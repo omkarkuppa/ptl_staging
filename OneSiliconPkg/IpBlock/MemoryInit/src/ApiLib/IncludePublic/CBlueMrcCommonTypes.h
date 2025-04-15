@@ -521,6 +521,7 @@ typedef enum {
   GsmMccSpineGateDis,
   GsmMccMainGlbDrvGateDis,
   GsmMccSchedGlbDrvGateDis,
+  GsmMccMainGlbGraceCnt,
   GsmMccOdtMatrixRd,
   GsmMccOdtMatrixWr,
   GsmMccCasStopAdditionalGap,

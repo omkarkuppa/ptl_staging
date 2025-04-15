@@ -660,8 +660,8 @@ Cpgc20SetDataControl (
 **/
 void
 AmtSetBaseAddressControl (
-  IN  MrcParameters *const      MrcData,
-  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
+  IN  MrcParameters *const MrcData,
+  IN PprTestTypeOffset     TestType
   )
 {
   MrcOutput *Outputs;
@@ -686,7 +686,7 @@ AmtSetBaseAddressControl (
       }
       IpChannel = LP_IP_CH (IsLpddr, Channel);
       BaseAddressControl.Data = 0;
-      if (TestType == AdvMtYMarchLong) {
+      if (TestType == PprTestTypeYMarchLong) {
         BaseAddressControl.Bits.Block_Row_Move_One_Row = 1;
         BaseAddressControl.Bits.Row_Inc = 1;
       }
@@ -1713,10 +1713,10 @@ AdvancedMemTestRankSetupMATSRowRange (
   MrcCall->MrcSetMem ((UINT8 *) CPGCAddressArray, sizeof (CPGCAddressArray), 0);
 
   switch (PprAmtData->TestType) {
-    case AdvMtXMarch:
-    case AdvMtXMarchG:
-    case AdvMtYMarchShort:
-    case AdvMtYMarchLong:
+    case PprTestTypeXMarch:
+    case PprTestTypeXMarchG:
+    case PprTestTypeYMarchShort:
+    case PprTestTypeYMarchLong:
       IsMarchAlgorithm = TRUE;
       break;
     default:
@@ -1733,12 +1733,12 @@ AdvancedMemTestRankSetupMATSRowRange (
       }
       IsMarchAlgoStartStopPerCh = IsMarchAlgorithm;
 #if AMT_USE_XMARCH_ALT == 1
-      // Use the same DpatAltStart / Stop for all channels when the test is AdvMtXMarch and AMT_USE_XMARCH_ALT is enabled
-      IsMarchAlgoStartStopPerCh = IsMarchAlgoStartStopPerCh && (PprAmtData->TestType != AdvMtXMarch);
+      // Use the same DpatAltStart / Stop for all channels when the test is XMarch and AMT_USE_XMARCH_ALT is enabled
+      IsMarchAlgoStartStopPerCh = IsMarchAlgoStartStopPerCh && (PprAmtData->TestType != PprTestTypeXMarch);
 #endif // AMT_USE_XMARCH_ALT
 #if AMT_USE_YMARCH_SHORT_ALT == 1
-      // Use the same DpatAltStart / Stop for all channels when the test is AdvMtYMarchShort and AMT_USE_YMARCH_SHORT_ALT is enabled
-      IsMarchAlgoStartStopPerCh = IsMarchAlgoStartStopPerCh && (PprAmtData->TestType != AdvMtYMarchShort);
+      // Use the same DpatAltStart / Stop for all channels when the test is YMarchShort and AMT_USE_YMARCH_SHORT_ALT is enabled
+      IsMarchAlgoStartStopPerCh = IsMarchAlgoStartStopPerCh && (PprAmtData->TestType != PprTestTypeYMarchShort);
 #endif // AMT_USE_YMARCH_SHORT_ALT
       if (IsMarchAlgoStartStopPerCh) {
         switch (Channel) {
@@ -1816,13 +1816,13 @@ AdvancedMemTestRankSetupMATSRowRange (
         CpgcTotalBanks = (UINT8) (1 << (PprAmtData->BankBits[Controller][Channel]));
       }
 
-      if (PprAmtData->TestType == AdvMtYMarchShort || PprAmtData->TestType == AdvMtYMarchLong) {
+      if (PprAmtData->TestType == PprTestTypeYMarchShort || PprAmtData->TestType == PprTestTypeYMarchLong) {
         CPGCAddressArray[Controller][Channel].AddrDirection = 3;
       } else {
         CPGCAddressArray[Controller][Channel].AddrDirection = FAST_Y;
       }
 #if AMT_USE_YMARCH_SHORT_ALT == 1
-      if (PprAmtData->TestType == AdvMtYMarchShort) {
+      if (PprAmtData->TestType == PprTestTypeYMarchShort) {
         // Alternate YMarch on patterns 2 and 3 (Rd/inverted Wr) should use Fast X ordering
         if (PprAmtData->PatternNumber == 2 || PprAmtData->PatternNumber == 3) {
           CPGCAddressArray[Controller][Channel].AddrDirection = 3;
@@ -1849,7 +1849,7 @@ AdvancedMemTestRankSetupMATSRowRange (
 
       // Set base repeats according to bank groups, number of rows tested, and column bits.
       BaseRepeats = CpgcTotalBanks * PprAmtData->TestRowSize[Controller][IpChannel] * (1 << (CpgcColAddressBits));
-      if (PprAmtData->TestType == AdvMtYMarchLong) {
+      if (PprAmtData->TestType == PprTestTypeYMarchLong) {
         Cpgc20BaseRepeats (MrcData, LocalMcChBitMask, BaseRepeats >> 1, 1); // Num Ranks = 1
         MrcSetLoopcount (MrcData, LocalMcChBitMask, 1);
       } else {
@@ -1931,10 +1931,10 @@ SetupIOTestRetention (
   Outputs = &MrcData->Outputs;
 
   switch (PprAmtData->TestType) {
-    case AdvMtXMarch:
-    case AdvMtXMarchG:
-    case AdvMtYMarchShort:
-    case AdvMtYMarchLong:
+    case PprTestTypeXMarch:
+    case PprTestTypeXMarchG:
+    case PprTestTypeYMarchShort:
+    case PprTestTypeYMarchLong:
       IsMarchAlgorithm = TRUE;
       break;
     default:
@@ -1963,7 +1963,7 @@ SetupIOTestRetention (
   }
 
   // Setup WDB
-  if (PprAmtData->TestType == AdvMtMmrw) {
+  if (PprAmtData->TestType == PprTestTypeMmrw) {
     MrcProgramDSPattern(MrcData, McChBitMask, PprAmtData->DataPattern, 0);
   } else {
     MrcProgramMATSPattern(MrcData, McChBitMask, PprAmtData->DataPattern, PprAmtData->DataPatternDepth, PprAmtData->UiShl, 0);
@@ -1978,14 +1978,14 @@ SetupIOTestRetention (
 
   if (IsMarchAlgorithm) {
     switch (PprAmtData->TestType) {
-      case AdvMtXMarch:
-      case AdvMtYMarchShort:
-      case AdvMtYMarchLong:
+      case PprTestTypeXMarch:
+      case PprTestTypeYMarchShort:
+      case PprTestTypeYMarchLong:
         DataInstruct[0].Data = 0;
         DataInstruct[0].Bits.Last = 1;
         Cpgc20DataInstructWrite (MrcData, &DataInstruct[0], 0x1);
         break;
-      case AdvMtXMarchG:
+      case PprTestTypeXMarchG:
         DataInstruct[0].Data = 0;
         DataInstruct[0].Bits.Data_Background = 0xD;
         DataInstruct[0].Bits.Background_Mode = 1;
@@ -2727,14 +2727,14 @@ RowTestPprWorker (
   UINT32                      Channel;
   UINT32                      Controller;
   UINT8                       IpChannel;
-  MRC_ADVANCED_MEM_TEST_TYPE  TestTypeSave;
+  PprTestTypeOffset           TestTypeSave;
   UINT32                      BaseRow[MAX_CONTROLLER][MAX_IP_CHANNEL];
   UINT32                      RangeSize[MAX_CONTROLLER][MAX_IP_CHANNEL];
   Status = mrcSuccess;
   Outputs = &MrcData->Outputs;
   MrcCall = MrcData->Inputs.Call.Func;
   TestTypeSave = PprAmtData->TestType;
-  PprAmtData->TestType = AdvMtWcMats8;
+  PprAmtData->TestType = PprTestTypeWcMats8;
 
   MrcCall->MrcSetMem((UINT8 *) BaseRow, sizeof (BaseRow), 0);
   MrcCall->MrcSetMem((UINT8 *) RangeSize, sizeof (RangeSize), 0);
@@ -2790,11 +2790,11 @@ RowTestPpr (
   )
 {
   MrcOutput                   *Outputs;
-  MRC_EXT_INPUTS_TYPE         *ExtInputs;
+  MrcInput                    *Inputs;
   MrcStatus                   Status;
 
   Outputs = &MrcData->Outputs;
-  ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
+  Inputs = &MrcData->Inputs;
   Status = mrcSuccess;
   PprAmtData->FromRowTestPpr = TRUE;
   PprAmtData->Bank = CpgcBank;
@@ -2806,8 +2806,8 @@ RowTestPpr (
   PprAmtData->SubSeqDataInv[1] = 1;
 
   if ((McChBitMask == 0) ||
-      (Outputs->IsLpddr && (ExtInputs->PprRepairType == SOFT_PPR)) ||
-      (ExtInputs->PprRepairType == NOREPAIR_PPR)) {
+      (Outputs->IsLpddr && (Inputs->PprRepairType == sPPR)) ||
+      (Inputs->PprRepairType == NoRepair)) {
     return mrcSuccess;
   }
 

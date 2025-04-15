@@ -158,7 +158,7 @@ MrcCalcSagvTypeConfig (
     break;
 
   case MidBwSaGv:
-    Freq = IsLpddr5 ? f4800 : f3200;
+    Freq = f4800;
     Gear = 4;
     break;
 
@@ -190,7 +190,7 @@ MrcCalcSagvTypeConfig (
     if (IsLpddr5) {
       Freq = f6400;
     } else if (IsDdr5) {
-      Freq = f4800;
+      Freq = f5600;
     } else {
       // Recalculate Freq - 1 bin
       Freq = Freq - 1;

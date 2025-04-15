@@ -880,6 +880,11 @@ MrcGetMcConfigGroupLimits (
       Max = MC0_CH0_CR_MCMNTS_SPARE_Spare_RW_MAX;
       break;
 
+    case GsmMccMainGlbGraceCnt:
+      Min = MC0_MCMAINS_GLOBAL_DRIVER_GATE_CFG_GLB_GRACE_CNT_MIN;
+      Max = MC0_MCMAINS_GLOBAL_DRIVER_GATE_CFG_GLB_GRACE_CNT_MAX;
+      break;
+
     case GsmMccMcMntsRfFastSleepDisable:
     case GsmScPbrEcsRefabEnable:
     case GsmMccEnSrxWrRetraining:

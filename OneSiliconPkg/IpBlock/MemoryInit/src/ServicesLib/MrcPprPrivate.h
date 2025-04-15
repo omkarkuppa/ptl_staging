@@ -27,4 +27,46 @@
 // DO NOT REMOVE: Ensures this header is only included once in the code
 PRIVATE_HEADER_DEFENDER(MrcPprPrivate)
 
+/**
+  Run PPR Advanced Memory Tets.
+
+  @param[in] MrcData pointer to global MRC data.
+  @param[in] PprAmtData pointer to PPR and AMT data structure.
+
+  @returns MrcStatus
+**/
+MrcStatus
+MrcRunPprAdvancedMemoryTests (
+  IN MrcParameters *const MrcData,
+  PPR_AMT_PARAMETER_DATA  *const PprAmtData
+  );
+
+/**
+  Execute PPR force repair routine.
+
+  @param[in] MrcData pointer to global MRC data.
+  @param[in] PprAmtData pointer to PPR and AMT data structure.
+
+  @returns MrcStatus
+**/
+MrcStatus
+MrcRunPprForceRepair (
+  IN MrcParameters *const MrcData,
+  PPR_AMT_PARAMETER_DATA  *const PprAmtData
+  );
+
+/**
+  Checks if a specific PPR Entry Address exists in the system.
+
+  @param[in] MrcData global MRC data structure.
+  @param[in] PprEntryAddress PPR Entry Address to check.
+
+  @returns TRUE if address exists, otherwise FALSE.
+**/
+BOOLEAN
+MrcIsPprEntryAddressExists (
+  IN MrcParameters *const MrcData,
+  IN MRC_PPR_ENTRY_ADDRESS PprEntryAddress
+  );
+
 #endif //MRC_PPR_PRIVATE_H_

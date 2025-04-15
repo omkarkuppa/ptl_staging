@@ -131,7 +131,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_DLLDCC                 (1)  // BIT10
 #define MRC_EXT_INPUTS_INIT_VAL_DLLBWSEL               (1)  // BIT11
 #define MRC_EXT_INPUTS_INIT_VAL_RDVREFDC               (0)  // BIT12
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved2Bit13         (0)  // BIT13
+#define MRC_EXT_INPUTS_INIT_VAL_RDTCIDLE               (1)  // BIT13
 #define MRC_EXT_INPUTS_INIT_VAL_RMTBIT                 (0)  // BIT14
 #define MRC_EXT_INPUTS_INIT_VAL_DQDQSSWZ               (1)  // BIT15
 #define MRC_EXT_INPUTS_INIT_VAL_REFPI                  (1)  // BIT16
@@ -167,7 +167,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_ROUNDTRIPMATCH         (1)  // BIT12
 #define MRC_EXT_INPUTS_INIT_VAL_TLINECLKCAL            (1)  // BIT13
 #define MRC_EXT_INPUTS_INIT_VAL_DCCPISERIALCAL         (1)  // BIT14
-#define MRC_EXT_INPUTS_INIT_VAL_PHASECLKCAL            (0)  // BIT15
+#define MRC_EXT_INPUTS_INIT_VAL_PHASECLKCAL            (1)  // BIT15
 #define MRC_EXT_INPUTS_INIT_VAL_WCKPADDCCCAL           (1)  // BIT16
 #define MRC_EXT_INPUTS_INIT_VAL_RDCTLET                (1)  // BIT17
 #define MRC_EXT_INPUTS_INIT_VAL_RDDQODTT               (1)  // BIT18
@@ -504,7 +504,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_DLLDCC,            // BIT10
       MRC_EXT_INPUTS_INIT_VAL_DLLBWSEL,          // BIT11
       MRC_EXT_INPUTS_INIT_VAL_RDVREFDC,          // BIT12
-      MRC_EXT_INPUTS_INIT_VAL_Reserved2Bit13,    // BIT13
+      MRC_EXT_INPUTS_INIT_VAL_RDTCIDLE,          // BIT13
       MRC_EXT_INPUTS_INIT_VAL_RMTBIT,            // BIT14
       MRC_EXT_INPUTS_INIT_VAL_DQDQSSWZ,          // BIT15
       MRC_EXT_INPUTS_INIT_VAL_REFPI,             // BIT16

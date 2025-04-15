@@ -31,19 +31,6 @@
 
 #define LOCAL_STUB_PPR_RESOURCE_ALWAYS_AVAILABLE  0
 
-// Advanced Mem Test types
-// Should agree with PPR test type bits defined in CMrcExtTypes.h
-typedef enum {
-  AdvMtWcMats8 = 0,         // Worst case MATS8 test; default test type
-  AdvMtDataRet,             // Data retention test
-  AdvMtXMarch,
-  AdvMtXMarchG,
-  AdvMtYMarchShort,
-  AdvMtYMarchLong,
-  AdvMtMmrw,
-  AdvMtNumMemTests
-} MRC_ADVANCED_MEM_TEST_TYPE;
-
 #define MAX_PATTERN_DEPTH 16 // CPGC_20_NUM_DPAT_EXTBUF
 
 typedef struct {
@@ -57,7 +44,7 @@ typedef struct {
   UINT8                       NumCL; // Number of cacheline transactions per algorithm instruction
   UINT8                       Direction;
   UINT8                       PatternNumber;
-  MRC_ADVANCED_MEM_TEST_TYPE  TestType;
+  PprTestTypeOffset           TestType;
   BOOLEAN                     FromRowTestPpr;
     // Status reporting and data metrics
   MrcStatus                   TestStatus;   // mrcFail if RowFailRange is full

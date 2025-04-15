@@ -868,6 +868,10 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_MCMAINS_GLOBAL_DRIVER_GATE_CFG_GLB_DRV_GATE_DIS_HSH;
     break;
 
+  case GsmMccMainGlbGraceCnt:
+    HashPtr->Data = MC0_MCMAINS_GLOBAL_DRIVER_GATE_CFG_GLB_GRACE_CNT_HSH;
+    break;
+
   case GsmMccPageIdleTimerDisable:
     HashPtr->Data = MC0_CH0_CR_SCHED_CBIT_dis_pt_it_HSH;
     break;

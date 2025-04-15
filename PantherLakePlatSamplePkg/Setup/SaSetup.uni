@@ -1329,6 +1329,7 @@
 #string STR_CMDSR_NAME                          #language en-US "CMD CTL CLK Slew Rate"
 #string STR_DIMMODTCA_NAME                      #language en-US "DIMM CA ODT Training"
 #string STR_RDVREFDC_NAME                       #language en-US "Read Vref Decap Training*"
+#string STR_RDTCIDLE_NAME                       #language en-US "Read Timing Centering Training with SR stress*"
 #string STR_DCCPICODELUT_NAME                   #language en-US "DCC PI Code LUT Calibration"
 #string STR_REFPI_NAME                          #language en-US "Ref PI Calibration"
 #string STR_PHASECLKCAL_NAME                    #language en-US "DCC Phase Clk Calibration"

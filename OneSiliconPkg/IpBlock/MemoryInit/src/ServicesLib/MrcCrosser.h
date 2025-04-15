@@ -120,7 +120,7 @@
 #define RX_DFE_BIT_NUM (8)
 #define TX_XTALK_CAPVAL_NUM (16)
 
-#define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY (22) // More than this, and the XTensa will run out of memory during a per-bit sweep if the array is per-rank
+#define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY (16) // More than this, and the XTensa will run out of memory during a per-bit sweep if the array is per-rank
 #define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY (MAX_RANK_IN_CHANNEL * MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY) // More than this, and the XTensa will run out of memory during a per-bit sweep
 #define MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_RANK_ARRAY (MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY * MAX_BITS) // More than this, and the XTensa will run out of memory during a per-byte sweep if the array is per-rank
 #define MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_CHANNEL_ARRAY (MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY * MAX_BITS) // More than this, and the XTensa will run out of memory during a per-byte sweep

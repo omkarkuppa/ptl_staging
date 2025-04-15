@@ -77,7 +77,7 @@ typedef enum {
   NomOdt,                       ///< Resistance setting within a set of possible resistances, which may be a different set of values per product. Indexed by integer values.
   ParkOdt,                      ///< Resistance setting within a set of possible resistances, which may be a different set of values per product. Indexed by integer values.
   TxDqTco,                      ///< TCO Comp Code for DQ
-  TxXtalk,                      ///< Capacitance value 0 - 15 for the Tx Xtalk Cancelation training 
+  TxXtalk,                      ///< Capacitance value 0 - 15 for the Tx Xtalk Cancelation training
   DqsEqLegs,                    ///<
   DqsEqRes,                     ///<
   DqsEqCap,                     ///<
@@ -299,6 +299,8 @@ typedef enum {
   GsmIocDataEnDQODTParkHi,
   GsmIocRxVrefMFC,              ///< RX Vref Metal Finger Cap. ?Vtt vs Vddq
   GsmIocDisableTxDqs,
+  GsmIocDqsSenseAmpDuration,
+  GsmIocDqSenseAmpDuration,
   GsmIocDbiEnable,
   GsmIocDbiMode,
   GsmIocForceRxAmpOn,
@@ -862,6 +864,7 @@ typedef enum {
   GsmMptuDunitEvenPhaseCmd,
   GsmMptuDCrPdDis,
   GsmMptuDCrPreaBeforePde,
+  GsmMptuSreDelay,
   GsmMptuManualSre,
   GsmMptuManualSrx,
   GsmMptuDynamicSrEn,
@@ -940,6 +943,9 @@ typedef enum {
   GsmMtgCmd0Type,
   GsmMtgCmd0Count,
   GsmMtgCmd0Last,
+  GsmMtgCmd1Type,
+  GsmMtgCmd1Count,
+  GsmMtgCmd1Last,
   GsmMtgCmdEntryDelay,
   GsmMtgCmdLoopDelay,
   GsmMtgStopOnErrEn,

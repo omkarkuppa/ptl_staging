@@ -517,13 +517,8 @@ typedef enum {
 // PPR Defines
 #define MAX_FAIL_RANGE                          (16)
 #define DQ_MASK_INDEX_MAX                       (2)
-#define MAX_PPR_ADDR_ENTRIES_DDR                (20)
-#define MAX_PPR_ADDR_ENTRIES_DDR_SPPR           (MAX_PPR_ADDR_ENTRIES_DDR + 20)
 #define MAX_MEMTEST_BANK_INTERLEAVE_NUMBER      (32)
-#define MAX_BAD_ROW_LIMIT_PER_BANK              (8)
-#define PPR_REPAIR_STATUS_FAIL                  (0)
-#define PPR_REPAIR_STATUS_UNCORRECTABLE         (1)
-#define PPR_REPAIR_STATUS_SUCCESS               (2)
+#define MRC_PPR_ADV_ALGORITHM_TEST_MASK         (0b01111111) // Look at MRC_PPR_TEST_TYPE
 
 #define NUM_LCPLL 2
 
@@ -688,6 +683,7 @@ typedef enum {
   OemRxDqsVoc,              ///< before RxDqs VOC Centering
   OemDunitTatOptimization,  ///< before Dunit TAT optimization
   OemVccLvrInit,            ///< before Vcc Lvr init configuration
+  OemReadDqDqsIdle,         ///< before RDTC with Idle stress
   ///
   ///*********************************************************************************
   ///
@@ -835,15 +831,6 @@ typedef struct {
   UINT8     DeviceTemp; // Device temperature after fail detected
   UINT8     Device;
 } ROW_FAIL_RANGE;
-
-// PPR test Type bits. Keep synced with defines in LunarLakePlatSamplePkg\Library\PeiPolicyUpdateLib\PeiSaPolicyUpdatePreMem.c
-#define PPR_MEMTEST_WCMATS8_BIT               (0)
-#define PPR_MEMTEST_DATA_RETENTION_BIT        (1)
-#define PPR_MEMTEST_XMARCH_BIT                (2)
-#define PPR_MEMTEST_XMARCHG_BIT               (3)
-#define PPR_MEMTEST_YMARCHSHORT_BIT           (4)
-#define PPR_MEMTEST_YMARCHLONG_BIT            (5)
-#define PPR_MEMTEST_MMRW_BIT                  (6)
 
 // PPR Running State
 typedef enum {
@@ -2169,7 +2156,6 @@ typedef struct {
   BOOLEAN             IsLoopbackSetupDone;
   BOOLEAN             WeaklockEn;                  ///< Weaklock enable
   BOOLEAN             RxDqsDelayCompEn;            ///< Rx DQS Delay Comp enable
-  UINT8               ReservedBytesAlign[3];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
@@ -2181,6 +2167,8 @@ typedef struct {
   UINT8               BibIdle;
   UINT8               BibIdleType;
   BOOLEAN             CaTristateForISenseRmt;      ///< Enable calling MrcTriStateCa in IoReset for Current Sensor RMT
+  BOOLEAN             SrOnRmt;                     ///< TRUE if Idle stress is enabled during MTG test (Power Down or Self-Refresh)
+  UINT8               ReservedBytesAlign[2];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;
@@ -2358,7 +2346,14 @@ typedef struct {
   INT32   RxDqsBaseOffset;        ///< Base value of DataOffsetTrain.RxDqsOffset
   UINT32  DebugValue;             ///< Used for general debug
   UINT16  Vout;
-  UINT8   ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
+  MRC_PPR_ENTRY_INFO    PprEntryInfo[PPR_REQUEST_MAX];
+  MRC_PPR_ENTRY_ADDRESS	PprEntryAddress[PPR_REQUEST_MAX];
+  MRC_PPR_TEST_TYPE     PprTestType;
+  MRC_PPR_REPAIR_TYPE   PprRepairType;
+  UINT8 PprRunOnce;
+  UINT8 PprErrorInjection;
+  UINT8 PprForceRepair;
+  UINT8 ReservedBytesAlign2[1]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

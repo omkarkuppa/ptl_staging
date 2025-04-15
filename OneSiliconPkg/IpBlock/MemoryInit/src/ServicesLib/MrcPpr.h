@@ -484,4 +484,41 @@ MrcPostPackageRepairTest (
   IN  MrcParameters *const MrcData
   );
 
+/**
+  Get status whether PPR is enabled or disabled based on supported usecases.
+
+  @param[in] MrcData global MRC data structure.
+
+  @retval TRUE if PPR is enabled and a supported usecase is detected.
+  @retval FALSE if PPR is disabled.
+**/
+BOOLEAN
+MrcIsPprEnabled (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  Checks if Targeted PPR is requested.
+
+  @param[in] MrcData global MRC data structure.
+
+  @returns TRUE if Targeted PPR is requested, otherwise FALSE.
+**/
+BOOLEAN
+MrcIsTargetedPprRequested (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  Run Targeted PPR if requested.
+  @param[in] MrcData pointer to global MRC data.
+  @param[in] PprAmtData pointer to PPR and AMT data structure.
+
+  @returns MrcStatus
+**/
+MrcStatus
+MrcRunPprTargeted (
+  IN MrcParameters *const MrcData
+  );
+
 #endif // _MrcPpr_h_
