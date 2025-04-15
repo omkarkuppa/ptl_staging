@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ## @file
 #  @copyright
 #  INTEL CONFIDENTIAL
