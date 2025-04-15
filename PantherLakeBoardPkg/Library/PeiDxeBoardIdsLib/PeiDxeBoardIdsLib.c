@@ -55,7 +55,7 @@ CHAR16 *mBoardIdIndex[] = {
   L"TBD",                                   // 0x1E
   L"TBD",                                   // 0x1F
   L"TBD",                                   // 0x20
-  L"TBD",                                   // 0x21
+  L"WCL LP5x MD T3 RVP2",                   // 0x21
   L"TBD",                                   // 0x22
   L"TBD",                                   // 0x23
   L"TBD",                                   // 0x24

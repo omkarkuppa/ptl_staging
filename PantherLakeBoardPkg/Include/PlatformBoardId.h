@@ -103,8 +103,9 @@ Defines Platform BoardIds
 #define BoardIdPtlUHLp5Adk2                0x16
 #define BoardIdPtlUHCammBep                0x08
 
-// WildcatLake N Board Id
+// WildcatLake Board Id
 #define BoardIdWclNDdr5Rvp1                0x10
+#define BoardIdWclLp5xRvp2                 0x21
 
 #define BoardIdUnknown1                   0xffff
 
@@ -158,8 +159,9 @@ Defines Platform BoardIds
 #define SkuIdPtlUHLp5AepBom32Gb           0x00020007
 #define SkuIdPtlUHCammBep                 0x00000008
 
-// WildcatLake N Sku Id
+// WildcatLake Sku Id
 #define SkuIdWclNDdr5Rvp1                 0x08000010
 #define SkuIdWclNDdr5Rvp1HDMI             0x0A000010
+#define SkuIdWclLp5Rvp2                   0x08000021
 
 #endif // _PLATFORM_BOARD_ID_H_
