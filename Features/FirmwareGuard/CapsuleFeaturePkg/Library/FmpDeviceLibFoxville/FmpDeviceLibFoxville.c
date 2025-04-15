@@ -975,7 +975,8 @@ FmpDeviceSetImageWithStatus (
 
   ImageCopy = (UINT8 *)AllocateZeroPool (ImageSize);
   if (ImageCopy == NULL) {
-    return EFI_ABORTED;
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Exit;
   }
 
   CopyMem (ImageCopy, Image, ImageSize);
@@ -1012,17 +1013,21 @@ FmpDeviceSetImageWithStatus (
     }
   }
 
-  ClearUpdateProgress ();
-  DeleteBackupFiles ();
-
   Progress (90);
 
   DEBUG ((DEBUG_INFO, "NVM image was updated successfully\n"));
 
 Exit:
-  FreePool (ImageCopy);
+  ClearUpdateProgress ();
+  DeleteBackupFiles ();
 
-  return EFI_SUCCESS;
+  if (ImageCopy != NULL) {
+    FreePool (ImageCopy);
+  }
+
+  Progress (95);
+
+  return Status;
 }
 
 /**
