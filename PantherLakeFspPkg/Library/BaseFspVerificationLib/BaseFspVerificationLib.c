@@ -258,6 +258,129 @@ VerifyFspVersion (
 }
 
 /**
+  Verify Fsp-M Configuration Region with the information which is added at the END of BSPM.
+  Fsp-M Configuration Region digest information is kept at the END of BSPM.
+
+  @param[in]   Bspm               Bspm structure found in BPM.
+  @param[in]   FspmImageBase      FSP-M image base in memory.
+  @param[in]   Buffer             Memory buffer for hash verification.
+
+  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_ACCESS_DENIED       Verification Fail.
+  @retval EFI_SUCCESS             Verification Pass.
+
+**/
+
+EFI_STATUS
+EFIAPI
+VerifyFspmUpdRegion (
+  IN BSPM_ELEMENT                   *Bspm,
+  IN UINTN                          FspmImageBase,
+  IN VOID                           *Buffer
+  )
+{
+  VOID                   *HashCtx;
+  REGION_SEGMENT         *FspmUpdSegmentPtr;
+  SHAX_HASH_STRUCTURE    *DigestPtr;
+  BOOLEAN                IsBspValid;
+
+  DEBUG ((DEBUG_INFO, "FspM Configuration Region Verification Start ...\n"));
+
+  if (Bspm == NULL || Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  HashCtx = (VOID *) Buffer;
+ 
+  // FSP-M Configuration Region Segment is the 1st Segment after all BSPM segments and Digests
+  FspmUpdSegmentPtr = (REGION_SEGMENT*) ((UINT8 *)(Bspm) + sizeof (BSPM_ELEMENT) + Bspm->BspSegmentCount * sizeof (REGION_SEGMENT) + Bspm->BspSegmentCount * BSPM_SUPPORTED_SHAX_HASHSTRUCTS_SIZE);
+  
+  DEBUG_CODE_BEGIN ();
+  DEBUG ((DEBUG_INFO, "FspmUpdSegmentBase - 0x%x    FspmUpdSegmentSize - 0x%x    Flag - %d\n", FspmUpdSegmentPtr->Base, FspmUpdSegmentPtr->Size, FspmUpdSegmentPtr->Flags));
+  DEBUG_CODE_END ();
+
+  DigestPtr = (SHAX_HASH_STRUCTURE *) (FSPM_UPD_DIGEST_PTR(Bspm, Bspm->BspSegmentCount, Bspm->FspConfigRegSegmentCount));
+  DEBUG ((DEBUG_INFO, "FspM Configuration Region Digest is found: 0x%x!\n", (UINTN) (VOID *) DigestPtr));
+  
+  IsBspValid = FALSE;
+  
+  if (DigestPtr->HashAlg == TPM_ALG_SHA384) {
+    IsBspValid = Sha384Verify (HashCtx, (SHA384_HASH_STRUCTURE *) DigestPtr, FspmImageBase, 1, FspmUpdSegmentPtr);
+  } else {
+    DEBUG ((DEBUG_ERROR, "The first digest must be Sha384 format!\n"));
+  }
+
+  if (IsBspValid) {
+    DEBUG ((DEBUG_INFO, "FspM Configuration Region Verification Pass!\n"));
+    return EFI_SUCCESS;
+  }
+
+  DEBUG ((DEBUG_ERROR, "FspM Configuration Region Verification Fail!\n"));
+  return EFI_ACCESS_DENIED;
+}
+
+/**
+  Verify Fsp-S Configuration Region with the information which is added at the END of BSPM.
+  Fsp-S Configuration Region digest information is kept at the END of BSPM.
+
+  @param[in]   Bspm               Bspm structure found in BPM.
+  @param[in]   FspsImageBase      FSP-S image base in memory.
+  @param[in]   Buffer             Memory buffer for hash verification.
+
+  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_ACCESS_DENIED       Verification Fail.
+  @retval EFI_SUCCESS             Verification Pass.
+
+**/
+EFI_STATUS
+EFIAPI
+VerifyFspsUpdRegion (
+  IN BSPM_ELEMENT                   *Bspm,
+  IN UINTN                          FspsImageBase,
+  IN VOID                           *Buffer
+  )
+{
+  VOID                   *HashCtx;
+  REGION_SEGMENT         *FspsUpdSegmentPtr;
+  SHAX_HASH_STRUCTURE    *DigestPtr;
+  BOOLEAN                IsBspValid;
+
+  DEBUG ((DEBUG_INFO, "FspS Configuration Regionn Verification Start ...\n"));
+
+  if (Bspm == NULL || Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  HashCtx = (VOID *) Buffer;
+
+  // FSP-S Configuration Region Segment is the 2nd Segment after all BSPM segments and Digests
+  FspsUpdSegmentPtr = (REGION_SEGMENT*) ((UINT8 *)(Bspm) + sizeof (BSPM_ELEMENT) + Bspm->BspSegmentCount * sizeof (REGION_SEGMENT) + Bspm->BspSegmentCount * BSPM_SUPPORTED_SHAX_HASHSTRUCTS_SIZE + sizeof(REGION_SEGMENT));
+
+  DEBUG_CODE_BEGIN ();
+  DEBUG ((DEBUG_INFO, "FspsUpdSegmentBase - 0x%x    FspsUpdSegmentSize - 0x%x    Flag - %d\n", FspsUpdSegmentPtr->Base, FspsUpdSegmentPtr->Size, FspsUpdSegmentPtr->Flags));
+  DEBUG_CODE_END ();
+
+  DigestPtr = (SHAX_HASH_STRUCTURE *) (FSPS_UPD_DIGEST_PTR(Bspm, Bspm->BspSegmentCount, Bspm->FspConfigRegSegmentCount));
+  DEBUG ((DEBUG_INFO, "FspS Configuration Region Digest is found: 0x%x!\n", (UINTN) (VOID *) DigestPtr));
+
+  IsBspValid = FALSE;
+
+  if (DigestPtr->HashAlg == TPM_ALG_SHA384) {
+    IsBspValid = Sha384Verify (HashCtx, (SHA384_HASH_STRUCTURE *) DigestPtr, FspsImageBase, 1, FspsUpdSegmentPtr);
+  } else {
+    DEBUG ((DEBUG_ERROR, "The first digest must be Sha384 format!\n"));
+  }
+
+  if (IsBspValid) {
+    DEBUG ((DEBUG_INFO, "FspS Configuration Region Verification Pass!\n"));
+    return EFI_SUCCESS;
+  }
+
+  DEBUG ((DEBUG_ERROR, "FspS Configuration Region Verification Fail!\n"));
+  return EFI_ACCESS_DENIED;
+}
+
+/**
   Verify FSP-M with the information in BSPM and FBM.
   FSP-M digest information is kept in FBM, FSP will only verify the SHA384 digest.
   FSP-M IBB region information is kept in FBM, only hashed IBB (indicate by flag) should be taken
@@ -285,6 +408,8 @@ VerifyAndExtendFspm (
   FSP_REGION_STRUCTURE    *FspRegion;
   VOID                    *HashCtx;
   UINTN                   FspmImageBase;
+  UINT8                   AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
+  EFI_STATUS              Status;
 
   DEBUG ((DEBUG_INFO, "FSP-M Verification ...\n"));
   if (Bspm == NULL || Fbm == NULL || Buffer == NULL) {
@@ -319,7 +444,12 @@ VerifyAndExtendFspm (
     FspmImageBase, FspRegion->SegmentCnt, IBB_SEGMENTS_PTR (FspRegion)) == TRUE)
   {
     DEBUG ((DEBUG_INFO, "FSP-M Verification Pass.\n"));
-    return EFI_SUCCESS;
+    //
+    // Verify FSP-M UPD Region
+    //
+    Status = VerifyFspmUpdRegion (Bspm, FspmImageBase, AvailableMemoryBuffer);
+    if(Status == EFI_SUCCESS)
+      return EFI_SUCCESS;
   }
 
   DEBUG ((DEBUG_INFO, "FSP-M Verification Fail!\n"));
@@ -348,6 +478,7 @@ EFIAPI
 VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN BSPM_ELEMENT                   *Bspm,
   IN VOID                           *Buffer
   )
 {
@@ -355,6 +486,8 @@ VerifyAndLogEventFsps (
   FSP_REGION_STRUCTURE    *FspRegion;
   UINT8                   Index;
   VOID                    *HashCtx;
+  UINT8                   AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
+  EFI_STATUS              Status;
 
   DEBUG ((DEBUG_INFO, "FSP-S Verification Start ...\n"));
   if (Fbm == NULL || Buffer == NULL) {
@@ -391,7 +524,12 @@ VerifyAndLogEventFsps (
     FspsImageBase, FspRegion->SegmentCnt, IBB_SEGMENTS_PTR (FspRegion)) == TRUE)
   {
     DEBUG ((DEBUG_INFO, "FSP-S Verification Pass!\n"));
-    return EFI_SUCCESS;
+    //
+    // Verify FSP-S UPD Region
+    //
+    Status = VerifyFspsUpdRegion (Bspm, FspsImageBase, AvailableMemoryBuffer);
+    if(Status == EFI_SUCCESS)
+      return EFI_SUCCESS;
   }
   DEBUG ((DEBUG_INFO, "FSP-S Verification Fail!\n"));
   return EFI_ACCESS_DENIED;

@@ -114,6 +114,7 @@ InitializeTpmAndGetActivePcrs (
 
   @param[out]  FspMeasurementInfo  Structure that points to the data
   @param[in]   Fbm                 Base address of Fbm
+  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
   @retval EFI_SUCCESS       Operation completed successfully.
@@ -125,6 +126,7 @@ EFIAPI
 ExtendFspmRegion (
   OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
+  IN   BSPM_ELEMENT                 *Bspm,
   IN   UINT32                       TpmActivePcrBanks
 );
 
@@ -276,6 +278,7 @@ FspExtendFspot (
   Extend FSP-M digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
+  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
   @retval EFI_SUCCESS       Operation completed successfully.
@@ -286,6 +289,7 @@ EFI_STATUS
 EFIAPI
 FspExtendFspm (
   IN  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN  BSPM_ELEMENT                   *Bspm,
   IN  UINT32                         TpmActivePcrBanks
   );
 
@@ -293,6 +297,7 @@ FspExtendFspm (
   Extend FSP-S digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
+  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
   @retval EFI_SUCCESS       Operation completed successfully.
@@ -303,6 +308,7 @@ EFI_STATUS
 EFIAPI
 FspExtendFsps (
   IN  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN  BSPM_ELEMENT                   *Bspm,
   IN  UINT32                         TpmActivePcrBanks
   );
 
@@ -321,6 +327,27 @@ EFI_STATUS
 EFIAPI
 FspRegionGetDigestList (
   IN   FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  OUT  TPML_DIGEST_VALUES             *TpmDigestValues,
+  IN   UINT8                          FspComponentId,
+  IN   UINT32                         TpmActivePcrBanks
+  );
+
+/**
+  Get FSP M/S UPD Region digests to active PCR.
+
+  @param[in]   Bspm                Base address of Bspm
+  @param[out]  TpmDigestValues     List of digests
+  @param[in]   FspComponentId      FSP component ID
+  @param[in]   TpmActivePcrBanks   Active PCR value
+
+  @retval EFI_SUCCESS              Operation completed successfully.
+  @retval EFI_INVALID_PARAMETER    If FspComponentId didn't match with FSP-M or S
+
+**/
+EFI_STATUS
+EFIAPI
+FspUpdRegionGetDigestList (
+  IN   BSPM_ELEMENT                   *Bspm,
   OUT  TPML_DIGEST_VALUES             *TpmDigestValues,
   IN   UINT8                          FspComponentId,
   IN   UINT32                         TpmActivePcrBanks
