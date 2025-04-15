@@ -668,7 +668,7 @@ if %EXTENDEDREGION_BUILD% EQU TRUE (
   @rem
   @rem Generate Extended_to_SPI BGUP.
   @rem
-  call %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BuildBGUP_SPI.bat -d %BUILD_DIR%\FV\ExtendedRegion.bin -p script_extendedbios.bgsl -v %BIOS_SVN%
+  call %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BuildBGUP_SPI.bat -d %BUILD_DIR%\FV\ExtendedRegion.bin -p script_extendedbios.bgsl -v !BIOS_GUARD_SVN! -use_ftu false
   @echo Create BGUP for ExtendBios
   %PYTHON_COMMAND% %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
   copy /b capsule_update_package.BIOS_Guard + update_package_bgupc.biosguard %BGSL_TMP_FOLDER%\ExtendedBgsl.bin
