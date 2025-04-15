@@ -490,6 +490,10 @@ PciBusConfigRead (
     return EFI_INVALID_PARAMETER;
   }
 
+  if (Width == -1 || Width >= EfiPciIoWidthMaximum) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   PrivateData = (PCI_DEVICE_PRIVATE_DATA*) This;
 
   //
@@ -555,6 +559,10 @@ PciBusConfigWrite (
   UINTN                    Index;
 
   if (This == NULL || Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Width == -1 || Width >= EfiPciIoWidthMaximum) {
     return EFI_INVALID_PARAMETER;
   }
 

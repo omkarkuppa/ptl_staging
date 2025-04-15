@@ -46,6 +46,15 @@ PciBusMap (
   OUT    VOID                           **Mapping
   )
 {
+
+  if (HostAddress == NULL || NumberOfBytes == NULL || Mapping == NULL || DeviceAddress == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Operation == -1 || Operation >= EfiPciIoOperationMaximum) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   return EFI_UNSUPPORTED;
 }
 
@@ -94,7 +103,12 @@ PciBusAllocateBuffer (
   IN  UINT64                       Attributes
   )
 {
-  return EFI_UNSUPPORTED;
+
+  if ((Attributes & (~(EFI_PCI_ATTRIBUTE_MEMORY_WRITE_COMBINE | EFI_PCI_ATTRIBUTE_MEMORY_CACHED))) != 0) {
+    return EFI_UNSUPPORTED;
+  }
+
+  return EFI_INVALID_PARAMETER;
 }
 
 /**
