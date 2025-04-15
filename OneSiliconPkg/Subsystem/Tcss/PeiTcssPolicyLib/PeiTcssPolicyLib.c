@@ -150,7 +150,7 @@ LoadTcssUsb3ConfigDefault (
   // BIOS should program PDO in PEI phase by default
   //
   UsbConfig->PdoProgramming = TRUE;
-  UsbConfig->UaolEnable = TRUE;
+  UsbConfig->UaolEnable = FALSE;
   UsbConfig->XhciOcLock = TRUE;
 }
 
