@@ -129,7 +129,7 @@ MpWrapperGetNumberOfProcessors (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackGetNumberOfProcessors();
+    SwitchStackGetNumberOfProcessors ();
     mIsSwitchStackDone = FALSE;
   }
 
@@ -161,7 +161,7 @@ MpWrapperGetProcessorInfo (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackGetProcessorInfo();
+    SwitchStackGetProcessorInfo ();
     mIsSwitchStackDone = FALSE;
   }
 
@@ -199,7 +199,7 @@ MpWrapperStartupAllAPs (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackStartupAllAPs();
+    SwitchStackStartupAllAPs ();
     mIsSwitchStackDone = FALSE;
   }
 
@@ -237,7 +237,7 @@ MpWrapperStartupThisAP (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackStartupThisAP();
+    SwitchStackStartupThisAP ();
     mIsSwitchStackDone = FALSE;
   }
 
@@ -269,7 +269,7 @@ MpWrapperSwitchBSP (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackSwitchBSP();
+    SwitchStackSwitchBSP ();
     mIsSwitchStackDone = FALSE;
   }
 
@@ -304,7 +304,7 @@ MpWrapperEnableDisableAP (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackEnableDisableAP();
+    SwitchStackEnableDisableAP ();
     mIsSwitchStackDone = FALSE;
   }
 
@@ -333,7 +333,7 @@ MpWrapperWhoAmI (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackWhoAmI();
+    SwitchStackWhoAmI ();
     mIsSwitchStackDone = FALSE;
   }
 
@@ -368,7 +368,7 @@ MpWrapperStartupAllCPUs (
     mFspGlobalData->FunctionParameterPtr = &mMpServiceParameter;
 
     mIsSwitchStackDone = TRUE;
-    mStatus = SwitchStackStartupAllCPUs();
+    SwitchStackStartupAllCPUs ();
     mIsSwitchStackDone = FALSE;
   }
 
