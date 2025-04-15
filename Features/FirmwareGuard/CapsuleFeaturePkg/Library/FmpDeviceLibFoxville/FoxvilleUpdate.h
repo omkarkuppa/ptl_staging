@@ -53,7 +53,7 @@ FoxvilleUpdateInBlankMode (
   );
 
 /**
-  Update the NVM image into flash in unprotected mode.
+  Update the NVM image into flash in non blank mode.
 
   @param[in]  HwPtr      Pointer to the HW instance.
   @param[in]  ImagePtr   Pointer to the image.
@@ -62,13 +62,14 @@ FoxvilleUpdateInBlankMode (
   @retval  EFI_SUCCESS            Succeed to update the NVM image into flash.
   @retval  EFI_INVALID_PARAMETER  Any input parameter is invalid.
   @retval  EFI_VOLUME_CORRUPTED   Input buffer is corrupted.
+  @retval  EFI_ACCESS_DENIED      Region to be programmed is under protected.
   @retval  EFI_DEVICE_ERROR       Operation could not be complete.
   @retval  Others                 Failed to update the NVM image into flash.
 
 **/
 EFI_STATUS
 EFIAPI
-FoxvilleUpdateInUnprotectedMode (
+FoxvilleUpdateInNonBlankMode (
   IN FOXVILLE_HW_INSTANCE  *HwPtr,
   IN VOID                  *ImagePtr,
   IN UINTN                 ImageSize
