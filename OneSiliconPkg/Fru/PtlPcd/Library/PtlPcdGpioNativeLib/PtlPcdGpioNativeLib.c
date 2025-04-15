@@ -2130,6 +2130,11 @@ ConfigureDisplayGpio (
   }
 
   Status = PtlPcdGpioSetNativePadByFunction (GpioServices, PadFunction, PinMux);
+
+  if (PadFunction == GPIOV2_SIGNAL_DDSP_HPDALV) {
+    Status = GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_DDSP_HPDALV, 0), GpioV2TermNone);
+  }
+
   return Status;
 }
 
