@@ -288,6 +288,10 @@ InitCpuNvsArea (
     mCpuNvsAreaProtocol.Area->HwpEnable = 1;
   }
 
+  if (mCpuNvsAreaProtocol.Area->PpmFlags & PPM_TURBO) {
+    mCpuNvsAreaProtocol.Area->TurboMode = 1;
+  }
+
   mCpuNvsAreaProtocol.Area->CtdpLevelsSupported =CpuPowerMgmtPrivateDataHob->CtdpLevelsSupported;                        /// ConfigTdp Number Of Levels.
   mCpuNvsAreaProtocol.Area->ConfigTdpBootModeIndex = CpuPowerMgmtPrivateDataHob->ConfigTdpBootModeIndex;                 /// CTDP Boot Mode Index
 
