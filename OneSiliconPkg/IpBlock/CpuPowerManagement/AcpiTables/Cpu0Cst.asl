@@ -50,11 +50,11 @@ Scope (\_SB.PR00)
   //
   // Create Temp packages for each C-state and Initialize them to default IO_LVL
   //
-  // C1  Temp Package (C1 - HLT)
+  // C1 Temp Package (C1 - HLT)
   //
   Name ( C1TM, Package ()
   {
-    ResourceTemplate () {Register (FFixedHW, 0, 0, 0)},
+    ResourceTemplate () {Register (FFixedHW, 1, 2, 0x00, 1)},
     1,
     C1_LATENCY,
     C1_POWER
@@ -65,21 +65,21 @@ Scope (\_SB.PR00)
   //
   Name ( C6TM, Package ()
   {
-     ResourceTemplate () {Register (FFixedHW, 1, 2, 0x00, 1)},
-     2,
-     0,
-     C6_POWER
-   })
+    ResourceTemplate () {Register (FFixedHW, 1, 2, 0x00, 1)},
+    2,
+    0,
+    C6_POWER
+  })
 
   //
   // C7 Temp Package
   //
   Name ( C7TM, Package ()
   {
-     ResourceTemplate () {Register (FFixedHW, 1, 2, 0x00, 1)},
-     2,
-     0,
-     C7_POWER
+    ResourceTemplate () {Register (FFixedHW, 1, 2, 0x00, 1)},
+    2,
+    0,
+    C7_POWER
    })
 
   //
@@ -87,11 +87,11 @@ Scope (\_SB.PR00)
   //
   Name ( CDTM, Package ()
   {
-     ResourceTemplate () {Register (FFixedHW, 1, 2, 0x00, 1)},
-     3,
-     0,
-     0
-   })
+    ResourceTemplate () {Register (FFixedHW, 1, 2, 0x00, 1)},
+    3,
+    0,
+    0
+  })
 
   //
   // Valid/Invalid Flags for ACPI C2 and C3
