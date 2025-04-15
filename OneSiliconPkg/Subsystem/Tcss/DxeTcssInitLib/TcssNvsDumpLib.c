@@ -83,7 +83,7 @@ DumpTcssVariable (
   DEBUG ((DEBUG_INFO, "IomReady                     : 0x%X\n", TcssNvsAreaProtocol->Area->IomReady));
   DEBUG ((DEBUG_INFO, "TcssIomVccSt                 : 0x%X\n", TcssNvsAreaProtocol->Area->TcssIomVccSt));
   DEBUG ((DEBUG_INFO, "RegBarOffset                 : 0x%X\n", TcssNvsAreaProtocol->Area->RegBarOffset));
-  DEBUG ((DEBUG_INFO, "IomBase                      : 0x%X\n", TcssNvsAreaProtocol->Area->IomBase));
+  DEBUG ((DEBUG_INFO, "IomBase                      : 0x%lX\n", TcssNvsAreaProtocol->Area->IomBase));
   DEBUG ((DEBUG_INFO, "RetimerMap                   : 0x%X\n", TcssNvsAreaProtocol->Area->RetimerMap));
 
   DEBUG ((DEBUG_INFO, "[Dumping TCSS NVS Area operation regio - End]\n"));

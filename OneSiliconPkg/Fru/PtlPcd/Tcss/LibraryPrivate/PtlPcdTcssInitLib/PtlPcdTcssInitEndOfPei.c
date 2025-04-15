@@ -168,7 +168,6 @@ PtlTcssInitEndOfPei (
   TCSS_DATA_SSID_HOB *TcssSsidHob;
   TCSS_DATA_HOB      *TcssHob;
   UINT32             Index;
-  UINT16             RetimerMap;
 
   DEBUG ((DEBUG_INFO, "%a\n",__FUNCTION__));
 
@@ -278,13 +277,12 @@ PtlTcssInitEndOfPei (
   TcssHob->TcssData.DeepstTcState               = (UINT8)TcssInst.Info->DeepStTcState;
   TcssHob->TcssData.IomBase                     = GetIomRegBase ();
 
-  RetimerMap = TcssInst.IomInst->IomConfig.AuxOriOverride;
-  for (Index = 0; Index < MAX_IOM_AUX_BIAS_COUNT; Index++) {
+  for (Index = 0; Index < MAX_TCSS_USB3_PORTS; Index++) {
     //
     // Check IOM_TYPEC_SW_CONFIGURATION_3_PORTx_RETIMER_DISABLED bit. If the retimer disabled bit is 0,
     // it means there is retimer attached to the port.
     //
-    if ((RetimerMap & (BIT0 << (Index * 2))) == 0) {
+    if (((TcssPeiPreMemConfig->TcssPlatConf >> (Index * 2)) & 0x03) == 1) {
       TcssHob->TcssData.RetimerMap |= BIT0 << Index;
     }
   }

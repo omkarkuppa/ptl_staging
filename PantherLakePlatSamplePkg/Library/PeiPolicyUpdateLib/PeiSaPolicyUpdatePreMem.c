@@ -60,6 +60,7 @@
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
 #include <TcssPeiPreMemConfig.h>
+#include <Library/PlatformUsbConfigLib.h>
 #endif
 #include <TishDataHob.h>
 ///
@@ -197,6 +198,11 @@ UpdatePeiSaPolicyPreMem (
   UINT8                                           *TcssPortCap;
   UINT32                                          TcssPortCapMap;
   UINT8                                           TcssPortConf[MAX_TCSS_USB3_PORTS];
+  UINT8                                           TcssPlatConfig;
+  USB_CONNECTOR_HOB_DATA                          *UsbConnectorHobDataPtr;
+  USBC_CONNECTOR_HOB_DATA                         *UsbCConnectorHobDataPtr;
+  USB_CONNECTOR_BOARD_CONFIG                      *UsbConnectorBoardConfig;
+  USBC_CONNECTOR_BOARD_CONFIG                     *UsbCConnectorBoardConfig;
 #endif
   UINT32                                          StreamTracerSize;
 #if FixedPcdGet8(PcdFspModeSelection) == 0
@@ -261,6 +267,7 @@ UpdatePeiSaPolicyPreMem (
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   TcssPortCapMap       = PcdGet32 (PcdTcssPortCapMap);
   TcssPortCap          = (UINT8 *) &TcssPortCapMap;
+  TcssPlatConfig       = 0;
 #endif
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   FspmArchConfigPpi    = NULL;
@@ -1391,6 +1398,15 @@ UpdatePeiSaPolicyPreMem (
     }
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PlatformMemorySize, MemConfigNoCrc->PlatformMemorySize, PlatformMemorySize);
 
+    ///
+    /// Build the GUID'd HOB for DXE
+    ///
+    BuildGuidDataHob (
+      &gEfiMemoryTypeInformationGuid,
+      MemoryData,
+      DataSize
+      );
+
 #if FixedPcdGetBool (PcdTcssSupport) == 1
     ///
     /// TCSS DEVEN bits from setup to policy
@@ -1430,16 +1446,43 @@ UpdatePeiSaPolicyPreMem (
       TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[3],
       (SaSetup.TcssXhciEn == 0) ? UsbCDisable : TcssPortConf[3]
     );
+
+    //
+    // Update Tcss Platform configuration (retimer)
+    //
+    UsbConnectorHobDataPtr = GetUsbConnectorHobData ();
+    UsbCConnectorHobDataPtr = GetUsbCConnectorHobData ();
+    if (UsbConnectorHobDataPtr == NULL || UsbCConnectorHobDataPtr == NULL) {
+      DEBUG((DEBUG_ERROR, "%a: UsbConnectorHobDataPtr or UsbCConnectorHobDataPtr is not available!!\n", __FUNCTION__));
+      return EFI_NOT_FOUND;
+    }
+
+    UsbConnectorBoardConfig = UsbConnectorHobDataPtr->UsbConnectorBoardConfig;
+    if (UsbConnectorBoardConfig == NULL) {
+      DEBUG ((DEBUG_ERROR, "%a: UsbConnectorBoardConfig is not available!!\n", __FUNCTION__));
+      return EFI_NOT_FOUND;
+    }
+
+    UsbCConnectorBoardConfig = UsbCConnectorHobDataPtr->UsbCConnectorBoardConfig;
+    if (UsbCConnectorBoardConfig == NULL) {
+      DEBUG ((DEBUG_ERROR, "%a: UsbCConnectorBoardConfig is not available!!\n", __FUNCTION__));
+      return EFI_NOT_FOUND;
+    }
+
+    for (Index = 0; Index < UsbConnectorHobDataPtr->NumberOfUsbConnectors; Index++) {
+        if (UsbConnectorBoardConfig[Index].Usb3Controller == TCSS_USB3 &&
+            UsbConnectorBoardConfig[Index].Usb3PortNum == Index) {
+          if (UsbCConnectorBoardConfig[Index].RetimerCount > 0) {
+            TcssPlatConfig |= 0x01 << (UsbConnectorBoardConfig[Index].Usb3PortNum * 2);
+          }
+        }
+    }
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPlatConf,
+      TcssPeiPreMemConfig->TcssPlatConf,
+      TcssPlatConfig
+    );
     DEBUG ((DEBUG_INFO, "[TCSS] UpdatePeiSaPolicyPreMem Filling TCSS iTBT Policy End\n"));
 #endif
-    ///
-    /// Build the GUID'd HOB for DXE
-    ///
-    BuildGuidDataHob (
-      &gEfiMemoryTypeInformationGuid,
-      MemoryData,
-      DataSize
-      );
   }
 
   return EFI_SUCCESS;

@@ -3319,33 +3319,35 @@
   # !BSF NAME:{IomUsbCDpConfig}
   # !BSF OPTION:{$EN_DIS}
   # !BSF HELP:{Set IomUsbCDpConfig. 0:Disabled  1:Enabled - Must be enabled if xDCI is enabled below}
-  gPlatformFspPkgTokenSpaceGuid.IomUsbCDpConfig                | * | 0x04 | {0x00, 0x00, 0x00, 0x00}
+  gPlatformFspPkgTokenSpaceGuid.IomUsbCDpConfig           | * | 0x04 | {0x00, 0x00, 0x00, 0x00}
 
   # !BSF NAME:{TCSS Type C Port 0}
   # !BSF TYPE:{Combo} OPTION:{0:DISABLE, 1:DP_ONLY, 2:NO_TBT, 3: NO_PCIE, 7:FULL_FUN}
   # !BSF HELP:{Set TCSS Type C Port 0 Type, Options are 0=DISABLE, 1=DP_ONLY, 2=NO_TBT, 3=NO_PCIE, 7=FULL_FUN}
   # ToClean
-  gPlatformFspPkgTokenSpaceGuid.TcssPort0                         | * | 0x01 | 0x07
+  gPlatformFspPkgTokenSpaceGuid.TcssPort0                 | * | 0x01 | 0x07
 
   # !BSF NAME:{TCSS Type C Port 1}
   # !BSF TYPE:{Combo} OPTION:{0:DISABLE, 1:DP_ONLY, 2:NO_TBT, 3: NO_PCIE, 7:FULL_FUN}
   # !BSF HELP:{Set TCSS Type C Port 1 Type, Options are 0=DISABLE, 1=DP_ONLY, 2=NO_TBT, 3=NO_PCIE, 7=FULL_FUN}
   # ToClean
-  gPlatformFspPkgTokenSpaceGuid.TcssPort1                         | * | 0x01 | 0x07
+  gPlatformFspPkgTokenSpaceGuid.TcssPort1                 | * | 0x01 | 0x07
 
   # !BSF NAME:{TCSS Type C Port 2}
   # !BSF TYPE:{Combo} OPTION:{0:DISABLE, 1:DP_ONLY, 2:NO_TBT, 3: NO_PCIE, 7:FULL_FUN}
   # !BSF HELP:{Set TCSS Type C Port 2 Type, Options are 0=DISABLE, 1=DP_ONLY, 2=NO_TBT, 3=NO_PCIE, 7=FULL_FUN}
   # ToClean
-  gPlatformFspPkgTokenSpaceGuid.TcssPort2                         | * | 0x01 | 0x07
+  gPlatformFspPkgTokenSpaceGuid.TcssPort2                 | * | 0x01 | 0x07
 
   # !BSF NAME:{TCSS Type C Port 3}
   # !BSF TYPE:{Combo} OPTION:{0:DISABLE, 1:DP_ONLY, 2:NO_TBT, 3: NO_PCIE, 7:FULL_FUN}
   # !BSF HELP:{Set TCSS Type C Port 3 Type, Options are 0=DISABLE, 1=DP_ONLY, 2=NO_TBT, 3=NO_PCIE, 7=FULL_FUN}
   # ToClean
-  gPlatformFspPkgTokenSpaceGuid.TcssPort3                         | * | 0x01 | 0x00
-  # Added reserved space   UnusedUpdSpace38[1]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd38             | * | 0x1 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.TcssPort3                 | * | 0x01 | 0x00
+
+  # !BSF NAME:{TCSS Platform Configuration} TYPE:{EditNum, HEX, (0x0,0xFF)}
+  # !BSF HELP:{Set TCSS Platform Configuration - Retimer Map, TCP0 - Bits[1:0], TCP1 - Bits[3:2], TCP2 - Bits[5:4], TCP3 - Bits[7:6]; 0=Retimerless, 1=Retimer}
+  gPlatformFspPkgTokenSpaceGuid.TcssPlatConf              | * | 0x01 | 0x00
 
   # !BSF NAME:{TypeC port GPIO setting} TYPE:{EditNum, HEX, (0, 0xFFFFFFFF)}
   # !HDR STRUCT:{UINT32}

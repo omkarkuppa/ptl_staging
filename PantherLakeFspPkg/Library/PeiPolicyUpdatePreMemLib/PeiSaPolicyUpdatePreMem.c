@@ -684,6 +684,7 @@ FspUpdatePeiSaPolicyPreMem (
     TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri                     = FspmUpd->FspmConfig.TcssAuxOri;
     TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri                     = FspmUpd->FspmConfig.TcssHslOri;
     TcssPeiPreMemConfig->TcssEnable                                        = FspmUpd->FspmConfig.TcssXhciEn;
+    TcssPeiPreMemConfig->TcssPlatConf                                      = FspmUpd->FspmConfig.TcssPlatConf;
     TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[0]       = FspmUpd->FspmConfig.TcssPort0;
     TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[1]       = FspmUpd->FspmConfig.TcssPort1;
     TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[2]       = FspmUpd->FspmConfig.TcssPort2;

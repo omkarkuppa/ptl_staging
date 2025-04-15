@@ -26,7 +26,7 @@
 
 extern EFI_GUID gTcssPeiPreMemConfigGuid;
 
-#define TCSS_PEI_PREMEM_CONFIG_REVISION 2
+#define TCSS_PEI_PREMEM_CONFIG_REVISION 3
 #define MAX_IOM_AUX_BIAS_COUNT          4
 #define IOM_DP                          0x1
 #define IOM_HDMI                        0x2
@@ -102,13 +102,16 @@ typedef struct {
   - Initial version.
   <b>Revision 2</b>:
   - Added TCSS_IOM_PEI_PERMEM_CONFIG
+  <b>Revision 3</b>:
+  - Added TcssPlatConf
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER            Header;       ///< Offset 0-27 Config Block Header
   TCSS_USBTC_PEI_PERMEM_CONFIG   UsbTcConfig;  ///< USB Type C Port Configuration
   TCSS_IOM_PEI_PERMEM_CONFIG     IomConfig;    ///< The Iom PreMem Config
   UINT8                          TcssEnable;   ///< TCSS is enabled or not
-  UINT8                          Rsvd[3];      ///< Reserved for future use
+  UINT8                          TcssPlatConf; ///< Platform configuration (retimer)
+  UINT8                          Rsvd[2];      ///< Reserved for future use
 } TCSS_PEI_PREMEM_CONFIG;
 
 #pragma pack (pop)
