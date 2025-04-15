@@ -703,7 +703,7 @@ UpdatePdBridgeVersion (
   @retval EFI_SUCCESS            The firmware device was successfully updated
                                  with the new firmware image.
   @retval EFI_INVALID_PARAMETER  The Image or Progress was NULL.
-  @retval Others                 The firmware device updated failed
+  @retval EFI_DEVICE_ERROR       Some error occurred during the update process.
 
 **/
 EFI_STATUS
@@ -727,6 +727,7 @@ FmpDeviceSetImageWithStatus (
   UINT32                   FwVersion;
   UINT32                   SubFwVersion;
   UINT16                   ProductId;
+  UINT32                   InitLastAttemptStatus;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_SET_IMAGE_START, 0, 0);
 
@@ -741,6 +742,8 @@ FmpDeviceSetImageWithStatus (
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PROGRESS_CALLBACK_ERROR;
     return EFI_INVALID_PARAMETER;
   }
+
+  InitLastAttemptStatus  = *LastAttemptStatus;
 
   ///
   /// Test Progress Callback function
@@ -787,27 +790,23 @@ FmpDeviceSetImageWithStatus (
     if ((PdBridgePayloadItem->ImageOffset + PdBridgePayloadItem->ImageSize) > ImageSize) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_OUT_BOUNDS2, 0, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2;
-      Status = EFI_INVALID_PARAMETER;
       goto UnLockEcPdCommunication;
     }
     if (PdBridgePayloadItem->FirmwareType != PD_BRIDGE) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_UNSUPPORT_FW_TYPE, (UINT32) PdBridgePayloadItem->FirmwareType, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_UNSUPPORT_FIRMWARE_TYPE;
-      Status = EFI_INVALID_PARAMETER;
       continue;
     }
 
     if (PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode > SHARE_FLASH_MODE_ENABLE) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_INVALID_SHARE_FLASH_MODE_VALUE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_INVALID_SHARE_FLASH_MODE_VALUE;
-      Status = EFI_INVALID_PARAMETER;
       continue;
     }
 
     if (PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType >= PD_BRIDGE_TYPE_INVALID_VALUE) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_INVALID_PD_BRIDGE_TYPE_VALUE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_INVALID_PD_BRIDGE_TYPE_VALUE;
-      Status = EFI_INVALID_PARAMETER;
       continue;
     } else {
       if (PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType == GOTHIC_BRIDGE) {
@@ -862,7 +861,11 @@ Exit:
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_SET_IMAGE_END, 0, 0);
 
-  return Status;
+  if (*LastAttemptStatus != InitLastAttemptStatus) {
+    return EFI_DEVICE_ERROR;
+  } else {
+    return EFI_SUCCESS;
+  }
 }
 
 /**

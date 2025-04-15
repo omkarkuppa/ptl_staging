@@ -853,10 +853,9 @@ FmpDeviceSetImage (
 
   @retval EFI_SUCCESS            The firmware device was successfully updated
                                  with the new firmware image.
-  @retval EFI_ABORTED            The operation is aborted.  Additional details
-                                 are provided in AbortReason.
-  @retval EFI_INVALID_PARAMETER  The Image was NULL.
-  @retval EFI_UNSUPPORTED        The operation is not supported.
+  @retval EFI_INVALID_PARAMETER  The Image or Progress was NULL.
+  @retval EFI_NOT_FOUND          Failed to locate critical protocol.
+  @retval EFI_DEVICE_ERROR       Some error occurred during the update process.
 
 **/
 EFI_STATUS
@@ -872,7 +871,6 @@ FmpDeviceSetImageWithStatus (
   )
 {
   EFI_STATUS                          Status;
-  EFI_STATUS                          RestoreStatus;
   USBC_RETIMER_PROTOCOL               *UsbCRetimerProtocol;
   EFI_HANDLE                          *DeviceHandleBuffer;
   UINTN                               DeviceHandleCount;
@@ -888,6 +886,7 @@ FmpDeviceSetImageWithStatus (
   UINT32                              RetimerVersion;
   USBC_PROGRESS_CODE_PROTOCOL         *UsbCProgressCodeProtocol;
   UINTN                               WaitForRetimerReadyToUpdate;
+  UINT32                              InitLastAttemptStatus;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_START, 0, 0);
 
@@ -933,6 +932,7 @@ FmpDeviceSetImageWithStatus (
   RetimerDeviceInstancesCount = 0;
   HrDeviceInstancesCount = 0;
   DeviceHandleBuffer = NULL;
+  InitLastAttemptStatus = *LastAttemptStatus;
 
   Status = ConstructRetimerInstances (
              Image,
@@ -1054,6 +1054,7 @@ FmpDeviceSetImageWithStatus (
     Status = InitRetimerHW (RetimerDevice);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_INIT_RETIMER_HW_FAIL, (UINT32) Status, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_INIT_HW_FAILED;
       continue;
     }
 
@@ -1094,6 +1095,7 @@ FmpDeviceSetImageWithStatus (
     Status = TerminateRetimerHW (RetimerDeviceInstances[Index]);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_TERMINATE_RETIMER_HW_FAIL, (UINT32) Status, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_TERMINATED_HW_FAILED;
     }
   }
 
@@ -1115,9 +1117,9 @@ RestorePdPowerMode:
   // Brings all TBT ports back to the original mode
   //
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_PD_RESTORE);
-  RestoreStatus = RestoreToOriginalMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
-  if (EFI_ERROR (RestoreStatus)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_RESTORE_TBTMODE_FAIL, (UINT32) RestoreStatus, 0);
+  Status = RestoreToOriginalMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
+  if (EFI_ERROR (Status)) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_RESTORE_TBTMODE_FAIL, (UINT32) Status, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_RESTORE_ORIGINAL_MODE_FAILED;
   }
 
@@ -1130,6 +1132,7 @@ OfflineModeExit:
     Status = TbtSendOfflineMode (HrDeviceInstances[Index], OFFLINE_MODE_EXIT);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_SEND_OFFLINEMODE_FAIL, (UINT32) Status, (UINT32) Index);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_SEND_OFFLINE_MODE_FAILED;
     }
   }
 
@@ -1156,10 +1159,12 @@ FreeInstances:
   Progress (100);
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_END, 0, 0);
-  if (EFI_ERROR (Status)) {
-    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_UPDATE_FAILED;
+
+  if (*LastAttemptStatus != InitLastAttemptStatus) {
+    return EFI_DEVICE_ERROR;
+  } else {
+    return EFI_SUCCESS;
   }
-  return Status;
 }
 
 /**

@@ -716,10 +716,9 @@ FmpDeviceSetImage (
 
   @retval EFI_SUCCESS            The firmware device was successfully updated
                                  with the new firmware image.
-  @retval EFI_ABORTED            The operation is aborted.  Additional details
-                                 are provided in AbortReason.
-  @retval EFI_INVALID_PARAMETER  The Image was NULL.
-  @retval EFI_UNSUPPORTED        The operation is not supported.
+  @retval EFI_INVALID_PARAMETER  The Image or Progress was NULL.
+  @retval EFI_NOT_FOUND          Failed to locate or handle critical protocol.
+  @retval EFI_DEVICE_ERROR       Some error occurred during the update process.
 
 **/
 EFI_STATUS
@@ -748,6 +747,7 @@ FmpDeviceSetImageWithStatus (
   UINTN                               DeviceNumber;
   UINTN                               FunctionNumber;
   USBC_PROGRESS_CODE_PROTOCOL         *UsbCProgressCodeProtocol;
+  UINT32                              InitLastAttemptStatus;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_FMP_UPDATE_START, 0, 0);
 
@@ -786,7 +786,7 @@ FmpDeviceSetImageWithStatus (
   //
   DiscreteTbtPayloadHeader = (PAYLOAD_HEADER *) Image;
   DiscreteTbtPayloadItem = (DISCRETE_TBT_ITEM *) (DiscreteTbtPayloadHeader + 1);
-
+  InitLastAttemptStatus  = *LastAttemptStatus;
   //
   // Start to update Discrete TBT firmware
   //
@@ -893,16 +893,19 @@ FmpDeviceSetImageWithStatus (
 
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_INSTANCE_UPDATE_FAIL, (UINT32) Status, (UINT32) Index);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_UPDATE_FAILED;
     }
   }
 
   Progress (100);
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_FMP_UPDATE_END, 0, 0);
-  if (EFI_ERROR (Status)) {
-    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_UPDATE_FAILED;
+
+  if (*LastAttemptStatus != InitLastAttemptStatus) {
+    return EFI_DEVICE_ERROR;
+  } else {
+    return EFI_SUCCESS;
   }
-  return Status;
 }
 
 /**
