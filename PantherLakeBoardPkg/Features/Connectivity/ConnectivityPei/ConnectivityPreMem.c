@@ -150,8 +150,10 @@ CnvInitPreMem (
     Status = PeiServicesInstallPpi (mFvCnvDispatchFlagPpi);
     ASSERT_EFI_ERROR (Status);
     #if FixedPcdGetBool (PcdCnvBinLoadFromESP) == 1
+    if(CnvSetup.CnvCompatibilityCheck == 1) {
       PcdSetBoolS (PcdCnvDispatch, TRUE);
       PcdSetBoolS (PcdCnvUnloadRequirement, TRUE);
+    }
     #endif
   }
 
