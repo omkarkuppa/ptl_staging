@@ -74,121 +74,148 @@ PeiCpuSetTurboRatioLimit (
   MSR_TURBO_RATIO_LIMIT_CORES_REGISTER              MsrTurboRatioLimitCores;
   MSR_ATOM_TURBO_RATIO_LIMIT_REGISTER               AtomMsrTurboRatioLimitRatio;
   MSR_ATOM_TURBO_RATIO_LIMIT_CORES_REGISTER         AtomMsrTurboRatioLimitCores;
-
   UINT8                                             Index;
   UINT8                                             MaxBusRatio;
+  UINT8                                             ValidFlag;
   BOOLEAN                                           Valid;
 
   MaxBusRatio = GetMaxNonTurboRatio ();
-
-  Valid = TRUE;
+  Valid       = TRUE;
+  ValidFlag   = 0;
 
   //
   // RATIO_[i] must be not less than Max Non-Turbo Ratio and
   // RATIO_[i+1] must be less than or equal to RATIO_[i]
+  // RATIO_[i] must not be all zero
   //
   for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
-    if (Index == 0) {
-      if (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[0] != 0 &&
-          CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[0] < MaxBusRatio) {
+    ValidFlag |= CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index];
+  }
+  if (ValidFlag != 0) {
+    for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
+      if (Index == 0) {
+        if (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[0] != 0 &&
+            CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[0] < MaxBusRatio) {
+          Valid = FALSE;
+          break;
+        }
+      }
+
+      if (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index+1] != 0 &&
+          (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index+1] < MaxBusRatio ||
+          CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index+1] > CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index])) {
         Valid = FALSE;
         break;
       }
     }
 
-    if (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index+1] != 0 &&
-        (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index+1] < MaxBusRatio ||
-         CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index+1] > CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index])) {
-      Valid = FALSE;
-      break;
+    if (Valid) {
+      MsrTurboRatioLimitRatio.Bits.RatioLimit0 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[0];
+      MsrTurboRatioLimitRatio.Bits.RatioLimit1 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[1];
+      MsrTurboRatioLimitRatio.Bits.RatioLimit2 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[2];
+      MsrTurboRatioLimitRatio.Bits.RatioLimit3 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[3];
+      MsrTurboRatioLimitRatio.Bits.RatioLimit4 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[4];
+      MsrTurboRatioLimitRatio.Bits.RatioLimit5 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[5];
+      MsrTurboRatioLimitRatio.Bits.RatioLimit6 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[6];
+      MsrTurboRatioLimitRatio.Bits.RatioLimit7 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[7];
+      AsmWriteMsr64 (MSR_TURBO_RATIO_LIMIT, MsrTurboRatioLimitRatio.Uint64);
     }
   }
 
-  if (Valid) {
-    MsrTurboRatioLimitRatio.Bits.RatioLimit0 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[0];
-    MsrTurboRatioLimitRatio.Bits.RatioLimit1 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[1];
-    MsrTurboRatioLimitRatio.Bits.RatioLimit2 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[2];
-    MsrTurboRatioLimitRatio.Bits.RatioLimit3 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[3];
-    MsrTurboRatioLimitRatio.Bits.RatioLimit4 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[4];
-    MsrTurboRatioLimitRatio.Bits.RatioLimit5 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[5];
-    MsrTurboRatioLimitRatio.Bits.RatioLimit6 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[6];
-    MsrTurboRatioLimitRatio.Bits.RatioLimit7 = CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[7];
-    AsmWriteMsr64 (MSR_TURBO_RATIO_LIMIT, MsrTurboRatioLimitRatio.Uint64);
-  }
-
   Valid = TRUE;
+  ValidFlag = 0;
 
   //
   // NUMCORE_[i+1] must be greater than NUMCORE_[i]
+  // NUMCORE_[i] must not be all zero
   //
   for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
-    if (CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index+1] != 0 &&
-        CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index+1] <= CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index]) {
-      Valid = FALSE;
-      break;
+    ValidFlag |= CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index];
+  }
+  if (ValidFlag != 0) {
+    for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
+      if (CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index+1] != 0 &&
+          CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index+1] <= CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index]) {
+        Valid = FALSE;
+        break;
+      }
+    }
+
+    if (Valid) {
+      MsrTurboRatioLimitCores.Bits.CoreCount0 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[0];
+      MsrTurboRatioLimitCores.Bits.CoreCount1 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[1];
+      MsrTurboRatioLimitCores.Bits.CoreCount2 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[2];
+      MsrTurboRatioLimitCores.Bits.CoreCount3 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[3];
+      MsrTurboRatioLimitCores.Bits.CoreCount4 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[4];
+      MsrTurboRatioLimitCores.Bits.CoreCount5 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[5];
+      MsrTurboRatioLimitCores.Bits.CoreCount6 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[6];
+      MsrTurboRatioLimitCores.Bits.CoreCount7 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[7];
+      AsmWriteMsr64 (MSR_TURBO_RATIO_LIMIT_CORES, MsrTurboRatioLimitCores.Uint64);
     }
   }
 
-  if (Valid) {
-    MsrTurboRatioLimitCores.Bits.CoreCount0 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[0];
-    MsrTurboRatioLimitCores.Bits.CoreCount1 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[1];
-    MsrTurboRatioLimitCores.Bits.CoreCount2 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[2];
-    MsrTurboRatioLimitCores.Bits.CoreCount3 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[3];
-    MsrTurboRatioLimitCores.Bits.CoreCount4 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[4];
-    MsrTurboRatioLimitCores.Bits.CoreCount5 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[5];
-    MsrTurboRatioLimitCores.Bits.CoreCount6 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[6];
-    MsrTurboRatioLimitCores.Bits.CoreCount7 = CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[7];
-    AsmWriteMsr64 (MSR_TURBO_RATIO_LIMIT_CORES, MsrTurboRatioLimitCores.Uint64);
-  }
-
   Valid = TRUE;
+  ValidFlag = 0;
 
   //
   // RATIO_[i+1] must be less than or equal to RATIO_[i]
+  // RATIO_[i] must not be all zero
   //
   for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
-    if (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index+1] != 0 &&
-        CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index+1] > CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index]) {
-      Valid = FALSE;
-      break;
-    }
+    ValidFlag |= CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index];
   }
+  if (ValidFlag != 0) {
+    for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
+      if (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index+1] != 0 &&
+          CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index+1] > CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index]) {
+        Valid = FALSE;
+        break;
+      }
+    }
 
-  if (Valid) {
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit0 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[0];
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit1 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[1];
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit2 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[2];
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit3 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[3];
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit4 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[4];
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit5 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[5];
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit6 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[6];
-    AtomMsrTurboRatioLimitRatio.Bits.RatioLimit7 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[7];
-    AsmWriteMsr64 (MSR_ATOM_TURBO_RATIO_LIMIT, AtomMsrTurboRatioLimitRatio.Uint64);
+    if (Valid) {
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit0 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[0];
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit1 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[1];
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit2 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[2];
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit3 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[3];
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit4 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[4];
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit5 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[5];
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit6 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[6];
+      AtomMsrTurboRatioLimitRatio.Bits.RatioLimit7 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[7];
+      AsmWriteMsr64 (MSR_ATOM_TURBO_RATIO_LIMIT, AtomMsrTurboRatioLimitRatio.Uint64);
+    }
   }
 
   Valid = TRUE;
+  ValidFlag = 0;
 
   //
   // NUMCORE_[i+1] must be greater than NUMCORE_[i]
+  // NUMCORE_[i] must not be all zero
   //
   for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
-    if (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index+1] != 0 &&
-        CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index+1] <= CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index]) {
-      Valid = FALSE;
-      break;
-    }
+    ValidFlag |= CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index];
   }
+  if (ValidFlag != 0) {
+    for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE - 1; Index++) {
+      if (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index+1] != 0 &&
+          CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index+1] <= CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index]) {
+        Valid = FALSE;
+        break;
+      }
+    }
 
-  if (Valid) {
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount0 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[0];
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount1 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[1];
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount2 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[2];
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount3 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[3];
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount4 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[4];
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount5 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[5];
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount6 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[6];
-    AtomMsrTurboRatioLimitCores.Bits.CoreCount7 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[7];
-    AsmWriteMsr64 (MSR_ATOM_TURBO_RATIO_LIMIT_CORES, AtomMsrTurboRatioLimitCores.Uint64);
+    if (Valid) {
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount0 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[0];
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount1 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[1];
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount2 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[2];
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount3 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[3];
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount4 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[4];
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount5 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[5];
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount6 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[6];
+      AtomMsrTurboRatioLimitCores.Bits.CoreCount7 = CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[7];
+      AsmWriteMsr64 (MSR_ATOM_TURBO_RATIO_LIMIT_CORES, AtomMsrTurboRatioLimitCores.Uint64);
+    }
   }
 }
 

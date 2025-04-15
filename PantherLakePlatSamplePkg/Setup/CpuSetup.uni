@@ -1117,7 +1117,7 @@
 #string STR_ATOM_RATIO_LIMIT_RATIO7        #language en-US "E-core Turbo Ratio Limit Ratio7"
 
 #string STR_OC_LOCK                             #language en-US "Overclocking Lock"
-#string STR_OC_LOCK_HELP                        #language en-US "Enable/Disable Overclocking Lock."
+#string STR_OC_LOCK_HELP                        #language en-US "Enable/Disable Overclocking Lock. Enable Overclocking Lock will not allow write command of OC Mailbox and TRL."
 
 #string STR_PM_CST_CFG_CTL_LOCK_PROMPT          #language en-US "CFG Lock"
 #string STR_PM_CST_CFG_CTL_LOCK_PROMPT_HELP     #language en-US "Configure MSR to CFG Lock bit"
