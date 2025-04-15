@@ -90,8 +90,6 @@
 #include <TraceHubDataHob.h>
 #include <Library/DomainPcie.h>
 #include <IpCpcie.h>
-#include <IpPcieRegs.h>
-#include <IpWrapperCntxtInfoClient.h>
 #include <Library/PeiVmdInitFruLib.h>
 
 extern EFI_GUID gIpPcieInstHobGuid;
@@ -575,10 +573,6 @@ SiInitPostMemOnPolicy (
   IP_PCIE_INST                *pInst;
   EFI_HOB_GUID_TYPE           *GuidHob;
   UINT8                       MaxLinkSpeed;
-  IP_WR_REG_INFO              *RegInfo;
-  UINT64                      RpBase;
-  LCAP_PCIE_CFG_STRUCT        Lcap;
-  PCIE_DEV_INFO               DevInfo;
 
   DEBUG ((DEBUG_INFO, "SiInit () - Start\n"));
 
@@ -794,12 +788,7 @@ SiInitPostMemOnPolicy (
     // 6.15 step 4 skip all subsequence steps if LCTS.TLS is Gen2
     //
     if (!pInst->PrivateConfig.RootPortDisable && pInst->PrivateConfig.LinkRetrainInProgress) {
-      RegInfo = (IP_WR_REG_INFO*) pInst->RegCntxt_Cfg_Pri;
-      RpBase  = PCI_SEGMENT_LIB_ADDRESS (RegInfo->RegType.Pci.Seg, RegInfo->RegType.Pci.Bus, RegInfo->RegType.Pci.Dev, RegInfo->RegType.Pci.Fun, 0);
-
-      Lcap.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
-      PcieGetDeviceInfo (pInst, pInst->PrivateConfig.BusMin, &DevInfo);
-      MaxLinkSpeed = (UINT8)MIN (Lcap.Bits.mls, DevInfo.MaxLinkSpeed);
+      MaxLinkSpeed = pInst->PcieRpCommonConfig.PcieSpeed;
       if (pInst->PcieRpCommonConfig.EnableDtr) {
         MaxLinkSpeed = PcieDtrSpeedDetermine (pInst, MaxLinkSpeed);
       }
