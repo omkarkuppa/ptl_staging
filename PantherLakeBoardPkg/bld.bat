@@ -102,12 +102,11 @@
   @set TOPSWAP_LIMIT=0x00650000
   @if %BB_CHECK% EQU TRUE (
       @call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\FvAlignment\FvAlignment.py --flashmap %FLASHMAP_FDF% --topswap_size %TOPSWAP_LIMIT% -cl all fv_alignment_check
-
-  @if %ERRORLEVEL% NEQ 0 goto :BldFail
-  @echo.
-  @echo PASS all flash map quick check successfully!
-  @echo ***********************************
   )
+  @if %ERRORLEVEL% NEQ 0 goto :BldFail
+@echo.
+@echo PASS all flash map quick check successfully!
+@echo ***********************************
 
 @REM
 @REM Definition for BtGACM Support.

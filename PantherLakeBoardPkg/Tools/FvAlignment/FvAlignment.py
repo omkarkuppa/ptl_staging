@@ -85,6 +85,7 @@ __description__   = "Firmware Volume Alignment Check and Edit Script"
 
 FULL_BIT_MASK =  0xFFFFFFFF
 FOUR_GB       =  0xFFFFFFFF
+FSPResetBuidFlag = os.getenv('FSP_RESET')
 
 #
 # This class supports flash map settings
@@ -108,19 +109,23 @@ class Flashmap ():
         self.ibb_size         = "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize"
         self.ibbr_offset      = "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbROffset"
         self.ibbr_size        = "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbRSize"
+        self.reset_vector     = "gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp"
+        self.fsptop_offset    = "gBoardModuleTokenSpaceGuid.PcdFspTopOffset"
+        self.fsptop_size      = "gBoardModuleTokenSpaceGuid.PcdFspTopSize"
         self.flash_base       = "FLASH_BASE"
         self.flash_size       = "FLASH_SIZE"
         self.acm_align_option = "ACM_ALIGNMENT_ON_FV_BASE"
 
     #
-    # Assuming Flash Map FDF has no !if/!else between the lines but only one set of mapping PCDs.
-    # This call returns the last hit of the matches by parsing the file. If no hit, raise exception.
+    # This function traverses the Flash Map FDF file.Does check for !if/!else for PCDs.
+    # If the pattern is found then returns the value of particular ocuurance mentioned in position.
     #
-    def read (self, setting):
+    def read (self, setting, position):
         setting_list = []
         pattern     = r"(?m)^\s*DEFINE\s*" + setting + "\s*=\s*0x(?P<value>[0-9a-fA-F]*).*"
         pattern_pcd = r"(?m)^\s*SET\s*" + setting + "\s*=\s*0x(?P<value>[0-9a-fA-F]*).*"
         pattern_acm_option = r"(?m)^\s*DEFINE\s*" + setting + "\s*=\s*(?P<value>[0-9]*K).*"
+        pattern_if_boolean = r"(?m)^\s*!if\s*" + setting + "\s*==\s*(?P<value>[a-zA-Z]*).*"
         for m in re.finditer (pattern_pcd, self.map):
             setting_list.append (int (m.group ("value"), base = 16))
         if len (setting_list) == 0:
@@ -129,24 +134,48 @@ class Flashmap ():
         if len (setting_list) == 0:
             for m in re.finditer (pattern_acm_option, self.map):
                 setting_list.append (m.group ("value"))
+        if len (setting_list) == 0:
+            for m in re.finditer (pattern_if_boolean, self.map):
+                setting_list.append (m.group ("value"))
         try:
-            read_value = setting_list [-1]
+            if (position == 0):
+                read_value = setting_list [-1]
+            elif position < len (setting_list):
+                read_value = setting_list [position]
         except IndexError as err:
             print ("\n\n Error!!! {} is not found in {} \n\n".format (setting, self.file_path))
             raise
         finally:
             return read_value
 
+    #First read is used to check the entire line FDF file where the PcdFspWrapperResetVectorInFsp is found
+    # Based on the condiotion of FSPResetBuidFlag the values are assigned
     def show_settings (self):
-        read_value  = "  |  {:#010x}".format (self.read (self.flash_base))
-        read_value += "  |  {:#010x}".format (self.read (self.flash_size))
-        read_value += "  |  {}".format (self.read (self.acm_align_option))
-        read_value += "  |  {:#010x}".format (self.read (self.premem_offset))
-        read_value += "  |  {:#010x}".format (self.read (self.premem_size))
-        read_value += "  |  {:#010x}".format (self.read (self.postmem_offset))
-        read_value += "  |  {:#010x}".format (self.read (self.postmem_size))
-        read_value += "  |  {:#010x}".format (self.read (self.bin_offset))
-        read_value += "  |  {:#010x}".format (self.read (self.bin_size))
+        read_value  = "  |  {:#010x}".format (self.read (self.flash_base, 0))
+        read_value += "  |  {:#010x}".format (self.read (self.flash_size, 0))
+        read_value += "  |  {}".format (self.read (self.acm_align_option, 0))
+        if (self.read (self.reset_vector, 1) == 'FALSE'):
+            if (FSPResetBuidFlag == 'FALSE'):
+                read_value += "  |  {:#010x}".format (self.read (self.premem_offset, 2))
+                read_value += "  |  {:#010x}".format (self.read (self.premem_size, 2))
+            else:
+                read_value += "  |  {:#010x}".format (self.read (self.premem_offset, 3))
+                read_value += "  |  {:#010x}".format (self.read (self.premem_size, 3))
+                read_value += "  |  {:#010x}".format (self.read (self.fsptop_offset, 0))
+                read_value += "  |  {:#010x}".format (self.read (self.fsptop_size, 0))
+        else:
+            if (FSPResetBuidFlag == 'TRUE'):
+                read_value += "  |  {:#010x}".format (self.read (self.premem_offset, 2))
+                read_value += "  |  {:#010x}".format (self.read (self.premem_size, 2))
+                read_value += "  |  {:#010x}".format (self.read (self.fsptop_offset, 0))
+                read_value += "  |  {:#010x}".format (self.read (self.fsptop_size, 0))
+            else:
+                read_value += "  |  {:#010x}".format (self.read (self.premem_offset, 3))
+                read_value += "  |  {:#010x}".format (self.read (self.premem_size, 3))
+        read_value += "  |  {:#010x}".format (self.read (self.postmem_offset, 0))
+        read_value += "  |  {:#010x}".format (self.read (self.postmem_size, 0))
+        read_value += "  |  {:#010x}".format (self.read (self.bin_offset, 0))
+        read_value += "  |  {:#010x}".format (self.read (self.bin_size, 0))
         read_value += "  |\n"
         print (read_value)
 
@@ -247,9 +276,9 @@ class RequirementList ():
         if self.to_run (id) and fm is not None and tsize is not None:
             error_message  = "({})\n".format (id)
             error_message += "  {} exceeds topswap size limitation\n".format (fm.ibb_size.split(".")[1])
-            error_message += "  {} : {:#010x}\n".format (fm.ibb_size, fm.read (fm.ibb_size))
+            error_message += "  {} : {:#010x}\n".format (fm.ibb_size, fm.read (fm.ibb_size, 0))
             error_message += "  topswap HW size req : {:#010x}".format (tsize)
-            if tsize - fm.read (fm.ibb_size) < 0:
+            if tsize - fm.read (fm.ibb_size, 0) < 0:
                 self.report (error_message, req_message, 1)
 
     def req_premem_flashbase_4g_address (self, fm):
@@ -260,10 +289,30 @@ class RequirementList ():
         if self.to_run (id) and fm is not None:
             error_message  = "({})\n".format (id)
             error_message += "  {} and/or {} has wrong settings\n".format (fm.premem_offset.split(".")[1], fm.premem_size.split(".")[1])
-            error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset))
-            error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size))
-            if FOUR_GB  - (fm.read (fm.premem_offset) + fm.read (fm.premem_size) + fm.read (fm.flash_base)) + 0x1 != 0:
-                self.report (error_message, req_message, 1)
+            if (fm.read (fm.reset_vector, 1) == 'FALSE'):
+                if (FSPResetBuidFlag == 'FALSE'):
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 2))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 2))
+                    if FOUR_GB  - (fm.read (fm.premem_offset, 2) + fm.read (fm.premem_size, 2) + fm.read (fm.flash_base, 0)) + 0x1 != 0:
+                        self.report (error_message, req_message, 1)
+                else:
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 3))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 3))
+                    error_message += "  {} : {:#010x}\n".format (fm.fsptop_size, fm.read (fm.fsptop_size, 0))
+                    if FOUR_GB  - (fm.read (fm.premem_offset, 3) + fm.read (fm.premem_size, 3) + fm.read (fm.fsptop_size, 0) + fm.read (fm.flash_base, 0)) + 0x1 != 0:
+                        self.report (error_message, req_message, 1)
+            else:
+                if (FSPResetBuidFlag == 'TRUE'):
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 2))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 2))
+                    error_message += "  {} : {:#010x}\n".format (fm.fsptop_size, fm.read (fm.fsptop_size, 0))
+                    if FOUR_GB  - (fm.read (fm.premem_offset, 2) + fm.read (fm.premem_size, 2) + fm.read (fm.fsptop_size, 0) + fm.read (fm.flash_base, 0)) + 0x1 != 0:
+                        self.report (error_message, req_message, 1)
+                else:
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 3))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 3))
+                    if FOUR_GB  - (fm.read (fm.premem_offset, 3) + fm.read (fm.premem_size, 3) + fm.read (fm.flash_base, 0)) + 0x1 != 0:
+                        self.report (error_message, req_message, 1)
 
     def req_bb_abs_address (self, fm): # absolute address check from 4GB
         id = 2
@@ -273,10 +322,10 @@ class RequirementList ():
         if self.to_run (id) and fm is not None:
             error_message  = "({})\n".format (id)
             error_message += "  {} does not match the region size from the boot block offset to 4GB\n".format (fm.ibb_size.split(".")[1])
-            error_message += "  {} : {:#010x}\n".format (fm.ibb_offset, fm.read (fm.ibb_offset))
-            error_message += "  {} : {:#010x}\n".format (fm.ibb_size, fm.read (fm.ibb_size))
-            error_message += "  {} : {:#010x}".format (fm.flash_base, fm.read (fm.flash_base))
-            if FOUR_GB - fm.read (fm.ibb_offset) - fm.read (fm.ibb_size) - fm.read (fm.flash_base) + 0x1 != 0:
+            error_message += "  {} : {:#010x}\n".format (fm.ibb_offset, fm.read (fm.ibb_offset, 0))
+            error_message += "  {} : {:#010x}\n".format (fm.ibb_size, fm.read (fm.ibb_size, 0))
+            error_message += "  {} : {:#010x}".format (fm.flash_base, fm.read (fm.flash_base, 0))
+            if FOUR_GB - fm.read (fm.ibb_offset, 0) - fm.read (fm.ibb_size, 0) - fm.read (fm.flash_base, 0) + 0x1 != 0:
                 self.report (error_message, req_message, 1)
 
     def req_bb_rel_address (self, fm): # relative address check from flash base (double check)
@@ -288,12 +337,32 @@ class RequirementList ():
             error_message  = "({})\n".format (id)
             error_message += "  {} does not match the region size from the boot block offset {}\n".format (fm.ibb_size.split(".")[1], format (fm.ibb_offset.split(".")[1]))
             error_message += "  to the address {} + {}\n".format (fm.premem_offset.split(".")[1], fm.premem_size.split(".")[1])
-            error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset))
-            error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size))
-            error_message += "  {} : {:#010x}\n".format (fm.ibb_offset, fm.read (fm.ibb_offset))
-            error_message += "  {} : {:#010x}".format (fm.ibb_size, fm.read (fm.ibb_size))
-            if (fm.read (fm.premem_offset) + fm.read (fm.premem_size) - fm.read (fm.ibb_offset) - fm.read (fm.ibb_size)) != 0:
-                self.report (error_message, req_message, 1)
+            error_message += "  {} : {:#010x}\n".format (fm.ibb_offset, fm.read (fm.ibb_offset, 0))
+            error_message += "  {} : {:#010x}\n".format (fm.ibb_size, fm.read (fm.ibb_size, 0))
+            if (fm.read (fm.reset_vector, 1) == 'FALSE'):
+                if (FSPResetBuidFlag == 'FALSE'):
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 2))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 2))
+                    if (fm.read (fm.premem_offset, 2) + fm.read (fm.premem_size, 2) - fm.read (fm.ibb_offset, 0) - fm.read (fm.ibb_size, 0)) != 0:
+                        self.report (error_message, req_message, 1)
+                else:
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 3))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 3))
+                    error_message += "  {} : {:#010x}\n".format (fm.fsptop_size, fm.read (fm.fsptop_size, 0))
+                    if (fm.read (fm.premem_offset, 3) + fm.read (fm.premem_size, 3) + fm.read (fm.fsptop_size, 0) - fm.read (fm.ibb_offset, 0) - fm.read (fm.ibb_size, 0)) != 0:
+                        self.report (error_message, req_message, 1)
+            else:
+                if (FSPResetBuidFlag == 'TRUE'):
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 2))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 2))
+                    error_message += "  {} : {:#010x}\n".format (fm.fsptop_size, fm.read (fm.fsptop_size, 0))
+                    if (fm.read (fm.premem_offset, 2) + fm.read (fm.premem_size, 2) + fm.read (fm.fsptop_size, 0) - fm.read (fm.ibb_offset, 0) - fm.read (fm.ibb_size, 0)) != 0:
+                        self.report (error_message, req_message, 1)
+                else:
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_offset, fm.read (fm.premem_offset, 3))
+                    error_message += "  {} : {:#010x}\n".format (fm.premem_size, fm.read (fm.premem_size, 3))
+                    if (fm.read (fm.premem_offset, 3) + fm.read (fm.premem_size, 3) - fm.read (fm.ibb_offset, 0) - fm.read (fm.ibb_size, 0)) != 0:
+                        self.report (error_message, req_message, 1)
 
     def req_bb_offset_match (self, fm):
         id = 4
@@ -303,9 +372,9 @@ class RequirementList ():
         if self.to_run (id) and fm is not None:
             error_message  = "({})\n".format (id)
             error_message += "  {} and {} should match\n".format (fm.ibb_offset.split(".")[1], fm.bin_offset.split(".")[1])
-            error_message += "  {} : {:#010x}\n".format (fm.ibb_offset, fm.read (fm.ibb_offset))
-            error_message += "  {} : {:#010x}".format (fm.bin_offset, fm.read (fm.bin_offset))
-            if fm.read (fm.ibb_offset) - fm.read (fm.bin_offset) != 0:
+            error_message += "  {} : {:#010x}\n".format (fm.ibb_offset, fm.read (fm.ibb_offset, 0))
+            error_message += "  {} : {:#010x}".format (fm.bin_offset, fm.read (fm.bin_offset, 0))
+            if fm.read (fm.ibb_offset, 0) - fm.read (fm.bin_offset, 0) != 0:
                 self.report (error_message, req_message, 1)
 
     def req_acm (self, fm):
@@ -324,9 +393,9 @@ class RequirementList ():
             acm_alignment_mask =  0x0003FFFF   # ACM absolute address alignment requirement mask (256kB)
             error_message  = "({})\n".format (id)
             error_message += "  {} does not meet the alignment requirement.\n".format (fm.bin_offset)
-            error_message += "  Current address = {0:#010x} + {1:#010x}".format (fm.read (fm.flash_base), fm.read (fm.bin_offset))
-            if (fm.read (fm.bin_offset) + alignment_dict [fm.read (fm.acm_align_option)][1] + fm.read (fm.flash_base)) & acm_alignment_mask != 0:
-                self.report (error_message, alignment_dict [fm.read (fm.acm_align_option)][0], 1)
+            error_message += "  Current address = {0:#010x} + {1:#010x}".format (fm.read (fm.flash_base, 0), fm.read (fm.bin_offset, 0))
+            if (fm.read (fm.bin_offset, 0) + alignment_dict [fm.read (fm.acm_align_option, 0)][1] + fm.read (fm.flash_base, 0)) & acm_alignment_mask != 0:
+                self.report (error_message, alignment_dict [fm.read (fm.acm_align_option, 0)][0], 1)
 
 
     def req_fspm_binary_size (self, pkg, bin, fspm_size_limit):
