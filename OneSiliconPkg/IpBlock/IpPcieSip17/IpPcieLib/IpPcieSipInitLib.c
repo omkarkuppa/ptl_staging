@@ -2648,8 +2648,14 @@ SipInitRootPort (
     /// Use byte access to avoid premature locking BIT23, SRL
     ///
     Mpc.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, MPC_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-    Mpc.Bits.hpce = 0;
-    Mpc.Bits.hpme = 1;
+    PRINT_LEVEL1 ("HpSci in Port %x is :%x \n", pInst->RpIndex, pInst->PcieRpCommonConfig.HpSci);
+    if (pInst->PcieRpCommonConfig.HpSci == 0) {
+      Mpc.Bits.hpce = 0;
+      Mpc.Bits.hpme = 1;
+    } else {
+      Mpc.Bits.hpce = 1;
+      Mpc.Bits.hpme = 0;
+    }
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, MPC_PCIE_CFG_REG, Mpc.Data, IpWrRegFlagSize32Bits);
     ///
     /// PCH BIOS Spec section 8.9

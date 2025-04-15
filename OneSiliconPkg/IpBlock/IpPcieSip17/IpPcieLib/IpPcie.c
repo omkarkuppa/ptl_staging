@@ -242,6 +242,7 @@ PcieLoadDefaultConfig (
   pInst->PcieRpCommonConfig.EqPhBypass                                                   = 0;
 
   pInst->PcieRpCommonConfig.HotPlug                       = FALSE;
+  pInst->PcieRpCommonConfig.HpSci                         = FALSE;
   pInst->PcieRpCommonConfig.TransmitterHalfSwing          = FALSE;
   pInst->PcieRpCommonConfig.AdvancedErrorReporting        = TRUE;
   pInst->PcieRpCommonConfig.UnsupportedRequestReport      = TRUE;

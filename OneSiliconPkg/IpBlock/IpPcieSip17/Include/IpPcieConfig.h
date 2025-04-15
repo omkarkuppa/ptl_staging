@@ -520,7 +520,8 @@ typedef struct {
   UINT32  PowerGating                     :  1;
   UINT32  PcieFomsCp                      :  3;    ///< FOM Score Board Control Policy
   UINT32  LedManagement                   :  1;   ///< Indicate whether the VMD Led Management is enabled in root port. <b>0: Disable</b>; 1: Enable.
-  UINT32  RsvdBits0                       :  20;   ///< Reserved bits.
+  UINT32  HpSci                           :  1;   ///< Indicate whether the root port is hot plug SCI available. <b>0: Disable</b>; 1: Enable.
+  UINT32  RsvdBits0                       :  19;   ///< Reserved bits.
   UINT16  PhysicalSlotNumber;                     ///< Indicates the slot number for the root port. Default is the value as root port index.
   /**
     PCIe Gen3 Equalization Phase 3 Method (see CPU_PCIE_EQ_METHOD).
