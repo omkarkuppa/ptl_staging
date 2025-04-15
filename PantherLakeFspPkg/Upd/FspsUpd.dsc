@@ -2665,6 +2665,9 @@
   # !BSF HELP:{VerticalResolution from PEIm Gfx for PEI Logo}
   gPlatformFspPkgTokenSpaceGuid.VerticalResolution          | * | 0x04 | 0x00000000
 
+  # Added reserved space FspsUpdRsvd38[56]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd388              | * | 0x38 | {0x00}
+
   ## GRAPHICS_PEI_CONFIG End
 
   ## PCH_INTERRUPT_CONFIG Start
@@ -2923,7 +2926,7 @@
   # !BSF NAME:{PCH HDA Verb Table Entry Number} TYPE:{EditNum, HEX, (0x0,0xFF)}
   # !BSF HELP:{Number of Entries in Verb Table.}
   gPlatformFspPkgTokenSpaceGuid.PchHdaVerbTableEntryNum     | * | 1 | 0
-  # Added reserved space    UnusedUpdSpace30[3]
+  # Added reserved space UnusedUpdSpace30[3]
   gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd30               | * | 0x3 | {0x00}
 
   # !BSF NAME:{PCH HDA Verb Table Pointer} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
