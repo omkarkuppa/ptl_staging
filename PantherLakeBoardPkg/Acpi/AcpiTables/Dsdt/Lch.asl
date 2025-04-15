@@ -141,7 +141,7 @@ If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03)) {
       Name (_DDN, "Intel UsbI2C Device")
 
       Method (_HID) {
-        Return ("INTC10B6")
+        Return ("INTC10E3")
       }
       //
       // When I2C Test Device is enabled in Setup.
@@ -175,7 +175,7 @@ If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03)) {
       Name (_DDN, "Intel UsbI2C Device")
 
       Method (_HID) {
-        Return ("INTC10B6")
+        Return ("INTC10E3")
       }
       //
       // When I2C Test Device is enabled in Setup.
