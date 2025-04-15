@@ -40,5 +40,4 @@
 !endif
 !if gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP == TRUE
   CnvFeaturePkg/CnvCompatibility/CnvCompatibilityDxe.inf
-  CnvFeaturePkg/CnvCompatibility/CnvSupportingDxe.inf
 !endif

@@ -128,7 +128,6 @@ MrcSaveStaticSpdData (
         StaticSpdData->DimmOutReferenceRawCard[Controller][Channel][Dimm]        = DimmOut->ReferenceRawCard;
         StaticSpdData->DimmOutXmpSupport[Controller][Channel][Dimm]              = DimmOut->XmpSupport;
         StaticSpdData->DimmOutCkdSupport[Controller][Channel][Dimm]              = DimmOut->IsCkdSupport;
-        StaticSpdData->DimmOutMbistMpprSupport[Controller][Channel][Dimm]        = DimmOut->IsMbistMpprSupport;
         StaticSpdData->DimmOutDeviceDensity[Controller][Channel][Dimm]           = DimmOut->DeviceDensity;
       } // for Dimm
     } // for Channel
@@ -230,7 +229,6 @@ MrcRestoreStaticSpdData (
         DimmOut->ReferenceRawCard        = StaticSpdData->DimmOutReferenceRawCard[Controller][Channel][Dimm];
         DimmOut->XmpSupport              = StaticSpdData->DimmOutXmpSupport[Controller][Channel][Dimm];
         DimmOut->IsCkdSupport            = StaticSpdData->DimmOutCkdSupport[Controller][Channel][Dimm];
-        DimmOut->IsMbistMpprSupport      = StaticSpdData->DimmOutMbistMpprSupport[Controller][Channel][Dimm];
         DimmOut->DeviceDensity           = StaticSpdData->DimmOutDeviceDensity[Controller][Channel][Dimm];
       } // for Dimm
     } // for Channel
@@ -264,7 +262,6 @@ MrcPrepareNextMrcIteration (
   STATIC_SPD_DATA         StaticSpdData;
   MrcSaGvPoint            PrevSagvFirst;
   MrcSaGvPoint            PrevSagvLast;
-  MrcSaGvPoint            PrevSagvPpr;
 
   Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
@@ -280,7 +277,6 @@ MrcPrepareNextMrcIteration (
   PrevMaxDimmFreq = Outputs->MaxDimmFreq;
   PrevSagvFirst = Outputs->SaGvFirst;
   PrevSagvLast = Outputs->SaGvLast;
-  PrevSagvPpr  = Outputs->SaGvPprPoint;
   PrevCmosConfig0 = Outputs->CmosConfig0;
   PrevCmosConfig1 = Outputs->CmosConfig1;
   PrevCmosConfig2 = Outputs->CmosConfig2;
@@ -293,7 +289,6 @@ MrcPrepareNextMrcIteration (
   Outputs->MaxDimmFreq = PrevMaxDimmFreq;
   Outputs->SaGvFirst = PrevSagvFirst;
   Outputs->SaGvLast = PrevSagvLast;
-  Outputs->SaGvPprPoint = PrevSagvPpr;
   Outputs->CmosConfig0 = PrevCmosConfig0;
   Outputs->CmosConfig1 = PrevCmosConfig1;
   Outputs->CmosConfig2 = PrevCmosConfig2;
@@ -642,11 +637,11 @@ MrcWrappedStartMemoryConfiguration (
                 MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Exit call table due to EnterInterpreterOnPostCode: 0x%x\n", Inputs->EnterInterpreterOnPostCode);
               break;
             }
-          } else {
-            // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the SaGv point check.
-            PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
-            MrcCall->MrcDebugHook (MrcData, PostCodeOut);
-          } // SAGV point match
+          }
+        } else {
+          // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the SaGv point check.
+          PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
+          MrcCall->MrcDebugHook (MrcData, PostCodeOut);
         } // Select match
       } else {
         // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the boot mode check.

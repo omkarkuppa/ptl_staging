@@ -447,18 +447,31 @@ DataDqRankXLaneYOffset (
 {
   UINT32 Offset;
 
-  // Lane 8 (DBI) offset is not consecutive with lane [0..7], so it needs to be handled separately
-  if (Bit == DBI_BIT) {
-    Offset = DATA0CH0_CR_DDRDATADQRANK0LANE8_REG;
-    Offset += (DATA0CH1_CR_DDRDATADQRANK0LANE8_REG - DATA0CH0_CR_DDRDATADQRANK0LANE8_REG) * Channel +
-              (DATA0CH0_CR_DDRDATADQRANK1LANE8_REG - DATA0CH0_CR_DDRDATADQRANK0LANE8_REG) * Rank +
-              (DATA1CH0_CR_DDRDATADQRANK0LANE8_REG - DATA0CH0_CR_DDRDATADQRANK0LANE8_REG) * Strobe;
+  if (Channel >= MAX_CHANNEL) {
+    // Lane 8 (DBI) offset is not consecutive with lane [0..7], so it needs to be handled separately
+    if (Bit == DBI_BIT) {
+      Offset = DATA_CR_DDRDATADQRANK0LANE8_REG;
+      Offset += (DATA_CR_DDRDATADQRANK1LANE8_REG - DATA_CR_DDRDATADQRANK0LANE8_REG) * Rank;
+    } else {
+    // Overall Broadcast
+      Offset = DATA_CR_DDRDATADQRANK0LANE0_REG;
+      Offset += (DATA_CR_DDRDATADQRANK1LANE0_REG - DATA_CR_DDRDATADQRANK0LANE0_REG) * Rank +
+                (DATA_CR_DDRDATADQRANK0LANE1_REG - DATA_CR_DDRDATADQRANK0LANE0_REG) * Bit;
+    }
   } else {
-    Offset = DATA0CH0_CR_DDRDATADQRANK0LANE0_REG;
-    Offset += (DATA0CH1_CR_DDRDATADQRANK0LANE0_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Channel +
-      (DATA0CH0_CR_DDRDATADQRANK1LANE0_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Rank +
-      (DATA1CH0_CR_DDRDATADQRANK0LANE0_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Strobe +
-      (DATA0CH0_CR_DDRDATADQRANK0LANE1_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Bit;
+    // Lane 8 (DBI) offset is not consecutive with lane [0..7], so it needs to be handled separately
+    if (Bit == DBI_BIT) {
+      Offset = DATA0CH0_CR_DDRDATADQRANK0LANE8_REG;
+      Offset += (DATA0CH1_CR_DDRDATADQRANK0LANE8_REG - DATA0CH0_CR_DDRDATADQRANK0LANE8_REG) * Channel +
+                (DATA0CH0_CR_DDRDATADQRANK1LANE8_REG - DATA0CH0_CR_DDRDATADQRANK0LANE8_REG) * Rank +
+                (DATA1CH0_CR_DDRDATADQRANK0LANE8_REG - DATA0CH0_CR_DDRDATADQRANK0LANE8_REG) * Strobe;
+    } else {
+      Offset = DATA0CH0_CR_DDRDATADQRANK0LANE0_REG;
+      Offset += (DATA0CH1_CR_DDRDATADQRANK0LANE0_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Channel +
+        (DATA0CH0_CR_DDRDATADQRANK1LANE0_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Rank +
+        (DATA1CH0_CR_DDRDATADQRANK0LANE0_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Strobe +
+        (DATA0CH0_CR_DDRDATADQRANK0LANE1_REG - DATA0CH0_CR_DDRDATADQRANK0LANE0_REG) * Bit;
+    }
   }
   VolatileMask->Data = DATA0CH0_CR_DDRDATADQRANK0LANE0_VOLATILE_BITFIELDS_MSK;
 
@@ -502,7 +515,7 @@ GetDdrIoPartitionOffsets (
       break;
 
     case PartitionComp:
-      Offset = GetDdrIoCompOffsets (MrcData, Group, Set, Lane, FreqIndex, VolatileMask);
+      Offset = GetDdrIoCompOffsets (MrcData, Group, Lane, FreqIndex, VolatileMask);
       break;
 
     case PartitionDataShared:

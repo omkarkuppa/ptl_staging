@@ -775,7 +775,7 @@
   #
   gStructPcdTokenSpaceGuid.PcdSetup.PowermeterDeviceEnable|0x1                                       # Enable PowerMeter, Enabled
   gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x0                                        # Enable Telemetry
-
+  
   #
   # Touch pad
   #
@@ -813,11 +813,6 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x1            # ACX/SDCA = Enabled
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[11]|0x1            # ACX/SDCA speaker aggregation = Enabled
   gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x6     # SoundWire codecs topology = Configuration GCS/ADK ALC712-VB, ALC1320
-
-  #
-  # Scan Matrix keyboard
-  #
-  gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                    # Scan Matrix Keyboard Support
 
   #
   # Camera

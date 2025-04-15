@@ -146,9 +146,11 @@ Scope (\_SB.PC00.HDAS)
     // Implement for all supported PP modules
     //
 
-    //
-    // Check Custom modules first in case of overlap
-    //
+    // PP Module Intel SST Speech
+    If (LEqual (Arg0, ToUUID ("7C708106-3AFF-40FE-88BE-8C999B3F7445"))) {
+      Return (And (ADPM, BIT2)) // DSDT NVS ADPM[BIT2] set - supported (return true)
+    }
+
     // PP Module 'Delta' Custom GUID
     // Check PP module with GUID - entered in Setup menu
     If (LEqual (Arg0, ACCG (AG4L, AG4H))) {
@@ -159,6 +161,21 @@ Scope (\_SB.PC00.HDAS)
     // Check PP module with GUID - entered in Setup menu
     If (LEqual (Arg0, ACCG (AG5L, AG5H))) {
       Return (And (ADPM, BIT26)) // ADPM[BIT26] set - supported (return true)
+    }
+
+    // AEC for Cirrus
+    If (LEqual (Arg0, ToUUID ("4BC75FFD-83A1-434B-83F4-F9F73BB8D48E"))) {
+      Return (And (ADPM, BIT27)) // DSDT NVS ADPM[BIT27] set - supported (return true)
+    }
+
+    // Waves Full and Reduced for Cirrus
+    If (LEqual (Arg0, ToUUID ("52983D04-2414-88B4-A2A2-C1397E13B022"))) {
+      Return (And (ADPM, BIT28)) // DSDT NVS ADPM[BIT28] set - supported (return true)
+    }
+
+    // Waves Full and Reduced for Cirrus
+    If (LEqual (Arg0, ToUUID ("FAACC8CC-B365-4964-B4B8-BD4DEB18D922"))) {
+      Return (And (ADPM, BIT28)) // DSDT NVS ADPM[BIT28] set - supported (return true)
     }
 
     // PP Module 'Alpha' Custom GUID
@@ -177,26 +194,6 @@ Scope (\_SB.PC00.HDAS)
     // Check PP module with GUID - entered in Setup menu
     If (LEqual (Arg0, ACCG (AG3L, AG3H))) {
       Return (And (ADPM, BIT31)) // ADPM[BIT31] set - supported (return true)
-    }
-
-    // PP Module Intel SST Speech
-    If (LEqual (Arg0, ToUUID ("7C708106-3AFF-40FE-88BE-8C999B3F7445"))) {
-      Return (And (ADPM, BIT2)) // DSDT NVS ADPM[BIT2] set - supported (return true)
-    }
-
-    // AEC for Cirrus
-    If (LEqual (Arg0, ToUUID ("4BC75FFD-83A1-434B-83F4-F9F73BB8D48E"))) {
-      Return (And (ADPM, BIT27)) // DSDT NVS ADPM[BIT27] set - supported (return true)
-    }
-
-    // Waves Full and Reduced for Cirrus
-    If (LEqual (Arg0, ToUUID ("52983D04-2414-88B4-A2A2-C1397E13B022"))) {
-      Return (And (ADPM, BIT28)) // DSDT NVS ADPM[BIT28] set - supported (return true)
-    }
-
-    // Waves Full and Reduced for Cirrus
-    If (LEqual (Arg0, ToUUID ("FAACC8CC-B365-4964-B4B8-BD4DEB18D922"))) {
-      Return (And (ADPM, BIT28)) // DSDT NVS ADPM[BIT28] set - supported (return true)
     }
 
     Return (0) // GUID not found - module not supported

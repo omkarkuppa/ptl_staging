@@ -70,7 +70,7 @@ const CallTableEntry  MrcCallTable[] = {
   {MrcMcProgramDeswizzleRegisters,  MRC_MC_DESWIZZLE_REG,          OemMcDeswizzleRegisters,1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Program Mc Deswizzle Register", TrainedParamNoPrint)},
   {MrcTurnAroundTimingOptimization, MRC_TURN_AROUND,               OemTurnAroundTimes,     1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST | MF_RMT | MF_TST, MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Turn Around Timing Optimization", TrainedParamTurnAroundTiming)},
   {MrcWriteDqDqsReTraining,         MRC_WRITE_DQ_DQS_RETRAINING,   OemWriteDqDqsReTraining,1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Write DQ/DQS Retraining", TrainedParamNoPrint)},
-  {MrcPostPackageRepairEnable,      MRC_PPR_ENABLE,                OemPprEnable,           1, MF_COLD                   | MF_FAST | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Post Package Repair", TrainedParamNoPrint)},
+  {MrcPostPackageRepairEnable,      MRC_PPR_ENABLE,                OemPprEnable,           1, MF_COLD                   | MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Post Package Repair", TrainedParamNoPrint)},
   {MrcRhPrevention,                 MRC_RH_PREVENTION,             OemMrcRhPrevention,     1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Row Hammer Prevention", TrainedParamNoPrint)},
   {MrcMcFinalize,                   MRC_MC_FINALIZE,               OemMrcMcFinalize,       1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC MC Finalize", TrainedParamNoPrint)},
   {MrcSaGvFinal,                    MRC_MR_FILL,                   OemSagvFinalize,        1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("SAGV Finalization", TrainedParamNoPrint)},
@@ -165,7 +165,7 @@ MrcInternalCheckPoint (
       break;
 
     case OemWriteDqDqsReTraining:
-      if (!TrainingEnables3->WRTRETRAIN || Outputs->IsLpddr5) {
+      if (!TrainingEnables3->WRTRETRAIN) {
         Status = mrcFail; // Skip this training step
       }
       break;
@@ -177,7 +177,7 @@ MrcInternalCheckPoint (
       break;
 
     case OemPprEnable:
-      if (!Inputs->PprEnable || (Outputs->SaGvPoint != Outputs->SaGvPprPoint)) {
+      if (!Inputs->PprEnable) {
         Status = mrcFail;
       }
       break;

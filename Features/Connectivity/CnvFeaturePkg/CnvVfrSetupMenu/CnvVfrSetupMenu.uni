@@ -77,5 +77,3 @@
 #string STR_BT_USB                                     #language en-US "USB"
 #string STR_PREBOOT_BLE_PROMPT                         #language en-US "Preboot BLE"
 #string STR_PREBOOT_BLE_HELP                           #language en-US "This will be used to enable Preboot Bluetooth function"
-#string STR_CNV_CHECK_PROMPT                           #language en-US "Cnv Compatibility Check"
-#string STR_CNV_CHECK_HELP                             #language en-US "This will be used to enable Cnv Bluetooth through sideload"

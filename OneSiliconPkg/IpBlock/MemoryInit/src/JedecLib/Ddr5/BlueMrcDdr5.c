@@ -86,6 +86,10 @@ MrcJedecInitDdr5 (
       }
     }
 
+    // Disable multicycle MPC command on MC
+    // DRAM will be configured to 1tCK MPC via MR2
+    DisableMcMulticycleCs (MrcData, FALSE);
+
     if (PerformGenericMrsFsmSequence (MrcData, JedecInitSequenceSingleCycle, FALSE) != mrcSuccess) {
       return mrcFail;
     }
@@ -123,10 +127,6 @@ MrcJedecInitDdr5 (
         return Status;
       }
     }
-
-    // Use multicycle MPC command only during boot.
-    // After boot, configure DRAM and MC for 1tCK MPC
-    DisableMcMulticycleCs (MrcData, FALSE);
 
     // Run the FSM second time, after PDA enumeration and multicycle MPC config
     if (PerformGenericMrsFsmSequence (MrcData, JedecInitSequenceMultiCycle, FALSE) != mrcSuccess) {

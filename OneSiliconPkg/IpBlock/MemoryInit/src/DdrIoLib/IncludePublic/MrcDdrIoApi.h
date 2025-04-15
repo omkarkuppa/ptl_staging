@@ -229,6 +229,7 @@ typedef struct {
   INT64 ForceOdtOn;
   INT64 DqOdtParkMode;
   INT64 ForceRxOnDqsMux;
+  INT64 ForceRxOnDq;
 } MRC_RX_DQS_DCC_SAVE;
 
 typedef enum {
@@ -621,25 +622,6 @@ MrcDecodeRxVref (
 MrcStatus
 MrcDdrIoInit (
   IN OUT MrcParameters *const MrcData
-  );
-
-/**
-  This function calculates SenseAmp duration for DQS and DQ.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-  @param[in]  Qclk2Pi - Number of PI Ticks in a QClk
-  @param[in]  GuardBand - Guardband for drift in Rd DQS timing in psec
-  @param[in]  RdPreambleLow - Read Preamble low time
-  @param[in]  RdPreambleT - Read Preamble Toggle time
-
-**/
-VOID
-MrcProgramDqDqsSenseAmpDuration (
-  IN     MrcParameters *const MrcData,
-  IN     UINT32 Qclk2Pi,
-  IN     UINT32 GuardBand,
-  IN     UINT8  RdPreambleLow,
-  IN     UINT8  RdPreambleT
   );
 
 /**
@@ -2097,7 +2079,9 @@ MrcAdcCountToVoltage (
   );
 
 /**
-  This function enters into an infinite loop for HVM, indicating the end of the MRC run.
+  This function configure some registers according to HVM requirements:
+  1. clear DataValue(BSCAN override of data value for each ccc) in CCC_CR_DDRCRBSCANDATA_REG
+  2. Enter into infinite loop in the end of the function.
 
   @param[in]  MrcData - Pointer to MRC global data.
 
@@ -2634,7 +2618,6 @@ GetDdrIoPgOffsets (
 
   @param[in]  MrcData      - Global MRC data structure.
   @param[in]  Group        - DDRIO group being accessed.
-  @param[in]  Index        - Generic index, used for PI look-up-table
   @param[in]  Lane         - Lane index within the data group (0-based).
   @param[in]  FreqIndex    - Workpoint Index.
   @param[out] VolatileMask - Mask indicating which bits are volatile in register
@@ -2645,7 +2628,6 @@ UINT32
 GetDdrIoCompOffsets (
   IN  MrcParameters         *MrcData,
   IN  GSM_GT                Group,
-  IN  UINT32                Index,
   IN  UINT32                Lane,
   IN  UINT32                FreqIndex,
   OUT UINT64_STRUCT *const  VolatileMask
@@ -3277,17 +3259,4 @@ MrcGetTxDqNmosOnlyValue (
   IN UINT32               VccDdq
   );
 
-/**
-  Reset the IO module. The hardware will handle creating the 20 dclk pulse
-  after the bit is set and will also clear the bit.
-
-  @param[in] MrcData - Include all MRC global data.
-
-  @retval mrcSuccess IO Reset was done successfully
-  @retval mrcDeviceBusy Timed out waiting for the IO to clear the bit
-**/
-MrcStatus
-IoReset(
-  IN MrcParameters *const MrcData
-  );
 #endif //MRC_DDR_IO_API_H_

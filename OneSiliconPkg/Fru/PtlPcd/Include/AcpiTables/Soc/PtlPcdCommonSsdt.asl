@@ -149,7 +149,6 @@ DefinitionBlock (
   External (\_SB.ISEN, FieldUnitObj)
   External (\_SB.LL1E, FieldUnitObj)
   External (\_SB.LL2E, FieldUnitObj)
-  External (\_SB.TBMD, FieldUnitObj)
 
   //
   // Notify Hot Plug
@@ -347,13 +346,15 @@ DefinitionBlock (
   //    Power Switch.
   //
   Method (SPNT,0,Serialized) {
-    //
-    // _PPC shall return 0 only when Turbo mode enabled.
-    //
-    If (CondRefOf (\_SB.TBMD)) {
-      If (LEqual (\_SB.TBMD, 1))
-      {
-        Store(Zero, \_SB.CPPC) // Return the maximum performance state P0 for available performance range from P0 to Pn.
+
+    If (And (\PF00,0x0400))
+    {
+      If (CondRefof (\_SB.PR00.TPSS)) {
+        Subtract (SizeOf (\_SB.PR00.TPSS), One, \_SB.CPPC)
+      }
+    } Else {
+      If (CondRefof (\_SB.PR00.LPSS)) {
+        Subtract (SizeOf (\_SB.PR00.LPSS), One, \_SB.CPPC)
       }
     }
 

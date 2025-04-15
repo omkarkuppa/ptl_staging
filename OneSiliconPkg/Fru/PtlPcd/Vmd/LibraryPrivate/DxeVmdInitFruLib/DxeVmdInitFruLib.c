@@ -84,25 +84,32 @@ UpdateVmdNvs (
                        (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpFunc == PCI_FUNCTION_NUMBER_PCH_PCIE_ROOT_PORT_5)) {
               // B0D6F4
               VmdNvsAreaProtocol->Area->VmdSocPciePorts |= (0x1 << 4);
-            } else if ((VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_10) && \
-                      (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpFunc == PCI_FUNCTION_NUMBER_PCH_PCIE_ROOT_PORT_6)) {
-              // B0D6F5
+            } else if ((VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_12) && \
+                      (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpFunc == PCI_FUNCTION_NUMBER_PCH_PCIE_ROOT_PORT_12)) {
+              // B0D1F0
               VmdNvsAreaProtocol->Area->VmdSocPciePorts |= (0x1 << 5);
-            } else if (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == 28) {
+            }
+          } else if (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpBus == VmdNvsAreaProtocol->Area->PchRpBusNo) {
+            DEBUG ((DEBUG_INFO, "VMD NVS protocol - PCIe RP with B/D/F %d/%d/%d is remapped under VMD\n", \
+                  VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpBus, \
+                  VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev, \
+                  VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpFunc));
+
+            if (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == 28) {
               VmdNvsAreaProtocol->Area->VmdPchPcieRp |= (UINT32) (0x1 << (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpFunc));
             } else if (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == 29) {
               VmdNvsAreaProtocol->Area->VmdPchPcieRp |= (UINT32) (0x100 << (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpFunc));
             } else if (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == 27) {
               VmdNvsAreaProtocol->Area->VmdPchPcieRp |= (UINT32) (0x10000 << (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpFunc));
             }
+          }
 
-            ///
-            /// SATA Ports
-            ///
-            if (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == PCI_DEVICE_NUMBER_PCH_SATA_1) {
-              DEBUG ((DEBUG_INFO, "VMD NVS protocol - SATA is mapped under VMD\n"));
-              VmdNvsAreaProtocol->Area->VmdSataPort0to7 = 0xFF;
-            }
+          ///
+          /// SATA Ports
+          ///
+          if (VmdInfoHob->VmdPortInfo.PortInfo[VmdDevIndex].RpDev == PCI_DEVICE_NUMBER_PCH_SATA_1) {
+            DEBUG ((DEBUG_INFO, "VMD NVS protocol - SATA is mapped under VMD\n"));
+            VmdNvsAreaProtocol->Area->VmdSataPort0to7 = 0xFF;
           }
         }
       }

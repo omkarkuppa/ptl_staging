@@ -28,7 +28,6 @@
 #include "MrcHalApi.h"
 #include "MrcMcSiSpecific.h"
 #include "MrcChipRouting.h"
-#include "MrcGeneral.h"
 
 // LP5 SplitACT enable BIOS knob defines input values as:
 // 0 = Auto, 1 = Disable, 2 = Enable
@@ -329,8 +328,6 @@ MrcSchedulerParametersConfig (
         MrcGetSetMcCh (MrcData, Controller, Channel, GSmMcttWckOff,              WriteToCache | PrintValue, &tWckOff);
         tCKFSPX = MrcGetTckfspx (MrcData);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttCkFspX,              WriteToCache | PrintValue, &tCKFSPX);
-
-        MrcSetGlobalGraceCounter (MrcData, Controller, Channel);
       }
 
       // Set Opportunistic Read for Write Major Mode
@@ -405,10 +402,6 @@ MrcSchedulerParametersConfig (
     // If Lp5SplitACTEnable == 2: set SCHED_THIRD_CBIT.disable_split_act = 0
     GetSetVal = (ExtInputs->Lp5SplitACTEnable == LP5_SPLIT_ACT_ENABLE) ? 0 : 1;
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisableSplitAct, WriteCached | PrintValue, &GetSetVal);
-  }
-
-  if ((ExtInputs->TrainingEnables3.WRTRETRAIN) == 0) {
-    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccEnSrxWrRetraining, WriteCached | PrintValue, &GetSetDis);
   }
 
 }

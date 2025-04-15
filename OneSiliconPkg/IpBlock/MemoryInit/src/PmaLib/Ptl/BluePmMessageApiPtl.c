@@ -227,7 +227,7 @@ MrcMcCapabilityPreSpd (
     if (Outputs->IsLpddr5) {
       Outputs->FreqMax = MIN (Outputs->FreqMax, f7467); // Default SAGV: 2400, 4800, 6400, 7467 (all G4)
     } else { // DDR5
-      Outputs->FreqMax = MIN (Outputs->FreqMax, f6400); // Default SAGV: 3200, 4800, 5600, 6400 (all G4)
+      Outputs->FreqMax = MIN (Outputs->FreqMax, f5600); // Default SAGV: 3200, 3200, 4800, 5600 (all G4)
     }
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Auto FreqMax resolved to: %u\n", Outputs->FreqMax);
   }
@@ -248,7 +248,7 @@ MrcMcCapabilityPreSpd (
   }
 
   if (MrcIsSaGvEnabled (MrcData) && ((ExtInputs->MemoryProfile == STD_PROFILE) || ((ExtInputs->SafeModeOverride & MRC_SAFE_OVERRIDE_SAGV) != 0))) {
-    MrcGetSagvConfig (MrcData, Outputs->SaGvPoint, Outputs->FreqMax, MaxQclkFreq, TRUE, &FreqMax, &Outputs->GearMode);
+    MrcGetSagvConfig (MrcData, Outputs->SaGvPoint, Outputs->FreqMax, MaxQclkFreq, &FreqMax, &Outputs->GearMode);
     Outputs->FreqMax = MIN (FreqMax, Outputs->FreqMax);
   } else {
     // Set Gear by the input parameter if not auto, otherwise default to G2 up to 2133 MHz.
@@ -281,11 +281,6 @@ MrcMcCapabilityPreSpd (
     "%uMHz reference clock is selected\n",
     REF_FREQ
     );
-
-  if (Outputs->SaGvPoint == Outputs->SaGvFirst) {
-    MrcCalculatePprSaGvPoint (MrcData, MaxQclkFreq);
-  }
-
   return Status;
 }
 

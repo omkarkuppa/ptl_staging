@@ -615,13 +615,4 @@ VOID
 PtlPcdPPsfConfigurePowerManagement (
   VOID
   );
-
-/**
-  Program hysteresis value for trunk clock gating on PSF6.
-  Value should be set to 0x9c4.
-**/
-VOID
-PtlPcdPPsfConfigureClkreqHys (
-  VOID
-  );
 #endif

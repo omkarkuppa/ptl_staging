@@ -86,7 +86,6 @@ gStructPcdTokenSpaceGuid.PcdAmtPetInitConfig.FwProgress|0x1                     
 !if gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport == 0x1
   gStructPcdTokenSpaceGuid.PcdCnvSetup.PrebootBleEnable|0x0                                          # Preboot BLE
 !endif
-gStructPcdTokenSpaceGuid.PcdCnvSetup.CnvCompatibilityCheck|0x0                                     # Cnv Compatability
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].BaudRate|0x1c200                       # Set COM Baud Rate
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].ComTag.ComNum|0x0                      # Set COM Tag
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].DataBits|0x8                           # Set COM Data Bits
@@ -447,7 +446,7 @@ gStructPcdTokenSpaceGuid.PcdDebugConfigData.RamDebugInterface|0x0               
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialDebug|0x3                                        # Serial Debug Messages
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialDebugBaudRate|0x7                                # Serial Debug Message Baud Rate
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialDebugMrcLevel|0x3                                # MRC Serial Debug Messages
-gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoDebugInterface|0x1                             # Serial IO UART
+gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoDebugInterface|0x0                             # Serial IO UART
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoUartDebugBaudRate|0x1c200                      # Baud Rate
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoUartDebugControllerNumber|0x0                  # Controller Number
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoUartDebugDataBits|0x8                          # Word Length
@@ -1263,7 +1262,7 @@ gStructPcdTokenSpaceGuid.PcdMeSetup.vProTbtDock|0x1                             
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicMonoEnabled|0x0        # Dmic Mono
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoEnabled|0x0      # Dmic Stereo
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoVpEnabled|0x0    # Dmic Stereo VP
-gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicQuadEnabled|0x0        # Dmic Quad
+gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicQuadEnabled|0x1        # Dmic Quad
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltBluetoothEnabled|0x2       # Bt
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltI2sAlc274Enabled|0x0       # I2s Alc274
 gStructPcdTokenSpaceGuid.PcdNvmeSetup.PlnEnable|0x2                                                # Power Loss Notification Feature
@@ -1310,8 +1309,8 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchGpioIrqRoute|0xe                        
     gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudio|0x0                                            # HD Audio
 !endif
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioCodecSxWakeCapability|0x0                           # Codec Sx Wake Capability
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x0                               # DMIC #0
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x1                               # DMIC #0
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x1                               # DMIC #1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDsp|0x1                                             # Audio DSP
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDspUaaCompliance|0x0                                # Audio DSP Compliance Mode
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[0]|0x1                                      # WoV (Wake on Voice)
@@ -1320,7 +1319,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[2]|0x0                   
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[5]|0x1                                      # BT Intel HFP
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[6]|0x1                                      # BT Intel A2DP
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[9]|0x1                                      # BT Intel Low Energy
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x1                                     # ACX/SDCA
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x0                                     # ACX/SDCA
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[11]|0x0                                     # ACX/SDCA speaker aggregation
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioHdaLinkEnable|0x0                                   # HDA Link
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioI2sCodecSelect|0x0                                  # I2S Codec Select
@@ -1345,7 +1344,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingModCustomGuid5|{0x0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSdiLaneEnable[0]|0x1                                # SDI0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSdiLaneEnable[1]|0x0                                # SDI1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[0]|0x0                               # SNDW #0
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[1]|0x0                               # SNDW #1
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[1]|0x1                               # SNDW #1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[2]|0x0                               # SNDW #2
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[3]|0x0                               # SNDW #3
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwMultilaneEnable[0]|0x0                          # SNDW #2 Multilane
@@ -3326,14 +3325,14 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidSpiWriteOpcode[0]|0x0                
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidSpiWriteOpcode[1]|0x0                                   # Write Opcode
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcIdleLtr[0]|0xffffffff                                      # Idle LTR
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcIdleLtr[1]|0xffffffff                                      # Idle LTR
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[0]|0x2                                                # THC Mode
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[1]|0x2                                                # THC Mode
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[0]|0x1                                                # THC Mode
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[1]|0x1                                                # THC Mode
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcPerformanceLimitation[0]|0x0                               # Hid Over Spi Performance Limitation
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcPerformanceLimitation[1]|0x0                               # Hid Over Spi Performance Limitation
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcResetPadTrigger[0]|0x0                                     # Reset Pad Trigger
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcResetPadTrigger[1]|0x0                                     # Reset Pad Trigger
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[0]|0x0                                            # DYSNC input
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[1]|0x0                                            # DYSNC input
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[0]|0x1                                            # DYSNC input
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[1]|0x1                                            # DYSNC input
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcTimestampTimerMode[0]|0x0                                  # Timestamp timer behavior in D0i2
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcTimestampTimerMode[1]|0x0                                  # Timestamp timer behavior in D0i2
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcWakeOnTouch[0]|0x0                                         # Wake On Touch
@@ -3516,7 +3515,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccOperationMode|0x2                      
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashOverride|0x0                                             #           Bit 19 - Channel Hash override
 gStructPcdTokenSpaceGuid.PcdSaSetup.RetrainOnFastFail|0x1                                          #           Bit 21 - Restart MRC in Cold mode if SW MemTest fails during Fast flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.DvfsqEnabled|0x0                                               #           Bit 22 - DVFSQ
-gStructPcdTokenSpaceGuid.PcdSaSetup.DvfscEnabled|0x1                                               #           Bit 23 - E-DVFSC
+gStructPcdTokenSpaceGuid.PcdSaSetup.DvfscEnabled|0x0                                               #           Bit 23 - E-DVFSC
 gStructPcdTokenSpaceGuid.PcdSaSetup.VoltageReadout|0x0                                             #           Bit 24 - Display VCCClk and PBias voltage readings across partitions
 gStructPcdTokenSpaceGuid.PcdSaSetup.CccHalfFrequency|0x0                                           #           Bit 25 - CCC Half Frequency
 gStructPcdTokenSpaceGuid.PcdSaSetup.Ddr5AutoPrechargeEnable|0x0                                    #           Bit 26:27 - DDR5 Auto Precharge Enable
@@ -3535,7 +3534,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DdrRatio|0x0                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashInterleaveBit|0x2                                        # Offset 46 Ch Hash Interleaved Bit
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.ECT|0x1                                                        # Offset 48 BIT0 - Early Command Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.SOT|0x1                                                        #           BIT1 - SenseAmp Offset Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.SOT|0x0                                                        #           BIT1 - SenseAmp Offset Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.ERDMPRTC2D|0x1                                                 #           BIT2 - Early ReadMPR Timing Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDMPRT|0x0                                                     #           BIT3 - Read MPR Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RCVET|0x1                                                      #           BIT4 - Receive Enable Training
@@ -3580,7 +3579,6 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DBI|0x0                                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLDCC|0x1                                                     #           BIT10 - DLL DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLBWSEL|0x1                                                   #           BIT11 - DLL BW Select Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDVREFDC|0x0                                                   #           BIT12 - Read Vref Decap Training*
-gStructPcdTokenSpaceGuid.PcdSaSetup.RDTCIDLE|0x1                                                   #           BIT13 - Read Timing Centering Training with SR stress
 gStructPcdTokenSpaceGuid.PcdSaSetup.RMTBIT|0x0                                                     #           BIT14 - Rank Margin Tool Per Bit
 gStructPcdTokenSpaceGuid.PcdSaSetup.DQDQSSWZ|0x1                                                   #           BIT15 - Map Dq Dqs Swizzle
 gStructPcdTokenSpaceGuid.PcdSaSetup.REFPI|0x1                                                      #           BIT16 - Ref PI Calibration
@@ -3600,6 +3598,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
 gStructPcdTokenSpaceGuid.PcdSaSetup.TXDQSDCC |0x1                                                  #           BIT2 - RxVref Per-Bit Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - TXDQS DCC Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.PPR|0x0                                                        #           BIT4 - Post Package Repair
 gStructPcdTokenSpaceGuid.PcdSaSetup.LVRAUTOTRIM|0x0                                                #           BIT5 - LVR Auto Trim
 gStructPcdTokenSpaceGuid.PcdSaSetup.OPTIMIZECOMP|0x0                                               #           BIT7 - Comp optimization
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTRETRAIN|0x1                                                 #           BIT8 - Write Dq/Dqs Retraining
@@ -3697,7 +3696,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.TargetedRowRefreshMode|0x1                  
 gStructPcdTokenSpaceGuid.PcdSaSetup.DrfmBrc|0x2                                                    # Offset 157 Row Hammer: Directed Refresh Management Blast Radius Configuration
 gStructPcdTokenSpaceGuid.PcdSaSetup.SafeModeOverride|0xFF                                          # Offset 159 MRC Safe Mode Override
 gStructPcdTokenSpaceGuid.PcdSaSetup.DdrSafeMode|0x4                                                # Offset 160 DDR PHY Safe Mode Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x0                                                 # Offset 164 MC Safe Mode Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x02                                                # Offset 164 MC Safe Mode Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode|0x7                                                     # Offset 165 LpMode bit mask
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode4|0x1                                                    # Offset 166 LpMode4
 
@@ -3779,33 +3778,25 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[3]|0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[4]|0                                               # Offset 284 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
 gStructPcdTokenSpaceGuid.PcdSaSetup.tCCD_L_WR|0x0                                                  # Offset 286 User defined Memory Timing tCCD_L_WR value, valid when SpdProfileSelected is CUSTOM_PROFILE
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunWCHMATS8|0x0                                             # Run WCHMATS8 in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunRetention|0x0                                            # Run Data Retention in Post Package Repair flow
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunWCHMATS8|0x1                                             # Run WCHMATS8 in Post Package Repair flow
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunRetention|0x1                                            # Run Data Retention in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarch|0x0                                               # Run XMarch in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarchG|0x0                                              # Run XMarchG in Post Package Repair flow
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarchG|0x1                                              # Run XMarchG in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchShort|0x0                                          # Run YMarchShort in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchLong|0x0                                           # Run YMarchLong in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunMmrw|0x0                                                 # Run Mmrw in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairType|0x0                                              # PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunOnce|0x1                                                 # When enabled, PPR will run only once and then is disabled at next training cycle
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprErrorInjection|0x0                                          # When enabled, PPR will inject bad rows during testing
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestEnable[0]|0x0                                        # Enable/Disable DRAM Address for PPR Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestEnable[1]|0x0                                        # Enable/Disable DRAM Address for PPR Request 1, only valid if Request 0 is ENABLED
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestController[0]|0x0                                    # PPR request controller - Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestController[1]|0x0                                    # PPR request controller - Request 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestChannel[0]|0x0                                       # PPR request channel - Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestChannel[1]|0x0                                       # PPR request channel - Request 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRank[0]|0x0                                          # PPR request rank - Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRank[1]|0x0                                          # PPR request rank - Request 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBankGroup[0]|0x0                                     # PPR request bank group - Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBankGroup[1]|0x0                                     # PPR request bank group - Request 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBank[0]|0x0                                          # PPR request bank - Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBank[1]|0x0                                          # PPR request bank - Request 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRow[0]|0x0                                           # PPR request row - Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRow[1]|0x0                                           # PPR request row - Request 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestDevice[0]|0x0                                        # PPR request device - Request 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestDevice[1]|0x0                                        # PPR request device - Request 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                                             # When enabled, PPR will issue force repair to the same row many times (90)
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairType|0x0                                              # Offset 288 PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunOnce|0x1                                                 # Offset 289 When enabled, PPR will run only once and then is disabled at next training cycle
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunAtFastboot|0x0                                           # Offset 290 When enabled, PPR will run during fastboot
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprErrorInjection|0x0                                          # Offset 291 When enabled, PPR will inject bad rows during testing
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairPhysicalAddress|0x0                                   # Offset 292 PPR repair physical address
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRow|0x0                                               # Offset 300 PPR repair row
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairController|0x0                                        # Offset 304 PPR repair controller
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairChannel|0x0                                           # Offset 305 PPR repair channel
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairDimm|0x0                                              # Offset 306 PPR repair Dimm
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRank|0x0                                              # Offset 307 PPR repair rank
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBankGroup|0x0                                         # Offset 308 PPR repair bank group
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBank|0x0                                              # Offset 309 PPR repair bank
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                                             # Offset 310 When enabled, PPR will issue force repair to the same row many times (90)
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 316 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 318 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
@@ -3825,7 +3816,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                              
 gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 # Offset 325 - DLL Weak Lock Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsDelayCompEn|0x0                                           # Offset 326 - Rx DQS Delay Comp Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFailureOnUnsupportedDimm|0x0                                # Offset 328 - Enable/disable MRC failure policy for unsupported memory type.
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x1                                             # Offset 329 - DRAM DCC for DDR5 READ DCA
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x0                                             # Offset 329 - DRAM DCC for DDR5 READ DCA
 
 ##############################
 # MRC - ExtInputs end
@@ -4136,7 +4127,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.Rtd3Support|0x1                               
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3TouchPadDelay|0x44                                           # TouchPad
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3TouchPanelDelay|0x44                                         # TouchPanel
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3WWAN|0x3                                                     # WWAN
-gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x0                                             # Scan Matrix Keyboard Support
+gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                                             # Scan Matrix Keyboard Support
 gStructPcdTokenSpaceGuid.PcdSetup.SensorHubType|0x1                                                # Sensor Hub Type
 gStructPcdTokenSpaceGuid.PcdSetup.SensorStandby|0x0                                                # Sensor Standby
 gStructPcdTokenSpaceGuid.PcdSetup.SerialPortAcpiDebug|0x0                                          # Print to Serial Port
@@ -4203,7 +4194,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.WwanTResTogDelayMs|0xa                        
 !else
     gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x0                                    # Platform Debug Option
 !endif
-  gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x4     # SoundWire codecs topology
+gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x0     # SoundWire codecs topology
 gStructPcdTokenSpaceGuid.PcdTCG2_CONFIGURATION.TpmDevice|0x1                                       # Attempt TPM Device
 gStructPcdTokenSpaceGuid.PcdTCG2_VERSION.PpiVersion|0x332e31                                       # Attempt PPI Version
 gStructPcdTokenSpaceGuid.PcdTCG2_VERSION.Tpm2AcpiTableRev|0x4                                      # Attempt Rev of TPM2 ACPI Table

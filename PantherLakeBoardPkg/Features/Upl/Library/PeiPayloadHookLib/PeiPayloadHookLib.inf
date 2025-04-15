@@ -251,7 +251,7 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvPresent
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvCompatibilityGuid
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSubSystemId
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch
   gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids
 

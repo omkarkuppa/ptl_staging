@@ -28,9 +28,9 @@
 #include "MrcDdr5.h" // for TOdtValueDqDdr5
 
 // RCOMP target values for { RdOdt, WrDS, WrDSCmd, WrDSCtl, WrDSClk } - per DDR Type
-const UINT16 RcompTargetLpddr5Type3[MAX_RCOMP_TARGETS]    = { 39, 25, 30, 30, 30 };
-const UINT16 RcompTargetLpddr5Type4_1R[MAX_RCOMP_TARGETS] = { 39, 25, 30, 30, 25 };
-const UINT16 RcompTargetLpddr5Type4_2R[MAX_RCOMP_TARGETS] = { 39, 25, 30, 30, 30 };
+const UINT16 RcompTargetLpddr5Type3[MAX_RCOMP_TARGETS]    = { 40, 27, 30, 30, 30 };
+const UINT16 RcompTargetLpddr5Type4_1R[MAX_RCOMP_TARGETS] = { 40, 27, 30, 30, 25 };
+const UINT16 RcompTargetLpddr5Type4_2R[MAX_RCOMP_TARGETS] = { 40, 27, 30, 30, 30 };
 
 const UINT16 RcompTargetPDdr5[MAX_RCOMP_TARGETS]          = { 60, 27, 25, 25, 25 };
 

@@ -203,13 +203,24 @@ InstallSmbiosType17 (
   UINT16                          Index;
   UINT32                          DimmMemorySizeInMB;
   UINT8                           Dimm;
+  UINT8                           *SmbusBuffer;
   CHAR8                           *StringBuffer;
   CHAR8                           *StringBufferStart;
   UINTN                           StringBufferSize;
   CHAR8                           StringBuffer2[4];
+  UINT8                           IndexCounter;
   UINTN                           IdListIndex;
+  UINT16                          MemoryTotalWidth;
+  UINT16                          MemoryDataWidth;
   BOOLEAN                         FoundManufacturer;
   EFI_SMBIOS_HANDLE               SmbiosHandle;
+  UINT16                          ManufactureIdLsb;
+  UINT16                          ManufactureIdMsb;
+  UINT16                          PartNoStartByte;
+  UINT16                          PartNoEndByte;
+  UINT16                          SerialNoStartByte;
+  UINT16                          SerialNoEndByte;
+  UINT8                           MemoryBusWidthByte;
   UINT8                           DramDeviceType;
   UINT8                           ModuleType;
   UINTN                           StrBuffLen;
@@ -219,10 +230,6 @@ InstallSmbiosType17 (
   UINT8                           MdSocket;
   MRC_SLOTMAP                     *MrcSlotMap;
   MEMORY_DEVICE_OPERATING_MODE_CAPABILITY MemoryDeviceOperatingModeCapability;
-  HOB_MANUFACTURER_ID_CODE        ManufacturerId;
-  UINT8                           *PartNumber;
-  UINT8                           *SerialNumber;
-  DIMM_INFO                       *DimmInfo;
 
   MrcSlotMap = (VOID*)(UINTN)PcdGet64 (PcdSlotMapAddress);
   if (MrcSlotMap == NULL) {
@@ -241,7 +248,20 @@ InstallSmbiosType17 (
   if (StringBufferStart == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+  /**
+    Initialize variables for retrieving required data from SPD buffer.
+    Since the first SPD byte in buffer is SPD_MANUFACTURER_ID_LSB,
+    all fields offset should be subtracted by SPD_MANUFACTURER_ID_LSB.
+    DDR4 offsets for the values below are good also for DDR5/LP4/LP5.
+  **/
+  ManufactureIdLsb = 0;
+  ManufactureIdMsb  = DDR4_SPD_MANUFACTURER_ID_MSB  - DDR4_SPD_MANUFACTURER_ID_LSB;
+  PartNoStartByte   = DDR4_SPD_PART_NO_START_BYTE   - DDR4_SPD_MANUFACTURER_ID_LSB;
+  PartNoEndByte     = DDR4_SPD_PART_NO_END_BYTE     - DDR4_SPD_MANUFACTURER_ID_LSB;
+  SerialNoStartByte = DDR4_SPD_SERIAL_NO_START_BYTE - DDR4_SPD_MANUFACTURER_ID_LSB;
+  SerialNoEndByte   = DDR4_SPD_SERIAL_NO_END_BYTE   - DDR4_SPD_MANUFACTURER_ID_LSB;
 
+  SmbusBuffer     = NULL;
   ///
   /// Each instance of table type 17 has the same MemoryArrayHandle
   ///
@@ -264,22 +284,24 @@ InstallSmbiosType17 (
       if (MrcSlotMap->MrcSlotMap[ControllerIndex][ChannelIndex] == 0) {
         continue;
       }
-      DimmInfo = &mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex];
-      if ((DimmInfo->Status == DIMM_PRESENT) && (DimmInfo->DimmCapacity > 0)) {
+      if ((mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].Status == DIMM_PRESENT) && (mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].DimmCapacity > 0)) {
         ///
         /// Generate Memory Device info (Type 17)
         ///
-        DramDeviceType      = DimmInfo->SpdDramDeviceType;
-        ModuleType          = DimmInfo->SpdModuleType;
+        DramDeviceType = mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].SpdDramDeviceType;
+        ModuleType = mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].SpdModuleType;
+        MemoryBusWidthByte = mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].SpdModuleMemoryBusWidth;
         SmbiosTableType17Strings.SerialNumber = (CHAR8*) PcdGetPtr (PcdSmbios17SerialNumber);
-        ManufacturerId      = DimmInfo->MfgId;
-        PartNumber          = (UINT8 *) &(DimmInfo->ModulePartNum);
-        SerialNumber        = (UINT8 *) &(DimmInfo->SerialNumber);
+
+        ///
+        /// MRC save/restore hob only provides these SPD bytes: Non-JEDEC LPDDR3/DDR3 - 117 ~ 145; JEDEC LPDDR3/DDR4 - 320 ~ 348
+        ///
+        SmbusBuffer = (UINT8 *) &(mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].SpdSave);
 
         ///
         /// Use SPD data to generate Device Type info
         ///
-        MdSocket = DimmInfo->MdSocket;
+        MdSocket = mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].MdSocket;
         SmbiosTableType17Strings.DeviceLocator  = GetDeviceLocatorString (ControllerIndex, Dimm, MdSocket);
         SmbiosTableType17Strings.BankLocator    = GetBankLocatorString (ControllerIndex, Dimm, MdSocket);
 
@@ -294,11 +316,17 @@ InstallSmbiosType17 (
         FoundManufacturer = FALSE;
 
         ///
+        /// Calculate index counter
+        /// Clearing Bit7 as it is the Parity Bit for Byte 117
+        ///
+        IndexCounter = SmbusBuffer[ManufactureIdLsb] & (~0x80);
+
+        ///
         /// Convert memory manufacturer ID to string
         ///
         for (IdListIndex = 0; MemoryModuleManufactureList[IdListIndex].Index != 0xff; IdListIndex++) {
-          if (MemoryModuleManufactureList[IdListIndex].Index == ManufacturerId.Bits.ContinuationCount &&
-              MemoryModuleManufactureList[IdListIndex].ManufactureId == ManufacturerId.Bits.LastNonZeroByte
+          if (MemoryModuleManufactureList[IdListIndex].Index == IndexCounter &&
+              MemoryModuleManufactureList[IdListIndex].ManufactureId == SmbusBuffer[ManufactureIdMsb]
               ) {
             SmbiosTableType17Strings.Manufacturer = MemoryModuleManufactureList[IdListIndex].ManufactureName;
             FoundManufacturer = TRUE;
@@ -311,17 +339,29 @@ InstallSmbiosType17 (
         StrBuffLen = StringBufferSize / sizeof (CHAR8);
         if (!(FoundManufacturer)) {
           AsciiStrCpyS (StringBuffer, StrBuffLen, "0x");
-          AsciiValueToStringS (StringBuffer2, sizeof (StringBuffer2), PREFIX_ZERO | RADIX_HEX, ManufacturerId.Bits.ContinuationCount, 2);
-          AsciiStrCatS (StringBuffer, StrBuffLen, StringBuffer2);
-          AsciiValueToStringS (StringBuffer2, sizeof (StringBuffer2), PREFIX_ZERO | RADIX_HEX, ManufacturerId.Bits.LastNonZeroByte, 2);
-          AsciiStrCatS (StringBuffer, StrBuffLen, StringBuffer2);
+          for (Index = ManufactureIdLsb; Index <= ManufactureIdMsb; Index++) {
+            if (Index == ManufactureIdLsb) {
+              ///
+              /// Clear the parity bit on the continuation counter for added readability
+              ///
+              AsciiValueToStringS (
+                StringBuffer2,
+                sizeof (StringBuffer2),
+                PREFIX_ZERO | RADIX_HEX,
+                (UINT8) (SmbusBuffer[Index] & (~0x80)),
+                2);
+            } else {
+              AsciiValueToStringS (StringBuffer2, sizeof (StringBuffer2), PREFIX_ZERO | RADIX_HEX, SmbusBuffer[Index], 2);
+            }
+            AsciiStrCatS (StringBuffer, StrBuffLen, StringBuffer2);
+          }
           SmbiosTableType17Strings.Manufacturer = StringBuffer;
           StrBuffLen -= AsciiStrSize (StringBuffer);
           StringBuffer += AsciiStrSize (StringBuffer);
         }
         AsciiStrCpyS (StringBuffer, StrBuffLen, "");
-        for (Index = 0; Index <= 3; Index++) {
-          AsciiValueToStringS (StringBuffer2, sizeof (StringBuffer2), PREFIX_ZERO | RADIX_HEX, SerialNumber[Index], 2);
+        for (Index = SerialNoStartByte; Index <= SerialNoEndByte; Index++) {
+          AsciiValueToStringS (StringBuffer2, sizeof (StringBuffer2), PREFIX_ZERO | RADIX_HEX, SmbusBuffer[Index], 2);
           AsciiStrCatS (StringBuffer, StrBuffLen, StringBuffer2);
         }
         SmbiosTableType17Strings.SerialNumber = StringBuffer;
@@ -329,8 +369,8 @@ InstallSmbiosType17 (
         StringBuffer += AsciiStrSize (StringBuffer);
 
         AsciiStrCpyS (StringBuffer, StrBuffLen, "");
-        for (Index = 0; Index < 30; Index++) {
-          AsciiSPrint (StringBuffer2, 4, "%c", PartNumber[Index]);
+        for (Index = PartNoStartByte; Index <= PartNoEndByte; Index++) {
+          AsciiSPrint (StringBuffer2, 4, "%c", SmbusBuffer[Index]);
           AsciiStrCatS (StringBuffer, StrBuffLen, StringBuffer2);
         }
         SmbiosTableType17Strings.PartNumber = StringBuffer;
@@ -343,12 +383,17 @@ InstallSmbiosType17 (
         SmbiosTableType17Data.PartNumber      = STRING_6;
 
         ///
-        /// Get the Memory TotalWidth and DataWidth info
+        /// Get the Memory TotalWidth and DataWidth info for DDR3
+        /// refer to DDR3 SPD 1.0 spec, Byte 8: Module Memory Bus Width
+        /// SPD Offset 8 Bits [2:0] DataWidth aka Primary Bus Width
+        /// SPD Offset 8 Bits [4:3] Bus Width extension for ECC
         ///
-        SmbiosTableType17Data.TotalWidth = DimmInfo->TotalWidth;
-        SmbiosTableType17Data.DataWidth  = DimmInfo->DataWidth;
+        MemoryDataWidth = 8 * (1 << (MemoryBusWidthByte & 0x07));
+        MemoryTotalWidth = MemoryDataWidth + (MemoryBusWidthByte & 0x18);
+        SmbiosTableType17Data.TotalWidth = MemoryTotalWidth;
+        SmbiosTableType17Data.DataWidth = MemoryDataWidth;
 
-        DimmMemorySizeInMB = DimmInfo->DimmCapacity;
+        DimmMemorySizeInMB = mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].DimmCapacity;
         ///
         /// See the DMTF SMBIOS Specification 2.7.1, section 7.18.4
         /// regarding use of the ExtendedSize field.
@@ -442,8 +487,8 @@ InstallSmbiosType17 (
         }
         SmbiosTableType17Data.TypeDetail.Synchronous  = 1;
 
-        SmbiosTableType17Data.Speed = DimmInfo->Speed;
-        SmbiosTableType17Data.Attributes = DimmInfo->RankInDimm & 0x0F;
+        SmbiosTableType17Data.Speed = mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].Speed;
+        SmbiosTableType17Data.Attributes = mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex].RankInDimm & 0x0F;
 
         SmbiosTableType17Data.ConfiguredMemoryClockSpeed = (UINT16) mMemInfo->ConfiguredMemoryClockSpeed;
         SmbiosTableType17Data.MinimumVoltage             = 0;
@@ -456,7 +501,7 @@ InstallSmbiosType17 (
         SmbiosTableType17Data.MemoryTechnology                          = MemoryTechnologyDram;
         MemoryDeviceOperatingModeCapability.Bits.VolatileMemory         = 1;
         SmbiosTableType17Data.MemoryOperatingModeCapability             = MemoryDeviceOperatingModeCapability;
-        SmbiosTableType17Data.ModuleManufacturerID                      = DimmInfo->MfgId.Data;
+        SmbiosTableType17Data.ModuleManufacturerID                      = SmbusBuffer[ManufactureIdLsb] | (SmbusBuffer[ManufactureIdMsb] << 8);
         SmbiosTableType17Data.ModuleProductID                           = 0;
         SmbiosTableType17Data.MemorySubsystemControllerManufacturerID   = 0;
         SmbiosTableType17Data.MemorySubsystemControllerProductID        = 0;

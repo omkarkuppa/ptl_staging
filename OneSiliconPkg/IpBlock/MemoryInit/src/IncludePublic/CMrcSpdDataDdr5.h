@@ -124,9 +124,7 @@ typedef union {
 // SDRAM Optional Features
 typedef union {
   struct {
-    UINT8                                      :  1; ///< Bits 0
-    UINT8  MbistMpprSupport                    :  1; ///< Bits 1
-    UINT8                                      :  2; ///< Bits 3:2
+    UINT8                                      :  4; ///< Bits 3:0
     UINT8  BL32                                :  1; ///< Bits 4:4
     UINT8  SoftPPR                             :  1; ///< Bits 5:5
     UINT8  PostPackageRepair                   :  2; ///< Bits 7:6

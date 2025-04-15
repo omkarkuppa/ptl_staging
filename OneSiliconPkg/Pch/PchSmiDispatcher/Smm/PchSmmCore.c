@@ -30,7 +30,6 @@
 #include <Register/RtcRegs.h>
 
 #define PROGRESS_CODE_S3_SUSPEND_START  PcdGet32 (PcdProgressCodeS3SuspendStart)
-extern CONST PCH_SMM_SOURCE_DESC mDescSrcTcoSts;
 //
 // MODULE / GLOBAL DATA
 //
@@ -662,8 +661,6 @@ ClearPendingSmiStatus (
   if (SmiStsValue & B_ACPI_IO_SMI_STS_TCO_STS) {
     if (IoRead16 (mTcoBaseAddr + R_TCO_IO_TSTS1) & B_TCO_IO_TSTS1_NEWCENTURY_STS) {
       PchTcoSmiClearSourceAndBlock (&mSrcDescNewCentury);
-    } else {
-      PchSmmClearSource (&mDescSrcTcoSts);
     }
   }
   // Clear PWRBTNOR_STS if it's not handled.

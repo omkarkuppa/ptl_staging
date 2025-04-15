@@ -33,5 +33,4 @@ INF CnvFeaturePkg/CnvUefiConfigVariables/CnvUefiConfigVariablesVer2.inf
 !endif
 !if gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP == TRUE
 INF CnvFeaturePkg/CnvCompatibility/CnvCompatibilityDxe.inf
-INF CnvFeaturePkg/CnvCompatibility/CnvSupportingDxe.inf
 !endif

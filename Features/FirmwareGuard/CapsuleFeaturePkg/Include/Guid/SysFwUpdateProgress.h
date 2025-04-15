@@ -64,7 +64,6 @@ typedef enum {
   UpdatingResiliency      = 9, // Post-BIOS update phase. Indicates BIOS backup requirement.
   UpdatingMeResiliency    = 10,
   UpdatingFsp             = 11,
-  UpdatingFoxville        = 12,
   UpdatingTypeMax
 } SYSTEM_FIRMWARE_COMPONENT;
 

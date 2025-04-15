@@ -2879,57 +2879,8 @@ endform; // CPU_VR_SETTINGS
             step    = 1,
             default = 0,
           endnumeric;
-
-          SEPARATOR
-          SUBTITLE(STRING_TOKEN (STR_CPU_IA_DOMAIN))
-          oneof varid  = CPU_SETUP.FastPkgCRampDisable[0],
-            prompt   = STRING_TOKEN (STR_IA_FAST_PKG_C_RAMP_DISABLE),
-            help     = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE_HELP),
-            option text = STRING_TOKEN (STR_FALSE),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-            option text = STRING_TOKEN (STR_TRUE),  value = 1, flags = RESET_REQUIRED;
-          endoneof;
-
-          oneof varid  = CPU_SETUP.SlowSlewRate[0],
-            prompt   = STRING_TOKEN (STR_IA_SLOW_SLEW_RATE_CONFIG),
-            help     = STRING_TOKEN (STR_IA_SLOW_SLEW_RATE_CONFIG_HELP),
-            option text = STRING_TOKEN (STR_FAST_2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-            option text = STRING_TOKEN (STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
-          endoneof;
-
-          SEPARATOR
-          SUBTITLE(STRING_TOKEN(STR_CPU_GT_DOMAIN))
-          oneof varid  = CPU_SETUP.FastPkgCRampDisable[1],
-            prompt   = STRING_TOKEN (STR_GT_FAST_PKG_C_RAMP_DISABLE),
-            help     = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE_HELP),
-            option text = STRING_TOKEN (STR_FALSE),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-            option text = STRING_TOKEN (STR_TRUE),  value = 1, flags = RESET_REQUIRED;
-          endoneof;
-
-          oneof varid  = CPU_SETUP.SlowSlewRate[1],
-            prompt   = STRING_TOKEN (STR_GT_SLOW_SLEW_RATE_CONFIG),
-            help     = STRING_TOKEN (STR_GT_SLOW_SLEW_RATE_CONFIG_HELP),
-            option text = STRING_TOKEN (STR_FAST_2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-            option text = STRING_TOKEN (STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
-            option text = STRING_TOKEN (STR_FAST_8),  value = 2, flags = RESET_REQUIRED;
-          endoneof;
-
-          SEPARATOR
-          SUBTITLE(STRING_TOKEN (STR_CPU_ATOM_DOMAIN))
-          oneof varid  = CPU_SETUP.FastPkgCRampDisable[3],
-            prompt   = STRING_TOKEN (STR_ATOM_FAST_PKG_C_RAMP_DISABLE),
-            help     = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE_HELP),
-            option text = STRING_TOKEN (STR_FALSE),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-            option text = STRING_TOKEN (STR_TRUE),  value = 1, flags = RESET_REQUIRED;
-          endoneof;
-
-          oneof varid  = CPU_SETUP.SlowSlewRate[3],
-             prompt   = STRING_TOKEN (STR_ATOM_SLOW_SLEW_RATE_CONFIG),
-             help     = STRING_TOKEN (STR_ATOM_SLOW_SLEW_RATE_CONFIG_HELP),
-             option text = STRING_TOKEN (STR_FAST_2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-             option text = STRING_TOKEN (STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
-          endoneof;
       endif;
-  endform;
+endform;
 
   form formid = AUTO_ID (CPU_IA_VR_OPTIONS_FORM_ID),
   title       = STRING_TOKEN (STR_CPU_IA_VR_FORM_TITLE);

@@ -402,38 +402,28 @@ MrcMcAddressDecoderValuesSaveRestore (
   IN OUT MRC_MC_AD_SAVE       *SavedValues
   )
 {
-  const MRC_FUNCTION  *MrcCall;
   BOOLEAN IsLpddr;
   UINT8   MaxChannels;
   UINT8   Controller;
   UINT8   Channel;
   UINT32  GetSetMode;
 
-  MrcCall = MrcData->Inputs.Call.Func;
   IsLpddr = MrcData->Outputs.IsLpddr;
   MaxChannels = MrcData->Outputs.MaxChannels;
   GetSetMode  = (SaveOrRestore == MrcSaveEnum) ? ReadCached : WriteCached;
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < MaxChannels; Channel++) {
-      if (!(MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (IsLpddr, Channel)) {
-        continue;
+      for (Channel = 0; Channel < MaxChannels; Channel++) {
+        if (!(MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (IsLpddr, Channel)) {
+          continue;
+        }
+        // Backup / Restore the MAD values
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0RankCnt,    GetSetMode, &SavedValues->Subch0RankCnt[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1RankCnt,    GetSetMode, &SavedValues->Subch1RankCnt[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0SdramWidth, GetSetMode, &SavedValues->Subch0SdramWidth[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1SdramWidth, GetSetMode, &SavedValues->Subch1SdramWidth[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0Density,    GetSetMode, &SavedValues->Subch0Density[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1Density,    GetSetMode, &SavedValues->Subch1Density[Controller][Channel]);
       }
-      // Backup / Restore the MAD values
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0RankCnt,    GetSetMode, &SavedValues->Subch0RankCnt[Controller][Channel]);
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1RankCnt,    GetSetMode, &SavedValues->Subch1RankCnt[Controller][Channel]);
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0SdramWidth, GetSetMode, &SavedValues->Subch0SdramWidth[Controller][Channel]);
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1SdramWidth, GetSetMode, &SavedValues->Subch1SdramWidth[Controller][Channel]);
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0Density,    GetSetMode, &SavedValues->Subch0Density[Controller][Channel]);
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1Density,    GetSetMode, &SavedValues->Subch1Density[Controller][Channel]);
     }
-  }
-  if (SaveOrRestore == MrcSaveEnum) {
-    SavedValues->Mc5_Control = MrcCall->MrcReadMsr64 (MRC_MSR_IA32_MC5_CTL);
-    MrcCall->MrcWriteMsr64 (MRC_MSR_IA32_MC5_CTL, 0);
-  } else {
-    MrcCall->MrcWriteMsr64 (MRC_MSR_IA32_MC5_STATUS, 0);
-    MrcCall->MrcWriteMsr64 (MRC_MSR_IA32_MC5_MISC, 0);
-    MrcCall->MrcWriteMsr64 (MRC_MSR_IA32_MC5_CTL, SavedValues->Mc5_Control);
-  }
 }

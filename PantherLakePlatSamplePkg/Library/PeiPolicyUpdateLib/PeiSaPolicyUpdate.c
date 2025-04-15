@@ -361,6 +361,7 @@ UpdatePeiSaPolicy (
 #endif
       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[Index],TcssPeiConfig->UsbConfig.PortUsb30[Index].OverCurrentPin, USB_OC_SKIP);
       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.TcssCpuUsbPdoProgramming,    TcssPeiConfig->UsbConfig.PdoProgramming, TRUE);
+      UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciUaolEnable,           TcssPeiConfig->UsbConfig.UaolEnable, TRUE);
     }
   }
 #endif

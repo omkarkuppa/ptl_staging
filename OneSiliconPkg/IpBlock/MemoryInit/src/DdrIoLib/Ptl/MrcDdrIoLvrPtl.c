@@ -1130,10 +1130,8 @@ SetVccIo (
   if (Outputs->IsDdr5) {
     Outputs->VccIogVoltage = 800;
   } else {
-    if (Outputs->Frequency <= f7467) {
+    if (Outputs->Frequency <= f8533) {
       Outputs->VccIogVoltage = 750;
-    } else if (Outputs->Frequency <= f8533) {
-      Outputs->VccIogVoltage = 850;
     } else {
       Outputs->VccIogVoltage = 850;
     }
@@ -1170,7 +1168,7 @@ SetVccClk (
     if (DdrFrequency <= f7467) {
       VccClk = 750;
     } else if (DdrFrequency <= f8533) {
-      VccClk = 850;
+      VccClk = 780;
     } else {
       VccClk = 850;
     }

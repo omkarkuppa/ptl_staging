@@ -57,7 +57,7 @@
 #string STR_CPU_VR_SETTINGS                     #language en-US "CPU VR Settings"
 
 #string STR_CPU_ACOUSTIC_NOISE_FORM_TITLE       #language en-US "Acoustic Noise Settings"
-#string STR_CPU_ACOUSTIC_NOISE_FORM_TITLE_HELP  #language en-US "Configure Acoustic Noise Settings for IAcore, GT, SA and Ecore domains"
+#string STR_CPU_ACOUSTIC_NOISE_FORM_TITLE_HELP  #language en-US "Configure Acoustic Noise Settings for Core, GT, SA and LP-Ecore domains"
 #string STR_CPU_ACOUSTIC_NOISE_FORM_SETTINGS    #language en-US "Acoustic Noise Settings"
 
 #string STR_CPU_IA_VR_FORM_TITLE                #language en-US "Performance Core VR Settings"
@@ -808,21 +808,13 @@
 #string STR_HYST_WINDOW_ECORE                   #language en-US "Ecore Hysteresis Window"
 #string STR_HYST_WINDOW_ECORE_HELP              #language en-US "Set the Hysteresis time in milliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
 
-#string STR_CPU_IA_DOMAIN                       #language en-US "IAcore VR Domain"
-#string STR_CPU_GT_DOMAIN                       #language en-US "GT VR Domain"
-#string STR_CPU_ATOM_DOMAIN                     #language en-US "Ecore VR Domain"
-
-#string STR_IA_FAST_PKG_C_RAMP_DISABLE          #language en-US "Disable Fast PKG C State Ramp for IAcore Domain"
-#string STR_GT_FAST_PKG_C_RAMP_DISABLE          #language en-US "Disable Fast PKG C State Ramp for GT Domain"
-#string STR_ATOM_FAST_PKG_C_RAMP_DISABLE        #language en-US "Disable Fast PKG C State Ramp for Ecore Domain"
+#string STR_FAST_PKG_C_RAMP_DISABLE             #language en-US "Disable Fast PKG C State Ramp"
 #string STR_FAST_PKG_C_RAMP_DISABLE_HELP        #language en-US "This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state"
 
-#string STR_IA_SLOW_SLEW_RATE_CONFIG            #language en-US "Slow Slew Rate for IAcore Domain"
-#string STR_IA_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR IAcore Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4 to slow down the slew rate to help minimize acoustic noise; divide by 8 and 16 are disabled"
-#string STR_GT_SLOW_SLEW_RATE_CONFIG            #language en-US "Slow Slew Rate for GT Domain"
+#string STR_SLOW_SLEW_RATE_CONFIG               #language en-US "Slow Slew Rate"
+#string STR_IA_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR Core Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4 to slow down the slew rate to help minimize acoustic noise; divide by 8 and 16 are disabled"
 #string STR_GT_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR GT Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4, 8 to slow down the slew rate to help minimize acoustic noise; divide by 16 is disabled"
-#string STR_ATOM_SLOW_SLEW_RATE_CONFIG          #language en-US "Slow Slew Rate for Ecore Domain"
-#string STR_ATOM_SLOW_SLEW_RATE_CONFIG_HELP     #language en-US "Set VR Ecore Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4 to slow down the slew rate to help minimize acoustic noise; divide by 8 and 16 are disabled"
+#string STR_ATOM_SLOW_SLEW_RATE_CONFIG_HELP     #language en-US "Set VR ATOM Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4 to slow down the slew rate to help minimize acoustic noise; divide by 8 and 16 are disabled"
 
 #string STR_FAST_2                              #language en-US "Fast/2"
 #string STR_FAST_4                              #language en-US "Fast/4"

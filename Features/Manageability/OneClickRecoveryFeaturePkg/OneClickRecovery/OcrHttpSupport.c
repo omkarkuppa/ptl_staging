@@ -169,9 +169,7 @@ ConnectWifiController (
       }
     }
   }
-  if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
-  }
+  FreePool (HandleBuffer);
   return;
 }
 
@@ -285,11 +283,8 @@ GetEthernetDevicePath (
       }
     }
   }
-
   DEBUG ((DEBUG_ERROR, "[%a] No Device Path Found\n", __FUNCTION__));
-  if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
-  }
+  FreePool (HandleBuffer);
   return EFI_NOT_FOUND;
 }
 

@@ -3206,28 +3206,3 @@ PtlPcdPPsfConfigurePowerManagement (
     PsfDev->Access->AndThenOr32 (PsfDev->Access, R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG, DataAnd32, DataOr32);
   }
 }
-
-/**
-  Program hysteresis value for trunk clock gating on PSF6.
-  Value should be set to 0x9c4.
-**/
-VOID
-PtlPcdPPsfConfigureClkreqHys (
-  VOID
-  )
-{
-  P2SB_CONTROLLER                P2SbController;
-  P2SB_SIDEBAND_REGISTER_ACCESS  RegisterAccess;
-
-  BuildPsfP2SbAccess (
-    6,
-    &P2SbController,
-    &RegisterAccess
-    );
-
-  RegisterAccess.Access.Write32 (
-    &RegisterAccess.Access,
-    R_PSF_PCR_PSF_X_PSF_CLKREQ_HYS,
-    0x9c4
-    );
-}

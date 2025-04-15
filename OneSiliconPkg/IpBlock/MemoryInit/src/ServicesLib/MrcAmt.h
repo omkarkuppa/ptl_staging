@@ -52,6 +52,10 @@ typedef enum {
   AmtMmrwTestPattern3 = 0x778503
 } MRC_AMT_MMRW_TEST_PATTERN_TYPE;
 
+// Mem test type selection and overrides
+// PprTestType setup option encoding -- Bit 0: WCMATS8 test, Bit 1: Data Retention test, Bit 2: X March test, Bit 3: X March G test, Bit 4: Y March Short test, Bit 5: Y March Long test
+#define PPR_TEST_TYPE_OVERRIDE                            (0x0)
+
 // Definition used with AmtCheckTestResults
 // cpgcErrorStatus parameter
 //
@@ -272,8 +276,8 @@ Cpgc20SetDataControl (
 **/
 void
 AmtSetBaseAddressControl (
-  IN  MrcParameters *const MrcData,
-  IN PprTestTypeOffset     TestType
+  IN  MrcParameters *const      MrcData,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   );
 
 /**

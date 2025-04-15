@@ -75,7 +75,6 @@ typedef struct {
   INT64 Subch1SdramWidth[MAX_CONTROLLER][MAX_CHANNEL];
   INT64 Subch0Density[MAX_CONTROLLER][MAX_CHANNEL];
   INT64 Subch1Density[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT64 Mc5_Control;
 } MRC_MC_AD_SAVE;
 
 typedef enum {

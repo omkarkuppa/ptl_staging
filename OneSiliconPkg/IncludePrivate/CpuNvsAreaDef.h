@@ -320,7 +320,6 @@ typedef struct {
   UINT8    ThETAIbattEnable;                        ///< Offset 330     Enable/Disable ThETA Ibatt Feature
   UINT8    IsysLimitL1Enable;                       ///< Offset 331     Enable/Disable Isys Limit L1 Feature
   UINT8    IsysLimitL2Enable;                       ///< Offset 332     Enable/Disable Isys Limit L2 Feature
-  UINT8    TurboMode;                               ///< Offset 333     Enable/Disable Turbo Mode
 } CPU_NVS_AREA;
 
 #pragma pack(pop)

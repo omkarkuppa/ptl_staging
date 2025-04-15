@@ -728,7 +728,7 @@ Scope (\_SB.PC00) {
     // Device Reset to the remapped port PCIe slot
     // Arg0  Storage remap port type
     // Arg1  Index of the storage remap port
-    // Arg2  Indicates Reset Method : Assert - 1  ,  De-Assert - 0
+    // Arg2  Indicates Reset Method : Assert - 0  ,  De-Assert - 1
     //
     Method (VDRA, 3, Serialized) {
       Switch (ToInteger (Arg0)) {

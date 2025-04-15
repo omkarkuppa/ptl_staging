@@ -325,6 +325,9 @@
 //
 // FVM control
 //
+#define KEY_CoreVrEnableFastVmode                 4290
+#define KEY_GtVrEnableFastVmode                   4291
+#define KEY_SaVrEnableFastVmode                   4292
 #define KEY_IccLimit0                             4293
 #define KEY_IccLimit1                             4294
 #define KEY_IccLimit2                             4295
@@ -343,6 +346,7 @@
 #define MEM_THERMMGT_FORM_ID                      4328
 #define MEMORY_CONFIG_PPR_ADV_FORM_ID             4341
 #define MEMORY_CONFIG_PPR_FORM_ID                 4337
+#define KEY_PPR_REPAIR_PHYSICAL_ADDRESS           4338
 
 #define MEM_OFFSET_KNOBS_FORM_ID                  5037
 #define CPU_MEMORY_CAP_FORM_ID                    4325

@@ -282,34 +282,23 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.VoltageReadout         = FspmUpd->FspmConfig.VoltageReadout;
   MemConfig->ExternalInputs.MrcTimeMeasure         = FspmUpd->FspmConfig.MrcTimeMeasure;
   MemConfig->ExternalInputs.DvfscEnabled           = FspmUpd->FspmConfig.DvfscEnabled;
+  MemConfig->ExternalInputs.PprTestType            = FspmUpd->FspmConfig.PprTestType;
   MemConfig->ExternalInputs.DFETap1StepSize            = FspmUpd->FspmConfig.DFETap1StepSize;
   MemConfig->ExternalInputs.DFETap2StepSize            = FspmUpd->FspmConfig.DFETap2StepSize;
-
-  for (Index = 0; Index < PPR_REQUEST_MAX; Index++) {
-    MemConfigNoCrc->PprEntryInfo[Index].PprValid      = ((MRC_PPR_ENTRY_INFO *)(FspmUpd->FspmConfig.PprEntryInfo))[Index].PprValid;
-    MemConfigNoCrc->PprEntryAddress[Index].Controller = ((MRC_PPR_ENTRY_ADDRESS *)(FspmUpd->FspmConfig.PprEntryAddress))[Index].Controller;
-    MemConfigNoCrc->PprEntryAddress[Index].Channel    = ((MRC_PPR_ENTRY_ADDRESS *)(FspmUpd->FspmConfig.PprEntryAddress))[Index].Channel;
-    MemConfigNoCrc->PprEntryAddress[Index].Rank       = ((MRC_PPR_ENTRY_ADDRESS *)(FspmUpd->FspmConfig.PprEntryAddress))[Index].Rank;
-    MemConfigNoCrc->PprEntryAddress[Index].BankGroup  = ((MRC_PPR_ENTRY_ADDRESS *)(FspmUpd->FspmConfig.PprEntryAddress))[Index].BankGroup;
-    MemConfigNoCrc->PprEntryAddress[Index].Bank       = ((MRC_PPR_ENTRY_ADDRESS *)(FspmUpd->FspmConfig.PprEntryAddress))[Index].Bank;
-    MemConfigNoCrc->PprEntryAddress[Index].Row        = ((MRC_PPR_ENTRY_ADDRESS *)(FspmUpd->FspmConfig.PprEntryAddress))[Index].Row;
-    MemConfigNoCrc->PprEntryAddress[Index].Device     = ((MRC_PPR_ENTRY_ADDRESS *)(FspmUpd->FspmConfig.PprEntryAddress))[Index].Device;
-  }
-
-  MemConfigNoCrc->PprTestType.Bits.WcMats8       = FspmUpd->FspmConfig.PprRunWCHMATS8;
-  MemConfigNoCrc->PprTestType.Bits.DataRetention = FspmUpd->FspmConfig.PprRunRetention;
-  MemConfigNoCrc->PprTestType.Bits.XMarch        = FspmUpd->FspmConfig.PprRunXMarch;
-  MemConfigNoCrc->PprTestType.Bits.XMarchG       = FspmUpd->FspmConfig.PprRunXMarchG;
-  MemConfigNoCrc->PprTestType.Bits.YMarchShort   = FspmUpd->FspmConfig.PprRunYMarchShort;
-  MemConfigNoCrc->PprTestType.Bits.YMarchLong    = FspmUpd->FspmConfig.PprRunYMarchLong;
-  MemConfigNoCrc->PprTestType.Bits.Mmrw          = FspmUpd->FspmConfig.PprRunMmrw;
-  MemConfigNoCrc->PprTestType.Bits.TestDisabled  = FspmUpd->FspmConfig.PprTestDisabled;
-
-  MemConfigNoCrc->PprRepairType                  = FspmUpd->FspmConfig.PprRepairType;
-  MemConfigNoCrc->PprRunOnce                     = FspmUpd->FspmConfig.PprRunOnce;
-  MemConfigNoCrc->PprErrorInjection              = FspmUpd->FspmConfig.PprErrorInjection;
-  MemConfigNoCrc->PprForceRepair                 = FspmUpd->FspmConfig.PprForceRepair;
-
+  MemConfig->ExternalInputs.PprRepairType          = FspmUpd->FspmConfig.PprRepairType;
+  MemConfig->ExternalInputs.PprRunOnce             = FspmUpd->FspmConfig.PprRunOnce;
+  MemConfig->ExternalInputs.PprRunAtFastboot       = FspmUpd->FspmConfig.PprRunAtFastboot;
+  MemConfig->ExternalInputs.PprErrorInjection      = FspmUpd->FspmConfig.PprErrorInjection;
+  MemConfig->ExternalInputs.PprRepairPhysicalAddrLow = FspmUpd->FspmConfig.PprRepairPhysicalAddrLow;
+  MemConfig->ExternalInputs.PprRepairPhysicalAddrHigh = FspmUpd->FspmConfig.PprRepairPhysicalAddrHigh;
+  MemConfig->ExternalInputs.PprRepairRow           = FspmUpd->FspmConfig.PprRepairRow;
+  MemConfig->ExternalInputs.PprRepairController    = FspmUpd->FspmConfig.PprRepairController;
+  MemConfig->ExternalInputs.PprRepairChannel       = FspmUpd->FspmConfig.PprRepairChannel;
+  MemConfig->ExternalInputs.PprRepairDimm          = FspmUpd->FspmConfig.PprRepairDimm;
+  MemConfig->ExternalInputs.PprRepairRank          = FspmUpd->FspmConfig.PprRepairRank;
+  MemConfig->ExternalInputs.PprRepairBankGroup     = FspmUpd->FspmConfig.PprRepairBankGroup;
+  MemConfig->ExternalInputs.PprRepairBank          = FspmUpd->FspmConfig.PprRepairBank;
+  MemConfig->ExternalInputs.PprForceRepair         = FspmUpd->FspmConfig.PprForceRepair;
   MemConfig->ExternalInputs.BoardDetails.BoardStackUp = FspmUpd->FspmConfig.BoardStackUp;
   MemConfig->ExternalInputs.BoardDetails.BoardTopology = FspmUpd->FspmConfig.BoardTopology;
   MemConfig->ExternalInputs.DprLock                = FspmUpd->FspmConfig.DprLock;
@@ -434,6 +423,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables3.PHASECLKCAL            = FspmUpd->FspmConfig.PHASECLKCAL;
   MemConfig->ExternalInputs.TrainingEnables3.TXDQSDCC               = FspmUpd->FspmConfig.TXDQSDCC;
   MemConfig->ExternalInputs.TrainingEnables3.RXVREFPERBIT           = FspmUpd->FspmConfig.RXVREFPERBIT;
+  MemConfig->ExternalInputs.TrainingEnables3.PPR                    = FspmUpd->FspmConfig.PPR;
   MemConfig->ExternalInputs.TrainingEnables3.LVRAUTOTRIM            = FspmUpd->FspmConfig.LVRAUTOTRIM;
   MemConfig->ExternalInputs.TrainingEnables3.OPTIMIZECOMP           = FspmUpd->FspmConfig.OPTIMIZECOMP;
   MemConfig->ExternalInputs.TrainingEnables3.WRTRETRAIN             = FspmUpd->FspmConfig.WRTRETRAIN;
@@ -494,7 +484,6 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables2.WRTDIMMDFE              = FspmUpd->FspmConfig.WRTDIMMDFE;
   MemConfig->ExternalInputs.TrainingEnables2.DDR5ODTTIMING           = FspmUpd->FspmConfig.DDR5ODTTIMING;
   MemConfig->ExternalInputs.TrainingEnables2.RDVREFDC                = FspmUpd->FspmConfig.RDVREFDC;
-  MemConfig->ExternalInputs.TrainingEnables2.RDTCIDLE                = FspmUpd->FspmConfig.RDTCIDLE;
   MemConfig->ExternalInputs.TrainingEnables2.RMTBIT                  = FspmUpd->FspmConfig.RMTBIT;
   MemConfig->ExternalInputs.TrainingEnables2.REFPI                   = FspmUpd->FspmConfig.REFPI;
   MemConfig->ExternalInputs.TrainingEnables2.DATAPILIN               = FspmUpd->FspmConfig.DATAPILIN;

@@ -985,19 +985,12 @@ DomainPcieInstSingleInit (
   }
 
   LcapCfg.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
-
   MaxLinkSpeed = MIN ((UINT8)LcapCfg.Bits.mls, DevInfo.MaxLinkSpeed);
+
   if (pInst->PcieRpCommonConfig.EnableDtr) {
     MaxLinkSpeed = PcieDtrSpeedDetermine (pInst, MaxLinkSpeed);
   }
-  //
-  // Copy minimum of RootPortMaxSpeed and EndPointMaxSpeed to config block
-  // Need to pass this details to IpPcieRpSpeedChangeEnd
-  //
-  pInst->PcieRpCommonConfig.PcieSpeed = MaxLinkSpeed;
-
   IpPcieRpSpeedChangeStart (pInst, MaxLinkSpeed);
-
   TimeStampAfterPcieLinkRetrainSet = GetTimeInNanoSecond (GetPerformanceCounter ());
 
   return pInst;

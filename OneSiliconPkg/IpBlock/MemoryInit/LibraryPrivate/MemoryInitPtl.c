@@ -50,7 +50,6 @@
 #include "MrcDdrIoComp.h"
 #include "CPlatformData.h"  // for PLATFORM_DATA and BDAT definitionss
 #include "MrcAmt.h" // For AMT_PPR_ENABLE
-#include "MrcPpr.h" // For MrcIsPprEnabled
 #include <Library/PeiVmdInitFruLib.h>
 
 //
@@ -219,7 +218,7 @@ InstallMrcCallback (
 #ifndef NO_MRC
   EFI_STATUS                    Status;
   MRC_INSTANCE                  *MrcInstance;
-  SI_PREMEM_POLICY              *SiPreMemPolicy;
+  SI_PREMEM_POLICY_PPI          *SiPreMemPolicyPpi;
   TXT_PREMEM_CONFIG             *TxtPreMemConfig;
 
   DEBUG ((DEBUG_INFO, "[InstallMrcCallback] MRC Entry...\n"));
@@ -230,12 +229,12 @@ InstallMrcCallback (
              &gSiPreMemPolicyPpiGuid,
              0,
              NULL,
-             (VOID **) &SiPreMemPolicy
+             (VOID **) &SiPreMemPolicyPpi
              );
   ASSERT_EFI_ERROR (Status);
 
   TxtPreMemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gTxtPreMemConfigGuid, (VOID *) &TxtPreMemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTxtPreMemConfigGuid, (VOID *) &TxtPreMemConfig);
   ASSERT_EFI_ERROR(Status);
 
   //
@@ -503,7 +502,7 @@ MrcDisableFailingChannels (
 /**
   Main starting point for system memory initialization.
     - 1. Get SysBootMode and MrcBootMode
-    - 2. Locate SiPreMemPolicy
+    - 2. Locate SiPreMemPolicyPpi
     - 3. Locate S3DataPtr from MiscPeiPreMemConfig.
     - 4. SaveDataValid := TRUE if S3DataPtr is not NULL.
     - 5. If SysBootMode is BOOT_ON_S3_RESUME and S3Data is not valid:
@@ -534,7 +533,7 @@ PeimMemoryInit (
   MRC_INSTANCE                 *MrcInstance
   )
 {
-  SI_PREMEM_POLICY             *SiPreMemPolicy;
+  SI_PREMEM_POLICY_PPI         *SiPreMemPolicyPpi;
   MEMORY_CONFIGURATION         *MemConfig;
   MEMORY_CONFIG_NO_CRC         *MemConfigNoCrc;
   MEMORY_PLATFORM_DATA_HOB     *Hob;
@@ -628,36 +627,36 @@ PeimMemoryInit (
   //
   // Obtain policy settings.
   //
-  SiPreMemPolicy = NULL;
-  Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicy);
+  SiPreMemPolicyPpi = NULL;
+  Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicyPpi);
   ASSERT_EFI_ERROR (Status);
-  if (SiPreMemPolicy == NULL) {
+  if (SiPreMemPolicyPpi == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   MemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigGuid, (VOID *) &MemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
   ASSERT_EFI_ERROR (Status);
   if (MemConfig == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   MemConfigNoCrc = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
   ASSERT_EFI_ERROR (Status);
   if (MemConfigNoCrc == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   SiPreMemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (SiPreMemConfig == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   IGpuPreMemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (IGpuPreMemConfig == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -676,9 +675,10 @@ PeimMemoryInit (
   DEBUG ((DEBUG_INFO, "SafeLoadingBiosEnableState: %x, PprRecoveryStatusEnable: %x\n",
     MemConfigNoCrc->SafeLoadingBiosEnableState, MemConfigNoCrc->PprRecoveryStatusEnable == 1));
   if ((MemConfigNoCrc->SafeLoadingBiosEnableState == 1) && (MemConfigNoCrc->PprRecoveryStatusEnable == 1)) {
-    // Trigger to get Status of MRC PPR
-    MemConfigNoCrc->PprTestType.Bits.XMarch = 1;
-    MemConfigNoCrc->PprRepairType = hPPR;
+    //
+    // Trigger the MRC PprEnable policy to get Status of MRC PPR
+    //
+    MemConfig->ExternalInputs.TrainingEnables3.PPR = 1;
   }
 
   //
@@ -686,6 +686,21 @@ PeimMemoryInit (
   // Input->ExtInputs points to the MemConfig and will break the raw data of MemConfig
   //
   Inputs->SaMemCfgCrc = MrcCalculateCrc32((UINT8 *)MemConfig, sizeof (MEMORY_CONFIGURATION));
+
+  // Unset MemConfig->ExternalInputs.PPR, MEMORY_CONFIGURATION CRC should not
+  // be calculated with this bit set, when it is non-zero. PPR Enable will only run once
+  ExtInputs->PprRepairPhysicalAddrLow = 0;
+  ExtInputs->PprRepairPhysicalAddrHigh = 0;
+  if (MemConfig->ExternalInputs.TrainingEnables3.PPR != 0) {
+    Inputs->PprEnable = TRUE;
+    if ((MemConfig->ExternalInputs.PprRunOnce != 0) && (MemConfig->ExternalInputs.PprRunAtFastboot == 0)) {
+      MemConfig->ExternalInputs.TrainingEnables3.PPR = 0;
+    }
+    ExtInputs->PprRepairPhysicalAddrLow = MemConfig->ExternalInputs.PprRepairPhysicalAddrLow;
+    MemConfig->ExternalInputs.PprRepairPhysicalAddrLow = 0;
+    ExtInputs->PprRepairPhysicalAddrHigh = MemConfig->ExternalInputs.PprRepairPhysicalAddrHigh;
+    MemConfig->ExternalInputs.PprRepairPhysicalAddrHigh = 0;
+  }
 
   Inputs->SaMemCfgCrcForSave = MrcCalculateCrc32((UINT8 *)MemConfig, sizeof (MEMORY_CONFIGURATION));
 
@@ -1030,13 +1045,10 @@ DEBUG_CODE_END();
                        MrcData,
                        MemConfig,
                        MemConfigNoCrc,
-                       SiPreMemPolicy,
+                       SiPreMemPolicyPpi,
                        DidPreviousTrainingFail
                        );
   PERF_INMODULE_END ("MrcSetupMrcData");
-
-  //  This shall be evaluated after MrcSetupMrcData is done
-  Inputs->PprEnable = MrcIsPprEnabled (MrcData);
 
   //
   // Initialize MeStolenSize to 0 before we retrieving from ME FW.
@@ -1166,7 +1178,7 @@ DEBUG_CODE_END();
                                MrcData,
                                MemConfig,
                                MemConfigNoCrc,
-                               SiPreMemPolicy,
+                               SiPreMemPolicyPpi,
                                DidPreviousTrainingFail
                                );
         } else {
@@ -1290,7 +1302,7 @@ DEBUG_CODE_END();
   //
   // Set MEM_CONFIG_DONE
   //
-  PeiMemorySubSystemInit (SiPreMemPolicy, MrcData);
+  PeiMemorySubSystemInit (SiPreMemPolicyPpi, MrcData);
   // Restore Inputs->TsegSize
   Inputs->TsegSize = SavedTsegSize;
 
@@ -1476,7 +1488,7 @@ InstallEfiMemory (
   EFI_PHYSICAL_ADDRESS                  BadMemoryAddress;
   EFI_RESOURCE_TYPE                     ResourceType;
   EFI_RESOURCE_ATTRIBUTE_TYPE           ResourceAttribute;
-  SI_PREMEM_POLICY                      *SiPreMemPolicy;
+  SI_PREMEM_POLICY_PPI                  *SiPreMemPolicyPpi;
   MEMORY_CONFIG_NO_CRC                  *MemConfigNoCrc;
   EFI_RESOURCE_ATTRIBUTE_TYPE           ResourceAttributeTested;
   UINT64                                TopMemSize;
@@ -1534,17 +1546,17 @@ InstallEfiMemory (
   //
   PeiMemoryLength = 0;
   RequiredMemSize = 0;
-  SiPreMemPolicy = NULL;
+  SiPreMemPolicyPpi = NULL;
   Status = PeiServicesLocatePpi (
              &gSiPreMemPolicyPpiGuid,
              0,
              NULL,
-             (VOID **) &SiPreMemPolicy
+             (VOID **) &SiPreMemPolicyPpi
              );
 
   SiPreMemConfig = NULL;
-  if (SiPreMemPolicy != NULL) {
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
+  if (SiPreMemPolicyPpi != NULL) {
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
     if (Status != EFI_SUCCESS) {
       DEBUG ((DEBUG_ERROR, "Unable to Get gSiPreMemConfigGuid block\n"));
       ASSERT_EFI_ERROR (Status);
@@ -1552,8 +1564,8 @@ InstallEfiMemory (
   }
 
   MemConfigNoCrc = NULL;
-  if (SiPreMemPolicy != NULL) {
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+  if (SiPreMemPolicyPpi != NULL) {
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
     if (Status != EFI_SUCCESS) {
       DEBUG ((DEBUG_ERROR, "Unable to Get gMemoryConfigNoCrcGuid block\n"));
       MemConfigNoCrc = NULL;
@@ -1633,7 +1645,7 @@ InstallEfiMemory (
 
   ASSERT_EFI_ERROR (Status);
 
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemorySubSystemConfigGuid, (VOID *) &MemorySubSystemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemorySubSystemConfigGuid, (VOID *) &MemorySubSystemConfig);
   if (Status != EFI_SUCCESS) {
     ASSERT_EFI_ERROR (Status);
   }
@@ -2047,7 +2059,7 @@ InstallEfiMemory (
     //
     // GSM2 allocation
     //
-    IGpuGsm2Allocation(SiPreMemPolicy, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
+    IGpuGsm2Allocation(SiPreMemPolicyPpi, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
     DEBUG((DEBUG_INFO, "[Post GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
@@ -2176,7 +2188,7 @@ GetMemoryMap (
   EFI_STATUS                   Status;
   UINT32                       SmramMask;
   UINT8                        Index;
-  SI_PREMEM_POLICY             *SiPreMemPolicy;
+  SI_PREMEM_POLICY_PPI         *SiPreMemPolicyPpi;
   MEMORY_CONFIGURATION         *MemConfig;
   IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig;
   UINT32                       GraphicsStolenSizeInMb;
@@ -2205,23 +2217,23 @@ GetMemoryMap (
   // Get platform memory range service
   //
   SmramMask = 0;
-  SiPreMemPolicy = NULL;
+  SiPreMemPolicyPpi = NULL;
   IGpuPreMemConfig = NULL;
   MemConfigNoCrc = NULL;
   Status = PeiServicesLocatePpi (
              &gSiPreMemPolicyPpiGuid,
              0,
              NULL,
-             (VOID **) &SiPreMemPolicy
+             (VOID **) &SiPreMemPolicyPpi
              );
   ASSERT_EFI_ERROR (Status);
 
-  if (SiPreMemPolicy != NULL) {
+  if (SiPreMemPolicyPpi != NULL) {
     MemConfig = NULL;
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigGuid, (VOID *) &MemConfig);
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
     ASSERT_EFI_ERROR (Status);
 
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
     ASSERT_EFI_ERROR (Status);
 
     if (MemConfig != NULL) {
@@ -2232,7 +2244,7 @@ GetMemoryMap (
     }
 
     if (IGpuIsSupported ()) {
-      Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
+      Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
       ASSERT_EFI_ERROR (Status);
 
       if (IGpuPreMemConfig != NULL) {
@@ -2797,6 +2809,11 @@ ColdBootRequired (
         ));
       RetVal = TRUE;
 
+      // TODO: PPR input policy should move to MEMORY_CONFIG_NO_CRC, and then SaMemCfgCrcForSave should be cleaned up
+      // if (Inputs->SaMemCfgCrc != Inputs->SaMemCfgCrcForSave) {
+      //   RetVal = TRUE;
+      // }
+
       // Check if McRegisterOffset is the only input parameter change if McRegisterOffset training function is enabled.
       // TODO: move MCREGOFFSET to MEMORY_CONFIG_NO_CRC and clean up this code
       if (MemConfig->ExternalInputs.MCREGOFFSET) {
@@ -2947,7 +2964,7 @@ MrcGetSkuType (
   @param[in]  MrcData             - Pointer to the MRC global data structure
   @param[in]  MemConfig           - MEMORY_CONFIGURATION structure.
   @param[in]  MemConfigNoCrc      - MEMORY_CONFIG_NO_CRC structure.
-  @param[in]  SiPreMemPolicy      - The SI Pre-Mem Policy instance.
+  @param[in]  SiPreMemPolicyPpi   - The SI Pre-Mem Policy PPI instance.
 
   @retval  Updated MRC_BOOT_MODE
 **/
@@ -2958,7 +2975,7 @@ MrcSetupMrcData (
   OUT      MrcParameters              *CONST MrcData,
   IN       MEMORY_CONFIGURATION       *CONST MemConfig,
   IN       MEMORY_CONFIG_NO_CRC       *CONST MemConfigNoCrc,
-  IN       SI_PREMEM_POLICY           *CONST SiPreMemPolicy,
+  IN       SI_PREMEM_POLICY_PPI       *CONST SiPreMemPolicyPpi,
   IN       BOOLEAN                    DidPreviousTrainingFail
   )
 {
@@ -3094,16 +3111,6 @@ DEBUG_CODE_END();
   Inputs->ErrorCountForFail = MRC_BER_ERROR_COUNTER_FOR_FAILURE;
   Inputs->BER = 1;
   ExtInputs->TrainTrace     = FALSE;
-
-  for (Index = 0; Index < PPR_REQUEST_MAX; Index++) {
-    Inputs->PprEntryInfo[Index] = MemConfigNoCrc->PprEntryInfo[Index];
-    Inputs->PprEntryAddress[Index] = MemConfigNoCrc->PprEntryAddress[Index];
-  }
-  Inputs->PprTestType.Value = MemConfigNoCrc->PprTestType.Value;
-  Inputs->PprRepairType     = MemConfigNoCrc->PprRepairType;
-  Inputs->PprRunOnce        = MemConfigNoCrc->PprRunOnce;
-  Inputs->PprErrorInjection = MemConfigNoCrc->PprErrorInjection;
-  Inputs->PprForceRepair    = MemConfigNoCrc->PprForceRepair;
 
   // LPDDR4: Bitmask of ranks that have CA bus terminated. Rank0 is terminating and Rank1 is non-terminating
   ExtInputs->CmdRanksTerminated = 0x01;
@@ -3501,8 +3508,7 @@ BuildMemoryInfoDataHob (
   UINT8                PartNumberOffset;
   UINT8                ModulePartLength;
   UINT8                NumChannelsPopulated;
-  UINT8                NumSubChannels;
-  UINT32               PartNumberLength;
+  UINT8                NumOfChannels;
   BOOLEAN              IsChannelPopulated;
   BOOLEAN              IsDdr5;
   SPD5_MODULE_MEMORY_BUS_WIDTH  MemoryBusWidthDdr5;
@@ -3523,7 +3529,7 @@ BuildMemoryInfoDataHob (
   MrcCall  = Inputs->Call.Func;
   ExtInputs = Inputs->ExtInputs.Ptr;
   NumChannelsPopulated = 0;
-  NumSubChannels       = 0;
+  NumOfChannels        = 0;
   IsChannelPopulated = FALSE;
   IsDdr5             = FALSE;
 
@@ -3543,7 +3549,7 @@ BuildMemoryInfoDataHob (
   ZeroMem ((VOID *) MemoryInfo, sizeof (MEMORY_INFO_DATA_HOB));
 
   MrcVersionGet (MrcData, (MrcVersion *) &MemoryInfo->Version);
-  MemoryInfo->Revision = 0x03;
+  MemoryInfo->Revision = 0x01;
   OdtDimmMask = 0;
   switch (Outputs->DdrType) {
     case MRC_DDR_TYPE_DDR5:
@@ -3572,8 +3578,6 @@ BuildMemoryInfoDataHob (
   }
   MemoryInfo->EccSupport              = Outputs->EccSupport;
   MemoryInfo->TotalPhysicalMemorySize = Outputs->MemoryMapData.TotalPhysicalMemorySize;
-  // Max Rank Capacity comes from MC HAS: 16GB in DDR5 and 8GB in LP5
-  MemoryInfo->MaxRankCapacity = Outputs->IsDdr5 ? 16 : 8;
   MrcCall->MrcSetMem ((UINT8 *) &MemoryInfo->RcompTarget, sizeof (MemoryInfo->RcompTarget), 0);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
     MemoryInfo->VddVoltage[Profile]   = Outputs->VddVoltage[Profile];
@@ -3596,11 +3600,11 @@ BuildMemoryInfoDataHob (
   DEBUG ((DEBUG_INFO, "IsIbeccEnabled: %u\n", MemoryInfo->IsIbeccEnabled));
 
   AmtPprRanInLastBoot.Data = 0;
-  if ((Outputs->PprRunningState == PPR_IS_DONE) && ((Inputs->PprTestType.Value & MRC_PPR_ADV_ALGORITHM_TEST_MASK) != 0)) {
+  if ((Outputs->PprRunningState == PPR_IS_DONE) && (ExtInputs->PprTestType != 0)) {
     AmtPprRanInLastBoot.Bits.AmtEnabled = 1;
-  }
-  if ((Inputs->PprRepairType != 0) && (Outputs->PprNumDetectedErrors != 0)) {
-    AmtPprRanInLastBoot.Bits.PprEnabled = 1;
+    if (ExtInputs->PprRepairType != 0) {
+      AmtPprRanInLastBoot.Bits.PprEnabled = 1;
+    }
   }
   MemoryInfo->PprRanInLastBoot = AmtPprRanInLastBoot.Data;
 
@@ -3681,60 +3685,55 @@ BuildMemoryInfoDataHob (
         DimmInfo->BankGroups = DimmOut->BankGroups;
         DimmInfo->DeviceDensity = DimmOut->DeviceDensity;
 
-        Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
         if (Outputs->IsDdr5) {
-          DimmInfo->CkdMfgID.Data  = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.ManufacturerId.Data;
-          DimmInfo->CkdDeviceRev   = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.DeviceRevision;
-          DimmInfo->DramMfgID.Data = Spd->Ddr5.ManufactureInfo.DramIdCode.Data;
-          DimmInfo->SerialNumber   = Spd->Ddr5.ManufactureInfo.ModuleId.SerialNumber.Data;
-          PartNumberLength         = sizeof (SPD5_MODULE_PART_NUMBER);
-        } else if (Outputs->IsLP5Camm2) {
-          DimmInfo->DramMfgID.Data = Spd->JedecLpddr5.ManufactureInfo.DramIdCode.Data;
-          DimmInfo->SerialNumber   = Spd->JedecLpddr5.ManufactureInfo.ModuleId.SerialNumber.Data;
-          PartNumberLength         = sizeof (SPD5_MODULE_PART_NUMBER);
+          Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
+          DimmInfo->CkdMfgID     = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.ManufacturerId.Data;
+          DimmInfo->CkdDeviceRev = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.DeviceRevision;
+          DimmInfo->DramMfgID    = Spd->Ddr5.ManufactureInfo.DramIdCode.Data;
         } else {
+          Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
           // No clock driver for LP devices
-          DimmInfo->DramMfgID.Data = Spd->Lpddr.ManufactureInfo.DramIdCode.Data;
-          DimmInfo->SerialNumber   = Spd->Lpddr.ManufactureInfo.ModuleId.SerialNumber.Data;
-          PartNumberLength         = sizeof (SPD4_MODULE_PART_NUMBER);
+          DimmInfo->DramMfgID = Spd->Lpddr.ManufactureInfo.DramIdCode.Data;
         }
 
         // Copy the SPD before DIMM_PRESENT check, to show Vendor ID in Setup also for disabled DIMMs
         MrcCall->MrcCopyMem (&DimmInfo->SpdSave[0], &DimmSave->SpdSave[0], sizeof (DimmInfo->SpdSave));
-        DimmInfo->MfgId.Data8[0] = DimmSave->SpdSave[0];
-        DimmInfo->MfgId.Data8[1] = DimmSave->SpdSave[1];
         if ((DimmInfo->Status == DIMM_PRESENT) && (DimmInfo->DimmCapacity > 0)) {
           if (Channel == 0 || !IsDdr5) {
             DimmInfo->RankInDimm = DimmOut->RankInDimm;
+            DimmInfo->MfgId = ((DimmSave->SpdSave[1] << 8) |
+                              (DimmSave->SpdSave[0]));
             MrcCall->MrcCopyMem ((UINT8 *) &DimmInfo->ModulePartNum[0],
                                 (UINT8 *) &DimmSave->SpdSave[PartNumberOffset],
-                                PartNumberLength);
-            // Pad with spaces in case of LP5 memory down, which only uses 20 bytes
-            if (PartNumberLength < sizeof (SPD5_MODULE_PART_NUMBER)) {
-              MrcCall->MrcSetMem ((UINT8 *) &DimmInfo->ModulePartNum[sizeof (SPD4_MODULE_PART_NUMBER)], sizeof (SPD5_MODULE_PART_NUMBER) - PartNumberLength, ' ');
-            }
+                                sizeof (SPD4_MODULE_PART_NUMBER));
             DimmInfo->SpdDramDeviceType       = DimmSave->SpdDramDeviceType;
             DimmInfo->SpdModuleType           = DimmSave->SpdModuleType;
+            DimmInfo->SpdModuleMemoryBusWidth = DimmSave->SpdModuleMemoryBusWidth;
             DimmInfo->Speed                   = (UINT16) DimmOut->Speed;
-            MemoryBusWidthDdr5.Data           = DimmSave->SpdModuleMemoryBusWidth;
-            NumSubChannels                    = MemoryBusWidthDdr5.Bits.NumberOfChannels + 1;       // SPD encoding: 0: one channel, 1: two channels
-            // Double the bus width / bus width extension (ECC) if we have two channels - this only happens in case of DDR5
-            DimmInfo->DataWidth               = 8 * (1 << MemoryBusWidthDdr5.Bits.PrimaryBusWidth) * NumSubChannels;
-            DimmInfo->TotalWidth              = DimmInfo->DataWidth + (MemoryBusWidthDdr5.Bits.BusWidthExtension * 4 * NumSubChannels);
             if (Channel == 0 && IsDdr5) {
               //
               // In order to report the combined BusWidth and Capacity in Smbios Type17 table and Setup menu,
               // modify the dimm info in HOB according to the number of subchannels in DDR5 module
               //
-              DimmInfo->DimmCapacity *= NumSubChannels;  // Double the capacity if we have two channels
+              MemoryBusWidthDdr5.Data = DimmSave->SpdModuleMemoryBusWidth;
+              NumOfChannels = MemoryBusWidthDdr5.Bits.NumberOfChannels + 1;       // SPD encoding: 0: one channel, 1: two channels
+              MemoryBusWidthDdr5.Bits.PrimaryBusWidth += (NumOfChannels - 1);     // Double the bus width if we have two channels
+              if (MemoryBusWidthDdr5.Bits.BusWidthExtension != 0) {
+                MemoryBusWidthDdr5.Bits.BusWidthExtension += (NumOfChannels - 1); // Double the bus width extension (ECC) if we have two channels
+              }
+              DimmInfo->SpdModuleMemoryBusWidth = MemoryBusWidthDdr5.Data;
+              DimmInfo->DimmCapacity *= NumOfChannels;                            // Double the capacity if we have two channels
             }
-            DEBUG ((DEBUG_INFO, "MC%u C%u D%u:\n MfgId: 0x%X, DramMfgID: 0x%X\n NumSubChannels: %u, DataWidth: %u, TotalWidth: %u\n",
-              Controller, Channel, Dimm, DimmInfo->MfgId.Data, DimmInfo->DramMfgID.Data, NumSubChannels, DimmInfo->DataWidth, DimmInfo->TotalWidth));
-            DEBUG ((DEBUG_INFO, " DeviceDensity: %uGb, DimmCapacity: %u, CkdMfgID: 0x%X, CkdDeviceRev: %u, SerialNumber: 0x%X\n",
-              DimmInfo->DeviceDensity, DimmInfo->DimmCapacity, DimmInfo->CkdMfgID.Data, DimmInfo->CkdDeviceRev, DimmInfo->SerialNumber));
+            ///
+            /// Dimm is present in slot
+            /// Get the Memory DataWidth info
+            /// SPD Offset 8 Bits [2:0] DataWidth aka Primary Bus Width
+            ///
+            MemoryInfo->DataWidth = 8 * (1 << (DimmInfo->SpdModuleMemoryBusWidth & 0x07));
+            DEBUG ((DEBUG_INFO, "MC%u C%u D%u:\n DeviceDensity: %uGb, MfgId: 0x%X\n", Controller, Channel, Dimm, DimmInfo->DeviceDensity, DimmInfo->MfgId));
             DEBUG ((DEBUG_INFO, " Module Part Number: "));
-            for (ModulePartLength = 0; ModulePartLength < sizeof (SPD5_MODULE_PART_NUMBER); ModulePartLength++) {
-              DEBUG ((DEBUG_INFO, "%c", DimmInfo->ModulePartNum[ModulePartLength]));
+            for (ModulePartLength = 0; ModulePartLength < sizeof (SPD4_MODULE_PART_NUMBER); ModulePartLength++) {
+              DEBUG ((DEBUG_INFO, "%x ", DimmInfo->ModulePartNum[ModulePartLength]));
             }
             DEBUG ((DEBUG_INFO, "\n"));
             if (!IsChannelPopulated) {
@@ -3746,7 +3745,6 @@ BuildMemoryInfoDataHob (
             DimmInfo->Status = DIMM_NOT_PRESENT;
             DimmInfo->DimmCapacity = 0;
           }
-          MemoryInfo->TotalMemWidth += DimmInfo->DataWidth; // Track the total number of data bits in the system (without ECC)
 
           if (OdtDimmMask & (1 << Dimm)) {
             for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
@@ -3776,6 +3774,7 @@ BuildMemoryInfoDataHob (
 #endif
     }
   }
+  MemoryInfo->TotalMemWidth        = (NumChannelsPopulated * MemoryInfo->DataWidth);
   DEBUG ((DEBUG_INFO, "NumPopulatedChannels: %u, TotalMemWidth(bits): %u\n", MemoryInfo->NumPopulatedChannels, MemoryInfo->TotalMemWidth));
 
   // Copy Over the SaGvOutputs Data

@@ -480,7 +480,7 @@ CalcUpDnVref (
     case WrDSCtl:
     case WrDSClk:
     default:
-      DnVal = MRC_RCOMP_VREF_CALCULATION_VALUE / 2;
+      DnVal = 96;
       break;
   }
 

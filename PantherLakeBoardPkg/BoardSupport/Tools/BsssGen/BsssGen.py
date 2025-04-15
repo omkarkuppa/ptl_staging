@@ -24,11 +24,8 @@ import argparse
 import sys
 import re
 import os
-import struct
 from ctypes import *
-from functools import reduce
 import subprocess
-import copy
 from GetSecCoreEntry import GetSecCoreEntry
 
 __copyright__   = "INTEL CONFIDENTIAL \n Copyright (c) 2023, Intel Corporation. All rights reserved. "
@@ -39,7 +36,7 @@ FSP_PKG_REVISION   = 0x02
 SEARCH_CHUNK_SIZE  = 4096
 BSIS_VERSION       = 0x20
 BSSS_VERSION       = 0x10
-BSIS_MAX_LENGTH    = 1024
+BSIS_MAX_LENGTH    = 512
 TPM_BASE_ADDRESS   = 0xFED40000
 FSPT_UPD_SIGNATURE = "PTLUPD_T"
 BSIS_ID            = "__BSIS__"
@@ -227,316 +224,6 @@ class REGION_SEGMENT(Structure):
         print("Base:",  hex(self.Base))
         print("Size:",  hex(self.Size))
 
-class FspRegionDigestHeader(Structure):
-    _pack_ = 1
-    _fields_ = [
-        ('FspComponentId',            c_uint8),
-        ('Size',                      c_uint16),
-        ('Count',                     c_uint16)
-    ]
-
-FBM_COMPONENT_ID = {
-    "TO": 0x0,
-    "M" : 0X1,
-    "S" : 0x2,
-    "VS": 0xF,
-    }
-
-class EFI_FIRMWARE_VOLUME_HEADER(Structure):
-    _fields_ = [
-        ('ZeroVector',      ARRAY(c_uint8, 16)),
-        ('FileSystemGuid',  ARRAY(c_uint8, 16)),
-        ('FvLength',        c_uint64),
-        ('Signature',       ARRAY(c_char, 4)),
-        ('Attributes',      c_uint32),
-        ('HeaderLength',    c_uint16),
-        ('Checksum',        c_uint16),
-        ('ExtHeaderOffset', c_uint16),
-        ('Reserved',        c_uint8),
-        ('Revision',        c_uint8)
-        ]
-
-class GUID(Structure):
-    _fields_ = [
-        ('Guid1',           c_uint32),
-        ('Guid2',           c_uint16),
-        ('Guid3',           c_uint16),
-        ('Guid4',           ARRAY(c_uint8, 8)),
-        ]
-
-class EFI_FIRMWARE_VOLUME_EXT_HEADER(Structure):
-    _fields_ = [
-        ('FvName',          GUID),
-        ('ExtHeaderSize',   c_uint32),
-        ]
-
-class EFI_FFS_INTEGRITY_CHECK(Structure):
-    _fields_ = [
-        ('Header',          c_uint8),
-        ('File',            c_uint8)
-        ]
-
-class c_uint24(Structure):
-    """
-    Little-Endian 24-bit Unsigned Integer
-    """
-    _pack_   = 1
-    _fields_ = [('Data', (c_uint8 * 3))]
-
-    def __init__(self, val=0):
-        self.set_value(val)
-
-    def __str__(self, indent=0):
-        return '0x%.6x' % self.value
-
-    def __int__(self):
-        return self.get_value()
-
-    def set_value(self, val):
-        self.Data[0:3] = Val2Bytes(val, 3)
-
-    def get_value(self):
-        return Bytes2Val(self.Data[0:3])
-
-    value = property(get_value, set_value)
-
-class EFI_FFS_FILE_HEADER(Structure):
-    _fields_ = [
-        ('Name',                      ARRAY(c_uint8, 16)),
-        ('IntegrityCheck',            EFI_FFS_INTEGRITY_CHECK),
-        ('Type',                      c_uint8),
-        ('Attributes',                c_uint8),
-        ('Size',                      c_uint24),
-        ('State',                     c_uint8)
-        ]
-
-class EFI_COMMON_SECTION_HEADER(Structure):
-    _fields_ = [
-        ('Size',                      c_uint24),
-        ('Type',                      c_uint8)
-        ]
-
-class FSP_INFORMATION_HEADER(Structure):
-    _fields_ = [
-        ('Signature',                 ARRAY(c_char, 4)),
-        ('HeaderLength',              c_uint32),
-        ('Reserved1',                 c_uint16),
-        ('SpecVersion',               c_uint8),
-        ('HeaderRevision',            c_uint8),
-        ('ImageRevision',             c_uint32),
-        ('ImageId',                   ARRAY(c_char, 8)),
-        ('ImageSize',                 c_uint32),
-        ('ImageBase',                 c_uint32),
-        ('ImageAttribute',            c_uint16),
-        ('ComponentAttribute',        c_uint16),
-        ('CfgRegionOffset',           c_uint32),
-        ('CfgRegionSize',             c_uint32),
-        ('Reserved2',                 c_uint32),
-        ('TempRamInitEntryOffset',    c_uint32),
-        ('Reserved3',                 c_uint32),
-        ('NotifyPhaseEntryOffset',    c_uint32),
-        ('FspMemoryInitEntryOffset',  c_uint32),
-        ('TempRamExitEntryOffset',    c_uint32),
-        ('FspSiliconInitEntryOffset', c_uint32),
-        ('FspMultiPhaseSiInitEntryOffset', c_uint32),
-        ('ExtendedImageRevision',     c_uint16)
-    ]
-
-class FSP_COMMON_HEADER(Structure):
-    _fields_ = [
-        ('Signature',                 ARRAY(c_char, 4)),
-        ('HeaderLength',              c_uint32)
-        ]
-
-class FSP_PATCH_TABLE(Structure):
-    _fields_ = [
-        ('Signature',                 ARRAY(c_char, 4)),
-        ('HeaderLength',              c_uint16),
-        ('HeaderRevision',            c_uint8),
-        ('Reserved',                  c_uint8),
-        ('PatchEntryNum',             c_uint32)
-        ]
-
-def AlignPtr (offset, alignment = 8) -> int:
-    return (offset + alignment - 1) & ~(alignment - 1)
-
-def Bytes2Val (bytes):
-    return reduce(lambda x,y: (x<<8)|y,  bytes[::-1] )
-
-def Val2Bytes (value, blen):
-    return [(value>>(i*8) & 0xff) for i in range(blen)]
-
-class FirmwareFile:
-    def __init__(self, offset, filedata):
-        self.FfsHdr   = EFI_FFS_FILE_HEADER.from_buffer (filedata, 0)
-        self.FfsData  = filedata[0:int(self.FfsHdr.Size)]
-        self.Offset   = offset
-        self.SecList  = []
-
-    def ParseFfs(self):
-        ffssize = len(self.FfsData)
-        offset  = sizeof(self.FfsHdr)
-        if self.FfsHdr.Name != '\xff' * 16:
-            while offset < ffssize:
-                sechdr = EFI_COMMON_SECTION_HEADER.from_buffer (self.FfsData, offset)
-                sec = Section (offset, self.FfsData[offset:offset + int(sechdr.Size)])
-                self.SecList.append(sec)
-                offset += int(sechdr.Size)
-                offset = AlignPtr(offset, 4)
-
-class Section:
-    def __init__(self, offset, secdata):
-        self.SecHdr  = EFI_COMMON_SECTION_HEADER.from_buffer (secdata, 0)
-        self.SecData = secdata[0:int(self.SecHdr.Size)]
-        self.Offset  = offset
-
-class FirmwareVolume:
-    def __init__(self, Offset, FvData):
-        self.FvHdr  = EFI_FIRMWARE_VOLUME_HEADER.from_buffer (FvData, 0)
-        self.FvData = FvData[0 : self.FvHdr.FvLength]
-        self.Offset = Offset
-        if self.FvHdr.ExtHeaderOffset > 0:
-            self.FvExtHdr = EFI_FIRMWARE_VOLUME_EXT_HEADER.from_buffer (self.FvData, self.FvHdr.ExtHeaderOffset)
-        else:
-            self.FvExtHdr = None
-        self.FfsList = []
-
-    def ParseFv(self):
-        fvsize = len(self.FvData)
-        if self.FvExtHdr:
-            offset = self.FvHdr.ExtHeaderOffset + self.FvExtHdr.ExtHeaderSize
-        else:
-            offset = self.FvHdr.HeaderLength
-        offset = AlignPtr(offset)
-        while offset < fvsize:
-            ffshdr = EFI_FFS_FILE_HEADER.from_buffer (self.FvData, offset)
-            if (ffshdr.Name == '\xff' * 16) and (int(ffshdr.Size) == 0xFFFFFF):
-                offset = fvsize
-            else:
-                ffs = FirmwareFile (offset, self.FvData[offset:offset + int(ffshdr.Size)])
-                ffs.ParseFfs()
-                self.FfsList.append(ffs)
-                offset += int(ffshdr.Size)
-                offset = AlignPtr(offset)
-
-class EFI_SECTION_TYPE():
-    """Enumeration of all valid firmware file section types."""
-    ALL                        = 0x00
-    COMPRESSION                = 0x01
-    GUID_DEFINED               = 0x02
-    DISPOSABLE                 = 0x03
-    PE32                       = 0x10
-    PIC                        = 0x11
-    TE                         = 0x12
-    DXE_DEPEX                  = 0x13
-    VERSION                    = 0x14
-    USER_INTERFACE             = 0x15
-    COMPATIBILITY16            = 0x16
-    FIRMWARE_VOLUME_IMAGE      = 0x17
-    FREEFORM_SUBTYPE_GUID      = 0x18
-    RAW                        = 0x19
-    PEI_DEPEX                  = 0x1b
-    SMM_DEPEX                  = 0x1c
-
-class FspImage:
-    def __init__(self, offset, fih, fihoff, patch):
-        self.Fih       = fih
-        self.FihOffset = fihoff
-        self.Offset    = offset
-        self.FvIdxList = []
-        self.Type      = "XTMSXXXXOXXXXXXX"[(fih.ComponentAttribute >> 12) & 0x0F]
-        self.PatchList = patch
-        self.PatchList.append(fihoff + 0x1C)
-
-    def AppendFv(self, FvIdx):
-        self.FvIdxList.append(FvIdx)
-
-class FirmwareDevice:
-    def __init__(self, fdfile):
-        self.FvList  = []
-        self.FspList = []
-        self.FdFile  = fdfile
-        self.Offset  = 0
-        with open (self.FdFile, 'rb') as hfsp:
-            self.FdData = bytearray(hfsp.read())
-
-    def ParseFd(self):
-        offset = 0
-        fdsize = len(self.FdData)
-        self.FvList  = []
-        while offset < fdsize:
-            fvh = EFI_FIRMWARE_VOLUME_HEADER.from_buffer (self.FdData, offset)
-            if b'_FVH' != fvh.Signature:
-                raise Exception("ERROR: Invalid FV header !")
-            fv = FirmwareVolume (offset, self.FdData[offset:offset + fvh.FvLength])
-            fv.ParseFv ()
-            self.FvList.append(fv)
-            offset += fv.FvHdr.FvLength
-
-    def CheckFsp (self):
-        if len(self.FspList) == 0:
-            return
-
-        fih = None
-        for fsp in self.FspList:
-            if fsp.Fih.HeaderRevision < 3:
-                raise Exception("ERROR: FSP 1.x is not supported by this tool !")
-            if not fih:
-                fih = fsp.Fih
-            else:
-                newfih = fsp.Fih
-                if (newfih.ImageId != fih.ImageId) or (newfih.ImageRevision != fih.ImageRevision):
-                    raise Exception("ERROR: Inconsistent FSP ImageId or ImageRevision detected !")
-
-    def ParseFsp(self):
-        flen = 0
-        cnt  = 0
-        for idx, fv in enumerate(self.FvList):
-            # Check if this FV contains FSP header
-            if flen == 0:
-                if len(fv.FfsList) == 0:
-                    continue
-                ffs = fv.FfsList[0]
-                if len(ffs.SecList) == 0:
-                    continue
-                sec = ffs.SecList[0]
-                if sec.SecHdr.Type != EFI_SECTION_TYPE.RAW:
-                    continue
-                fihoffset = ffs.Offset + sec.Offset + sizeof(sec.SecHdr)
-                fspoffset = fv.Offset
-                offset    = fspoffset + fihoffset
-                fih = FSP_INFORMATION_HEADER.from_buffer (self.FdData, offset)
-                cnt += 1
-                if b'FSPH' != fih.Signature:
-                    continue
-
-                offset += fih.HeaderLength
-                offset = AlignPtr(offset, 4)
-                plist  = []
-                while True:
-                    fch = FSP_COMMON_HEADER.from_buffer (self.FdData, offset)
-                    if b'FSPP' != fch.Signature:
-                        offset += fch.HeaderLength
-                        offset = AlignPtr(offset, 4)
-                    else:
-                        fspp = FSP_PATCH_TABLE.from_buffer (self.FdData, offset)
-                        offset += sizeof(fspp)
-                        pdata  = (c_uint32 * fspp.PatchEntryNum).from_buffer(self.FdData, offset)
-                        plist  = list(pdata)
-                        break
-
-                fsp  = FspImage (fspoffset, fih, fihoffset, plist)
-                fsp.AppendFv (idx)
-                self.FspList.append(fsp)
-                flen = fsp.Fih.ImageSize - fv.FvHdr.FvLength
-            else:
-                fsp.AppendFv (idx)
-                print("2idx = ", idx, "flen", flen)
-                flen -= fv.FvHdr.FvLength
-                if flen < 0:
-                    raise Exception("ERROR: Incorrect FV size in image !")
-        self.CheckFsp ()
-
 class BSSSHeader(Structure):
     _pack_ = 1
     _fields_ = [
@@ -567,13 +254,12 @@ class BSSSHeader(Structure):
 class BspConfigHead(Structure):
     _pack_ = 1
     _fields_ = [
-        ('BspEntryPoint',          c_uint32),
-        ('FsptUpd',                FSPT_UPD),
-        ('FspmLoadingPolicy',      c_uint8),
-        ('FspmBaseAddress',        c_uint32),
-        ('TpmBaseAddress',         c_uint64),
-        ('BspSegmentCount',        c_uint32),
-        ('FspConfigRegSegmentCount',   c_uint32)
+        ('BspEntryPoint',     c_uint32),
+        ('FsptUpd',           FSPT_UPD),
+        ('FspmLoadingPolicy', c_uint8),
+        ('FspmBaseAddress',   c_uint32),
+        ('TpmBaseAddress',    c_uint64),
+        ('BspSegmentCount',   c_uint32)
         ]
 
     def dumpInfo(self):
@@ -594,7 +280,6 @@ class BspConfigHead(Structure):
         print("FspmLoadingPolicy:", hex(self.FspmLoadingPolicy))
         print("FspmBaseAddress:", hex(self.FspmBaseAddress))
         print("BspSegmentCount:", self.BspSegmentCount)
-        print("FspConfigRegSegmentCount:", self.FspConfigRegSegmentCount)
         print("TpmBaseAddress:", hex(self.TpmBaseAddress))
 
     #
@@ -694,12 +379,6 @@ class BspConfig():
         self.BspDigestList = []
         self.IbbSegmentList = []
         self.fdDir = fdDir
-        self.FspRegionsList = []
-        self.OpenSslCommand = None
-        self.Fspfd = ''
-        self.FspMFspSConfigRegDigestList = []
-        self.FspMFspSConfigRegSegList = []
-        self.header = FspRegionDigestHeader()
 
         self.BspConfigHead.TpmBaseAddress = TPM_BASE_ADDRESS
         self.BspConfigHead.FspmBaseAddress = ConvertTo4GSpaceAddr(flashMap.FvFspmOffset, flashMap.BiosFlashBaseAddr)
@@ -750,23 +429,9 @@ class BspConfig():
             fd.seek(len(buffer) - 0x1000)
             fd.write(bsssBin)
 
-    ##################  Order of Components in BSIS.bin file ##############
-    ##############            BSIS Header               ###############
-    ##############            BSSS Header               ###############
-    ##############            BSPM ELEMENT              ###############
-    ##############            BSP SEGMENT LIST          ###############
-    ##############            BSP DIGEST LIST           ###############
-    ##############            FSP-M UPD REGION SEGMENT  ###############
-    ##############            FSP-S UPD REGION SEGMENT  ###############
-    ##############            FSP-M UPD REGION DIGEST   ###############
-    ##############            FSP-S UPD REGION DIGEST   ###############
-    ########################################################################
     def genBsisBin(self, BiosFlashBaseAddr, OpenSslCommand, output, FspSigned):
         if FspSigned:
-            self.OpenSslCommand = OpenSslCommand
             self.genBspDgstList(BiosFlashBaseAddr, OpenSslCommand)
-            self.genFspSAndMConfigRegionDigest()
-            
         bsisBin = bytes(self.BspConfigHead)
 
         for i in range(self.BspConfigHead.BspSegmentCount):
@@ -774,15 +439,6 @@ class BspConfig():
 
         for bspDigest in self.BspDigestList:
             bsisBin += bspDigest.serializeToBin()
-        
-        #
-        # Add FSP-M and S Configuration Region Segment List and respective Digests at the END of Bsis.bin file
-        #
-        for i in range(self.BspConfigHead.FspConfigRegSegmentCount):
-            bsisBin += bytes(self.FspMFspSConfigRegSegList[i])
-        
-        for fspCfgRegDigest in self.FspMFspSConfigRegDigestList:
-            bsisBin += fspCfgRegDigest.serializeToBin()
 
         #
         # Add BSSS header
@@ -823,67 +479,6 @@ class BspConfig():
 
             for t in HASH_TYPE_VALUE:
                 self.BspDigestList.append(HashStruct(t, openSslCommand, bspDataToCmpDgst))
-
-    def genFspSAndMConfigRegionDigest(self):
-        FspBinDir = os.getenv('WORKSPACE_FSP_BIN')
-        # Fsp.fd file path
-        self.Fspfd = os.path.join(FspBinDir, "PantherLakeFspBinPkg", "Fsp.fd")
-        self.fd = FirmwareDevice(self.Fspfd)
-        self.fd.ParseFd()
-        self.fd.ParseFsp()
-        self.CalFspSOrMRegionDigest()
-
-    def CalFspSOrMRegionDigest(self) -> None:
-        """
-        Calculate digest lists for FSP-M and S Configuration Region
-
-        Returns:
-            None
-        """
-        fspM = None
-        fspS = None
-        for fsp in self.fd.FspList:
-            if fsp.Type == 'M':
-                fspM = fsp
-            elif fsp.Type == 'S':
-                fspS = fsp
-
-        if fspM is not None:
-            self.getFspMOrSConfigRegionDigest(fspM)
-        else:
-            print("Error! FSP-M is None")
-            sys.exit(1)
-
-        if fspS is not None:
-            self.getFspMOrSConfigRegionDigest(fspS)
-        else:
-            print("Error! FSP-S is None")
-            sys.exit(1)
-    
-    def getFspMOrSConfigRegionDigest(self, fsp) -> None:
-        """
-        Calculate the digest list for FSP-M or FSP-S Configuartion Region.
-
-        The digest calculation includes only the UPD region of FSP-M/S.
-
-        Args:
-            fsp (FspObject): The FSP-M or FSP-S object.
-
-        """
-        fspDataToCalDigest = b''
-        with open(self.Fspfd, "rb") as fr:
-            print("FSP-M/S CfgRegionOffset", fsp.Fih.CfgRegionOffset - fsp.Offset)
-            print("FSP-M/S CfgRegionSize", fsp.Fih.CfgRegionSize)
-            ibbSeg = REGION_SEGMENT()
-            ibbSeg.Base = fsp.Fih.CfgRegionOffset - fsp.Offset
-            ibbSeg.Size = fsp.Fih.CfgRegionSize
-            self.FspMFspSConfigRegSegList.append(ibbSeg)
-            self.BspConfigHead.FspConfigRegSegmentCount = len(self.FspMFspSConfigRegSegList)
-            fr.seek(fsp.Fih.CfgRegionOffset, 0)
-            fspDataToCalDigest += bytearray(fr.read(fsp.Fih.CfgRegionSize))
-
-        for t in HASH_TYPE_VALUE:
-            self.FspMFspSConfigRegDigestList.append(HashStruct(t, self.OpenSslCommand, fspDataToCalDigest))
 
 def dumpHashStruct(bsisBin, offset):
     hashHead = HashStructHead.from_buffer(bsisBin, offset)
@@ -938,20 +533,7 @@ def dumBsis(bsisDir):
         ibbSeg = REGION_SEGMENT.from_buffer(bsisData, offset)
         ibbSeg.dumpInfo()
         offset += sizeof(REGION_SEGMENT)
-        
-    for i in range(bspConfigHead.BspSegmentCount):
-        for t in HASH_TYPE_VALUE:
-            offset = dumpHashStruct(bsisData, offset)
-
-    for i in range(bspConfigHead.FspConfigRegSegmentCount):
-        print("Segment Array[%d]" % i)
-        ibbSeg = REGION_SEGMENT.from_buffer(bsisData, offset)
-        ibbSeg.dumpInfo()
-        offset += sizeof(REGION_SEGMENT)
-    
-    for i in range(bspConfigHead.FspConfigRegSegmentCount):
-        for t in HASH_TYPE_VALUE:
-            offset = dumpHashStruct(bsisData, offset)
+        offset = dumpHashStruct(bsisData, offset)
 
 #
 # Bsis that only consists of headers

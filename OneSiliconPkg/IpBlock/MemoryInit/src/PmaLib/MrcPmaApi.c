@@ -370,8 +370,6 @@ MrcMcCapability (
   // Print Dq / Dqs Swizzle Tables
   PrintDqDqsTable (MrcData);
 
-  MrcSetChannelToMptuSwizzleMap (MrcData);
-
   return mrcSuccess;
 }
 

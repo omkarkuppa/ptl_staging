@@ -177,7 +177,7 @@ typedef struct {
   UINT8   McSafeMode;             ///< Offset 164
   UINT8   LpMode;                 ///< Offset 165 Bit mask: Bit[0] - Enable Lpmode0p5 (Idle_enable); Bit[1] - Enable Lpmode2 (Powerdown_enable); Bit[2] - Enable Lpmode3 (Selfrefresh_enable); Default = 7 ('111')
   UINT8   LpMode4;                ///< Offset 166 LpMode4: 0=Disabled; <b>1=Enabled</b>; 2=Dynamic with threshold 2; 3=Dynamic with threshold=3
-  UINT8   PprTestType;            ///< Offset 167 Deprecated
+  UINT8   PprTestType;            ///< Offset 167 PPR Test Type- enable/disable various memory tests in the PPR flow
   UINT16  tRFCpb;                 ///< Offset 168 User defined Memory Timing tRFCpb value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
   UINT16  tRFC2;                  ///< Offset 170 User defined Memory Timing tRFC2 value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
   UINT16  tRFC4;                  ///< Offset 172 User defined Memory Timing tRFC4 value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
@@ -228,20 +228,20 @@ typedef struct {
   UINT16  RcompResistor;          ///< Offset 274 Reference RCOMP resistor on motherboard ~ 100 ohms
   UINT16  RcompTarget[MAX_RCOMP_TARGETS]; ///< Offset 276 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
   UINT16  tCCD_L_WR;                ///< Offset 286 User defined Memory Timing tCCD_L_WR value, valid when SpdProfileSelected is CUSTOM_PROFILE
-  UINT8   PprRepairType;            ///< Offset 288 Deprecated
-  UINT8   PprRunOnce;               ///< Offset 289 Deprecated
-  UINT8   PprRunAtFastboot;         ///< Offset 290 Deprecated
-  UINT8   PprErrorInjection;        ///< Offset 291 Deprecated
-  UINT32  PprRepairPhysicalAddrLow; ///< Offset 292 Deprecated
-  UINT32  PprRepairPhysicalAddrHigh;///< Offset 296 Deprecated
-  UINT32  PprRepairRow;             ///< Offset 300 Deprecated
-  UINT8   PprRepairController;      ///< Offset 304 Deprecated
-  UINT8   PprRepairChannel;         ///< Offset 305 Deprecated
-  UINT8   PprRepairDimm;            ///< Offset 306 Deprecated
-  UINT8   PprRepairRank;            ///< Offset 307 Deprecated
-  UINT8   PprRepairBankGroup;       ///< Offset 308 Deprecated
-  UINT8   PprRepairBank;            ///< Offset 309 Deprecated
-  UINT8   PprForceRepair;           ///< Offset 310 Deprecated
+  UINT8   PprRepairType;            ///< Offset 288 PPR Repair Type: 0=DoNotRepair, 1=SoftPPR, <b>2=HardPPR</b>
+  UINT8   PprRunOnce;               ///< Offset 289 PPR Run Once
+  UINT8   PprRunAtFastboot;         ///< Offset 290 PPR Run During Fastboot
+  UINT8   PprErrorInjection;        ///< Offset 291 PPR Error Injection
+  UINT32  PprRepairPhysicalAddrLow; ///< Offset 292 PPR Repair Physical Address Low 4 bytes
+  UINT32  PprRepairPhysicalAddrHigh;///< Offset 296 PPR Repair Physical Address High 4 bytes
+  UINT32  PprRepairRow;             ///< Offset 300 PPR Repair Row
+  UINT8   PprRepairController;      ///< Offset 304 PPR Repair Controller
+  UINT8   PprRepairChannel;         ///< Offset 305 PPR Repair Channel
+  UINT8   PprRepairDimm;            ///< Offset 306 PPR Repair Dimm
+  UINT8   PprRepairRank;            ///< Offset 307 PPR Repair Rank
+  UINT8   PprRepairBankGroup;       ///< Offset 308 PPR Repair Bank Group
+  UINT8   PprRepairBank;            ///< Offset 309 PPR Repair Bank
+  UINT8   PprForceRepair;           ///< Offset 310 PPR Force Repair Some Rows
   UINT8   RunRefPiMaxVoltage;       ///< Offset 311 Run Ref PI Calibration for both min and max Voltage
   MrcBoardInputs BoardDetails;      ///< Offset 312 The details of the board that help MRC determine top memory speed
   UINT16  SubChHashMask;            ///< Offset 316 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
@@ -277,9 +277,9 @@ typedef struct {
   UINT8   WeaklockEn;                     ///< Offset 325 Weak Lock Enable: <b>0=Auto</b>, 1=Enable, 2=Disable
   UINT8   RxDqsDelayCompEn;               ///< Offset 326 Rx DQS Delay Comp Enable: <b>0=Auto</b>, 1=Enable, 2=Disable
 
-  UINT8  RxDqsStepSizeLB            : 2;  ///< Offset 327 Bit 0-1  Control RxDqs step size for Dq Loopback test (actual value = set value * 2)
-  UINT8  RxVrefStepSizeLB           : 2;  ///<            Bit 2-3  Control RxVref step size for the Dq Loopback test (actual value = set value * 2)
-  UINT8  TxStepSizeLB               : 2;  ///<            Bit 4-5  Control Tx step size for Dq Loopback test (actual value = set value * 2)
+  UINT8  RxDqsStepSizeLB            : 2;  ///< Offset 327 Bit 0-1  Control RxDqs step size for Dq Loopback test
+  UINT8  RxVrefStepSizeLB           : 2;  ///<            Bit 2-3  Control RxVref step size for Dq Loopback test
+  UINT8  TxStepSizeLB               : 2;  ///<            Bit 4-5  Control Tx step size for Dq Loopback test
   UINT8  ReservedBitsLB             : 2;  ///<            Bit 5-7  Reserved
 
   UINT8   MrcFailureOnUnsupportedDimm;    ///< Offset 328 Enable/disable MRC failure policy for unsupported memory type.

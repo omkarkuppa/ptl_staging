@@ -173,12 +173,12 @@ MrcAddConfigBlocksPreMem (
 /**
   This function prints the PEI phase Mrc PreMem policy.
 
-  @param[in] SiPolicyPreMemPpi - Instance of SI_PREMEM_POLICY
+  @param[in] SiPolicyPreMemPpi - Instance of SI_PREMEM_POLICY_PPI
 **/
 VOID
 EFIAPI
 MrcPrintPolicyPpiPreMem (
-  IN  SI_PREMEM_POLICY     *SiPolicyPreMemPpi
+  IN  SI_PREMEM_POLICY_PPI *SiPolicyPreMemPpi
   )
 {
   DEBUG_CODE_BEGIN();

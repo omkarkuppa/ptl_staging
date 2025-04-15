@@ -517,8 +517,13 @@ typedef enum {
 // PPR Defines
 #define MAX_FAIL_RANGE                          (16)
 #define DQ_MASK_INDEX_MAX                       (2)
+#define MAX_PPR_ADDR_ENTRIES_DDR                (20)
+#define MAX_PPR_ADDR_ENTRIES_DDR_SPPR           (MAX_PPR_ADDR_ENTRIES_DDR + 20)
 #define MAX_MEMTEST_BANK_INTERLEAVE_NUMBER      (32)
-#define MRC_PPR_ADV_ALGORITHM_TEST_MASK         (0b01111111) // Look at MRC_PPR_TEST_TYPE
+#define MAX_BAD_ROW_LIMIT_PER_BANK              (8)
+#define PPR_REPAIR_STATUS_FAIL                  (0)
+#define PPR_REPAIR_STATUS_UNCORRECTABLE         (1)
+#define PPR_REPAIR_STATUS_SUCCESS               (2)
 
 #define NUM_LCPLL 2
 
@@ -683,7 +688,6 @@ typedef enum {
   OemRxDqsVoc,              ///< before RxDqs VOC Centering
   OemDunitTatOptimization,  ///< before Dunit TAT optimization
   OemVccLvrInit,            ///< before Vcc Lvr init configuration
-  OemReadDqDqsIdle,         ///< before RDTC with Idle stress
   ///
   ///*********************************************************************************
   ///
@@ -831,6 +835,15 @@ typedef struct {
   UINT8     DeviceTemp; // Device temperature after fail detected
   UINT8     Device;
 } ROW_FAIL_RANGE;
+
+// PPR test Type bits. Keep synced with defines in LunarLakePlatSamplePkg\Library\PeiPolicyUpdateLib\PeiSaPolicyUpdatePreMem.c
+#define PPR_MEMTEST_WCMATS8_BIT               (0)
+#define PPR_MEMTEST_DATA_RETENTION_BIT        (1)
+#define PPR_MEMTEST_XMARCH_BIT                (2)
+#define PPR_MEMTEST_XMARCHG_BIT               (3)
+#define PPR_MEMTEST_YMARCHSHORT_BIT           (4)
+#define PPR_MEMTEST_YMARCHLONG_BIT            (5)
+#define PPR_MEMTEST_MMRW_BIT                  (6)
 
 // PPR Running State
 typedef enum {
@@ -1686,15 +1699,6 @@ typedef struct {
   UINT8      CkdAddress;
 } MRC_CKD_BUFFER;
 
-typedef union {
-  struct {
-    UINT8 MptuInstance : 1;
-    UINT8 MptuChannel  : 2;
-    UINT8 Reserved     : 5;
-  } Bits;
-  UINT8 Value;
-} MrcMptuChannelConfig;
-
 ///*****************************************
 /// Output related "global data" structures.
 ///*****************************************
@@ -1715,7 +1719,6 @@ typedef struct {
   UINT8       DdrPdaVrefCmd[MAX_BYTE_IN_DDR5_CHANNEL]; ///< DDR5 MR11 [7:0] for per-DRAM VrefCmd (PDA)
   UINT8       Ddr5PdaMr3[MAX_BYTE_IN_DDR5_CHANNEL];    ///< DDR5 MR3 for per-DRAM
   UINT8       Ddr5PdaMr7[MAX_BYTE_IN_DDR5_CHANNEL];    ///< DDR5 MR7 for per-DRAM
-  UINT8       Ddr5PdaMr23[MAX_BYTE_IN_DDR5_CHANNEL];    ///< DDR5 MR23 for per-DRAM
   UINT8       Ddr5PdaCaOdtStrap[MAX_BYTE_IN_DDR5_CHANNEL];  ///< DDR5 MR32 CA ODT Strap per-DRAM
   UINT8       Ddr5PdaMr43[MAX_BYTE_IN_DDR5_CHANNEL];   ///< DDR5 MR43 for per-DRAM
   UINT8       Ddr5PdaMr44[MAX_BYTE_IN_DDR5_CHANNEL];   ///< DDR5 MR44 for per-DRAM
@@ -1778,8 +1781,7 @@ typedef struct {
   MrcFrequency   Speed;                   ///< Max DIMM speed in the current profile - needed  for SMBIOS
   MrcRankOut     Rank[MAX_RANK_IN_DIMM];  ///< The following are rank level definitions.
   BOOLEAN        IsCkdSupport;            ///< TRUE if CKD is installed on this DIMM.
-  BOOLEAN        IsMbistMpprSupport;      ///< TRUE if MBIST/mPPR is supported on this DIMM.
-  UINT8          CkdDimmIndex;            ///<  Indicates the index of Physical DIMM (Max up to 4 for 2DPC), this is used when programming CKD Control Word
+  UINT8          CkdDimmIndex;            ///< Indicates the index of Physical DIMM (Max up to 4 for 2DPC), this is used when programming CKD Control Word
 } MrcDimmOut;
 
 /// This data structure contains all the "global data" values that are considered output by the MRC.
@@ -1810,7 +1812,6 @@ typedef struct {
   BOOLEAN           IsMr10PdaEnabled;                                             ///< Defines if MR10 (VrefDQ) is required as PDA for this channel.
   BOOLEAN           IsMr11PdaEnabled;                                             ///< Defines if MR11 (VrefCA) is required as PDA for this channel.
   BOOLEAN           IsMrDcaPdaEnabled;                                            ///< Defines if MRs of Dca (Write Pattern) is required as PDA for this channel.
-  BOOLEAN           IsMr23PdaEnabled;                                             ///< Defines if MR23 is required as PDA for this channel.
   BOOLEAN           IsMr48PdaEnabled;                                             ///< Defines if MR48 (Write Pattern) is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap1Enabled;                                         ///< Defines if MRs of DFE TAP1 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap2Enabled;                                         ///< Defines if MRs of DFE TAP2 is required as PDA for this channel.
@@ -1934,7 +1935,6 @@ typedef struct {
   UINT8             ValidRankMask;                 ///< Rank bit map.  Includes both channels across memory controllers.
   UINT8             ValidChBitMask;                ///< Channel bit map of the populated channels
   UINT8             ValidMcBitMask;                ///< Memory Controller population bit mask.
-  UINT8             ValidMptuChBitMask;            ///< MPTU Channel bit mask of the populated channels, each MPTU has 4 independent channels
   BOOLEAN           CpgcGlobalStart;               ///< TRUE if using CPGC Global Start feature
   UINT8             MaxDqBits;                     ///< Maximum number of Dq bits for the memory type.
   BOOLEAN           IsMr10PdaEnabled;              ///< TRUE if PDA programming of MR10 is used in DDR5
@@ -1959,7 +1959,6 @@ typedef struct {
   BOOLEAN           LpX;                            ///< Low power die of the LPDDR part is detected.
   UINT32            VccddqVoltage[MAX_SAGV_POINTS]; ///< Current VCCDDQ (can be affected by DVFSQ on LP5)
   BOOLEAN           IsCkdSupported;               ///< TRUE if SPD byte 242 CKD Buffer is supported
-  BOOLEAN           IsMbistMpprSupported;         ///< TRUE if MBIST/mPPR is supported.
   BOOLEAN           IsCs2NEver;                   ///< If any SAGV point has CS 2N Mode
   BOOLEAN           IsMixedEccDimms;              ///< TRUE if at least one ECC DIMM and at least one nonECC DIMM are present
   MrcVddSelect      VddqVoltage[MAX_PROFILE];     ///< The voltage (VDDQ) setting for all DIMMs in the system, per profile.
@@ -1970,9 +1969,7 @@ typedef struct {
   UINT8             PmaCceConfig;
   UINT8             MaxRanks;                     ///< Maximum number of ranks detected in any channel on the Phy. Per Channel MaxRanks may be different.
   BOOLEAN           IsMrDcaPdaEnabled;            ///< TRUE if PDA programming of MR43/MR44 is used in DDR5
-  MrcSaGvPoint      SaGvPprPoint;                 ///< SA GV point at which PPR should be executed
-  MrcMptuChannelConfig MptuChannelMap[MAX_CONTROLLER][MAX_CHANNEL]; ///< System to MPTU channel map
-  UINT8             ReservedBytesAlign[1];        ///< Align to 4 bytes for MrcSavedata
+  UINT8             ReservedBytesAlign[3];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //
@@ -2040,7 +2037,6 @@ typedef struct {
   UINT8               CkdShift[MAX_CONTROLLER][MAX_DDR5_CHANNEL][MAX_RANK_IN_CHANNEL]; ///< CKD QCK Output Delay obtained from Early Command Training
   MRC_CKD_BUFFER      CkdBuffer[MAX_DIMMS_IN_SYSTEM];
   UINT8               PprAvailableResources[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_SDRAM_IN_DIMM]; ///< PPR available resources per device
-  MrcMptuChannelConfig MptuChannelMap[MAX_CONTROLLER][MAX_CHANNEL]; ///< System to MPTU swizzle channel map
 #if MRC_ENABLE_STATS
   MrcStatsTracker     StatsTracker;                ///< Used to record the data for the stats and telemetry framework
 #endif // MRC_ENABLE_STATS && MRC_DEBUG_PRINT
@@ -2113,7 +2109,6 @@ typedef struct {
   BOOLEAN             IsSkipIoReset;               ///< Skip IoReset in RunIoTest
   BOOLEAN             MrcBasicMemoryTestPass;      ///< MRC health data for telemetry. Unhealthy status is reported on bmcold boot after bmFast failure
   BOOLEAN             IsCkdSupported;              ///< TRUE if SPD byte 242 CKD Buffer is supported
-  BOOLEAN             IsMbistMpprSupported;        ///< TRUE if MBIST/mPPR is supported.
   BOOLEAN             IsEnDqsNRcvEn;               ///< TRUE if LP5 single ended receiver is enabled
   BOOLEAN             NeedManualParamDivide;       ///< Need manually divide MCT timing parameters which are in tCK cycles
   BOOLEAN             IsResetSequenceNeeded;       ///< TRUE if ClkPiCode was shifted and Reset Sequence is required to recover DRAM to operational state
@@ -2136,7 +2131,6 @@ typedef struct {
   UINT8               ValidRankMask;               ///< Rank bit map.  Includes both channels across memory controllers.
   UINT8               ValidChBitMask;              ///< Channel bit map of the populated channels
   UINT8               ValidMcBitMask;              ///< Memory Controller population bit mask.
-  UINT8               ValidMptuChBitMask;          ///< MPTU Channel bit mask of the populated channels, each MPTU has 4 independent channels
   UINT8               MaxDimm;                     ///< Maximum number of dimms supported by the channel.  Varies per technology.
   UINT8               BurstLength;                 ///< Burst length in tCK.
   UINT8               McChBitMask;                 ///< Flat Bit Mask of which CPGC/CADB engines to setup based on MaxChannels per technology.
@@ -2161,22 +2155,17 @@ typedef struct {
   BOOLEAN             IsLoopbackSetupDone;
   BOOLEAN             WeaklockEn;                  ///< Weaklock enable
   BOOLEAN             RxDqsDelayCompEn;            ///< Rx DQS Delay Comp enable
+  UINT8               ReservedBytesAlign[4];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
   MrcSaGvPoint        SaGvLast;                    ///< Last SaGv Point to be trained
   MrcSaGvPoint        SaGvPoint;                   ///< SA GV point - Low, Med or High
-  MrcSaGvPoint        SaGvPprPoint;                ///< SA GV point at which PPR should be executed
   UINT8               BibOnRmt;                    ///< TRUE if  Bib is enabled for RMT
   UINT8               BibEnable;
   UINT8               BibIdle;
   UINT8               BibIdleType;
   BOOLEAN             CaTristateForISenseRmt;      ///< Enable calling MrcTriStateCa in IoReset for Current Sensor RMT
-  BOOLEAN             SrOnRmt;                     ///< TRUE if Idle stress is enabled during MTG test (Power Down or Self-Refresh)
-  UINT16              DivCode0;
-  UINT16              DivCode2;
-  UINT16              DivCode3;
-  UINT8               ReservedBytesForAlignment[3]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;
@@ -2229,10 +2218,7 @@ typedef struct {
     MRC_EXT_INPUTS_TYPE *Ptr;                  ///< External Inputs Pointer
     UINT64 Data;
   } ExtInputs;
-  union {
-    MRC_FUNCTION    *Func;                     ///< External to MRC function pointers
-    UINT64          Data;
-  } Call;
+
   UINT64          TscTimeBase;                 ///< CPU TSC timebase in [us] : (BCLK * Ratio / 1000 / 1000)
   MrcFrequency    FreqMax;                     ///< The requested maximum valid frequency.
   MrcSkuType      SkuType;                     ///< The CPU SKU Type: 0=MrcSkuTypeUnspecified
@@ -2259,7 +2245,7 @@ typedef struct {
   BOOLEAN           BdatEnable;                   ///< Option to enable output of training results into BDAT.
   UINT8             BdatTestType;                 ///< When BdatEnable is set to TRUE, this option selects the type of training results data which will be populated into BDAT: 0 - RMT, 1 - RMT Per Bit, 2 - Margin 2D.
   UINT8             DramDqOdt;                    ///< Controls the usage of the DRAM DQ ODT. 0 - Auto, 1 - Enable, 2 - Disable. See MRC_EN_DIS_AUTO_TYPE.
-  UINT32            SiPreMemPolicy;
+  UINT32            SiPreMemPolicyPpi;
   BOOLEAN           LpFreqSwitch;                       ///< Boolean variable to enable or disable frequency switching for supported LPDDR devices.
   UINT8             MinAllowedNModeOvrd;                ///< DDR5 CA Minimal Allowed NMode Override: Disabled, 1N or 2N: 0=DISABLED, 1=1N, 2=2N.
   BOOLEAN           MptuPropagationErrorFlow;           ///< Boolean variable to enable or disable special flow around CHAN_EN field switching to avoid X propagation in simulation
@@ -2339,7 +2325,13 @@ typedef struct {
   UINT64 UcPayloadAddress; ///< Location of Green MRC payload
 #ifdef CTE_FLYBY_FLAG
   MrcDdrioFlyBy DdrioFlyBy;
+#else
+  UINT32 StructAlignBuf;
 #endif
+  union {
+    MRC_FUNCTION    *Func;  ///< External to MRC function pointers
+    UINT64          Data;
+  } Call;
   UINT8   PsmiHandlerSize;    ///< PSMI handler size for reservation
   UINT8   MaxVrefSamplesOvrd; ///< Override maximum VREF Samples used for 2D sweep
   UINT32  SaMemCfgCrcForSave; ///< Save current MEMORY_CONFIGURATION crc after a few fields of MemConfig are overwritten. Used for saving CRC during saving training values.
@@ -2351,17 +2343,9 @@ typedef struct {
   UINT8   PhClkCheckPhError;      ///< Defines min to max tolerance for phase spacing check, specified max - min of all 8 phases in 1/512 * phclk increments
   UINT8   PhClkCheckDcError;      ///< Defines duty cycle tolerance in 1/512 * phclk increments
   BOOLEAN IsOneDpcSplitBgEnabled; ///< TRUE: 1Rank Split Bg On SubChannel Enabled.
-  INT32   RxDqsBaseOffset;        ///< Base value of DataOffsetTrain.RxDqsOffset
   UINT32  DebugValue;             ///< Used for general debug
   UINT16  Vout;
-  MRC_PPR_ENTRY_INFO    PprEntryInfo[PPR_REQUEST_MAX];
-  MRC_PPR_ENTRY_ADDRESS	PprEntryAddress[PPR_REQUEST_MAX];
-  MRC_PPR_TEST_TYPE     PprTestType;
-  MRC_PPR_REPAIR_TYPE   PprRepairType;
-  UINT8 PprRunOnce;
-  UINT8 PprErrorInjection;
-  UINT8 PprForceRepair;
-  UINT8 ReservedBytesAlign2[1]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
+  UINT8   ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

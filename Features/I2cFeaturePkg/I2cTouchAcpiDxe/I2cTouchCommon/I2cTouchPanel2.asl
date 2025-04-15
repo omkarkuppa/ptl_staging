@@ -29,7 +29,6 @@
 #define NTRIG_SHARP_PANEL             5
 #define WACOM_PANEL                   6
 #define ELAN8E18_PANEL                8
-#define ATMEL1296_PANEL               9
 #define SERIAL_IO_TPL_CUSTOM_DEVICE   7 // Custom TouchPanel device
 
 //------------------------
@@ -100,17 +99,6 @@
         Store ("ELAN8E18",_HID)
         Store (1,HID2)
         Store (0x16,BADR)
-        If (LEqual (DeRefOf(Index(TPTD,3)),0)) { Store ( 100000,SPED) }
-        If (LEqual (DeRefOf(Index(TPTD,3)),1)) { Store ( 400000,SPED) }
-        If (LEqual (DeRefOf(Index(TPTD,3)),2)) { Store (1000000,SPED) }
-        Return
-      }
-      If (LEqual (DeRefOf(Index(TPTD,0)), ATMEL1296_PANEL)) {
-        //
-        // Do not need to configure HID descriptor address(HID2) because ATMXT1296 touch screen is not compliant with HID-I2C specification.
-        //
-        Store ("ATML0001",_HID)
-        Store (0x4B,BADR)
         If (LEqual (DeRefOf(Index(TPTD,3)),0)) { Store ( 100000,SPED) }
         If (LEqual (DeRefOf(Index(TPTD,3)),1)) { Store ( 400000,SPED) }
         If (LEqual (DeRefOf(Index(TPTD,3)),2)) { Store (1000000,SPED) }

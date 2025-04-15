@@ -35,14 +35,6 @@ typedef enum {
   MrcSaGvPointMax
 } MrcSaGvPoint;
 
-typedef enum {
-  NoRepair = 0,
-  sPPR = 1,
-  hPPR = 2,
-  mPPR = 3,
-  PprTypeMax
-} MRC_PPR_REPAIR_TYPE;
-
 #define EXT_MAX_DIMMS_IN_CHANNEL  (2)       ///< The maximum number of DIMMs per channel for external MRC input block
 #define MAX_MPTU                  (2)       ///< The maximum number of MPTU blocks in PHY
 #define MAX_CONTROLLER            (2)       ///< The maximum number of memory controllers per CPU socket.
@@ -53,7 +45,6 @@ typedef enum {
 #define MAX_RANK_IN_DIMM          (2)       ///< The maximum number of ranks per DIMM.
 // 11 entries are for RttWr, RttNomRd, RttNomWr, RttPark, RttParkDqs, RttCa GroupA, RttCs GroupA, RttCk GroupA, RttCa GroupB, RttCs GroupB, RttCk GroupB
 #define MAX_DIMMODT_ENTRY         (11)
-#define PPR_REQUEST_MAX           (2)
 
 #ifndef MAX_RCOMP_TARGETS
 #define MAX_RCOMP_TARGETS         (5)
@@ -122,7 +113,7 @@ typedef struct {
   UINT32 DLLDCC:1;               ///< BIT10 - DLL DCC Calibration
   UINT32 DLLBWSEL:1;             ///< BIT11 - DLL BW Select Calibration
   UINT32 RDVREFDC:1;             ///< BIT12 - Read Vref Decap Training
-  UINT32 RDTCIDLE:1;             ///< BIT13 - Read Timing Centering Training with SR stress
+  UINT32 Reserved2Bit13:1;       ///< BIT13 - Reserved
   UINT32 RMTBIT:1;               ///< BIT14 - Rank Margin Tool Per Bit
   UINT32 DQDQSSWZ:1;             ///< BIT15 - Map Dq Dqs Swizzle
   UINT32 REFPI:1;                ///< BIT16 - RefPi Calibration
@@ -184,65 +175,5 @@ typedef struct {
   UINT8 BrdReserved : 6;     ///< BIT[7:2] - Reserved for future use
   UINT8 BrdReserved1[3];     ///< Reserved bytes for struct DWORD alignment
 } MrcBoardInputs;
-
-typedef struct {
-  UINT64  PprValid :  1;   // Bit  0
-  UINT64  MemSS    :  3;   // Bits 3:1
-  UINT64  Reserved : 60;   // Bits 63:4
-} MRC_PPR_ENTRY_INFO;
-
-#ifndef MRC_MINIBIOS_BUILD
-typedef struct {
-  UINT64 Controller :  1;  // Bit 0
-  UINT64 Channel    :  3;  // Bits 2:1
-  UINT64 Rank       :  2;  // Bits 4:3
-  UINT64 BankGroup  :  3;  // Bits 8:5
-  UINT64 Bank       :  2;  // Bits 10:9
-  UINT64 Row        : 18;  // Bits 28:11
-  UINT64 Device     :  3;  // Bits 31:29
-  UINT64 Reserved   : 32;  // Bits 63:32
-} MRC_PPR_ENTRY_ADDRESS;
-#else
-typedef struct {
-  UINT32 Controller :  1;  // Bit 0
-  UINT32 Channel    :  3;  // Bits 2:1
-  UINT32 Rank       :  2;  // Bits 4:3
-  UINT32 BankGroup  :  3;  // Bits 8:5
-  UINT32 Bank       :  2;  // Bits 10:9
-  UINT32 Row        : 18;  // Bits 28:11
-  UINT32 Device     :  3;  // Bits 31:29
-  UINT32 Reserved;         // Bits 63:32
-} MRC_PPR_ENTRY_ADDRESS;
-#endif
-
-// Keep PprTestTypeOffset in sync with MRC_PPR_TEST_TYPE
-typedef enum {
-  PprTestTypeWcMats8       = 0,
-  PprTestTypeDataRetention = 1,
-  PprTestTypeXMarch        = 2,
-  PprTestTypeXMarchG       = 3,
-  PprTestTypeYMarchShort   = 4,
-  PprTestTypeYMarchLong    = 5,
-  PprTestTypeMmrw          = 6,
-  PprTestTypeNumMemTests   = PprTestTypeMmrw,
-  PprTestTypeMbist         = 7,
-  PprTestTypeTestDisabled  = 8,
-} PprTestTypeOffset;
-
-typedef union {
-  struct {
-    UINT64 WcMats8        :  1; // Bit 0
-    UINT64 DataRetention  :  1; // Bit 1
-    UINT64 XMarch         :  1; // Bit 2
-    UINT64 XMarchG        :  1; // Bit 3
-    UINT64 YMarchShort    :  1; // Bit 4
-    UINT64 YMarchLong     :  1; // Bit 5
-    UINT64 Mmrw           :  1; // Bit 6
-    UINT64 Mbist          :  1; // Bit 7
-    UINT64 TestDisabled   :  1; // Bit 8
-    UINT64 Reserved9to63  : 55; // Bits 63:9
-  } Bits;
-  UINT64 Value;
-} MRC_PPR_TEST_TYPE;
 
 #endif

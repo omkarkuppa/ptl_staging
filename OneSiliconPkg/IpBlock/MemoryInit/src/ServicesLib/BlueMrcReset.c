@@ -22,7 +22,6 @@
 // Include files
 #include "MrcReset.h"
 #include "MrcCommon.h"
-#include "MrcGeneral.h"
 #include "CMrcApi.h"
 #include "MrcHalApi.h"
 #include "MrcMemoryApi.h"
@@ -270,8 +269,6 @@ MrcResetSequencePrivate (
       // Save the generic mrs fsm
       MrcSaveRestoreGenericMrsFsm (MrcData, TRUE, FALSE, SaveBuffer->MrsFsmCtlSave, SaveBuffer->GenMrsFsmCtlSave, SaveBuffer->GenMrsFsmValSave, SaveBuffer->GenMrsFsmTimeSave);
       MrcGenMrsFsmClean (MrcData, SaveBuffer->MrData, TRUE);
-    } else {
-      MrcGenMrsFsmCleanNonFastBoot (MrcData, NULL, FALSE);
     }
 
     if (Outputs->IsCs2NEnabled) {

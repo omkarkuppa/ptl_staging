@@ -293,7 +293,6 @@ CMDDSEQ
 DIMMODTCA
 DDR5ODTTIMING
 RDVREFDC
-RDTCIDLE
 RMTBIT
 DQDQSSWZ
 REFPI
@@ -309,6 +308,7 @@ RXUNMATCHEDCAL
 WRTDIMMDFE
 TXDQSDCC
 RXVREFPERBIT
+PPR
 LVRAUTOTRIM
 OPTIMIZECOMP
 WRTRETRAIN
@@ -403,6 +403,18 @@ OCSafeMode
 RcompResistor
 RcompTarget
 tCCD_L_WR
+PprRepairType
+PprRunOnce
+PprRunAtFastboot
+PprErrorInjection
+PprRepairRow
+PprRepairController
+PprRepairChannel
+PprRepairDimm
+PprRepairRank
+PprRepairBankGroup
+PprRepairBank
+PprForceRepair
 LMemBar
 EnableFastVmode
 DlvrRfiEnable

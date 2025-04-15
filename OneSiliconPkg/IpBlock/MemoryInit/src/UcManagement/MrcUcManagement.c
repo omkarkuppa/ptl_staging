@@ -434,7 +434,7 @@ MrcUpdateDataFromUc (
 
   SaveSizeToCopy   = OFFSET_OF (MrcSaveData, RegSaveCommon); // Last part of MrcSave is not used in Green MRC, hence do not copy it (RegSaveCommon, SaGvRegSave, Controller and SaGvOutputs)
   OutputSizeToCopy = OFFSET_OF (MrcOutput, RegisterCache) - OFFSET_OF (MrcOutput, Version); // Skipped past debug member, Stop at register cache
-  InputSizeToCopy  = sizeof (MrcInput) - OFFSET_OF (MrcInput, TscTimeBase); // Do not copy the ExtInputs and MrcCall pointers
+  InputSizeToCopy  = OFFSET_OF (MrcInput, Call) - sizeof (Inputs->ExtInputs); // Do not copy the ExtInputs pointer, Stop at Inputs->Call
 
   BlueMrcReadUcData (MrcData, SaveOffset,      (UINT32 *) Save,        SaveSizeToCopy);
   BlueMrcReadUcData (MrcData, VersionOffset,   (UINT32 *) Version,     OutputSizeToCopy);

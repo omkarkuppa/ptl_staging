@@ -76,9 +76,10 @@ typedef struct {
   UINT8  VrConfigEnable[MAX_NUM_VRS];             ///< Enable/Disable BIOS configuration of VR; 0: Disable; <b>1: Enable.</b>
   UINT8  TdcEnable[MAX_NUM_VRS];                  ///< PCODE MMIO Mailbox: Thermal Design Current enable/disable; <b>0: Disable; </b>1: Enable
   UINT8  TdcLock[MAX_NUM_VRS];                    ///< PCODE MMIO Mailbox: Thermal Design Current Lock; <b>0: Disable</b>; 1: Enable.
-  UINT8  FastPkgCRampDisable[MAX_NUM_VRS];        ///< Disable Fast Slew Rate for Deep Package C States for VR IA, GT, SA, Atom domain based on Acoustic Noise Mitigation feature enabled. <b>0: False</b>; 1: True
-  UINT8  SlowSlewRate[MAX_NUM_VRS];               ///< Slew Rate configuration for Deep Package C States for VR IA, GT, SA, Atom domain based on Acoustic Noise Mitigation feature enabled. <b>0: Fast/2</b>; 1: Fast/4; 2: Fast/8; 3: Fast/16
-  UINT8  Rsvd1[2];                                ///< Make sure nature alignment
+  UINT8  FastPkgCRampDisable[MAX_NUM_VRS];        ///< Disable Fast Slew Rate for Deep Package C States for VR IA,GT domain. <b>0: False</b>; 1: True
+  UINT8  SlowSlewRate[MAX_NUM_VRS];               ///< Slew Rate configuration for Deep Package C States for VR IA,GT domain. <b>0: Fast/2</b>; 1: Fast/4; 2: Fast/8; 3: Fast/16
+  ///@}
+  UINT8  Rsvd1[2];                                ///  Make sure nature alignment
   INT32  PsysOffset;                              ///< PCODE MMIO Mailbox: Platform Psys offset correction. <b>0: Auto</b> 32-bit signed value (2's complement). Units 1/1000, Range is [-128000, 127999]. For an offset of 25.348, enter 25348.
   UINT32 TdcTimeWindow[MAX_NUM_VRS];              ///< PCODE MMIO Mailbox: Thermal Design Current time window. Defined in milli seconds. <b>1ms default</b>
   UINT8  TdcMode[MAX_NUM_VRS];                    ///< PCODE MMIO Mailbox:TDC Mode based on IRMS supported bit from Mailbox. <b>0: iPL2</b>; 1: IRMS.

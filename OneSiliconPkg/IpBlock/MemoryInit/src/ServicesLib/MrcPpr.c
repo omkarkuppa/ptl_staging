@@ -29,21 +29,6 @@
 #include "MrcReset.h"
 #include "MrcGeneral.h"
 
-#ifdef MRC_DEBUG_PRINT
-static const CHAR8 *PprRepairTypeStrings[] = {
-  [NoRepair] = "NoRepair",
-  [sPPR] = "sPPR",
-  [hPPR] = "hPPR",
-  [mPPR] = "mPPR",
-};
-#endif
-
-#define PPR_ALL_DEVICES_SELECTED      (0x7)
-#define DDR5_FULL_CHANNEL_BYTE_MASK   (0xF)
-#define LPDDR5_FULL_CHANNEL_BYTE_MASK (0x3)
-
-#define DDR5_CHANNEL_WIDTH   (32)
-#define LPDDR5_CHANNEL_WIDTH (16)
 /**
   Enter Post Package Repair (PPR) to attempt to repair detected failed row.
 
@@ -109,7 +94,7 @@ Ddr5PostPackageRepair (
   tRCD        = Timing->tRCDtRP;
   tRCD        *= Outputs->tCKps; // convert from nCK to ps
   tRCD        /= 1000; //convert from ps to ns
-  IsSppr      = Inputs->PprRepairType == sPPR;
+  IsSppr      = ExtInputs->PprRepairType == SOFT_PPR;
 
   // DDR5 PPR Beginning Sequence
   static const MR_DATA_STRUCT Ddr5PprGuardKeySequence[] = {
@@ -457,15 +442,15 @@ MrcPostPackageRepair (
   )
 {
   MrcOutput      *Outputs;
-  MrcInput       *Inputs;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
   MrcDdrType     DdrType;
   MrcStatus      Status;
 
   Outputs = &MrcData->Outputs;
-  Inputs = &MrcData->Inputs;
+  ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
   DdrType = Outputs->DdrType;
 
-  if (Inputs->PprRepairType == NoRepair) {
+  if (ExtInputs->PprRepairType == NOREPAIR_PPR) {
     return mrcSuccess;
   }
 
@@ -473,7 +458,7 @@ MrcPostPackageRepair (
   if (DdrType == MRC_DDR_TYPE_DDR5) {
     Status = Ddr5PostPackageRepair (MrcData, Controller, Channel, Rank, BankGroup, BankAddress, Row, ByteMask);
   } else {
-    if (Inputs->PprRepairType == hPPR) {
+    if (ExtInputs->PprRepairType == HARD_PPR) {
       Status = LpDdr5PostPackageRepair (MrcData, Controller, Channel, Rank, BankGroup, BankAddress, Row);
     }
   }
@@ -745,261 +730,52 @@ MrcPostPackageRepairTest (
   IN  MrcParameters *const MrcData
   )
 {
-  MrcInput *Inputs = &MrcData->Inputs;
-  MrcStatus Status = mrcSuccess;
-  BOOLEAN IsMbist  = (((UINT32) Inputs->PprTestType.Value) & (1 << PprTestTypeMbist)) ? 1 : 0;
+  MrcInput  *Inputs;
+  MrcOutput *Outputs;
+  UINT32    Controller;
+  UINT32    Channel;
+  UINT32    Rank;
+  UINT8     BankInterleaveIndex;
+  UINT8     Bank;
+  UINT32    Row;
+  UINT16    ByteMask;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
 
-  if (MrcIsTargetedPprRequested (MrcData)) {
-    Status = MrcRunPprTargeted (MrcData);
-  } else if (IsMbist) {
-    Status = RunMbistMppr (MrcData);
+  Inputs    = &MrcData->Inputs;
+  Outputs   = &MrcData->Outputs;
+  ExtInputs = Inputs->ExtInputs.Ptr;
+
+  if (ExtInputs->PprRepairPhysicalAddrLow == 0 && ExtInputs->PprRepairPhysicalAddrHigh == 0) {
+    // Repair a fixed address
+    Controller = Outputs->FirstPopController;
+    Channel = Outputs->Controller[Controller].FirstPopCh;
+    Rank = GetRankToStoreResults (
+                  MrcData,
+                  Outputs->Controller[Controller].Channel[Channel].ValidRankBitMask
+                  );
+    BankInterleaveIndex = 0;
+    Bank = 0;
+    Row = 0;
+    ByteMask = MRC_BIT1;
+  } else {
+    // Repair the input address
+    Controller = ExtInputs->PprRepairController;
+    Channel = ExtInputs->PprRepairChannel;
+    Rank = (UINT16)(MAX_RANK_IN_DIMM * ExtInputs->PprRepairDimm + ExtInputs->PprRepairRank);
+    BankInterleaveIndex = ExtInputs->PprRepairBankGroup;
+    Bank = ExtInputs->PprRepairBank;
+    Row = ExtInputs->PprRepairRow;
+    ByteMask = (1 << Outputs->SdramCount) - 1;
   }
 
-  return Status;
-}
-
-/**
-  Checks if a specific PPR Entry Address exists in the system.
-
-  @param[in] MrcData global MRC data structure.
-  @param[in] PprEntryAddress PPR Entry Address to check.
-
-  @returns TRUE if address exists, otherwise FALSE.
-**/
-BOOLEAN
-MrcIsPprEntryAddressExists (
-  IN MrcParameters *const MrcData,
-  IN MRC_PPR_ENTRY_ADDRESS PprEntryAddress
-  )
-{
-  MrcOutput *const Outputs = &MrcData->Outputs;
-  MrcDimmOut *DimmOut;
-
-  UINT32 Controller = (UINT32) PprEntryAddress.Controller;
-  UINT32 Channel    = (UINT32) PprEntryAddress.Channel;
-  UINT32 Rank       = (UINT32) PprEntryAddress.Rank;
-  UINT8  ChannelWidth;
-  UINT8  MaxSdramDevice;
-
-  if (!MrcControllerExist (MrcData, Controller)          ||
-      !MrcChannelExist (MrcData, Controller, Channel)) {
-    return FALSE;
-  }
-
-  if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
-    return FALSE;
-  }
-
-  DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER(Rank)];
-  if (PprEntryAddress.BankGroup >= DimmOut->BankGroups ||
-      PprEntryAddress.Bank >= DimmOut->Banks           ||
-      PprEntryAddress.Row >= DimmOut->RowSize          ) {
-    return FALSE;
-  }
-
-  if (PprEntryAddress.Device != PPR_ALL_DEVICES_SELECTED) {
-    ChannelWidth = Outputs->DdrType == MRC_DDR_TYPE_DDR5 ? DDR5_CHANNEL_WIDTH : LPDDR5_CHANNEL_WIDTH;
-    MaxSdramDevice = ChannelWidth / DimmOut->SdramWidth;
-    if (PprEntryAddress.Device >= MaxSdramDevice) {
-      return FALSE;
-    }
-  }
-
-  return TRUE;
-}
-
-/**
-  Run Targeted PPR if requested.
-  @param[in] MrcData pointer to global MRC data.
-  @param[in] PprAmtData pointer to PPR and AMT data structure.
-
-  @returns MrcStatus
-**/
-MrcStatus
-MrcRunPprTargeted (
-  IN MrcParameters *const MrcData
-  )
-{
-  MrcInput *const Inputs = &MrcData->Inputs;
-  MrcOutput *const Outputs = &MrcData->Outputs;
-  MrcDebug *Debug;
-  MrcStatus Status = mrcSuccess;
-
-  Debug = &Outputs->Debug;
-
-  MrcDimmOut *DimmOut;
-  UINT8 Entry;
-
-  UINT32 Controller;
-  UINT32 Channel;
-  UINT32 Rank;
-  UINT32 BankGroup;
-  UINT32 BankAddress;
-  UINT32 Row;
-  UINT32 Device;
-  UINT16 ByteMask;
-
-  UINT8 BytesNumInDevice;
-  UINT8 Byte;
-
-  for (Entry = 0; Entry < ARRAY_COUNT (Inputs->PprEntryInfo); Entry++) {
-    if (Inputs->PprEntryInfo[Entry].PprValid) {
-
-      Controller = (UINT32) Inputs->PprEntryAddress[Entry].Controller;
-      Channel = (UINT32) Inputs->PprEntryAddress[Entry].Channel;
-      Rank = (UINT32) Inputs->PprEntryAddress[Entry].Rank;
-      DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER(Rank)];
-
-      BankGroup = (UINT32) Inputs->PprEntryAddress[Entry].BankGroup;
-      BankAddress = (UINT32) Inputs->PprEntryAddress[Entry].Bank;
-      Row = (UINT32) Inputs->PprEntryAddress[Entry].Row;
-      Device = (UINT32) Inputs->PprEntryAddress[Entry].Device;
-
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR Entry %d: MC%d CH%d R%d BG: %d, Bank: %d, Row: %d, Device: %d\n",
-        Entry, Controller, Channel, Rank, BankGroup, BankAddress, Row, Device);
-
-      if (!MrcIsPprEntryAddressExists (MrcData, Inputs->PprEntryAddress[Entry])) {
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "PPR Entry %d: Invalid address was requested.\n", Entry);
-        continue;
-      }
-
-      if (Device == PPR_ALL_DEVICES_SELECTED) {
-        ByteMask = Outputs->DdrType == MRC_DDR_TYPE_DDR5 ? DDR5_FULL_CHANNEL_BYTE_MASK : LPDDR5_FULL_CHANNEL_BYTE_MASK;
-      } else {
-        ByteMask = 0;
-        BytesNumInDevice = DimmOut->SdramWidth / 8;
-        for (Byte = 0; Byte < BytesNumInDevice; Byte++) {
-          ByteMask |= (1 << (Device * BytesNumInDevice + Byte));
-        }
-      }
-
-      Outputs->PprNumDetectedErrors++;
-      Status = MrcPostPackageRepair (MrcData, Controller, Channel, Rank, BankGroup, BankAddress, Row, ByteMask);
-      if (Status == mrcSuccess) {
-        Outputs->PprNumSuccessfulRepairs++;
-      } else {
-        Outputs->PprRepairFails++;
-      }
-    }
-  }
-
-  return Status;
-}
-
-/**
-  Checks if Targeted PPR is requested.
-
-  @param[in] MrcData global MRC data structure.
-
-  @returns TRUE if Targeted PPR is requested, otherwise FALSE.
-**/
-BOOLEAN
-MrcIsTargetedPprRequested (
-  IN MrcParameters *const MrcData
-  )
-{
-  MrcInput *Inputs = &MrcData->Inputs;
-  BOOLEAN IsTargetedPprRequested = FALSE;
-  UINT8 EntryPprIndex;
-
-  for (EntryPprIndex = 0; EntryPprIndex < PPR_REQUEST_MAX; EntryPprIndex++) {
-    if (Inputs->PprEntryInfo[EntryPprIndex].PprValid) {
-      IsTargetedPprRequested = TRUE;
-      break;
-    }
-  }
-
-  return IsTargetedPprRequested;
-}
-
-
-/**
-  Get status whether PPR is enabled or disabled based on supported usecases.
-
-  @param[in] MrcData global MRC data structure.
-
-  @retval TRUE if PPR is enabled and a supported usecase is detected.
-  @retval FALSE if PPR is disabled.
-**/
-BOOLEAN
-MrcIsPprEnabled (
-  IN MrcParameters *const MrcData
-  )
-{
-  MrcInput *Inputs = &MrcData->Inputs;
-
-  UINT32  PprTestType    = (UINT32)  Inputs->PprTestType.Value;
-  BOOLEAN IsMbist        = (((UINT32) Inputs->PprTestType.Value) & (1 << PprTestTypeMbist)) ? 1 : 0;
-  BOOLEAN IsTestDisabled = (((UINT32) Inputs->PprTestType.Value) & (1 << PprTestTypeTestDisabled)) ? 1 : 0;
-
-  BOOLEAN IsTargetedPprRequested;
-
-  MrcDebug *Debug;
-  Debug = &MrcData->Outputs.Debug;
-
-  IsTargetedPprRequested = MrcIsTargetedPprRequested (MrcData);
-
-  // Use Case 1: Algorithm + hPPR/sPPR Enabled
-  // Use Case 2: Algorithm + PPR Disabled
-  if ((PprTestType & MRC_PPR_ADV_ALGORITHM_TEST_MASK)               &&
-       Inputs->PprRepairType != mPPR                                &&
-      !IsTargetedPprRequested && !IsMbist
-    ) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR memory test enabled run with PPR Repair Type: %s\n", PprRepairTypeStrings[Inputs->PprRepairType]);
-    return TRUE;
-  } else if ((PprTestType & MRC_PPR_ADV_ALGORITHM_TEST_MASK)) {
-    // Debug messages for host when multiple confiting options are enabled
-    if (Inputs->PprRepairType == mPPR) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR memory test cannot be run with %s\n", PprRepairTypeStrings[mPPR]);
-    }
-  }
-
-  // Use Case 3: mBIST + mPPR
-  // Use Case 4: mBIST only
-  if ( IsMbist                                                                      &&
-      (Inputs->PprRepairType == mPPR || Inputs->PprRepairType == NoRepair)          &&
-      (PprTestType & MRC_PPR_ADV_ALGORITHM_TEST_MASK) == 0                          &&
-      !Inputs->PprErrorInjection && !Inputs->PprForceRepair && !IsTargetedPprRequested) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "mBIST %senabled\n", Inputs->PprRepairType == mPPR ? "with mPPR " : "");
-    return TRUE;
-  } else if (IsMbist) {
-    // Debug messages for host when multiple confiting options are enabled
-    if (Inputs->PprRepairType != mPPR && Inputs->PprRepairType != NoRepair) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "mBIST cannot be run with %s\n", PprRepairTypeStrings[Inputs->PprRepairType]);
-    } else if (Inputs->PprErrorInjection) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "mBIST cannot be run with Error Injection\n");
-    } else if (Inputs->PprForceRepair) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "mBIST cannot be run with Force Repair\n");
-    }
-  }
-
-  // Use Case 5: Targeted PPR
-  if ( IsTargetedPprRequested && IsTestDisabled                          &&
-      (Inputs->PprRepairType == hPPR || Inputs->PprRepairType == sPPR)   &&
-      !IsMbist
-    ) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Targeted PPR enabled\n");
-    return TRUE;
-  } else if (IsTargetedPprRequested) {
-    // Debug messages for host when multiple confiting options are enabled
-    if (Inputs->PprRepairType != hPPR && Inputs->PprRepairType != sPPR) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Targeted PPR cannot be run with PPR Repair Type: %s\n", PprRepairTypeStrings[Inputs->PprRepairType]);
-    }
-  }
-
-  if (IsTargetedPprRequested && IsMbist) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Targeted PPR cannot be run with mBIST\n");
-  }
-
-  if ((PprTestType & MRC_PPR_ADV_ALGORITHM_TEST_MASK) && IsTargetedPprRequested) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR memory test cannot be run with Targeted PPR\n");
-  }
-
-  if ((PprTestType & MRC_PPR_ADV_ALGORITHM_TEST_MASK) && IsMbist) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR memory test cannot be run with mBIST\n");
-  }
-
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR is disabled\n");
-
-  return FALSE;
+  return MrcPostPackageRepair (
+    MrcData,
+    Controller,
+    Channel,
+    Rank,
+    BankInterleaveIndex,
+    Bank,
+    Row,
+    ByteMask
+    );
 }

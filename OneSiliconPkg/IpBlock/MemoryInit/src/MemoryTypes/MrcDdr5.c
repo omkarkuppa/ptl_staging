@@ -1759,8 +1759,6 @@ PerformGenericMrsFsmSequence (
 //  mrMR37,     // ODTLon_WR_Offset,    ODTLoff_WR_Offset
 //  mrMR38,     // ODTLon_WR_NT_Offset, ODTLoff_WR_NT_Offset
 //  mrMR39,     // ODTLon_RD_NT_Offset, ODTLoff_RD_NT_Offset
-    mrMR43,
-    mrMR44,
     mrMR48,     // Write Pattern
     mrMR129,    // Start DFE Registers
     mrMR130,

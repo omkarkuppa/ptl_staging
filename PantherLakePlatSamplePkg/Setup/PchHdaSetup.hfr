@@ -115,8 +115,8 @@
         oneof varid  = PCH_SETUP.PchHdAudioDmicLinkEnable[0],
           prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_DMIC0_PROMPT),
           help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
-          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         endoneof;
       endif; // suppressif
 
@@ -125,8 +125,8 @@
         oneof varid  = PCH_SETUP.PchHdAudioDmicLinkEnable[1],
           prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_DMIC1_PROMPT),
           help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
-          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         endoneof;
       endif; // suppressif
 
@@ -185,8 +185,8 @@
           oneof varid  = PCH_SETUP.PchHdAudioSndwLinkEnable[1],
             prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW1_PROMPT),
             help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
-            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
           endoneof;
         endif; // grayoutif
       endif; // suppressif
@@ -274,11 +274,11 @@
     oneof varid  = SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE.SndwDevTopologyConfigurationNumber,
       prompt   = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_SELECT_PROMPT),
       help     = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_SELECT_HELP),
-      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_DEFAULT),  value = 0x0,  flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_ALC722_SN_PTL), value = 0x1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_DEFAULT),  value = 0x0,  flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_10EC3056), value = 0x1,  flags = RESET_REQUIRED;
       option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_5STAR_ES1_PTL),    value = 0x2,  flags = RESET_REQUIRED;
       option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_4STAR_3_ES1_PTL),  value = 0x3,  flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_4STAR_1_PTL),  value = 0x4,  flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_4STAR_1_PTL),  value = 0x4,  flags = RESET_REQUIRED;
       option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_CIRRUS_PTL),   value = 0x5,  flags = RESET_REQUIRED;
       option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_GCS_ADK),  value = 0x6,  flags = RESET_REQUIRED;
       option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_5STAR_MP_PTL),    value = 0x9,  flags = RESET_REQUIRED;
@@ -441,8 +441,8 @@
         oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicQuadEnabled,
           prompt      = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_QUAD_PROMPT),
           help        = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_QUAD_HELP),
-          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
-          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_48KHZ), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_48KHZ), value = 1, flags = DEFAULT | RESET_REQUIRED;
           option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ), value = 2, flags = RESET_REQUIRED;
         endoneof;
       endif;
@@ -557,7 +557,6 @@
       help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
-      default  = TRUE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     grayoutif ideqval PCH_SETUP.PchHdAudioFeature[10] == 0x0;

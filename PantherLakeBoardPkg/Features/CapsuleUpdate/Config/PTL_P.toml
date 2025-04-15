@@ -143,16 +143,16 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
     IsEnabled = true
 
     [Firmware.Fsp.Offset.Normal.Debug.Default]
-      FspS  = { Offset = '0x00A00000', Size = '0x000A0000' }
-      FspM  = { Offset = '0x00AA0000', Size = '0x001A0000' }
+      FspS  = { Offset = '0x00A10000', Size = '0x000A0000' }
+      FspM  = { Offset = '0x00AB0000', Size = '0x00190000' }
       FspT  = { Offset = '0x00DD2000', Size = '0x00010000' }
       FspO  = { Offset = '0x00DE2000', Size = '0x0001D000' }
       FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00DD0000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Normal.Release.Default]
-      FspS  = { Offset = '0x00B70000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00BD0000', Size = '0x00110000' }
+      FspS  = { Offset = '0x00B80000', Size = '0x00060000' }
+      FspM  = { Offset = '0x00BE0000', Size = '0x00100000' }
       FspT  = { Offset = '0x00DE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00DEE000', Size = '0x00011000' }
       FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }

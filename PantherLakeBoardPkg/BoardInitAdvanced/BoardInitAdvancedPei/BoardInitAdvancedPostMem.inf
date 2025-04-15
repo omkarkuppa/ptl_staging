@@ -49,7 +49,6 @@
   GpioV2WrapperLib
   PeiDTbtInitLib
   PeiTbtTaskDispatchLib
-  PmcLib
 
 [Packages]
   EcFeaturePkg/EcFeaturePkg.dec
@@ -66,7 +65,6 @@
   PantherLakeBinPkg/PantherLakeBinPkg.dec
   BoardModulePkg/BoardModulePkg.dec
   Usb4FeaturePkg/Usb4FeaturePkg.dec
-  TelemetryFeaturePkg/TelemetryFeaturePkg.dec
 
 [Sources]
   BoardInitAdvancedPostMem.c
@@ -112,7 +110,6 @@
   gPlatformModuleTokenSpaceGuid.PcdForceSerialAfterConsoleReady   ## PRODUCES
   gPlatformModuleTokenSpaceGuid.PcdReducedShellEntryTime          ## PRODUCES
   gSiPkgTokenSpaceGuid.PcdMmio64Base                              ## CONSUMES
-  gTelemetryFeaturePkgTokenSpaceGuid.PcdTelemetryFeatureEnable    ## CONSUMES
 
 [FixedPcd]
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection             ## CONSUMES

@@ -21,136 +21,24 @@
 
 **/
 
-//
-// EDK-II Foundation.
-//
-#include <PiDxe.h>
-#include <LastAttemptStatus.h>
-#include <IndustryStandard/Pci.h>
-#include <Guid/SystemResourceTable.h>
+#include <Uefi.h>
 #include <Protocol/PciEnumerationComplete.h>
-#include <Protocol/PciIo.h>
-#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/FmpDeviceLib.h>
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-//
-// AFP Foundation.
-//
-#include <Library/SeamlessRecoverySupportLib.h>
-//
-// Self-Module Foundation.
-//
-#include "Defines/FoxvilleCommon.h"
-#include "Defines/FoxvilleNvmMap.h"
-#include "FoxvilleApi.h"
-#include "FoxvilleDevice.h"
-#include "FoxvilleUpdate.h"
-
-#define FOXVILLE_DEVICE_VERSION_STRING_FORMAT  L"#.##-#"
-#define FOXVILLE_DEVICE_VERSION_STRING_SIZE    (sizeof (FOXVILLE_DEVICE_VERSION_STRING_FORMAT))
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <Library/PcdLib.h>
+#include <LastAttemptStatus.h>
+#include <Library/FmpDeviceLib.h>
+#include "FoxvilleDeviceLib.h"
 
 //
 // Module Variables.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED STATIC EFI_EVENT             mFoxvilleOnPciEnumCompleteEvent = NULL;
-GLOBAL_REMOVE_IF_UNREFERENCED STATIC FOXVILLE_HW_INSTANCE  *mFoxvilleHwInstPtr             = NULL;
-GLOBAL_REMOVE_IF_UNREFERENCED STATIC EFI_PCI_IO_PROTOCOL   *mPciIoProtocolPtr              = NULL;
-GLOBAL_REMOVE_IF_UNREFERENCED STATIC FOXVILLE_DEVICE_INFO  *mFoxvilleDeviceInfoPtr         = NULL;
-
-/**
-  Initialize the Foxville device information.
-
-  @param[out]  DeviceHandlePtr  Pointer to the device handle.
-
-  @retval  EFI_SUCCESS            Succeed to initialize the Foxville device information.
-  @retval  EFI_INVALID_PARAMETER  Any input parameter is invalid.
-  @retval  EFI_OUT_OF_RESOURCES   Failed to allocate needed memory buffer.
-  @retval  EFI_DEVICE_ERROR       Operation could not be complete.
-  @retval  Others                 Failed to initialize the Foxville device information.
-
-**/
-EFI_STATUS
-EFIAPI
-FoxvilleDeviceInit (
-  OUT EFI_HANDLE  *DeviceHandlePtr
-  )
-{
-  EFI_STATUS  Status;
-  EFI_HANDLE  Handle;
-
-  Status = EFI_ABORTED;
-  Handle = NULL;
-
-  if (DeviceHandlePtr == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  mFoxvilleHwInstPtr = AllocateZeroPool (sizeof (FOXVILLE_HW_INSTANCE));
-  if (mFoxvilleHwInstPtr == NULL) {
-    Status = EFI_OUT_OF_RESOURCES;
-    DEBUG ((DEBUG_ERROR, "AllocateZeroPool failed, Status = %r\n", Status));
-    return Status;
-  }
-
-  Status = GetFoxvilleDeviceHandle (&Handle);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  Status = gBS->HandleProtocol (
-                  Handle,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **)&mPciIoProtocolPtr
-                  );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to locate the PCI IO protocol, Status = %r\n", Status));
-    return Status;
-  }
-
-  mFoxvilleHwInstPtr->PciIo = mPciIoProtocolPtr;
-
-  //
-  // Set the Foxville device PCI attributes.
-  //
-  Status = SetFoxvillePciAttributes (mPciIoProtocolPtr);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  //
-  // Initial the Foxville device information.
-  //
-  mFoxvilleDeviceInfoPtr = AllocateZeroPool (sizeof (FOXVILLE_DEVICE_INFO));
-  if (mFoxvilleDeviceInfoPtr == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
-
-  Status = InitFoxvilleDeviceInfo (mPciIoProtocolPtr, mFoxvilleDeviceInfoPtr);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to initialize the Foxville device information.\n"));
-    return EFI_DEVICE_ERROR;
-  }
-
-  mFoxvilleHwInstPtr->FlashSize = mFoxvilleDeviceInfoPtr->FlashSize;
-
-  //
-  // Config the Foxville register for device initialization.
-  //
-  Status = ConfigRegisterForDeviceInit (mPciIoProtocolPtr);
-  if (EFI_ERROR (Status)) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  DEBUG ((DEBUG_INFO, "%a: Flash Mode = %d\n", __func__, mFoxvilleDeviceInfoPtr->FlashMode));
-
-  *DeviceHandlePtr = Handle;
-
-  return Status;
-}
+GLOBAL_REMOVE_IF_UNREFERENCED STATIC EFI_EVENT  mFoxvilleOnPciEnumCompleteEvent = NULL;
 
 /**
   Callback function for the gEfiPciEnumerationCompleteProtocolGuid protocol installed.
@@ -198,11 +86,8 @@ FoxvillePciEnumCompleteCallback (
   // Retrieve the device handle for Foxville.
   //
   Status = FoxvilleDeviceInit (&DeviceHandle);
-  if (Status == EFI_NOT_FOUND) {
-    DEBUG ((DEBUG_INFO, "Not found supported Foxville Device for FMP capsule update.\n"));
-    return;
-  } else if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to detect Foxville device, Status = %r\n", Status));
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Failed to detect Foxville device, Status = %r\n", Status));
     return;
   }
 
@@ -283,6 +168,9 @@ RegisterFmpUninstaller (
   IN FMP_DEVICE_LIB_REGISTER_FMP_UNINSTALLER  Function
   )
 {
+  //
+  // This is a system firmware update that does not use Driver Binding Protocol
+  //
   return EFI_SUCCESS;
 }
 
@@ -317,6 +205,9 @@ FmpDeviceSetContext (
   IN OUT VOID    **Context
   )
 {
+  //
+  // This is a system firmware update that does not use Driver Binding Protocol
+  //
   return EFI_UNSUPPORTED;
 }
 
@@ -345,12 +236,7 @@ FmpDeviceGetSize (
   OUT UINTN  *Size
   )
 {
-  if (Size == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  *Size = 0;
-  return EFI_SUCCESS;
+  return EFI_UNSUPPORTED;
 }
 
 /**
@@ -402,11 +288,11 @@ FmpDeviceGetImageTypeIdGuidPtr (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetAttributes (
-  OUT UINT64  *Supported,
-  OUT UINT64  *Setting
+  OUT UINT64    *Supported,
+  OUT UINT64    *Setting
   )
 {
-  if ((Supported == NULL) || (Setting == NULL)) {
+  if (Supported == NULL || Setting == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -415,7 +301,6 @@ FmpDeviceGetAttributes (
                 IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |
                 IMAGE_ATTRIBUTE_IN_USE
                 );
-
   *Setting   = (IMAGE_ATTRIBUTE_IMAGE_UPDATABLE         |
                 IMAGE_ATTRIBUTE_RESET_REQUIRED          |
                 IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |
@@ -460,120 +345,6 @@ FmpDeviceGetLowestSupportedVersion (
   )
 {
   return EFI_UNSUPPORTED;
-}
-
-/**
-  Returns the Null-terminated Unicode string that is used to fill in the
-  VersionName field of the EFI_FIRMWARE_IMAGE_DESCRIPTOR structure that is
-  returned by the GetImageInfo() service of the Firmware Management Protocol.
-  The returned string must be allocated using EFI_BOOT_SERVICES.AllocatePool().
-
-  @note It is recommended that all firmware devices support a method to report
-        the VersionName string from the currently stored firmware image.
-
-  @param[out] VersionString  The version string retrieved from the currently
-                             stored firmware image.
-
-  @retval EFI_SUCCESS            The version string of currently stored
-                                 firmware image was returned in Version.
-  @retval EFI_INVALID_PARAMETER  VersionString is NULL.
-  @retval EFI_UNSUPPORTED        The firmware device does not support a method
-                                 to report the version string of the currently
-                                 stored firmware image.
-  @retval EFI_DEVICE_ERROR       An error occurred attempting to retrieve the
-                                 version string of the currently stored
-                                 firmware image.
-  @retval EFI_OUT_OF_RESOURCES   There are not enough resources to allocate the
-                                 buffer for the version string of the currently
-                                 stored firmware image.
-
-**/
-EFI_STATUS
-EFIAPI
-FmpDeviceGetVersionString (
-  OUT CHAR16  **VersionString
-  )
-{
-  EFI_STATUS                    Status;
-  FOXVILLE_DEV_STARTER_VERSION  NvmVersion;
-
-  if (VersionString == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if ((mFoxvilleDeviceInfoPtr == NULL) || (!(mFoxvilleDeviceInfoPtr->IsValid))) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  *VersionString = (CHAR16 *)AllocateZeroPool (FOXVILLE_DEVICE_VERSION_STRING_SIZE);
-  if (*VersionString == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
-
-  NvmVersion.Uint16 = mFoxvilleDeviceInfoPtr->NvmVersion;
-  Status            = UnicodeSPrint (
-                        *VersionString,
-                        FOXVILLE_DEVICE_VERSION_STRING_SIZE,
-                        L"%X.%X%X-%X",
-                        (UINT8)((NvmVersion.Bits.UpperByte & 0xF0) >> 4),
-                        (UINT8)(NvmVersion.Bits.UpperByte & 0x0F),
-                        (UINT8)((NvmVersion.Bits.LowerByte & 0xF0) >> 4),
-                        (UINT8)(NvmVersion.Bits.LowerByte & 0x0F)
-                        );
-  if (EFI_ERROR (Status)) {
-    return EFI_UNSUPPORTED;
-  }
-
-  return EFI_SUCCESS;
-}
-
-/**
-  Returns the value used to fill in the Version field of the
-  EFI_FIRMWARE_IMAGE_DESCRIPTOR structure that is returned by the GetImageInfo()
-  service of the Firmware Management Protocol.  If EFI_SUCCESS is returned, then
-  the firmware device supports a method to report the Version value from the
-  currently stored firmware image.  If the value can not be reported for the
-  firmware image currently stored in the firmware device, then EFI_UNSUPPORTED
-  must be returned.  EFI_DEVICE_ERROR is returned if an error occurs attempting
-  to retrieve the LowestSupportedVersion value for the currently stored firmware
-  image.
-
-  @note It is recommended that all firmware devices support a method to report
-        the Version value from the currently stored firmware image.
-
-  @param[out] Version  The version value retrieved from the currently stored
-                       firmware image.
-
-  @retval EFI_SUCCESS       The version of currently stored firmware image was
-                            returned in Version.
-  @retval EFI_UNSUPPORTED   The firmware device does not support a method to
-                            report the version of the currently stored firmware
-                            image.
-  @retval EFI_DEVICE_ERROR  An error occurred attempting to retrieve the version
-                            of the currently stored firmware image.
-
-**/
-EFI_STATUS
-EFIAPI
-FmpDeviceGetVersion (
-  OUT UINT32  *Version
-  )
-{
-  if (Version == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if (mFoxvilleDeviceInfoPtr == NULL) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  if (!(mFoxvilleDeviceInfoPtr->IsValid)) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  *Version = (UINT32)(mFoxvilleDeviceInfoPtr->NvmVersion);
-
-  return EFI_SUCCESS;
 }
 
 /**
@@ -679,12 +450,7 @@ FmpDeviceCheckImage (
 {
   UINT32  LastAttemptStatus;
 
-  return FmpDeviceCheckImageWithStatus (
-           Image,
-           ImageSize,
-           ImageUpdatable,
-           &LastAttemptStatus
-           );
+  return FmpDeviceCheckImageWithStatus (Image, ImageSize, ImageUpdatable, &LastAttemptStatus);
 }
 
 /**
@@ -705,7 +471,8 @@ FmpDeviceCheckImage (
                                     IMAGE_UPDATABLE_VALID_WITH_VENDOR_CODE
   @param[out] LastAttemptStatus   A pointer to a UINT32 that holds the last attempt
                                   status to report back to the ESRT table in case
-                                  of error.
+                                  of error. This value will only be checked when this
+                                  function returns an error.
 
                                   The return status code must fall in the range of
                                   LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE to
@@ -724,67 +491,37 @@ FmpDeviceCheckImage (
 EFI_STATUS
 EFIAPI
 FmpDeviceCheckImageWithStatus (
-  IN     CONST VOID    *Image,
-  IN           UINTN   ImageSize,
-     OUT       UINT32  *ImageUpdatable,
-     OUT       UINT32  *LastAttemptStatus
+  IN  CONST VOID  *Image,
+  IN  UINTN       ImageSize,
+  OUT UINT32      *ImageUpdatable,
+  OUT UINT32      *LastAttemptStatus
   )
 {
-  FOXVILLE_NVM_MAP  *FoxvilleNvmMapPtr;
+  EFI_STATUS          Status;
 
-  FoxvilleNvmMapPtr = NULL;
-
-  //
-  // Check the input parameters.
-  //
-  if ((Image == NULL) || (ImageSize == 0)) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if ((ImageUpdatable == NULL) || (LastAttemptStatus == NULL)) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if ((ImageSize < SIZE_1MB) || (ImageSize > SIZE_2MB)) {
+  if (ImageUpdatable == NULL) {
+    DEBUG ((DEBUG_ERROR, "CheckImage - ImageUpdatable Pointer Parameter is NULL.\n"));
+    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE;
     return EFI_INVALID_PARAMETER;
   }
 
   //
-  // Check the device information.
+  // Set to valid and then if any tests fail it will update this flag.
   //
-  if ((mFoxvilleDeviceInfoPtr == NULL) || (!(mFoxvilleDeviceInfoPtr->IsValid))) {
-    return EFI_DEVICE_ERROR;
-  }
+  *ImageUpdatable = IMAGE_UPDATABLE_VALID;
 
-  //
-  // Check the image validity.
-  //
-  FoxvilleNvmMapPtr = (FOXVILLE_NVM_MAP *)Image;
-  *ImageUpdatable   = IMAGE_UPDATABLE_VALID;
-
-  if (IsBlankFlashDeviceId (mFoxvilleDeviceInfoPtr->DeviceId)) {
-    return EFI_SUCCESS;
-  }
-
-  if (ImageSize > mFoxvilleDeviceInfoPtr->FlashSize) {
-    DEBUG ((DEBUG_ERROR, "Image size is larger than flash size.\n"));
+  if (Image == NULL) {
+    DEBUG ((DEBUG_ERROR, "CheckImage - Image Pointer Parameter is NULL.\n"));
+    //
+    // Not sure if this is needed
+    //
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
-    return EFI_ABORTED;
+    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE;
+    return EFI_INVALID_PARAMETER;
   }
 
-  if ((FoxvilleNvmMapPtr->DeviceId) != (mFoxvilleDeviceInfoPtr->DeviceId)) {
-    DEBUG ((DEBUG_ERROR, "Update image is not for this device.\n"));
-    *ImageUpdatable = IMAGE_UPDATABLE_INVALID_TYPE;
-    return EFI_ABORTED;
-  }
-
-  if ((FoxvilleNvmMapPtr->DevStarterVersion.Uint16) < (mFoxvilleDeviceInfoPtr->NvmVersion)) {
-    DEBUG ((DEBUG_ERROR, "Update image version is lower than current, rollback is unsupported.\n"));
-    *ImageUpdatable = IMAGE_UPDATABLE_INVALID_OLD;
-    return EFI_ABORTED;
-  }
-
-  return EFI_SUCCESS;
+  Status = IgcCheckImage (Image, ImageSize, ImageUpdatable);
+  return Status;
 }
 
 /**
@@ -844,8 +581,8 @@ EFIAPI
 FmpDeviceSetImage (
   IN  CONST VOID                                     *Image,
   IN  UINTN                                          ImageSize,
-  IN  CONST VOID                                     *VendorCode        OPTIONAL,
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress           OPTIONAL,
+  IN  CONST VOID                                     *VendorCode,       OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
   IN  UINT32                                         CapsuleFwVersion,
   OUT CHAR16                                         **AbortReason
   )
@@ -853,14 +590,14 @@ FmpDeviceSetImage (
   UINT32  LastAttemptStatus;
 
   return FmpDeviceSetImageWithStatus (
-           Image,
-           ImageSize,
-           VendorCode,
-           Progress,
-           CapsuleFwVersion,
-           AbortReason,
-           &LastAttemptStatus
-           );
+                                      Image,
+                                      ImageSize,
+                                      VendorCode,
+                                      Progress,
+                                      CapsuleFwVersion,
+                                      AbortReason,
+                                      &LastAttemptStatus
+                                      );
 }
 
 /**
@@ -931,106 +668,122 @@ EFIAPI
 FmpDeviceSetImageWithStatus (
   IN  CONST VOID                                     *Image,
   IN  UINTN                                          ImageSize,
-  IN  CONST VOID                                     *VendorCode        OPTIONAL,
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress           OPTIONAL,
+  IN  CONST VOID                                     *VendorCode,       OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
   IN  UINT32                                         CapsuleFwVersion,
   OUT CHAR16                                         **AbortReason,
   OUT UINT32                                         *LastAttemptStatus
   )
 {
-  EFI_STATUS                       Status;
-  SYSTEM_FIRMWARE_UPDATE_PROGRESS  PreviousProgress;
-  UINT8                            *ImageCopy;
+  EFI_STATUS                          Status;
 
-  ImageCopy = NULL;
+  DEBUG ((DEBUG_INFO, "FmpDeviceSetImageWithStatus (Foxville) - Start\n"));
 
   if (Progress == NULL) {
-    DEBUG ((DEBUG_ERROR, "FmpDeviceSetImageWithStatus - Invalid progress callback\n"));
+    DEBUG((DEBUG_ERROR, "FmpDeviceSetImageWithStatus - Invalid progress callback\n"));
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE;
     return EFI_INVALID_PARAMETER;
   }
 
   //
-  // Test Progress Callback function.
+  // Test Progress Callback function
   //
   Status = Progress (5);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "FmpDeviceSetImageWithStatus - Progress Callback failed with Status %r.\n", Status));
   }
 
-  DEBUG ((DEBUG_INFO, "Flashing new NVM image\n"));
-
-  //
-  // Check if system is continuing from an interrupted update.
-  // If not, save current Capsule image to storage for support seamless recovery
-  // Otherwise, no need to backup files again.
-  //
-  if (!IsPreviousUpdateUnfinished (&PreviousProgress)) {
-    SaveCurrentCapsuleToStorage ((VOID *)Image, ImageSize);
-  } else {
-    ASSERT (PreviousProgress.Component == UpdatingFoxville);
+  Status = IgcSetImage (Image, ImageSize);
+  if (EFI_ERROR(Status)) {
+    DEBUG ((DEBUG_INFO, "[%a]: Foxville Update Fail!\n", __FUNCTION__));
   }
 
-  SetUpdateProgress (UpdatingFoxville, 0);
+  Progress (100);
 
-  ImageCopy = (UINT8 *)AllocateZeroPool (ImageSize);
-  if (ImageCopy == NULL) {
-    Status = EFI_OUT_OF_RESOURCES;
-    goto Exit;
+  DEBUG ((DEBUG_INFO, "FmpDeviceSetImageWithStatus (Foxville) - %r\n", Status));
+  if (EFI_ERROR (Status)) {
+    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE;
+  }
+  return Status;
+}
+
+/**
+  Returns the Null-terminated Unicode string that is used to fill in the
+  VersionName field of the EFI_FIRMWARE_IMAGE_DESCRIPTOR structure that is
+  returned by the GetImageInfo() service of the Firmware Management Protocol.
+  The returned string must be allocated using EFI_BOOT_SERVICES.AllocatePool().
+
+  @note It is recommended that all firmware devices support a method to report
+        the VersionName string from the currently stored firmware image.
+
+  @param[out] VersionString  The version string retrieved from the currently
+                             stored firmware image.
+
+  @retval EFI_SUCCESS            The version string of currently stored
+                                 firmware image was returned in Version.
+  @retval EFI_INVALID_PARAMETER  VersionString is NULL.
+  @retval EFI_UNSUPPORTED        The firmware device does not support a method
+                                 to report the version string of the currently
+                                 stored firmware image.
+  @retval EFI_DEVICE_ERROR       An error occurred attempting to retrieve the
+                                 version string of the currently stored
+                                 firmware image.
+  @retval EFI_OUT_OF_RESOURCES   There are not enough resources to allocate the
+                                 buffer for the version string of the currently
+                                 stored firmware image.
+
+**/
+EFI_STATUS
+EFIAPI
+FmpDeviceGetVersionString (
+  OUT CHAR16  **VersionString
+  )
+{
+  if (VersionString == NULL) {
+    return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (ImageCopy, Image, ImageSize);
+  return GetVersionString (VersionString);
+}
 
-  switch (mFoxvilleDeviceInfoPtr->FlashMode) {
-    case FLASH_MODE_BLANK:
-      Status = FoxvilleUpdateInBlankMode (mPciIoProtocolPtr, (VOID *)ImageCopy, ImageSize);
-      if (EFI_ERROR (Status)) {
-        Status = EFI_ABORTED;
-        goto Exit;
-      }
+/**
+  Returns the value used to fill in the Version field of the
+  EFI_FIRMWARE_IMAGE_DESCRIPTOR structure that is returned by the GetImageInfo()
+  service of the Firmware Management Protocol.  If EFI_SUCCESS is returned, then
+  the firmware device supports a method to report the Version value from the
+  currently stored firmware image.  If the value can not be reported for the
+  firmware image currently stored in the firmware device, then EFI_UNSUPPORTED
+  must be returned.  EFI_DEVICE_ERROR is returned if an error occurs attempting
+  to retrieve the LowestSupportedVersion value for the currently stored firmware
+  image.
 
-      break;
+  @note It is recommended that all firmware devices support a method to report
+        the Version value from the currently stored firmware image.
 
-    case FLASH_MODE_PROTECTED:
-    case FLASH_MODE_UNPROTECTED:
-      Status = FoxvilleUpdateInNonBlankMode (mFoxvilleHwInstPtr, (VOID *)ImageCopy, ImageSize);
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Flashing NVM FAILED\n"));
-        Status = EFI_ABORTED;
-        goto Exit;
-      }
+  @param[out] Version  The version value retrieved from the currently stored
+                       firmware image.
 
-      //
-      // Reload the GPHY FW to complete the update.
-      //
-      Status = ReloadGphyFw (mPciIoProtocolPtr);
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Failed to reload the GPHY FW.\n"));
-        Status = EFI_DEVICE_ERROR;
-        goto Exit;
-      }
+  @retval EFI_SUCCESS       The version of currently stored firmware image was
+                            returned in Version.
+  @retval EFI_UNSUPPORTED   The firmware device does not support a method to
+                            report the version of the currently stored firmware
+                            image.
+  @retval EFI_DEVICE_ERROR  An error occurred attempting to retrieve the version
+                            of the currently stored firmware image.
 
-      break;
+**/
+EFI_STATUS
+EFIAPI
+FmpDeviceGetVersion (
+  OUT UINT32  *Version
+  )
+{
+  EFI_STATUS           Status;
+  Status = IgcGetImageVersion (Version);
 
-    default:
-      Status = EFI_UNSUPPORTED;
-      DEBUG ((DEBUG_ERROR, "Unsupported flash mode - [%02X].", mFoxvilleDeviceInfoPtr->FlashMode));
-      goto Exit;
+  if (EFI_ERROR (Status)) {
+    return EFI_UNSUPPORTED;
   }
-
-  Progress (90);
-
-  DEBUG ((DEBUG_INFO, "NVM image was updated successfully\n"));
-
-Exit:
-  ClearUpdateProgress ();
-  DeleteBackupFiles ();
-
-  if (ImageCopy != NULL) {
-    FreePool (ImageCopy);
-  }
-
-  Progress (95);
 
   return Status;
 }
@@ -1056,5 +809,6 @@ FmpDeviceLock (
   VOID
   )
 {
+  DEBUG ((DEBUG_INFO, "FmpDeviceLib(Foxville): FmpDeviceLock() for system FLASH\n"));
   return EFI_UNSUPPORTED;
 }

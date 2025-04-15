@@ -66,26 +66,4 @@ MrcModifyMcAddressDecoderValues (
   IN  MrcParameters *const  MrcData
   );
 
-/**
-  This function extends tMRR
-
-  @param[in]       MrcData  - Pointer to MRC global data.
-  @param[in, out]  tMRR     - Holds the incoming tMRR value, and outputs the updated tMRR value
-**/
-VOID
-MrcExtendTmrr (
-  IN     MrcParameters *const  MrcData,
-  IN OUT INT64                 *tMRR
-  );
-
-/**
-  Disable Write Periodic Retraining
-
-  @param[in]  MrcData  - Pointer to MRC global data.
-**/
-VOID
-MrcDisableWrRetraining (
-  IN  MrcParameters *const  MrcData
-  );
-
 #endif //_MrcMc_h_

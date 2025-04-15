@@ -22,7 +22,7 @@ Feature package contains:
 * Acpi Tables
   * **SndwDevTopologySsdtPlatformA**  (*SndwDevTopologySsdtPlatformA.inf*) - Module contain SSDT tables for different topology configurations:
     * SndwDevTopologySt00Ssdt - SSDT contains DisCo for legacy codecs topology.
-    * SndwDevTopologySt01Ssdt - SSDT contains DisCo for ALC722-CG in single lane.
+    * SndwDevTopologySt01Ssdt - SSDT contains DisCo for ALC711-VD1, ALC714-VC1, 2x ALC316 and SSID: 10EC3056.
     * SndwDevTopologySt02Ssdt - SSDT contains DisCo for ALC712-VB, ALC1320, 5-Star Configuration, ES-1.
     * SndwDevTopologySt03Ssdt - SSDT contains DisCo for ALC713-VB, 2xALC1320, 4-Star(3) Configuration, ES-1.
     * SndwDevTopologySt04Ssdt - SSDT contains DisCo for ALC722-CG, 4-Star(1) Configuration.
@@ -48,7 +48,7 @@ SndwInstallDevTopology is configured by EFI Variable: SndwDevTopologyConfigurati
 Currently supported devices and endpoints topology:
 
 1. [0] - Legacy codecs topology
-1. [1] - ALC722-CG, single lane Configuration
+1. [1] - Configuration 10EC3056 ALC711-VD1, ALC714-VC1, 2x ALC316
 1. [2] - ALC712-VB, ALC1320, 5-Star Configuration
 1. [3] - ALC713-VB, 2xALC1320, 4-Star(3) Configuration
 1. [4] - ALC722-CG, 4-Star(2) Configuration

@@ -2174,6 +2174,7 @@ WriteTimeByteCentering1D (
   @param[in,out] MrcData          - Include all MRC global data.
   @param[in]     StepSize         - Step size
   @param[in]     MsgPrintMask     - Serial debug output message enable mask
+  @param[in]     IsEarlyCentering - Execute as early centering routine
   @param[out]    VrefOffsets      - Per-rank offsets from the low CAC Vref edge
 
   @retval        MrcStatus -  If succeeded, return mrcSuccess
@@ -2184,6 +2185,7 @@ CmdVCentering1D (
   IN OUT MrcParameters *const MrcData,
   IN     const UINT8          StepSize,
   IN     UINT8                MsgPrintMask,
+  IN     BOOLEAN              IsEarlyCentering,
   OUT    UINT8                VrefOffsets[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL]
   );
 

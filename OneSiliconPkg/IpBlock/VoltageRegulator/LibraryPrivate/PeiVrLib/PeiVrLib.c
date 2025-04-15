@@ -606,39 +606,36 @@ SetVrNonOverrideValues (
   }
 
   ///
-  /// Acoustic Noise Mitigation
-  /// VR Core, GT and Atom domains support Slow Slew Rate and Fast Pkg Ramp features
+  /// Core, GT and Atom domains support Slow Slew Rate and Fast Pkg Ramp features
   ///
-  if (CpuPowerMgmtVrConfig->AcousticNoiseMitigation) {
-    if ((VrIndex < 2) || (VrIndex == 3)) {
-      ///
-      /// Set Fast and Slow Slew Rate for Deep Package C States.
-      ///
+  if ((VrIndex < 2) || (VrIndex == 3)) {
+    ///
+    /// Set Fast and Slow Slew Rate for Deep Package C States.
+    ///
+    MailboxCommand.InterfaceData = 0;
+    MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
+    MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_SET_DISABLE_FAST_PKGC_RAMP;
+    MailboxCommand.Fields.Param2 = (TempVrAddress & VR_ADDRESS_MASK);
+    FastPkgcRampMailboxData.Data32 = 0;
+    FastPkgcRampMailboxData.Fields.FastPkgcRampDisable = CpuPowerMgmtVrConfig->FastPkgCRampDisable[VrIndex];
+    DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = WRITE_SVID_SET_DISABLE_FAST_PKGC_RAMP_CMD\n"));
+    Status = MailboxWrite (MailboxCommand.InterfaceData, FastPkgcRampMailboxData.Data32, &MailboxStatus);
+    if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+      DEBUG ((DEBUG_ERROR, "VR: Error Writing disable Fast Deep Package C States for VrIndex = %x. EFI_STATUS = %r, Mailbox Status = %X\n", VrIndex , Status, MailboxStatus));
+    }
+
+    if (CpuPowerMgmtVrConfig->FastPkgCRampDisable[VrIndex] == 1) {
       MailboxCommand.InterfaceData = 0;
       MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
-      MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_SET_DISABLE_FAST_PKGC_RAMP;
+      MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_SET_VR_SLEW_RATE;
       MailboxCommand.Fields.Param2 = (TempVrAddress & VR_ADDRESS_MASK);
-      FastPkgcRampMailboxData.Data32 = 0;
-      FastPkgcRampMailboxData.Fields.FastPkgcRampDisable = CpuPowerMgmtVrConfig->FastPkgCRampDisable[VrIndex];
-      DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = WRITE_SVID_SET_DISABLE_FAST_PKGC_RAMP_CMD\n"));
-      Status = MailboxWrite (MailboxCommand.InterfaceData, FastPkgcRampMailboxData.Data32, &MailboxStatus);
+      VrSlewRateMailboxData.Data32 = 0;
+      VrSlewRateMailboxData.Fields.SlowSlewRate = CpuPowerMgmtVrConfig->SlowSlewRate[VrIndex];
+      DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = WRITE_SVID_SET_VR_SLEW_RATE_CMD\n"));
+      DEBUG ((DEBUG_INFO, "(MAILBOX) SlowSlewRate[%x] = %d (0: Fast/2</b>; 1: Fast/4; 2: Fast/8; 3: Fast/16)\n", VrIndex, CpuPowerMgmtVrConfig->SlowSlewRate[VrIndex]));
+      Status = MailboxWrite (MailboxCommand.InterfaceData, VrSlewRateMailboxData.Data32, &MailboxStatus);
       if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
-        DEBUG ((DEBUG_ERROR, "VR: Error Writing disable Fast Deep Package C States for VrIndex = %x. EFI_STATUS = %r, Mailbox Status = %X\n", VrIndex , Status, MailboxStatus));
-      }
-
-      if (CpuPowerMgmtVrConfig->FastPkgCRampDisable[VrIndex] == 1) {
-        MailboxCommand.InterfaceData = 0;
-        MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
-        MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_SET_VR_SLEW_RATE;
-        MailboxCommand.Fields.Param2 = (TempVrAddress & VR_ADDRESS_MASK);
-        VrSlewRateMailboxData.Data32 = 0;
-        VrSlewRateMailboxData.Fields.SlowSlewRate = CpuPowerMgmtVrConfig->SlowSlewRate[VrIndex];
-        DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = WRITE_SVID_SET_VR_SLEW_RATE_CMD\n"));
-        DEBUG ((DEBUG_INFO, "(MAILBOX) SlowSlewRate[%x] = %d (0: Fast/2</b>; 1: Fast/4; 2: Fast/8; 3: Fast/16)\n", VrIndex, CpuPowerMgmtVrConfig->SlowSlewRate[VrIndex]));
-        Status = MailboxWrite (MailboxCommand.InterfaceData, VrSlewRateMailboxData.Data32, &MailboxStatus);
-        if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
-          DEBUG ((DEBUG_ERROR, "VR: Error Writing Slow Slew Rate for VrIndex = %x. EFI_STATUS = %r, Mailbox Status = %X\n", VrIndex , Status, MailboxStatus));
-        }
+        DEBUG ((DEBUG_ERROR, "VR: Error Writing Slow Slew Rate for VrIndex = %x. EFI_STATUS = %r, Mailbox Status = %X\n", VrIndex , Status, MailboxStatus));
       }
     }
   }

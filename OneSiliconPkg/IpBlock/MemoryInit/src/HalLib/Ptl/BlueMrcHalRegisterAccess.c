@@ -543,7 +543,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccSpineGateDis",
   "GsmMccMainGlbDrvGateDis",
   "GsmMccSchedGlbDrvGateDis",
-  "GsmMccMainGlbGraceCnt",
   "GsmMccOdtMatrixRd",
   "GsmMccOdtMatrixWr",
   "GsmMccCasStopAdditionalGap",
@@ -2087,7 +2086,6 @@ MrcCheckGroupSupported (
     case GsmMccSpineGateDis:
     case GsmMccMainGlbDrvGateDis:
     case GsmMccSchedGlbDrvGateDis:
-    case GsmMccMainGlbGraceCnt:
     case GsmMccPageIdleTimerDisable:
     case GsmMccRetrainPeriod:
     case GsmMccOdtMatrixRd:

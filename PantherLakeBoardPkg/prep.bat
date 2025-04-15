@@ -118,9 +118,9 @@ cd ..\..\
 @set BUILD_OPTION_PCD=--pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE
 
 @set BUILD_DATE=
+@ for /f "tokens=2 delims==" %%G in ('wmic os get localdatetime /value') do set BUILD_DATE=%%G
+@set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=%BUILD_DATE:~0,4%
 
-@ for /f %%G in ('powershell -Command "(Get-Date).Year"') do set BUILD_DATE=%%G
-@set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=%BUILD_DATE%
 :CmdLineParse
 
 @if "" == "%1" (

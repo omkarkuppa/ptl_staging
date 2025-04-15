@@ -71,14 +71,14 @@ typedef struct {
 } MEMORY_MODULE_LOCATION;
 
 typedef struct {
-  MEMORY_MODULE_LOCATION    Location;
-  UINT8                     MemoryType;   ///< Memory Type Memory Type of the module (E.g DDR4, DDR5)
-  HOB_MANUFACTURER_ID_CODE  MfgId;        ///< Manufacturer ID of the memory module
-  UINT16                    Speed;        ///< Speed Max data rate supported by the memory module on board, in MHz
-  UINT8                     RankInDimm;   ///< Number of rank Memory organization: number of ranks of the memory module
-  UINT8                     Banks;        ///< Number of banks Memory organization: number of banks of the memory module
-  UINT8                     BankGroups;   ///< Bank group Memory organization
-  UINT8                     FormFactor;   ///< SPD ModuleType
+  MEMORY_MODULE_LOCATION  Location;
+  UINT8                   MemoryType;   ///< Memory Type Memory Type of the module (E.g DDR4, DDR5)
+  UINT16                  MfgId;        ///< Manufacturer ID Part number of the memory module
+  UINT16                  Speed;        ///< Speed Max data rate supported by the memory module on board, in MHz
+  UINT8                   RankInDimm;   ///< Number of rank Memory organization: number of ranks of the memory module
+  UINT8                   Banks;        ///< Number of banks Memory organization: number of banks of the memory module
+  UINT8                   BankGroups;   ///< Bank group Memory organization
+  UINT8                   FormFactor;   ///< SPD ModuleType
 } MEMORY_MODULE_ENTRY;
 
 typedef struct {

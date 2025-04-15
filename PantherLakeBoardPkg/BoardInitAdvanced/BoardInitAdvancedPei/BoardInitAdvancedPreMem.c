@@ -66,7 +66,6 @@
 #include <PlatformBoardConfig.h>
 #include <Ppi/IGpuPlatformPolicyPpi.h>
 #include <Library/PeiLib.h>
-#include <Guid/ResetCauseHobGuid.h>
 
 ///
 /// Reset Generator I/O Port
@@ -634,54 +633,6 @@ PlatformInitPreMem (
   return Status;
 }
 
-#if FixedPcdGetBool (PcdTelemetryFeatureEnable) == 1
-/**
-  Keep the snapshot of reset cause relative PM register for DXE phase.
-
-  @retval None.
-
-**/
-VOID
-CreateResetCauseHob (
-  VOID
-  )
-{
-  EFI_HOB_GUID_TYPE     *GuidHob;
-  RESET_CAUSE_HOB_DATA  ResetCauseHobData;
-
-  GuidHob = GetFirstGuidHob (&gIntelResetCauseHobGuid);
-  if (GuidHob != NULL) {
-    return;
-  }
-
-  GetPmcResetRegisters (
-    &(ResetCauseHobData.ResetCauseRegs.GenPmconA),
-    &(ResetCauseHobData.ResetCauseRegs.HbrCause0),
-    &(ResetCauseHobData.ResetCauseRegs.GblrstCause0),
-    &(ResetCauseHobData.ResetCauseRegs.GblrstCause1)
-    );
-
-  ResetCauseHobData.PmcSleepState = PmcGetSleepTypeAfterWake ();
-
-  DEBUG ((DEBUG_INFO, "HPR_CAUSE0    = 0x%x\n", ResetCauseHobData.ResetCauseRegs.HbrCause0));
-  DEBUG ((DEBUG_INFO, "GBLRST_CAUSE0 = 0x%x\n", ResetCauseHobData.ResetCauseRegs.GblrstCause0));
-  DEBUG ((DEBUG_INFO, "GBLRST_CAUSE1 = 0x%x\n", ResetCauseHobData.ResetCauseRegs.GblrstCause1));
-  DEBUG ((DEBUG_INFO, "PmcSleepState = 0x%x\n", ResetCauseHobData.PmcSleepState));
-
-  GuidHob = BuildGuidDataHob (
-              &gIntelResetCauseHobGuid,
-              (VOID *)&ResetCauseHobData,
-              sizeof (RESET_CAUSE_HOB_DATA)
-              );
-
-  if (GuidHob == NULL) {
-    ASSERT (FALSE);
-  }
-
-  return;
-}
-#endif
-
 /**
   Platform Init before memory PEI module entry point
 
@@ -699,10 +650,6 @@ BoardInitAdvancedPreMemEntryPoint(
   )
 {
   EFI_STATUS     Status;
-
-#if FixedPcdGetBool (PcdTelemetryFeatureEnable) == 1
-  CreateResetCauseHob ();
-#endif
 
   ///
   /// Initialize Nvram to default when checksum computation is failed

@@ -898,13 +898,9 @@ IGpuSetMemMap (
   //
   // Clear VGA Display
   //
-  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
   if (IpIGpuSupported (IGpuInst) == TRUE) {
-    if ((IGpuPreMemConfig != NULL) && (IGpuDataHob != NULL)) {
-      //
-      // Check if VGA is enabled successfully
-      //
-      if ((IS_VGA_EXIT_STATUS_SUPPORT (IGpuPreMemConfig->VgaInitControl)) && (IS_VGA_EXIT_STATUS_SUPPORT (IGpuDataHob->VgaDisplayConfig))) {
+    if (IGpuPreMemConfig != NULL) {
+      if (IS_VGA_EXIT_STATUS_SUPPORT (IGpuPreMemConfig->VgaInitControl)) {
         Status = PeiServicesLocatePpi (&gIntelPeiPreMemGraphicsPpiGuid, 0, NULL, (VOID **)&GraphicsPreMemPpi);
         if (EFI_ERROR (Status)) {
           DEBUG ((DEBUG_ERROR, "Unable to locate the GraphicsPreMemPpi\n"));
@@ -918,9 +914,15 @@ IGpuSetMemMap (
           StartTime = GetFspCurrentTime ();
 
           //
-          // Update disabled VGA in Hob
+          // Retrieve the IGPU data HOB to update the VGA display configuration
           //
-          IGpuDataHob->VgaDisplayConfig = VGA_DISPLAY_DISABLED;
+          IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+          if (IGpuDataHob != NULL) {
+            //
+            // Disable the VGA in Hob
+            //
+            IGpuDataHob->VgaDisplayConfig = VGA_DISPLAY_DISABLED;
+          }
 
           //
           // Exit VGA

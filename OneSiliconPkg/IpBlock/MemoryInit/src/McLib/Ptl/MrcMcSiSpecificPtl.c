@@ -120,36 +120,3 @@ MrcModifyMcAddressDecoderValues (
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch0Density,    WriteCached, &GetSetVal);
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch1Density,    WriteCached, &GetSetVal);
 }
-
-/**
-  This function extends tMRR
-
-  @param[in]       MrcData  - Pointer to MRC global data.
-  @param[in, out]  tMRR     - Holds the incoming tMRR value, and outputs the updated tMRR value
-**/
-VOID
-MrcExtendTmrr (
-  IN     MrcParameters *const  MrcData,
-  IN OUT INT64                 *tMRR
-  )
-{
-  if (MrcData->Outputs.IsDdr5) {
-    *tMRR += 60;
-  }
-}
-
-/**
-  Disable Write Periodic Retraining
-
-  @param[in]  MrcData  - Pointer to MRC global data.
-**/
-VOID
-MrcDisableWrRetraining (
-  IN  MrcParameters *const  MrcData
-  )
-{
-  INT64 GetSetDis = 0;
-  if (MrcData->Outputs.IsLpddr5 && MrcData->Outputs.Frequency <= 3200) {
-    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccEnWrRetraining, WriteCached, &GetSetDis);
-  }
-}

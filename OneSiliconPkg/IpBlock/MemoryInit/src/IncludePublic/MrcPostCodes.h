@@ -45,7 +45,7 @@
 #define MRC_FREQ_LOCK                   (0xDD11)
 #define MRC_DDRIO_INIT                  (0xDD12)
 #define MRC_UC_EXECUTE_GREEN            (0xDD13)
-#define MRC_READ_TIMING_1D_IDLE         (0xDD14)
+#define MRC_DDRCOMP_CAL_PRE             (0xDD14)
 #define MRC_DCC_DATA_DQ                 (0xDD15)
 #define MRC_READ_VREF_DECAP             (0xDD16)
 #define MRC_DIMM_RX_OFFSET              (0xDD17)

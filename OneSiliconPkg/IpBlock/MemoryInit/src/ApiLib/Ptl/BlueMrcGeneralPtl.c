@@ -20,7 +20,6 @@
 **/
 #include "MrcCommon.h"
 #include "MrcLpddr5.h"
-#include "MrcChipApi.h"
 
 /**
   This function sets the project specific overrides in the Input and Output structure
@@ -108,42 +107,4 @@ GetMcIbeccHash (
 
   *HashMask = IsDdr5 ? 0x2098 : 0x2094;
   *HashLsb  = IsDdr5 ? 3 : 2;
-}
-
-/**
-  This function is a wrapper for MrcGenMrsFsmClean().
-
-  @param[in] MrcData - Pointer to MRC global data.
-  @param[in] MrData  - Pointer to an array of MR data to configure the MRS FSM with.
-  @param[in] CleanAll - If set to TRUE, MrData values will be ignored and all Control Registers will be cleared
-
-  @retval mrcFail if clean failed.
-  @retval mrcSuccess otherwise.
-**/
-MrcStatus
-MrcGenMrsFsmCleanNonFastBoot (
-  IN  MrcParameters *MrcData,
-  IN  MRC_GEN_MRS_FSM_MR_TYPE MrData[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_MR_GEN_FSM],
-  IN  BOOLEAN       CleanAll
-  )
-{
-  return mrcSuccess;
-}
-
-/**
-  Set the Global driver grace period in MC.
-
-  @param[in] MrcData - Pointer to the MRC Debug structure.
-  @param[in] Controller    - Controller to setup
-  @param[in] Channel       - Channel to setup
-
-**/
-VOID
-MrcSetGlobalGraceCounter (
-  IN MrcParameters *MrcData,
-  IN UINT32        Controller,
-  IN UINT32        Channel
-  ) 
-{
-  // W/A Not applicable for PTL
 }

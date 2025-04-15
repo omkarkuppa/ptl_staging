@@ -474,55 +474,6 @@ MrcLpddr5PprControllerTeardown (
   );
 
 /**
-  Runs MBIST
-
-  @param[in]  MrcData           - Global MRC data structure
-  @param[in]  Rank              - Rank number
-  @param[in]  MbistMcChBitMask  - Memory Controller Channel Bit mask for MBIST rerun status
-  @param[in, out] MbistMpprStatus   - Array to store MBIST/mPPR Transparency status
-
-  @retval MrcStatus - mrcSuccess/mrcFail
-**/
-MrcStatus
-MemTestMbist (
-  IN  MrcParameters             *const MrcData,
-  IN  UINT32                    Rank,
-  IN  UINT32                    MbistMcChBitMask,
-  IN OUT UINT8                  MbistMpprStatus[MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_DDR5_CHANNEL]
-  );
-
-/**
-  Runs mPPR
-
-  @param[in]  MrcData               - Global MRC data structure
-  @param[in]  Rank                  - Rank number
-  @param[in]  MpprtMcChBitMask      - Memory Controller Channel Bit mask for mPPR rerun status
-  @param[in, out] MbistMpprStatus   - Array to store MBIST/mPPR Transparency status
-
-  @retval MrcStatus - mrcSuccess/mrcFail
-**/
-MrcStatus
-RunMppr (
-  IN     MrcParameters             *const MrcData,
-  IN     UINT32                    Rank,
-  IN     UINT32                    MpprtMcChBitMask,
-  IN OUT UINT8                     MbistMpprStatus[MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_DDR5_CHANNEL]
-  );
-
-/**
-  Initial function to execute MBIST/mPPR
-
-  @param[in]  MrcData           - Global MRC data structure
-
-  @retval MrcStatus - mrcSuccess/mrcFail
-
-**/
-MrcStatus
-RunMbistMppr (
-  IN  MrcParameters             *const MrcData
-  );
-
-/**
   This is a test function for direct testing of the Post Package Repair sequence.
   @param[in] MrcData     - Pointer to global MRC data.
 
@@ -531,43 +482,6 @@ RunMbistMppr (
 MrcStatus
 MrcPostPackageRepairTest (
   IN  MrcParameters *const MrcData
-  );
-
-/**
-  Get status whether PPR is enabled or disabled based on supported usecases.
-
-  @param[in] MrcData global MRC data structure.
-
-  @retval TRUE if PPR is enabled and a supported usecase is detected.
-  @retval FALSE if PPR is disabled.
-**/
-BOOLEAN
-MrcIsPprEnabled (
-  IN MrcParameters *const MrcData
-  );
-
-/**
-  Checks if Targeted PPR is requested.
-
-  @param[in] MrcData global MRC data structure.
-
-  @returns TRUE if Targeted PPR is requested, otherwise FALSE.
-**/
-BOOLEAN
-MrcIsTargetedPprRequested (
-  IN MrcParameters *const MrcData
-  );
-
-/**
-  Run Targeted PPR if requested.
-  @param[in] MrcData pointer to global MRC data.
-  @param[in] PprAmtData pointer to PPR and AMT data structure.
-
-  @returns MrcStatus
-**/
-MrcStatus
-MrcRunPprTargeted (
-  IN MrcParameters *const MrcData
   );
 
 #endif // _MrcPpr_h_

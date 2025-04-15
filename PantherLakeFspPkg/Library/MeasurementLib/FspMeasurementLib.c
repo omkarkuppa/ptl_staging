@@ -775,7 +775,7 @@ ExtendFspVersion (
   if (IsS3Resume () == 0) {
     Status = FspExtendFspVersion (Fbm, TpmActivePcrBanks);
     if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "FSP version extended to PCR Bank %r %d\n",
+      DEBUG ((DEBUG_INFO, "FSP version extended to PCR Bank\n",
               Status, TpmActivePcrBanks));
     } else {
       DEBUG ((DEBUG_INFO, "FSP version measurement fail\n"));

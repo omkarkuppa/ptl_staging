@@ -842,6 +842,13 @@ InitCpuVrConfig (
         DEBUG ((DEBUG_INFO, "VR: IccLimit[%x] = %d\n", VrIndex, (UINT16)(FastVIccMaxMailboxData.Fields.FastVModeIccLimit)));
       }
 
+      if (mVrDataHob->FastVmodeSupported[VrIndex] == 1 && mCpuSetup.EnableFastVmode[VrIndex] == 1 && mCpuSetup.IccLimit[VrIndex] == 0) {
+        //
+        // Display/Set the default IccLimit to IccMaxItrip
+        //
+        mCpuSetup.IccLimit[VrIndex] = mVrDataHob->IccMaxItrip[VrIndex];
+      }
+
       if (mVrDataHob->FastVmodeSupported[VrIndex] == 0) {
         //
         // For some SKUs, default EnableFastVmode has patched to 1, if CPU doesn't support FVM, write back to 0.
@@ -2686,6 +2693,66 @@ CpuVrConfigCallBackFunction (
   ASSERT_EFI_ERROR (Status);
 
   switch (KeyValue) {
+    case KEY_CoreVrEnableFastVmode:
+      if (Value->u8 == 0) {
+        //
+        // Disable the FVM, set the IccLimit to 0.
+        //
+        CpuSetup.IccLimit[0] = 0;
+      } else {
+        //
+        // Set to default IccLimit (IccMaxItrip) when FVM enable (Spec defined).
+        //
+        CpuSetup.IccLimit[0] = MIN (mVrDataHob->IccMaxItrip[0], MAX_ICC_LIMIT);
+      }
+      DEBUG ((DEBUG_INFO, "CpuVrConfigCallBackFunction (knob): CpuSetup.IccLimit[0] - %d\n", CpuSetup.IccLimit[0]));
+      RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (CPU_SETUP, IccLimit[0]), sizeof (CpuSetup.IccLimit[0]));
+      if (!HiiSetBrowserData (&gCpuSetupVariableGuid, L"CpuSetup", VarSize, (UINT8 *) &CpuSetup, RequestString)) {
+        Status = EFI_NOT_FOUND;
+      }
+      ASSERT_EFI_ERROR (Status);
+      break;
+
+    case KEY_GtVrEnableFastVmode:
+      if (Value->u8 == 0) {
+        //
+        // Disable the FVM, set the IccLimit to 0.
+        //
+        CpuSetup.IccLimit[1] = 0;
+      } else {
+        //
+        // Set to default IccLimit (IccMaxItrip) when FVM enable (Spec not defined yet).
+        //
+        CpuSetup.IccLimit[1] = MIN (mVrDataHob->IccMaxItrip[1], MAX_ICC_LIMIT);
+      }
+      DEBUG ((DEBUG_INFO, "CpuVrConfigCallBackFunction (knob): CpuSetup.IccLimit[1] - %d\n", CpuSetup.IccLimit[1]));
+      RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (CPU_SETUP, IccLimit[1]), sizeof (CpuSetup.IccLimit[1]));
+      if (!HiiSetBrowserData (&gCpuSetupVariableGuid, L"CpuSetup", VarSize, (UINT8 *) &CpuSetup, RequestString)) {
+        Status = EFI_NOT_FOUND;
+      }
+      ASSERT_EFI_ERROR (Status);
+      break;
+
+    case KEY_SaVrEnableFastVmode:
+      if (Value->u8 == 0) {
+        //
+        // Disable the FVM, set the IccLimit to 0.
+        //
+        CpuSetup.IccLimit[2] = 0;
+      } else {
+        //
+        // Set to default IccLimit (IccMaxItrip) when FVM enable (Spec not defined yet).
+        //
+        CpuSetup.IccLimit[2] = MIN (mVrDataHob->IccMaxItrip[2], MAX_ICC_LIMIT);
+      }
+      DEBUG ((DEBUG_INFO, "CpuVrConfigCallBackFunction (knob): CpuSetup.IccLimit[2] - %d\n", CpuSetup.IccLimit[2]));
+      RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (CPU_SETUP, IccLimit[2]), sizeof (CpuSetup.IccLimit[2]));
+      if (!HiiSetBrowserData (&gCpuSetupVariableGuid, L"CpuSetup", VarSize, (UINT8 *) &CpuSetup, RequestString)) {
+        Status = EFI_NOT_FOUND;
+      }
+      ASSERT_EFI_ERROR (Status);
+      break;
+
     case KEY_IccLimit0:
       if (CpuSetup.IccLimit[0] > MIN (mIccMax[0], MAX_ICC_LIMIT)) {
         HiiPopUp->CreatePopup (

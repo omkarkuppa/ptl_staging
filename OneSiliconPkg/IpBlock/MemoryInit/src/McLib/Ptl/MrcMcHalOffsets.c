@@ -588,7 +588,6 @@ MrcGetMcConfigRegOffset (
       break;
 
    case GsmMccMainGlbDrvGateDis:
-   case GsmMccMainGlbGraceCnt:
      Offset = OFFSET_CALC_CH(MC0_MCMAINS_GLOBAL_DRIVER_GATE_CFG_REG, MC1_MCMAINS_GLOBAL_DRIVER_GATE_CFG_REG, Controller);
      break;
 

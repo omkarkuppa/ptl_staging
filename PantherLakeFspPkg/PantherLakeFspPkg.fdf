@@ -25,23 +25,31 @@ DEFINE FLASH_BASE       = 0xFFE20000
 
 DEFINE FLASH_BLOCK_SIZE = 0x00001000     #The block size
 
-# FSP-M expected to be < 0x1A0000 for PantherLake project
+# FSP-M expected to be < 0x190000 for PantherLake project
 
 #
 # Flash Size
 #
 !if $(TARGET) == "RELEASE"
 #=============================================================================#
-DEFINE FLASH_BASE       = 0xFFE76000     # 4G - FLASH_SIZE (size of Fsp.fd)   #
-DEFINE FLASH_SIZE       = 0x0018A000     # The flash size in bytes of the FSP #
-DEFINE FLASH_NUM_BLOCKS = 0x18A          # The number of blocks               #
+DEFINE FLASH_BASE       = 0xFFE8F000     # 4G - FLASH_SIZE (size of Fsp.fd)   #
+DEFINE FLASH_SIZE       = 0x00171000     # The flash size in bytes of the FSP #
+DEFINE FLASH_NUM_BLOCKS = 0x171          # The number of blocks               #
 #=============================================================================#
 #=============================================================================#
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x0000A000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x00110000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000F7000      #
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005E000      #
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00012000      #
 #=============================================================================#
+!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
+#=============================================================================#
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x00007000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000FF000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005B000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00010000      #
+#=============================================================================#
+!endif
 !if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == TRUE
 #=============================================================================#
 DEFINE FLASH_SIZE       = 0x00128000     # The flash size in bytes of the FSP #
@@ -55,13 +63,13 @@ SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x00062000      #
 !endif
 !else
 #=============================================================================#
-DEFINE FLASH_BASE       = 0xFFD93000     # 4G - FLASH_SIZE (size of Fsp.fd)   #
-DEFINE FLASH_SIZE       = 0x0026D000     # The flash size in bytes of the FSP #
-DEFINE FLASH_NUM_BLOCKS = 0x26D          # The number of blocks               #
+DEFINE FLASH_BASE       = 0xFFDA3000     # 4G - FLASH_SIZE (size of Fsp.fd)   #
+DEFINE FLASH_SIZE       = 0x0025D000     # The flash size in bytes of the FSP #
+DEFINE FLASH_NUM_BLOCKS = 0x25D          # The number of blocks               #
 #=============================================================================#
 #=============================================================================#
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x00010000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x001A0000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x00190000      #
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0009F000      #
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x0001E000      #
 #=============================================================================#

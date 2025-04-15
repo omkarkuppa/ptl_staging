@@ -28,7 +28,6 @@
 #define LP5_LOW_FREQ_INIT         f2133
 // DDR5 CA Training Guardband
 #define MRC_CA_PARITY_DDR5_GUARDBAND (4)
-#define MRC_CA_PARITY_LP5_GUARDBAND  (1)
 #define MRC_DATA_NUM                 MRC_DATA_MOBILE_NUM
 #define MRC_DATA_SHARED_NUM          (8)         ///< # of DATA_SHARED Partitions
 #define NUM_PHASES                   (8)
@@ -68,5 +67,5 @@ typedef enum {
 
 // Configure RefreshAbrRelease with the same value like RefreshHpWm
 #define REFRESH_ABR_RELEASE       REFRESH_HP_WM_HIGH
-#define SI_PREMEM_POLICY          SI_PREMEM_POLICY_PPI
+
 #endif

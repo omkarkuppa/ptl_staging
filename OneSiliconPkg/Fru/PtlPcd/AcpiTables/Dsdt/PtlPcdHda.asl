@@ -80,32 +80,6 @@ Scope (HDAS.IDA) {
     //
     include ("HdaUsbAudioOffload.asl")
   }
-
-  Device (ISSW) {
-    Name (_ADR, 0x70000000)  // _ADR: Address
-
-    Name (_CID, Package () { // _CID: Compatible ID
-      "PRP00001",
-      "PNP0A05" /* Generic Container Device */
-    })
-
-    Method (_STA, 0, NotSerialized) { // _STA: Status
-      Return (0x0F)
-    }
-  }
-
-  Device (ISBL) {
-    Name (_ADR, 0x70000010)  // _ADR: Address
-
-    Name (_CID, Package () { // _CID: Compatible ID
-      "PRP00001",
-      "PNP0A05" /* Generic Container Device */
-    })
-
-    Method (_STA, 0, NotSerialized) { // _STA: Status
-      Return (0x0F)
-    }
-  }
 } // END Device (HDAS)
 
 #undef HDAS_PATH

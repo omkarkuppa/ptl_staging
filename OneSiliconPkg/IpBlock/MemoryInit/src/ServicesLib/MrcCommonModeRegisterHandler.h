@@ -67,31 +67,4 @@ MrcGetDramCommandMap (
   IN OUT BOOLEAN            *IsSingleCycleCmd
   );
 
-/**
-  This function issues the apporiate MR command based on MrCmd Input.
-  The data driven by the MR command is based on the data within the MrData host structure
-
-  This function assumes the inputs Controller, Channel, and Rank are all valid instances
-
-   @param[in] MrcData    - Pointer to global MRC data.
-   @param[in] Controller - Current Controller
-   @param[in] Channel    - Current Channel
-   @param[in] Rank       - Current Rank
-   @param[in] CurMrAddr  - Current MR Address to issue command too
-   @param[in] MrCmd      - Current MR Cmd type (MRW, MPC, Vref, ect) to issue
-
-   @retval mrcSuccess Dram Command successfully sent
-   @retval mrcFail Dram Command not successfully sent or DdrType not supported
-**/
-MRC_IRAM0_FUNCTION
-MrcStatus
-MrcIssueMrCommand (
-  IN  MrcParameters* const  MrcData,
-  IN  UINT32                Controller,
-  IN  UINT32                Channel,
-  IN  UINT32                Rank,
-  IN  MrcModeRegister       Address,
-  IN  GmfCmdType            MrCmd
-  );
-
 #endif // _MRC_COMMON_MODE_REGISTER_HANDLER_H_

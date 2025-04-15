@@ -50,7 +50,7 @@
 [Pcd]
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvPresent
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvCompatibilityGuid
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSubSystemId
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch
   gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUnloadRequirement
@@ -78,4 +78,6 @@
   gEfiPciIoProtocolGuid
 
 [Depex]
-  gCnvSupportingProtocolGuid
+  gEfiVariableArchProtocolGuid AND
+  gEfiVariableWriteArchProtocolGuid AND
+  gEfiBlockIoProtocolGuid

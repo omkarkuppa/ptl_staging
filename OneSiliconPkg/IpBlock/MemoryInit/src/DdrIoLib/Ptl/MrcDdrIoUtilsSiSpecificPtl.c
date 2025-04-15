@@ -30,12 +30,12 @@
 
 UINT8 AuxClkRef100[] = { 33,  33,  27,  28,  27,  30,  33,  28,  33,  32,  33,  32,  32,  33,  36,  36, //  0 .. 15
                          39,  33,  42,  39,  42,  44,  44,  42,  53,  44,  45,  42,  51,  48,  52,  40, // 16 .. 31
-                         54,  52,  52,  57,  47,  45,  56,  52,  57,  63,  64,  60,  66,  66,  68,  69, // 32 .. 47
-                         69,  66,  66,  68,  69,  69,  76,  63,  78,  78,  30,  75,  80,  76,  78,  78, // 48 .. 63
+                         54,  52,  52,  57,  54,  45,  56,  52,  57,  63,  64,  60,  66,  66,  68,  69, // 32 .. 47
+                         69,  66,  66,  68,  69,  69,  76,  63,  78,  78,  30,  75,  83,  76,  78,  78, // 48 .. 63
                          78,  81,  87,  88,  90,  84,  84,  92,  87,  87,  88,  92,  88,  93,  92,  84, // 64 .. 79
                          93,  92,  63,  99, 105, 100, 100, 102, 108, 104, 116,  78, 114, 120, 114, 108, // 80 .. 95
                         116, 111, 111, 112, 126, 114, 128, 117, 104, 144, 144, 120, 135,  90, 120, 124, // 96 .. 111
-                        123, 141, 123, 126, 136, 129, 138, 129, 104, 132, 132, 135, 132, 136, 136, 138, // 112 .. 127
+                        123, 141, 123, 126, 136, 129, 138, 129, 129, 132, 132, 135, 132, 136, 136, 138, // 112 .. 127
                         136, 140, 138, 141, 141, 144, 141, 144, 144, 108, 100, 132, 135, 111, 111, 135, // 128 .. 143
                         104, 114, 140, 138, 114, 140, 144, 117, 141, 120, 132, 120, 136, 123, 120, 123, // 144 .. 159
                         123, 124,  68, 126, 126, 128, 126, 129, 129};
@@ -56,9 +56,6 @@ static const UINT8 HwChBitMasks[][MAX_MRC_DDR_TYPE] = {
   };
 
 #define DQS_PARK_DIFF_LOW_WHEN_LPM0_NO_ODT_NO_DRVEN_TXANALOGEN   2
-
-#define DDR5CATMLEFTRANGE    (128)  ///< DDR5 CA Training Mode Phase 1 Sweep Range
-#define DDR5CATMRIGHTRANGE   (96)   ///< DDR5 CA Training Mode Phase 1 Sweep Range
 
 
 /**
@@ -280,36 +277,6 @@ MrcGetEnDqsOdtParkModeValue (
 {
   return DQS_PARK_DIFF_LOW_WHEN_LPM0_NO_ODT_NO_DRVEN_TXANALOGEN;
 }
-
-/**
-  Calculates sweeping range for CATM based on min/max values of CtlPiCode.
-
-  @param[in]  MinPiCode - Min CTL PI accross all channels.
-  @param[in]  MaxPiCode - Max CTL PI accross all channels.
-  @param[out] PiLow     - Starting PI code value for CATM.
-  @param[out] PiHigh    - Ending PI code value for CATM.
-
-  @returns nothing.
-**/
-VOID
-MrcGetCatmSweepingRange (
-  IN  UINT16 MinPiCode,
-  IN  UINT16 MaxPiCode,
-  OUT UINT16 *PiLow,
-  OUT UINT16 *PiHigh
-  )
-{
-  // Calculate the sweep range: -128 PI from (min), +96 PI from (max)
-  // Limit PiLow to MAX(0, min - 128)
-  // Limit PiHigh to MIN(512, max + 96)
-  if (PiLow != NULL) {
-    *PiLow  = (MinPiCode < DDR5CATMLEFTRANGE) ? 0 : (MinPiCode - DDR5CATMLEFTRANGE);
-  }
-  if (PiHigh != NULL) {
-    *PiHigh = (MaxPiCode > (DDR5CATMMAXPI - DDR5CATMRIGHTRANGE)) ? DDR5CATMMAXPI : (MaxPiCode + DDR5CATMRIGHTRANGE);
-  }
-}
-
 
 /**
   This function is to set up the margin parameters for RdV.

@@ -85,6 +85,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_MEMORY_TYPE_INFORMATION mDefaultMemoryTypeInfo
 //
 GLOBAL_REMOVE_IF_UNREFERENCED const CHAR8 VgaMessage[] = "MEMORY TRAINING IN PROGRESS";
 
+
+// PPR test Type bits. Keep synced with defines in MrcInterface.h
+#define PPR_MEMTEST_WCMATS8_BIT               (0)
+#define PPR_MEMTEST_DATA_RETENTION_BIT        (1)
+#define PPR_MEMTEST_XMARCH_BIT                (2)
+#define PPR_MEMTEST_XMARCHG_BIT               (3)
+#define PPR_MEMTEST_YMARCHSHORT_BIT           (4)
+#define PPR_MEMTEST_YMARCHLONG_BIT            (5)
+
 /**
   Return TRUE when the Operand is exactly power of 2.
   @retval TRUE  Operand is exactly power of 2.
@@ -191,7 +200,7 @@ UpdatePeiSaPolicyPreMem (
   TISH_CONFIG_HOB                                  *TishDataHob;
   BOOLEAN                                         ExternalSpdPresent;
   UINT16                                          *RcompTarget;
-  MRC_PPR_TEST_TYPE                               PprTestType;
+  UINT8                                           PprTestType;
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   UINT8                                           *TcssPortCap;
@@ -669,7 +678,7 @@ UpdatePeiSaPolicyPreMem (
   TishDataHob = (TISH_CONFIG_HOB*) GetFirstGuidHob (&gTishDataHobGuid);
   if (TishDataHob != NULL) {
     if ((TishDataHob->SafeLoadingBiosEnableState == 1) || (TishDataHob->TsegMemoryTestStatus == EFI_SUCCESS)) {
-      TishDataHob->PprRecoveryStatusEnable = 1;
+      TishDataHob->PprRecoveryStatusEnable = SaSetup.PPR;
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SafeLoadingBiosEnableState, MemConfigNoCrc->SafeLoadingBiosEnableState, TishDataHob->SafeLoadingBiosEnableState);
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRecoveryStatusEnable, MemConfigNoCrc->PprRecoveryStatusEnable, TishDataHob->PprRecoveryStatusEnable);
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TsegMemoryTestStatus, MemConfigNoCrc->TsegMemoryTestStatus, TishDataHob->TsegMemoryTestStatus);
@@ -1029,7 +1038,6 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DLLDCC,  MemConfig->ExternalInputs.TrainingEnables2.DLLDCC,         SaSetup.DLLDCC         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DLLBWSEL,  MemConfig->ExternalInputs.TrainingEnables2.DLLBWSEL,       SaSetup.DLLBWSEL       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RDVREFDC,  MemConfig->ExternalInputs.TrainingEnables2.RDVREFDC,       SaSetup.RDVREFDC       );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RDTCIDLE,  MemConfig->ExternalInputs.TrainingEnables2.RDTCIDLE,       SaSetup.RDTCIDLE       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RMTBIT,  MemConfig->ExternalInputs.TrainingEnables2.RMTBIT,         SaSetup.RMTBIT         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DQDQSSWZ,  MemConfig->ExternalInputs.TrainingEnables2.DQDQSSWZ,       SaSetup.DQDQSSWZ       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.REFPI,  MemConfig->ExternalInputs.TrainingEnables2.REFPI,          SaSetup.REFPI          );
@@ -1050,6 +1058,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DIMMNTODT,  MemConfig->ExternalInputs.TrainingEnables3.DIMMNTODT,      SaSetup.DIMMNTODT      );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TXDQSDCC,  MemConfig->ExternalInputs.TrainingEnables3.TXDQSDCC,   SaSetup.TXDQSDCC   );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RXVREFPERBIT,  MemConfig->ExternalInputs.TrainingEnables3.RXVREFPERBIT,   SaSetup.RXVREFPERBIT   );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PPR,  MemConfig->ExternalInputs.TrainingEnables3.PPR,            SaSetup.PPR            );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.LVRAUTOTRIM,  MemConfig->ExternalInputs.TrainingEnables3.LVRAUTOTRIM,    SaSetup.LVRAUTOTRIM    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.OPTIMIZECOMP,  MemConfig->ExternalInputs.TrainingEnables3.OPTIMIZECOMP,   SaSetup.OPTIMIZECOMP   );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WRTRETRAIN,  MemConfig->ExternalInputs.TrainingEnables3.WRTRETRAIN,     SaSetup.WRTRETRAIN     );
@@ -1210,43 +1219,31 @@ UpdatePeiSaPolicyPreMem (
     }
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.tCCD_L_WR, MemConfig->ExternalInputs.tCCD_L_WR, SaSetup.tCCD_L_WR);
 
-    for (Index = 0; Index < MRC_PPR_REQUEST_MAX; Index++) {
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_INFO *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryInfo))[Index].PprValid,      MemConfigNoCrc->PprEntryInfo[Index].PprValid,                      SaSetup.PprRequestEnable[Index]                                            );
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Controller, MemConfigNoCrc->PprEntryAddress[Index].Controller,                 SaSetup.PprRequestController[Index]                                           );
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Channel,    MemConfigNoCrc->PprEntryAddress[Index].Channel,                    SaSetup.PprRequestChannel[Index]                                           );
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Rank,       MemConfigNoCrc->PprEntryAddress[Index].Rank,                       SaSetup.PprRequestRank[Index]                                           );
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].BankGroup,  MemConfigNoCrc->PprEntryAddress[Index].BankGroup,                  SaSetup.PprRequestBankGroup[Index]                                           );
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Bank,       MemConfigNoCrc->PprEntryAddress[Index].Bank,                       SaSetup.PprRequestBank[Index]                                           );
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Row,        MemConfigNoCrc->PprEntryAddress[Index].Row,                        SaSetup.PprRequestRow[Index]                                           );
-      COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Device,     MemConfigNoCrc->PprEntryAddress[Index].Device,                     SaSetup.PprRequestDevice[Index]                                           );
-    }
-
-    PprTestType.Value = 0;
-    PprTestType.Bits.WcMats8       = SaSetup.PprRunWCHMATS8;
-    PprTestType.Bits.DataRetention = SaSetup.PprRunRetention;
-    PprTestType.Bits.XMarch        = SaSetup.PprRunXMarch;
-    PprTestType.Bits.XMarchG       = SaSetup.PprRunXMarchG;
-    PprTestType.Bits.YMarchShort   = SaSetup.PprRunYMarchShort;
-    PprTestType.Bits.YMarchLong    = SaSetup.PprRunYMarchLong;
-    PprTestType.Bits.Mmrw          = SaSetup.PprRunMmrw;
-    PprTestType.Bits.TestDisabled = (PprTestType.Value == 0) ? 1 : 0;
-
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunWCHMATS8,    MemConfigNoCrc->PprTestType.Bits.WcMats8,       SaSetup.PprRunWCHMATS8                 );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunRetention,   MemConfigNoCrc->PprTestType.Bits.DataRetention, SaSetup.PprRunRetention                );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunXMarch,      MemConfigNoCrc->PprTestType.Bits.XMarch,        SaSetup.PprRunXMarch                   );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunXMarchG,     MemConfigNoCrc->PprTestType.Bits.XMarchG,       SaSetup.PprRunXMarchG                  );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunYMarchShort, MemConfigNoCrc->PprTestType.Bits.YMarchShort,   SaSetup.PprRunYMarchShort              );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunYMarchLong,  MemConfigNoCrc->PprTestType.Bits.YMarchLong,    SaSetup.PprRunYMarchLong               );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunMmrw,        MemConfigNoCrc->PprTestType.Bits.Mmrw,          SaSetup.PprRunMmrw                     );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprTestDisabled,   MemConfigNoCrc->PprTestType.Bits.TestDisabled,  (UINT8) PprTestType.Bits.TestDisabled  );
-
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairType,     MemConfigNoCrc->PprRepairType,                  SaSetup.PprRepairType                  );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunOnce,        MemConfigNoCrc->PprRunOnce,                     SaSetup.PprRunOnce                     );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprErrorInjection, MemConfigNoCrc->PprErrorInjection,              SaSetup.PprErrorInjection              );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprForceRepair,    MemConfigNoCrc->PprForceRepair,                 SaSetup.PprForceRepair                 );
-
+    PprTestType = 0;
+    PprTestType |= SaSetup.PprRunWCHMATS8 == 1 ? (1 << PPR_MEMTEST_WCMATS8_BIT) : 0;
+    PprTestType |= SaSetup.PprRunRetention == 1 ? (1 << PPR_MEMTEST_DATA_RETENTION_BIT) : 0;
+    PprTestType |= SaSetup.PprRunXMarch == 1 ? (1 << PPR_MEMTEST_XMARCH_BIT) : 0;
+    PprTestType |= SaSetup.PprRunXMarchG == 1 ? (1 << PPR_MEMTEST_XMARCHG_BIT) : 0;
+    PprTestType |= SaSetup.PprRunYMarchShort == 1 ? (1 << PPR_MEMTEST_YMARCHSHORT_BIT) : 0;
+    PprTestType |= SaSetup.PprRunYMarchLong == 1 ? (1 << PPR_MEMTEST_YMARCHLONG_BIT) : 0;
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprTestType, MemConfig->ExternalInputs.PprTestType,                 PprTestType                                            );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairType, MemConfig->ExternalInputs.PprRepairType,               SaSetup.PprRepairType                                  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunOnce, MemConfig->ExternalInputs.PprRunOnce,                  SaSetup.PprRunOnce                                     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunAtFastboot, MemConfig->ExternalInputs.PprRunAtFastboot,            SaSetup.PprRunAtFastboot                               );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprErrorInjection, MemConfig->ExternalInputs.PprErrorInjection,           SaSetup.PprErrorInjection                              );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairPhysicalAddrLow, MemConfig->ExternalInputs.PprRepairPhysicalAddrLow,    (UINT32)(SaSetup.PprRepairPhysicalAddress)             );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairPhysicalAddrHigh, MemConfig->ExternalInputs.PprRepairPhysicalAddrHigh,   (UINT32)RShiftU64(SaSetup.PprRepairPhysicalAddress, 32));
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairRow, MemConfig->ExternalInputs.PprRepairRow,                SaSetup.PprRepairRow                                   );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairController, MemConfig->ExternalInputs.PprRepairController,         SaSetup.PprRepairController                            );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairChannel, MemConfig->ExternalInputs.PprRepairChannel,            SaSetup.PprRepairChannel                               );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairDimm, MemConfig->ExternalInputs.PprRepairDimm,               SaSetup.PprRepairDimm                                  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairRank, MemConfig->ExternalInputs.PprRepairRank,               SaSetup.PprRepairRank                                  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairBankGroup, MemConfig->ExternalInputs.PprRepairBankGroup,          SaSetup.PprRepairBankGroup                             );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairBank, MemConfig->ExternalInputs.PprRepairBank,               SaSetup.PprRepairBank                                  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprForceRepair, MemConfig->ExternalInputs.PprForceRepair,              SaSetup.PprForceRepair                                 );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardStackUp, MemConfig->ExternalInputs.BoardDetails.BoardStackUp,   PcdGet8(VpdPcdMrcBoardStackUp)                         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardTopology, MemConfig->ExternalInputs.BoardDetails.BoardTopology,  PcdGet8(VpdPcdMrcBoardTopology)                        );
+
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DprLock, MemConfig->ExternalInputs.DprLock,                     SetupData.TestLtDprLock         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashMask, MemConfig->ExternalInputs.SubChHashMask,               SaSetup.SubChHashMask           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashInterleaveBit, MemConfig->ExternalInputs.SubChHashInterleaveBit,      SaSetup.SubChHashInterleaveBit  );

@@ -736,8 +736,8 @@ InitPpm (
   DumpFvidTable (mFvidPointer, LPSS_FVID_MAX_STATES, NumberOfStates);
 
   if (ApplyConfigTdp) {
-    CtdpPatchFvidTableforLimit16Pstate (mFvidPointer, ConfigTdpTar);
     CtdpPatchFvidTable (mFvidPointer, ConfigTdpTar);
+    CtdpPatchFvidTableforLimit16Pstate (mFvidPointer, ConfigTdpTar);
 
     //
     // Print Ctdp TAR and PPC patch table
