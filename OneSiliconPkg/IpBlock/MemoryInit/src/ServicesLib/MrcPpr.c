@@ -774,11 +774,6 @@ MrcIsPprEntryAddressExists (
   UINT32 Controller = (UINT32) PprEntryAddress.Controller;
   UINT32 Channel    = (UINT32) PprEntryAddress.Channel;
   UINT32 Rank       = (UINT32) PprEntryAddress.Rank;
-  UINT32 BankGroup  = (UINT32) PprEntryAddress.BankGroup;
-  UINT32 Bank       = (UINT32) PprEntryAddress.Bank;
-  UINT32 Row        = (UINT32) PprEntryAddress.Row;
-  UINT32 Device     = (UINT32) PprEntryAddress.Device;
-
   UINT8  ChannelWidth;
   UINT8  MaxSdramDevice;
 
@@ -792,16 +787,16 @@ MrcIsPprEntryAddressExists (
   }
 
   DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER(Rank)];
-  if (BankGroup >= DimmOut->BankGroups ||
-    Bank >= DimmOut->Banks           ||
-    Row >= DimmOut->RowSize          ) {
+  if (PprEntryAddress.BankGroup >= DimmOut->BankGroups ||
+      PprEntryAddress.Bank >= DimmOut->Banks           ||
+      PprEntryAddress.Row >= DimmOut->RowSize          ) {
     return FALSE;
   }
 
-  if (Device != PPR_ALL_DEVICES_SELECTED) {
+  if (PprEntryAddress.Device != PPR_ALL_DEVICES_SELECTED) {
     ChannelWidth = Outputs->DdrType == MRC_DDR_TYPE_DDR5 ? DDR5_CHANNEL_WIDTH : LPDDR5_CHANNEL_WIDTH;
     MaxSdramDevice = ChannelWidth / DimmOut->SdramWidth;
-    if (Device >= MaxSdramDevice) {
+    if (PprEntryAddress.Device >= MaxSdramDevice) {
       return FALSE;
     }
   }
