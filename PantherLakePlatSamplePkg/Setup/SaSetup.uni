@@ -355,6 +355,8 @@
 #string STR_MEMORY_PPR_RUN_ONCE_HELP                #language en-US "When it's enabled, PPR training runs only once, then is disabled at further training reboot"
 #string STR_MEMORY_PPR_REPAIR_TYPE_PROMPT           #language en-US "Repair Type"
 #string STR_MEMORY_PPR_REPAIR_TYPE_HELP             #language en-US "PPR Repair Type"
+#string STR_MEMORY_PPR_RETRY_LIMIT_PROMPT           #language en-US "Retry Limit"
+#string STR_MEMORY_PPR_RETRY_LIMIT_HELP             #language en-US "Sets a limit on the number of times Memory Testing will be retried after attempting to repair using PPR."
 #string STR_MEMORY_PPR_RUN_TEST_WCHMATS8_PROMPT     #language en-US "Run Test WCHMATS8"
 #string STR_MEMORY_PPR_RUN_TEST_WCHMATS8_HELP       #language en-US "PPR Run Test WCHMATS8"
 #string STR_MEMORY_PPR_RUN_TEST_RETENTION_PROMPT    #language en-US "Run Test Data Retention"

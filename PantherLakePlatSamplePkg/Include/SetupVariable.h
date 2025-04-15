@@ -1257,9 +1257,10 @@ typedef struct {
   <b>Revision 5</b>:  - Add DCCDDR5READDCA.
   <b>Revision 6</b>:  - Add PPR-related variables.
   <b>Revision 7</b>:  - Add RDTCIDLE.
+  <b>Revision 8</b>:  - Add PprRetryLimit variable.
 **/
 
-#define SA_SETUP_REVISION   7
+#define SA_SETUP_REVISION   8
 
 typedef struct {
   UINT8   Revision;
@@ -1748,7 +1749,8 @@ typedef struct {
   UINT32  PprRequestRow[MRC_PPR_REQUEST_MAX];
   UINT8   PprRequestDevice[MRC_PPR_REQUEST_MAX];
   UINT8   RDTCIDLE;
-  UINT8   Rsvd[43];
+  UINT8   PprRetryLimit;
+  UINT8   Rsvd[42];
 } SA_SETUP;
 
 /**

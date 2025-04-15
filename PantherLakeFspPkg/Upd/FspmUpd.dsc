@@ -1469,11 +1469,16 @@
   # !BSF HELP:{Enable/Disable Read Timing Centering Training with SR stress*}
   gPlatformFspPkgTokenSpaceGuid.RDTCIDLE                    | * | 0x01 | 0x01
 
+  # !BSF NAME:{PPR Retry Limit}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFF)}
+  # !BSF HELP:{Sets a limit on the number of times Memory Testing will be retried after attempting to repair using PPR.}
+  gPlatformFspPkgTokenSpaceGuid.PprRetryLimit                  | * | 0x01 | 0x0A
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 20  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 19  | {0x00}
 
   #
   # MRC Block End

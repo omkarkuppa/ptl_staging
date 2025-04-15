@@ -1248,6 +1248,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprTestDisabled,   MemConfigNoCrc->PprTestType.Bits.TestDisabled,  (UINT8) PprTestType.Bits.TestDisabled  );
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairType,     MemConfigNoCrc->PprRepairType,                  SaSetup.PprRepairType                  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRetryLimit,     MemConfigNoCrc->PprRetryLimit,                  SaSetup.PprRetryLimit                  );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunOnce,        MemConfigNoCrc->PprRunOnce,                     SaSetup.PprRunOnce                     );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprErrorInjection, MemConfigNoCrc->PprErrorInjection,              SaSetup.PprErrorInjection              );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprForceRepair,    MemConfigNoCrc->PprForceRepair,                 SaSetup.PprForceRepair                 );

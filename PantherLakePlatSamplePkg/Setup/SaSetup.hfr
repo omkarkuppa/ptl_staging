@@ -2118,6 +2118,16 @@ form formid = AUTO_ID(MEMORY_CONFIG_PPR_FORM_ID),
      endoneof;
    endif; // Grayout if PprRequestEnable[0] == 0
 
+   numeric varid    = SA_SETUP.PprRetryLimit,
+     prompt  = STRING_TOKEN(STR_MEMORY_PPR_RETRY_LIMIT_PROMPT),
+     help    = STRING_TOKEN(STR_MEMORY_PPR_RETRY_LIMIT_HELP),
+     flags   = RESET_REQUIRED,
+     minimum = 0,
+     maximum = 0xFF,
+     step    = 1,
+     default = 10,
+   endnumeric;
+
    grayoutif ideqval SA_SETUP.PprRequestEnable[1] == 0x0;
      numeric varid    = SA_SETUP.PprRequestController[1],
        prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_REQUEST1_PROMPT),

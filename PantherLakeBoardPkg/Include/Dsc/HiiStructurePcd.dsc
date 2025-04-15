@@ -3787,6 +3787,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchShort|0x0                       
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchLong|0x0                                           # Run YMarchLong in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunMmrw|0x0                                                 # Run Mmrw in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairType|0x0                                              # PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRetryLimit|0xA                                              # PPR Retry Limit: 10:Retry the repair 10 times (Default). Setting 0 will result in one repeair attempt without the retries
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunOnce|0x1                                                 # When enabled, PPR will run only once and then is disabled at next training cycle
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprErrorInjection|0x0                                          # When enabled, PPR will inject bad rows during testing
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestEnable[0]|0x0                                        # Enable/Disable DRAM Address for PPR Request 0

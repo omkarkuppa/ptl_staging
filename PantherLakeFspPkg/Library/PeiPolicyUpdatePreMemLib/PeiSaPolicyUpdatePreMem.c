@@ -306,6 +306,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfigNoCrc->PprTestType.Bits.TestDisabled  = FspmUpd->FspmConfig.PprTestDisabled;
 
   MemConfigNoCrc->PprRepairType                  = FspmUpd->FspmConfig.PprRepairType;
+  MemConfigNoCrc->PprRetryLimit                  = FspmUpd->FspmConfig.PprRetryLimit;
   MemConfigNoCrc->PprRunOnce                     = FspmUpd->FspmConfig.PprRunOnce;
   MemConfigNoCrc->PprErrorInjection              = FspmUpd->FspmConfig.PprErrorInjection;
   MemConfigNoCrc->PprForceRepair                 = FspmUpd->FspmConfig.PprForceRepair;

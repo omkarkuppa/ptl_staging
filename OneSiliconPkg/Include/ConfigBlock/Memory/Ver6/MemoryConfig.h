@@ -32,7 +32,7 @@
 // MEMORY_CONFIGURATION_REVISION:
 // Keep in sync with MRC_EXT_INPUTS_REVISION in MrcExtInputs.h
 #define MEMORY_CONFIGURATION_REVISION 1
-#define MEMORY_CONFIG_NO_CRC_REVISION 2
+#define MEMORY_CONFIG_NO_CRC_REVISION 3
 
 ///
 /// Memory SubSystem Definitions
@@ -245,7 +245,8 @@ typedef struct {
   UINT8                 PprRunOnce;        ///< Offset 133 PPR Run Once, used to un-set PPR Policies after PPR execution is completed
   UINT8                 PprErrorInjection; ///< Offset 134 PPR Error Injection
   UINT8                 PprForceRepair;    ///< Offset 135 PPR Force Repair Some Rows
-  UINT8                 Reserved[1];       ///< Offset 136 Reserved bytes for struct alignment
+  UINT8                 PprRetryLimit;     ///< Offset 136 PPR Retry Limit
+  UINT8                 Reserved[8];       ///< Offset 137 Reserved bytes for struct alignment
 } MEMORY_CONFIG_NO_CRC;
 #pragma pack(pop)
 
