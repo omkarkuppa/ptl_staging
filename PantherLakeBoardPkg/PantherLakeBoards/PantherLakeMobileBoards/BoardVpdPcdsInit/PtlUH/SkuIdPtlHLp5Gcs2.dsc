@@ -815,6 +815,11 @@
   gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x6     # SoundWire codecs topology = Configuration GCS/ADK ALC712-VB, ALC1320
 
   #
+  # Scan Matrix keyboard
+  #
+  gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                    # Scan Matrix Keyboard Support
+
+  #
   # Camera
   #
 !if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == TRUE

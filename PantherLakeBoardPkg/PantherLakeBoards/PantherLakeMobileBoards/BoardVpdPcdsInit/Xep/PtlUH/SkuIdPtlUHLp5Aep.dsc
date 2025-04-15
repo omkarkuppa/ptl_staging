@@ -841,6 +841,11 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cController|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
+[PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom.STANDARD]
+  #
+  # Scan Matrix keyboard
+  #
+  gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                    # Scan Matrix Keyboard Support
 
 #####################################################################
 #  PTL UH LP5x AEP MEM 32GB
@@ -925,3 +930,9 @@
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 240 - 249
       0, 0, 0, 0, 0, 0                      ///< 250 - 255
   }})}
+
+[PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom32Gb.STANDARD]
+  #
+  # Scan Matrix keyboard
+  #
+  gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                    # Scan Matrix Keyboard Support

@@ -827,7 +827,7 @@
 // Scan Matrix Keyboard Support
 //---------------------------------------------------------------------------
 #string STR_SCAN_MATRIX_PROFILE                 #language en-US "Scan Matrix Keyboard Support"
-#string STR_SCAN_MATRIX_PROFILE_HELP            #language en-US "Enables/Disables Scan Matrix Keyboard Support"
+#string STR_SCAN_MATRIX_PROFILE_HELP            #language en-US "Enables/Disables the option when Scan Matrix Keyboard is connected/not connected"
 
 //
 // EC PECI Mode
