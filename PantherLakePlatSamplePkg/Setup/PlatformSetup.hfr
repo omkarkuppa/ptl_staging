@@ -667,8 +667,8 @@
       questionid  = AUTO_ID(EC_PECI_MODE_KEY),
       prompt      = STRING_TOKEN(STR_SET_PECI_MODE_PROMPT),
       help        = STRING_TOKEN(STR_EC_PECI_MODE_HELP),
-      option text = STRING_TOKEN(STR_SET_PECI_LEGACY_MODE), value = 0, flags = DEFAULT | RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_SET_PECI_ESPI_MODE),  value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_SET_PECI_LEGACY_MODE), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_SET_PECI_ESPI_MODE),  value = 1, flags = DEFAULT | RESET_REQUIRED;
   endoneof;
 
  // Power Loss Notification

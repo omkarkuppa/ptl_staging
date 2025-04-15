@@ -3874,7 +3874,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.DisablePassiveTripPoints|0x0                  
 gStructPcdTokenSpaceGuid.PcdSetup.DisplayBootMode|0x0                                              # Display Boot Mode
 gStructPcdTokenSpaceGuid.PcdSetup.EcChargingMethod|0x0                                             # Charging Method
 gStructPcdTokenSpaceGuid.PcdSetup.EcLowPowerMode|0x1                                               # EC Low Power Mode
-gStructPcdTokenSpaceGuid.PcdSetup.EcPeciMode|0x0                                                   # EC PECI Mode
+gStructPcdTokenSpaceGuid.PcdSetup.EcPeciMode|0x1                                                   # EC PECI Mode
 gStructPcdTokenSpaceGuid.PcdSetup.EfiNetworkSupport|0x0                                            # EFI Network
 gStructPcdTokenSpaceGuid.PcdSetup.EnableMsiInFadt|0x1                                              # MSI enabled
 gStructPcdTokenSpaceGuid.PcdSetup.EnablePcieTunnelingOverUsb4|0x1                                  # PCIE Tunneling over USB4
