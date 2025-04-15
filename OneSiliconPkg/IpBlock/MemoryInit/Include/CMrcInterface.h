@@ -2058,6 +2058,7 @@ typedef struct {
   UINT16              PostCodeStart;               ///< Green Start POST code for the interpreter
   UINT16              PostCodeStop;                ///< Green Stop  POST code for the interpreter
   UINT16              PprNumSuccessfulRepairs;     ///< PPR number of successful repairs
+  UINT16              PprFailingChannelBitMask;    ///< PPR failing channel mask
   UINT16              RcompTarget[MAX_RCOMP_TARGETS]; ///< RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
   MrcClockRatio       Ratio;                       ///< Request for this memory controller to use this clock ratio.
   MrcDimmStatus       FailingChannelBitMask;       ///< BitMask to detect failing Channels and disable them
@@ -2176,7 +2177,7 @@ typedef struct {
   UINT16              DivCode0;
   UINT16              DivCode2;
   UINT16              DivCode3;
-  UINT8               ReservedBytesForAlignment[3]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  UINT8               ReservedBytesForAlignment[1]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;

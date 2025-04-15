@@ -3609,6 +3609,7 @@ BuildMemoryInfoDataHob (
   MemoryInfo->PprRepairFails          = Outputs->PprRepairFails;
   MemoryInfo->PprForceRepairStatus    = Outputs->PprForceRepairStatus;
   MemoryInfo->PprRepairsSuccessful    = Outputs->PprNumSuccessfulRepairs;
+  MemoryInfo->PprFailingChannelBitMask = Outputs->PprFailingChannelBitMask;
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
       for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
