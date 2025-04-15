@@ -715,6 +715,7 @@ DisplayUsbProvisionError (
     Status = MebxReadUserInput (&UserInput);
     if (EFI_ERROR (Status)) {
       MebxDisplayError (ConinError);
+      return;
     }
   } while (UserInput == MebxUserInputNoInput);
 }
