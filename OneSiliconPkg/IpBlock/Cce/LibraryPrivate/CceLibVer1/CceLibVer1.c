@@ -139,17 +139,17 @@ TmeControlInit (
 
   if (GetMcHashEnable ()) {
     TmeControl.Bits.HashEnabled = 1;
-
-    /// HashLsb and HashMask are only set when HashEnabled is 1
-    CceHashMask = GetMcHashMask ();
-    CceHashLsb  = GetMcHashLsb ();
-    DEBUG ((DEBUG_INFO, " CceHashMask     = 0x%X\n", CceHashMask));
-    DEBUG ((DEBUG_INFO, " CceHashLsb      = 0x%X\n", CceHashLsb));
-
-    TmeControl.Bits.HashLsb  = CceHashLsb;
-    TmeControl.Bits.HashMask = CceHashMask;
-    DEBUG ((DEBUG_INFO, " TmeControl Data = 0x%X\n", TmeControl.Data));
   }
+
+  /// Align HashLsb and HashMask with Memory Slice hash values
+  CceHashMask = GetMcHashMask ();
+  CceHashLsb  = GetMcHashLsb ();
+  DEBUG ((DEBUG_INFO, " CceHashMask     = 0x%X\n", CceHashMask));
+  DEBUG ((DEBUG_INFO, " CceHashLsb      = 0x%X\n", CceHashLsb));
+
+  TmeControl.Bits.HashLsb  = CceHashLsb;
+  TmeControl.Bits.HashMask = CceHashMask;
+  DEBUG ((DEBUG_INFO, " TmeControl Data = 0x%X\n", TmeControl.Data));
 
   /// configure TME_CONTROL of CCE0 if enabled
   if (Cce0Enable) {
