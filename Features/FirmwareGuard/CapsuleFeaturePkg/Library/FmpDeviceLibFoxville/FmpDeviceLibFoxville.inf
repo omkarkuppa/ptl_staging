@@ -30,12 +30,36 @@
   LIBRARY_CLASS  = FmpDeviceLib | DXE_DRIVER
 
 [Sources]
+  Defines/FoxvilleNvmMap.h
+  Defines/FoxvilleModule.h
+  Defines/FoxvilleRegs.h
+  Misc/FoxvilleFlashAccess.c
+  Misc/FoxvilleFlashAccess.h
+  Misc/FoxvilleFwSts.c
+  Misc/FoxvilleFwSts.h
+  Misc/FoxvilleNvmAccess.c
+  Misc/FoxvilleNvmAccess.h
+  Misc/FoxvillePciIoAccess.c
+  Misc/FoxvillePciIoAccess.h
+  Misc/FoxvillePhy.c
+  Misc/FoxvillePhy.h
+  Misc/FoxvilleRegAccess.c
+  Misc/FoxvilleRegAccess.h
+  Misc/FoxvilleSemaphore.c
+  Misc/FoxvilleSemaphore.h
   FmpDeviceLibFoxville.c
-  FoxvilleDeviceLib.h
-  FoxvilleNvmMap.h
-  FoxvilleInitI225.c
-  I225.c
-  I225.h
+  FoxvilleApi.c
+  FoxvilleApi.h
+  FoxvilleCrc.c
+  FoxvilleCrc.h
+  FoxvilleDevice.c
+  FoxvilleDevice.h
+  FoxvilleModuleFlash.c
+  FoxvilleModuleFlash.h
+  FoxvilleModuleImage.c
+  FoxvilleModuleImage.h
+  FoxvilleUpdate.c
+  FoxvilleUpdate.h
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -44,14 +68,14 @@
   CapsuleFeaturePkg/CapsuleFeaturePkg.dec
 
 [LibraryClasses]
-  DebugLib
   BaseLib
   BaseMemoryLib
-  UefiLib
+  DebugLib
   MemoryAllocationLib
   PrintLib
   UefiBootServicesTableLib
+  UefiLib
 
 [Protocols]
-  gEfiPciIoProtocolGuid                   ## CONSUMES
   gEfiPciEnumerationCompleteProtocolGuid  ## CONSUMES
+  gEfiPciIoProtocolGuid                   ## CONSUMES
