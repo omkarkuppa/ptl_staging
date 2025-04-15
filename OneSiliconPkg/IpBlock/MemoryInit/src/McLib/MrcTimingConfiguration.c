@@ -27,6 +27,7 @@
 #include "MrcTurnAround.h"
 #include "BlueMrcJedecApi.h"  //for MrcGetTppd()
 #include "MrcMemoryScrub.h"
+#include "MrcMcSiSpecific.h"
 
 /**
   This function sets up the following MC Timing
@@ -387,6 +388,7 @@ SetTcPwrdwn (
   tOSCO = MrcGetTosco (MrcData);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttOSCO, WriteToCache | PrintValue, &tOSCO);
   tMRR = MrcGetTmrr (MrcData, Timing->tCL);
+  MrcExtendTmrr (MrcData, &tMRR);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttMRR,  WriteToCache | PrintValue, &tMRR);
   // LP5 only
   if (IsLpddr5) {

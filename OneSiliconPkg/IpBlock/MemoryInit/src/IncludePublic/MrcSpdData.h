@@ -1287,10 +1287,10 @@ typedef struct {
 
 typedef struct {
   SPD_UNIQUE_MODULE_ID                      ModuleId;                 ///< 512-520 Unique Module ID
-  SPD4_MODULE_PART_NUMBER                   ModulePartNumber;         ///< 521-550 Module Part Number
-  SPD4_MODULE_REVISION_CODE                 ModuleRevisionCode;       ///< 551     Module Revision Code
+  SPD5_MODULE_PART_NUMBER                   ModulePartNumber;         ///< 521-550 Module Part Number
+  SPD5_MODULE_REVISION_CODE                 ModuleRevisionCode;       ///< 551     Module Revision Code
   SPD_MANUFACTURER_ID_CODE                  DramIdCode;               ///< 552-553 Dram Manufacturer ID Code
-  SPD4_DRAM_STEPPING                        DramStepping;             ///< 554     Dram Stepping
+  SPD5_DRAM_STEPPING                        DramStepping;             ///< 554     Dram Stepping
   SPD_LPDDR_JEDEC_SPEC_MANUFACTURE_SPECIFIC ManufactureSpecificData;  ///< 555-639 Manufacturer Specific Data
 } SPD_LPDDR_JEDEC_SPEC_MANUFACTURING_INFO;
 

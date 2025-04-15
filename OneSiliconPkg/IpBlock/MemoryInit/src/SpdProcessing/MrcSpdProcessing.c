@@ -7608,14 +7608,423 @@ MrcUpdateDdr5MintCL (
       if ((Outputs->Frequency == f3200) && (Outputs->Timing[Profile].tCL < 28)) {
         Outputs->Timing[Profile].tCL = 28;     // 28 is the smallest valid CL in DDR5 3200G4.
         IsUpdated = TRUE;
-       }
-       if ((Outputs->Frequency == f3600) && (Outputs->Timing[Profile].tCL < 30)) {
-         Outputs->Timing[Profile].tCL = 30;     // 30 is the smallest valid CL in DDR5 3600G4.
-         IsUpdated = TRUE;
-       }
-       if (IsUpdated) {
-         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Profile:%d New tCL: %u\n", Profile, Outputs->Timing[Profile].tCL);
-       }
+      }
+      if ((Outputs->Frequency == f3600) && (Outputs->Timing[Profile].tCL < 30)) {
+        Outputs->Timing[Profile].tCL = 30;     // 30 is the smallest valid CL in DDR5 3600G4.
+        IsUpdated = TRUE;
+      }
+      if (IsUpdated) {
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Profile:%d New tCL: %u\n", Profile, Outputs->Timing[Profile].tCL);
+      }
+    }
+  }
+}
+
+/**
+  This function returns first populated DIMM for a given controller and channel based on output data.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+  @param[in] Controller controller index.
+  @param[in] Channel channel index.
+
+  @returns Index of first populated DIMM.
+**/
+UINT8
+MrcGetFirstPopulatedDimm (
+  MrcParameters *const MrcData,
+  UINT8 Controller,
+  UINT8 Channel
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT8 Dimm;
+
+  for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+    if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status == DIMM_PRESENT) {
+      return Dimm;
+    }
+  }
+  return MAX_DIMMS_IN_CHANNEL;
+}
+
+/**
+  This function get physcial DIMM count in MemSS mounted in the first slot on channel and
+  checks if DIMMs are swizzled.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns Physical DIMM0 configuration in the system.
+**/
+PhysicalDimmConfig
+MrcGetPhysicalDimmConfig (
+  IN MrcParameters *const MrcData
+  )
+{
+  const MrcInput *Inputs = &MrcData->Inputs;
+  const MRC_FUNCTION *MrcCall = Inputs->Call.Func;;
+
+  UINT8 Controller;
+  UINT8 Channel;
+  UINT8 Dimm;
+
+  UINT8 DimmAddress;
+  UINT8 PhysicalDimmIndex;
+  BOOLEAN IsDimmAlreadyCounted;
+
+  PhysicalDimmConfig DimmConfig;
+  UINT8 ControllerBitMaskOccupation[MAX_DIMMS_IN_SYSTEM];
+  UINT8 ChannelOccupationCount[MAX_DIMMS_IN_SYSTEM];
+
+  MrcCall->MrcSetMem ((UINT8 *) &DimmConfig, sizeof (DimmConfig), 0);
+  MrcCall->MrcSetMem ((UINT8 *) ControllerBitMaskOccupation, sizeof (ControllerBitMaskOccupation), 0);
+  MrcCall->MrcSetMem ((UINT8 *) ChannelOccupationCount, sizeof (ChannelOccupationCount), 0);
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
+      }
+
+      Dimm = MrcGetFirstPopulatedDimm (MrcData, Controller, Channel);
+      if (Dimm == MAX_DIMMS_IN_CHANNEL) {
+        continue;
+      }
+
+      IsDimmAlreadyCounted = FALSE;
+      DimmAddress = Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].SpdAddress;
+
+      // Check if DIMM is counted
+      for (PhysicalDimmIndex = 0; PhysicalDimmIndex < DimmConfig.Count; PhysicalDimmIndex++) {
+        if (DimmConfig.SpdAddress[PhysicalDimmIndex] == DimmAddress) {
+          ControllerBitMaskOccupation[PhysicalDimmIndex] |= (1 << Controller);
+          ChannelOccupationCount[PhysicalDimmIndex] += 1;
+
+          IsDimmAlreadyCounted = TRUE;
+          break;
+        }
+      }
+
+      // If a DIMM has not been found then add it to the list
+      if (!IsDimmAlreadyCounted) {
+        ControllerBitMaskOccupation[DimmConfig.Count] = (1 << Controller);
+        ChannelOccupationCount[DimmConfig.Count] = 1;
+
+        DimmConfig.SpdAddress[DimmConfig.Count] = DimmAddress;
+        DimmConfig.Count++;
+      }
+    }
+  }
+
+  // Check if DIMMs are swizzled in the system
+  // The codition is met if there is a DIMM that is connected to two different memory controllers.
+  for (PhysicalDimmIndex = 0; PhysicalDimmIndex < DimmConfig.Count; PhysicalDimmIndex++) {
+    if ((MrcCountBitsEqOne (ControllerBitMaskOccupation[PhysicalDimmIndex]) == 2) &&
+         ChannelOccupationCount[PhysicalDimmIndex] == 2) {
+      DimmConfig.IsSwizzled = TRUE;
+      break;
+    }
+  }
+  return DimmConfig;
+}
+
+/**
+  This function sets MptuChannelMap to the default one without swizzling.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+**/
+VOID
+MrcSetDefaultChannelToMptuSwizzleMap (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *const Outputs = &MrcData->Outputs;
+  UINT8 Controller;
+  UINT8 Channel;
+
+  MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "DIMMs aren't swizzled, set default map from system channel to MPTU channel map.\n");
+
+  UINT8 MptuChannelCoef = MAX_CHANNEL / Outputs->MaxChannels; // How many MPTU channels are needed to occupy one system channel
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      Outputs->MptuChannelMap[Controller][Channel].Bits.MptuInstance = Controller;
+      Outputs->MptuChannelMap[Controller][Channel].Bits.MptuChannel = MptuChannelCoef * Channel;
+    }
+  }
+}
+
+/**
+ * This function sets MptuChannelMap for DDR5.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+**/
+VOID
+MrcSetDdr5ChannelToMptuSwizzleMap (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *const Outputs = &MrcData->Outputs;
+  MRC_FUNCTION *const MrcCall = MrcData->Inputs.Call.Func;
+
+  PhysicalDimmConfig DimmConfig;
+  UINT8 DimmIndex;
+  UINT8 Ddr5ChannelOccupationMask = 0b11; // 0b11 means that two MPTU channels occupy one system channel
+  UINT8 MptuChannelOccupied = 0;
+
+  MrcChannelIn *ChannelIn;
+  UINT8 Controller;
+  UINT8 Channel;
+  UINT8 Dimm;
+
+  BOOLEAN IsSystemChannelAllocated[MAX_CONTROLLER][MAX_CHANNEL];
+  BOOLEAN IsEmptyChannelFound;
+  BOOLEAN IsEmptyMptuChannelAllocated;
+  UINT8 EmptyMptuInstance = 0;
+  UINT8 EmptyMptuChannel = 0;
+
+
+  UINT8 MptuChannelCoef = MAX_CHANNEL / Outputs->MaxChannels; // How many MPTU channels are needed to occupy one system channel
+
+  DimmConfig = MrcGetPhysicalDimmConfig (MrcData);
+  if (!DimmConfig.IsSwizzled) {
+    MrcSetDefaultChannelToMptuSwizzleMap (MrcData);
+    return;
+  }
+
+  MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "DIMMs are swizzled, detect swizzling.\n");
+
+  MrcCall->MrcSetMem ((UINT8 *) IsSystemChannelAllocated, sizeof (IsSystemChannelAllocated), 0);
+
+  // The order of DIMMs is dictated by the order of the DimmConfig list. The first DIMM in the system
+  // goes to the first MPTU, and the second DIMM in the system goes to the second MPTU if it exists.
+  // The output structure MptuChannel map is updated in 4 steps. Remember that one x64 DIMM
+  // is mapped to one MC/MPTU instance.
+
+  // STEP 1: Check if a channel is occupied by a DIMM that is mapped to a controller, if so, there is no swizzling needed
+  //         and update MptuChannelMap accordingly.
+  for (Controller = 0; Controller < DimmConfig.Count; Controller++) {
+    for (Channel = 0; Channel < MAX_DDR5_CHANNEL; Channel++) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
+      }
+
+      Dimm = MrcGetFirstPopulatedDimm (MrcData, Controller, Channel);
+      if (Dimm == MAX_DIMMS_IN_CHANNEL) {
+        continue;
+      }
+
+      ChannelIn = &MrcData->Inputs.Controller[Controller].Channel[Channel];
+      if (ChannelIn->Dimm[Dimm].SpdAddress == DimmConfig.SpdAddress[Controller]) {
+        Outputs->MptuChannelMap[Controller][Channel].Bits.MptuInstance = Controller;
+        Outputs->MptuChannelMap[Controller][Channel].Bits.MptuChannel = MptuChannelCoef * Channel;
+
+        MptuChannelOccupied |= (0b11 << (MAX_CHANNEL * Controller + (MAX_CHANNEL / Outputs->MaxChannels) * Channel));
+        IsSystemChannelAllocated[Controller][Channel] = TRUE;
+      }
+    }
+  }
+
+  // STEP 2: For a DIMM, allocate its channels that need swizzling.
+  for (DimmIndex = 0; DimmIndex < DimmConfig.Count; DimmIndex++) {
+    IsEmptyMptuChannelAllocated = FALSE;
+    IsEmptyChannelFound = FALSE;
+    EmptyMptuInstance = DimmIndex;
+
+    // Find a channel that has not beed allocated yet within a controller that is mapped to a DIMM
+    for (Channel = 0; Channel < MAX_DDR5_CHANNEL; Channel++) {
+      if (((MptuChannelOccupied >> (MAX_CHANNEL * DimmIndex + MptuChannelCoef * Channel)) & Ddr5ChannelOccupationMask) == 0) {
+        IsEmptyChannelFound = TRUE;
+        EmptyMptuChannel = 2 * Channel;
+        break; // First empty channel found
+      }
+    }
+
+    // Go to next DIMM if thery is no empty channel
+    if (!IsEmptyChannelFound) {
+      continue;
+    }
+
+    // Having the empty channel within controller that is mapped to the DIMM, find the DIMM's second x32 channel
+    // that resides in other controller (swizzled).
+    for (Controller = 0; Controller < MAX_CONTROLLER && !IsEmptyMptuChannelAllocated; Controller++) {
+      for (Channel = 0; Channel < MAX_DDR5_CHANNEL; Channel++) {
+        if (!MrcChannelExist (MrcData, Controller, Channel) || IsSystemChannelAllocated[Controller][Channel]) {
+          continue;
+        }
+
+        Dimm = MrcGetFirstPopulatedDimm (MrcData, Controller, Channel);
+        if (Dimm == MAX_DIMMS_IN_CHANNEL) {
+          continue;
+        }
+
+        ChannelIn = &MrcData->Inputs.Controller[Controller].Channel[Channel];
+        if (ChannelIn->Dimm[Dimm].SpdAddress == DimmConfig.SpdAddress[DimmIndex]) {
+          Outputs->MptuChannelMap[Controller][Channel].Bits.MptuInstance = EmptyMptuInstance;
+          Outputs->MptuChannelMap[Controller][Channel].Bits.MptuChannel = EmptyMptuChannel;
+
+          MptuChannelOccupied |= (0b11 << ( MAX_CHANNEL * EmptyMptuInstance + EmptyMptuChannel));
+          IsEmptyMptuChannelAllocated = TRUE;
+          IsSystemChannelAllocated[Controller][Channel] = TRUE;
+          break;
+        }
+      }
+    }
+  }
+
+  if (MptuChannelOccupied == 0xFF) {
+    // If we have all channels occupied then we are done.
+    return;
+  }
+
+  // Otherwise, in x128 system we have only one DIMM, so we need to resolve all empty channel to MPTU channel mapping.
+  // STEP 3: Execute similar routine to STEP 1 for non-populated channels to map a system channel to an MPTU channel when
+  //         swizzling is not needed.
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_DDR5_CHANNEL; Channel++) {
+        if (IsSystemChannelAllocated[Controller][Channel]) {
+          continue;
+        }
+        if (((MptuChannelOccupied >> (MAX_CHANNEL * Controller + MptuChannelCoef * Channel)) & Ddr5ChannelOccupationMask) == 0) {
+          Outputs->MptuChannelMap[Controller][Channel].Bits.MptuInstance = Controller;
+          Outputs->MptuChannelMap[Controller][Channel].Bits.MptuChannel = 2 * Channel;
+
+          IsSystemChannelAllocated[Controller][Channel] = TRUE;
+          MptuChannelOccupied |= (0b11 << (MAX_CHANNEL * Controller + MptuChannelCoef * Channel));
+        }
+    }
+  }
+
+  // STEP 4: Step is similar to STEP 2, where we map non-populated channels to MPTU channels when swizzling is needed.
+  do {
+    IsEmptyChannelFound = FALSE;
+    for (Controller = 0; Controller < MAX_CONTROLLER && !IsEmptyChannelFound; Controller++) {
+      for (Channel = 0; Channel < MAX_DDR5_CHANNEL; Channel++) {
+        if (((MptuChannelOccupied >> (MAX_CHANNEL * Controller + MptuChannelCoef * Channel)) & Ddr5ChannelOccupationMask) == 0) {
+          IsEmptyChannelFound = TRUE;
+          EmptyMptuInstance = Controller;
+          EmptyMptuChannel = MptuChannelCoef * Channel;
+          break; // First empty channel found
+        }
+      }
+    }
+
+    if (IsEmptyChannelFound) {
+      IsEmptyMptuChannelAllocated = FALSE;
+
+      for (Controller = 0; Controller < MAX_CONTROLLER && !IsEmptyMptuChannelAllocated; Controller++) {
+        for (Channel = 0; Channel < MAX_DDR5_CHANNEL; Channel++) {
+            if (!IsSystemChannelAllocated[Controller][Channel]) {
+              Outputs->MptuChannelMap[Controller][Channel].Bits.MptuInstance = EmptyMptuInstance;
+              Outputs->MptuChannelMap[Controller][Channel].Bits.MptuChannel = EmptyMptuChannel;
+              MptuChannelOccupied |= (0b11 << (MAX_CHANNEL * EmptyMptuInstance + EmptyMptuChannel));
+              IsEmptyMptuChannelAllocated = TRUE;
+              break;
+            }
+        }
+      }
+    }
+  } while (IsEmptyChannelFound);
+}
+
+/*
+  Print MptuChannelMap in the system.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+**/
+VOID
+PrintSystemToMptuChannelMap (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT8 Controller;
+  UINT8 Channel;
+
+  // Print system channel to MPTU channel swizzling map
+  MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "DIMM swizzle map:\n");
+  MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "|%3s %3s |%5s %8s|\n", "MC", "CH", "MPTU", "MPTU_CH");
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < (Outputs->DdrType == MRC_DDR_TYPE_DDR5 ? MAX_DDR5_CHANNEL: MAX_CHANNEL); Channel++) {
+      MRC_DEBUG_MSG (
+        &Outputs->Debug,
+        MSG_LEVEL_NOTE,
+        "|%3u %3u |%5u %8u|\n",
+        Controller,
+        Channel,
+        Outputs->MptuChannelMap[Controller][Channel].Bits.MptuInstance,
+        Outputs->MptuChannelMap[Controller][Channel].Bits.MptuChannel
+      );
+    }
+  }
+}
+
+/**
+  This sets in MrcData structure MptuChannelMap field
+  based on the physical DIMM0 configuration.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+ */
+VOID
+MrcSetChannelToMptuSwizzleMap (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+
+  MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "DIMM Swizzling Detection\n");
+
+  switch (Outputs->DdrType) {
+    case MRC_DDR_TYPE_LPDDR5:
+      // LP5 does not support system channel to MPTU channel swizzle.
+      MrcSetDefaultChannelToMptuSwizzleMap (MrcData);
+      break;
+    case MRC_DDR_TYPE_DDR5:
+      MrcSetDdr5ChannelToMptuSwizzleMap (MrcData);
+      break;
+    default:
+      MRC_DEBUG_ASSERT (FALSE, &Outputs->Debug, "Unsupported DDR type: %x", Outputs->DdrType);
+      break;
+  }
+
+  SetValidMptuChBitMasks (MrcData);
+
+  PrintSystemToMptuChannelMap (MrcData);
+}
+
+/**
+  This function sets ValidMptuChBitMask inside MrcOutput structure based on
+  MptuChannelMap.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+**/
+VOID
+SetValidMptuChBitMasks (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT8 Controller;
+  UINT8 Channel;
+  UINT8 MptuInstance;
+  UINT8 MptuChannel;
+
+  Outputs->ValidMptuChBitMask = 0;
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if (MrcChannelExist (MrcData, Controller, Channel)) {
+        MptuInstance = Outputs->MptuChannelMap[Controller][Channel].Bits.MptuInstance;
+        MptuChannel = Outputs->MptuChannelMap[Controller][Channel].Bits.MptuChannel;
+        Outputs->ValidMptuChBitMask |= (1 << (MAX_CHANNEL * MptuInstance + MptuChannel));
+      }
     }
   }
 }

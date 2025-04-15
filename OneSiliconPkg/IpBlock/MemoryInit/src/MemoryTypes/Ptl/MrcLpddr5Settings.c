@@ -31,12 +31,12 @@
 // ODT values are in this order: { RttWr, RttWck, RttCa, RttCa2RByteMode, RttCs, RttCs2RByteMode, RttNT}
 const TOdtValueLpddr Lpddr5OdtTableType3[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
 /// 1DPC 1R,                    1DPC 2R
-  {{60, 60, 240, 240, 80, 0, 0},  {48, 60, 240, 240, 80, 120, 0}},
+  {{120, 60, 240, 240, 80, 0, 0},  {120, 60, 240, 240, 80, 120, 0}},
 };
 
 const TOdtValueLpddr Lpddr5OdtTableType4[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
 /// 1DPC 1R,                    1DPC 2R
-  {{48, 60, 240, 240, 80, 0, 0},  {60, 48, 240, 240, 80, 120, 0}},
+  {{120, 60, 240, 240, 80, 0, 0},  {120, 48, 240, 240, 80, 120, 0}},
 };
 
 /**

@@ -1644,6 +1644,7 @@ MrcPrintInputParameters (
 {
   MrcDebug                *Debug;
   const MrcInput          *Inputs;
+  MrcOutput               *Outputs;
   const MrcControllerIn   *ControllerIn;
   const MrcChannelIn      *ChannelIn;
   const MrcDimmIn         *DimmIn;
@@ -1653,9 +1654,10 @@ MrcPrintInputParameters (
   const TrainingStepsEn3  *TrainingSteps3;
   const UINT8             *Buffer;
   const MRC_EXT_INPUTS_TYPE *ExtInputs;
-  UINT16                  Line;
-  UINT16                  Address;
-  UINT16                  Offset;
+  UINT32                  Line;
+  UINT32                  Address;
+  UINT32                  Offset;
+  UINT32                  MaxSpd;
   UINT8                   Controller;
   UINT8                   Channel;
   UINT8                   Dimm;
@@ -1665,7 +1667,8 @@ MrcPrintInputParameters (
   UINT8                   Data8;
 
   Inputs  = &MrcData->Inputs;
-  Debug   = &MrcData->Outputs.Debug;
+  Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
   ExtInputs = Inputs->ExtInputs.Ptr;
 
   // The following are system level definitions. All memory controllers in the system are set to these values.
@@ -2106,7 +2109,7 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "REFPI: %u\nDCCLP5READDCA: %u\nVCCCLKFF: %u\nFUNCDCCDQS: %u\n",           TrainingSteps2->REFPI,          TrainingSteps2->DCCLP5READDCA,  TrainingSteps2->VCCCLKFF,       TrainingSteps2->FUNCDCCDQS);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "FUNCDCCCLK: %u\nFUNCDCCWCK: %u\nFUNCDCCDQ: %u\nDATAPILIN: %u\n",         TrainingSteps2->FUNCDCCCLK,     TrainingSteps2->FUNCDCCWCK,     TrainingSteps2->FUNCDCCDQ,      TrainingSteps2->DATAPILIN);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5XTALK: %u\nDCCLP5WCKDCA: %u\nRXUNMATCHEDCAL: %u\nWRTDIMMDFE: %u\n",  TrainingSteps2->DDR5XTALK,      TrainingSteps2->DCCLP5WCKDCA,   TrainingSteps2->RXUNMATCHEDCAL, TrainingSteps2->WRTDIMMDFE);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RMTLVR: %u\nDCCDDR5READDCA: %u\n",                                        TrainingSteps2->RMTLVR,         TrainingSteps2->DCCDDR5READDCA   /* Reserved2Bit30 */            /* SimicsReservedBit */);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RMTLVR: %u\n",                                                           TrainingSteps2->RMTLVR          /* Reserved2Bit29 */            /* Reserved2Bit30 */            /* SimicsReservedBit */);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s3:\n", "TrainingEnables");
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nTXDQSDCC: %u\nRXVREFPERBIT: %u\n",              TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,   TrainingSteps3->TXDQSDCC,       TrainingSteps3->RXVREFPERBIT);
@@ -2184,7 +2187,15 @@ MrcPrintInputParameters (
           continue;
         }
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "SPD:           00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\n");
-        for (Line = 0; Line < (sizeof (MrcSpdLpddr) / 16); Line++) {
+        // Dump SPD data only up to manufacturing info, minus Manufacturer's Specific Data
+        if (Outputs->IsDdr5) {
+          MaxSpd = OFFSET_OF (MrcSpdDdr5, EndUser) - (sizeof (SPD5_MANUFACTURING_DATA) - OFFSET_OF (SPD5_MANUFACTURING_DATA, ManufactureSpecificData));
+        } else if (Outputs->IsLP5Camm2) {
+          MaxSpd = OFFSET_OF (MrcSpdJedecSpecLpddr, EndUser) - (sizeof (SPD_LPDDR_JEDEC_SPEC_MANUFACTURING_INFO) - OFFSET_OF (SPD_LPDDR_JEDEC_SPEC_MANUFACTURING_INFO, ManufactureSpecificData));
+        } else { // LP5 memory down
+          MaxSpd = OFFSET_OF (MrcSpdLpddr, EndUser) - (sizeof (SPD_LPDDR_MANUFACTURING_DATA) - OFFSET_OF (SPD_LPDDR_MANUFACTURING_DATA, ManufactureSpecificData));
+        }
+        for (Line = 0; Line < DIVIDECEIL (MaxSpd, 16); Line++) {
           Address = Line * 16;
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %4Xh(%5u): ", Address, Address);
           p = HexDump;

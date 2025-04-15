@@ -61,6 +61,7 @@ MrcGetNextSupportedFreq (
   @param[in]  SaGvPoint   - Current operating SAGV point.
   @param[in]  FreqMax     - The maximum memory frequency allowed considering fuse, SPD, and topology limitations
   @param[in]  MaxQclkFreq - The maximum QCLK frequency supporte by the current hardware
+  @param[in]  SagvPrint   - Enable/disable debug printing for GV point number during processing.
   @param[out] FreqOut     - Pointer to return the SAGV point Frequency.
   @param[out] GearOut     - Pointer to return the SAGV point Gear.
 **/
@@ -70,6 +71,7 @@ MrcGetSagvConfig (
   IN  MrcSaGvPoint          SaGvPoint,
   IN  MrcFrequency          FreqMax,
   IN  UINT32                MaxQclkFreq,
+  IN  BOOLEAN               SagvPrint,
   OUT MrcFrequency          *FreqOut,   OPTIONAL
   OUT BOOLEAN               *GearOut    OPTIONAL
   );
@@ -210,6 +212,20 @@ MrcCalcSagvTypeConfig (
 BOOLEAN
 MrcIsSaGvEnabled (
   IN  MrcParameters *const  MrcData
+  );
+
+/**
+  Calculate at which SaGv point PPR shall be executed.
+
+  @param[in] MrcData     - The global host structure.
+  @param[in] MaxQclkFreq - Max QClk frequency.
+
+  @return nothing.
+**/
+VOID
+MrcCalculatePprSaGvPoint (
+  IN MrcParameters *const  MrcData,
+  IN UINT32         const  MaxQclkFreq
   );
 
 /**

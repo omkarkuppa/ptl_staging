@@ -910,10 +910,12 @@ MrcSaveMCValues (
   MrcCall->MrcCopyMem ((UINT8 *) &SaveData->VppVoltage[0], (UINT8 *) &Outputs->VppVoltage[0], sizeof (Outputs->VppVoltage));
   MrcCall->MrcCopyMem ((UINT8 *) &SaveData->MemFrequency[0], (UINT8 *) &Outputs->MemFrequency[0], sizeof (Outputs->MemFrequency));
   MrcCall->MrcCopyMem ((UINT8 *) &SaveData->CkdShift, (UINT8 *) &Outputs->CkdShift, sizeof (Outputs->CkdShift));
+  MrcCall->MrcCopyMem ((UINT8 *) &SaveData->MptuChannelMap, (UINT8 *) &Outputs->MptuChannelMap, sizeof (Outputs->MptuChannelMap));
 
   SaveData->ValidRankMask  = Outputs->ValidRankMask;
   SaveData->ValidChBitMask = Outputs->ValidChBitMask;
   SaveData->ValidMcBitMask = Outputs->ValidMcBitMask;
+  SaveData->ValidMptuChBitMask = Outputs->ValidMptuChBitMask;
 
   // Copy specified memory controller MMIO registers to the data area that will be saved.
   // Start with the common section.
@@ -958,6 +960,7 @@ MrcSaveMCValues (
   SaveData->MaxDqBits              = Outputs->MaxDqBits;
   SaveData->MaxRanks               = Outputs->MaxRanks;
   SaveData->IsCkdSupported         = Outputs->IsCkdSupported;
+  SaveData->SaGvPprPoint           = Outputs->SaGvPprPoint;
   SaveData->PmaCceConfig           = (UINT8) Inputs->PmaCceConfig;
   SaveData->TmeEnable              = (UINT8) Inputs->TmeEnable;
   SaveData->Ibecc                  = (UINT8) Inputs->ExtInputs.Ptr->Ibecc;
@@ -1147,11 +1150,13 @@ MrcRestoreNonTrainingValues (
   MrcCall->MrcCopyMem ((UINT8 *) &Outputs->VppVoltage[0], (UINT8 *)&SaveData->VppVoltage[0], sizeof (Outputs->VppVoltage));
   MrcCall->MrcCopyMem ((UINT8 *) &Outputs->MemFrequency[0], (UINT8 *)&SaveData->MemFrequency[0], sizeof (Outputs->MemFrequency));
   MrcCall->MrcCopyMem ((UINT8 *) &Outputs->CkdShift, (UINT8 *) &SaveData->CkdShift, sizeof (Outputs->CkdShift));
+  MrcCall->MrcCopyMem ((UINT8 *) &Outputs->MptuChannelMap, (UINT8 *) &SaveData->MptuChannelMap, sizeof (Outputs->MptuChannelMap));
 
   Outputs->ValidRankMask  = SaveData->ValidRankMask;
   Outputs->ValidChBitMask = SaveData->ValidChBitMask;
   Outputs->ValidMcBitMask = SaveData->ValidMcBitMask;
   Outputs->McChBitMask    = Outputs->ValidChBitMask;
+  Outputs->ValidMptuChBitMask = SaveData->ValidMptuChBitMask;
 
 // ------- IMPORTANT NOTE --------
 // MeStolenSize should not be saved/restored (except on S3).  There is no rule stating that ME FW cannot request
@@ -1182,6 +1187,7 @@ MrcRestoreNonTrainingValues (
   Outputs->MaxDqBits              = SaveData->MaxDqBits;
   Outputs->MaxRanks               = SaveData->MaxRanks;
   Outputs->IsCkdSupported         = SaveData->IsCkdSupported;
+  Outputs->SaGvPprPoint           = SaveData->SaGvPprPoint;
   Outputs->HighFrequency          = Outputs->Frequency;
   if (Outputs->GearMode == 1) {
     Outputs->Gear4Ever = 1;

@@ -163,4 +163,18 @@ VOID
 MrcUpdateDdr5MintCL (
   IN MrcParameters *const MrcData
   );
+
+/**
+  This sets in MrcData structure MptuChannelMap field
+  based on the physical DIMM0 configuration.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+ */
+VOID
+MrcSetChannelToMptuSwizzleMap (
+  IN MrcParameters *const MrcData
+  );
+
 #endif // BlueMrcSpdProcessing_h_

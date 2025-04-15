@@ -29,6 +29,11 @@
 // DO NOT REMOVE: Ensures this header is only included once in the code
 PRIVATE_HEADER_DEFENDER(BlueSpdProcessingPrivate)
 
+typedef struct {
+  UINT8 Count;
+  UINT8 SpdAddress[MAX_DIMMS_IN_SYSTEM];
+  BOOLEAN IsSwizzled;
+} PhysicalDimmConfig;
 
 /**
   Calculate the memory frequency from the memory clock value.
@@ -859,5 +864,80 @@ MrcSpdProcessingMaxFreqCheck (
   IN OUT MrcParameters *const MrcData
   );
 
+/**
+  This function returns first populated DIMM for a given controller and channel based on output data.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+  @param[in] Controller controller index.
+  @param[in] Channel channel index.
+
+  @returns Index of first populated DIMM.
+**/
+UINT8
+MrcGetFirstPopulatedDimm (
+  MrcParameters *const MrcData,
+  UINT8 Controller,
+  UINT8 Channel
+  );
+
+/**
+  This function get physcial DIMM count in MemSS mounted in the first slot on channel and
+  checks if DIMMs are swizzled.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns Physical DIMM0 configuration in the system.
+**/
+PhysicalDimmConfig
+MrcGetPhysicalDimmConfig (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function sets MptuChannelMap to the default one without swizzling .
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+**/
+VOID
+MrcSetDefaultChannelToMptuSwizzleMap (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+ * This function sets MptuChannelMap for DDR5.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+**/
+VOID
+MrcSetDdr5ChannelToMptuSwizzleMap (
+  IN MrcParameters *const MrcData
+  );
+
+  /*
+  Print MptuChannelMap in the system.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+**/
+VOID
+PrintSystemToMptuChannelMap (
+  IN MrcParameters *const MrcData
+  );
+
+  /**
+  This function sets ValidMptuChBitMask inside MrcOutput structure based on
+  MptuChannelMap.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+
+  @returns None.
+**/
+VOID
+SetValidMptuChBitMasks (
+  IN MrcParameters *const MrcData
+  );
 
 #endif // BLUE_MRC_SPD_PROCESSING_PRIVATE_H

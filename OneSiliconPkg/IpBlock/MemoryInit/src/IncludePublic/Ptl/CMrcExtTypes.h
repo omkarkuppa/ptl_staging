@@ -35,6 +35,14 @@ typedef enum {
   MrcSaGvPointMax
 } MrcSaGvPoint;
 
+typedef enum {
+  NoRepair = 0,
+  sPPR     = 1,
+  hPPR     = 2,
+  mPPR     = 3,
+  PprTypeMax
+} MRC_PPR_REPAIR_TYPE;
+
 #define EXT_MAX_DIMMS_IN_CHANNEL  (2)       ///< The maximum number of DIMMs per channel for external MRC input block
 #define MAX_MPTU                  (2)       ///< The maximum number of MPTU blocks in PHY
 #define MAX_CONTROLLER            (2)       ///< The maximum number of memory controllers per CPU socket.
@@ -45,6 +53,7 @@ typedef enum {
 #define MAX_RANK_IN_DIMM          (2)       ///< The maximum number of ranks per DIMM.
 // 11 entries are for RttWr, RttNomRd, RttNomWr, RttPark, RttParkDqs, RttCa GroupA, RttCs GroupA, RttCk GroupA, RttCa GroupB, RttCs GroupB, RttCk GroupB
 #define MAX_DIMMODT_ENTRY         (11)
+#define PPR_REQUEST_MAX           (2)
 
 #ifndef MAX_RCOMP_TARGETS
 #define MAX_RCOMP_TARGETS         (5)
@@ -175,5 +184,51 @@ typedef struct {
   UINT8 BrdReserved : 6;     ///< BIT[7:2] - Reserved for future use
   UINT8 BrdReserved1[3];     ///< Reserved bytes for struct DWORD alignment
 } MrcBoardInputs;
+
+typedef struct {
+  UINT64  PprValid :  1;   // Bit  0
+  UINT64  MemSS    :  3;   // Bits 3:1
+  UINT64  Reserved : 60;   // Bits 63:4
+} MRC_PPR_ENTRY_INFO;
+
+typedef struct {
+  UINT64 Controller :  1;  // Bit 0
+  UINT64 Channel    :  3;  // Bits 2:1
+  UINT64 Rank       :  2;  // Bits 4:3
+  UINT64 BankGroup  :  3;  // Bits 8:5
+  UINT64 Bank       :  2;  // Bits 10:9
+  UINT64 Row        : 18;  // Bits 28:11
+  UINT64 Device     :  3;  // Bits 31:29
+  UINT64 Reserved   : 32;  // Bits 63:32
+} MRC_PPR_ENTRY_ADDRESS;
+
+// Keep PprTestTypeOffset in sync with MRC_PPR_TEST_TYPE
+typedef enum {
+  PprTestTypeWcMats8       = 0,
+  PprTestTypeDataRetention = 1,
+  PprTestTypeXMarch        = 2,
+  PprTestTypeXMarchG       = 3,
+  PprTestTypeYMarchShort   = 4,
+  PprTestTypeYMarchLong    = 5,
+  PprTestTypeMmrw          = 6,
+  PprTestTypeNumMemTests   = PprTestTypeMmrw,
+  PprTestTypeTestDisabled  = 8,
+} PprTestTypeOffset;
+
+typedef union {
+  struct {
+    UINT64 WcMats8       : 1;  // Bit0
+    UINT64 DataRetention : 1;  // Bit1
+    UINT64 XMarch        : 1;  // Bit2
+    UINT64 XMarchG       : 1;  // Bit3
+    UINT64 YMarchShort   : 1;  // Bit4
+    UINT64 YMarchLong    : 1;  // Bit5
+    UINT64 Mmrw          : 1;  // Bit6
+    UINT64 Mbist         : 1;  // Bit7
+    UINT64 TestDisabled  : 1;  // Bit8
+    UINT64 Reserved      : 55; // Bits 63:9
+  } Bits;
+  UINT64 Value;
+} MRC_PPR_TEST_TYPE;
 
 #endif
