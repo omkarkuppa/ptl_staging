@@ -71,7 +71,7 @@ Name(EC10, Package() {
 Name(CC10, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -166,7 +166,7 @@ Name(EC20, Package() {
 Name(CC20, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -245,7 +245,7 @@ Name(EC30, Package() {
 Name(CC30, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -324,7 +324,7 @@ Name(EC40, Package() {
 Name(CC40, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -403,7 +403,7 @@ Name(EC50, Package() {
 Name(CC50, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -482,7 +482,7 @@ Name(EC60, Package() {
 Name(CC60, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -561,7 +561,7 @@ Name(EC70, Package() {
 Name(CC70, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -640,7 +640,7 @@ Name(EC80, Package() {
 Name(CC80, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.ISSW"},
       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
    },
    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
