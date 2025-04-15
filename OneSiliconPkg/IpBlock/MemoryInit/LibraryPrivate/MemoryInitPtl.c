@@ -3102,6 +3102,7 @@ DEBUG_CODE_END();
   }
   Inputs->PprTestType.Value = MemConfigNoCrc->PprTestType.Value;
   Inputs->PprRepairType     = MemConfigNoCrc->PprRepairType;
+  // Inputs->PprRetryLimit     = MemConfigNoCrc->PprRetryLimit;
   Inputs->PprRunOnce        = MemConfigNoCrc->PprRunOnce;
   Inputs->PprErrorInjection = MemConfigNoCrc->PprErrorInjection;
   Inputs->PprForceRepair    = MemConfigNoCrc->PprForceRepair;

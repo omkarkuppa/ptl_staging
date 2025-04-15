@@ -712,6 +712,8 @@ typedef union {
   INT64 CsPulseCntSave;
 } CA_PARITY_IO_SAVE;
 
+#define DQ_LOOPBACK_READ_TIMING_MARGIN_MIN (20)
+
 typedef enum {
   LoopBackRdTDqsP,
   LoopBackRdTDqsN,
@@ -725,6 +727,15 @@ typedef enum {
 typedef struct {
   UINT64  Signature;
   UINT16  LoopbackResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS];
+  UINT16  MinMargin[LoopBackTasksMax];
+  // Bitmasks of failed partitions
+  UINT32  FailedMcChMask;         // [0:3] - MC0 CH[0..3], [4:7] - MC1 CH[0..3]; CH2/3 are not used in DDR5 case
+  UINT32  FailedByteMask;         // LP5:  [0:1] - MC0 C0 Byte[0..1], [2:3] - MC0 C1 Byte[0..1], etc.
+                                  // DDR5: [0:3] - MC0 C0 Byte[0..3], [4:7] - MC0 C1 Byte[0..3], etc.
+  UINT32  FailedDataSharedMask;   // [0:7] - DataShared[0..7]
+  UINT32  FailedCccSharedMask;    // [0:3] - CccShared[0..3]
+  UINT32  FailedCompMask;         // [0]   - COMP
+  UINT32  FailedLvrMask;          // Bitmask of (1 << Supply), where Supply is one of LVR_AUTO_TRIM_SUPPLY_TYPE
 } LOOPBACK_RESULT;
 
 ///
@@ -2343,7 +2354,7 @@ CccTimeCenteringPerLane (
   @retval mrcSuccess if successful, otherwise the function returns an error status.
 **/
 extern
-MRC_IRAM0_FUNCTION
+
 MrcStatus
 DQTimeCenterEH (
   IN     MrcParameters * const MrcData,
@@ -4267,6 +4278,18 @@ LoopbackByteCentering1D (
   );
 
 /**
+  Get the loopback result struct base address
+
+  @param[in]  MrcData - Include all MRC global data
+
+  @retval   LOOPBACK_RESULT address
+**/
+LOOPBACK_RESULT *
+GetLoopbackResultsBase (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   Report DQ loopback margin results into a DRAM0 array
 
   @param[in]  MrcData      - Include all MRC global data
@@ -4278,6 +4301,20 @@ GetLoopbackTestMarginsResults (
   IN MrcParameters *const MrcData,
   IN LoopBackTasks        Task,
   IN SweepResultsBit     *PerBitResult
+  );
+
+/**
+  Find lowest DQ loopback margin for a given param
+
+  @param[in]  MrcData - Include all MRC global data
+  @param[in]  Task    - Loopback task to use
+
+  @retval     Lowest margin for the given param
+**/
+UINT32
+GetLoopbackTestMinMargin (
+  IN MrcParameters *const MrcData,
+  IN LoopBackTasks        Task
   );
 
 /**

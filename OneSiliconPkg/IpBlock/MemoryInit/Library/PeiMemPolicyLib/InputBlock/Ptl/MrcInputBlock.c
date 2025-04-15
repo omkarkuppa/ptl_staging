@@ -70,7 +70,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_SimicsMinDbgMsg         (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RetrainOnFastFail       (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DvfsqEnabled            (0)
-#define MRC_EXT_INPUTS_INIT_VAL_DvfscEnabled            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DvfscEnabled            (1)
 #define MRC_EXT_INPUTS_INIT_VAL_VoltageReadout          (0)
 #define MRC_EXT_INPUTS_INIT_VAL_CccHalfFrequency        (0)
 #define MRC_EXT_INPUTS_INIT_VAL_Ddr5AutoPrechargeEnable (0)
@@ -340,6 +340,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RunRefPiMaxVoltage              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_BOARDSTACKUP                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_BOARDTOPOLOGY                   (0)
+#define MRC_EXT_INPUTS_INIT_VAL_SingleVdd2Rail                  (0)
 #define MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED                     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED1                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SubChHashMask                   (0x838)
@@ -717,7 +718,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     {
       MRC_EXT_INPUTS_INIT_VAL_BOARDSTACKUP,                         ///< Offset 189 BIT0 - Board Stack Up: 0 - Typical, 1 - Frequency Limited
       MRC_EXT_INPUTS_INIT_VAL_BOARDTOPOLOGY,                        ///< Offset 189 BIT1 - Board Topology: 0 - Daisy Chain, 1 - Tee
-      MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED,                          ///< Offset 189 BIT[7:2] - Reserved for future use
+      MRC_EXT_INPUTS_INIT_VAL_SingleVdd2Rail,                       ///< Offset 189 BIT2 - LP5x VDD2 rail: <b>0=Dual rail (E-DVFSC is possible)</b>, 1=Single rail(No E-DVFSC; VDD2L == VDD2H).
+      MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED,                          ///< Offset 189 BIT[7:3] - Reserved for future use
       {MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED1},                       ///< Reserved bytes for struct DWORD alignment
     },
     MRC_EXT_INPUTS_INIT_VAL_SubChHashMask,

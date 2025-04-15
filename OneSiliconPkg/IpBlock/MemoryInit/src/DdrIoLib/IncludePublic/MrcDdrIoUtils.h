@@ -107,19 +107,6 @@ MrcGetGBDrift (
   );
 
 /**
-  This function configures the Data Invert Nibble feature in the Phy based on the Phy ODT configuration
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @retval MrcStatus - mrcFail if the ODT mode doesn't have a mapping for Data Invert Nibble.
-  @retval MrcStatus - mrcSuccess otherwise.
-**/
-MrcStatus
-MrcDataInvertNibble (
-  IN  MrcParameters *const MrcData
-  );
-
-/**
   This function returns channel bit mask of the channels that hardware exists even though it may not be populated
   @param[in] MrcData - Pointer to MRC global data.
 
@@ -206,16 +193,6 @@ UINT32
 GetAuxClkRatio (
   IN MrcParameters *const MrcData,
   IN UINT32               Ratio33
-  );
-
-/**
-  This function sets XSyncDelay
-
-  @param[in] MrcData  - Include all MRC global data.
-**/
-VOID
-MrcSetXSyncDelay (
-  IN MrcParameters *const MrcData
   );
 
 /**
@@ -424,9 +401,7 @@ MrcCalcCurrentRxBitDelay (
 /**
   This function performs an ADC readout for the VCCCLK and PBIas voltages before Read MPR training.
   The readout applies across Data, CCC, and Comp partitions
-
   @param[in] MrcData - Include all MRC global data.
-
   @retval mrcSuccess
 **/
 MrcStatus

@@ -98,7 +98,6 @@ MrcWriteVoltageCentering (
 
   **/
 extern
-MRC_IRAM0_FUNCTION
 MrcStatus
 MrcWriteTimingCentering2D (
   IN     MrcParameters *const MrcData
@@ -127,7 +126,6 @@ MrcRankMarginTool (
   @retval MrcStatus -  mrcSuccess if succeded
 **/
 extern
-MRC_IRAM0_FUNCTION
 MrcStatus
 MrcCustomRankMarginTool (
   IN OUT    MrcParameters  *const  MrcData,
@@ -172,7 +170,6 @@ MrcRankMarginToolBit (
   @todo - Need option for loopcount
 **/
 extern
-MRC_IRAM0_FUNCTION
 MrcStatus
 MrcWriteVoltageCentering2D (
   IN OUT MrcParameters *const MrcData
@@ -217,7 +214,6 @@ MrcEarlyWriteTimingCentering2D (
   @retval MrcStatus        - if it success return mrcSuccess
 **/
 extern
-MRC_IRAM0_FUNCTION
 MrcStatus
 MrcWriteDqDqsReTraining (
   IN     MrcParameters *const MrcData
@@ -255,7 +251,6 @@ WriteTimingPerBit1DCentering (
   @todo - Need option for loopcount
 **/
 extern
-MRC_IRAM0_FUNCTION
 MrcStatus
 MrcWriteVoltageCentering2D_DDR5 (
   IN OUT MrcParameters *const MrcData
@@ -275,7 +270,6 @@ MrcWriteVoltageCentering2D_DDR5 (
   @retval MrcStatus -    if it succeded return mrcSuccess
 **/
 extern
-MRC_IRAM0_FUNCTION
 MrcStatus
 WriteVoltageCentering2D_DDR5 (
   IN OUT MrcParameters *const MrcData,

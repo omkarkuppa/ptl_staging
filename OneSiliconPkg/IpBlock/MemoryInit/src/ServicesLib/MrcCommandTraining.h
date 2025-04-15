@@ -64,6 +64,12 @@ typedef enum {
   MrcCaParityEnabled
 } MrcCaParityKnob;
 
+// Structure used to store limit results
+typedef struct {
+  UINT16   LeftEdge;
+  UINT16   RightEdge;
+} EDGE_SAMPLES;
+
 typedef
 UINT8
 (*MRC_CHANNEL_ERROR_STATUS_FUNC) (
@@ -623,6 +629,27 @@ SetCmdTest (
   IN BOOLEAN              IsEct,
   IN UINT8                Pattern,
   IN UINT32               Rank
+  );
+
+/**
+  This function takes a per-byte DDR5 CS training result and aligns the
+  results to be on the same clock cycle as the first byte (byte 0).
+  @param[in] MrcData           - The MRC global data.
+  @param[in] Composite         - The composite eye calculated for all bytes processed so far. Not used for Byte 0.
+  @param[in] Byte              - The current working byte to align
+  @param[in,out] Left          - The left edge of the eye for the current byte to align. This value will be updated to the aligned value.
+  @param[in,out] Right         - The right edge of the eye for the current byte to align. This value will be updated to the aligned value.
+  @param[in,out] CenterByte0   - The center of the eye for byte 0. This value will be updated for Byte 0 and used as a reference for all other bytes.
+  @retval None
+**/
+VOID
+MrcDdr5AlignCsClockCycle (
+  IN     MrcParameters *const MrcData,
+  IN     EDGE_SAMPLES         Composite,
+  IN     UINT8                Byte,
+  IN OUT UINT16        *const Left,
+  IN OUT UINT16        *const Right,
+  IN OUT INT16         *const CenterByte0
   );
 
 #endif // _MrcCommandTraining_h_

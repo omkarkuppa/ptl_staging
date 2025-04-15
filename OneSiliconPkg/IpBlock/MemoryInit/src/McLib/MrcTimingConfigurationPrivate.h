@@ -23,33 +23,6 @@
 #ifndef MrcTimingConfigurationPrivate_h_
 #define MrcTimingConfigurationPrivate_h_
 
-
-/**
-  This function returns nWR latency.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @returns nWR parameter.
-**/
-UINT32
-GetnWR (
-  IN MrcParameters *const MrcData
-  );
-
-
-/**
-  This function returns nWR_diff = nWR - tWR.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @returns nWR_diff parameter.
-**/
-UINT32
-GetnWRDiff (
-  IN MrcParameters *const MrcData
-  );
-
-
 /**
   This function returns derating_ext value which is added to tRAS, tRRD, tRP and tRCD when LPDDR5 is hot.
 

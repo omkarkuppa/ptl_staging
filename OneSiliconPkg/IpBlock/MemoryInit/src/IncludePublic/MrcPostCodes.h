@@ -141,7 +141,7 @@
 #define MRC_WCKTCO_COMP_TRAINING        (0xDD65)
 #define MRC_READ_CTLE                   (0xDD66)
 #define MRC_DIMM_ODT_CA                 (0xDD67)
-#define MRC_DDRIO_FINALIZE_POST_DFI     (0xDD68)
+// unused                               (0xDD68)
 #define MRC_FILL_BDAT_STRUCTURE         (0xDD69)
 #define MRC_WCK_LEVELING                (0xDD6A)
 #define MRC_MBIST                       (0xDD6B)

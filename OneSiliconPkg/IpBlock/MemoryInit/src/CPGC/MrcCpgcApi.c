@@ -662,26 +662,6 @@ MrcGetCpgcBitMask (
 }
 
 /**
-  This function acts as wrapper function and calls UpdateAddressForWholeRankExtended().
-  @param[in]  MrcData           - Pointer to MRC global data.
-  @param[out] CPGCAddressArray  - 2D Array of Structure that stores address related settings per channel.
-  @param[in]  AddrDirection     - CPGC Address Direction
-  @param[in]  McChMask          - Channel bit mask (can be different than Outputs->McChBitMask)
-  @param[in]  Rank              - Rank to work on
-**/
-VOID
-UpdateAddressForWholeRank (
-    IN  MrcParameters *const            MrcData,
-    OUT MRC_ADDRESS                     CPGCAddressArray[MAX_CONTROLLER][MAX_CHANNEL],
-    IN  MRC_ADDRESS_INCREMENT_ORDER     AddrIncOrder,
-    IN  UINT8                           McChMask,
-    IN  UINT32                          Rank
-  )
-{
-  UpdateAddressForWholeRankExtended (MrcData, CPGCAddressArray, AddrIncOrder, McChMask, Rank, NULL);
-}
-
-/**
   This function sets up ADDRESS_SIZE register per channel to the whole rank, Bank/Row/Col size is determined by DIMM.
   This is used in memory scrubbing and PPR.
   The register will be updated on all enabled CPGC engines.
@@ -691,17 +671,15 @@ UpdateAddressForWholeRank (
   @param[in]  AddrDirection     - CPGC Address Direction
   @param[in]  McChMask          - Channel bit mask (can be different than Outputs->McChBitMask)
   @param[in]  Rank              - Rank to work on
-  @param[in]  CapNotPowerOf2    - Whether non-power of 2 capacity found per MC/CH
 
 **/
 VOID
-UpdateAddressForWholeRankExtended (
+UpdateAddressForWholeRank (
   IN  MrcParameters *const            MrcData,
   OUT MRC_ADDRESS                     CPGCAddressArray[MAX_CONTROLLER][MAX_CHANNEL],
   IN  MRC_ADDRESS_INCREMENT_ORDER     AddrIncOrder,
   IN  UINT8                           McChMask,
-  IN  UINT32                          Rank,
-  IN  BOOLEAN                         CapNotPowerOf2[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL] OPTIONAL
+  IN  UINT32                          Rank
   )
 {
   MrcDebug          *Debug;
@@ -748,11 +726,7 @@ UpdateAddressForWholeRankExtended (
       CpgcAddrPtr->ColSizeBits = (UINT8)ColSizeBits;
       CpgcAddrPtr->ColStart = 0;
       CpgcAddrPtr->LastValidAddr = 0;
-      if ((CapNotPowerOf2 != NULL) && CapNotPowerOf2[Rank][Controller][Channel]) {
-        CpgcAddrPtr->RowSizeBits = (UINT8)(RowSizeBits - 2);
-      } else {
-        CpgcAddrPtr->RowSizeBits = (UINT8)RowSizeBits;
-      }
+      CpgcAddrPtr->RowSizeBits = (UINT8)RowSizeBits;
       CpgcAddrPtr->RowStart = 0;
     }
   }

@@ -40,5 +40,19 @@ MrcTimingConfiguration (
   IN MrcParameters *const MrcData
   );
 
+/**
+  This function returns the tccd_32_byte_cas_delta value.
+
+  @param[in] MrcData  - Include all MRC global data.
+  @param[in] Timing   - Timing Settings.
+
+  @returns The tccd_32_byte_cas_delta value for the specified configuration.
+**/
+UINT32
+MrcGetTccdByteCasDelta (
+  IN MrcParameters *const MrcData,
+  IN MrcTiming     *Timing
+  );
+
 #endif // _MrcTimingConfiguration_h_
 

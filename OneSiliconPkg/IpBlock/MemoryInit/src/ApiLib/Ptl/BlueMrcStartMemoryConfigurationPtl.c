@@ -129,13 +129,13 @@ MrcInternalCheckPoint (
     case OemPmaConfig:
     case OemMcInitRun:
     case OemMbist:
-      if (Inputs->IsDdrIoTc) {
+      if (Inputs->IsDdrIoGen1Tc) {
         Status = mrcFail; // Skip this training step
       }
       break;
 
     case OemPreTraining:
-      if (!TrainingEnables->PRETRAIN || Inputs->IsDdrIoTc) {
+      if (!TrainingEnables->PRETRAIN || Inputs->IsDdrIoGen1Tc) {
         Status = mrcFail; // Skip this training step
       }
       break;

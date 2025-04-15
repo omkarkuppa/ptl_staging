@@ -1527,7 +1527,7 @@ Ddr5GmfDelayTimings (
       break;
 
     case GmfDdr5Delay_tZQLAT:
-      TimingNck = MrcGetTzqcs (MrcData, tCK);
+      TimingNck = MrcGetTzqlat (MrcData, tCK);
       break;
 
     case GmfDdr5Delay_tDFE:

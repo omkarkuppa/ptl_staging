@@ -36,6 +36,8 @@
 #define LP5_TFR_NUM_ENTRIES   (Lp5Wl4t1BMax)
 #define LP5_TFR_UPPER_LIMIT (1)
 #define LP5_TFR_LOWER_LIMIT (0)
+#define MRC_LP_tINIT0_US   20000   ///< Max voltage-ramp time
+#define MRC_LP_tINIT4_TCK  5       ///< Min stable clock before first CKE high
 
 ///
 /// Local Constants
@@ -61,7 +63,37 @@ static const MrcFrequency TimingFreqRangeLp5[LP5_TFR_NUM_ENTRIES][2] = {
   {f6000,   f6400},
   {f6400,   f7500},
   {f7500,   f8533},
-  {f8533,   fInvalid}};
+  {f8533,   f9600},
+  {f9600,   fInvalid}
+  };
+
+typedef enum {
+  MrcLp5RlDvfscDisIndex533,
+  MrcLp5RlDvfscDisIndex1067,
+  MrcLp5RlDvfscDisIndex1600,
+  MrcLp5RlDvfscDisIndex2133,
+  MrcLp5RlDvfscDisIndex2750,
+  MrcLp5RlDvfscDisIndex3200,
+  MrcLp5RlDvfscDisIndex3733,
+  MrcLp5RlDvfscDisIndex4267,
+  MrcLp5RlDvfscDisIndex4800,
+  MrcLp5RlDvfscDisIndex5500,
+  MrcLp5RlDvfscDisIndex6000,
+  MrcLp5RlDvfscDisIndex6400,
+  MrcLp5RlDvfscDisIndex7500,
+  MrcLp5RlDvfscDisIndex8533,
+  MrcLp5RlDvfscDisIndex9600,
+  MrcLp5RlDvfscDisIndex10667,
+  MrcLp5RlDvfscDisIndexMax
+} MrcLp5RlDvfscDisIndex;
+
+const UINT8 Lp5ReadLatencyDvfscDisabledSet0[MrcLp5RlDvfscDisIndexMax] = { 3, 4, 5, 6, 8,  9, 10, 12, 13, 15, 16, 17, 20, 23, 25, 28 };
+const UINT8 Lp5ReadLatencyDvfscDisabledSet1[MrcLp5RlDvfscDisIndexMax] = { 3, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 18, 22, 25, 28, 30 };
+const UINT8 Lp5ReadLatencyDvfscDisabledSet2[MrcLp5RlDvfscDisIndexMax] = { 3, 4, 6, 7, 9, 10, 12, 14, 15, 17, 19, 20, 24, 26, 29, 33 };
+
+const UINT8 Lp5ReadLatencyDvfscEnabledSet0[6] = { 3, 5, 7, 8, 10, 12 };
+const UINT8 Lp5ReadLatencyDvfscEnabledSet1[6] = { 3, 5, 7, 8, 10, 12 };
+const UINT8 Lp5ReadLatencyDvfscEnabledSet2[6] = { 3, 5, 7, 10, 12, 14 };
 
 /**
   This function checks that the Vref requested is within the spec defined range for LPDDR5.
@@ -364,6 +396,10 @@ EncodeWriteLatencyLpddr5 (
       MrValue = Lp5Wl4t1B24;
       break;
 
+    case 26:
+      MrValue = Lp5Wl4t1B26;
+      break;
+
     default:
       MrValue = 0xFF;
       break;
@@ -478,6 +514,10 @@ EncodeWriteRecoveryLpddr5 (
           MrValue = Lp5Wr4t1X8_44;
           break;
 
+        case 48:
+          MrValue = Lp5Wr4t1X8_48;
+          break;
+
         default:
           MrValue = 0xFF;
           Status = mrcWrongInputParameter;
@@ -543,6 +583,10 @@ EncodeWriteRecoveryLpddr5 (
 
         case 41:
           MrValue = Lp5Wr4t1X16_41;
+          break;
+
+        case 48:
+          MrValue = Lp5Wr4t1X16_48;
           break;
 
         default:
@@ -629,7 +673,7 @@ EncodeWriteRecoveryLpddr5 (
     }
   } else {
     Status = mrcWrongInputParameter;
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Unsupported Write Recovery value\n", gErrString);
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Unsupported Write Recovery value: %u\n", gErrString, Value);
   }
 
   return Status;
@@ -948,7 +992,7 @@ InitMrwLpddr5 (
         //MR13 - 0 by default from Host Structure Init.
         Mr13.Data8 = 0;
         Mr13.Bits.DmDisable = 1;
-        Mr13.Bits.DualVdd2 = 0; // Dual VDD2 is used, due to DVFSC
+        Mr13.Bits.DualVdd2 = (ExtInputs->BoardDetails.SingleVdd2Rail == 1) ? 1 : 0; // Single or Dual VDD2 rail. If Single VDD2 rail, E-DVFSC cannot be used.
         MrPtr[mrIndexMR13] = Mr13.Data8;
 
         //MR20 - WCK Mode is 0 (Differential)
@@ -1400,8 +1444,7 @@ Lpddr5GmfDelayTimings (
 
     case GmfLpddr5Delay_tZQLAT:
       // tZQLAT = MAX(30ns,4nCK)
-      TimingNck = DIVIDECEIL (tZQLAT_FS, tCK);
-      TimingNck = MAX (TimingNck, tZQLAT_LPDDR5_CK_MIN);
+      TimingNck = MrcGetLpddr5Tzqlat (tCK);
       break;
 
     //    Delay Time from ZQ Stop Bit Set to ZQ Resistor
@@ -1735,7 +1778,7 @@ MrcGetWckPreRdTotalLpddr5 (
   IN  MrcFrequency          Frequency
   )
 {
-  static const UINT8 tWckPreTotalRd[LP5_TFR_NUM_ENTRIES] =  {4, 5, 5, 6, 7, 7, 8, 9, 9, 10, 11, 11, 14, 16, 18};
+  static const UINT8 tWckPreTotalRd[LP5_TFR_NUM_ENTRIES] =  {4, 5, 5, 6, 7, 7, 8, 9, 9, 10, 11, 11, 14, 16, 18, 18};
   INT8  RetVal;
   UINT8 FreqBin;
 
@@ -3146,30 +3189,29 @@ MrcGetLpddr5Tzqcal (
   }
 
   tZQCAL = MrcCall->MrcDivU64x64 (tZQCALfs + tCK - 1, tCK, NULL);
-  tZQCAL = MrcCall->MrcMultU64x32 (tZQCAL, 4);
-  tZQCAL = MAX (tZQCAL, tZQCAL_LPDDR5_CK_MIN);
 
   return (UINT32) tZQCAL;
 }
 
 /**
-  This function returns the LPDDR5 tZQCS value.
+  This function returns the LPDDR5 tZQLAT value in tCK
 
-  @param[in] tZQLAT  - tZQLAT in femtoseconds over tCK.
+  @param[in] tCK  - CK period in femtoseconds.
 
-  @retval tZQCS  - Value in WCK.
+  @retval tZQLAT  - Timing in tCK.
 **/
 UINT32
-MrcGetLpddr5Tzqcs (
-  IN UINT32  tZQLAT
+MrcGetLpddr5Tzqlat (
+  IN UINT32 tCK
   )
 {
-  UINT32 tZQCS = 0;
+  UINT32   Zqlat;
 
-  tZQCS = MAX (tZQLAT, tZQLAT_LPDDR5_CK_MIN);
-  tZQCS *= 4;
+  //tZQLAT = max (30ns, 4nCK)
+  Zqlat = DIVIDECEIL (tZQLAT_LP5_FS, tCK);
+  Zqlat = MAX (Zqlat, tZQLAT_LP5_MIN_NCK);
 
-  return tZQCS;
+  return Zqlat;
 }
 
 /**
@@ -3500,48 +3542,6 @@ MrcGetLpddr5Tfc (
   return Result;
 }
 
-/**
-  Calculate DqioDuration based on frequency and memory techmology
-
-  @param[in] MrcData               - Include all MRC global data
-  @param[out] *DqioDuration        - DqioDuration encoded to DDR5 MR45 / LPDDR5 MR37 definition
-  @param[out] *RunTimeClocksBy16   - DqioDuration in units of (tCK * 16)
-
-  @retval mrcSuccess               - if it success
-  @retval mrcUnsupportedTechnology - if the frequency doesn't match
-**/
-MrcStatus
-MrcGetDqioDuration (
-  IN     MrcParameters *const MrcData,
-  OUT    UINT8               *DqioDuration,
-  OUT    UINT16              *RunTimeClocksBy16
-  )
-{
-  MrcStatus Status;
-  MrcOutput *Outputs;
-  UINT32    Duration;
-  Outputs = &MrcData->Outputs;
-  Status  = mrcSuccess;
-  Duration = DIVIDECEIL ((2047 * 2 * 300), (Outputs->tCKps * 16));
-  if (Duration > 511) {
-    *DqioDuration = (MRC_BIT7|MRC_BIT6);
-    *RunTimeClocksBy16 = 512; // 8192 clocks
-  } else if (Duration > 255) {
-    *DqioDuration = MRC_BIT7;
-    *RunTimeClocksBy16 = 256; // 4096 clocks
-  } else if (Duration > 127) {
-    *DqioDuration = MRC_BIT6;
-    *RunTimeClocksBy16 = 128; // 2048 clocks
-  } else if (Duration > 63) {
-    *DqioDuration = 63;
-    *RunTimeClocksBy16 = 63;  // 1008 clocks
-  } else {
-    *DqioDuration = (UINT8) Duration;
-    *RunTimeClocksBy16 = (UINT16) Duration;
-  }
-
-  return Status;
-}
 
 /**
   This function returns the tPRPDEN value for the specified Memory type.
@@ -3567,8 +3567,6 @@ MrcGetTprpden (
   switch (DdrType) {
     case MRC_DDR_TYPE_LPDDR5:
       tPRPDEN = MRC_LP5_tCMDPD_MIN_NCK;
-      // Scale to WCK
-      tPRPDEN *= 4;
       break;
 
     default:
@@ -3576,9 +3574,6 @@ MrcGetTprpden (
       tPRPDEN = 2;
       break;
   } // end switch
-
-  // tPRPDEN must be programmed to a minimum of 4
-  tPRPDEN = MAX (tPRPDEN, MRC_tPRPDEN_MIN);
 
   return tPRPDEN;
 }
@@ -3611,9 +3606,7 @@ MrcGetTbpr2act (
 
   Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
   MinDlySbRef2Act = (Lp5BGOrg == MrcLp58Bank ? MRC_LP5_tBPR2ACT_8B_PS : MRC_LP5_tBPR2ACT_PS);
-  MinDlySbRef2Act = MinDlySbRef2Act * 4; // Multiply by 4 for units of WCK per tCK
   tBPR2ACT = DIVIDECEIL (MinDlySbRef2Act, TckPs);
-  tBPR2ACT += ((tBPR2ACT % 4) == 0 ? 0 : (4 - (tBPR2ACT % 4))); // Round to the next number divisible by 4
 
   return tBPR2ACT;
 }
@@ -3666,6 +3659,68 @@ MrcGetDramWriteDrift (
 
   return DramWriteDrift;
 
+}
+
+/**
+  Calculates different types (roundings) of tWCKDQO parameter:
+  - tWCKDQO rounded up,
+  - tWCKDQO rounded down (floor),
+  - tWCKDQO remainder from rounding.
+
+  @param[in]      MrcData   - Include all MRC global data.
+  @param[in]      Type      - Type of tWCKDQO rounding.
+
+  @retval tWCKDQO based on chosen tWCKDQO rounding type.
+**/
+UINT32 MrcGetTwckdqo (
+  IN MrcParameters    *const MrcData,
+  IN MRC_TWCKDQO_TYPE  const Type
+  )
+{
+  MrcOutput *Outputs;
+  UINT32    tWckDqoMaxPs;
+  UINT32    tWckDqoRound;
+  UINT32    tWckDqoFloor;
+  UINT32    tWckDqoRemPs;
+  UINT32    tWckDqoRem;
+  UINT32    PhClkPeriod;
+  UINT32    Value;
+
+  /*
+  tWCKDQO_DECI        = $floor(tWCKDQO / q_period) ;
+  tWCKDQO_DECI_RNDUP  = $ceil(tWCKDQO / q_period);
+  tWCKDQO_REM_ABS     = tWCKDQO - (tWCKDQO_DECI[pt] * q_period) ;
+  tWCKDQO_REM         = real'(tWCKDQO_REM_ABS) / phclk_period * 128
+  */
+
+  Outputs = &MrcData->Outputs;
+  PhClkPeriod = DIVIDECEIL (2000000, Outputs->Frequency);
+  tWckDqoMaxPs = (Outputs->Frequency >= f3200) ? MRC_LP5_tWCKDQO_HF_MAX : MRC_LP5_tWCKDQO_LF_MAX;
+
+  tWckDqoRound = UDIVIDEROUND (tWckDqoMaxPs, Outputs->Qclkps);
+  tWckDqoFloor = DIVIDEFLOOR  (tWckDqoMaxPs, Outputs->Qclkps);
+
+  tWckDqoRemPs = tWckDqoMaxPs - (tWckDqoFloor * Outputs->Qclkps);
+  tWckDqoRem = UDIVIDEROUND (128 * tWckDqoRemPs, PhClkPeriod);
+
+  if (MrcData->Inputs.ExtInputs.Ptr->DqLoopbackTest) {
+    Value = 0;
+  } else {
+    switch (Type) {
+      case MrcLp5tWckDqoFloor:
+        Value = tWckDqoFloor;
+        break;
+      case MrcLp5tWckDqoRemainder:
+        Value = tWckDqoRem;
+        break;
+      case MrcLp5tWckDqoRound:
+      default:
+        Value = tWckDqoRound;
+        break;
+    }
+  }
+
+  return Value;
 }
 
 /**
@@ -3811,8 +3866,230 @@ GetLpddr5tCWL (
     tCWL = 19;
   } else if (tCKNorm >= MRC_DDR_8533_TCK_MIN) {
     tCWL = 22;
-  } else {
+  } else if (tCKNorm >= MRC_DDR_9600_TCK_MIN) {
     tCWL = 24; // MRC_DDR_9600_TCK_MIN
+  } else {
+    tCWL = 26; // MRC_DDR_10667_TCK_MIN
   }
   return tCWL;
+}
+
+/**
+  Calculate the tCL value for LPDDR5.
+
+  JEDEC Spec Table 225 - Read Latencies for Read Link ECC off case (DVFSC disabled, Enhanced DVFSC disabled):
+
+    Lower Clk   Upper Clk        Read Latency
+    Freq Limit  Freq Limit     Set0  Set1  Set2
+    -------------------------------------------
+      5            67           3      3      3
+     67           133           4      4      4
+    133           200           5      5      6
+    200           267           6      7      7
+    267           344           8      8      9
+    344           400           9     10     10
+    400           467          10     11     12
+    467           533          12     13     14
+    533           600          13     14     15
+    600           688          15     16     17
+    688           750          16     17     19
+    750           800          17     18     20
+    800           937.5        20     22     24
+    937.5        1066.5        23     25     26
+
+
+    JEDEC Spec Table 225 - Read Latencies for Read Link ECC off case (DVFSC disabled, Enhanced DVFSC enabled):
+
+    Lower Clk   Upper Clk        Read Latency
+    Freq Limit  Freq Limit     Set0  Set1  Set2
+    -------------------------------------------
+      5            67           3      3      3
+     67           133           5      5      5
+    133           200           7      7      7
+    200           267           8      8     10
+    267           344           10    10     12
+    344           400           12    12     14
+
+
+    Set0 - x16, No DBI
+    Set1 - x8 and No DBI, or x16 and DBI
+    Set2 - x8 and DBI
+
+    @param[in] tCK          - The memory tCK in femtoseconds.
+    @param[in] SdramWidth   - SDRAM width (8 or 16)
+    @param[in] IsDbiEnabled - TRUE if DBI is enabled
+    @param[in] IsDvfscEnabled - TRUE if Dvfsc is enabled
+
+    @retval LPDDR5 tCL in tCK units
+**/
+UINT32
+GetLpddr5tCL (
+  IN const UINT32     tCK,
+  IN UINT8            SdramWidth,
+  IN BOOLEAN          IsDbiEnabled,
+  IN BOOLEAN          IsDvfscEnabled
+  )
+{
+  UINT32 tCL;
+  UINT32 tCKNorm;
+  UINT32 RlSet;
+  UINT32 Index;
+  MrcLp5RlDvfscDisIndex RlIndex;
+
+  // Scale tCK up to typical DDR ratio of 2:1 between tCK and Data Rate
+  // We are always in 4:1 mode for WCK.
+  tCKNorm = tCK / 4;
+
+  RlSet = 0;
+  if (SdramWidth == 8) {
+    RlSet += 1;
+  }
+  if (IsDbiEnabled) {
+    RlSet += 1;
+  }
+
+  Index = 0;
+  if (!IsDvfscEnabled) {
+    if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex533;
+    } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex1067;
+    } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex1600;
+    } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex2133;
+    } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex2750;
+    } else if (tCKNorm >= MRC_DDR_3200_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex3200;
+    } else if (tCKNorm >= MRC_DDR_3733_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex3733;
+    } else if (tCKNorm >= MRC_DDR_4267_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex4267;
+    } else if (tCKNorm >= MRC_DDR_4800_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex4800;
+    } else if (tCKNorm >= MRC_DDR_5500_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex5500;
+    } else if (tCKNorm >= MRC_DDR_6000_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex6000;
+    } else if (tCKNorm >= MRC_DDR_6400_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex6400;
+    } else if (tCKNorm >= MRC_DDR_7500_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex7500;
+    } else if (tCKNorm >= MRC_DDR_8533_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex8533;
+    } else if (tCKNorm >= MRC_DDR_9600_TCK_MIN) {
+      RlIndex = MrcLp5RlDvfscDisIndex9600;
+    } else {
+      RlIndex = MrcLp5RlDvfscDisIndex10667;
+    }
+    if (RlSet == 0) {
+      tCL = Lp5ReadLatencyDvfscDisabledSet0[RlIndex];
+    } else if (RlSet == 1) {
+      tCL = Lp5ReadLatencyDvfscDisabledSet1[RlIndex];
+    } else {
+      tCL = Lp5ReadLatencyDvfscDisabledSet2[RlIndex];
+    }
+  } else {  //Dvfsc enabled
+    if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
+      Index = 0;
+    } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
+      Index = 1;
+    } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
+      Index = 2;
+    } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
+      Index = 3;
+    } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
+      Index = 4;
+    } else {
+      Index = 5;
+    }
+
+    if (RlSet == 0) {
+      tCL = Lp5ReadLatencyDvfscEnabledSet0[Index];
+    } else if (RlSet == 1) {
+      tCL = Lp5ReadLatencyDvfscEnabledSet1[Index];
+    } else {
+      tCL = Lp5ReadLatencyDvfscEnabledSet2[Index];
+    }
+  }
+  return tCL;
+}
+
+/**
+  This function converts from the integer defined Read Latency to the Mode Register
+  encoding of the timing in LPDDR5.
+
+  @param[in]  MrcData - Pointer to global MRC data.
+  @param[in]  Value   - Requested Read Latency value.
+  @param[out] EncVal  - Encoded Mode Register value.
+
+  @retval MrcStatus - mrcSuccess if the latency is supported.  Else mrcWrongInputParameter.
+**/
+MrcStatus
+EncodeReadLatencyLpddr5 (
+  IN  MrcParameters *MrcData,
+  IN  UINT16        Value,
+  OUT UINT8         *EncVal
+  )
+{
+  MrcOutput   *Outputs;
+  MrcDebug    *Debug;
+  MrcStatus   Status;
+  UINT8       MrValue;
+  UINT8       RlSet;
+  UINT8       Index;
+  UINT8       ReadLatencyValueArrLength;
+  const UINT8 *ReadLatency;
+
+  Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
+  Status = mrcSuccess;
+  RlSet = 0;
+
+  if (Outputs->LpByteMode) {
+    RlSet += 1;
+  }
+
+  // Use MR2 table from JEDEC spec - "MR2 Register Definition"
+  if (!Outputs->IsDvfscEnabled) {
+    if (RlSet == 0) {
+      ReadLatency = Lp5ReadLatencyDvfscDisabledSet0;
+    } else {
+      ReadLatency = Lp5ReadLatencyDvfscDisabledSet1;
+    }
+  } else {
+    if (RlSet == 0) {
+      ReadLatency = Lp5ReadLatencyDvfscEnabledSet0;
+    } else {
+      ReadLatency = Lp5ReadLatencyDvfscEnabledSet1;
+    }
+  }
+
+  MrValue = 0xFF;
+  ReadLatencyValueArrLength = (Outputs->IsDvfscEnabled) ? LP5_READ_LATENCY_VALUES_DVFSC : MrcLp5RlDvfscDisIndexMax;
+  for (Index = 0; Index < ReadLatencyValueArrLength; Index++) {
+    if (ReadLatency[Index] == Value) {
+      MrValue = Index;
+      break;
+    }
+  }
+
+  if (MrValue != 0xFF) {
+    // Check to see if the time requested matches JEDEC Frequency table
+    if (!Outputs->IsDvfscEnabled) {
+      Status = LatencyFreqCheckLpddr5 (MrcData, MrValue);
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, (Status != mrcSuccess) ? " (RL)\n" : "");
+    }
+    if (EncVal != NULL) {
+      *EncVal = MrValue;
+    } else {
+      Status = mrcWrongInputParameter;
+    }
+  } else {
+    Status = mrcWrongInputParameter;
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Latency Value: %d\n", gErrString, gRdString, Value);
+  }
+
+  return Status;
 }

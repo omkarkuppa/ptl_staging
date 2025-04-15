@@ -90,47 +90,41 @@ SetTcPreActOdt (
     Lp5BankMode = (INT64) MrcGetBankBgOrg (MrcData, Outputs->Frequency);
   }
 
-  // tRP is equal to tRCD
-  tRP = Timing->tRCDtRP;
-  if (IsLpddr5) {
-    tRP = ((INT32) tRP) * 4;
-  }
+  tRP      = Timing->tRCDtRP; // tRP is equal to tRCD
+  tRCDw    = MrcGetTrcdw (MrcData, Timing->tRCDtRP);
+  tRAS     = Timing->tRAS;
+  tRPab    = IsLpddr ? (INT32) (Timing->tRPab) : tRP;
+  // LP5: SPD Processing aligns Timing->tWR to nWR according to JEDEC MR2 table; hence the nWR_diff should be zero
+  nWRDiff  = 0;
+  tRDPRE   = Timing->tRTP;
+  tPPD     = MrcGetTppd (MrcData);
+  tFAW     = Timing->tFAW;
+  tCL      = Timing->tCL;
+  tCWL     = Timing->tCWL;
+  tWRPRE   = MrcGetTwrpre (MrcData, Timing->tCWL, Timing->tWR);
+  tREFSBRD = Outputs->IsDdr5 ? DIVIDECEIL (MRC_DDR5_tREFSBRD_PS, TckPs) : MrcGetTbpr2act (MrcData);
+  tccdByteCasDelta = MrcGetTccdByteCasDelta (MrcData, Timing);
+  DeratingExt = GetDeratingExt (MrcData);
 
-  tRCDw = MrcGetTrcdw (MrcData, Timing->tRCDtRP);
-
-  if (IsLpddr) {
-    tRPab = (INT32) (Timing->tRPab);
-    if (IsLpddr5) {
-      tRPab = ((INT32) tRPab) * 4;
-    }
-  } else {
-    tRPab = tRP;
-  }
-
-  tRAS = Timing->tRAS;
-  if (IsLpddr5) {
-    tRAS = ((INT32) tRAS) * 4;
-  }
-
-  nWRDiff = GetnWRDiff (MrcData);
-
-  tRDPRE = Timing->tRTP;
   if (IsLpddr5) {
     tRDPRE += MrcGetBurstLengthNMin (MrcData);
   }
-
   // Store tRDPRE in units of tCK consitent with JEDEC Timings
   MrcData->Save.Data.SaGvOutputs.SaGvTiming[Outputs->SaGvPoint].IpTiming.tRDPRE = (UINT16) tRDPRE;
 
   if (IsLpddr5) {
-    tRDPRE = ((INT32) tRDPRE) * 4;
-  }
-
-  tPPD = MrcGetTppd (MrcData);
-
-  tFAW = Timing->tFAW;
-  if (IsLpddr5) {
-    tFAW = ((INT32) tFAW) * 4;
+    // Scale to WCK for Lpddr5
+    tRP      = ((INT32) tRP)      * WCK_TO_CK_RATIO;
+    tRCDw    = ((INT32) tRCDw)    * WCK_TO_CK_RATIO;
+    tRAS     = ((INT32) tRAS)     * WCK_TO_CK_RATIO;
+    tRPab    = ((INT32) tRPab)    * WCK_TO_CK_RATIO;
+    tRDPRE   = ((INT32) tRDPRE)   * WCK_TO_CK_RATIO;
+    tPPD     = ((INT32) tPPD)     * WCK_TO_CK_RATIO;
+    tFAW     = ((INT32) tFAW)     * WCK_TO_CK_RATIO;
+    tCL      = ((INT32) tCL)      * WCK_TO_CK_RATIO;
+    tCWL     = ((INT32) tCWL)     * WCK_TO_CK_RATIO;
+    tWRPRE   = ((INT32) tWRPRE)   * WCK_TO_CK_RATIO;
+    tREFSBRD = ((INT32) tREFSBRD) * WCK_TO_CK_RATIO;
   }
 
   // Setup tRRD_sg and tRRD_dg based on DdrType.
@@ -141,42 +135,17 @@ SetTcPreActOdt (
     // in LP5, as there is no concept of tRRD_sg or dg, so we set them to the same value
     tRRD = Timing->tRRD;
     if (IsLpddr5) {
-      tRRD *= 4;
+      tRRD = ((UINT32) tRRD) * WCK_TO_CK_RATIO;
     }
     tRRDsg = tRRD;
     tRRDdg = tRRD;
-  }
-
-  DeratingExt = GetDeratingExt (MrcData);
-
-  tCL = Timing->tCL;
-  if (IsLpddr5) {
-    tCL = ((INT32) tCL) * 4;
-  }
-
-  tCWL  = Timing->tCWL;
-  if (IsLpddr5) {
-    tCWL = ((INT32) tCWL) * 4;
-  }
-
-  tWRPRE = MrcGetTwrpre (MrcData, Timing->tCWL, Timing->tWR);
-
-  tREFSBRD = 0;
-  if (IsDdr5) {
-    tREFSBRD = DIVIDECEIL (MRC_DDR5_tREFSBRD_PS, TckPs);
-  } else if (IsLpddr5) {
-    tREFSBRD = MrcGetTbpr2act (MrcData);
   }
 
   if (tREFSBRD != 0) {
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctREFSbRd, WriteToCache | PrintValue, &tREFSBRD);
   }
 
-  tccdByteCasDelta = MrcGetTccdByteCasDelta (MrcData, Timing);
-
-
   AddTcwl = 0;
-
   if (IsLpddr5) {
     DecTcwl = 7;
   } else { // DDR5
@@ -211,66 +180,6 @@ SetTcPreActOdt (
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctCWLAdd,         WriteToCache | PrintValue, &AddTcwl);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmtccdCasDelta,      WriteToCache | PrintValue, &tccdByteCasDelta);
   MrcFlushRegisterCachedData (MrcData);
-}
-
-/**
-  This function returns nWR_diff = nWR - tWR.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @returns nWR_diff parameter.
-**/
-UINT32
-GetnWRDiff (
-  IN MrcParameters *const MrcData
-  )
-{
-  UINT32 Result = 0;
-  BOOLEAN IsLpddr5 = MrcData->Outputs.IsLpddr5;
-  UINT32 tWrConstant = (MrcData->Outputs.LpByteMode ? MRC_LPDDR5_x8_tWR : MRC_LPDDR5_x16_tWR);
-  UINT32 nWR;
-  UINT32 tWR;
-
-  if (IsLpddr5) {
-    // tWR = max (36ns, 3nCK) for x8 devices
-    // tWR = max (34ns, 3nCK) for x16 devices
-    tWR = DIVIDECEIL (tWrConstant, MrcData->Outputs.MemoryClock);
-    tWR = MAX (tWR, MRC_LPDDR5_tWR_MIN);
-
-    nWR = GetnWR (MrcData);
-    Result = (nWR - tWR) * WCK_TO_CK_RATIO;
-  }
-
-  return Result;
-}
-
-/**
-  This function returns nWR latency.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @returns nWR parameter.
-**/
-UINT32
-GetnWR (
-  IN MrcParameters *const MrcData
-  )
-{
-  UINT32 Result = 0;
-  INT8 Index;
-  MrcFrequency Frequency = MrcData->Outputs.Frequency;
-  BOOLEAN IsLpByteMode = MrcData->Outputs.LpByteMode;
-
-  if (MrcData->Outputs.IsLpddr5) {
-    for (Index = JEDEC_LPDDR5_nWR_LATENCY_ARRAY_SIZE - 1; 0 <= Index; Index--) {
-      if (Frequency <= Lpddr5nWrLatency[Index].Frequency) {
-        Result = IsLpByteMode ? Lpddr5nWrLatency[Index].nWRx8 : Lpddr5nWrLatency[Index].nWRx16;
-      } else {
-        break;
-      }
-    }
-  }
-  return Result;
 }
 
 /**
@@ -327,7 +236,6 @@ SetTcPwrdwn (
   INT64           tCSL;
   INT64           tCSH;
   UINT32          tCK;
-  UINT32          Data32;
   INT64           tOSCO;
   INT64           tMRR;
   INT64           tPREMRR;
@@ -343,21 +251,13 @@ SetTcPwrdwn (
   IsLpddr5    = Outputs->IsLpddr5;
   DdrFreq     = Outputs->Frequency;
 
-  Data32 = MrcGetTcke (DdrType, tCK);
-  if (IsLpddr5) {
-    // Scale to WCK for Lpddr5
-    Data32 *= 4;
-  }
-  tCKE = Data32;
-
-  Data32 = MrcGetTxp (DdrType, tCK);
+  tXP = MrcGetTxp (DdrType, tCK);
   if (IsLpddr5) {
     // More conservative approach is used, optimization is done in SAGV Final when CS ODT is enabled
     // tXP = MAX(tPDXCSODTON, 3nCK) = MAX(20ns, 3nck)
-    Data32 = MAX (DIVIDECEIL (MRC_LPDDR5_tPDXCSODTON, tCK), MRC_LP5_tXP_MIN_NCK);
-    Data32 *= 4;
+    tXP = MAX (DIVIDECEIL (MRC_LPDDR5_tPDXCSODTON, tCK), MRC_LP5_tXP_MIN_NCK);
+    tXP = ((UINT32) tXP) * WCK_TO_CK_RATIO;
   }
-  tXP = Data32;
 
   if (DdrType == MRC_DDR_TYPE_DDR5) {
     tCSL = (Timing->NMode == 2) ? MRC_DDR5_tCSL_SREXIT_2N : MRC_DDR5_tCSL_SREXIT_1N;
@@ -368,12 +268,27 @@ SetTcPwrdwn (
 
     tCA2CS = MAX (MrcGetTcacsh (MrcData), MrcGetTckckeh (MrcData));
   }
-
-  tCSH = MrcGetTcsh (MrcData);
-
+  tCKE = MrcGetTcke (DdrType, tCK);
+  tCSH    = MrcGetTcsh (MrcData);
   tPRPDEN = MrcGetTprpden (MrcData, DdrFreq);
   tRDPDEN = MrcGetTrdpden (MrcData, Timing->tCL);
   tWRPDEN = MrcGetTwrpden (MrcData, Timing->tCWL, Timing->tWR);
+  tOSCO   = MrcGetTosco (MrcData);
+
+  if (IsLpddr5) {
+    // Scale to WCK for Lpddr5
+    tCKE    = ((UINT32) tCKE)    * WCK_TO_CK_RATIO;
+    tCA2CS  = ((UINT32) tCA2CS)  * WCK_TO_CK_RATIO;
+    tCSL    = ((UINT32) tCSL)    * WCK_TO_CK_RATIO;
+    tCSH    = ((UINT32) tCSH)    * WCK_TO_CK_RATIO;
+    tPRPDEN = ((UINT32) tPRPDEN) * WCK_TO_CK_RATIO;
+    tRDPDEN = ((UINT32) tRDPDEN) * WCK_TO_CK_RATIO;
+    tWRPDEN = ((UINT32) tWRPDEN) * WCK_TO_CK_RATIO;
+    tOSCO   = ((UINT32) tOSCO)   * WCK_TO_CK_RATIO;
+  }
+
+  // tPRPDEN must be programmed to a minimum of 4
+  tPRPDEN = MAX (tPRPDEN, MRC_tPRPDEN_MIN);
 
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctCKE,    WriteToCache | PrintValue, &tCKE);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctXP,     WriteToCache | PrintValue, &tXP);
@@ -382,24 +297,32 @@ SetTcPwrdwn (
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctWRPDEN, WriteToCache | PrintValue, &tWRPDEN);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctCSH,    WriteToCache | PrintValue, &tCSH);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctCSL,    WriteToCache | PrintValue, &tCSL);
-
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttOSCO,  WriteToCache | PrintValue, &tOSCO);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctCA2CS,  WriteToCache | PrintValue, &tCA2CS);
 
-  tOSCO = MrcGetTosco (MrcData);
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttOSCO, WriteToCache | PrintValue, &tOSCO);
+
   tMRR = MrcGetTmrr (MrcData, Timing->tCL);
-  MrcExtendTmrr (MrcData, &tMRR);
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttMRR,  WriteToCache | PrintValue, &tMRR);
+
   // LP5 only
   if (IsLpddr5) {
     tPREMRR = MAX (tMRR, MrcGetWrToMrr (MrcData, Timing->tCWL, Timing->tWTR, Timing->tWTR_L));
+    tPREMRR = ((UINT32) tPREMRR) * WCK_TO_CK_RATIO;
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttPREMRR, WriteToCache | PrintValue, &tPREMRR);
+    tMRR = ((UINT32) tMRR) * WCK_TO_CK_RATIO;
+  } else {
+    MrcExtendTmrr (MrcData, &tMRR);
   }
+
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttMRR,  WriteToCache | PrintValue, &tMRR);
 
   // Setup tVRCG_ENABLE and tVRCG_DISABLE
   tVRCGEnable  = MrcGetTvrcgEnable (MrcData);
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctVrcgEnable,  WriteToCache | PrintValue, &tVRCGEnable);
   tVRCGDisable = MrcGetTvrcgDisable (MrcData);
+  if (IsLpddr5) {
+    tVRCGEnable  = ((UINT32) tVRCGEnable)  * WCK_TO_CK_RATIO;
+    tVRCGDisable = ((UINT32) tVRCGDisable) * WCK_TO_CK_RATIO;
+  }
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctVrcgEnable,  WriteToCache | PrintValue, &tVRCGEnable);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctVrcgDisable, WriteToCache | PrintValue, &tVRCGDisable);
 
   MrcFlushRegisterCachedData (MrcData);
@@ -610,4 +533,38 @@ MrcTatStretch (
     // Program Same Rank WR 2 RD dg value
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctWRRDdg, GsmMode, &GetSetVal);
   }
+}
+
+/**
+  This function returns the tccd_32_byte_cas_delta value.
+
+  @param[in] MrcData  - Include all MRC global data.
+  @param[in] Timing   - Timing Settings.
+
+  @returns The tccd_32_byte_cas_delta value for the specified configuration.
+**/
+UINT32
+MrcGetTccdByteCasDelta (
+  IN MrcParameters *const MrcData,
+  IN MrcTiming     *Timing
+  )
+{
+  UINT32 Result = 0;
+  UINT32 tCCD_L_WR;
+  UINT32 tCCD_L_WR2;
+
+  MrcOutput *Outputs = &MrcData->Outputs;
+  if (Outputs->IsLpddr5) {
+    if (Outputs->Frequency > f3200) {
+      Result = 16;
+    } else {
+      Result = 8;
+    }
+  } else if (Outputs->IsDdr5) {
+    tCCD_L_WR  = Timing->tCCD_L_WR;
+    tCCD_L_WR2 = tCCD_L_WR / 2;
+    Result = tCCD_L_WR - tCCD_L_WR2;
+  }
+
+  return Result;
 }

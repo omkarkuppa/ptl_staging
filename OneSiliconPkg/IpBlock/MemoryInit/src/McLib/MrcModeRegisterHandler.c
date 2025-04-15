@@ -1312,8 +1312,8 @@ MrcIssueWraCmd (
   UINT32     tMpcNs;
   UINT32     WraDelayNs;
   INT64  GetSetVal;
-  INT64  GetSetEn;
   INT64  GetSetDis;
+  INT64  MultiCycCmdSaved;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
   UINT32 Byte;
   MRC_GEN_MRH_COMMAND MrhCommand;
@@ -1322,8 +1322,7 @@ MrcIssueWraCmd (
   Inputs      = &MrcData->Inputs;
   ExtInputs   = Inputs->ExtInputs.Ptr;
   Timing      = &Outputs->Timing[ExtInputs->MemoryProfile];
-  GetSetEn  = 1;
-  GetSetDis = 0;
+  GetSetDis   = 0;
 
   tMpcNck     = MrcGetTmod (MrcData, Timing->tCK);
   tMpcNckFs   = tMpcNck * Outputs->MemoryClock;
@@ -1363,13 +1362,14 @@ MrcIssueWraCmd (
   MrhCommand.Ddr5.CA_0 = DDR5_WRA_CMD | ((BankGroup & 0x7) << 8) | ((BankAddress & 0x3) << 6); // WRA
   MrhCommand.Ddr5.CA_1 = 0x800; // Not Partial
 
-  // Enable multicyccmd
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMultiCycCmd, WriteNoCache, &GetSetEn);
+  // Disable multicyccmd
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMultiCycCmd, ReadCached, &MultiCycCmdSaved);
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMultiCycCmd, WriteNoCache, &GetSetDis);
   // WRA, this should send WRCMD indication, for DQS
   MrcRunGenericMrh (MrcData, Controller, Channel, Rank, MrhCommand, TRUE, TRUE);
   MrcWait (MrcData, WraDelayNs);
-  // Disable multicyccmd
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMultiCycCmd, WriteNoCache, &GetSetDis);
+  // Restore multicyccmd
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMultiCycCmd, WriteNoCache, &MultiCycCmdSaved);
 
   GetSetVal = 0x0;
   MrcGetSetChStrb (MrcData, Controller, Channel, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideEn, WriteToCache, &GetSetVal);

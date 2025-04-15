@@ -1204,6 +1204,7 @@ Cpgc20DataInstructWrite (
   @param[in]  MrcData           - Pointer to MRC global data.
   @param[in]  CPGCAddressArray  - 2D Array of Structure that stores address related settings
   @param[in]  EnCADB            - Set up the address ordering for Command stress
+  @param[in] CapNotPowerOf2     - Whether non-power of 2 capacity found per MC/CH
 
   @retval Nothing.
 **/
@@ -1211,7 +1212,8 @@ VOID
 Cpgc20AddressSetup (
   IN  MrcParameters *const            MrcData,
   IN  MRC_ADDRESS                     CPGCAddressArray [MAX_CONTROLLER][MAX_CHANNEL],
-  IN  UINT8                           EnCADB
+  IN  UINT8                           EnCADB,
+  IN  BOOLEAN                         CapNotPowerOf2[MAX_CONTROLLER][MAX_CHANNEL] OPTIONAL
   )
 {
   MrcOutput *Outputs;
@@ -1260,6 +1262,15 @@ Cpgc20AddressSetup (
         MrcWriteCR (MrcData, Offset, BaseAddressControl.Data);
       }
 
+      if ((CapNotPowerOf2 != NULL) && CapNotPowerOf2[Controller][Channel]) {
+        BaseAddressControl.Bits.Bank_Inc = 2; // Add +4 for each new bank, wrapping into LSB bits (due to block size)
+        Offset = OFFSET_CALC_MC_CH (
+          MC0_REQ0_CR_CPGC2_BASE_ADDRESS_CONTROL_REG,
+          MC1_REQ0_CR_CPGC2_BASE_ADDRESS_CONTROL_REG, Controller,
+          MC0_REQ1_CR_CPGC2_BASE_ADDRESS_CONTROL_REG, IpChannel);
+        MrcWriteCR (MrcData, Offset, BaseAddressControl.Data);
+      }
+
       CpgcAddrPtr = &CPGCAddressArray[Controller][Channel];
       //  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "AddressOrder: %u, AddressDirection: %u, LastValidInstruct: %u\n", AddressOrder, AddressDirection, LastValidInstruct);
       //  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RowStart: %u, RowSizeBits: 0x%x\n", RowStart, RowSizeBits);
@@ -1295,8 +1306,14 @@ Cpgc20AddressSetup (
                 MC1_REQ0_CR_CPGC2_ADDRESS_SIZE_REG, Controller,
                 MC0_REQ1_CR_CPGC2_ADDRESS_SIZE_REG, IpChannel);
       Cpgc2AddrSize.Data = MrcReadCR64 (MrcData, Offset);
+
       // Row and Col bit sizes in BlockSize and RegionSize registers are exponential. Bank and Rank are linear "+1".
-      Cpgc2AddrSize.Bits.Block_Size_Bits_Row  = EnCADB ? 0 : CpgcAddrPtr->RowSizeBits; // In command stress we want Row to be updated together with Bank, so block size is zero
+      if ((CapNotPowerOf2 != NULL) && CapNotPowerOf2[Controller][Channel]) {
+        Cpgc2AddrSize.Bits.Block_Size_Bits_Row = EnCADB ? 0 : 4;
+      } else {
+        Cpgc2AddrSize.Bits.Block_Size_Bits_Row  = EnCADB ? 0 : CpgcAddrPtr->RowSizeBits; // In command stress we want Row to be updated together with Bank, so block size is zero
+      }
+
       Cpgc2AddrSize.Bits.Block_Size_Bits_Col  = EnCADB ? 2 : CpgcAddrPtr->ColSizeBits; // In command stress we want Bank / Row update every 4 CLs
       Cpgc2AddrSize.Bits.Region_Size_Bits_Row = CpgcAddrPtr->RowSizeBits;
       Cpgc2AddrSize.Bits.Region_Size_Bits_Col = CpgcAddrPtr->ColSizeBits;
@@ -1348,7 +1365,9 @@ Cpgc20UpdateBaseRepeatsForWholeRankExtended (
   UINT8             Controller;
   MrcOutput         *Outputs;
   UINT8             Channel;
+  UINT8             LocalMcChBitMask;
   UINT32            Burst;
+  UINT32            BlockRepeats;
   UINT8             MaxChannel;
   MrcDimmOut        *DimmOut;
   UINT8             BankCount;
@@ -1383,11 +1402,19 @@ Cpgc20UpdateBaseRepeatsForWholeRankExtended (
 
       // Update BASE_REPEATS to match the required number of Writes
       if ((CapNotPowerOf2 != NULL) && CapNotPowerOf2[Rank][Controller][Channel]) {
-        Burst = (DimmOut->RowSize * Columns * BankCount) / 4;
+        Burst = 16 * Columns * BankCount;
       } else {
         Burst = DimmOut->RowSize * Columns * BankCount;
       }
       Cpgc20BaseRepeatsMcCh (MrcData, Controller, IpChannel, Burst, SINGLE_RANK);
+
+      if ((CapNotPowerOf2 != NULL) && CapNotPowerOf2[Rank][Controller][Channel]) {
+        LocalMcChBitMask = (UINT8) (MRC_BIT0 << ((Controller * Outputs->MaxChannels) + Channel));
+        BlockRepeats = (DimmOut->RowSize * Columns * BankCount) * 3 / 4;
+        BlockRepeats = BlockRepeats / Burst;
+        BlockRepeats -= (BlockRepeats) ? 1 : 0;
+        MrcSetLoopcount (MrcData, LocalMcChBitMask, BlockRepeats);
+      }
     }
   }
 }

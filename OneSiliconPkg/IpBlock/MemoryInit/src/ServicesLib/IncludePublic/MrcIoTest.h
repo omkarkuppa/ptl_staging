@@ -53,7 +53,7 @@ SetupIOTest (
   IN const UINT8                  CmdPat,
   IN       UINT32                 NumCL,
   IN       UINT8                  LcExp,
-  IN MRC_ADDRESS                  AddressArray[MAX_CONTROLLER][MAX_CHANNEL],
+  IN       MRC_ADDRESS            AddressArray[MAX_CONTROLLER][MAX_CHANNEL],
   IN const MRC_TEST_STOP_TYPE     SOE,
   IN       MRC_PATTERN_CTL *const PatCtlPtr,
   IN       UINT16                 SubSeqWait

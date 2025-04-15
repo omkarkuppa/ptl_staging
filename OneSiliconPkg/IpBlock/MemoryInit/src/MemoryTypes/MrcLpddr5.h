@@ -209,8 +209,8 @@
 #define tZQCAL_16NZQ_NS_LPDDR5 (6000)
 
 // tZQLAT MAX(30ns, 4nCK)
-#define tZQLAT_FS            (30 * 1000 * 1000)
-#define tZQLAT_LPDDR5_CK_MIN 4
+#define tZQLAT_LP5_FS      (30 * 1000 * 1000)
+#define tZQLAT_LP5_MIN_NCK 4
 
 // tZQRESET MAX(50ns, 3nCK)
 #define tZQRESET_FS            (50 * 1000 * 1000)
@@ -355,6 +355,12 @@
 #define LP5_ACT1_CMD_RISE_EDGE   (0x07)  //         H-H-H (    111)
 #define LP5_ACT2_CMD_RISE_EDGE   (0x03)  //         L-H-H (    011)
 
+/// tFC_Long = 250ns.  Common for LPDDR5
+#define MRC_LP_tFC_LONG_NS (250)
+
+#define LP5_READ_LATENCY_VALUES       15
+#define LP5_READ_LATENCY_VALUES_DVFSC 6
+
 typedef enum {
   MrcLp5BgMode,
   MrcLp58Bank,
@@ -377,34 +383,6 @@ typedef union {
   }Bits;
   UINT32 Data32;
 } LpDdr5ActStruct;
-
-// Structure to store data from JEDEC JESD209-5C Table 230 - nWR Latency
-// This data is neccesery to calculate nWR_diff value in TC_PRE_0_0_0_MCHBAR
-typedef struct {
-  MrcFrequency Frequency;
-  UINT32       nWRx8;
-  UINT32       nWRx16;
-} JEDEC_LPDDR5_nWR_LATENCY;
-
-static const JEDEC_LPDDR5_nWR_LATENCY Lpddr5nWrLatency[] = {
-  {f533,   3,  3},
-  {f1067,  5,  5},
-  {f1600,  8,  7},
-  {f2133, 10, 10},
-  {f2750, 13, 12},
-  {f3200, 15, 14},
-  {f3733, 17, 16},
-  {f4267, 20, 19},
-  {f4800, 22, 21},
-  {f5500, 25, 24},
-  {f6000, 28, 26},
-  {f6400, 29, 28},
-  {f7500, 34, 32},
-  {f8533, 39, 37},
-  {f9600, 44, 41},
-};
-
-#define JEDEC_LPDDR5_nWR_LATENCY_ARRAY_SIZE (sizeof(Lpddr5nWrLatency)/sizeof(Lpddr5nWrLatency[0]))
 
 /**
   This function is only used with LPDDR and will return 1 if the current channel should be skipped in SW looping, 0 otherwise.
@@ -924,15 +902,15 @@ MrcGetLpddr5Tzqcal (
   );
 
 /**
-  This function returns the LPDDR5 tZQCS value.
+  This function returns the LPDDR5 tZQLAT value in tCK.
 
-  @param[in] tZQLAT  - tZQLAT in femtoseconds over tCK.
+  @param[in] tCK  - CK period in femtoseconds.
 
-  @retval tZQCS  - Value in WCK.
+  @retval tZQLAT  - Timing in tCK.
 **/
 UINT32
-MrcGetLpddr5Tzqcs (
-  IN UINT32  tZQLAT
+MrcGetLpddr5Tzqlat (
+  IN UINT32 tCK
   );
 
 /**
@@ -1278,23 +1256,6 @@ MrcGetLpddr5Tfc (
 );
 
 /**
-  Calculate DqioDuration based on frequency and memory techmology
-
-  @param[in] MrcData               - Include all MRC global data
-  @param[out] *DqioDuration        - DqioDuration encoded to DDR5 MR45 / LPDDR5 MR37 definition
-  @param[out] *RunTimeClocksBy16   - DqioDuration in units of (tCK * 16)
-
-  @retval mrcSuccess               - if it success
-  @retval mrcUnsupportedTechnology - if the frequency doesn't match
-**/
-MrcStatus
-MrcGetDqioDuration (
-  IN     MrcParameters *const MrcData,
-  OUT    UINT8               *DqioDuration,
-  OUT    UINT16              *RunTimeClocksBy16
-  );
-
-/**
   This function returns the tPRPDEN value for the specified Memory type.
 
   @param[in] MrcData  - Include all MRC global data.
@@ -1410,5 +1371,68 @@ UINT16
 MrcLp5GetVrefDq (
   IN  MrcParameters *const  MrcData
   );
+
+///
+/// Function Declarations
+///
+
+/**
+  Calculate the tCL value for LPDDR5.
+  JEDEC Spec Table 220 - Read Latencies for Read Link ECC off case (DVFSC disabled)
+
+    Lower Clk   Upper Clk        Read Latency
+    Freq Limit  Freq Limit     Set0  Set1  Set2
+    -------------------------------------------
+      5            67           3      3      3
+     67           133           4      4      4
+    133           200           5      5      6
+    200           267           6      7      7
+    267           344           8      8      9
+    344           400           9     10     10
+    400           467          10     11     12
+    467           533          12     13     14
+    533           600          13     14     15
+    600           688          15     16     17
+    688           750          16     17     19
+    750           800          17     18     20
+    800           937.5        20     22     24
+    937.5        1066.5        23     25     26
+
+    Set0 - x16, No DBI
+    Set1 - x8 and No DBI, or x16 and DBI
+    Set2 - x8 and DBI
+
+    @param[in] tCK          - The memory tCK in femtoseconds.
+    @param[in] SdramWidth   - SDRAM width (8 or 16)
+    @param[in] IsDbiEnabled - TRUE if DBI is enabled
+    @param[in] IsDvfscEnabled - TRUE if Dvfsc is enabled
+
+    @retval LPDDR5 tCL in tCK units
+**/
+UINT32
+GetLpddr5tCL (
+  IN const UINT32     tCK,
+  IN UINT8            SdramWidth,
+  IN BOOLEAN          IsDbiEnabled,
+  IN BOOLEAN          IsDvfscEnabled
+  );
+
+/**
+  This function converts from the integer defined Read Latency to the Mode Register
+  encoding of the timing in LPDDR5.
+
+  @param[in]  MrcData - Pointer to global MRC data.
+  @param[in]  Value   - Requested Read Latency value.
+  @param[out] EncVal  - Encoded Mode Register value.
+
+  @retval MrcStatus - mrcSuccess if the latency is supported.  Else mrcWrongInputParameter.
+**/
+MrcStatus
+EncodeReadLatencyLpddr5 (
+  IN  MrcParameters *MrcData,
+  IN  UINT16        Value,
+  OUT UINT8         *EncVal
+  );
+
 
 #endif // _MRC_LPDDR5_H_

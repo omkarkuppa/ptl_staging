@@ -185,7 +185,7 @@ SetTcZqCalReg (
   MrcInput  *Inputs;
   MrcOutput *Outputs;
   MrcTiming *Timing;
-  INT64     tZQCS;
+  INT64     tZQLAT;
   INT64     ZQCSPeriod;
   INT64     tZQCAL;
 
@@ -193,12 +193,16 @@ SetTcZqCalReg (
   Outputs  = &MrcData->Outputs;
   Timing   = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
 
-  tZQCS       = MrcGetTzqcs (MrcData, Timing->tCK);
   ZQCSPeriod  = (Outputs->IsLpddr) ? ZQCS_PERIOD_LPDDR : ZQCS_PERIOD_DDR5;
+  tZQLAT      = MrcGetTzqlat (MrcData, Timing->tCK);
   tZQCAL      = MrcGetTzqcal (MrcData, Timing->tCK);
+  if (Outputs->IsLpddr5) {
+    tZQCAL = ((UINT32) tZQCAL) * WCK_TO_CK_RATIO;
+    tZQLAT = ((UINT32) tZQLAT) * WCK_TO_CK_RATIO;
+  }
 
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctZQCAL, WriteToCache | PrintValue, &tZQCAL);
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttZQLatch, WriteToCache | PrintValue, &tZQCS);
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttZQLatch, WriteToCache | PrintValue, &tZQLAT);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctZQCalPeriod, WriteToCache | PrintValue, &ZQCSPeriod);
   MrcFlushRegisterCachedData (MrcData);
 }
@@ -241,6 +245,9 @@ MrcRefreshConfiguration (
       SetTcZqCalReg (MrcData, Controller, Channel);
 
       tSR = MrcGetTsr (MrcData);
+      if (MrcData->Outputs.IsLpddr5) {
+        tSR = ((UINT32) tSR) * WCK_TO_CK_RATIO;
+      }
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctSR, WriteToCache | PrintValue, &tSR);
 
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccEnRefTypeDisplay,     WriteToCache | PrintValue, &GetSetEn);

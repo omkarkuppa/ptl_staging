@@ -564,26 +564,6 @@ MrcBwSelUpdate (
   );
 
 /**
-  Program MCMISCS_DDRWCKCONTROL
-
-  @param[in] MrcData  - Include all MRC global data
-**/
-VOID
-MrcSetWckControl (
-  IN MrcParameters *const MrcData
-  );
-
-/**
-  Program MCMISCS_RXDQFIFORDENCH[01..67], MCMISCS_WRITECFGCH[0..7] and MCMISCS_READCFGCH[0..7] registers.
-
-  @param[in]  MrcData         - Include all MRC global data
-**/
-VOID
-MrcSetReadWriteConfig (
-  IN MrcParameters *const MrcData
-  );
-
-/**
   CPU specific function which encodes Vref (mV) for the GSM_GT RxVref.
 
   @param[in]  MrcData       - Pointer to global data.
@@ -621,25 +601,6 @@ MrcDecodeRxVref (
 MrcStatus
 MrcDdrIoInit (
   IN OUT MrcParameters *const MrcData
-  );
-
-/**
-  This function calculates SenseAmp duration for DQS and DQ.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-  @param[in]  Qclk2Pi - Number of PI Ticks in a QClk
-  @param[in]  GuardBand - Guardband for drift in Rd DQS timing in psec
-  @param[in]  RdPreambleLow - Read Preamble low time
-  @param[in]  RdPreambleT - Read Preamble Toggle time
-
-**/
-VOID
-MrcProgramDqDqsSenseAmpDuration (
-  IN     MrcParameters *const MrcData,
-  IN     UINT32 Qclk2Pi,
-  IN     UINT32 GuardBand,
-  IN     UINT8  RdPreambleLow,
-  IN     UINT8  RdPreambleT
   );
 
 /**
@@ -708,19 +669,6 @@ MrcLateDdrIoFinalize (
   IN     MrcParameters *const MrcData
   );
 
-/**
-  This function performs final DDRIO configuration after all training steps are done.
-  This is a second part of DDRIO finalize, which is called after DFI control is switched back to MC,
-  and MRC is not going to use MPTU anymore.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @returns MrcStatus value reflecting any errors
-**/
-MrcStatus
-MrcDdrIoFinalizePostDfi (
-  IN     MrcParameters *const MrcData
-  );
 
 /**
   This function sets the default Rx DFE tap values based on desired DFE tap mV.
@@ -1286,20 +1234,6 @@ MrcToggleDllReset (
   );
 
 /**
-  This function sets workpoint data including Qclk, Gear, and AuxClk
-
-  @param[in, out] MrcData - MRC global data.
-  @param[in]      NewFreq - Target Frequency for PLL
-  @param[in]      Save    - Indicator as to if we should save or restore PllOffset Data
-**/
-VOID
-PllOffsetSaveRestore (
-  IN OUT MrcParameters* const MrcData,
-  IN     MrcFrequency         NewFreq,
-  IN     BOOLEAN              Save
-  );
-
-/**
   Calculates different types (roundings) of tWCKDQO parameter:
   - tWCKDQO rounded up,
   - tWCKDQO rounded down (floor),
@@ -1444,15 +1378,6 @@ MrcSetForceOdtOn (
   IN UPDATE_MODE    UpdateMode,
   IN UINT32         GetSetMode,
   IN INT64          *Value
-  );
-
-/**
-  This function gets the endqsodtparkmode value.
-
-  @returns the value for endqsodtparkmode
-**/
-UINT8
-MrcGetEnDqsOdtParkModeValue (
   );
 
 /**
@@ -1874,22 +1799,6 @@ DataDccFsmCtlOffset (
   );
 
 /**
-  This function returns the offset to access specific Index and SaGv Point for DDRCRVCCDDQCONTROL_Target
-
-  @param[in]  Index - DDRDATA DDRCRVCCDDQCONTROL SBMEM Index
-  @param[in]  FreqIndex  - SaGvIndex
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-DataVccDdqTargetOffset (
-  IN  UINT32                Index,
-  IN  UINT32                FreqIndex,
-  OUT UINT64_STRUCT  *const VolatileMask
-  );
-
-/**
   This function returns the offset to access specific Index for DDRCRLVRAutoTrim
 
   @param[in]  Index - DATA DDRCRLVRAutoTrim SBMEM Index
@@ -1914,22 +1823,6 @@ DataLvrAutoTrimOffset (
 **/
 UINT32
 DataVccIogTargetOffset(
-  IN  UINT32                Index,
-  IN  UINT32                FreqIndex,
-  OUT UINT64_STRUCT  *const VolatileMask
-  );
-
-/**
-  This function returns the offset to access specific Index and SaGv Point for DDRCRVCCDDQCONTROL_Target
-
-  @param[in]  Index - CCC DDRCRVCCDDQCONTROL SBMEM Index
-  @param[in]  FreqIndex  - SaGvIndex
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-CccVccDdqTargetOffset (
   IN  UINT32                Index,
   IN  UINT32                FreqIndex,
   OUT UINT64_STRUCT  *const VolatileMask
@@ -2246,36 +2139,6 @@ MrcGetSetEnPhaseGating (
   IN UPDATE_MODE    UpdateMode,
   IN UINT32         GetSetMode,
   IN INT64          *Value
-  );
-
-/**
-  This function is to set up the margin parameters for RdV.
-
-  @param[in,out] MrcData      - Include all MRC global data.
-  @param[in]     McStart      - MC number starts
-  @param[in]     McEnd        - MC number ends.
-  @param[in]     ChannelStart - Channel number starts.
-  @param[in]     ChannelEnd   - Channel number ends
-  @param[in]     ByteStart    - Byte number starts.
-  @param[in]     ByteEnd      - Byte number ends.
-  @param[in]     GsmMode      - Get Set mode.
-  @param[in]     GetSetVal    - The pointer to the get set value
-  @param[in,out] UpdateGrp    - Update Group or not.
-  @param[in,out] Group        - The group parameter which will be used during margin
-**/
-VOID
-SetupMarginRdV (
-  IN OUT MrcParameters *const MrcData,
-  IN           UINT32          McStart,
-  IN           UINT32          McEnd,
-  IN           UINT32          ChannelStart,
-  IN           UINT32          ChannelEnd,
-  IN           UINT32          ByteStart,
-  IN           UINT32          ByteEnd,
-  IN           UINT8           GsmMode,
-  IN           INT64           *GetSetVal,
-  IN OUT       BOOLEAN         *UpdateGrp,
-  IN OUT       GSM_GT          *Group
   );
 
 /*

@@ -2278,10 +2278,10 @@ typedef struct {
   BOOLEAN           IsMcMbA0;                       ///< Identifies that the current CPU stepping is Mobile A0 (MC)
   BOOLEAN           IsDdrIoMbA0;                    ///< Identifies that the current CPU stepping is Mobile A0 (PHY)
   BOOLEAN           IsMcMbB0;                       ///< Identifies that the current CPU stepping is Mobile B0 (MC)
-  BOOLEAN           IsDdrIoB0;                    ///< Identifies that the current CPU stepping is Mobile B0 (PHY)
+  BOOLEAN           IsDdrIoB0;                      ///< Identifies that the current CPU stepping is Mobile B0 (PHY)
   BOOLEAN           IsMcDtA0;                       ///< Identified that the current CPU stepping is Desktop A0 (MC)
-  BOOLEAN           IsDdrIoA0;                    ///< Identified that the current CPU stepping is Desktop A0 (PHY)
-  BOOLEAN           IsDdrIoTc;                      ///< Identified that the current CPU is a test chip (PHY)
+  BOOLEAN           IsDdrIoA0;                      ///< Identified that the current CPU stepping is Desktop A0 (PHY)
+  BOOLEAN           IsDdrIoGen1Tc;                  ///< Identified that the current CPU is a test chip (PHY)
   BOOLEAN           NonTargetOdtEn;                 ///< Enables Non-Target ODT for LPDDR5
   BOOLEAN           TxtClean;                       ///< TRUE if we require to perform TxtClean when Trusted eXecution Technology flow enabled.
   UINT8             Reserved2;                      ///< Reserved to ensure config block size is a multiple of DWORDs
@@ -2362,7 +2362,8 @@ typedef struct {
   UINT8 PprRunOnce;
   UINT8 PprErrorInjection;
   UINT8 PprForceRepair;
-  UINT8 ReservedBytesAlign2[1]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
+  UINT8 PprRetryLimit;
+  UINT8 Reserved3[4];             ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

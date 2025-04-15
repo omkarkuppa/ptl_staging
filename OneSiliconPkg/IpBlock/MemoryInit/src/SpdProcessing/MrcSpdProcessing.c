@@ -2603,7 +2603,7 @@ GetChannelDimmtAA (
 
   if (Outputs->IsLpddr5) {
     Outputs->Frequency = ConvertClock2Freq (MrcData, Outputs->MemoryClock, NULL);
-    if ((ExtInputs->DvfscEnabled && (Outputs->Frequency <= f3200)) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData))) {
+    if ((ExtInputs->DvfscEnabled && (Outputs->Frequency <= f3200)) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData)) && (ExtInputs->BoardDetails.SingleVdd2Rail == 0)) {
       Outputs->IsDvfscEnabled = TRUE;
     }
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IsDvfscEnabled: %u\n", Outputs->IsDvfscEnabled);
@@ -5040,8 +5040,10 @@ GetLpddr5tWR (
           tWR = 34;
         } else if (tWR <= 39) {
           tWR = 39;
-        } else {
+        } else if (tWR <= 44) {
           tWR = 44;
+        } else {
+          tWR = 48;
         }
       } else {
         if (tWR <= 3) {
@@ -5072,8 +5074,10 @@ GetLpddr5tWR (
           tWR = 32;
         } else if (tWR <= 37) {
           tWR = 37;
-        } else {
+        } else if (tWR <= 41) {
           tWR = 41;
+        } else {
+          tWR = 48;
         }
       }
     } else {  // Dvfsc enabled

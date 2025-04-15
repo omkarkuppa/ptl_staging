@@ -19,7 +19,6 @@
 **/
 
 #include "MrcDdrIoUtils.h" // for prototypes
-#include "MrcDdrIoUtilsPrivate.h" // for WrappedForceRcomp()
 #include "CMrcStatsTracker.h" // for MrcStatsStartTimer()
 #include "CMrcApi.h" // for MRC_WAIT_TIMEOUT
 #include "MrcCommon.h" // for MrcReadCR()

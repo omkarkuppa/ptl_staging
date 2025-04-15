@@ -22,6 +22,7 @@
 
 #include "MrcPpr.h"
 #include "MrcPprPrivate.h"
+#include "MrcBluePprPrivate.h"
 #include "MrcAmt.h"
 #include "MrcCommon.h"
 #include "MrcChipApi.h"
@@ -414,12 +415,8 @@ DispositionFailRangesWithPprFlow (
 
                   RepairStatus = FALSE;
 
-                  // Test on paired channels for LPDDR
-                  if (Outputs->IsLpddr) {
-                    McChRowTestBitMask = 3 << ((Controller * Outputs->MaxChannels) + 2 * LP_IP_CH(Outputs->IsLpddr, Channel));
-                  } else {
-                    McChRowTestBitMask = 1 << MC_CH_IDX(Controller, Channel, Outputs->MaxChannels);
-                  }
+                  McChRowTestBitMask = MrcGetPprChBitMask (MrcData, Controller, Channel);
+
                   // Run clean-up before PPR execution
                   PprCleanup (MrcData, PprAmtData, McChRowTestBitMask);
                   // Test row
@@ -434,13 +431,13 @@ DispositionFailRangesWithPprFlow (
                   ++NumRepairsIssued;
                   FailRangePtr->BankGroupAttempts[BankInterleaveIndex]++;
 
-                  // Post-repair analysis
-                  if (Status == mrcSuccess && (RowTestPpr(MrcData, PprAmtData, McChRowTestBitMask, PprBank, FailRangePtr->Addr.Bits.Row) == mrcSuccess)) {
-                    ++NumRepairsSuccessful;
-                    RepairStatus = TRUE;
+                  if (Status == mrcSuccess) {
+                    RepairStatus = MrcPostPprAnalysis (MrcData, PprAmtData, Controller, Channel, Bank, FailRangePtr->Addr.Bits.Row);
+                    NumRepairsSuccessful += RepairStatus;
                   } else {
                     Outputs->PprRepairFails++;
                   }
+
                   // Clean up after PPR execution
                   PprCleanup (MrcData, PprAmtData, McChRowTestBitMask);
                 } // if (ByteMask)
@@ -471,6 +468,84 @@ DispositionFailRangesWithPprFlow (
 } // DispositionFailRangesWithPprFlow
 
 /**
+  Checks if a Post Package Repair succeded and updates internal outputs structure based on the results.
+
+  @param[in] MrcData     - Global MRC data structure
+  @param[in] PprAmtData  - PPR and AMT data structure
+  @param[in] McChBitMask - Memory Controller Channel Bit mask to read results for.
+  @param[in] Bank        - Current bank address
+  @param[in] Row         - Row address to run test
+
+  @retval True when PPR succeded.
+  @retval False when PPR failed.
+**/
+BOOLEAN
+MrcPostPprAnalysis (
+  IN MrcParameters  *const          MrcData,
+  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel,
+  IN UINT32                         Bank,
+  IN UINT32                         Row
+  )
+{
+  MrcOutput *const Outputs = &MrcData->Outputs;
+  MrcInput *const Inputs = &MrcData->Inputs;
+
+  UINT8 McChBitMask;
+  MrcStatus Status;
+  BOOLEAN IsTestSuccessful;
+
+  McChBitMask = MrcGetPprChBitMask (MrcData, Controller, Channel);
+
+  Status = RowTestPpr (MrcData, PprAmtData, McChBitMask, Bank, Row);
+  IsTestSuccessful = (Status == mrcSuccess) ? TRUE : FALSE;
+
+  if (!IsTestSuccessful                                                                      &&
+      (Outputs->Controller[Controller].Channel[Channel].DimmCount == 1)                      &&
+    ((Outputs->IsLpddr5 && (Inputs->PprRepairType == hPPR)                                 ) ||
+     (Outputs->IsDdr5   && (Inputs->PprRepairType == hPPR || Inputs->PprRepairType == sPPR)))) {
+
+    MRC_DEBUG_MSG (&MrcData->Outputs.Debug,
+                   MSG_LEVEL_ERROR,
+                  "MC%d Ch%d: Post PPR analysis indicates that PPR flow didn't fix the issue with the failing row.\n",
+                  Controller,
+                  Channel);
+    Outputs->PprFailingChannelBitMask |= McChBitMask;
+    Outputs->PprRepairFails++;
+  }
+
+  return IsTestSuccessful;
+}
+
+/**
+  Retrieves the Post Package Repair (PPR) channel bit mask for a specified controller and channel.
+
+  @param[in]  MrcData     - Pointer to the MRC global data structure
+  @param[in]  Controller  - The controller index
+  @param[in]  Channel     - The channel index
+
+  @returns The PPR channel bit mask for the specified controller and channel.
+**/
+UINT8
+MrcGetPprChBitMask (
+  IN MrcParameters  *const          MrcData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel
+) {
+  MrcOutput *const Outputs = &MrcData->Outputs;
+  UINT8 McChBitMask = 0;
+
+  if (Outputs->IsLpddr5) {
+    McChBitMask = 0b11 << ((Controller * Outputs->MaxChannels) + 2 * LP_IP_CH (Outputs->IsLpddr, Channel));
+  } else if (Outputs->IsDdr5) {
+    McChBitMask = 1 << MC_CH_IDX (Controller, Channel, Outputs->MaxChannels);
+  }
+
+  return McChBitMask;
+}
+
+/**
   Check to see if Retry is required after a PPR repair
 
   @param[in]  MrcData     - Include all MRC global data.
@@ -486,20 +561,8 @@ IsAmtRetryRequiredAfterRepair (
   IN UINT32               RetryCount
   )
 {
-  MrcDebug  *Debug;
-  BOOLEAN   RetryRequired;
-
-  Debug = &MrcData->Outputs.Debug;
-
-  if (RetryCount == 0) {
-    RetryRequired = TRUE;
-  } else if ((RepairDone != 0) && (RetryCount < PPR_REPAIR_RETRY_LOOPS)) {
-    RetryRequired = TRUE;
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\nPPR repair done so retry MemTest!\n");
-  } else {
-    RetryRequired = FALSE;
-  }
-  return RetryRequired;
+  MrcInput  *Inputs = &MrcData->Inputs;
+  return ((RepairDone != 0) && (RetryCount < Inputs->PprRetryLimit));
 }
 
 /**
@@ -758,8 +821,8 @@ MemTestMATSN (
     InvPattern[0] = ~(Pattern[0]);
     RepairDone = 1;
     RetryCount = 0;
-    // Current retry limit is 10
-    while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++)) {
+
+    do {
       PprAmtData->DataPatternDepth = 1;
       PprAmtData->UiShl = 1;  // Indicate a bit-shift of 1 for all UIs of the Data Pattern
       PprAmtData->SubSeqDataInv[0] = 0; // Indicates if CPGC should invert Data pattern for SubSequence 0
@@ -828,7 +891,8 @@ MemTestMATSN (
         break;
       }
       MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "End Test #%d, TotalTime Elapsed = %dms\n", Test, PprAmtData->CurTestTime);
-    } // while
+    } while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++));
+
     if (PprAmtData->TestStatus != mrcSuccess) {
       break;
     }
@@ -893,8 +957,8 @@ MemTestDataRetention (
 
     RepairDone = 1;
     RetryCount = 0;
-    // Current retry limit is 10
-    while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++)) {
+
+    do {
       PprAmtData->DataPatternDepth = 8;
       PprAmtData->UiShl = 0;  // Do not bit-shift for all UIs of the Data Pattern
       PprAmtData->SubSeqDataInv[0] = 0;
@@ -941,7 +1005,7 @@ MemTestDataRetention (
         break;
       }
       MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "End Test #%d, TotalTime Elapsed = %dms\n", Test, PprAmtData->CurTestTime);
-    } // while
+    } while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++));
     if (PprAmtData->TestStatus != mrcSuccess) {
       break;
     }
@@ -1025,8 +1089,8 @@ MemTestMarch (
     Outputs->PprPatBufShift = PatBufShift << 3; // Shift by 8 * PatBufShift
     RepairDone = 1;
     RetryCount = 0;
-    // Current retry limit is 10
-    while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++)) {
+
+    do {
       PprAmtData->DataPatternDepth = PatternDepth;
       PprAmtData->UiShl = 0;  // Do not bit-shift for all UIs of the Data Pattern
       PprAmtData->SubSeqDataInv[0] = 0;
@@ -1067,7 +1131,7 @@ MemTestMarch (
         MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "%s: Test Failed!\n\n", TestName);
         break;
       }
-    } // while
+    } while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++));
     if (PprAmtData->TestType == PprTestTypeXMarchG) {
       break;  // XMarchG has one data instruction and does not need to shift pattern
     } else if (PatBufShift < 3) {
@@ -1140,8 +1204,8 @@ MemTestMarchAlt (
     InvPattern[0] = ~(Pattern[0]);
     RepairDone = 1;
     RetryCount = 0;
-    // Current retry limit is 10
-    while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++)) {
+
+    do {
       PprAmtData->DataPatternDepth = 1;
       PprAmtData->UiShl = 0;  // Do not bit-shift for all UIs of the Data Pattern
       PprAmtData->SubSeqDataInv[0] = 0;
@@ -1188,7 +1252,7 @@ MemTestMarchAlt (
         MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "%s: Test Failed!\n\n", TestName);
         break;
       }
-    } // while
+    } while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++));
   } // for
 
   if (PprAmtData->TestStatus == mrcSuccess) {
@@ -1245,8 +1309,8 @@ MemTestMmrw (
 
     RepairDone = 1;
     RetryCount = 0;
-    // Current retry limit is 10
-    while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++)) {
+
+    do {
       PprAmtData->DataPatternDepth = 2;
       PprAmtData->UiShl = 0;  // Do not bit-shift for all UIs of the Data Pattern
       PprAmtData->SubSeqDataInv[0] = 0;
@@ -1297,7 +1361,7 @@ MemTestMmrw (
         break;
       }
       MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "End Test #%d, TotalTime Elapsed = %dms\n", Test, PprAmtData->CurTestTime);
-    } // while
+    } while (IsAmtRetryRequiredAfterRepair (MrcData, RepairDone, RetryCount++));
     if (PprAmtData->TestStatus != mrcSuccess) {
       break;
     }

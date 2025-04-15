@@ -28,6 +28,7 @@
 #include "MrcMemoryApi.h"
 #include "MrcDdrIoUtils.h"
 #include "CMrcStatsTracker.h" // for MrcStatsIncrementData()
+#include "MrcLpddr5.h"
 
 
 typedef struct {

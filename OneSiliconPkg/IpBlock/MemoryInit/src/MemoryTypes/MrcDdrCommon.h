@@ -83,77 +83,6 @@ typedef struct {
   UINT16  RttNT;
 } TOdtValueLpddr;
 
-///
-/// Common Defines and Macros
-///
-/// tFC_Long = 250ns.  Common for LPDDR5
-#define MRC_LP_tFC_LONG_NS (250)
-
-#define LP5_READ_LATENCY_VALUES       15
-#define LP5_READ_LATENCY_VALUES_DVFSC 6
-
-///
-/// Function Declarations
-///
-
-/**
-  Calculate the tCL value for LPDDR5.
-  JEDEC Spec Table 220 - Read Latencies for Read Link ECC off case (DVFSC disabled)
-
-    Lower Clk   Upper Clk        Read Latency
-    Freq Limit  Freq Limit     Set0  Set1  Set2
-    -------------------------------------------
-      5            67           3      3      3
-     67           133           4      4      4
-    133           200           5      5      6
-    200           267           6      7      7
-    267           344           8      8      9
-    344           400           9     10     10
-    400           467          10     11     12
-    467           533          12     13     14
-    533           600          13     14     15
-    600           688          15     16     17
-    688           750          16     17     19
-    750           800          17     18     20
-    800           937.5        20     22     24
-    937.5        1066.5        23     25     26
-
-    Set0 - x16, No DBI
-    Set1 - x8 and No DBI, or x16 and DBI
-    Set2 - x8 and DBI
-
-    @param[in] tCK          - The memory tCK in femtoseconds.
-    @param[in] SdramWidth   - SDRAM width (8 or 16)
-    @param[in] IsDbiEnabled - TRUE if DBI is enabled
-    @param[in] IsDvfscEnabled - TRUE if Dvfsc is enabled
-
-    @retval LPDDR5 tCL in tCK units
-**/
-UINT32
-GetLpddr5tCL (
-  IN const UINT32     tCK,
-  IN UINT8            SdramWidth,
-  IN BOOLEAN          IsDbiEnabled,
-  IN BOOLEAN          IsDvfscEnabled
-  );
-
-/**
-  This function converts from the integer defined Read Latency to the Mode Register
-  encoding of the timing in LPDDR5.
-
-  @param[in]  MrcData - Pointer to global MRC data.
-  @param[in]  Value   - Requested Read Latency value.
-  @param[out] EncVal  - Encoded Mode Register value.
-
-  @retval MrcStatus - mrcSuccess if the latency is supported.  Else mrcWrongInputParameter.
-**/
-MrcStatus
-EncodeReadLatencyLpddr5 (
-  IN  MrcParameters *MrcData,
-  IN  UINT16        Value,
-  OUT UINT8         *EncVal
-  );
-
 /**
   Print non-LP MRs
 
@@ -246,20 +175,6 @@ MrcCkeOnProgramming (
 void
 MrcCkeOverrideProgramming (
   IN  MrcParameters *const  MrcData
-  );
-
-/**
-  This function will set WCK2DQI (LP5) / DQS (DDR5) Interval Timer Run Time to MR37 (LP5) / MR45 (DDR5).
-
-  @param[in]      MrcData       - Pointer to global MRC data.
-  @param[in]      DqioDuration  - WCK2DQI/DQS interval timer run time.
-
-  @retval MrcStatus - mrcSuccess if the value is supported, else mrcWrongInputParameter.
-**/
-MrcStatus
-MrcSetIntervalTimerMr (
-  IN      MrcParameters *const  MrcData,
-  IN      UINT8                 DqioDuration
   );
 
 /**

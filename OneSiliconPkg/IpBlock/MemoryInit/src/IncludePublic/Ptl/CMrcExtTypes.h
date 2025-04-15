@@ -179,10 +179,11 @@ typedef struct {
 } TrainingStepsEn3;
 
 typedef struct {
-  UINT8 BoardStackUp : 1;    ///< BIT0 - Board Stack Up: <b>0=Typical</b>, 1=Freq Limited.
-  UINT8 BoardTopology : 1;   ///< BIT1 - Board Topology: <b>0=Daisy Chain</b>, 1=Tee.
-  UINT8 BrdReserved : 6;     ///< BIT[7:2] - Reserved for future use
-  UINT8 BrdReserved1[3];     ///< Reserved bytes for struct DWORD alignment
+  UINT8 BoardStackUp   : 1;   ///< BIT0 - Board Stack Up: <b>0=Typical</b>, 1=Freq Limited.
+  UINT8 BoardTopology  : 1;   ///< BIT1 - Board Topology: <b>0=Daisy Chain</b>, 1=Tee.
+  UINT8 SingleVdd2Rail : 1;   ///< BIT2 - LP5x VDD2 rail: <b>0=Dual rail (E-DVFSC is possible)</b>, 1=Single rail(No E-DVFSC; VDD2L == VDD2H).
+  UINT8 BrdReserved    : 5;   ///< BIT[7:3] - Reserved for future use
+  UINT8 BrdReserved1[3];      ///< Reserved bytes for struct DWORD alignment
 } MrcBoardInputs;
 
 typedef struct {

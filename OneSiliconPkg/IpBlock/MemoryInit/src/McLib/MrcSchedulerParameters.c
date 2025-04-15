@@ -257,6 +257,10 @@ MrcSchedulerParametersConfig (
       tCPDED = MrcGetTcpded (MrcData);
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctCPDED,          WriteToCache | PrintValue, &tCPDED);
       tCKCKEH = MrcGetTckckeh (MrcData);
+      if (IsLpddr5) {
+        // Scale to WCK for Lpddr5
+        tCKCKEH = ((UINT32) tCKCKEH) * WCK_TO_CK_RATIO;
+      }
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctCKCKEH,         WriteToCache | PrintValue, &tCKCKEH);
 
       GetSetVal = SerializeZq;
@@ -314,22 +318,30 @@ MrcSchedulerParametersConfig (
         GetSetVal = tWCK_STOP;
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctWckDfiStop,     WriteToCache | PrintValue, &GetSetVal);
         WckDfiOffset = 4;
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctWckDfiOffset,   WriteToCache | PrintValue, &WckDfiOffset);
-        tCSLCK = MrcGetTcsclk (MrcData);
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttCSLCK,   WriteToCache | PrintValue, &tCSLCK);
-        tWckStop = MrcGetTwckstop (MrcData);
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttWckStop, WriteToCache | PrintValue, &tWckStop);
+        tCSLCK     = MrcGetTcsclk (MrcData);
+        tWckStop   = MrcGetTwckstop (MrcData);
+        RdWckAsync = MrcGetTrdWckAsyncGap (MrcData, tCL);
+        WrWckAsync = MrcGetTwrWckAsyncGap (MrcData, tCWL);
+        tWckOff    = MrcGetTwckoff (MrcData);
+        tCKFSPX    = MrcGetTckfspx (MrcData);
+        if (IsLpddr5) {
+          // Scale to WCK for Lpddr5
+          tCSLCK     = ((UINT32) tCSLCK)    * WCK_TO_CK_RATIO;
+          tWckStop   = ((UINT32) tWckStop)  * WCK_TO_CK_RATIO;
+          RdWckAsync = ((UINT32) RdWckAsync)* WCK_TO_CK_RATIO;
+          WrWckAsync = ((UINT32) WrWckAsync)* WCK_TO_CK_RATIO;
+          tWckOff    = ((UINT32) tWckOff)   * WCK_TO_CK_RATIO;
+          tCKFSPX    = ((UINT32) tCKFSPX)   * WCK_TO_CK_RATIO;
+        }
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctWckDfiOffset,         WriteToCache | PrintValue, &WckDfiOffset);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttCSLCK,               WriteToCache | PrintValue, &tCSLCK);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttWckStop,             WriteToCache | PrintValue, &tWckStop);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRdWckAsyncGap,        WriteToCache | PrintValue, &RdWckAsync);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccWrWckAsyncGap,        WriteToCache | PrintValue, &WrWckAsync);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GSmMcttWckOff,              WriteToCache | PrintValue, &tWckOff);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttCkFspX,              WriteToCache | PrintValue, &tCKFSPX);
         GetSetVal = MAX (tWckStop, tCSLCK);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccCasStopAdditionalGap, WriteToCache | PrintValue, &GetSetVal);
-        RdWckAsync = MrcGetTrdWckAsyncGap (MrcData, tCL);
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRdWckAsyncGap,        WriteToCache | PrintValue, &RdWckAsync);
-        WrWckAsync = MrcGetTwrWckAsyncGap (MrcData, tCWL);
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccWrWckAsyncGap,        WriteToCache | PrintValue, &WrWckAsync);
-        tWckOff = MrcGetTwckoff (MrcData);
-        MrcGetSetMcCh (MrcData, Controller, Channel, GSmMcttWckOff,              WriteToCache | PrintValue, &tWckOff);
-        tCKFSPX = MrcGetTckfspx (MrcData);
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttCkFspX,              WriteToCache | PrintValue, &tCKFSPX);
-
         MrcSetGlobalGraceCounter (MrcData, Controller, Channel);
       }
 

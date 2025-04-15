@@ -944,7 +944,7 @@ MrcGetTrdpden (
     Result = tCL + MRC_DDR5_tCCD_ALL_FREQ + 1;
   } else { // LPDDR
     tWCKDQO_MAX = Outputs->Frequency < f3200 ? MRC_LP5_tWCKDQO_LF_MAX : MRC_LP5_tWCKDQO_HF_MAX;
-    Result = (tCL + tBLn_max + DIVIDECEIL(tWCKDQO_MAX, Outputs->tCKps) + 1) * WCK_TO_CK_RATIO;
+    Result = (tCL + tBLn_max + DIVIDECEIL(tWCKDQO_MAX, Outputs->tCKps) + 1);
   }
 
   return Result;
@@ -984,7 +984,7 @@ MrcGetTwrpden (
 
     // tWRPDEN = (tCWL + CEIL(tWCKDQImax/tCKPs) + tBL/n_max + tWR + 1) 4
     tBLn_max = Outputs->BurstLength + (Outputs->Frequency > f3200 ? 4 : 0);
-    Result = (tCWL + DIVIDECEIL (tWCKDQI, Outputs->tCKps) + tBLn_max + tWR + 1) * WCK_TO_CK_RATIO;
+    Result = (tCWL + DIVIDECEIL (tWCKDQI, Outputs->tCKps) + tBLn_max + tWR + 1);
   }
 
   return Result;
@@ -1036,7 +1036,7 @@ MrcGetTckckeh (
 
   if (Outputs->IsLpddr5) {
     // tCKCKEH = MAX (1.75ns; 2nCK)
-    Result = MAX (DIVIDECEIL (MRC_LP5_tCKCKEH, Outputs->MemoryClock), MRC_LP5_tCKCKEH_nCK) * WCK_TO_CK_RATIO;
+    Result = MAX (DIVIDECEIL (MRC_LP5_tCKCKEH, Outputs->MemoryClock), MRC_LP5_tCKCKEH_nCK);
   } else if (Outputs->IsDdr5) {
     // tCKCKEH = MAX(8; 3.5nCK)
     Result = MAX (MRC_DDR5_tCKCKEH_MIN, DIVIDECEIL (MRC_DDR5_tCKCKEH_MAX_FS, Outputs->MemoryClock));
@@ -1062,7 +1062,7 @@ MrcGetTcacsh (
 
   if (Outputs->IsLpddr5) {
     // tCACSH = 1.75 ns
-    Result = DIVIDECEIL (MRC_LP5_tCACSH, Outputs->MemoryClock) * WCK_TO_CK_RATIO;
+    Result = DIVIDECEIL (MRC_LP5_tCACSH, Outputs->MemoryClock);
   } else { // DDR5
     if (Outputs->GearMode == 0) { // Gear2
       Result = 12;
@@ -1197,8 +1197,6 @@ MrcGetTzqcal (
       break;
 
     case MRC_DDR_TYPE_LPDDR5:
-      // Convert tCK from Femtoseconds to Picoseconds
-      //tCK   = DIVIDECEIL (MrcData->Outputs.MemoryClock, 1000);
       tZQCAL = MrcGetLpddr5Tzqcal (MrcData, tCK);
       break;
 
@@ -1224,7 +1222,6 @@ MrcGetTzqlat (
   IN UINT32               tCK
   )
 {
-  UINT16  Nck;
   UINT32  tZQLAT;
 
   switch (MrcData->Outputs.DdrType) {
@@ -1235,8 +1232,7 @@ MrcGetTzqlat (
 
     case MRC_DDR_TYPE_LPDDR5:
       //tZQLAT = MAX (30ns, 4nCK)
-      Lpddr5GmfDelayTimings (MrcData, (GmfTimingIndex) GmfLpddr5Delay_tZQLAT, &Nck);
-      tZQLAT = Nck;
+      tZQLAT = MrcGetLpddr5Tzqlat (tCK);
       break;
 
     default:
@@ -1245,41 +1241,6 @@ MrcGetTzqlat (
   }
 
   return tZQLAT;
-}
-
-/**
-  This function returns the tZQCS value.
-
-  @param[in] MrcData  - Include all MRC global data.
-  @param[in] tCK      - DCLK period in femtoseconds.
-
-  @retval UINT32 - Value in tCK or WCK (LP5).
-**/
-UINT32
-MrcGetTzqcs (
-  IN MrcParameters *const MrcData,
-  IN UINT32               tCK
-  )
-{
-  UINT32 tZQCS;
-
-  tZQCS = DIVIDECEIL (tZQLAT_FS, tCK);
-
-  switch (MrcData->Outputs.DdrType) {
-    case MRC_DDR_TYPE_DDR5:
-      tZQCS = MrcGetDdr5Tzqcs (tZQCS);
-      break;
-
-    case MRC_DDR_TYPE_LPDDR5:
-      tZQCS = MrcGetLpddr5Tzqcs (tZQCS);
-      break;
-
-    default:
-      tZQCS = 0;
-      break;
-  }
-
-  return tZQCS;
 }
 
 /**
@@ -1387,7 +1348,7 @@ MrcGetTwckoff (
   // twckoff holds the additional time on top wr_wck_async_gap to allow "RD/WR -> CAS WS_OFF"
   // In JEDEC spec "Write Clock Always on mode (WCK Always on mode)" chapter, this addition is 1nCK
   if (MrcData->Outputs.IsLpddr5) {
-    Result = 4; // 1 * WCK:CK ratio -> 1 * WCK_TO_CK_RATIO
+    Result = 1;
   }
   return Result;
 }
@@ -1459,7 +1420,7 @@ MrcGetTrdWckAsyncGap (
   if (MrcData->Outputs.IsLpddr5) {
     // rd_wck_async_gap = RL + BL/n_max + RD(tWCKPST/tCK)
     // tWCKPST is 2.5 tWCK, so RD(tWCKPST/tCK) is 0
-    Result = (tCL + MrcGetBurstLengthNMax (MrcData)) * WCK_TO_CK_RATIO;
+    Result = (tCL + MrcGetBurstLengthNMax (MrcData));
   }
   return Result;
 }
@@ -1482,7 +1443,7 @@ MrcGetTwrWckAsyncGap (
   if (MrcData->Outputs.IsLpddr5) {
     // wr_wck_async_gap = CWL + BL/n_max + RD(tWCKPST/tCK)
     // tWCKPST is 2.5 tWCK, so RD(tWCKPST/tCK) is 0
-    Result = (tCWL + MrcGetBurstLengthNMax (MrcData)) * WCK_TO_CK_RATIO;
+    Result = (tCWL + MrcGetBurstLengthNMax (MrcData));
   }
   return Result;
 }
@@ -1503,7 +1464,7 @@ MrcGetTwckstop (
   UINT32 Result = 0;
   if (Outputs->IsLpddr5) {
     // tWCKSTOP = MAX (6ns, 2nCK)
-    Result =  MAX(DIVIDECEIL (MRC_LP5_tWCKSTOP_MIN, Outputs->MemoryClock), MRC_LP5_tWCKSTOP_MIN_NCK) * WCK_TO_CK_RATIO;
+    Result =  MAX(DIVIDECEIL (MRC_LP5_tWCKSTOP_MIN, Outputs->MemoryClock), MRC_LP5_tWCKSTOP_MIN_NCK);
   }
   return Result;
 }
@@ -1524,7 +1485,7 @@ MrcGetTcsclk (
   MrcOutput *Outputs = &MrcData->Outputs;
   if (Outputs->IsLpddr5) {
     // tCSLCK = MAX (5ns, 3nCK)
-    Result =  MAX(DIVIDECEIL (MRC_LP5_tCSCLK_MIN, Outputs->MemoryClock), MRC_LP5_tCSCLK_MIN_NCK) * WCK_TO_CK_RATIO;
+    Result =  MAX(DIVIDECEIL (MRC_LP5_tCSCLK_MIN, Outputs->MemoryClock), MRC_LP5_tCSCLK_MIN_NCK);
   }
   return Result;
 }
@@ -1546,7 +1507,7 @@ MrcGetTckfspx (
 
   if (Outputs->IsLpddr5) {
     // tCKFSPX = MAX (7.5ns, 4nCK)
-    Result =  MAX(DIVIDECEIL (MRC_LP5_tCKFSPX_MIN, Outputs->MemoryClock), MRC_LP5_tCKFSPX_MIN_NCK) * WCK_TO_CK_RATIO;
+    Result =  MAX(DIVIDECEIL (MRC_LP5_tCKFSPX_MIN, Outputs->MemoryClock), MRC_LP5_tCKFSPX_MIN_NCK);
   }
 
   return Result;
@@ -1569,7 +1530,7 @@ MrcGetTvrcgEnable (
 
   if (Outputs->IsLpddr5) {
     // tVRCG_ENABLE = 150 ns
-    Result =  DIVIDECEIL (MRC_LP5_tVRCG_ENABLE_FS, Outputs->MemoryClock) * WCK_TO_CK_RATIO;
+    Result =  DIVIDECEIL (MRC_LP5_tVRCG_ENABLE_FS, Outputs->MemoryClock);
   }
 
   return Result;
@@ -1592,7 +1553,7 @@ MrcGetTvrcgDisable (
 
   if (Outputs->IsLpddr5) {
     // tVRCG_DISABLE = 100 ns
-    Result =  DIVIDECEIL (MRC_LP5_tVRCG_DISABLE_FS, Outputs->MemoryClock) * WCK_TO_CK_RATIO;
+    Result =  DIVIDECEIL (MRC_LP5_tVRCG_DISABLE_FS, Outputs->MemoryClock);
   }
 
   return Result;
@@ -1618,13 +1579,13 @@ MrcGetTrcdw (
   if (Outputs->LpX) {
     if (Outputs->IsDvfscEnabled) {
       // tRCD LPx with DVFSC = max (9ns, 2nCK)
-      Result = MAX (DIVIDECEIL (MRC_LP5X_TRCDW_DVFSC_MIN, Outputs->MemoryClock), MRC_LP5X_TRCDW_NCK_MIN) * WCK_TO_CK_RATIO;
+      Result = MAX (DIVIDECEIL (MRC_LP5X_TRCDW_DVFSC_MIN, Outputs->MemoryClock), MRC_LP5X_TRCDW_NCK_MIN);
     } else {
       // tRCD LPx = max (8ns, 2nCK)
-      Result = MAX (DIVIDECEIL (MRC_LP5X_TRCDW_MIN, Outputs->MemoryClock), MRC_LP5X_TRCDW_NCK_MIN) * WCK_TO_CK_RATIO;
+      Result = MAX (DIVIDECEIL (MRC_LP5X_TRCDW_MIN, Outputs->MemoryClock), MRC_LP5X_TRCDW_NCK_MIN);
     }
   } else if (Outputs->IsLpddr5) {
-    Result = tRCD * WCK_TO_CK_RATIO;
+    Result = tRCD;
   }
 
   return Result;
@@ -1636,7 +1597,7 @@ MrcGetTrcdw (
   @param[in] MrcData    - Include all MRC global data.
   @param[in] tCL        - CAS Latency in tCK.
 
-  @retval UINT32 - Timing in tCK / wCK (LP5).
+  @retval UINT32 - Timing in tCK
 **/
 UINT32
 MrcGetTmrr (
@@ -1651,8 +1612,8 @@ MrcGetTmrr (
     // tMRR = max(14ns, 16nCK)
     Result = MAX (DIVIDECEIL (tMRR_DDR5_FS, Outputs->MemoryClock), tMRR_DDR5_nCK);
   } else if (Outputs->IsLpddr5) {
-    // tMRR = (RL + BL/n_max + RD (tWCKPST/tCK)  + 2) * wck_to_ck_ratio
-    Result = (tCL + MrcGetBurstLengthNMax (MrcData) + 2) * WCK_TO_CK_RATIO;
+    // tMRR = (RL + BL/n_max + RD (tWCKPST/tCK)  + 2)
+    Result = (tCL + MrcGetBurstLengthNMax (MrcData) + 2);
   }
 
   return Result;
@@ -1666,7 +1627,7 @@ MrcGetTmrr (
   @param[in] tWTR       - WRITE-to-READ delay.
   @param[in] tWTR_L     - WRITE-to-READ delay long.
 
-  @retval UINT32 - Timing in tCK / wCK (LP5).
+  @retval UINT32 - Timing in tCK
 **/
 UINT32
 MrcGetWrToMrr (
@@ -1683,11 +1644,11 @@ MrcGetWrToMrr (
   if (Outputs->IsLpddr5) {
     Lp5BankOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
     if (Lp5BankOrg == MrcLp5BgMode) {
-      // tMRW = (WL + (BL/N_max) + RU(tWTR_L/tCK)) * wck_to_ck_ratio
-      Result = (tCWL + MrcGetBurstLengthNMax (MrcData) + tWTR_L) * WCK_TO_CK_RATIO;
+      // tMRW = (WL + (BL/N_max) + RU(tWTR_L/tCK))
+      Result = (tCWL + MrcGetBurstLengthNMax (MrcData) + tWTR_L);
     } else {
-      // tMRW = (WL + (BL/N_max) + RU(tWTR/tCK)) * wck_to_ck_ratio
-      Result = (tCWL + MrcGetBurstLengthNMax (MrcData) + tWTR) * WCK_TO_CK_RATIO;
+      // tMRW = (WL + (BL/N_max) + RU(tWTR/tCK))
+      Result = (tCWL + MrcGetBurstLengthNMax (MrcData) + tWTR);
     }
   }
 
@@ -1711,7 +1672,7 @@ MrcGetTppd (
 
   switch (Outputs->DdrType) {
     case MRC_DDR_TYPE_LPDDR5:
-      tPPD = MRC_LP5_tPPD_ALL_FREQ * WCK_TO_CK_RATIO; // WCK:CK ratio is 4:1
+      tPPD = MRC_LP5_tPPD_ALL_FREQ;
       break;
 
     case MRC_DDR_TYPE_DDR5:
@@ -1746,7 +1707,7 @@ MrcGetTcsh (
   MrcOutput *Outputs = &MrcData->Outputs;
 
   if (Outputs->IsLpddr5) {
-    Result = (DIVIDECEIL (MRC_LP5_tCSH_MIN, Outputs->MemoryClock)) * WCK_TO_CK_RATIO;
+    Result = (DIVIDECEIL (MRC_LP5_tCSH_MIN, Outputs->MemoryClock));
   } else if (Outputs->IsDdr5) {
     Result = DIVIDECEIL (MRC_DDR5_tCSH_MIN_FS, Outputs->MemoryClock);
   }
@@ -1769,43 +1730,9 @@ MrcGetTcsl (
   MrcOutput *Outputs = &MrcData->Outputs;
 
   if (Outputs->IsLpddr5) {
-    Result = (DIVIDECEIL (MRC_LP5_tCSL_MIN, Outputs->MemoryClock)) * WCK_TO_CK_RATIO;
+    Result = (DIVIDECEIL (MRC_LP5_tCSL_MIN, Outputs->MemoryClock));
   } else if (Outputs->IsDdr5) {
     Result = MRC_DDR5_tCSL_MIN_NCK;
-  }
-
-  return Result;
-}
-
-/**
-  This function returns the tccd_32_byte_cas_delta value.
-
-  @param[in] MrcData  - Include all MRC global data.
-  @param[in] Timing   - Timing Settings.
-
-  @returns The tccd_32_byte_cas_delta value for the specified configuration.
-**/
-UINT32
-MrcGetTccdByteCasDelta (
-  IN MrcParameters *const MrcData,
-  IN MrcTiming     *Timing
-  )
-{
-  UINT32 Result = 0;
-  UINT32 tCCD_L_WR;
-  UINT32 tCCD_L_WR2;
-
-  MrcOutput *Outputs = &MrcData->Outputs;
-  if (Outputs->IsLpddr5) {
-    if (Outputs->Frequency > f3200) {
-      Result = 16;
-    } else {
-      Result = 8;
-    }
-  } else if (Outputs->IsDdr5) {
-    tCCD_L_WR  = Timing->tCCD_L_WR;
-    tCCD_L_WR2 = tCCD_L_WR / 2;
-    Result = tCCD_L_WR - tCCD_L_WR2;
   }
 
   return Result;
@@ -1827,7 +1754,7 @@ MrcGetTsr (
   MrcOutput *Outputs = &MrcData->Outputs;
 
   if (Outputs->IsLpddr5) {
-    Result = DIVIDECEIL (MRC_LP5_tSR_MIN, Outputs->MemoryClock) * WCK_TO_CK_RATIO;
+    Result = DIVIDECEIL (MRC_LP5_tSR_MIN, Outputs->MemoryClock);
   } else {
     Result = DIVIDECEIL (MRC_DDR5_tSR_MIN, Outputs->MemoryClock);
   }
@@ -1851,7 +1778,7 @@ MrcGetTosco (
   UINT32      Result = 0;
 
   if (Outputs->IsLpddr5) {
-    Result = MAX (DIVIDECEIL (MRC_LP5_tOSCO_FS, Outputs->MemoryClock), MRC_LP5_tOSCO_nCK) * WCK_TO_CK_RATIO;
+    Result = MAX (DIVIDECEIL (MRC_LP5_tOSCO_FS, Outputs->MemoryClock), MRC_LP5_tOSCO_nCK);
   } else if (Outputs->IsDdr5) {
     // tMPC_Delay
     Result = MrcGetTmod (MrcData, Outputs->MemoryClock);
@@ -1867,7 +1794,7 @@ MrcGetTosco (
   @param[in] tCWL       - WR CAS Latency in tCK.
   @param[in] tWR        - Write recovery time in tCK.
 
-  @returns tWRPRE timing in tCK (WCK for LP5)
+  @returns tWRPRE timing in tCK
 **/
 UINT32
 MrcGetTwrpre (
@@ -1880,7 +1807,7 @@ MrcGetTwrpre (
   MrcOutput   *Outputs = &MrcData->Outputs;
 
   if (Outputs->IsLpddr5) {
-    Result = (tCWL + MrcGetBurstLengthNMin (MrcData) + tWTR + 1) * WCK_TO_CK_RATIO;
+    Result = (tCWL + MrcGetBurstLengthNMin (MrcData) + tWTR + 1);
   } else if (Outputs->IsDdr5) {
     Result = (tCWL + Outputs->BurstLength + tWTR);
   }
@@ -1889,12 +1816,12 @@ MrcGetTwrpre (
 }
 
 /**
-  This function returns tRRFpb in WCK/CK.
+  This function returns tRRFpb in ps.
 
   @param[in] MrcData       - Include all MRC global data.
   @param[in] DeviceDensity - Device density in MB.
 
-  @returns tRRFpb timing in WCK/CK.
+  @returns tRRFpb timing in ps.
 **/
 UINT32
 MrcGetTrrfpb (
@@ -1908,7 +1835,6 @@ MrcGetTrrfpb (
   switch (Outputs->DdrType) {
     case MRC_DDR_TYPE_LPDDR5:
       tRRFpb = MrcGetLpddr5Trrfpb (DeviceDensity); // in PS
-      tRRFpb = DIVIDECEIL (tRRFpb, Outputs->Wckps); // in WCK
       break;
 
     default:
@@ -1920,11 +1846,11 @@ MrcGetTrrfpb (
 }
 
 /**
-  This function returns tRRFsb in WCK/CK.
+  This function returns tRRFsb in CK.
 
   @param[in] MrcData       - Include all MRC global data.
 
-  @returns tRRFsb timing in WCK/CK.
+  @returns tRRFsb timing in CK.
 **/
 UINT32
 MrcGetTrrfsb (
@@ -1945,6 +1871,49 @@ MrcGetTrrfsb (
   }
 
   return tRRFsb;
+}
+
+/**
+  Calculate DqioDuration based on frequency and memory techmology
+
+  @param[in] MrcData               - Include all MRC global data
+  @param[out] *DqioDuration        - DqioDuration encoded to DDR5 MR45 / LPDDR5 MR37 definition
+  @param[out] *RunTimeClocksBy16   - DqioDuration in units of (tCK * 16)
+
+  @retval mrcSuccess               - if it success
+  @retval mrcUnsupportedTechnology - if the frequency doesn't match
+**/
+MrcStatus
+MrcGetDqioDuration (
+  IN     MrcParameters *const MrcData,
+  OUT    UINT8               *DqioDuration,
+  OUT    UINT16              *RunTimeClocksBy16
+  )
+{
+  MrcStatus Status;
+  MrcOutput *Outputs;
+  UINT32    Duration;
+  Outputs = &MrcData->Outputs;
+  Status  = mrcSuccess;
+  Duration = DIVIDECEIL ((2047 * 2 * 300), (Outputs->tCKps * 16));
+  if (Duration > 511) {
+    *DqioDuration = (MRC_BIT7|MRC_BIT6);
+    *RunTimeClocksBy16 = 512; // 8192 clocks
+  } else if (Duration > 255) {
+    *DqioDuration = MRC_BIT7;
+    *RunTimeClocksBy16 = 256; // 4096 clocks
+  } else if (Duration > 127) {
+    *DqioDuration = MRC_BIT6;
+    *RunTimeClocksBy16 = 128; // 2048 clocks
+  } else if (Duration > 63) {
+    *DqioDuration = 63;
+    *RunTimeClocksBy16 = 63;  // 1008 clocks
+  } else {
+    *DqioDuration = (UINT8) Duration;
+    *RunTimeClocksBy16 = (UINT16) Duration;
+  }
+
+  return Status;
 }
 
 /**
@@ -1994,4 +1963,29 @@ IsNtOdtSupported (
       }
     }
   }
+}
+
+/**
+  This function will set WCK2DQI (LP5) / DQS (DDR5) Interval Timer Run Time to MR37 (LP5) / MR45 (DDR5).
+
+  @param[in]      MrcData       - Pointer to global MRC data.
+  @param[in]      DqioDuration  - WCK2DQI/DQS interval timer run time.
+
+  @retval MrcStatus - mrcSuccess if the value is supported, else mrcWrongInputParameter.
+**/
+MrcStatus
+MrcSetIntervalTimerMr (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT8                 DqioDuration
+  )
+{
+  MrcStatus Status;
+
+  if (MrcData->Outputs.IsDdr5) {
+    Status = MrcSetDdr5Mr45 (MrcData, DqioDuration);
+  } else {
+    Status = MrcSetLp5MR37 (MrcData, DqioDuration);
+  }
+
+  return Status;
 }

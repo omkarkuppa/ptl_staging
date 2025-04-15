@@ -29,20 +29,6 @@
 #include "MrcPmaApi.h"
 #include "MrcHalRegisterAccess.h"
 
-///
-/// Initialization Timing Parameters
-///
-#define MRC_LP_tINIT0_US   20000   ///< Max voltage-ramp time
-#define MRC_LP_tINIT4_TCK  5       ///< Min stable clock before first CKE high
-
-const UINT8 Lp5ReadLatencyDvfscDisabledSet0[15] = { 3, 4, 5, 6, 8,  9, 10, 12, 13, 15, 16, 17, 20, 23, 25 };
-const UINT8 Lp5ReadLatencyDvfscDisabledSet1[15] = { 3, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 18, 22, 25, 28 };
-const UINT8 Lp5ReadLatencyDvfscDisabledSet2[15] = { 3, 4, 6, 7, 9, 10, 12, 14, 15, 17, 19, 20, 24, 26, 29 };
-
-const UINT8 Lp5ReadLatencyDvfscEnabledSet0[6] = { 3, 5, 7, 8, 10, 12 };
-const UINT8 Lp5ReadLatencyDvfscEnabledSet1[6] = { 3, 5, 7, 8, 10, 12 };
-const UINT8 Lp5ReadLatencyDvfscEnabledSet2[6] = { 3, 5, 7, 10, 12, 14 };
-
 // This table is used for LPDDR MR5 decoding
 struct {
   UINT8   VendorId;
@@ -54,223 +40,6 @@ struct {
   { 6,    0xAD00, "Hynix"   },
   { 0xFF, 0x2C00, "Micron"  },
 };
-
-/**
-  Calculate the tCL value for LPDDR5.
-
-  JEDEC Spec Table 225 - Read Latencies for Read Link ECC off case (DVFSC disabled, Enhanced DVFSC disabled):
-
-    Lower Clk   Upper Clk        Read Latency
-    Freq Limit  Freq Limit     Set0  Set1  Set2
-    -------------------------------------------
-      5            67           3      3      3
-     67           133           4      4      4
-    133           200           5      5      6
-    200           267           6      7      7
-    267           344           8      8      9
-    344           400           9     10     10
-    400           467          10     11     12
-    467           533          12     13     14
-    533           600          13     14     15
-    600           688          15     16     17
-    688           750          16     17     19
-    750           800          17     18     20
-    800           937.5        20     22     24
-    937.5        1066.5        23     25     26
-
-
-    JEDEC Spec Table 225 - Read Latencies for Read Link ECC off case (DVFSC disabled, Enhanced DVFSC enabled):
-
-    Lower Clk   Upper Clk        Read Latency
-    Freq Limit  Freq Limit     Set0  Set1  Set2
-    -------------------------------------------
-      5            67           3      3      3
-     67           133           5      5      5
-    133           200           7      7      7
-    200           267           8      8     10
-    267           344           10    10     12
-    344           400           12    12     14
-
-
-    Set0 - x16, No DBI
-    Set1 - x8 and No DBI, or x16 and DBI
-    Set2 - x8 and DBI
-
-    @param[in] tCK          - The memory tCK in femtoseconds.
-    @param[in] SdramWidth   - SDRAM width (8 or 16)
-    @param[in] IsDbiEnabled - TRUE if DBI is enabled
-    @param[in] IsDvfscEnabled - TRUE if Dvfsc is enabled
-
-    @retval LPDDR5 tCL in tCK units
-**/
-UINT32
-GetLpddr5tCL (
-  IN const UINT32     tCK,
-  IN UINT8            SdramWidth,
-  IN BOOLEAN          IsDbiEnabled,
-  IN BOOLEAN          IsDvfscEnabled
-  )
-{
-  UINT32 tCL;
-  UINT32 tCKNorm;
-  UINT32 RlSet;
-  UINT32 Index;
-
-  // Scale tCK up to typical DDR ratio of 2:1 between tCK and Data Rate
-  // We are always in 4:1 mode for WCK.
-  tCKNorm = tCK / 4;
-
-  RlSet = 0;
-  if (SdramWidth == 8) {
-    RlSet += 1;
-  }
-  if (IsDbiEnabled) {
-    RlSet += 1;
-  }
-
-  Index = 0;
-  if (!IsDvfscEnabled) {
-    if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
-      Index = 0;
-    } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
-      Index = 1;
-    } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
-      Index = 2;
-    } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
-      Index = 3;
-    } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
-      Index = 4;
-    } else if (tCKNorm >= MRC_DDR_3200_TCK_MIN) {
-      Index = 5;
-    } else if (tCKNorm >= MRC_DDR_3733_TCK_MIN) {
-      Index = 6;
-    } else if (tCKNorm >= MRC_DDR_4267_TCK_MIN) {
-      Index = 7;
-    } else if (tCKNorm >= MRC_DDR_4800_TCK_MIN) {
-      Index = 8;
-    } else if (tCKNorm >= MRC_DDR_5500_TCK_MIN) {
-      Index = 9;
-    } else if (tCKNorm >= MRC_DDR_6000_TCK_MIN) {
-      Index = 10;
-    } else if (tCKNorm >= MRC_DDR_6400_TCK_MIN) {
-      Index = 11;
-    } else if (tCKNorm >= MRC_DDR_7500_TCK_MIN) {
-      Index = 12;
-    } else if (tCKNorm >= MRC_DDR_8533_TCK_MIN) {
-      Index = 13;
-    } else {
-      Index = 14;
-    }
-    if (RlSet == 0) {
-      tCL = Lp5ReadLatencyDvfscDisabledSet0[Index];
-    } else if (RlSet == 1) {
-      tCL = Lp5ReadLatencyDvfscDisabledSet1[Index];
-    } else {
-      tCL = Lp5ReadLatencyDvfscDisabledSet2[Index];
-    }
-  } else {  //Dvfsc enabled
-    if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
-      Index = 0;
-    } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
-      Index = 1;
-    } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
-      Index = 2;
-    } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
-      Index = 3;
-    } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
-      Index = 4;
-    } else {
-      Index = 5;
-    }
-
-    if (RlSet == 0) {
-      tCL = Lp5ReadLatencyDvfscEnabledSet0[Index];
-    } else if (RlSet == 1) {
-      tCL = Lp5ReadLatencyDvfscEnabledSet1[Index];
-    } else {
-      tCL = Lp5ReadLatencyDvfscEnabledSet2[Index];
-    }
-  }
-  return tCL;
-}
-
-/**
-  This function converts from the integer defined Read Latency to the Mode Register
-  encoding of the timing in LPDDR5.
-
-  @param[in]  MrcData - Pointer to global MRC data.
-  @param[in]  Value   - Requested Read Latency value.
-  @param[out] EncVal  - Encoded Mode Register value.
-
-  @retval MrcStatus - mrcSuccess if the latency is supported.  Else mrcWrongInputParameter.
-**/
-MrcStatus
-EncodeReadLatencyLpddr5 (
-  IN  MrcParameters *MrcData,
-  IN  UINT16        Value,
-  OUT UINT8         *EncVal
-  )
-{
-  MrcOutput   *Outputs;
-  MrcDebug    *Debug;
-  MrcStatus   Status;
-  UINT8       MrValue;
-  UINT8       RlSet;
-  UINT8       Index;
-  UINT8       ReadLatencyValueArrLength;
-  const UINT8 *ReadLatency;
-
-  Outputs = &MrcData->Outputs;
-  Debug   = &Outputs->Debug;
-  Status = mrcSuccess;
-  RlSet = 0;
-
-  if (Outputs->LpByteMode) {
-    RlSet += 1;
-  }
-
-  // Use MR2 table from JEDEC spec - "MR2 Register Definition"
-  if (!Outputs->IsDvfscEnabled) {
-    if (RlSet == 0) {
-      ReadLatency = Lp5ReadLatencyDvfscDisabledSet0;
-    } else {
-      ReadLatency = Lp5ReadLatencyDvfscDisabledSet1;
-    }
-  } else {
-    if (RlSet == 0) {
-      ReadLatency = Lp5ReadLatencyDvfscEnabledSet0;
-    } else {
-      ReadLatency = Lp5ReadLatencyDvfscEnabledSet1;
-    }
-  }
-
-  MrValue = 0xFF;
-  ReadLatencyValueArrLength = (Outputs->IsDvfscEnabled) ? LP5_READ_LATENCY_VALUES_DVFSC : LP5_READ_LATENCY_VALUES;
-  for (Index = 0; Index < ReadLatencyValueArrLength; Index++) {
-    if (ReadLatency[Index] == Value) {
-      MrValue = Index;
-      break;
-    }
-  }
-
-  if (MrValue != 0xFF) {
-    // Check to see if the time requested matches JEDEC Frequency table
-    if (!Outputs->IsDvfscEnabled) {
-      Status = LatencyFreqCheckLpddr5 (MrcData, MrValue);
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, (Status != mrcSuccess) ? " (RL)\n" : "");
-    }
-    if (EncVal != NULL) {
-      *EncVal = MrValue;
-    } else {
-      Status = mrcWrongInputParameter;
-    }
-  } else {
-    Status = mrcWrongInputParameter;
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Latency Value: %d\n", gErrString, gRdString, Value);
-  }
-
-  return Status;
-}
 
 /**
   Print non-LP MRs
@@ -537,31 +306,6 @@ MrcCheckSocOdtLpddr (
 }
 
 /**
-  This function will set WCK2DQI (LP5) / DQS (DDR5) Interval Timer Run Time to MR37 (LP5) / MR45 (DDR5).
-
-  @param[in]      MrcData       - Pointer to global MRC data.
-  @param[in]      DqioDuration  - WCK2DQI/DQS interval timer run time.
-
-  @retval MrcStatus - mrcSuccess if the value is supported, else mrcWrongInputParameter.
-**/
-MrcStatus
-MrcSetIntervalTimerMr (
-  IN      MrcParameters *const  MrcData,
-  IN      UINT8                 DqioDuration
-  )
-{
-  MrcStatus Status;
-
-  if (MrcData->Outputs.IsDdr5) {
-    Status = MrcSetDdr5Mr45 (MrcData, DqioDuration);
-  } else {
-    Status = MrcSetLp5MR37 (MrcData, DqioDuration);
-  }
-
-  return Status;
-}
-
-/**
   This function sets the memory frequency.
 
   @param[in] MrcData           - Include all MRC global data.
@@ -609,7 +353,7 @@ McFrequencySet (
   Outputs->Ratio -= GearMode ? (Outputs->Ratio % 4) : (Outputs->Ratio % 2);
 
   if (Outputs->InWorkPointLock) {
-    if (Inputs->IsDdrIoTc && !ExtInputs->SimicsFlag) {
+    if (Inputs->IsDdrIoGen1Tc && !ExtInputs->SimicsFlag) {
       if (Inputs->DdrIoIpVersion.Bits.Derivative == 1) { // MC_IP model
         Status = MrcSendPmMessage (MrcData, PM_MESSAGE_0, PM_MSG_MC);
       } else {
@@ -631,7 +375,7 @@ McFrequencySet (
     Status = MrcSendPmMessage (MrcData, PM_MESSAGE_13, PM_MSG_PHY);
   }
 
-  if ((ExtInputs->SimicsFlag == 1) || (Outputs->InWorkPointLock && !Inputs->IsDdrIoTc))  {
+  if ((ExtInputs->SimicsFlag == 1) || (Outputs->InWorkPointLock && !Inputs->IsDdrIoGen1Tc))  {
     Outputs->Frequency = MrcGetCurrentMemoryFrequency (MrcData, &MemoryClock, &Ratio);
   } else {
     Outputs->Frequency = MrcGetPhyCurrentMemoryFrequency (MrcData, &MemoryClock, &Ratio);
@@ -785,8 +529,9 @@ ShowLpddrInfo (
           MrcIssueMrr (MrcData, Controller, Channel, Rank, MrAddr, MrrResult);
           for (Device = 0; Device < DeviceMax; Device++) {
             Mr8.Data8 = MrrResult[Device];
-            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDevice[%u]= 0x%02X - LP5%c %s %uGb\n", Device, MrrResult[Device],
-              ((Mr8.Bits.Type == Lp5Mr8TypeLp5x8533) || (Mr8.Bits.Type == Lp5Mr8TypeLp5x9600)) ? 'X' : ' ',
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDevice[%u]= 0x%02X - LP5%c %s %s %uGb\n", Device, MrrResult[Device],
+              ((Mr8.Bits.Type == Lp5Mr8TypeLp5x8533) || (Mr8.Bits.Type == Lp5Mr8TypeLp5x9600) || (Mr8.Bits.Type == Lp5Mr8TypeLp5x10667)) ? 'X' : ' ',
+              (CHAR8*[Lp5Mr8TypeLp5xMax]){"", "8533", "9600", "10667"}[MIN(Mr8.Bits.Type, (Lp5Mr8TypeLp5xMax - 1))],
               (Mr8.Bits.IoWidth == 1) ? "x8" : "x16",
               (Mr8.Bits.Density < ARRAY_COUNT (DensityMap)) ? DensityMap[Mr8.Bits.Density] : 0
               );

@@ -33,9 +33,9 @@ UINT8 AuxClkRef100[] = { 33,  33,  27,  28,  27,  30,  33,  28,  33,  32,  33,  
                          54,  52,  52,  57,  47,  45,  56,  52,  57,  63,  64,  60,  66,  66,  68,  69, // 32 .. 47
                          69,  66,  66,  68,  69,  69,  76,  63,  78,  78,  30,  75,  80,  76,  78,  78, // 48 .. 63
                          78,  81,  87,  88,  90,  84,  84,  92,  87,  87,  88,  92,  88,  93,  92,  84, // 64 .. 79
-                         93,  92,  63,  99, 105, 100, 100, 102, 108, 104, 116,  78, 114, 120, 114, 108, // 80 .. 95
-                        116, 111, 111, 112, 126, 114, 128, 117, 104, 144, 144, 120, 135,  90, 120, 124, // 96 .. 111
-                        123, 141, 123, 126, 136, 129, 138, 129, 104, 132, 132, 135, 132, 136, 136, 138, // 112 .. 127
+                         93,  92,  63,  99, 105, 100, 100, 102, 102, 104, 116,  78, 114, 120, 114, 108, // 80 .. 95
+                        103, 111, 111, 112, 126, 114, 128, 117, 105, 144, 144, 120, 135,  90, 120, 124, // 96 .. 111
+                        123, 141, 123, 126, 136, 129, 138, 129, 105, 132, 132, 135, 132, 136, 136, 138, // 112 .. 127
                         136, 140, 138, 141, 141, 144, 141, 144, 144, 108, 100, 132, 135, 111, 111, 135, // 128 .. 143
                         104, 114, 140, 138, 114, 140, 144, 117, 141, 120, 132, 120, 136, 123, 120, 123, // 144 .. 159
                         123, 124,  68, 126, 126, 128, 126, 129, 129};
@@ -55,136 +55,9 @@ static const UINT8 HwChBitMasks[][MAX_MRC_DDR_TYPE] = {
     },
   };
 
-#define DQS_PARK_DIFF_LOW_WHEN_LPM0_NO_ODT_NO_DRVEN_TXANALOGEN   2
 
 #define DDR5CATMLEFTRANGE    (128)  ///< DDR5 CA Training Mode Phase 1 Sweep Range
 #define DDR5CATMRIGHTRANGE   (96)   ///< DDR5 CA Training Mode Phase 1 Sweep Range
-
-
-/**
-  This function configures the Data Invert Nibble feature in the Phy based on the Phy ODT configuration
-
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @retval MrcStatus - mrcFail if the ODT mode doesn't have a mapping for Data Invert Nibble.
-  @retval MrcStatus - mrcSuccess otherwise.
-**/
-MrcStatus
-MrcDataInvertNibble (
-  IN  MrcParameters *const MrcData
-  )
-{
-  MrcInput    *Inputs;
-  MrcOutput   *Outputs;
-  INT64       GetSetVal;
-  INT32       ByteOff;
-  INT32       ByteSel;
-  UINT32      Controller;
-  UINT32      Channel;
-  UINT32      Byte;
-  UINT32      ByteMax;
-  UINT32      SwizOffset;
-  UINT32      DataCtrl5Offset;
-  UINT8       DniDataMask;
-  UINT8       DniMiscMask;
-  UINT8       ByteRead;
-  BOOLEAN     IsDdr5;
-  BOOLEAN     IsDataPatternSupported;
-  MrcStatus   Status;
-  MRC_EXT_INPUTS_TYPE                         *ExtInputs;
-  DATA_CR_DDRCRDATACONTROL5_STRUCT            DataControl5;
-  DATA_CR_DDRCRWRRETRAINSWIZZLECONTROL_STRUCT WrRetrainSwizzleControl;
-  DDRSCRAM_CR_DDRMISCCONTROL2_STRUCT          MiscControl2;
-
-  Inputs  = &MrcData->Inputs;
-  Outputs = &MrcData->Outputs;
-  ByteMax = (Inputs->IsDdrIoUlxUlt) ? 8 : 10;
-  ExtInputs = Inputs->ExtInputs.Ptr;
-  IsDdr5 = Outputs->IsDdr5;
-  Status = mrcSuccess;
-
-  IsDataPatternSupported = TRUE;
-  switch (Outputs->OdtMode) {
-    case MrcOdtModeVss:
-      DniDataMask = DniMiscMask = 0;
-      break;
-
-    case MrcOdtModeVddq:
-      DniDataMask = 3;
-      DniMiscMask = 1;
-      break;
-
-    default:
-      MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_ERROR, "Invalid ODT mode for DataInvertNibble: %u\n", Outputs->OdtMode);
-      return mrcFail;
-  }
-
-  if (ExtInputs->DataInvertNibble == 0) {
-    DniDataMask = DniMiscMask = 0;
-    IsDataPatternSupported = FALSE;
-  }
-
-  // Update the value across the entire phy regardless of population.  Logic won't run on non-populated channels.
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
-        GetSetVal = DniDataMask;
-        MrcGetSetChStrb (MrcData, Controller, Channel, Byte, GsmIocDataInvertNibble, WriteToCache, &GetSetVal);
-      }
-    }
-  }
-  MrcFlushRegisterCachedData (MrcData);
-
-  if (ExtInputs->ScramblerSupport) {
-    MiscControl2.Data = MrcReadCR (MrcData, DDRSCRAM_CR_DDRMISCCONTROL2_REG);
-    MiscControl2.Bits.DataInvertNibble = DniMiscMask;
-    MrcWriteCR (MrcData, DDRSCRAM_CR_DDRMISCCONTROL2_REG, MiscControl2.Data);
-  }
-
-    // DDR5 needs to program MR48 to match DataInvertNibble programming
-  if (IsDdr5) {
-    Status = MrcSetDdr5Mr48 (MrcData, Outputs->OdtMode, IsDataPatternSupported);
-    MRC_DEBUG_ASSERT (Status == mrcSuccess, &Outputs->Debug, "Ddr5 MR48 not properly programmed\n");
-  }
-
-  for (Channel = 0; Channel < 2; Channel++) {
-    for (Byte = 0; Byte < ByteMax; Byte++) {
-      SwizOffset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRWRRETRAINSWIZZLECONTROL_REG, MRC_IGNORE_ARG, Channel, Byte);
-      //0: ODT to Vss 1: ODT to Vddq
-      //(OdtMode==0 or DDRMiscControl0.Write0En==0)? 0 : (OdtMode==1) ? 3 : (IamDDR5 ? 0x3*IamOddWord : "Error")
-      WrRetrainSwizzleControl.Data = MrcReadCR (MrcData, SwizOffset);
-      if (Outputs->IsLpddr) {
-        ByteRead = (UINT8) (((Byte % 2) << 1) | WrRetrainSwizzleControl.Bits.DataRetrain_ByteSel);
-      } else {
-        ByteRead = 0;
-      }
-      switch (ByteRead) {
-        case 1:
-          ByteOff = 1;
-          break;
-
-        case 3:
-          ByteOff = -1;
-          break;
-
-        default:
-        case 0:
-        case 2:
-          ByteOff = 0;
-          break;
-      }
-      ByteSel = Byte + ByteOff;
-
-      DataCtrl5Offset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRDATACONTROL5_REG, MRC_IGNORE_ARG, Channel, ByteSel);
-      DataControl5.Data = MrcReadCR (MrcData, DataCtrl5Offset);
-      WrRetrainSwizzleControl.Bits.DataInvertNibble = DataControl5.Bits.DataInvertNibble;
-      MrcWriteCR (MrcData, SwizOffset, WrRetrainSwizzleControl.Data);
-    }
-  }
-
-  return mrcSuccess;
-}
 
 /**
   This function programs the WorkPoint CR, including enforcing any fuse limits to avoid HW from NACKing PLLLock Requests.
@@ -269,17 +142,6 @@ GetAuxClkRatio (
   return AuxClkRatio33;
 }
 
-/**
-  This function gets the endqsodtparkmode value.
-
-  @retval The value for endqsodtparkmode
-**/
-UINT8
-MrcGetEnDqsOdtParkModeValue (
-  )
-{
-  return DQS_PARK_DIFF_LOW_WHEN_LPM0_NO_ODT_NO_DRVEN_TXANALOGEN;
-}
 
 /**
   Calculates sweeping range for CATM based on min/max values of CtlPiCode.
@@ -310,41 +172,6 @@ MrcGetCatmSweepingRange (
   }
 }
 
-
-/**
-  This function is to set up the margin parameters for RdV.
-
-  @param[in,out] MrcData      - Include all MRC global data.
-  @param[in]     McStart      - MC number starts
-  @param[in]     McEnd        - MC number ends.
-  @param[in]     ChannelStart - Channel number starts.
-  @param[in]     ChannelEnd   - Channel number ends
-  @param[in]     ByteStart    - Byte number starts.
-  @param[in]     ByteEnd      - Byte number ends.
-  @param[in]     GsmMode      - Get Set mode.
-  @param[in]     GetSetVal    - The pointer to the get set value
-  @param[in,out] UpdateGrp    - Update Group or not.
-  @param[in,out] Group        - The group parameter which will be used during margin
-
-**/
-VOID
-SetupMarginRdV (
-  IN OUT MrcParameters *const MrcData,
-  IN           UINT32          McStart,
-  IN           UINT32          McEnd,
-  IN           UINT32          ChannelStart,
-  IN           UINT32          ChannelEnd,
-  IN           UINT32          ByteStart,
-  IN           UINT32          ByteEnd,
-  IN           UINT8           GsmMode,
-  IN           INT64           *GetSetVal,
-  IN OUT       BOOLEAN         *UpdateGrp,
-  IN OUT       GSM_GT          *Group
-  )
-{
-  *UpdateGrp = TRUE;
-  *Group = RxVrefOffset;
-}
 
 /*
   Update the requested Param offset with the given Value,
@@ -499,106 +326,6 @@ WriteAllLvrTarget (
 }
 
 /**
-  This function calculates the SA/ODT Delay and Duration
-  @param[in]  MrcData       - Include all MRC global data.
-  @param[in]  MinRcvEn      - Min Value of RcvEn in QClk across populated ranks
-  @param[in]  GuardbandQ    - Guardband in QCLK
-  @param[in]  RdPreambleLow - Read Preamble Static
-  @param[in]  RdPreambleT   - Read Preamble Toggle
-  @param[in]  RdPostamble   - Read Postamble
-  @param[out] Returns SA/ODT Delay and Duration value
-**/
-VOID
-MrcGetSaOdtValue (
-  IN   MrcParameters *const MrcData,
-  IN   UINT32        MinRcvEn,
-  IN   UINT32        GuardbandQ,
-  IN   UINT32        RdPreambleLow,
-  IN   UINT32        RdPreambleT,
-  IN   UINT32        RdPostamble,
-  OUT  SaOdtTiming   *SaOdtValue
-  )
-{
-  MrcOutput    *Outputs;
-  BOOLEAN      IsDdr5;
-  BOOLEAN      IsGear4;
-  UINT32       SAWakeUp;
-  UINT32       OdtWakeUp;
-  UINT32       QClk;
-  INT64        DataPath;
-  INT64        TempVarInt;
-  UINT32       DramDrift;
-  UINT32       Guardband;
-  UINT32       RdPreambleStatic;
-  UINT32       RdPreambleToggle;
-  UINT32       RcvEnPullInQclk;
-  UINT32       OdtPullInQclk;
-  UINT32       SenseAmpPullInQclk;
-
-  Outputs = &MrcData->Outputs;
-
-
-  IsDdr5       = Outputs->IsDdr5;
-  IsGear4      = Outputs->GearMode ? 1 : 0;
-  QClk         = Outputs->Qclkps;
-  SAWakeUp     = 2000; // From UVopt POR equations
-  OdtWakeUp    = 1000; // From UVopt POR equations
-
-  // int tWCKDQO_drift_max = 0
-  // int tDQSCK_drift_max = 0;
-  // int DRAM_drift = ( tech == DDRPHY_LPDDR5 ) ? tWCKDQO_drift_max : tDQSCK_drift_max;
-  DramDrift = 0;
-
-  // int guardband = 2;
-  Guardband = 2;
-
-  DataPath = IsGear4 ? 5 : 8;
-
-  // This mapping is needed to translate the MRC's definition of RdPreambleToggle/Static to RTL's definition
-  RdPreambleToggle = IsDdr5 ? (2 * RdPreambleT) : RdPreambleT;
-  RdPreambleStatic = IsDdr5 ? MIN ((2 * RdPreambleLow), 2) : MIN ((RdPreambleLow), 2);
-
-  // odt_pull_in_qclk = odt_wakeuptime_qclk + (rdpreamble_static >> (gear == 4)) + DRAM_drift;
-  OdtPullInQclk = UDIVIDEROUND (OdtWakeUp, QClk) + (RdPreambleStatic >> IsGear4) + DramDrift;
-
-  // rcven_pull_in_qclk = int'(real'(rdpreamble_toggle + 1) / (gear == 4 ? 2 : 1));
-  RcvEnPullInQclk = UDIVIDEROUND ((RdPreambleToggle + 1), (UINT32) (IsGear4 ? 2 : 1));
-
-  // senseamp_pull_in_qclk = senseamp_wakeuptime_qclk + (rdpreamble_static >> (gear == 4)) + DRAM_drift;
-  SenseAmpPullInQclk = UDIVIDEROUND (SAWakeUp, QClk) + (RdPreambleStatic >> IsGear4) + DramDrift;
-
-  // dqsodtdelay_pre_sat         = rxrcvenpi_min + (gear == 4 ? 5:8) - odt_pull_in_qclk;
-  // dqsodtdelay                 = SatMinMax(dqsodtdelay_pre_sat,0,20);
-  TempVarInt = MinRcvEn + DataPath - OdtPullInQclk;
-  SaOdtValue->DqsDelay = RANGE (TempVarInt, 0, 20);
-
-  // dqodtdelay_pre_sat          = rxrcvenpi_min + (gear == 4 ? 5:8) - odt_pull_in_qclk + (rdpreamble_toggle >> (gear == 4));
-  // dqodtdelay                  = SatMinMax(dqodtdelay_pre_sat,0,20);
-  TempVarInt = MinRcvEn + DataPath - OdtPullInQclk + (RdPreambleToggle >> IsGear4);
-  SaOdtValue->DqDelay = RANGE (TempVarInt, 0, 20);
-
-  // senseampdelay_pre_sat       = rxrcvenpi_min + (gear == 4 ? 5:8) - senseamp_pull_in_qclk;
-  // senseampdelay               = SatMinMax(senseampdelay_pre_sat,0,20);
-  TempVarInt = MinRcvEn + DataPath - SenseAmpPullInQclk;
-  SaOdtValue->SaDelay = RANGE (TempVarInt, 0, 20);
-
-  // dqsodtduration_pre_sat      = 2 + odt_pull_in_qclk + DRAM_drift + guardband;
-  // dqsodtduration              = SatMinMax(dqsodtduration_pre_sat,0,7);
-  TempVarInt = 2 + OdtPullInQclk + DramDrift + Guardband;
-  SaOdtValue->DqsDuration = MIN (TempVarInt, 7);
-
-  // dqodtduration_pre_sat       = rcven_pull_in_qclk + 2 + odt_pull_in_qclk + DRAM_drift + guardband;
-  // dqodtduration               = SatMinMax(dqodtduration_pre_sat,0,15);
-  TempVarInt = RcvEnPullInQclk + 2 + OdtPullInQclk + DramDrift + Guardband;
-  SaOdtValue->DqDuration = MIN (TempVarInt, 15);
-
-  // senseampduration_pre_sat    = rcven_pull_in_qclk + 2 + senseamp_pull_in_qclk + DRAM_drift + guardband;
-  // senseampduration            = SatMinMax(senseampduration_pre_sat,0,15);
-  TempVarInt = RcvEnPullInQclk + 2 + SenseAmpPullInQclk + DramDrift + Guardband;
-  SaOdtValue->SaDuration = MIN (TempVarInt, 15);
-}
-
-/**
   This function calculates QClkRatio.
 
   @param[in] MrcData  - Include all MRC global data.
@@ -693,64 +420,6 @@ DataBufferBonusPerBitUpdate (
     Byte1DataBufferBonusPerBit.Data &= 0x77777777; // Clear bit 3 of each 4-bit bonus field for each lane
   }
   MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRBYTE1DATABUFFERBONUSPERBIT0_REG, Byte1DataBufferBonusPerBit.Data);
-}
-
-/**
-  Program MCMISCS_DDRWCKCONTROL
-
-  @param[in] MrcData  - Include all MRC global data
-**/
-VOID
-MrcSetWckControl (
-  IN MrcParameters *const MrcData
-  )
-{
-  MrcOutput     *Outputs;
-  MrcInput      *Inputs;
-  MrcDebug      *Debug;
-  MrcTiming     *TimingProfile;
-  MrcFrequency  DdrFrequency;
-  UINT8         tCL;
-  UINT8         tCWL;
-  UINT8         tWCKENL_RD;
-  UINT8         tWCKENL_WR;
-  UINT32        PHClk;
-  UINT32        QClk;
-  UINT32        nCK;
-  BOOLEAN       IsGear4;
-  BOOLEAN       IsLpddr5;
-  MCMISCS_DDRWCKCONTROL_STRUCT  McMiscsWckControl;
-
-  Outputs      = &MrcData->Outputs;
-  Inputs       = &MrcData->Inputs;
-  Debug        = &Outputs->Debug;
-  DdrFrequency = Outputs->Frequency;
-  IsGear4      = Outputs->GearMode ? 1 : 0;
-  IsLpddr5     = Outputs->IsLpddr5;
-  PHClk             = DIVIDECEIL (2000000, DdrFrequency);
-  QClk              = IsGear4 ? (PHClk * 2) : PHClk;
-  nCK               = IsLpddr5 ? (PHClk * 4) : PHClk;
-
-  McMiscsWckControl.Data = 0;
-  if (Outputs->IsLpddr5) {
-    TimingProfile = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
-    tCL  = (UINT8) TimingProfile->tCL;
-    tCWL = (UINT8) TimingProfile->tCWL;
-    //tWCKENL_RD = RL + 1 - tWCKPRE_total_RD
-    tWCKENL_RD = tCL + 1 - MrcGetWckPreRdTotalLpddr5 (MrcData, DdrFrequency);
-    //tWCKENL_RD*nCK/QClk
-    McMiscsWckControl.Bits.cas2rdwck = (tWCKENL_RD * nCK) / QClk;
-    //tWCKENL_WR = WL + 1 - tWCKPRE_total_WR
-    tWCKENL_WR = tCWL + 1 - MrcGetWckPreWrTotalLpddr5 (DdrFrequency);
-    //tWCKENL_WR*nCK/QClk
-    McMiscsWckControl.Bits.cas2wrwck = (tWCKENL_WR * nCK) / QClk;
-    //Log(NCK/QClk,2)
-    McMiscsWckControl.Bits.tWckHalfRate = MrcLog2Round (MrcData, nCK/QClk);
-    //tWCKPRE_Static*nCK/QClk
-    McMiscsWckControl.Bits.tWckPre = (MrcGetWckPreStaticLpddr5 (DdrFrequency) * nCK) / QClk;
-  }
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "McMiscsWckControl: 0x%08X\n", McMiscsWckControl.Data);
-  MrcWriteCR (MrcData, MCMISCS_DDRWCKCONTROL_REG, McMiscsWckControl.Data);
 }
 
 /**
@@ -994,32 +663,6 @@ MrcReadUpdateRefPiData (
   }
 
   return Status;
-}
-
-/**
-  This function sets XSyncDelay
-
-  @param[in] MrcData  - Include all MRC global data.
-**/
-VOID
-MrcSetXSyncDelay (
-  IN MrcParameters *const MrcData
-  )
-{
-  UINT32 PhyDelay;
-  UINT32 Usync1OutStage;
-  DDRPHY_DDRCOMP_SBMEM_CR_DDRCRTLCLKDRVCTRL_STRUCT DdrCrTlClkDrvCtrl;
-  DDRSCRAM_CR_DDRMISCCONTROL2_STRUCT DdrMiscControl2;
-
-  PhyDelay = 5;
-
-  //XsyncDelay = usync1_out_stage - [4 + PHYDelay]
-  //usync1_out_stage = DDRTLCLK_CR_DDRCRTLCLKDRVCTRL_0_0_0_MCHBAR.LjpllUsync1Out
-  DdrCrTlClkDrvCtrl.Data = MrcReadCR (MrcData, DDRPHY_DDRCOMP_SBMEM_CR_DDRCRTLCLKDRVCTRL_REG);
-  Usync1OutStage = DdrCrTlClkDrvCtrl.Bits.LjpllUsync1Out;
-  DdrMiscControl2.Data = MrcReadCR (MrcData, DDRSCRAM_CR_DDRMISCCONTROL2_REG);
-  DdrMiscControl2.Bits.XSyncDelay = Usync1OutStage - (4 + PhyDelay);
-  MrcWriteCR (MrcData, DDRSCRAM_CR_DDRMISCCONTROL2_REG, DdrMiscControl2.Data);
 }
 
 /**

@@ -661,25 +661,6 @@ RdRetrainControlStatusOffset (
 }
 
 /**
-  This function returns the offset to access specific Index and SaGv Point for DDRCRVCCDDQCONTROL_Target
-
-  @param[in]  Index - DDRDATA DDRCRVCCDDQCONTROL SBMEM Index
-  @param[in]  FreqIndex  - SaGvIndex
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-DataVccDdqTargetOffset (
-  IN  UINT32                Index,
-  IN  UINT32                FreqIndex,
-  OUT UINT64_STRUCT  *const VolatileMask
-  )
-{
-   return 0; //Not VccDdq for DATA partition
-}
-
-/**
   This function returns the offset to access specific Index for DDRCRLVRAutoTrim
 
   @param[in]  Index - DATA DDRCRLVRAutoTrim SBMEM Index
@@ -718,25 +699,6 @@ DataVccIogTargetOffset(
   )
 {
    return 0; //No DDRCRVCCIOGCONTROL in Data partition
-}
-
-/**
-  This function returns the offset to access specific Index and SaGv Point for DDRCRVCCDDQCONTROL_Target
-
-  @param[in]  Index - CCC DDRCRVCCDDQCONTROL SBMEM Index
-  @param[in]  FreqIndex  - SaGvIndex
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-CccVccDdqTargetOffset (
-  IN  UINT32                Index,
-  IN  UINT32                FreqIndex,
-  OUT UINT64_STRUCT  *const VolatileMask
-  )
-{
-    return 0; //No DDRCRVCCIOGCONTROL in CCC partition
 }
 
 /**

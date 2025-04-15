@@ -53,7 +53,6 @@ This API provides an interface to abstract out memory protocol differences.
 #define HARD_PPR            0x2
 
 #define PPR_TEST_DETECTION_LOOPS              8
-#define PPR_REPAIR_RETRY_LOOPS                10
 
 ///
 /// Enumeration Types
@@ -467,20 +466,6 @@ MrcGetTzqlat (
   );
 
 /**
-  This function returns the tZQCS value.
-
-  @param[in] MrcData  - Include all MRC global data.
-  @param[in] tCK      - DCLK period in femtoseconds.
-
-  @retval UINT32 - Value in tCK or WCK (LP5).
-**/
-UINT32
-MrcGetTzqcs (
-  IN MrcParameters *const MrcData,
-  IN UINT32               tCK
-  );
-
-/**
   This function returns type of DimmOdt for DDR5 based on OdtMatrix and Read/Write mode
 
   Returns OptDimmOdtPark if OdtMatrix is 0
@@ -776,7 +761,7 @@ MrcGetTrcdw (
   @param[in] MrcData    - Include all MRC global data.
   @param[in] tCL        - CAS Latency in tCK.
 
-  @retval UINT32 - Timing in tCK / wCK (LP5).
+  @retval UINT32 - Timing in tCK
 **/
 UINT32
 MrcGetTmrr (
@@ -792,7 +777,7 @@ MrcGetTmrr (
   @param[in] tWTR       - WRITE-to-READ delay.
   @param[in] tWTR_L     - WRITE-to-READ delay long.
 
-  @retval UINT32 - Timing in tCK / wCK (LP5).
+  @retval UINT32 - Timing in tCK
 **/
 UINT32
 MrcGetWrToMrr (
@@ -839,20 +824,6 @@ MrcGetTcsl (
   );
 
 /**
-  This function returns the tccd_32_byte_cas_delta value.
-
-  @param[in] MrcData  - Include all MRC global data.
-  @param[in] Timing   - Timing Settings.
-
-  @returns The tccd_32_byte_cas_delta value for the specified configuration.
-**/
-UINT32
-MrcGetTccdByteCasDelta (
-  IN MrcParameters *const MrcData,
-  IN MrcTiming     *Timing
-  );
-
-/**
   This function returns the tSR value.
 
   @param[in] MrcData  - Include all MRC global data.
@@ -883,7 +854,7 @@ MrcGetTosco (
   @param[in] tCWL     - WR CAS Latency in tCK.
   @param[in] tWR      - Write recovery time in tCK.
 
-  @returns tWRPRE timing in tCK (WCK for LP5)
+  @returns tWRPRE timing in tCK
 **/
 UINT32
 MrcGetTwrpre (
@@ -893,12 +864,12 @@ MrcGetTwrpre (
 );
 
 /**
-  This function returns tRRFpb in WCK/CK.
+  This function returns tRRFpb in ps
 
   @param[in] MrcData       - Include all MRC global data.
   @param[in] DeviceDensity - Device density in MB.
 
-  @returns tRRFpb timing in WCK/CK.
+  @returns tRRFpb timing in ps
 **/
 UINT32
 MrcGetTrrfpb (
@@ -907,11 +878,11 @@ MrcGetTrrfpb (
   );
 
 /**
-  This function returns tRRFsb in WCK/CK.
+  This function returns tRRFsb in CK.
 
   @param[in] MrcData       - Include all MRC global data.
 
-  @returns tRRFsb timing in WCK/CK.
+  @returns tRRFsb timing in CK.
 **/
 UINT32
 MrcGetTrrfsb (
@@ -934,6 +905,23 @@ MrcGetOdtlTiming (
   IN  MrcFrequency          Frequency,
   IN  LPDDR_ODT_TYPE        OdtType,
   IN  LPDDR_ODTL_PARAM      OdtlParam
+  );
+
+/**
+  Calculate DqioDuration based on frequency and memory techmology
+
+  @param[in] MrcData               - Include all MRC global data
+  @param[out] *DqioDuration        - DqioDuration encoded to DDR5 MR45 / LPDDR5 MR37 definition
+  @param[out] *RunTimeClocksBy16   - DqioDuration in units of (tCK * 16)
+
+  @retval mrcSuccess               - if it success
+  @retval mrcUnsupportedTechnology - if the frequency doesn't match
+**/
+MrcStatus
+MrcGetDqioDuration (
+  IN     MrcParameters *const MrcData,
+  OUT    UINT8               *DqioDuration,
+  OUT    UINT16              *RunTimeClocksBy16
   );
 
 /**
@@ -966,6 +954,20 @@ OverrideCs (
   IN MrcParameters *const MrcData,
   IN UINT8                CsOverrideVal,
   IN BOOLEAN              CsOverrideEn
+  );
+
+/**
+  This function will set WCK2DQI (LP5) / DQS (DDR5) Interval Timer Run Time to MR37 (LP5) / MR45 (DDR5).
+
+  @param[in]      MrcData       - Pointer to global MRC data.
+  @param[in]      DqioDuration  - WCK2DQI/DQS interval timer run time.
+
+  @retval MrcStatus - mrcSuccess if the value is supported, else mrcWrongInputParameter.
+**/
+MrcStatus
+MrcSetIntervalTimerMr (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT8                 DqioDuration
   );
 
 #endif // _MRC_MEMORY_API_H_

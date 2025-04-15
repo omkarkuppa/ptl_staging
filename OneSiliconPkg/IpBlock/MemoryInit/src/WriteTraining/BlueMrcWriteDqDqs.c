@@ -133,6 +133,9 @@ MrcWriteDqDqsReTraining (
       tMpcNs = DIVIDECEIL (tMpcNckFs, FEMTOSECONDS_PER_NANOSECOND);
 
       tOscoNck = MrcGetTosco (MrcData);
+      if (Outputs->IsLpddr5) {
+        tOscoNck = ((UINT32) tOscoNck) * WCK_TO_CK_RATIO;
+      }
       tOscoNckFs = tOscoNck * Outputs->MemoryClock;
       tOscoNs = DIVIDECEIL (tOscoNckFs, FEMTOSECONDS_PER_NANOSECOND);
       if (tOscoNs > tMpcNs) {

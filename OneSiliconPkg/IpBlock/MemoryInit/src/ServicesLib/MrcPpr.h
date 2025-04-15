@@ -219,24 +219,6 @@ PprDispositionFailRange (
   );
 
 /**
-  Executes PPR flow on correctable failures in the row failure list
-
-  @param [in]     MrcData             - Pointer to global MRC data.
-  @param [in]     PprAmtData          - PPR and AMT data structure
-  @param [in]     McChBitMask         - Memory Controller Channel Bit mask to update
-  @param [in,out] *RepairDone         - Flag to indicate the repair was done
-
-  @retval status - MRC_STATUS_SUCCESS/MRC_STATUS_FAILURE
-
-**/
-MrcStatus
-DispositionFailRangesWithPprFlow (
-  IN     MrcParameters      *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN     UINT32                     McChBitMask,
-  IN OUT UINT8                      *RepairDone
-);
-/**
   Check to see if Retry is required after a PPR repair
 
   @param[in]  MrcData     - Include all MRC global data.

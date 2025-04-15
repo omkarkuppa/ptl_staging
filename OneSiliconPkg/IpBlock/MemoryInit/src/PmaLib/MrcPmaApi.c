@@ -120,7 +120,7 @@ MrcMcCapability (
 
   // Check that current DDR type is allowed on this CPU
   StrDdrType = NULL;
-  if (!(Inputs->IsDdrIoTc)) {
+  if (!(Inputs->IsDdrIoGen1Tc)) {
     if (IsLpddr5 && (PmaFuseTechEn.Bits.LPDDR5_EN == 0)) {
       StrDdrType = gDdrTypeStr[MRC_DDR_TYPE_LPDDR5];
     } else if (IsDdr5 && (PmaFuseTechEn.Bits.DDR5_EN == 0)) {

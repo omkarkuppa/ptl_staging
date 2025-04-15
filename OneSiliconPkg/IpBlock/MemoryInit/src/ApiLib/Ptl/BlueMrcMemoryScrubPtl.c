@@ -75,7 +75,6 @@ MrcEccClean (
   UINT8                 McChBitMask;
   UINT8                 McChError;
   UINT8                 RankToDimm;
-  UINT8                 LocalMcChBitMask;
   BOOLEAN               TxtClean;
   BOOLEAN               IsLpddr;
   BOOLEAN               CapNotPowerOf2[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL];
@@ -203,25 +202,13 @@ MrcEccClean (
     }
 
     // Update the Bank/Row/Col sizes per current rank population
-    UpdateAddressForWholeRankExtended (MrcData, CPGCAddressArray, BANK_2_ROW_COL_2_RANK, McChBitMask, Rank, CapNotPowerOf2);
+    UpdateAddressForWholeRank (MrcData, CPGCAddressArray, BANK_2_ROW_COL_2_RANK, McChBitMask, Rank);
 
-    SetupIOTestScrub (MrcData, CPGCAddressArray, McChBitMask, PatWrScrub);
+    SetupIOTestScrubCpgc (MrcData, CPGCAddressArray, McChBitMask, PatWrScrub, CapNotPowerOf2[Rank]);
 
     Cpgc20UpdateBaseRepeatsForWholeRankExtended (MrcData, Rank, McChBitMask, TRUE, CapNotPowerOf2);
 
     MrcUpdateL2PAllsBanksMapping (MrcData, Rank, McChBitMask, FALSE);
-
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-        if (MC_CH_MASK_CHECK (McChBitMask, Controller, Channel, Outputs->MaxChannels) == 0) {
-          continue;
-        }
-        LocalMcChBitMask = (UINT8) (MRC_BIT0 << ((Controller * Outputs->MaxChannels) + Channel));
-        if (CapNotPowerOf2[Rank][Controller][Channel]) {
-          MrcSetLoopcount (MrcData, LocalMcChBitMask, 2);
-        }
-      }
-    }
 
     // Run the test on both channels, don't check for errors - this is WR only test
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Scrubbing Rank%d: McChBitMask = 0x%X\n", Rank, McChBitMask);
@@ -249,25 +236,13 @@ MrcEccClean (
         }
       }
       // Update the Bank/Row/Col sizes per current rank population
-      UpdateAddressForWholeRankExtended (MrcData, CPGCAddressArray, BANK_2_ROW_COL_2_RANK, McChBitMask, Rank, CapNotPowerOf2);
+      UpdateAddressForWholeRank (MrcData, CPGCAddressArray, BANK_2_ROW_COL_2_RANK, McChBitMask, Rank);
 
-      SetupIOTestScrub (MrcData, CPGCAddressArray, McChBitMask, PatRd);
+      SetupIOTestScrubCpgc (MrcData, CPGCAddressArray, McChBitMask, PatRd, CapNotPowerOf2[Rank]);
 
       Cpgc20UpdateBaseRepeatsForWholeRankExtended (MrcData, Rank, McChBitMask, TRUE, CapNotPowerOf2);
 
       MrcUpdateL2PAllsBanksMapping (MrcData, Rank, McChBitMask, FALSE);
-
-      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-        for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-          if (MC_CH_MASK_CHECK (McChBitMask, Controller, Channel, Outputs->MaxChannels) == 0) {
-            continue;
-          }
-          LocalMcChBitMask = (UINT8) (MRC_BIT0 << ((Controller * Outputs->MaxChannels) + Channel));
-          if (CapNotPowerOf2[Rank][Controller][Channel]) {
-            MrcSetLoopcount (MrcData, LocalMcChBitMask, 2);
-          }
-        }
-      }
 
       // Run the test on both channels, to check if it is all zeros
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Checking Zeros on Rank%d: McChBitMask = 0x%X\n", Rank, McChBitMask);

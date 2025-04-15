@@ -34,24 +34,26 @@
   Programs all the key registers to define a CPGC test as per input mask and Outputs->McChBitMask.
   McChBitMask is initialized in MrcPretraining based on population, and used throughout internal CPGC structure.
   Modify McChBitMask to specify which MC/CH to program
+  This function shall be used in Blue MRC CPGC-related calls
 
-  @param[in] MrcData       - Include all MRC global data.
-  @param[in] McChBitMask   - Memory Controller Channel Bit mask for which test should be setup for.
-  @param[in] CmdPat        - [0: PatWrRd (Standard Write/Read Loopback),
-                              1: PatWr (Write Only),
-                              2: PatRd (Read Only),
-                              3: PatRdWrTA (ReadWrite Turnarounds),
-                              4: PatWrRdTA (WriteRead Turnarounds)
-  @param[in] NumCL         - Number of Cache lines transactions per algorithm instruction within 1 BlockRepeat.
-                             Non-zero Inputs->NumCL will override this.
-  @param[in] LcExp         - Loop Count exponent. Non-zero Inputs->LoopCount will override this.
-  @param[in] AddressArray  - 2D Array of Structure that stores address related settings
-  @param[in] SOE           - [0: Never Stop, 1: Stop on Any Lane, 2: Stop on All Byte, 3: Stop on All Lane]
-  @param[in] PatCtlPtr     - Structure that stores start, Stop, IncRate and Dqpat for pattern.
-  @param[in] SubSeqWait    - # of Dclks to stall at the end of a sub-sequence
+  @param[in] MrcData        - Include all MRC global data.
+  @param[in] McChBitMask    - Memory Controller Channel Bit mask for which test should be setup for.
+  @param[in] CmdPat         - [0: PatWrRd (Standard Write/Read Loopback),
+                               1: PatWr (Write Only),
+                               2: PatRd (Read Only),
+                               3: PatRdWrTA (ReadWrite Turnarounds),
+                               4: PatWrRdTA (WriteRead Turnarounds)
+  @param[in] NumCL          - Number of Cache lines transactions per algorithm instruction within 1 BlockRepeat.
+                              Non-zero Inputs->NumCL will override this.
+  @param[in] LcExp          - Loop Count exponent. Non-zero Inputs->LoopCount will override this.
+  @param[in] AddressArray   - 2D Array of Structure that stores address related settings
+  @param[in] SOE            - [0: Never Stop, 1: Stop on Any Lane, 2: Stop on All Byte, 3: Stop on All Lane]
+  @param[in] PatCtlPtr      - Structure that stores start, Stop, IncRate and Dqpat for pattern.
+  @param[in] SubSeqWait     - # of Dclks to stall at the end of a sub-sequence
+  @param[in] CapNotPowerOf2 - Whether non-power of 2 capacity found per MC/CH
 **/
 VOID
-SetupIOTest (
+SetupIOTestCpgc (
   IN MrcParameters *const         MrcData,
   IN const UINT8                  McChBitMask,
   IN const UINT8                  CmdPat,
@@ -60,7 +62,8 @@ SetupIOTest (
   IN MRC_ADDRESS                  AddressArray[MAX_CONTROLLER][MAX_CHANNEL],
   IN const MRC_TEST_STOP_TYPE     SOE,
   IN MRC_PATTERN_CTL *const       PatCtlPtr,
-  IN UINT16                       SubSeqWait
+  IN UINT16                       SubSeqWait,
+  IN BOOLEAN                      CapNotPowerOf2[MAX_CONTROLLER][MAX_CHANNEL] OPTIONAL
   )
 {
   MrcInput          *Inputs;
@@ -146,7 +149,8 @@ SetupIOTest (
   Cpgc20AddressSetup (
     MrcData,
     AddressArray,
-    FALSE
+    FALSE,
+    CapNotPowerOf2
     );
   //###########################################################
   // Program Error Checking
@@ -257,7 +261,7 @@ SetupIOTestStatic (
     }
   }
 
-  SetupIOTest (MrcData, McChBitMask, PatWrRd, NumCL, AdjustedLoopCount, AddressArr, NSOE, &PatCtl, 0);
+  SetupIOTestCpgc (MrcData, McChBitMask, PatWrRd, NumCL, AdjustedLoopCount, AddressArr, NSOE, &PatCtl, 0, NULL);
   MrcData->Outputs.DQPat = PatCtl.DQPat;
 }
 
@@ -269,13 +273,15 @@ SetupIOTestStatic (
   @param[in]     CPGCAddressArray - 2D Array of Structure that stores address Row/Col/Bank sizes that may be different per DIMM.
   @param[in]     McChbitMask      - Bit masks of MC channels to enable for the test.
   @param[in]     CmdPat           - read/write.
+  @param[in]     CapNotPowerOf2   - Whether non-power of 2 capacity found per MC/CH.
 **/
 VOID
-SetupIOTestScrub (
+SetupIOTestScrubCpgc (
   IN OUT MrcParameters *const MrcData,
   IN     MRC_ADDRESS          CPGCAddressArray[MAX_CONTROLLER][MAX_CHANNEL],
   IN     const UINT8          McChBitMask,
-  IN     const UINT8          CmdPat
+  IN     const UINT8          CmdPat,
+  IN     BOOLEAN              CapNotPowerOf2[MAX_CONTROLLER][MAX_CHANNEL] OPTIONAL
   )
 {
   MRC_PATTERN_CTL       PatCtl;
@@ -291,7 +297,7 @@ SetupIOTestScrub (
   PatCtl.PatSource = MrcPatSrcAllZeroes;  // DC zero
   PatCtl.EnableXor = FALSE;
 
-  SetupIOTest (MrcData, McChBitMask, CmdPat, NumCL, LC, CPGCAddressArray, NSOE, &PatCtl, 0);
+  SetupIOTestCpgc (MrcData, McChBitMask, CmdPat, NumCL, LC, CPGCAddressArray, NSOE, &PatCtl, 0, CapNotPowerOf2);
 
   MrcData->Outputs.DQPat = PatCtl.DQPat;
 }

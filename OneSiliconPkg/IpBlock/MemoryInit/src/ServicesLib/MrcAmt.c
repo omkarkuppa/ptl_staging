@@ -1839,7 +1839,7 @@ AdvancedMemTestRankSetupMATSRowRange (
       CPGCAddressArray[Controller][Channel].RowSizeBits = (PprAmtData->FromRowTestPpr) ? 0 : PprAmtData->RowBits[Controller][Channel];
       CPGCAddressArray[Controller][Channel].RowStart = PprAmtData->TestRowAddr[Controller][IpChannel];
 
-      Cpgc20AddressSetup (MrcData, CPGCAddressArray, FALSE);
+      Cpgc20AddressSetup (MrcData, CPGCAddressArray, FALSE, NULL);
       AmtSetBaseAddressControl (MrcData, PprAmtData->TestType);
       if ((Outputs->IsLpddr && (MrcGetBankBgOrg(MrcData, Outputs->Frequency) != MrcLp5BgMode)) || PprAmtData->FromRowTestPpr) {
         AmtUpdateL2PBankMappingWithoutBG (MrcData, PprAmtData->Rank, PprAmtData->FromRowTestPpr, PprAmtData->Bank);  // Use if LP5 16 bank mode or programming a single bank
@@ -2195,7 +2195,8 @@ SetupIOTestAmt (
   Cpgc20AddressSetup (
     MrcData,
     AddressArray,
-    FALSE
+    FALSE,
+    NULL
   );
   //###########################################################
   // Program Error Checking
@@ -2284,7 +2285,7 @@ SetupIOTestPPR (
 
   McChBitMask = 1 << MC_CH_IDX (Controller, Channel, Outputs->MaxChannels);
 
-  SetupIOTest (MrcData, (UINT8) McChBitMask, PatWr, NumCL, LC, CPGCAddressArray, NSOE, &PatCtl, 0);
+  SetupIOTestCpgc (MrcData, (UINT8) McChBitMask, PatWr, NumCL, LC, CPGCAddressArray, NSOE, &PatCtl, 0, NULL);
 
   MrcConvertBankAddresstoCpgcBank (MrcData, BankAddress, BankGroup, &Bank);
 

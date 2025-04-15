@@ -54,6 +54,9 @@
 #define RX_RISE                          (0)            ///< Training Case Idx for Rise
 #define RX_FALL                          (1)            ///< Training Case Idx for Fall
 
+// Minimum passing best score in advanced training
+#define MRC_ADV_BEST_SCORE_MIN  (20)
+
 // Re-centering loop count
 #define RE_CENTER_LOOP_COUNT (10)
 

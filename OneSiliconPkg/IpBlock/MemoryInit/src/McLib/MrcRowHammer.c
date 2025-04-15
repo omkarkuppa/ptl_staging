@@ -587,6 +587,7 @@ MrcConfigDrfm (
           }
         }
         tRRF = MrcGetTrrfpb (MrcData, MaxDeviceDensityInChannel);
+        tRRF = DIVIDECEIL (tRRF, Outputs->Wckps); // in WCK
       } else { // DDR5
         tRRF = MrcGetTrrfsb (MrcData);
       }

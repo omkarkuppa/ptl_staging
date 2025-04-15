@@ -56,6 +56,7 @@ typedef enum {
   Lp5Wl4t1B19,
   Lp5Wl4t1B22,
   Lp5Wl4t1B24,
+  Lp5Wl4t1B26,
   Lp5Wl4t1BMax
 } LPDDR5_WR_LATENCY_4t1_B;
 
@@ -77,6 +78,8 @@ typedef enum {
   Lp5RlRbtp4t1X16_17,
   Lp5RlRbtp4t1X16_20,
   Lp5RlRbtp4t1X16_23,
+  Lp5RlRbtp4t1X16_25,
+  Lp5RlRbtp4t1X16_28,
   Lp5RlRbtp4t1X16Max
 } LPDDR5_RL_RBTP_4t1_Set0;
 
@@ -98,6 +101,8 @@ typedef enum {
   Lp5RlRbtp4t1X8_18,
   Lp5RlRbtp4t1X8_22,
   Lp5RlRbtp4t1X8_25,
+  Lp5RlRbtp4t1X8_28,
+  Lp5RlRbtp4t1X8_30,
   Lp5RlRbtp4t1X8Max
 } LPDDR5_RL_RBTP_4t1_Set1;
 
@@ -119,6 +124,8 @@ typedef enum {
   Lp5RlRbtp4t1Set2_20,
   Lp5RlRbtp4t1Set2_24,
   Lp5RlRbtp4t1Set2_26,
+  Lp5RlRbtp4t1Set2_29,
+  Lp5RlRbtp4t1Set2_33,
   Lp5RlRbtp4t1Set2Max
 } LPDDR5_RL_RBTP_4t1_Set2;
 
@@ -142,6 +149,7 @@ typedef enum {
   Lp5Wr4t1X16_32,
   Lp5Wr4t1X16_37,
   Lp5Wr4t1X16_41,
+  Lp5Wr4t1X16_48,
   Lp5Wr4t1X16Max
 } LPDDR5_WR_4t1_x16;
 
@@ -164,6 +172,7 @@ typedef enum {
   Lp5Wr4t1X8_34,
   Lp5Wr4t1X8_39,
   Lp5Wr4t1X8_44,
+  Lp5Wr4t1X8_48,
   Lp5Wr4t1X8Max
 } LPDDR5_WR_4t1_x8;
 
@@ -225,7 +234,9 @@ typedef enum {
 **/
 typedef enum {
   Lp5Mr8TypeLp5x8533 = 1,
-  Lp5Mr8TypeLp5x9600 = 2
+  Lp5Mr8TypeLp5x9600 = 2,
+  Lp5Mr8TypeLp5x10667 = 3,
+  Lp5Mr8TypeLp5xMax
 } LPDDR5_MR8_TYPE;
 
 /**

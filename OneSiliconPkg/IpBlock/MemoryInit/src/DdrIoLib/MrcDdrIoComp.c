@@ -197,9 +197,15 @@ ForceRcomp (
   MrcStatus Status;
   MRC_STATISTIC Timer = MRC_FORCE_RCOMP_TIME;
 
+  // enable/disable dfi_dram_clk_disable so WCK/CK obtains initial sync
+  // no wait time needed for this write
+  WriteForceCkStopToMptu (MrcData, TRUE, 0);
+
   MrcStatsStartTimer (MrcData, Timer);
   Status = WrappedForceRcomp (MrcData, CompType, TRUE);
   MrcStatsEndTimer (MrcData, Timer);
+
+  WriteForceCkStopToMptu (MrcData, FALSE, (27 * MRC_TIMER_1NS));
 
   return Status;
 }

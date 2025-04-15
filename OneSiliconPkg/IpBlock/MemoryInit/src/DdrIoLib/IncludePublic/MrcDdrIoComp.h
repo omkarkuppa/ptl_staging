@@ -211,4 +211,18 @@ ForceRcompContinuous (
   IN     UINT32               TestLength
   );
 
+/**
+  This function writes to the ForceCkStop field when Xtensa is enabled
+
+  @param[in, out] MrcData        - Include all MRC global data.
+  @param[in]      ForceCkStopVal - Set to 1 to bypass Dunit control and force high
+  @param[in]      DelayTimeNs    - The amount of time to wait before writing to field.
+**/
+void
+WriteForceCkStopToMptu (
+  IN OUT MrcParameters *const MrcData,
+  IN     INT64                ForceCkStopVal,
+  IN     UINT32               DelayTimeNs
+  );
+
 #endif // MRC_DDR_IO_COMP_H

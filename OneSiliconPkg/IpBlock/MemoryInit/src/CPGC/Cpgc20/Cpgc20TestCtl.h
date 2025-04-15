@@ -396,6 +396,7 @@ Cpgc20DataInstructWrite (
   @param[in]  MrcData           - Pointer to MRC global data.
   @param[in]  CPGCAddressArray  - 2D Array of Structure that stores address related settings
   @param[in]  EnCADB            - Set up the address ordering for Command stress
+  @param[in]  CapNotPowerOf2    - Whether non-power of 2 capacity found per MC/CH
 
   @retval Nothing.
 **/
@@ -403,7 +404,8 @@ VOID
 Cpgc20AddressSetup (
   IN  MrcParameters *const    MrcData,
   IN  MRC_ADDRESS             CPGCAddressArray [MAX_CONTROLLER][MAX_CHANNEL],
-  IN  UINT8                   EnCADB
+  IN  UINT8                   EnCADB,
+  IN  BOOLEAN                 CapNotPowerOf2[MAX_CONTROLLER][MAX_CHANNEL] OPTIONAL
   );
 
 /**

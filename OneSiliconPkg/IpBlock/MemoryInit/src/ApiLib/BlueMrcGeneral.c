@@ -1371,8 +1371,12 @@ MrcSetOverrides (
 
   // Set Default Read Preamble
   // LP5: will be updated to a longer preamble after LockUI if needed
-  // DDR5: LockUI uses the same frequency-based formula
-  Outputs->ReadPreamble = Outputs->IsDdr5 ? ((Outputs->Frequency <= f4000) ? tRPRE_ALL_FREQ_DDR5_3tCK : tRPRE_ALL_FREQ_DDR5_4tCK) : MRC_LP5_tRPRE_TOGGLE_2tWCK;
+  // DDR5: LockUI won't change RDPRE
+  if (Outputs->IsDdr5) {
+    Outputs->ReadPreamble = (Outputs->Frequency < f4000) ? tRPRE_ALL_FREQ_DDR5_2tCK : (Outputs->Frequency == f4000) ? tRPRE_ALL_FREQ_DDR5_3tCK : tRPRE_ALL_FREQ_DDR5_4tCK;
+  } else { // LP5
+    Outputs->ReadPreamble = MRC_LP5_tRPRE_TOGGLE_2tWCK;
+  }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ReadPreamble: %u\n", Outputs->ReadPreamble);
 
 
@@ -1425,7 +1429,7 @@ MrcSetOverrides (
 
     // Set Outputs->IsDvfscEnabled based on Inputs->IsDvfscEnable
     Outputs->IsDvfscEnabled = FALSE;
-    if ((ExtInputs->DvfscEnabled && (Outputs->Frequency <= f3200)) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData))) {
+    if ((ExtInputs->DvfscEnabled && (Outputs->Frequency <= f3200)) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData)) && (ExtInputs->BoardDetails.SingleVdd2Rail == 0)) {
       Outputs->IsDvfscEnabled = TRUE;
     }
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IsDvfscEnabled: %u\n", Outputs->IsDvfscEnabled);
@@ -1965,11 +1969,13 @@ MrcPrintInputParameters (
     "\tPprRunOnce: %u\n"
     "\tPprTestType: %Xh\n"
     "\tPprRepairType: %u\n"
+    "\tPprRetryLimit: %d\n"
     "\tPprErrorInjection: %u\n"
     "\tPprForceRepair: %u\n",
     Inputs->PprRunOnce,
     (UINT32) Inputs->PprTestType.Value,
     (UINT32) Inputs->PprRepairType,
+    Inputs->PprRetryLimit,
     Inputs->PprErrorInjection,
     Inputs->PprForceRepair
   );
@@ -2038,10 +2044,12 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tAsyncOdtDis: %u\n"
     "\tCccHalfFrequency: %u\n"
-    "\tBoardStackUp: %u\n",
+    "\tBoardStackUp: %u\n"
+    "\tSingleVdd2Rail: %u\n",
     ExtInputs->AsyncOdtDis,
     ExtInputs->CccHalfFrequency,
-    ExtInputs->BoardDetails.BoardStackUp
+    ExtInputs->BoardDetails.BoardStackUp,
+    ExtInputs->BoardDetails.SingleVdd2Rail
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tForceRetrainPath: %Xh\n"

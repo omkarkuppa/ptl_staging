@@ -122,7 +122,7 @@ MrcPdaEnumeration (
 
   MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmIocDataDqsOdtParkMode, ReadCached, &OdtParkModeSave);
   // Drive DQS low
-  GetSetVal = MrcGetEnDqsOdtParkModeValue();
+  GetSetVal = 2; // Park Diff Low
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDataDqsOdtParkMode, WriteToCache, &GetSetVal);
 
   MrcGetSetNoScope (MrcData, GsmIocDfiCmdDecoderEn, WriteToCache, &GetSetDis);
