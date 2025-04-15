@@ -209,6 +209,11 @@
   0x08070020|SkuIdWclDdr5McioRvp1|SkuIdWclNDdr5Rvp1
   0x0A070020|SkuIdWclDdr5McioRvp1HDMI|SkuIdWclNDdr5Rvp1HDMI
 
+  0x08010021|SkuIdWclLp5SktRvp2|SkuIdWclLp5Rvp2
+  0x08030021|SkuIdWclLp5PpvRvp2|SkuIdWclLp5Rvp2
+  0x08040021|SkuIdWclLp5PnpRvp2|SkuIdWclLp5Rvp2
+  0x08050021|SkuIdWclLp5MeccRvp2|SkuIdWclLp5Rvp2
+  0x08070021|SkuIdWclLp5McioRvp2|SkuIdWclLp5Rvp2
 
 # Keeping this section as an example to define SKUs that can inherit parent
 # properties and define a section by its own identifier as well.
