@@ -161,6 +161,12 @@
     ADBG (Concatenate ("Arg2 -", ToHexString (Arg2)))
     Store (Arg1, SD3C)                                 // If entering Sx (Arg1 > 1), need to skip TCSS D3Cold & TBT RTD3/D3Cold.
     ADBG (Concatenate ("SD3C -", ToHexString (SD3C)))
+    If (CondRefOf (\_SB.PC00.TDM0.SD3C)) {
+      Store (Arg1, \_SB.PC00.TDM0.SD3C)                // If entering Sx (Arg1 > 1), need to skip TCSS D3Cold & TBT RTD3/D3Cold.
+    }
+    If (CondRefOf (\_SB.PC00.TDM1.SD3C)) {
+      Store (Arg1, \_SB.PC00.TDM1.SD3C)                // If entering Sx (Arg1 > 1), need to skip TCSS D3Cold & TBT RTD3/D3Cold.
+    }
   }
 
   //
