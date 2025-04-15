@@ -374,6 +374,8 @@
   gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport|FALSE
   gAmtPetInitFeaturePkgTokenSpaceGuid.PcdAmtPetInitFeatureEnable|FALSE
 !endif
+
+
   # Restricting the simulation support to Intel Internal only
 
 #
