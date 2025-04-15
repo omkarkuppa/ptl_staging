@@ -1340,7 +1340,7 @@ typedef union {
                       sizeof (SPD_MANUFACTURING_LOCATION) + \
                       sizeof (SPD_MANUFACTURING_DATE) + \
                       sizeof (SPD_MANUFACTURER_SERIAL_NUMBER) + \
-                      sizeof (SPD4_MODULE_PART_NUMBER))
+                      sizeof (SPD5_MODULE_PART_NUMBER))
 #endif
 
 #pragma pack (pop)

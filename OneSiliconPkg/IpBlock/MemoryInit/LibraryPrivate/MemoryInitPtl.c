@@ -3508,7 +3508,8 @@ BuildMemoryInfoDataHob (
   UINT8                PartNumberOffset;
   UINT8                ModulePartLength;
   UINT8                NumChannelsPopulated;
-  UINT8                NumOfChannels;
+  UINT8                NumSubChannels;
+  UINT32               PartNumberLength;
   BOOLEAN              IsChannelPopulated;
   BOOLEAN              IsDdr5;
   SPD5_MODULE_MEMORY_BUS_WIDTH  MemoryBusWidthDdr5;
@@ -3529,7 +3530,7 @@ BuildMemoryInfoDataHob (
   MrcCall  = Inputs->Call.Func;
   ExtInputs = Inputs->ExtInputs.Ptr;
   NumChannelsPopulated = 0;
-  NumOfChannels        = 0;
+  NumSubChannels       = 0;
   IsChannelPopulated = FALSE;
   IsDdr5             = FALSE;
 
@@ -3549,7 +3550,7 @@ BuildMemoryInfoDataHob (
   ZeroMem ((VOID *) MemoryInfo, sizeof (MEMORY_INFO_DATA_HOB));
 
   MrcVersionGet (MrcData, (MrcVersion *) &MemoryInfo->Version);
-  MemoryInfo->Revision = 0x01;
+  MemoryInfo->Revision = 0x03;
   OdtDimmMask = 0;
   switch (Outputs->DdrType) {
     case MRC_DDR_TYPE_DDR5:
@@ -3578,6 +3579,8 @@ BuildMemoryInfoDataHob (
   }
   MemoryInfo->EccSupport              = Outputs->EccSupport;
   MemoryInfo->TotalPhysicalMemorySize = Outputs->MemoryMapData.TotalPhysicalMemorySize;
+  // Max Rank Capacity comes from MC HAS: 16GB in DDR5 and 8GB in LP5
+  MemoryInfo->MaxRankCapacity         = Outputs->IsDdr5 ? 16 : 8;
   MrcCall->MrcSetMem ((UINT8 *) &MemoryInfo->RcompTarget, sizeof (MemoryInfo->RcompTarget), 0);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
     MemoryInfo->VddVoltage[Profile]   = Outputs->VddVoltage[Profile];
@@ -3685,55 +3688,60 @@ BuildMemoryInfoDataHob (
         DimmInfo->BankGroups = DimmOut->BankGroups;
         DimmInfo->DeviceDensity = DimmOut->DeviceDensity;
 
+        Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
         if (Outputs->IsDdr5) {
-          Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
-          DimmInfo->CkdMfgID     = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.ManufacturerId.Data;
-          DimmInfo->CkdDeviceRev = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.DeviceRevision;
-          DimmInfo->DramMfgID    = Spd->Ddr5.ManufactureInfo.DramIdCode.Data;
+          DimmInfo->CkdMfgID.Data  = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.ManufacturerId.Data;
+          DimmInfo->CkdDeviceRev   = Spd->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.DeviceRevision;
+          DimmInfo->DramMfgID.Data = Spd->Ddr5.ManufactureInfo.DramIdCode.Data;
+          DimmInfo->SerialNumber   = Spd->Ddr5.ManufactureInfo.ModuleId.SerialNumber.Data;
+          PartNumberLength         = sizeof (SPD5_MODULE_PART_NUMBER);
+        } else if (Outputs->IsLP5Camm2) {
+          DimmInfo->DramMfgID.Data = Spd->JedecLpddr5.ManufactureInfo.DramIdCode.Data;
+          DimmInfo->SerialNumber   = Spd->JedecLpddr5.ManufactureInfo.ModuleId.SerialNumber.Data;
+          PartNumberLength         = sizeof (SPD5_MODULE_PART_NUMBER);
         } else {
-          Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
           // No clock driver for LP devices
-          DimmInfo->DramMfgID = Spd->Lpddr.ManufactureInfo.DramIdCode.Data;
+          DimmInfo->DramMfgID.Data = Spd->Lpddr.ManufactureInfo.DramIdCode.Data;
+          DimmInfo->SerialNumber   = Spd->Lpddr.ManufactureInfo.ModuleId.SerialNumber.Data;
+          PartNumberLength         = sizeof (SPD4_MODULE_PART_NUMBER);
         }
 
         // Copy the SPD before DIMM_PRESENT check, to show Vendor ID in Setup also for disabled DIMMs
         MrcCall->MrcCopyMem (&DimmInfo->SpdSave[0], &DimmSave->SpdSave[0], sizeof (DimmInfo->SpdSave));
+        DimmInfo->MfgId.Data8[0] = DimmSave->SpdSave[0];
+        DimmInfo->MfgId.Data8[1] = DimmSave->SpdSave[1];
         if ((DimmInfo->Status == DIMM_PRESENT) && (DimmInfo->DimmCapacity > 0)) {
           if (Channel == 0 || !IsDdr5) {
             DimmInfo->RankInDimm = DimmOut->RankInDimm;
-            DimmInfo->MfgId = ((DimmSave->SpdSave[1] << 8) |
-                              (DimmSave->SpdSave[0]));
             MrcCall->MrcCopyMem ((UINT8 *) &DimmInfo->ModulePartNum[0],
                                 (UINT8 *) &DimmSave->SpdSave[PartNumberOffset],
-                                sizeof (SPD4_MODULE_PART_NUMBER));
+                                PartNumberLength);
+            // Pad with spaces in case of LP5 memory down, which only uses 20 bytes
+            if (PartNumberLength < sizeof (SPD5_MODULE_PART_NUMBER)) {
+              MrcCall->MrcSetMem ((UINT8 *) &DimmInfo->ModulePartNum[sizeof (SPD4_MODULE_PART_NUMBER)], sizeof (SPD5_MODULE_PART_NUMBER) - PartNumberLength, ' ');
+            }
             DimmInfo->SpdDramDeviceType       = DimmSave->SpdDramDeviceType;
             DimmInfo->SpdModuleType           = DimmSave->SpdModuleType;
-            DimmInfo->SpdModuleMemoryBusWidth = DimmSave->SpdModuleMemoryBusWidth;
             DimmInfo->Speed                   = (UINT16) DimmOut->Speed;
+            MemoryBusWidthDdr5.Data           = DimmSave->SpdModuleMemoryBusWidth;
+            NumSubChannels                    = MemoryBusWidthDdr5.Bits.NumberOfChannels + 1;       // SPD encoding: 0: one channel, 1: two channels
+            // Double the bus width / bus width extension (ECC) if we have two channels - this only happens in case of DDR5
+            DimmInfo->DataWidth               = 8 * (1 << MemoryBusWidthDdr5.Bits.PrimaryBusWidth) * NumSubChannels;
+            DimmInfo->TotalWidth              = DimmInfo->DataWidth + (MemoryBusWidthDdr5.Bits.BusWidthExtension * 4 * NumSubChannels);
             if (Channel == 0 && IsDdr5) {
               //
               // In order to report the combined BusWidth and Capacity in Smbios Type17 table and Setup menu,
               // modify the dimm info in HOB according to the number of subchannels in DDR5 module
               //
-              MemoryBusWidthDdr5.Data = DimmSave->SpdModuleMemoryBusWidth;
-              NumOfChannels = MemoryBusWidthDdr5.Bits.NumberOfChannels + 1;       // SPD encoding: 0: one channel, 1: two channels
-              MemoryBusWidthDdr5.Bits.PrimaryBusWidth += (NumOfChannels - 1);     // Double the bus width if we have two channels
-              if (MemoryBusWidthDdr5.Bits.BusWidthExtension != 0) {
-                MemoryBusWidthDdr5.Bits.BusWidthExtension += (NumOfChannels - 1); // Double the bus width extension (ECC) if we have two channels
-              }
-              DimmInfo->SpdModuleMemoryBusWidth = MemoryBusWidthDdr5.Data;
-              DimmInfo->DimmCapacity *= NumOfChannels;                            // Double the capacity if we have two channels
+              DimmInfo->DimmCapacity *= NumSubChannels;  // Double the capacity if we have two channels
             }
-            ///
-            /// Dimm is present in slot
-            /// Get the Memory DataWidth info
-            /// SPD Offset 8 Bits [2:0] DataWidth aka Primary Bus Width
-            ///
-            MemoryInfo->DataWidth = 8 * (1 << (DimmInfo->SpdModuleMemoryBusWidth & 0x07));
-            DEBUG ((DEBUG_INFO, "MC%u C%u D%u:\n DeviceDensity: %uGb, MfgId: 0x%X\n", Controller, Channel, Dimm, DimmInfo->DeviceDensity, DimmInfo->MfgId));
+            DEBUG ((DEBUG_INFO, "MC%u C%u D%u:\n MfgId: 0x%X, DramMfgID: 0x%X\n NumSubChannels: %u, DataWidth: %u, TotalWidth: %u\n",
+              Controller, Channel, Dimm, DimmInfo->MfgId.Data, DimmInfo->DramMfgID.Data, NumSubChannels, DimmInfo->DataWidth, DimmInfo->TotalWidth));
+            DEBUG ((DEBUG_INFO, " DeviceDensity: %uGb, DimmCapacity: %u, CkdMfgID: 0x%X, CkdDeviceRev: %u, SerialNumber: 0x%X\n",
+              DimmInfo->DeviceDensity, DimmInfo->DimmCapacity, DimmInfo->CkdMfgID.Data, DimmInfo->CkdDeviceRev, DimmInfo->SerialNumber));
             DEBUG ((DEBUG_INFO, " Module Part Number: "));
-            for (ModulePartLength = 0; ModulePartLength < sizeof (SPD4_MODULE_PART_NUMBER); ModulePartLength++) {
-              DEBUG ((DEBUG_INFO, "%x ", DimmInfo->ModulePartNum[ModulePartLength]));
+            for (ModulePartLength = 0; ModulePartLength < sizeof (SPD5_MODULE_PART_NUMBER); ModulePartLength++) {
+              DEBUG ((DEBUG_INFO, "%c", DimmInfo->ModulePartNum[ModulePartLength]));
             }
             DEBUG ((DEBUG_INFO, "\n"));
             if (!IsChannelPopulated) {
@@ -3745,6 +3753,7 @@ BuildMemoryInfoDataHob (
             DimmInfo->Status = DIMM_NOT_PRESENT;
             DimmInfo->DimmCapacity = 0;
           }
+          MemoryInfo->TotalMemWidth += DimmInfo->DataWidth; // Track the total number of data bits in the system (without ECC)
 
           if (OdtDimmMask & (1 << Dimm)) {
             for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
@@ -3774,7 +3783,6 @@ BuildMemoryInfoDataHob (
 #endif
     }
   }
-  MemoryInfo->TotalMemWidth        = (NumChannelsPopulated * MemoryInfo->DataWidth);
   DEBUG ((DEBUG_INFO, "NumPopulatedChannels: %u, TotalMemWidth(bits): %u\n", MemoryInfo->NumPopulatedChannels, MemoryInfo->TotalMemWidth));
 
   // Copy Over the SaGvOutputs Data

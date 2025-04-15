@@ -56,14 +56,15 @@ InstallSmbiosType16 (
   UINT32                          MaxRankCapacity;
   UINT16                          MaxSockets;
   UINT8                           ModuleType;
-  UINT8                           DeviceType;
   UINT8                           ChannelIndex;
   UINT8                           DimmIndex;
   UINT8                           Dimm;
   DIMM_INFO                       *DimmInfo;
-  UINT8                           SkipSolderedDimmCapacityCount;
   UINT8                           ControllerIndex;
   MRC_SLOTMAP                     *MrcSlotMap;
+  UINT32                          MaxDimmCountPerChannel;
+  UINT32                          MaxRankinDimm;
+
   ///
   /// Configure the data for TYPE 16 SMBIOS Structure
   ///
@@ -87,10 +88,10 @@ InstallSmbiosType16 (
   ///
   /// Get the Memory DIMM info from policy protocols
   ///
-  SkipSolderedDimmCapacityCount = 0;
   MaxSockets = 0;
+  ModuleType = 0;
   MaximumCapacity = 0;
-  //@todo - Fix for 2xMC
+  MaxRankCapacity = mMemInfo->MaxRankCapacity;
   for (ControllerIndex = 0; ControllerIndex < MEM_CFG_MAX_CONTROLLERS; ControllerIndex++) {
     for (Dimm = 0; Dimm < (MEM_CFG_MAX_SOCKETS/MEM_CFG_MAX_CONTROLLERS); Dimm++) {
       ChannelIndex = Dimm >> 1;
@@ -98,11 +99,9 @@ InstallSmbiosType16 (
       DimmInfo = &mMemInfo->Controller[ControllerIndex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex];
       if ((DimmInfo->Status == DIMM_PRESENT) && (DimmInfo->DimmCapacity > 0)) {
         ModuleType = DimmInfo->SpdModuleType;
-        DeviceType = DimmInfo->SpdDramDeviceType;
-        // If Memory Down is detected, report System Memory Size instead of Maximum Capacity
-        if ((DeviceType == DDR_DTYPE_LPDDR3) || ((ModuleType & DDR_MTYPE_SPD_MASK) == DDR_MTYPE_MEM_DOWN)) {
+         // If Memory Down is detected, report System Memory Size instead of Maximum Capacity
+        if ((ModuleType & DDR_MTYPE_SPD_MASK) == DDR_MTYPE_MEM_DOWN_LP5) {
           MaximumCapacity += (DimmInfo->DimmCapacity * 1024); // Convert from MB to KB
-          SkipSolderedDimmCapacityCount++;
         }
       }
       if ((BIT0 << DimmIndex) & MrcSlotMap->MrcSlotMap[ControllerIndex][ChannelIndex]) {
@@ -111,21 +110,12 @@ InstallSmbiosType16 (
     }
   }
 
-  switch (mMemInfo->MemoryType) {
-    case MemoryTypeDdr4 :
-      MaxRankCapacity = MAX_RANK_CAPACITY_DDR4;
-      break;
-
-    case MemoryTypeDdr5 :
-      MaxRankCapacity = MAX_RANK_CAPACITY_DDR5;
-      break;
-
-    default:
-      MaxRankCapacity = MAX_RANK_CAPACITY;
-      break;
+  // If Memory Down is not detected, report Maximum Capacity based on Memory configuration
+  if (((ModuleType & DDR_MTYPE_SPD_MASK) != DDR_MTYPE_MEM_DOWN_LP5)) {
+    MaxDimmCountPerChannel = mMemInfo->Controller[0].ChannelInfo[0].DimmCount;
+    MaxRankinDimm = MEM_CFG_MAX_RANKS_PER_DIMM; //it will be always 2
+    MaximumCapacity = (MaxRankCapacity * MaxRankinDimm * MaxDimmCountPerChannel * MaxSockets) * 1024 * 1024;
   }
-
-  MaximumCapacity += (MaxRankCapacity * MEM_CFG_MAX_RANKS_PER_DIMM * (MaxSockets - SkipSolderedDimmCapacityCount));
 
   if (MaximumCapacity < SMBIOS_TYPE16_USE_EXTENDED_MAX_CAPACITY) {
     SmbiosTableType16Data.MaximumCapacity = MaximumCapacity;
@@ -134,6 +124,7 @@ InstallSmbiosType16 (
     SmbiosTableType16Data.ExtendedMaximumCapacity = ((UINT64) MaximumCapacity) * 1024; // Convert from KB to Byte
   }
 
+  // This is Max Socket in system irrespective of DIMM populated or not
   SmbiosTableType16Data.NumberOfMemoryDevices = MaxSockets;
 
   ///

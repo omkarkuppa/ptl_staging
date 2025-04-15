@@ -498,6 +498,7 @@ DumpFspSmbiosMemoryInfoHob (
   UINT8                  ChannelIndex;
   UINT8                  DimmIndex;
   UINT8                  Contollerindex;
+  CHAR8                  *Bar;
   EFI_HOB_GUID_TYPE      *GuidHob;
 
   GuidHob = NULL;
@@ -510,7 +511,6 @@ DumpFspSmbiosMemoryInfoHob (
   if (FspSmbiosMemoryInfo != NULL) {
     DEBUG((DEBUG_INFO, "\nFspSmbiosMemoryInfo\n"));
     DEBUG((DEBUG_INFO, "  |-> Revision : %d\n", FspSmbiosMemoryInfo->Revision));
-    DEBUG((DEBUG_INFO, "  |-> DataWidth : %d\n", FspSmbiosMemoryInfo->DataWidth));
     DEBUG((DEBUG_INFO, "  |-> MemoryType : %d\n", FspSmbiosMemoryInfo->MemoryType));
     DEBUG((DEBUG_INFO, "  |-> MaximumMemoryClockSpeed : %d\n", FspSmbiosMemoryInfo->MaximumMemoryClockSpeed));
     DEBUG((DEBUG_INFO, "  |-> ConfiguredMemoryClockSpeed : %d\n", FspSmbiosMemoryInfo->ConfiguredMemoryClockSpeed));
@@ -532,13 +532,10 @@ DumpFspSmbiosMemoryInfoHob (
               DIMM_INFO  *DimmInfo;
 
               DimmInfo = &FspSmbiosMemoryInfo->Controller[Contollerindex].ChannelInfo[ChannelIndex].DimmInfo[DimmIndex];
-              if (ChannelIndex < (MAX_CH - 1)) {
-                DEBUG((DEBUG_INFO, "        |     |-> DimmId : %d\n", DimmInfo->DimmId));
-                DEBUG((DEBUG_INFO, "        |     |-> SizeInMb : %d\n", DimmInfo->DimmCapacity));
-              } else {
-                DEBUG((DEBUG_INFO, "              |-> DimmId : %d\n", DimmInfo->DimmId));
-                DEBUG((DEBUG_INFO, "              |-> SizeInMb : %d\n", DimmInfo->DimmCapacity));
-              }
+              Bar = (ChannelIndex < (MAX_CH - 1)) ? "|" : " ";
+              DEBUG((DEBUG_INFO, "        %a     |-> DimmId : %u\n", Bar, DimmInfo->DimmId));
+              DEBUG((DEBUG_INFO, "        %a     |-> SizeInMb : %u\n", Bar, DimmInfo->DimmCapacity));
+              DEBUG((DEBUG_INFO, "        %a     |-> DataWidth : %u\n", Bar, DimmInfo->DataWidth));
             }
           }
         }
