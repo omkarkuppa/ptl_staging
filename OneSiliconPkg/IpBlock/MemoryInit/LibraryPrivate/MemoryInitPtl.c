@@ -751,6 +751,7 @@ PeimMemoryInit (
 
   MrcCall->MrcDebugHook (MrcData, MRC_INITIALIZATION_START);
   InitStat = 0;
+
   ForceFullTraining = 0;
 
   DEBUG ((DEBUG_INFO, "Inputs->SerialDebugLevel: 0x%X\n", Inputs->SerialDebugLevel));
