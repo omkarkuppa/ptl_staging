@@ -690,6 +690,7 @@ UpdateUsb2PortEnablePolicy (
   USB_CONNECTOR_HOB_DATA     *UsbConnectorHobDataPtr;
   USBC_CONNECTOR_HOB_DATA    *UsbCConnectorHobDataPtr;
   USB_CONNECTOR_BOARD_CONFIG *UsbConnectorBoardConfig;
+  UINT8                      PchUsb2PortEnable;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                       *FspsUpd;
@@ -737,25 +738,33 @@ UpdateUsb2PortEnablePolicy (
         // Enable USB2 port if the corresponding Type-C connector option is NoThunderbolt, NoPcie or FullFunction
         //
 #if FixedPcdGet8(PcdFspModeSelection) == 0
-          CapPolicy = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[ConnectorIndex];
+        CapPolicy = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[ConnectorIndex];
 #else
-          if (ConnectorIndex == 0) {
-            CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort0;
-          } else if (ConnectorIndex == 1) {
-            CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort1;
-          } else if (ConnectorIndex == 2) {
-            CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort2;
-          } else if (ConnectorIndex == 3) {
-            CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort3;
-          } else {
-            CapPolicy = 0;
-          }
+        if (ConnectorIndex == 0) {
+          CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort0;
+        } else if (ConnectorIndex == 1) {
+          CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort1;
+        } else if (ConnectorIndex == 2) {
+          CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort2;
+        } else if (ConnectorIndex == 3) {
+          CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort3;
+        } else {
+          CapPolicy = 0;
+        }
 #endif
-          UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb20Enable[UsbConnectorBoardConfig[ConnectorIndex].Usb2PortNum],
-            UsbConfig->PortUsb20[UsbConnectorBoardConfig[ConnectorIndex].Usb2PortNum].Enable,
-            IS_TC_PORT_USB_SUPPORTED (CapPolicy)
-          );
-
+        //
+        // Update USB2 port enable policy according to connector capability only when
+        // the port is enabled by default.
+        //
+#if FixedPcdGet8(PcdFspModeSelection) == 0
+        PchUsb2PortEnable = (UINT8) UsbConfig->PortUsb20[UsbConnectorBoardConfig[ConnectorIndex].Usb2PortNum].Enable;
+#else
+        PchUsb2PortEnable = ((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb20Enable[UsbConnectorBoardConfig[ConnectorIndex].Usb2PortNum];
+#endif
+        UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb20Enable[UsbConnectorBoardConfig[ConnectorIndex].Usb2PortNum],
+          UsbConfig->PortUsb20[UsbConnectorBoardConfig[ConnectorIndex].Usb2PortNum].Enable,
+          (PchUsb2PortEnable != 0) ? IS_TC_PORT_USB_SUPPORTED (CapPolicy) : 0
+        );
       }
     }
   }
@@ -785,7 +794,7 @@ UpdateUsbOverCurrentPolicy (
 
   UsbConnectorBoardConfig = NULL;
 
-  Usb2PortCount = GetPchXhciMaxUsb2PortNum ();
+  Usb2PortCount = GetPchUsb2MaxPhysicalPortNum ();
   Usb3PortCount = GetPchXhciMaxUsb3PortNum ();
 
   UsbConnectorHobDataPtr = GetUsbConnectorHobData ();
@@ -960,7 +969,7 @@ UpdateUsbConfig (
   Usb3PortCount = GetPchXhciMaxUsb3PortNum ();
   Usb31SpeedMask = 0;
 
-  UPDATE_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.UsbPdoProgramming, UsbConfig->PdoProgramming, PchSetup->PchUsbPdoProgramming);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.UsbPdoProgramming, UsbConfig->PdoProgramming, PchSetup->PchUsbPdoProgramming);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchUsbOverCurrentEnable, UsbConfig->OverCurrentEnable, PchSetup->PchUsbOverCurrentEnable);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciUaolEnable, UsbConfig->UaolEnable, !!PchSetup->PchXhciUaol);
 
