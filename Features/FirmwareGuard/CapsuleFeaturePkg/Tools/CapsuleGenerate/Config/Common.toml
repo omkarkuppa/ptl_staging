@@ -374,11 +374,11 @@ Note:
 To build the IshPdt Capsule File.
 Support two methods
   (1) Use -fit and -ifwi to decompose the IshPdt firmware.
-  (2) Use -ishpdt to assign the IshPdt firmware.
+  (2) Use -pdt to assign the IshPdt firmware.
     '''
     SubDescription = '''
 Note:
-  (1) -ishpdt have the high priority to override the IshPdt firmware that decompose from IFWI.
+  (1) -pdt have the high priority to override the IshPdt firmware that decompose from IFWI.
   (2) To decompose from IFWI please make sure IshPdt is supported.
     '''
 
