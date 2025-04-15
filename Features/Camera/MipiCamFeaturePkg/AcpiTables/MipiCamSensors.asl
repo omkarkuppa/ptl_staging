@@ -252,6 +252,7 @@ Scope (\_SB) {
       case (2) { Return ("OVTI00AB") } // OG0VA1B
       case (3) { Return ("SONY688A") } // IMX688
       case (4) { Return ("OVTI08F4") } // OV08X40
+      case (5) { Return ("MAX96724") } // OV08X40
       default { Return (GRID (Arg0)) }
     }
   }
