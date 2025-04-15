@@ -3325,14 +3325,14 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidSpiWriteOpcode[0]|0x0                
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidSpiWriteOpcode[1]|0x0                                   # Write Opcode
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcIdleLtr[0]|0xffffffff                                      # Idle LTR
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcIdleLtr[1]|0xffffffff                                      # Idle LTR
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[0]|0x1                                                # THC Mode
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[1]|0x1                                                # THC Mode
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[0]|0x2                                                # THC Mode
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[1]|0x2                                                # THC Mode
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcPerformanceLimitation[0]|0x0                               # Hid Over Spi Performance Limitation
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcPerformanceLimitation[1]|0x0                               # Hid Over Spi Performance Limitation
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcResetPadTrigger[0]|0x0                                     # Reset Pad Trigger
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcResetPadTrigger[1]|0x0                                     # Reset Pad Trigger
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[0]|0x1                                            # DYSNC input
-gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[1]|0x1                                            # DYSNC input
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[0]|0x0                                            # DYSNC input
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[1]|0x0                                            # DYSNC input
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcTimestampTimerMode[0]|0x0                                  # Timestamp timer behavior in D0i2
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcTimestampTimerMode[1]|0x0                                  # Timestamp timer behavior in D0i2
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcWakeOnTouch[0]|0x0                                         # Wake On Touch
