@@ -127,10 +127,10 @@ STATIC_ASSERT (ARRAY_SIZE (mPtlPlx) == ProfilePtlMax, "PPM Profile count mismatc
 
 GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mWclPlx[] = {
   //
-  // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow
-  // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1
-  {  1500,     0,     0,        0,        0,        0,        0,       28},  // ProfileWclU15W10
-  {  1500,  3500,  3500,     3500,     3500,     4400,        0,       28}   // ProfileWclU15W20
+  // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow  IsysL1Tau  IsysLimitL1  IsysLimitL2  VsysMax  PsysPmax
+  // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1            Sec        1/8A         1/8A       mV      1/8W
+  {  1500,     0,     0,        0,        0,        0,        0,         28,            28,         48,         120,     24000,    0},  // ProfileWclU15W10
+  {  2500,  3500,  3500,     3500,     3500,     4400,        0,         28,            28,         48,         120,     24000,    0}   // ProfileWclU15W20
 };
 //
 // Catch the mismatch of number of profile enum IDs and number of profiles.

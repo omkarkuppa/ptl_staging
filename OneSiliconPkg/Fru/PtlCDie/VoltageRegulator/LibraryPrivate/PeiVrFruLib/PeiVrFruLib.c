@@ -213,7 +213,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_PROFILE mWclVr[] = {
 // {{Ia,     IaFvm, IaFvmItrip, Gt,  GtFvm, GtFvmItrip, Sa,  SaFvm, SaFvmItrip, Atom} {IaLimit, IaTimeLimit, IaIrmsLimit, IaIrmsTimeLimit, GtLimit, GtTimeLimit, SaLimit, SaTimeLimit, AtomLimit, AtomTimeLimit, AtomIrmsLimit, AtomIrmsTimeLimit} {IaVoltageLimit, GtVoltageLimit, SaVoltageLimit, AtomVoltageLimit}}
 //
   {{     0,      0,      0,       0,     0,      0,       0,    0,        0,      0}, {    0,      0,             0,          0,             0,         1,          0,       0,            0,         1,              0,                0       },  {1600,               1520,           1520,          1520}},  // ProfileVrWclU15W10
-  {{  40*4,      0,      0,    40*4,     0,      0,    35*4,    0,        0,   28*4}, { 23*8,      1,             0,          0,          20*8,         1,       20*8,       0,         19*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}   // ProfileVrWclU15W20
+  {{  40*4,      0,      0,    40*4,     0,      0,    35*4,    0,        0,   28*4}, { 23*8,      1,             0,          0,          20*8,         0,       20*8,       0,         19*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}   // ProfileVrWclU15W20
 
 };
 //
@@ -232,7 +232,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_LOAD_LINE_PROFILE mWclLoadLine[] = {
 //  IaAc   IaDc   GtAc   GtDc   SaAc   SaDc  AtomAc  AtomDc  [1/100mOhm]
 //
   {   0,     0,      0,    0,     0,     0,     0,      0 }, // ProfileLoadLineWclU15W10
-  { 520,   520,    660,  660,   750,   750,     0,      0 }  // ProfileLoadLineWclU15W20
+  { 520,   520,    660,  660,   750,   750,   750,    750 }  // ProfileLoadLineWclU15W20
 };
 //
 // Catch the mismatch of number of profile enum IDs and number of profiles.
