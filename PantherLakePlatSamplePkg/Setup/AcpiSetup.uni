@@ -111,7 +111,7 @@
 #string STR_D3HOT                               #language en-US "D3Hot"
 #string STR_D3COLD                              #language en-US "D3Cold"
 #string STR_DLRM_STORAGE                        #language en-US "DLRM Setting for Storage"
-#string STR_DLRM_STORAGE_HELP                   #language en-US "Dynamic Link (PCIe) Rate management (DLRM) for Storage to reduce active power usage in D3"
+#string STR_DLRM_STORAGE_HELP                   #language en-US "Dynamic Link (PCIe) Rate management (DLRM) for Storage to reduce active power usage in D0"
 
 #string STR_LOW_POWER_S0_IDLE                   #language en-US "Low Power S0 Idle Capability"
 #string STR_LOW_POWER_S0_IDLE_HELP              #language en-US "This variable determines if we enable ACPI Lower Power S0 Idle Capability (Mutually exclusive with Smart connect). While this is enabled, it also disable 8254 timer for SLP_S0 support."
