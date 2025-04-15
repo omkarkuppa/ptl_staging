@@ -38,7 +38,7 @@ CHAR16 *mBoardIdIndex[] = {
   L"TBD",                                   // 0x0D
   L"TBD",                                   // 0x0E
   L"TBD",                                   // 0x0F
-  L"WCL-N DDR5 SODIMM T3 RVP1",             // 0x10
+  L"TBD",                                   // 0x10
   L"PTL-H LP5 GCS1",                        // 0x11
   L"PTL-H LP5 GCS2",                        // 0x12
   L"TBD",                                   // 0x13
@@ -54,7 +54,7 @@ CHAR16 *mBoardIdIndex[] = {
   L"TBD",                                   // 0x1D
   L"TBD",                                   // 0x1E
   L"TBD",                                   // 0x1F
-  L"TBD",                                   // 0x20
+  L"WCL DDR5 SODIMM T3 RVP1",               // 0x20
   L"WCL LP5x MD T3 RVP2",                   // 0x21
   L"TBD",                                   // 0x22
   L"TBD",                                   // 0x23
