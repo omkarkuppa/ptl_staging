@@ -57,7 +57,6 @@
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_AtomRatioLimitNumCore7, CpuFormCallBackFunction),                                     \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_BootFrequency, CpuFormCallBackFunction),                                              \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_TurboMode, CpuFormCallBackFunction),                                                  \
-  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_PPR_REPAIR_PHYSICAL_ADDRESS, FormMemoryPPRCallBackFunction),                          \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_CpuRatioLimit, CpuFormCallBackFunction),                                              \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_DTBT_SUPPORT,DTbtFormCallBackFunction),                                               \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_DTBT_CONTROLLER0_HOSTROUTER,DTbtFormCallBackFunction),                                \

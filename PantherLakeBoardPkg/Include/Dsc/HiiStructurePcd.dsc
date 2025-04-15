@@ -3598,7 +3598,6 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
 gStructPcdTokenSpaceGuid.PcdSaSetup.TXDQSDCC |0x1                                                  #           BIT2 - RxVref Per-Bit Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - TXDQS DCC Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.PPR|0x0                                                        #           BIT4 - Post Package Repair
 gStructPcdTokenSpaceGuid.PcdSaSetup.LVRAUTOTRIM|0x0                                                #           BIT5 - LVR Auto Trim
 gStructPcdTokenSpaceGuid.PcdSaSetup.OPTIMIZECOMP|0x0                                               #           BIT7 - Comp optimization
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTRETRAIN|0x1                                                 #           BIT8 - Write Dq/Dqs Retraining
@@ -3778,25 +3777,33 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[3]|0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[4]|0                                               # Offset 284 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
 gStructPcdTokenSpaceGuid.PcdSaSetup.tCCD_L_WR|0x0                                                  # Offset 286 User defined Memory Timing tCCD_L_WR value, valid when SpdProfileSelected is CUSTOM_PROFILE
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunWCHMATS8|0x1                                             # Run WCHMATS8 in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunRetention|0x1                                            # Run Data Retention in Post Package Repair flow
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunWCHMATS8|0x0                                             # Run WCHMATS8 in Post Package Repair flow
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunRetention|0x0                                            # Run Data Retention in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarch|0x0                                               # Run XMarch in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarchG|0x1                                              # Run XMarchG in Post Package Repair flow
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarchG|0x0                                              # Run XMarchG in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchShort|0x0                                          # Run YMarchShort in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchLong|0x0                                           # Run YMarchLong in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairType|0x0                                              # Offset 288 PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunOnce|0x1                                                 # Offset 289 When enabled, PPR will run only once and then is disabled at next training cycle
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunAtFastboot|0x0                                           # Offset 290 When enabled, PPR will run during fastboot
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprErrorInjection|0x0                                          # Offset 291 When enabled, PPR will inject bad rows during testing
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairPhysicalAddress|0x0                                   # Offset 292 PPR repair physical address
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRow|0x0                                               # Offset 300 PPR repair row
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairController|0x0                                        # Offset 304 PPR repair controller
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairChannel|0x0                                           # Offset 305 PPR repair channel
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairDimm|0x0                                              # Offset 306 PPR repair Dimm
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRank|0x0                                              # Offset 307 PPR repair rank
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBankGroup|0x0                                         # Offset 308 PPR repair bank group
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBank|0x0                                              # Offset 309 PPR repair bank
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                                             # Offset 310 When enabled, PPR will issue force repair to the same row many times (90)
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunMmrw|0x0                                                 # Run Mmrw in Post Package Repair flow
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairType|0x0                                              # PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunOnce|0x1                                                 # When enabled, PPR will run only once and then is disabled at next training cycle
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprErrorInjection|0x0                                          # When enabled, PPR will inject bad rows during testing
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestEnable[0]|0x0                                        # Enable/Disable DRAM Address for PPR Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestEnable[1]|0x0                                        # Enable/Disable DRAM Address for PPR Request 1, only valid if Request 0 is ENABLED
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestController[0]|0x0                                    # PPR request controller - Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestController[1]|0x0                                    # PPR request controller - Request 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestChannel[0]|0x0                                       # PPR request channel - Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestChannel[1]|0x0                                       # PPR request channel - Request 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRank[0]|0x0                                          # PPR request rank - Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRank[1]|0x0                                          # PPR request rank - Request 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBankGroup[0]|0x0                                     # PPR request bank group - Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBankGroup[1]|0x0                                     # PPR request bank group - Request 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBank[0]|0x0                                          # PPR request bank - Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestBank[1]|0x0                                          # PPR request bank - Request 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRow[0]|0x0                                           # PPR request row - Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestRow[1]|0x0                                           # PPR request row - Request 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestDevice[0]|0x0                                        # PPR request device - Request 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestDevice[1]|0x0                                        # PPR request device - Request 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                                             # When enabled, PPR will issue force repair to the same row many times (90)
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 316 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 318 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)

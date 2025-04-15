@@ -321,13 +321,25 @@ InitSaStrings (
 
   mSaSetup.XmpProfileEnable = MemInfoData->XmpProfileEnable;
 
-  if (mSaSetup.PPR != 0) {
-    if ((mSaSetup.PprRunOnce != 0) && (mSaSetup.PprRunAtFastboot == 0)) {
-      mSaSetup.PPR = 0;
+  if (mSaSetup.PprRunOnce != 0) {
+    for (Index = 0; Index < MRC_PPR_REQUEST_MAX; Index++) {
+      mSaSetup.PprRequestEnable[Index]     = 0;
+      mSaSetup.PprRequestController[Index] = 0;
+      mSaSetup.PprRequestChannel[Index]    = 0;
+      mSaSetup.PprRequestRank[Index]       = 0;
+      mSaSetup.PprRequestBankGroup[Index]  = 0;
+      mSaSetup.PprRequestBank[Index]       = 0;
+      mSaSetup.PprRequestRow[Index]        = 0;
+      mSaSetup.PprRequestDevice[Index]     = 0;
     }
-    if (mSaSetup.PprRepairPhysicalAddress != 0) {
-      mSaSetup.PprRepairPhysicalAddress = 0;
-    }
+    mSaSetup.PprRepairType     = 0;
+    mSaSetup.PprRunWCHMATS8    = 0;
+    mSaSetup.PprRunRetention   = 0;
+    mSaSetup.PprRunXMarch      = 0;
+    mSaSetup.PprRunXMarchG     = 0;
+    mSaSetup.PprRunYMarchShort = 0;
+    mSaSetup.PprRunYMarchLong  = 0;
+    mSaSetup.PprRunMmrw        = 0;
   }
 
   Mc0Enabled = 0;

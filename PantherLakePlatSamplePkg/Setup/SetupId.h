@@ -346,7 +346,6 @@
 #define MEM_THERMMGT_FORM_ID                      4328
 #define MEMORY_CONFIG_PPR_ADV_FORM_ID             4341
 #define MEMORY_CONFIG_PPR_FORM_ID                 4337
-#define KEY_PPR_REPAIR_PHYSICAL_ADDRESS           4338
 
 #define MEM_OFFSET_KNOBS_FORM_ID                  5037
 #define CPU_MEMORY_CAP_FORM_ID                    4325

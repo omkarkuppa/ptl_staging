@@ -24,6 +24,7 @@
 
 #include <ConfigBlock.h>
 #include "Ptl/CMrcExtInputs.h"
+#include "Ptl/CMrcExtTypes.h"
 
 
 #pragma pack(push, 1)
@@ -31,7 +32,7 @@
 // MEMORY_CONFIGURATION_REVISION:
 // Keep in sync with MRC_EXT_INPUTS_REVISION in MrcExtInputs.h
 #define MEMORY_CONFIGURATION_REVISION 1
-#define MEMORY_CONFIG_NO_CRC_REVISION 1
+#define MEMORY_CONFIG_NO_CRC_REVISION 2
 
 ///
 /// Memory SubSystem Definitions
@@ -234,8 +235,17 @@ typedef struct {
     6 - Controller 1 Channel 1 Dimm 0
     7 - Controller 1 Channel 1 Dimm 1
   **/
-  UINT8 PhyClockToCkdDimm[MEM_CFG_MAX_DDR5_SOCKETS];
-  UINT8 RsvdBytes243[2];
+  UINT8                 PhyClockToCkdDimm[MEM_CFG_MAX_DDR5_SOCKETS];
+
+  UINT8                 RsvdBytes106[2];                  ///< Offset 106 Reserved bytes for struct natural alignment
+  MRC_PPR_ENTRY_INFO    PprEntryInfo[PPR_REQUEST_MAX];    ///< Offset 108 PPR Repair Info
+  MRC_PPR_ENTRY_ADDRESS PprEntryAddress[PPR_REQUEST_MAX]; ///< Offset 116 PPR Repair Memory Address
+  MRC_PPR_TEST_TYPE     PprTestType;       ///< Offset 124 PPR Test Type, enable or disable memory tests in the PPR flow
+  MRC_PPR_REPAIR_TYPE   PprRepairType;     ///< Offset 132 PPR Repair Type: 0 = Do not repair, 1 = Soft PPR, 2 = Hard PPR
+  UINT8                 PprRunOnce;        ///< Offset 133 PPR Run Once, used to un-set PPR Policies after PPR execution is completed
+  UINT8                 PprErrorInjection; ///< Offset 134 PPR Error Injection
+  UINT8                 PprForceRepair;    ///< Offset 135 PPR Force Repair Some Rows
+  UINT8                 Reserved[1];       ///< Offset 136 Reserved bytes for struct alignment
 } MEMORY_CONFIG_NO_CRC;
 #pragma pack(pop)
 

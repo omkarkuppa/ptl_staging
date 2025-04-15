@@ -1898,11 +1898,9 @@
       default     = 0, // Auto
     endnumeric;
 
-    grayoutif ideqval SA_SETUP.PPR == 0;
-      goto MEMORY_CONFIG_PPR_FORM_ID,
-        prompt  = STRING_TOKEN(STR_MEMORY_PPR_CONFIGURATION),
-        help    = STRING_TOKEN(STR_MEMORY_PPR_CONFIGURATION_HELP);
-    endif;
+    goto MEMORY_CONFIG_PPR_FORM_ID,
+      prompt  = STRING_TOKEN(STR_MEMORY_PPR_CONFIGURATION),
+      help    = STRING_TOKEN(STR_MEMORY_PPR_CONFIGURATION_HELP);
 
     text
         help   = STRING_TOKEN(STR_PPR_STAT_HELP),
@@ -1992,12 +1990,6 @@ form formid = AUTO_ID(MEMORY_CONFIG_PPR_FORM_ID),
      option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
      option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
    endoneof;
-   oneof varid  = SA_SETUP.PprRunAtFastboot,
-     prompt   = STRING_TOKEN (STR_MEMORY_PPR_RUN_AT_FASTBOOT_PROMPT),
-     help     = STRING_TOKEN (STR_MEMORY_PPR_RUN_AT_FASTBOOT_HELP),
-     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
-     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-   endoneof;
    oneof varid  = SA_SETUP.PprRepairType,
      prompt   = STRING_TOKEN (STR_MEMORY_PPR_REPAIR_TYPE_PROMPT),
      help     = STRING_TOKEN (STR_MEMORY_PPR_REPAIR_TYPE_HELP),
@@ -2008,14 +2000,14 @@ form formid = AUTO_ID(MEMORY_CONFIG_PPR_FORM_ID),
    oneof varid  = SA_SETUP.PprRunWCHMATS8,
      prompt   = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_WCHMATS8_PROMPT),
      help     = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_WCHMATS8_HELP),
-     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
    endoneof;
    oneof varid  = SA_SETUP.PprRunRetention,
      prompt   = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_RETENTION_PROMPT),
      help     = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_RETENTION_HELP),
-     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
    endoneof;
    oneof varid  = SA_SETUP.PprRunXMarch,
      prompt   = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_XMARCH_PROMPT),
@@ -2026,8 +2018,8 @@ form formid = AUTO_ID(MEMORY_CONFIG_PPR_FORM_ID),
    oneof varid  = SA_SETUP.PprRunXMarchG,
      prompt   = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_XMARCHG_PROMPT),
      help     = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_XMARCHG_HELP),
-     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
    endoneof;
    oneof varid  = SA_SETUP.PprRunYMarchShort,
      prompt   = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_YMARCHSHORT_PROMPT),
@@ -2041,82 +2033,158 @@ form formid = AUTO_ID(MEMORY_CONFIG_PPR_FORM_ID),
      option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
      option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
    endoneof;
-   numeric varid    = SA_SETUP.PprRepairPhysicalAddress,
-     questionid  = AUTO_ID(KEY_PPR_REPAIR_PHYSICAL_ADDRESS),
-     prompt   = STRING_TOKEN(STR_MEMORY_PPR_PHYSICAL_ADDRESS_PROMPT),
-     help     = STRING_TOKEN(STR_MEMORY_PPR_PHYSICAL_ADDRESS_HELP),
-     flags   = RESET_REQUIRED | DISPLAY_UINT_HEX | INTERACTIVE,
-     minimum = 0,
-     maximum = 0xFFFFFFFFFFFFFFFF,
-     step    = 1,
-     default = 0,
-   endnumeric;
-   // Users don't input below fields as they are converted from PprRepairPhysicalAddress
-   suppressif TRUE;
-     numeric varid    = SA_SETUP.PprRepairController,
-       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_PROMPT),
-       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_HELP),
+   oneof varid  = SA_SETUP.PprRunMmrw,
+     prompt   = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_MMRW_PROMPT),
+     help     = STRING_TOKEN (STR_MEMORY_PPR_RUN_TEST_MMRW_HELP),
+     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+   endoneof;
+   oneof varid  = SA_SETUP.PprRequestEnable[0],
+     prompt   = STRING_TOKEN (STR_MEMORY_PPR_REQUEST0_ENABLE_PROMPT),
+     help     = STRING_TOKEN (STR_MEMORY_PPR_REQUEST0_ENABLE_HELP),
+     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+   endoneof;
+   grayoutif ideqval SA_SETUP.PprRequestEnable[0] == 0x0; // PPR Request1 should only be enabled if PPR Request0 was already enabled
+     oneof varid  = SA_SETUP.PprRequestEnable[1],
+       prompt   = STRING_TOKEN (STR_MEMORY_PPR_REQUEST1_ENABLE_PROMPT),
+       help     = STRING_TOKEN (STR_MEMORY_PPR_REQUEST1_ENABLE_HELP),
+       option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+     endoneof;
+   endif; // Grayout if PprRequestEnable[0] == 0
+
+   grayoutif ideqval SA_SETUP.PprRequestEnable[0] == 0x0;
+     numeric varid    = SA_SETUP.PprRequestController[0],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_REQUEST0_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_REQUEST0_HELP),
        flags   = RESET_REQUIRED,
        minimum = 0,
-       maximum = 0xFF,
+       maximum = 1,
        step    = 1,
        default = 0,
      endnumeric;
-     numeric varid    = SA_SETUP.PprRepairChannel,
-       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_PROMPT),
-       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_HELP),
+     numeric varid    = SA_SETUP.PprRequestChannel[0],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_REQUEST0_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_REQUEST0_HELP),
        flags   = RESET_REQUIRED,
        minimum = 0,
-       maximum = 0xFF,
+       maximum = 3,
        step    = 1,
        default = 0,
      endnumeric;
-     numeric varid    = SA_SETUP.PprRepairDimm,
-       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_DIMM_PROMPT),
-       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_DIMM_HELP),
+     numeric varid    = SA_SETUP.PprRequestRank[0],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_RANK_REQUEST0_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_RANK_REQUEST0_HELP),
        flags   = RESET_REQUIRED,
        minimum = 0,
-       maximum = 0xFF,
+       maximum = 3,
        step    = 1,
        default = 0,
      endnumeric;
-     numeric varid    = SA_SETUP.PprRepairRank,
-       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_RANK_PROMPT),
-       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_RANK_HELP),
+     numeric varid    = SA_SETUP.PprRequestBankGroup[0],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_REQUEST0_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_REQUEST0_HELP),
        flags   = RESET_REQUIRED,
        minimum = 0,
-       maximum = 0xFF,
+       maximum = 7,
        step    = 1,
        default = 0,
      endnumeric;
-     numeric varid    = SA_SETUP.PprRepairBankGroup,
-       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_PROMPT),
-       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_HELP),
+     numeric varid    = SA_SETUP.PprRequestBank[0],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANK_REQUEST0_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANK_REQUEST0_HELP),
        flags   = RESET_REQUIRED,
        minimum = 0,
-       maximum = 0xFF,
-       step    = 1,
-       default = 0,
-       endnumeric;
-     numeric varid    = SA_SETUP.PprRepairBank,
-       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANK_PROMPT),
-       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANK_HELP),
-       flags   = RESET_REQUIRED,
-       minimum = 0,
-       maximum = 0xFF,
+       maximum = 3,
        step    = 1,
        default = 0,
      endnumeric;
-     numeric varid    = SA_SETUP.PprRepairRow,
-       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_ROW_PROMPT),
-       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_ROW_HELP),
+     numeric varid    = SA_SETUP.PprRequestRow[0],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_ROW_REQUEST0_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_ROW_REQUEST0_HELP),
        flags   = RESET_REQUIRED,
        minimum = 0,
-       maximum = 0xFFFFFFFF,
+       maximum = 0x3FFFF,
        step    = 1,
        default = 0,
      endnumeric;
-   endif;
+     oneof varid  = SA_SETUP.PprRequestDevice[0],
+       prompt   = STRING_TOKEN (STR_MEMORY_PPR_MEM_ADDRESS_DEVICE_REQUEST0_PROMPT),
+       help     = STRING_TOKEN (STR_MEMORY_PPR_MEM_ADDRESS_DEVICE_REQUEST0_HELP),
+       option text = STRING_TOKEN (STR_0_PPR_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_1_PPR_STRING), value = 1, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_2_PPR_STRING), value = 2, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_3_PPR_STRING), value = 3, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_ALL_PPR_STRING), value = 7, flags = RESET_REQUIRED;
+     endoneof;
+   endif; // Grayout if PprRequestEnable[0] == 0
+
+   grayoutif ((ideqval SA_SETUP.PprRequestEnable[0] == 0x0) OR (ideqval SA_SETUP.PprRequestEnable[1] == 0x0)); // Both PPR requests need to be enabled to enable Request1 address knobs
+     numeric varid    = SA_SETUP.PprRequestController[1],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_REQUEST1_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_REQUEST1_HELP),
+       flags   = RESET_REQUIRED,
+       minimum = 0,
+       maximum = 1,
+       step    = 1,
+       default = 0,
+     endnumeric;
+     numeric varid    = SA_SETUP.PprRequestChannel[1],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_REQUEST1_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_REQUEST1_HELP),
+       flags   = RESET_REQUIRED,
+       minimum = 0,
+       maximum = 3,
+       step    = 1,
+       default = 0,
+     endnumeric;
+     numeric varid    = SA_SETUP.PprRequestRank[1],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_RANK_REQUEST1_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_RANK_REQUEST1_HELP),
+       flags   = RESET_REQUIRED,
+       minimum = 0,
+       maximum = 3,
+       step    = 1,
+       default = 0,
+     endnumeric;
+     numeric varid    = SA_SETUP.PprRequestBankGroup[1],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_REQUEST1_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_REQUEST1_HELP),
+       flags   = RESET_REQUIRED,
+       minimum = 0,
+       maximum = 7,
+       step    = 1,
+       default = 0,
+     endnumeric;
+     numeric varid    = SA_SETUP.PprRequestBank[1],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANK_REQUEST1_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_BANK_REQUEST1_HELP),
+       flags   = RESET_REQUIRED,
+       minimum = 0,
+       maximum = 3,
+       step    = 1,
+       default = 0,
+     endnumeric;
+     numeric varid    = SA_SETUP.PprRequestRow[1],
+       prompt  = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_ROW_REQUEST1_PROMPT),
+       help    = STRING_TOKEN(STR_MEMORY_PPR_MEM_ADDRESS_ROW_REQUEST1_HELP),
+       flags   = RESET_REQUIRED,
+       minimum = 0,
+       maximum = 0x3FFFF,
+       step    = 1,
+       default = 0,
+     endnumeric;
+     oneof varid  = SA_SETUP.PprRequestDevice[1],
+       prompt   = STRING_TOKEN (STR_MEMORY_PPR_MEM_ADDRESS_DEVICE_REQUEST1_PROMPT),
+       help     = STRING_TOKEN (STR_MEMORY_PPR_MEM_ADDRESS_DEVICE_REQUEST1_HELP),
+       option text = STRING_TOKEN (STR_0_PPR_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_1_PPR_STRING), value = 1, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_2_PPR_STRING), value = 2, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_3_PPR_STRING), value = 3, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_ALL_PPR_STRING), value = 7, flags = RESET_REQUIRED;
+     endoneof;
+   endif; // Grayout if PprRequestEnable[0] == 0 OR PprRequestEnable[1] == 0
    goto MEMORY_CONFIG_PPR_ADV_FORM_ID,
      prompt  = STRING_TOKEN(STR_MEMORY_PPR_ADV_CONFIGURATION),
      help    = STRING_TOKEN(STR_MEMORY_PPR_ADV_CONFIGURATION_HELP);
@@ -2127,12 +2195,6 @@ form formid = AUTO_ID(MEMORY_CONFIG_PPR_ADV_FORM_ID),
    oneof varid  = SA_SETUP.PprErrorInjection,
      prompt   = STRING_TOKEN (STR_MEMORY_PPR_ERROR_INJECTION_PROMPT),
      help     = STRING_TOKEN (STR_MEMORY_PPR_ERROR_INJECTION_HELP),
-     option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
-     option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-   endoneof;
-   oneof varid  = SA_SETUP.PprForceRepair,
-     prompt   = STRING_TOKEN (STR_MEMORY_PPR_FORCE_REPAIR_PROMPT),
-     help     = STRING_TOKEN (STR_MEMORY_PPR_FORCE_REPAIR_HELP),
      option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
      option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
    endoneof;
@@ -4224,13 +4286,6 @@ endform;
         help        = STRING_TOKEN(STR_DIMMNTODT_TRNG_NAME),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
-      endoneof;
-
-      oneof varid   = SA_SETUP.PPR,
-        prompt      = STRING_TOKEN(STR_PPR_ENABLE_PROMPT),
-        help        = STRING_TOKEN(STR_PPR_ENABLE_HELP),
-        option text = STRING_TOKEN(STR_DISABLED_STRING),      value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_PPR_ENABLE_STRING),    value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.LVRAUTOTRIM,
