@@ -457,14 +457,20 @@ IsWarmReset (
 }
 
 /**
-  Perform Trust Domain Execution(Tdx) initialization.
+  Perform Trust Domain Execution (TDX) initialization.
 
-  @param[in] TdxPolicy           - TDx policy enable
-  @param[in] MrcData             - MRC Parameter Structure
-  @param[in] TdxActmModuleAddr   - Tdx Actm Module address
-  @param[in] TdxActmModuleSize   - Tdx Actm Module Size
+  This function initializes the TDX environment by performing various checks, 
+  setting up necessary data structures, and launching the ACTM module if required. 
+  It ensures that all preconditions for TDX are met and updates the TDX HOB with 
+  relevant information.
 
-  @retval VOID              - No value to return
+  @param[in] TdxPolicy           Pointer to the TDX policy structure.
+  @param[in] MrcData             Pointer to the MRC parameter structure.
+  @param[in] TdxActmModuleAddr   Address of the TDX ACTM module.
+  @param[in] TdxActmModuleSize   Size of the TDX ACTM module.
+  @param[in] TdxSeamldrSeSvn     SE SVN value for the SEAMLDR.
+
+  @retval VOID                   No value is returned.
 **/
 VOID
 TdxInit (
@@ -492,13 +498,15 @@ TdxInit (
 
   DEBUG ((DEBUG_INFO, "Trust Domain Extension (TDX) Initialization\n"));
 
+  // Validate the TDX policy pointer
   if (TdxPolicy == NULL) {
     DEBUG ((DEBUG_ERROR, "TdxPolicy is null, exiting\n"));
     return;
   } else {
     LocalTdxPolicy = (TDX_POLICY *) TdxPolicy;
   }
-  // Check for Tdx Dependancy
+
+  // Check for TDX dependencies (MKTME, VT-d, VMX, etc.)
   TdxPreconditionsMet = CheckTdxDependancy (LocalTdxPolicy->MktmeEnable,
                                             LocalTdxPolicy->VtdEnable,
                                             LocalTdxPolicy->VmxEnable
@@ -510,21 +518,7 @@ TdxInit (
     return;
   }
 
-  Status = TdxHobInit (
-             &TdxDataHobPtr
-             );
-
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[TDX] Error creating TDX HOB, Status = %r\n", Status));
-    return;
-  }
-  //
-  // Update HOB values
-  //
-  TdxDataHobPtr->TdxEnabled = LocalTdxPolicy->TdxEnable;
-  DEBUG ((DEBUG_INFO, " TDX_DATA_HOB: TdxEnabled: 0x%X\n", TdxDataHobPtr->TdxEnabled));
-
-  // Check for Tdx enable Policy
+  // Verifies if TDX is enabled in the policy and skips initialization if disabled.
   if (LocalTdxPolicy->TdxEnable == FALSE)
   {
     DEBUG ((DEBUG_INFO, "TDX Enable Policy is disabled.\n"));
@@ -532,13 +526,24 @@ TdxInit (
     return;
   }
 
-  // Update SeamrrBaseAddress and SeamrrSize in HOB
+  // Initialize the TDX HOB
+  Status = TdxHobInit (
+             &TdxDataHobPtr
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[TDX] Error creating TDX HOB, Status = %r\n", Status));
+    return;
+  }
+
+  // Update HOB values
+  TdxDataHobPtr->TdxEnabled = LocalTdxPolicy->TdxEnable;
+  DEBUG ((DEBUG_INFO, " TDX_DATA_HOB: TdxEnabled: 0x%X\n", TdxDataHobPtr->TdxEnabled));
+
+  // Update SeamRR base address and size in the HOB
   TdxDataHobPtr->SeamRrBaseAddress = MemoryMapData->SeamrrBase;
   TdxDataHobPtr->SeamrrSize = CalculateSeamrrSize (Outputs);
 
-  //
-  // Register for MemoryDiscover notification.
-  //
+  // Register for memory discovery notification.
   DEBUG ((DEBUG_INFO, "[TDX] Notify the CMR event from Tdx init\n"));
   Status = PeiServicesNotifyPpi (&mPpiPeiTdxMemoryNotifyList);
   if (EFI_ERROR (Status)) {
@@ -546,9 +551,7 @@ TdxInit (
     return;
   }
 
-  //
-  // Building Dimm manifest
-  //
+  // Builds the DIMM manifest for DDR5 memory type and skips for LPDDR5.
   if (Outputs->DdrType == MRC_DDR_TYPE_DDR5) {
     DEBUG ((DEBUG_INFO, "[TDX] Memory Type is DDR5 %a %d\n", __FUNCTION__, __LINE__));
     DEBUG ((DEBUG_INFO, "[TDX] Building Dimm Manifest.....\n"));
@@ -563,16 +566,17 @@ TdxInit (
     return;
   }
 
+  // Skip ACTM launch if a warm reset is detected
   if (WarmReset) {
     DEBUG ((DEBUG_INFO, "[TDX] Warm reset detected\n"));
     DEBUG ((DEBUG_INFO, "[TDX] Skip ACTM launch\n"));
     return;
   }
 
-  //program Dimm manifest to TEE_INPUT MSR
+  // Program DIMM manifest to TEE_INPUT MSR
   AsmWriteMsr64 (MSR_TEE_INPUT_PARAM, (UINT64)&TdxDataHobPtr->ActmDimmManifest);
 
-  // Launching the ACTM
+  // Launch the ACTM module
   DEBUG ((DEBUG_INFO, "[TDX] Allocate Temp ram for ACTM module\n"));
 
   Status = PeiServicesAllocatePages (
@@ -586,20 +590,22 @@ TdxInit (
     DEBUG ((DEBUG_INFO, "Page Allocation Success, Address = 0x%X\n", TempRamPtr));
     ActmRelocPointer = (UINT64 *)((UINTN)TempRamPtr);
 
+    // Copy the ACTM module to the allocated memory
     CopyMem (
         ActmRelocPointer,
         (UINT64 *)((UINTN)TdxActmModuleAddr),
         TdxActmModuleSize
         );
 
-    // Launching the ACTM, need to subtract BIOS image header size to obtain true ACTM module size
+    // Launch the ACTM
     DEBUG((DEBUG_INFO, "[TDX] Launching ACTM\n"));
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TDX_ACM_ENTRY); //PostCode (0xD903)
-    ActmStatus = AsmLaunchActm (TempRamPtr, TdxActmModuleSize - BIOS_IMAGE_HEADER_SIZE);
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TDX_ACM_EXIT); //PostCode (0xD904)
+    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TDX_ACM_ENTRY); // PostCode (0xD903)
+    ActmStatus = AsmLaunchActm (TempRamPtr, TdxActmModuleSize);
+    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TDX_ACM_EXIT); // PostCode (0xD904)
     DEBUG((DEBUG_INFO, "[TDX] ACTM Return Status = 0x%x\n", ActmStatus));
   }
 
+  // Free the allocated memory for the ACTM module
   Status = PeiServicesFreePages (TempRamPtr, EFI_SIZE_TO_PAGES (TdxActmModuleSize));
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "[TDX] PeiServicesFreePages failed (%r)\n", Status));

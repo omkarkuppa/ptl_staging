@@ -391,11 +391,11 @@ BiosGuardHobInit (
 }
 
 /**
-  Get the ACTM ACM Module pointer.
+  This function locates the TDX ACTM module within the firmware volume and retrieves its address and size.
 
   @param[in, out] ModulePtr  - Input is a NULL pointer,
-                               and output points ACTM module address if found.
-  @param[out]     ModuleSize - UINT32 Input Output the ACTM module size
+                               and output points to the ACTM module address if found.
+  @param[out]     ModuleSize - Output the ACTM module size.
 
   @retval EFI_SUCCESS        - ACTM ACM Module found.
   @retval EFI_NOT_FOUND      - ACTM ACM Module size and/or Address equal to 0.
@@ -411,6 +411,7 @@ UpdateTdxActmModulePtr (
   EFI_FIRMWARE_VOLUME_HEADER    *FvHeader;
   EFI_PEI_FILE_HANDLE           *FfsHeader;
   EFI_PEI_FILE_HANDLE           *FfsRawSectionHeader;
+  EFI_PEI_FILE_HANDLE           *FfsRawSectionData;
   EFI_GUID                      *TdxActmModuleGuidPtr;
 
   DEBUG ((DEBUG_INFO, "Update Tdx Actm Module Pointer and Size\n"));
@@ -418,10 +419,10 @@ UpdateTdxActmModulePtr (
   Status                 = EFI_SUCCESS;
   TdxActmModuleGuidPtr = &gTdxModuleBinGuid;
 
-  ///
-  /// Locate Firmware Volume header
-  ///
+  // Locate Firmware Volume header
   FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) FixedPcdGet32 (PcdFlashFvFirmwareBinariesBase);
+
+  // Find the TDX ACTM module file by its GUID
   Status = PeiServicesFfsFindFileByName (TdxActmModuleGuidPtr, FvHeader, (VOID **)&FfsHeader);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Error returned by PeiServicesFfsFindFileByName while retrieving TDX ACTM FFS File Handle\n"));
@@ -429,10 +430,20 @@ UpdateTdxActmModulePtr (
     return Status;
   }
 
-  *ModulePtr = (EFI_PHYSICAL_ADDRESS)((UINT8 *)FfsHeader + sizeof (EFI_FFS_FILE_HEADER));
-  FfsRawSectionHeader = (VOID *)(((UINT8 *) FfsHeader + sizeof (EFI_FFS_FILE_HEADER)) - sizeof (EFI_COMMON_SECTION_HEADER));
-  *ModuleSize = SECTION_SIZE(FfsRawSectionHeader) - sizeof (EFI_COMMON_SECTION_HEADER);
+  // Find the raw section data within the TDX ACTM module file
+  Status = PeiServicesFfsFindSectionData (EFI_SECTION_RAW, FfsHeader, (VOID **)&FfsRawSectionData);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Error returned by PeiServicesFfsFindSectionData while retrieving TDX ACTM Address\n"));
+    ASSERT_EFI_ERROR (Status);
+    return Status;
+  }
 
+  // Set the module pointer to the address of the raw section data
+  *ModulePtr = (EFI_PHYSICAL_ADDRESS)((UINT8 *)FfsRawSectionData);
+
+  // Calculate the size of the TDX ACTM module
+  FfsRawSectionHeader = (VOID *)((UINT8 *)FfsRawSectionData - sizeof (EFI_COMMON_SECTION_HEADER));
+  *ModuleSize = SECTION_SIZE (FfsRawSectionHeader) - sizeof (EFI_COMMON_SECTION_HEADER);
 
   DEBUG ((DEBUG_ERROR, "Tdx Actm Module Location: 0x%X\n", *ModulePtr ));
   DEBUG(( DEBUG_ERROR, "Tdx Actm Module size: 0x%X\n", *ModuleSize));
