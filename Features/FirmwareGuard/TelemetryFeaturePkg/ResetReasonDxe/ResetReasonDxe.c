@@ -128,13 +128,14 @@ PublishResetReasonPhat (
 BOOLEAN
 IsColdBoot (
   IN      UINT32    GenPmConA,
-  IN OUT  UINT8     Reason,
-  IN OUT  UINT8     Source
+  IN OUT EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE  *ResetHealthTable
   )
 {
   if ((GenPmConA & B_ACPI_IO_PM1_STS_WAK) == B_ACPI_IO_PM1_STS_WAK) {
-    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_BOOT;
-    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
+    ResetHealthTable->Reason  |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_BOOT;
+    DEBUG ((DEBUG_ERROR, "ResetHealthTable->Reason  : 0x%X\n", ResetHealthTable->Reason));
+    ResetHealthTable->Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
+    DEBUG ((DEBUG_ERROR, "ResetHealthTable->Source  : 0x%X\n",  ResetHealthTable->Source));
     return TRUE;
   }
   return FALSE;
@@ -441,7 +442,8 @@ GetSourceAndReason (
   ///
   /// Check for Cold Boot
   ///
-  if (IsColdBoot (GenPmConA, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+  if (IsColdBoot (GenPmConA, ResetHealthTable)) {
+    DEBUG ((DEBUG_ERROR, "GenPmConA -Check for ColdBoot  \n"));
     return EFI_SUCCESS;
   }
 
@@ -449,6 +451,7 @@ GetSourceAndReason (
   /// Cold Reset Check
   ///
   if (IsColdReset (HprCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Cold Reset Check -HprCause0 : 0x%X\n", HprCause0));
     return EFI_SUCCESS;
   }
 
@@ -456,6 +459,7 @@ GetSourceAndReason (
   /// Check for Warm Reset
   ///
   if (IsWarmReset (HprCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Check for Warm Reset -HprCause0 : 0x%X\n", HprCause0));
     return EFI_SUCCESS;
   }
 
@@ -463,6 +467,7 @@ GetSourceAndReason (
   /// Check if Update was the reason
   ///
   if (IsUpdate(ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Check if Update was the reason \n"));
     return EFI_SUCCESS;
   }
 
@@ -470,6 +475,7 @@ GetSourceAndReason (
   /// Check for Unexpected Reset Reason
   ///
   if (IsUnexpectedReset (GblCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Check for Unexpected Reset Reason-GblCause0  : 0x%X\n", GblCause0));
     return EFI_SUCCESS;
   }
 
@@ -477,6 +483,7 @@ GetSourceAndReason (
   /// Check for Fault Reset Reason
   ///
   if (IsFaultReset (GblCause0, GblCause1, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Check for Fault Reset Reason- GblCause0  : 0x%X\n", GblCause0));
     return EFI_SUCCESS;
   }
 
@@ -484,6 +491,7 @@ GetSourceAndReason (
   /// Check for Timeout Reset Reason
   ///
   if (IsTimeoutReset (GblCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Check for Timeout Reset Reason- GblCause0  : 0x%X\n", GblCause0));
     return EFI_SUCCESS;
   }
 
@@ -491,6 +499,7 @@ GetSourceAndReason (
   /// Check for Thermal Reset Reason
   ///
   if (IsThermalReset (GblCause0, GblCause1, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Check for Thermal Reset Reason- GblCause0  : 0x%X\n", GblCause0));
     return EFI_SUCCESS;
   }
 
@@ -498,6 +507,7 @@ GetSourceAndReason (
   /// Power Loss Reset Reason
   ///
   if (IsPowerLossReset (GenPmConA, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Power Loss Reset Reason- GenPmConA  : 0x%X\n", GenPmConA));
     return EFI_SUCCESS;
   }
 
@@ -505,6 +515,7 @@ GetSourceAndReason (
   /// Power Button Pressed Reset Reason
   ///
   if (IsPowerButtonReset (GblCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
+    DEBUG ((DEBUG_ERROR, "Power Button Pressed Reset Reason- GblCause0  : 0x%X\n", GblCause0));
     return EFI_SUCCESS;
   }
 
@@ -555,7 +566,7 @@ ResetReasonMain (
   Status = PublishResetReasonPhat (
              ResetReasonHealthRecord,
              ResetReasonHealthRecordSize,
-             EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_UNKNOWN
+             EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_NO_ERRORS_FOUND
              );
 
   FreePool (ResetReasonHealthRecord);
