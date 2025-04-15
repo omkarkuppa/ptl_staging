@@ -61,7 +61,6 @@
 #include <Library/PeiDTbtInitLib.h>
 #endif
 
-
 EFI_STATUS
 EFIAPI
 GpioV2LockCallback (
@@ -159,6 +158,28 @@ DTbtInitEndOfPei (
 }
 #endif
 
+#if FixedPcdGetBool (PcdTelemetryFeatureEnable) == 1
+#include <Library/PmcLib.h>
+#include <Register/PmcRegs.h>
+
+/**
+  Clear PMC GBLRST_CAUSE register to avoid confusion when determining reset reason
+  in the following boots.
+
+  @retval None.
+
+**/
+VOID
+ClearPmcGblrstCause (
+  VOID
+  )
+{
+  DEBUG ((DEBUG_INFO, "Clear GBLRST_CAUSE\n"));
+  MmioWrite32 ((PmcGetPwrmBase () + R_PMC_PWRM_GBLRST_CAUSE0), 0xFFFFFFFF);
+  MmioWrite32 ((PmcGetPwrmBase () + R_PMC_PWRM_GBLRST_CAUSE1), 0xFFFFFFFF);
+}
+#endif
+
 /**
   This function handles PlatformInit task at the end of PEI
 
@@ -187,6 +208,10 @@ PlatformInitAdvancedEndOfPei (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: DTBT Initial fail, (%r)\n", __FUNCTION__, Status));
   }
+#endif
+
+#if FixedPcdGetBool (PcdTelemetryFeatureEnable) == 1
+  ClearPmcGblrstCause ();
 #endif
 
   return EFI_SUCCESS;
