@@ -111,49 +111,6 @@ VerifyFspVersion (
   );
 
 /**
-  Verify Fsp-M Configuration Region with the information which is added at the END of BSPM.
-  Fsp-M Configuration Region digest information is kept at the END of BSPM.
-
-  @param[in]   Bspm               Bspm structure found in BPM.
-  @param[in]   FspmImageBase      FSP-M image base in memory.
-  @param[in]   Buffer             Memory buffer for hash verification.
-
-  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
-  @retval EFI_ACCESS_DENIED       Verification Fail.
-  @retval EFI_SUCCESS             Verification Pass.
-
-**/
-EFI_STATUS
-EFIAPI
-VerifyFspmUpdRegion (
-  IN BSPM_ELEMENT                   *Bspm,
-  IN UINTN                          FspmImageBase,
-  IN VOID                           *Buffer
-  );
-
-/**
-  Verify Fsp-S Configuration Region with the information which is added at the END of BSPM.
-  Fsp-S Configuration Region digest information is kept at the END of BSPM.
-
-  @param[in]   Bspm               Bspm structure found in BPM.
-  @param[in]   FspsImageBase      FSP-S image base in memory.
-  @param[in]   Buffer             Memory buffer for hash verification.
-
-  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
-  @retval EFI_ACCESS_DENIED       Verification Fail.
-  @retval EFI_SUCCESS             Verification Pass.
-
-**/
-
-EFI_STATUS
-EFIAPI
-VerifyFspsUpdRegion (
-  IN BSPM_ELEMENT                   *Bspm,
-  IN UINTN                          FspsImageBase,
-  IN VOID                           *Buffer
-  );
-
-/**
   Verify FSP-M with the information in BSSS(BSPM) and FBM.
   FSP-M digest information is kept in FBM, FSP will only verify the SHA384 digest.
   FSP-M IBB region information is kept in FBM, only hashed IBB (indicate by flag) should be taken
@@ -187,7 +144,6 @@ VerifyAndExtendFspm (
 
   @param[in]   FspsImageBase      FSP-S image base in memory.
   @param[in]   Fbm                FSP Boot Manifest which keeps FSP-S digest and IBB information.
-  @param[in]   Bspm               BSPM structure found in BPM.
   @param[in]   Buffer             Memory buffer for hash verification.
 
   @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
@@ -200,7 +156,6 @@ EFIAPI
 VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
-  IN BSPM_ELEMENT                   *Bspm,
   IN VOID                           *Buffer
   );
 
@@ -250,7 +205,6 @@ EFI_STATUS
 (EFIAPI *VERIFY_FSPS_API_WRAPPER) (
   IN UINTN                          FspsImageBase,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
-  IN BSPM_ELEMENT                   *Bspm,
   IN VOID                           *Buffer
   );
 
