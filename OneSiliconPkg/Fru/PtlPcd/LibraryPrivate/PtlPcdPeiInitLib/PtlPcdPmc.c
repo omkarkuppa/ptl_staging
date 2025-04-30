@@ -44,6 +44,7 @@
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdFiaSocLib.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <PcdSbPortIds.h>
+#include <Library/Ptl/PcdInfoLib/PtlPcdInfoLib.h>
 
 
 #define R_PTL_SOC_PMC_PWRM_DISABLE_DTS_IN_S0IX                      0x1580
@@ -85,11 +86,9 @@ PtlPcdPmcConfigureCppm (
   IN PMC_HANDLE  *PmcHandle
   )
 {
-
   MmioAndThenOr32 (PmcHandle->PwrmBase + R_PMC_PWRM_CPPMFALIGNCTL_2, (UINT32) ~B_PMC_PWRM_CPPMFALIGNCTL_2_MASK, 0x00002EFB);
 
   MmioAndThenOr32 (PmcHandle->PwrmBase + R_PMC_PWRM_CPPMFALIGNCTL_1, (UINT32) ~B_PMC_PWRM_CPPMFALIGNCTL_1_MASK, 0xC80A8000);
-
 }
 
 /**
