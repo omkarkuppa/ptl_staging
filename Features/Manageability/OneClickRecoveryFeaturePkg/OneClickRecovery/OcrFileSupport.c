@@ -221,7 +221,7 @@ AddWinReBootOptions (
         continue;
       }
 
-      DevicePath = ConvertDevicePathToText (HandleFilePath, TRUE, TRUE);
+      DevicePath = ConvertDevicePathToText (HandleFilePath, FALSE, TRUE);
 
       if (DevicePath != NULL) {
         if (*NumUefiBootOptions < MAX_UEFI_BOOT_OPTIONS) {
