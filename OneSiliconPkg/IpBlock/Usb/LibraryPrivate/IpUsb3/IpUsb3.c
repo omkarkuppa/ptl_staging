@@ -526,6 +526,8 @@ IpUsb3SocConfiguration (
 
   IpUsb3OvercurrentMapping (pInst);
 
+  IpUsb3UsbSwDeviceModeConfig (pInst);
+
   Status = IpUsb3FabricConfiguration (pInst, pInst->RequestBoundaryCrossingControl, pInst->MaxPayloadSize);
   if (Status != IpCsiStsSuccess) {
     PRINT_ERROR ("Error during fabric configuration");
@@ -948,53 +950,58 @@ IpUsb3UsbSwDeviceModeConfig (
   IP_USB3_INST  *pInst
   )
 {
-  UINT32  ReportedHsPortCount;
   UINT32  Index;
   UINT32  PortControl0Offset;
-  UINT32  PortControl1Offset;
   UINT32  PortControl0Val;
-  UINT32  PortControl1Val;
-  UINT16  ConnectorType;
+  UINT32  Usb3PortControl0Val;
+  UINT8   Usb3PortIndex;
+  UINT32  Usb3PortControl0Offset;
 
   if (pInst == NULL) {
     PRINT_ERROR_NULL_INST ("Instance pointer cannot be NULL\n");
     return IpCsiStsErrorNullPtr;
   }
 
-  ReportedHsPortCount = IP_WR_READ_32 (pInst->RegCntxtMem, R_XHCI_MEM_XECP_SUPP_USB2_2);
-  ReportedHsPortCount &= B_XHCI_MEM_XECP_SUPP_USB2_2_CPC;
-  ReportedHsPortCount >>= N_XHCI_MEM_XECP_SUPP_USB2_2_CPC;
+  PRINT_LEVEL1 ("%s - Reported count of HS ports: %d\n", __FUNCTION__, pInst->Usb2PortCount);
 
-  PRINT_LEVEL1 ("%s - Reported count of HS ports: %d\n", __FUNCTION__, ReportedHsPortCount);
-
-  for (Index = 0; Index < ReportedHsPortCount; Index++) {
+  for (Index = 0; Index < pInst->Usb2PortCount; Index++) {
     PortControl0Offset = R_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO + (Index * S_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_SPACING);
-    PortControl1Offset = R_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO + (Index * S_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_SPACING);
-
     PortControl0Val = IP_WR_READ_32 (pInst->RegCntxtMem, PortControl0Offset);
-    PortControl1Val = IP_WR_READ_32 (pInst->RegCntxtMem, PortControl1Offset);
-    PRINT_LEVEL1 ("%s - Port %d DAP Control0 = %08X, Control1 = %08X\n",
-      __FUNCTION__, Index, PortControl0Val, PortControl1Val);
-
-    ConnectorType = PortControl1Val & B_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO_CONNECTOR_TYPE;
-    if ((ConnectorType == V_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO_CONNECTOR_TYPE_AB)
-      || (ConnectorType == V_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO_CONNECTOR_TYPE_C)) {
-      if (pInst->Usb2PortConfig[Index].SwDeviceModeEnable == TRUE) {
-        PRINT_LEVEL1 ("%s - Port %d is Type AB/C and will be swtiched to device subscription\n", __FUNCTION__, Index);
-
+    PRINT_LEVEL1 ("%s - Port %d DAP Control0 = %08X\n", __FUNCTION__, Index, PortControl0Val);
+    if (pInst->Usb2PortConfig[Index].Usb3CompatiblePort == TRUE) {
+      Usb3PortIndex = pInst->Usb2PortConfig[Index].Usb3CompatiblePortNum;
+      Usb3PortControl0Offset = R_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO + ( Usb3PortIndex * S_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_SPACING);
+      Usb3PortControl0Val = IP_WR_READ_32 (pInst->RegCntxtMem, Usb3PortControl0Offset);
+      PRINT_LEVEL1 ("%s - USB3 Port %d DAP Control0 = %08X\n", __FUNCTION__, Usb3PortIndex, Usb3PortControl0Val);
+    }
+    if (pInst->Usb2PortConfig[Index].SwDeviceModeEnable == TRUE) {
+      PRINT_LEVEL1 ("%s - USB 2.0 Port %d switched to device subscription\n", __FUNCTION__, Index);
+      IP_WR_AND_THEN_OR_32 (
+        pInst->RegCntxtMem,
+        PortControl0Offset,
+        ((UINT32) ~B_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT),
+        (V_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT_DEV_SUBSCRIPTION |
+         B_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_SW_VBUS)
+      );
+      if (pInst->Usb2PortConfig[Index].Usb3CompatiblePort == TRUE) {
+        PRINT_LEVEL1 ("%s - USB 3.2 Port %d switched to device subscription\n", __FUNCTION__, Usb3PortIndex);
+        Usb3PortIndex = pInst->Usb2PortConfig[Index].Usb3CompatiblePortNum;
+        Usb3PortControl0Offset = R_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO + ( Usb3PortIndex * S_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_SPACING);
         IP_WR_AND_THEN_OR_32 (
           pInst->RegCntxtMem,
-          PortControl0Offset,
-          ((UINT32) ~B_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT),
-          (V_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT_DEV_SUBSCRIPTION |
-           B_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_SW_VBUS)
-          );
+          Usb3PortControl0Offset,
+          ((UINT32) ~B_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT),
+          (V_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT_DEV_SUBSCRIPTION |
+           B_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO_SW_VBUS)
+        );
       }
+    }
 
-      PortControl0Val = IP_WR_READ_32 (pInst->RegCntxtMem, PortControl0Offset);
-      PortControl1Val = IP_WR_READ_32 (pInst->RegCntxtMem, PortControl1Offset);
-      PRINT_LEVEL1 ("%s - Port %d DAP Control0 = %08X, Control1 = %08X\n",
-        __FUNCTION__, Index, PortControl0Val, PortControl1Val);
+    PortControl0Val = IP_WR_READ_32 (pInst->RegCntxtMem, PortControl0Offset);
+    PRINT_LEVEL1 ("%s - Port %d DAP Control0 = %08X\n", __FUNCTION__, Index, PortControl0Val);
+    if (pInst->Usb2PortConfig[Index].Usb3CompatiblePort == TRUE) {
+      Usb3PortControl0Val = IP_WR_READ_32 (pInst->RegCntxtMem, Usb3PortControl0Offset);
+      PRINT_LEVEL1 ("%s - USB3 Port %d DAP Control0 = %08X\n", __FUNCTION__, Usb3PortIndex, Usb3PortControl0Val);
     }
   }
 

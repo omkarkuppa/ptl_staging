@@ -460,6 +460,8 @@ InitIpInstance (
       pInst->Usb2PortConfig[Index].OverCurrentPin = (UINT8)UsbConfig->PortUsb20[Index].OverCurrentPin;
       pInst->Usb2PortConfig[Index].PortResetMessageEnable = !!UsbConfig->PortUsb20[Index].PortResetMessageEnable;
       pInst->Usb2PortConfig[Index].SwDeviceModeEnable     = !!UsbConfig->PortUsb20[Index].SwDeviceModeEnable;
+      pInst->Usb2PortConfig[Index].Usb3CompatiblePort     = (UINT8)UsbConfig->PortUsb20[Index].Usb3CompatiblePort;
+      pInst->Usb2PortConfig[Index].Usb3CompatiblePortNum  = (UINT8)UsbConfig->PortUsb20[Index].Usb3CompatiblePortNum;
     }
 
     for (Index = 0; Index < pInst->Usb3LanesCount; Index++) {

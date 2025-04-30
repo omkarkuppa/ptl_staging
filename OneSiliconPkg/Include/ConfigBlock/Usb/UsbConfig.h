@@ -47,7 +47,9 @@ typedef struct {
   UINT32     Enable                  :  1;     ///< 0: Disable; <b>1: Enable</b>.
   UINT32     PortResetMessageEnable  :  1;     ///< 0: Disable USB2 Port Reset Message; 1: Enable USB2 Port Reset Message
   UINT32     SwDeviceModeEnable      :  1;     ///< 0: Disable USB2 Port Device Mode; 1: Force USB2 Port Device Mode
-  UINT32     RsvdBits0               : 21;     ///< Reserved bits
+  UINT32     Usb3CompatiblePort      :  3;     ///< 0: Not PCH USB3 port; 1: PCH USB3 (eSS) port
+  UINT32     Usb3CompatiblePortNum   :  5;     ///< 0: port1; 1: port2; 2: port3. Usb3CompatiblePort with 1 is the premise.
+  UINT32     RsvdBits0               : 13;     ///< Reserved bits
 } USB2_PORT_CONFIG;
 
 /**

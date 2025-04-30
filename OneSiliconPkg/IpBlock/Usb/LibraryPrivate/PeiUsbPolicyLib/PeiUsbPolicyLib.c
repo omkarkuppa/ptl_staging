@@ -55,9 +55,9 @@ UsbConfPrintConfig (
     DEBUG ((DEBUG_INFO, " PortUsb20[%d].Enabled                = %x\n", Index, UsbConfig->PortUsb20[Index].Enable));
     DEBUG ((DEBUG_INFO, " PortUsb20[%d].OverCurrentPin         = OC%d\n", Index, UsbConfig->PortUsb20[Index].OverCurrentPin));
     DEBUG ((DEBUG_INFO, " PortUsb20[%d].PortResetMessageEnable = %x\n", Index, UsbConfig->PortUsb20[Index].PortResetMessageEnable));
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
     DEBUG ((DEBUG_INFO, " PortUsb20[%d].SwDeviceModeEnable     = %x\n", Index, UsbConfig->PortUsb20[Index].SwDeviceModeEnable));
-#endif
+    DEBUG ((DEBUG_INFO, " PortUsb20[%d].Usb3CompatiblePort     = %x\n", Index, UsbConfig->PortUsb20[Index].Usb3CompatiblePort));
+    DEBUG ((DEBUG_INFO, " PortUsb20[%d].Usb3CompatiblePortNum  = %x\n", Index, UsbConfig->PortUsb20[Index].Usb3CompatiblePortNum));
   }
 
   for (Index = 0; Index < MAX_USB3_PORTS; Index++) {
@@ -192,6 +192,9 @@ UsbConfLoadConfigDefault (
     UsbConfig->PortUsb20[PortIndex].Enable                 = TRUE;
     UsbConfig->PortUsb20[PortIndex].OverCurrentPin         = USB_OC_SKIP;
     UsbConfig->PortUsb20[PortIndex].PortResetMessageEnable = FALSE;
+    UsbConfig->PortUsb20[PortIndex].SwDeviceModeEnable     = FALSE;
+    UsbConfig->PortUsb20[PortIndex].Usb3CompatiblePort     = FALSE;
+    UsbConfig->PortUsb20[PortIndex].Usb3CompatiblePortNum  = 0;
   }
 
   for (PortIndex = 0; PortIndex < MAX_USB3_PORTS; PortIndex++) {

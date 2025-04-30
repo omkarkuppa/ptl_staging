@@ -38,6 +38,8 @@ typedef struct {
   UINT8      PortResetMessageEnable; // Port reset message enable/disable control
   UINT8      SwDeviceModeEnable;     // Switch port to device mode
   BOOLEAN    HasInboxDevice;         // Flag for setting whether there's inbox device on a port
+  UINT8      Usb3CompatiblePort;     // whether a USB2 and USB3 Compatible Port
+  UINT8      Usb3CompatiblePortNum;  // USB3 Port number if a USB2 and USB3 Compatible Port
 } IP_USB3_USB2_PORT_CONFIG;
 
 //

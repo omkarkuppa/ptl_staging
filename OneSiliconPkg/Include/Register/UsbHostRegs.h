@@ -202,10 +202,6 @@
 #define R_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO                                    0x89C4   ///< DAP USB2 Port Control 0 Register
 #define B_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT                    (BIT7 | BIT6 | BIT5)   ///< Connector Event (CE) in DAP USB2 Port<N> Control 0 Register
 #define B_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_SW_VBUS                            BIT8   ///< VBUS presence
-#define R_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO                                    0x89C8   ///< DAP USB2 Port Control 1 Register
-#define B_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO_CONNECTOR_TYPE                     (BIT10 | BIT9 | BIT8)   ///< Connector Type (CT)
-#define V_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO_CONNECTOR_TYPE_AB                  BIT8
-#define V_XHCI_MEM_DAP_USB2_PORT_CONTROL_1_REG_0_MMIO_CONNECTOR_TYPE_C                   0x0
 #define R_XHCI_MEM_DAP_USB2_PORT_STATUS_REG_0_MMIO                                       0x89CC   ///< DAP USB2 Port Status Register
 #define V_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT_DEV_SUBSCRIPTION   0x60    ///< Device subscription
 #define V_XHCI_MEM_DAP_USB2_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT_TYPEABANDC         0x20     ///< Value loaded for Connector Type AB and Type C
@@ -236,11 +232,13 @@
 #define R_XHCI_MEM_HOST_CTRL_USB3_CP16_DEEMPH_REG   0x8E98
 
 //
-// TCSS CPU XHCI DAP ESS PORT Registers in MMIO Space
+// TCSS XHCI DAP ESS PORT Registers in MMIO Space
 //
-#define R_XHCI_MEM_DAP_ESS_PORT_CONTROL_1_REG_0_MMIO  0x8AC8 ///< DAP eSS Port <N> Control1 Register for TCSS CPU XHCI PORT.
-#define S_CPU_XHCI_MEM_ESS_PORT_CONTROL1_SPACING      0x10   ///< Size of space between DAP eSS Port <N> Control1 Register for each port. Max 4 CPU XHCI Port
-#define B_XHCI_PCR_DAP_ESS_PORT_CONTROL_1_REG_0_RTCO  BIT3   ///< DAP eSS Port <N> Control1 Register for TCSS CPU XHCI PORT.
+#define R_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO  0x8AC4 ///< DAP eSS Port <N> Control0 Register for TCSS XHCI PORT.
+#define S_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_SPACING     0x10   ///< Size of space between DAP eSS Port <N> Control1 Register for each port.
+#define B_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT                    (BIT7 | BIT6 | BIT5)   ///< Connector Event (CE) in DAP ESS Port<N> Control 0 Register
+#define V_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO_CONNECTOR_EVENT_DEV_SUBSCRIPTION   0x60    ///< Device subscription
+#define B_XHCI_MEM_DAP_ESS_PORT_CONTROL_0_REG_0_MMIO_SW_VBUS                            BIT8   ///< VBUS presence
 
 #define R_XHCI_MEM_USB2PDO    0x84F8    ///< USB2 Port Disable Override register
 #define R_XHCI_MEM_USB3PDO    0x84FC    ///< USB3 Port Disable Override register

@@ -420,8 +420,10 @@ FspUpdateUsbPolicy (
     UsbConfig->PortUsb20[Index].Enable         = FspsUpd->FspsConfig.PortUsb20Enable[Index];
     UsbConfig->PortUsb20[Index].OverCurrentPin = FspsUpd->FspsConfig.Usb2OverCurrentPin[Index];
     UsbConfig->PortUsb20[Index].PortResetMessageEnable = FspsUpd->FspsConfig.PortResetMessageEnable[Index];
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
     UsbConfig->PortUsb20[Index].SwDeviceModeEnable = FspsUpd->FspsConfig.PortUsb20SwDeviceModeEnable[Index];
+    UsbConfig->PortUsb20[Index].Usb3CompatiblePort = FspsUpd->FspsConfig.Usb3CompatiblePort[Index];
+    UsbConfig->PortUsb20[Index].Usb3CompatiblePortNum = FspsUpd->FspsConfig.Usb3CompatiblePortNum[Index];
 #endif
   }
 

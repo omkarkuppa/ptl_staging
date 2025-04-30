@@ -2280,10 +2280,18 @@
   # !BSF HELP:{Enable/disable per USB2 ports. One byte for each port, byte0 for port0, byte1 for port1, and so on.}
   gPlatformFspPkgTokenSpaceGuid.PortUsb20Enable             | * | 0x10 | { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01}
 
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+!if (gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == TRUE)
   # !BSF NAME:{Enable USB2 SW Device Mode} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{Enable/disable SW device mode per USB2 ports. One byte for each port, byte0 for port0, byte1 for port1, and so on.}
   gPlatformFspPkgTokenSpaceGuid.PortUsb20SwDeviceModeEnable | * | 0x10 | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+
+  # !BSF NAME:{USB3 compatible port} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
+  # !BSF HELP:{For the USB2 port, whether it also can be used as USB3 port. 0: no; 1: yes.}
+  gPlatformFspPkgTokenSpaceGuid.Usb3CompatiblePort          | * | 0x10 | { 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+
+  # !BSF NAME:{USB3 port number of compatible port} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
+  # !BSF HELP:{USB3 port number if the USB2 port can be used as USB3. 0: port1; 1: port2; 2: port3. Usb3CompatiblePort=1 is  the premise.}
+  gPlatformFspPkgTokenSpaceGuid.Usb3CompatiblePortNum       | * | 0x10 | { 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 !endif
 
   # !BSF NAME:{Enable USB3 ports} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFFFFFF)}
