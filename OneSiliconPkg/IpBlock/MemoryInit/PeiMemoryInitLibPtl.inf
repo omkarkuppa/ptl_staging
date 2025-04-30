@@ -166,6 +166,7 @@ src/HalLib/MrcHalApi.c
 src/HalLib/IncludePublic/MrcHalApi.h
 src/HalLib/Ptl/BlueMrcHalRegisterAccess.c
 src/HalLib/IncludePublic/MrcHalRegisterAccess.h
+src/ServicesLib/BlueMrcAmt.h
 src/ServicesLib/MrcAmt.h
 src/ServicesLib/MrcAmtPprInterface.h
 src/ApiLib/BlueMrcAgentCommunication.h
@@ -177,6 +178,7 @@ src/JedecLib/Ddr5/BlueMrcDdr5.c
 src/JedecLib/Ddr5/Ptl/BlueMrcDdr5Ptl.c
 src/JedecLib/Lpddr5/BlueMrcLpddr5.c
 src/JedecLib/Lpddr5/Ptl/BlueMrcLpddr5Ptl.c
+src/ServicesLib/BlueMrcAmt.c
 src/ServicesLib/MrcAmt.c
 src/JedecLib/IncludePublic/BlueMrcJedecApi.h
 src/JedecLib/BlueMrcMemoryApi.c

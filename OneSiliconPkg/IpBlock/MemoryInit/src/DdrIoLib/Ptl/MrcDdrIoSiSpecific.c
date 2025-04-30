@@ -341,3 +341,19 @@ MrcForceFsmIntoCsGeardownMode (
     MrcGetSetNoScope (MrcData, GsmIocCsGearDownForce, ForceWriteCached, &GetSetEn);
   }
 }
+
+/**
+  This function does Force Comp result distribution WA
+
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]     CompType - Enum of Comp being forced
+
+  @retval NA
+**/
+VOID
+CompResultDistribution (
+  IN OUT MrcParameters *const MrcData,
+  IN     COMP_CYCLE_TYPE      CompType
+  )
+{
+}

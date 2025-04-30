@@ -22,11 +22,7 @@
 #ifndef _MrcAmt_h_
 #define _MrcAmt_h_
 
-#include "MrcCpgcApi.h"
-#include "Cpgc20.h"
-#include "Cpgc20Patterns.h"
 #include "MrcAmtPprInterface.h"
-#include "CMrcInternalTypes.h" // UINT64_STRUCT
 
 // Hook for function to display row failure list
 #define AMT_PRINT_ROW_FAIL_LIST   0
@@ -52,65 +48,40 @@ typedef enum {
   AmtMmrwTestPattern3 = 0x778503
 } MRC_AMT_MMRW_TEST_PATTERN_TYPE;
 
-// Definition used with AmtCheckTestResults
-// cpgcErrorStatus parameter
-//
-// LP5:
-// cpgcErrDat0S           - Channel data lane [15:0] UI error status.
-// cpgcErrEccS            - Ecc lane [7:0] UI error status.
-// cpgcErrRow             - Row address that error happens on
-// cpgcErrBank            - Bank address that error happens on
-// cpgcErrRank            - Rank address that error happens on
-// overflow               - True if more than two errors were found on a given bank (LP5 has 16 banks max)
-//
-// DDR5:
-// cpgcErrDat0S           - Channel data lane [31:0] UI error status.
-// cpgcErrEccS            - Ecc lane [7:0] UI error status.
-// cpgcErrRow             - Row address that error happens on
-// cpgcErrBank            - [4:0]   Bank address that error happens on
-// cpgcErrRank            - [2:0]   Rank address that error happens on
-// overflow               - True if more than one error was found on a given bank (DDR5 has 32 banks max)
-
-typedef struct {
-  UINT32    cpgcErrDat0S;
-  UINT32    cpgcErrEccS;
-  UINT32    cpgcErrRow;
-  UINT32    cpgcErrBank;
-  UINT32    cpgcErrRank;
-  BOOLEAN   overflow;
-  UINT8     device;
-} CPGC_ERROR_STATUS_AMT;
-
 /**
-  This function will convert the CPGC Bank address into the DRAM Bank Address and Bank Group bits based on DDR technology
+  This function will convert the MPTU Bank address into the DRAM Bank Address and Bank Group bits based on DDR technology
 
   @param[in]  MrcData     - Global MRC data structure
-  @param[in]  LogicalBank - CPGC Bank Number
+  @param[in]  PprAmtData  - PPR and AMT data structure
+  @param[in]  LogicalBank - Bank Number
   @param[out] BankAddress - Pointer to BankAddress value
   @param[out] BankGroup   - Pointer to BankGroup value
 **/
 VOID
-MrcConvertCpgcBanktoBankAddress (
-  IN  MrcParameters *const MrcData,
-  IN  UINT32               LogicalBank,
-  OUT UINT8                *BankAddress,
-  OUT UINT8                *BankGroup
+MrcConvertLogicalBanktoBankBg (
+  IN  MrcParameters *const          MrcData,
+  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
+  IN  UINT32                        LogicalBank,
+  OUT UINT8                         *BankAddress,
+  OUT UINT8                         *BankGroup
   );
 
 /**
-  This function will convert the DRAM Bank Address and Bank Group bits into the CPGC Bank address based on DDR technology
+  This function will convert the DRAM Bank Address and Bank Group bits into the MPTU Bank address based on DDR technology
 
   @param[in]  MrcData     - Global MRC data structure
+  @param[in]  PprAmtData  - PPR and AMT data structure
   @param[in]  BankAddress - Pointer to BankAddress value
   @param[in]  BankGroup   - Pointer to BankGroup value
-  @param[out] LogicalBank - CPGC Bank Number
+  @param[out] LogicalBank - Bank Number
 **/
 VOID
-MrcConvertBankAddresstoCpgcBank (
-  IN  MrcParameters *const MrcData,
-  IN  UINT32               BankAddress,
-  IN  UINT32               BankGroup,
-  OUT UINT32               *LogicalBank
+MrcConvertBankBgtoLogicalBank (
+  IN  MrcParameters *const          MrcData,
+  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
+  IN  UINT32                        BankAddress,
+  IN  UINT32                        BankGroup,
+  OUT UINT32                        *LogicalBank
   );
 
 /**
@@ -118,162 +89,46 @@ MrcConvertBankAddresstoCpgcBank (
   Data Pattern is shifted across each UI, if non-zero
 
   @param[in]  MrcData                 - Global MRC data structure
+  @param[in]  PprAmtData              - PPR and AMT data structure
   @param[in]  McChBitMask             - Memory Controller Channel Bit mask to read status for.
-  @param[in]  PatternQW               - Array of 64-bit Data Pattern to write
-  @param[in]  PatternDepth            - Length of PatternQW in number of UIs
-  @param[in]  UiShl                   - Bit-shift value per UI
   @param[in]  ErrInjMask16            - Bitmask of DQ lanes to inject error
-
-  @retval   mrcSuccess / mrcFail
 **/
-MrcStatus
+VOID
 MrcProgramMATSPattern (
-  IN  MrcParameters *const MrcData,
-  IN  UINT32               McChBitMask,
-  IN  UINT64               PatternQW[],
-  IN  UINT8                PatternDepth,
-  IN  UINT8                UiShl,
-  IN  UINT16               ErrInjMask16
+  IN  MrcParameters *const          MrcData,
+  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
+  IN  UINT32                        McChBitMask,
+  IN  UINT16                        ErrInjMask16
   );
 
 /**
   This function programs a specific pattern for the MMRW test into CPGC ExtBuf registers.
 
   @param[in]  MrcData                 - Global MRC data structure
+  @param[in]  PprAmtData              - PPR and AMT data structure
   @param[in]  McChBitMask             - Memory Controller Channel Bit mask to read status for.
-  @param[in]  PatternQW               - Array of 64-bit Data Pattern to write
   @param[in]  ErrInjMask16            - Bitmask of DQ lanes to inject error
-
-  @retval   mrcSuccess / mrcFail
-**/
-MrcStatus
-MrcProgramDSPattern (
-  IN  MrcParameters *const MrcData,
-  IN  UINT32               McChBitMask,
-  IN  UINT64               PatternQW[],
-  IN  UINT16               ErrInjMask16
-  );
-
-/**
-  Cpgc command pattern setup up for memory test
-
-  @param[in] MrcData        - Pointer to MRC global data.
-  @param[in] RwMode         - Cpgc read and write mode
-  @param[in] UseSubSeq1     - Cpgc subseq1 usage
-  @param[in] Direction      - Address direction during memory test
-  @param[in] SeqDataInv     - Enables pattern inversion per subsequence
-  @param[in] IsUseInvtPat   - Info to indicate whether or not patternQW is inverted by comparing original pattern
-
-  @retval n/a
 **/
 VOID
-MrcConfigurePprCmdPat (
-  IN MrcParameters  *const MrcData,
-  IN UINT8                 RwMode,
-  IN BOOLEAN               UseSubSeq1,
-  IN UINT8                 Direction,
-  IN UINT8                 SeqDataInv[2],
-  IN BOOLEAN               IsUseInvtPat
+MrcProgramDSPattern (
+  IN  MrcParameters *const          MrcData,
+  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
+  IN  UINT32                        McChBitMask,
+  IN  UINT16                        ErrInjMask16
   );
 
 /**
-  This function programs the Raster Repo Configuration register based on input values.
+  Selects channels to enable for the next memory test
 
-  @param[in]  MrcData         - Pointer to MRC global data.
-  @param[in]  McChBitMask     - Bitmask of participating controllers / channels
-  @param[in]  Mode3Banks      - Specifies which Bank mode to use in Raster Repo Mode 3 usage.
-  @param[in]  UpperBanks      - Indicates the base Bank to store when using Raster Repo Mode 3
-  @param[in]  StopOnRaster    - If TRUE, the test will stop after status condition is met in Raster Repo
-  @param[in]  RasterRepoClear - If set, Raster Repo entries will be Reset (this bit auto-clears)
-  @param[in]  RasterRepoMode  - Indicates the mode of operation for Raster Repo
-  @param[in]  Mode3Max        - In Raster Repo Mode 3, sets maximum number of failing address before an additional failing address will set fail_excess for the respective Bank.
+  @param[in]  MrcData                 - Global MRC data structure
+  @param[in]  ChanEnMask              - Bit mask of channels to be enabled
+
+  @retval BitMask that was previously programmed (for save/restore purposes)
 **/
-void
-Cpgc20RasterRepoConfig (
+UINT32
+AmtSelectChannel (
   IN  MrcParameters *const  MrcData,
-  IN  UINT8                 McChBitMask,
-  IN  UINT8         *const  Mode3Banks,
-  IN  UINT8         *const  Mode3UpperBanks,
-  IN  BOOLEAN       *const  StopOnRaster,
-  IN  BOOLEAN       *const  RasterRepoClear,
-  IN  UINT8         *const  RasterRepoMode,
-  IN  UINT8         *const  Mode3Max
-  );
-
-/**
-  This function Reads the Repo Content registers, and returns those values in an input array.
-
-  @param[in]  MrcData      - Pointer to MRC global data.
-  @param[in]  Controller   - Controller to work on
-  @param[in]  Channel      - Channel to work on
-  @param[out] RepoStatus   - Contains the data from Repo Content registers, for 8 normal entries and 2 ECC entries
-
-  @retval nothing
-**/
-void
-Cpgc20ReadRasterRepoContent (
-  IN  MrcParameters *const  MrcData,
-  IN  UINT32                Controller,
-  IN  UINT32                Channel,
-  OUT UINT64_STRUCT         RepoStatus[CPGC20_MAX_RASTER_REPO_CONTENT]
-  );
-
-/**
-  This function reads the Raster Repo Status register and parses the individual fields into the input pointers.
-
-  @param[in]   MrcData        - Pointer to MRC global data.
-  @param[in]   Controller     - Controller to work on
-  @param[in]   Channel        - Channel to work on
-  @param[out]  BitmapValid    - Optional pointer, if provided it will be updated with indication of valid bits in Repo Status
-  @param[out]  SummaryValid   - Optional pointer, if provided it will be updated with indication that test summary in Raster Repo is valid
-  @param[out]  FailExcessAll  - Optional pointer, if provided it will be updated with indication of any bank that observed a number of failures that exceeded MAX_BANKS setting
-  @param[out]  FailAnyAll     - Optional pointer, if provided it will be updated with indication if any bank failed
-  @param[out]  NumErrLogged   - Optional pointer, if provided it will be updated with number of errors logged
-  @param[out]  RasterRepoFull - Optional pointer, if provided it will be updated with indication of RasterRepo being full
-
-  @retval nothing
-**/
-void
-Cpgc20ReadRasterRepoStatus (
-  IN  MrcParameters *const  MrcData,
-  IN  UINT8                 Controller,
-  IN  UINT8                 Channel,
-  OUT UINT8         *const  BitmapValid,
-  OUT UINT8         *const  SummaryValid,
-  OUT UINT8         *const  FailExcessAll,
-  OUT UINT8         *const  FailAnyAll,
-  OUT UINT8         *const  NumErrLogged,
-  OUT UINT8         *const  RasterRepoFull
-  );
-
-/**
-  This function configures the CPGC Data Control register.
-
-  @param[in]  MrcData                   - Pointer to MRC global data.
-  @param[in]  DataSelectRotationRepeats - Number of times to repeat a Data_Instruction with Data_Select_Rotation_Enable
-  @param[in]  SplitBackground           - Background mode.
-
-  @retval Nothing.
-**/
-void
-Cpgc20SetDataControl (
-  IN  MrcParameters *const  MrcData,
-  IN  UINT32                DataSelectRotationRepeats,
-  IN  UINT32                SplitBackground
-  );
-
-/**
-  This function configures the CPGC Base Address Control register based on TestType.
-
-  @param[in] MrcData        - Pointer to MRC global data.
-  @param[in] TestType       - Memory test type that is currently being run
-
-  @retval Nothing.
-**/
-void
-AmtSetBaseAddressControl (
-  IN  MrcParameters *const MrcData,
-  IN PprTestTypeOffset     TestType
+  IN  UINT32                ChanEnMask
   );
 
 /**
@@ -604,7 +459,7 @@ AmtUpdateRowFailList (
   @param[in]  PprAmtData              - PPR and AMT data structure
   @param[in]  Controller              - Controller number of failure
   @param[in]  Channel                 - Channel number of failure
-  @param[in]  CpgcErrorStatus         - the failure information
+  @param[in]  ErrorStatus             - the failure information
   @param[in]  DeviceTemp              - Dimm Temperature on initial failure
 
   @retval status - mrcSuccess / mrcFail
@@ -612,16 +467,16 @@ AmtUpdateRowFailList (
 MrcStatus
 AmtUpdateRowFailures (
   IN  MrcParameters *const          MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
+  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
   IN  UINT8                         Controller,
   IN  UINT8                         Channel,
-  IN  CPGC_ERROR_STATUS_AMT         CpgcErrorStatus,
+  IN  ERROR_STATUS_AMT              ErrorStatus,
   IN  UINT8                         DeviceTemp[MAX_CONTROLLER][MAX_CHANNEL]
   );
 
 /**
 
-  CPGC setup per rank for Advanced Memory test
+  Test engine setup per rank for Advanced Memory test
 
   @param[in] MrcData                    - Global MRC data structure
   @param[in] PprAmtData                 - PPR and AMT data structure
@@ -719,8 +574,6 @@ SetupIOTestPPR (
 
   @param[in] MrcData        - Global MRC data structure
   @param[in] PprAmtData     - PPR and AMT data structure
-
-  @retval status - mrcSuccess / mrcFail
 **/
 VOID
 MrcAdvancedMemTest (
@@ -742,6 +595,58 @@ AmtCheckTestResults (
   IN  MrcParameters *const          MrcData,
   IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
   IN  UINT32                        McChBitMask
+  );
+
+/**
+  Determines the max row and column for this channel for stop-on-error tests
+
+  @param[in] MrcData        - Global MRC data structure
+  @param[in] PprAmtData     - PPR and AMT data structure
+  @param[in] Controller     - Controller number to update
+  @param[in] Channel        - Channel number to update
+**/
+VOID
+AmtGetMaxRowCol (
+  MrcParameters *const              MrcData,
+  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel,
+  IN UINT32                         *MaxRow,
+  IN UINT32                         *MaxCol
+  );
+
+/**
+  Determines the row and column range of the next test if using stop-on-error.
+
+  @param[in] MrcData        - Global MRC data structure
+  @param[in] PprAmtData     - PPR and AMT data structure
+  @param[in] Controller     - Controller number to update
+  @param[in] Channel        - Channel number to update
+**/
+VOID
+AmtDetermineNextTestRange (
+  MrcParameters *const              MrcData,
+  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel
+  );
+
+/**
+  Determines the next AmtTestState for the current channel
+
+  @param[in] MrcData        - Global MRC data structure
+  @param[in] PprAmtData     - PPR and AMT data structure
+  @param[in] Controller     - Controller number to update
+  @param[in] Channel        - Channel number to update
+
+  @retval Whether this channel is done with its memory test
+**/
+BOOLEAN
+AmtDetermineNextTestState (
+  MrcParameters *const              MrcData,
+  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel
   );
 
 /**
@@ -799,7 +704,7 @@ RowTestPpr (
   IN MrcParameters  *const          MrcData,
   IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
   IN UINT8                          McChBitMask,
-  IN UINT32                         CpgcBank,
+  IN UINT32                         Bank,
   IN UINT32                         Row
   );
 
@@ -829,40 +734,5 @@ AmtPrintTotalRowFailures (
   MrcParameters *const    MrcData
   );
 #endif // POISON_ROW_FAIL_LIST
-
-/**
-  This function sets the Pattern Generators' Alternate Dpat Buffer Control for use with AMT tests.
-  @param[in]  MrcData             - Pointer to global MRC data.
-  @param[in]  Controller          - Desired Memory Controller.
-  @param[in]  Channel             - Desired Channel.
-  @param[in]  Start               - Lane to start from
-  @param[in]  Stop                - Lane to wrap ("stop") on
-  @retval - MrcStatus: mrcSuccess if McChBitMask are non-zero, mrcFail if McChBitMask = 0.
-**/
-MrcStatus
-AmtSetDpatAltBufCtl (
-  IN  MrcParameters *const  MrcData,
-  IN  UINT8                 Controller,
-  IN  UINT8                 Channel,
-  IN  UINT8                 Start,
-  IN  UINT8                 Stop
-  );
-
-/**
-  This function programs Bank Logical to Physical mapping for single-bank tests and for LP5 16-bank mode.
-  The register will be updated on all enabled CPGC engines.
-
-  @param[in]  MrcData           - Pointer to MRC global data.
-  @param[in]  Rank              - Rank to work on
-  @param[in]  UseSingleBank     - Whether to program a single bank; if false, will program all banks in order without BG calculation
-  @param[in]  CpgcBank          - Cpgc address of bank to work on, only valid if UseSingleBank = TRUE
-**/
-VOID
-AmtUpdateL2PBankMappingWithoutBG (
-  IN  MrcParameters* const  MrcData,
-  IN  UINT32                Rank,
-  IN  BOOLEAN               UseSingleBank,
-  IN  UINT32                CpgcBank
-  );
 
 #endif // _MrcAmt_h_

@@ -148,6 +148,18 @@ GetAllPprResources (
   );
 
 /**
+  Configures the data pattern that will be written and read for the next memory test.
+
+  @param[in] MrcData                    - Global MRC data structure
+  @param[in] PprAmtData                 - PPR and AMT data structure
+**/
+VOID
+AmtSetDataPattern (
+  MrcParameters *const            MrcData,
+  PPR_AMT_PARAMETER_DATA  *const  PprAmtData
+  );
+
+/**
   Returns the number of low order bank group and bank address bits that are not included in the BG interleave
 
   @param[in] MrcData                - Pointer to MrcData
@@ -208,14 +220,66 @@ IsPprRepairRequired (
   @param [in]     MrcData             - Pointer to global MRC data.
   @param [in]     PprAmtData          - PPR and AMT data structure
   @param [in,out] *RepairDone         - Flag to indicate the repair was done
-
-  @retval status - MRC_STATUS_SUCCESS/MRC_STATUS_FAILURE
 **/
-MrcStatus
+VOID
 PprDispositionFailRange (
   IN     MrcParameters *const       MrcData,
   IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
   IN OUT UINT8                      *RepairDone
+  );
+
+/**
+  Executes PPR flow on correctable failures in the row failure list
+
+  @param [in]     MrcData             - Pointer to global MRC data.
+  @param [in]     PprAmtData          - PPR and AMT data structure
+  @param [in]     McChBitMask         - Memory Controller Channel Bit mask to update
+  @param [in,out] *RepairDone         - Flag to indicate the repair was done
+**/
+VOID
+DispositionFailRangesWithPprFlow (
+  IN     MrcParameters      *const  MrcData,
+  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
+  IN     UINT32                     McChBitMask,
+  IN OUT UINT8                      *RepairDone
+  );
+
+/**
+  Checks if a Post Package Repair succeded and updates internal outputs structure based on the results.
+
+  @param[in] MrcData     - Global MRC data structure
+  @param[in] PprAmtData  - PPR and AMT data structure
+  @param[in] McChBitMask - Memory Controller Channel Bit mask to read results for.
+  @param[in] Bank        - Current bank address
+  @param[in] Row         - Row address to run test
+
+  @retval True when PPR succeded.
+  @retval False when PPR failed.
+**/
+BOOLEAN
+MrcPostPprAnalysis (
+  IN MrcParameters  *const          MrcData,
+  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel,
+  IN UINT32                         Bank,
+  IN UINT32                         Row
+  );
+
+/**
+  Retrieves the Post Package Repair (PPR) channel bit mask for a specified controller and channel.
+
+  @param[in]  MrcData     - Pointer to the MRC global data structure
+  @param[in]  Controller  - The controller index
+  @param[in]  Channel     - The channel index
+
+  @returns The PPR channel bit mask for the specified controller and channel.
+**/
+UINT8
+MrcGetPprChBitMask (
+  IN MrcParameters  *const          MrcData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel
   );
 
 /**
@@ -266,10 +330,9 @@ InjectMemtestError (
 
   @param[in] MrcData        - Global MRC data structure
   @param[in] PprAmtData     - PPR and AMT data structure
-  @param[in] CmdPat         - Type of sequence MT_CPGC_WRITE, MT_CPGC_READ, or MT_CPGC_READ_WRITE
-  @param[in] Pattern        - Array of 64-bit Data Pattern for the test
+  @param[in] CmdPat         - Type of sequence PatWr, PatRd, or PatRdWr
   @param[in] IsUseInvtPat   - Info to indicate whether or not patternQW is inverted by comparing original pattern
-  @param[in] Direction      - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DOWN
+  @param[in] Direction      - Sequential address direction AMT_ADDR_DIR_UP, AMT_ADDR_DIR_DOWN
   @param[in] PatternNumber  - Which pattern in the MATS8 sequence is this test
 
   @retval None
@@ -279,7 +342,6 @@ MrcRunPprDetection (
   IN MrcParameters *const           MrcData,
   IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
   IN UINT8                          CmdPat,
-  IN UINT64                         Pattern[],
   IN BOOLEAN                        IsUseInvtPat,
   IN UINT8                          Direction,
   IN UINT8                          PatternNumber
@@ -289,10 +351,8 @@ MrcRunPprDetection (
   Pause refreshes during Data Retention memory test
 
   @param[in] MrcData - Global MRC data structure
-
-  @retval MrcStatus - mrcSuccess/mrcFail
 **/
-MrcStatus
+VOID
 AdvMemTestPauseDataRet (
   IN MrcParameters* const MrcData
 );
@@ -310,7 +370,7 @@ MrcStatus
 MemTestMATSN (
   IN MrcParameters          *const  MrcData,
   IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  BOOLEAN                           InvertedPassEn
+  IN BOOLEAN                        InvertedPassEn
 );
 
 /**
@@ -550,6 +610,18 @@ MrcIsTargetedPprRequested (
 MrcStatus
 MrcRunPprTargeted (
   IN MrcParameters *const MrcData
+  );
+
+/**
+  Enable or disable refreshes in the test engine
+
+  @param[in]  MrcData           - Pointer to global MRC data.
+  @param[in]  RefreshEnabled    - Whether refreshes should be enabled.
+**/
+VOID
+MrcPprSetRefresh (
+  IN  MrcParameters *const MrcData,
+  IN  BOOLEAN              RefreshEnabled
   );
 
 #endif // _MrcPpr_h_

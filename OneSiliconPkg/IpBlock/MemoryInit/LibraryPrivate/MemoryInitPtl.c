@@ -52,6 +52,7 @@
 #include "MrcAmt.h" // For AMT_PPR_ENABLE
 #include "MrcPpr.h" // For MrcIsPprEnabled
 #include <Library/PeiVmdInitFruLib.h>
+#include <BupMsgs.h>
 
 //
 // Definition in EDK Foundation, used in this driver
@@ -563,8 +564,6 @@ PeimMemoryInit (
 #ifndef MDEPKG_NDEBUG
   const UINT8                  *Str;
 #endif
-  UINT32                       MemoryClock;
-  MrcClockRatio                Ratio;
   UINT8                        InitStat;
   UINT8                        ForceFullTraining;
   UINT8                        TotalDprSizeMB;
@@ -750,7 +749,7 @@ PeimMemoryInit (
   Inputs->MrcStackTop.Ptr = &FileHandle;
 
   MrcCall->MrcDebugHook (MrcData, MRC_INITIALIZATION_START);
-  InitStat = 0;
+  InitStat = BIOS_MSG_DID_SUCCESS;
 
   ForceFullTraining = 0;
 
@@ -870,7 +869,7 @@ DEBUG_CODE_END();
   // there was a BasicMemoryTest failure during the previous flow.
   // Report the health check result to Telemetry Health Driver,
   // and then clear the bit.
-  if ((SskpdValue.Bits.MEM_BASICMEMORYTEST_FAIL) != 0) {
+  if (SskpdValue.Bits.MEM_BASICMEMORYTEST_FAIL != 0) {
     if (ExtInputs->MrcFastBoot > 0) {
         IsLastBasicMemoryTestPass = FALSE;
     }
@@ -1049,7 +1048,7 @@ DEBUG_CODE_END();
     Alignment      = 0;
     Status = MeImrConfig (&ImrsSize, &Alignment);
     if (Status == EFI_OUT_OF_RESOURCES) {
-      InitStat = 0x1;
+      InitStat = BIOS_MSG_DID_NO_MEMORY;
       Outputs->MemoryMapData.MeStolenBase = 0x0;
     }
     Inputs->MeStolenSize = ImrsSize;
@@ -1140,20 +1139,6 @@ DEBUG_CODE_END();
         }
         break;
 
-      case mrcFrequencyError:
-        MrcGetCurrentMemoryFrequency (MrcData, (UINT32 * const) &MemoryClock, &Ratio);
-        if (Ratio >= Outputs->Ratio) {
-          DEBUG ((DEBUG_ERROR, "Memory initialization has failed\n"));
-          // Replace the upper byte (0x81) with MRC_FAILURE_INDICATION
-          (MrcCall->MrcIoWrite8) (0x81, MRC_FAILURE_INDICATION);
-          ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
-          return EFI_DEVICE_ERROR;
-        } else {
-          // Restart memory configuration, using the lower frequency.
-          MrcStatus = mrcColdBootRequired;
-        }
-        // no break;
-
       case mrcColdBootRequired:
         // The MrcSave data is no longer valid, clear it to avoid Ghost DIMMs and SAGV points on the next MRC call.
         ZeroMem (&MrcData->Save, sizeof (MrcSave));
@@ -1194,20 +1179,6 @@ DEBUG_CODE_END();
 
       case mrcUnsupportedTechnology:
       case mrcDimmNotExist:
-        //
-        // Set memory init status = 0x1 and send DRAM Init Done to ME FW,
-        // indicating that no memory exists in the system.
-        //
-        InitStat = 0x1;
-        MeConfigDidReg (
-          FileHandle,
-          InitStat,
-          (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20, // Low DWORD
-          Outputs->MemoryMapData.MeStolenBase >> 12 // High DWORD
-          );
-        DEBUG ((DEBUG_INFO, "CSE IMR Base Low  = 0x%08X\n", (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20));
-        DEBUG ((DEBUG_INFO, "CSE IMR Base High = 0x%08X\n", Outputs->MemoryMapData.MeStolenBase >> 12));
-
         MrcCall->MrcDebugHook (MrcData, MRC_NO_MEMORY_DETECTED);
         if (MrcStatus == mrcUnsupportedTechnology) {
           DEBUG ((DEBUG_ERROR, "DIMM is present but not supported\n"));
@@ -1236,10 +1207,21 @@ DEBUG_CODE_END();
 
         if ((MrcStatus == mrcDimmNotExist) || (MrcStatus == mrcUnsupportedTechnology)) {
           (MrcCall->MrcIoWrite16)(0x80, MRC_NO_MEMORY_DETECTED);
+          InitStat = BIOS_MSG_DID_NO_MEMORY;
         } else {
           // Replace the upper byte (0x81) with MRC_FAILURE_INDICATION
           (MrcCall->MrcIoWrite8) (0x81, MRC_FAILURE_INDICATION);
+          InitStat = BIOS_MSG_DID_INIT_ERROR;
         }
+        //
+        // Send DRAM Init Done to ME FW, indicating either 'no DRAM' or 'MRC failure'
+        //
+        MeConfigDidReg (
+          FileHandle,
+          InitStat,
+          (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20, // Low DWORD
+          Outputs->MemoryMapData.MeStolenBase >> 12 // High DWORD
+          );
         ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
     }
@@ -1330,8 +1312,18 @@ DEBUG_CODE_END();
         }
       }
       MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
-      ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
       PERF_INMODULE_END ("MrcBasicMemoryTest");
+      //
+      // Send DRAM Init Done to ME FW, indicating 'MRC failure'
+      //
+      InitStat = BIOS_MSG_DID_INIT_ERROR;
+      MeConfigDidReg (
+        FileHandle,
+        InitStat,
+        (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20, // Low DWORD
+        Outputs->MemoryMapData.MeStolenBase >> 12 // High DWORD
+        );
+      ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
       return EFI_DEVICE_ERROR;
     }
   } else {
@@ -1344,8 +1336,18 @@ DEBUG_CODE_END();
 #endif // MDEPKG_NDEBUG
       if (mrcFail == BasicMemoryTestS3 (MrcData)) {
         MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
-        ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         PERF_INMODULE_END ("MrcBasicMemoryTest");
+        //
+        // Send DRAM Init Done to ME FW, indicating 'MRC failure'
+        //
+        InitStat = BIOS_MSG_DID_INIT_ERROR;
+        MeConfigDidReg (
+          FileHandle,
+          InitStat,
+          (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20, // Low DWORD
+          Outputs->MemoryMapData.MeStolenBase >> 12 // High DWORD
+          );
+        ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
       }
 #ifdef MDEPKG_NDEBUG
@@ -3102,7 +3104,7 @@ DEBUG_CODE_END();
   }
   Inputs->PprTestType.Value = MemConfigNoCrc->PprTestType.Value;
   Inputs->PprRepairType     = MemConfigNoCrc->PprRepairType;
-  // Inputs->PprRetryLimit     = MemConfigNoCrc->PprRetryLimit;
+  Inputs->PprRetryLimit     = MemConfigNoCrc->PprRetryLimit;
   Inputs->PprRunOnce        = MemConfigNoCrc->PprRunOnce;
   Inputs->PprErrorInjection = MemConfigNoCrc->PprErrorInjection;
   Inputs->PprForceRepair    = MemConfigNoCrc->PprForceRepair;

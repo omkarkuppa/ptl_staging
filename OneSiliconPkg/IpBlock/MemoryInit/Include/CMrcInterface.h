@@ -830,6 +830,7 @@ typedef struct {
   BOOLEAN   Overflow;
   UINT8     DeviceTemp; // Device temperature after fail detected
   UINT8     Device;
+  UINT32    DqMask[DQ_MASK_INDEX_MAX];
 } ROW_FAIL_RANGE;
 
 // PPR Running State

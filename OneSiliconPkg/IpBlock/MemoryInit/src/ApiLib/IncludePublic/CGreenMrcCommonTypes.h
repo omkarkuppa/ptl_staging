@@ -366,6 +366,7 @@ typedef enum {
   GsmIocTxDllWeakLock,
   GsmIocDllParkToggle,
   GsmIocInputClkSelect,
+  GsmIocOpenLoop,
   GsmIocDllEnPhaseGating,
   GsmIocEnablePiWhenOff,
   GsmIocDataPhaseDrvPiPMEn,

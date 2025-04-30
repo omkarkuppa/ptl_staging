@@ -225,4 +225,18 @@ WriteForceCkStopToMptu (
   IN     UINT32               DelayTimeNs
   );
 
+/**
+  This function does Force Comp result distribution WA
+
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]     CompType - Enum of Comp being forced
+
+  @retval NA
+**/
+VOID
+CompResultDistribution (
+  IN OUT MrcParameters* const MrcData,
+  IN     COMP_CYCLE_TYPE      CompType
+  );
+
 #endif // MRC_DDR_IO_COMP_H

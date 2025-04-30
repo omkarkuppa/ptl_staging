@@ -176,6 +176,7 @@ WrappedForceRcomp (
     Done = (GetSetVal == 0);
   } while (!Done && (MrcCall->MrcGetCpuTime () < Timeout));
 
+  CompResultDistribution (MrcData, CompType);
   return (!Done) ? mrcDeviceBusy : mrcSuccess;
 }
 
@@ -228,7 +229,7 @@ ForceRcompNotCheckAllCompDone (
   MrcStatus Status;
 
   MRC_STATISTIC Timer = MRC_FORCE_RCOMP_TIME;
-  
+
   MrcStatsStartTimer (MrcData, Timer);
   Status = WrappedForceRcomp (MrcData, CompType, FALSE);
   MrcStatsEndTimer (MrcData, Timer);
@@ -319,7 +320,7 @@ DdrIoSetVddqImpactedCrs (
   //[0] is set for LP5 and (Vddq >= 0.7v).
   GetSetDisWckPupDcc = (IsLpddr && (VccDdq >= VDD_0_70)) ? 1 : 0;
   //(VccDDQ < 500mV)
-  GetSetTxDqNmosOnly = MrcGetTxDqNmosOnlyValue (MrcData, VccDdq); 
+  GetSetTxDqNmosOnly = MrcGetTxDqNmosOnlyValue (MrcData, VccDdq);
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < MaxChannel; Channel++) {
       if (!MrcChannelExist (MrcData, Controller, Channel)) {

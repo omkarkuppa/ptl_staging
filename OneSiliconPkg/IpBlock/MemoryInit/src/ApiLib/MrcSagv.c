@@ -298,12 +298,14 @@ MrcSaGvSwitch (
   MrcStatus           Status;
   UINT32              SBClock;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
+  MrcInput            *Inputs;
   DDRPHY_MISC_SAUG_CR_PHYPMOVRD_STRUCT  PhyPmOvrd;
 
   Outputs     = &MrcData->Outputs;
   ExtInputs   = MrcData->Inputs.ExtInputs.Ptr;
   Debug       = &Outputs->Debug;
   Status      = mrcSuccess;
+  Inputs      = &MrcData->Inputs;
 
   if (ExtInputs->TargetedRowRefreshMode < TrrDisabled || ExtInputs->DramRfmMode < DramRfmDisabled) {
     MrcRhPtrrLfsrConfig (MrcData);
@@ -321,15 +323,17 @@ MrcSaGvSwitch (
   if ((Outputs->SaGvPoint == Outputs->SaGvLast) || !MrcIsSaGvEnabled (MrcData)) {
     MrcPmCfgCrAccess (MrcData, FALSE, FALSE);
 
+    PhyPmOvrd.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD_REG);
+    PhyPmOvrd.Bits.SAGAckOvrd = 0;
+
     // Enable Periodic Compensation
-    if (ExtInputs->EnPeriodicComp == 1) {
+    if ((ExtInputs->EnPeriodicComp == 1)  && (!(Inputs->IsDdrIoGen1Tc))){
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Enable Periodic Compensation\n");
-      PhyPmOvrd.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD_REG);
       // MaxMin( ROUNDUP( LOG(1280uS/SBClock,2)-12, 0), 0, 13)
       SBClock = 1000000 / 400; // 400 MHz SBClock
       PhyPmOvrd.Bits.EnPeriodicComp = RANGE (MrcLog2Round (MrcData, 1280 * 1000000/SBClock) - 12, 0 ,13);
-      MrcWriteCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD_REG, PhyPmOvrd.Data);
     }
+    MrcWriteCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD_REG, PhyPmOvrd.Data);
   }
 
   if (ExtInputs->RealtimeMemoryFrequency && (Outputs->SaGvPoint != MrcSaGvPoint0)) {

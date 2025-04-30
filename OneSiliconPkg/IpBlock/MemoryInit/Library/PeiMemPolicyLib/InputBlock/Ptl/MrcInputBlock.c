@@ -263,7 +263,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_McSafeMode                      (0)
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode                          (MRC_LPMODE_ALL)
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode4                         (MrcLpMode4_Enable)
-#define MRC_EXT_INPUTS_INIT_VAL_PprTestType                     (0x6)
+#define MRC_EXT_INPUTS_INIT_VAL_PprTestType                     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_tRFCpb                          (0)
 #define MRC_EXT_INPUTS_INIT_VAL_tRFC2                           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_tRFC4                           (0)

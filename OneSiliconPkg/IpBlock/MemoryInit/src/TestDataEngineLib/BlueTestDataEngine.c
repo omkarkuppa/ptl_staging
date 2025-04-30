@@ -184,3 +184,68 @@ TestDataEngineTestDone (
 
   return Status;
 }
+
+/**
+  Get number of column address bits accounting for burst length of the memory technology.
+
+  @param[in]  MrcData           - Pointer to MRC global data.
+  @param[in]  Controller        - Targeted controller
+  @param[in]  Channel           - Targeted channel
+  @param[in]  Rank              - Targeted rank
+
+  @retval Number of column address bits
+**/
+UINT8
+TestDataEngineGetColAddressBits (
+  IN MrcParameters  *const          MrcData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel,
+  IN UINT32                         Rank
+  )
+{
+  MrcOutput         *Outputs;
+  MrcDimmOut        *DimmOut;
+  UINT32            ColSizeBits;
+
+  Outputs = &MrcData->Outputs;
+  DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER(Rank)];
+  ColSizeBits = MrcLog2 (MrcData, DimmOut->ColumnSize) - 1;
+
+  // BL=16: column increment is 2^4 per CL --> 10 - 4 = 6
+  // BL=32: column increment is 2^5 per CL --> 10 - 5 = 5
+  ColSizeBits -= (Outputs->IsLpddr ? 5 : 4);
+
+  return (UINT8) ColSizeBits;
+}
+
+/**
+  Get number of columns accounting for burst length of the memory technology.
+
+  @param[in]  MrcData           - Pointer to MRC global data.
+  @param[in]  Controller        - Targeted controller
+  @param[in]  Channel           - Targeted channel
+  @param[in]  Rank              - Targeted rank
+
+  @retval Number of columns
+**/
+UINT16
+TestDataEngineGetNumColumns (
+  IN MrcParameters  *const          MrcData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel,
+  IN UINT32                         Rank
+  )
+{
+  MrcOutput         *Outputs;
+  MrcDimmOut        *DimmOut;
+  UINT32            Columns;
+
+  Outputs = &MrcData->Outputs;
+  DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER(Rank)];
+
+  // BL=16: column increment is 2^4 per CL --> Columns / 16
+  // BL=32: column increment is 2^5 per CL --> Columns / 32
+  Columns = DimmOut->ColumnSize >> (Outputs->IsLpddr ? 5 : 4);
+
+  return (UINT16) Columns;
+}

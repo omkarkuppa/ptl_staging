@@ -35,6 +35,7 @@ typedef enum {
   PtDATASbmem,
   PtVccClk,
   PtCCCShared,
+  PtCCCSbmem,
   PtPG,
   PtMax
 } PartitionScope;

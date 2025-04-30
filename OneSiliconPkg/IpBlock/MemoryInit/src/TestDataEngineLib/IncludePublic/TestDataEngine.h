@@ -36,4 +36,40 @@ TestDataEngineInit (
   IN  MrcParameters *const  MrcData
   );
 
+/**
+  Get number of column address bits accounting for burst length of the memory technology.
+
+  @param[in]  MrcData           - Pointer to MRC global data.
+  @param[in]  Controller        - Targeted controller
+  @param[in]  Channel           - Targeted channel
+  @param[in]  Rank              - Targeted rank
+
+  @retval Number of column address bits
+**/
+UINT8
+TestDataEngineGetColAddressBits (
+  IN MrcParameters  *const          MrcData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel,
+  IN UINT32                         Rank
+  );
+
+/**
+  Get number of columns accounting for burst length of the memory technology.
+
+  @param[in]  MrcData           - Pointer to MRC global data.
+  @param[in]  Controller        - Targeted controller
+  @param[in]  Channel           - Targeted channel
+  @param[in]  Rank              - Targeted rank
+
+  @retval Number of columns
+**/
+UINT16
+TestDataEngineGetNumColumns (
+  IN MrcParameters  *const          MrcData,
+  IN UINT32                         Controller,
+  IN UINT32                         Channel,
+  IN UINT32                         Rank
+  );
+
 #endif //TEST_DATA_ENGINE_H__
