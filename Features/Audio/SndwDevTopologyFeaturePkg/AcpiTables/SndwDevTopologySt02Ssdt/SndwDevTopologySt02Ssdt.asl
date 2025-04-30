@@ -19,7 +19,7 @@
 @par Specification Reference:
 **/
 
-DefinitionBlock ("SndwDevTopologySt09Ssdt.aml", "SSDT", 2, "INTEL", "St09Ssdt", 0x1000) {
+DefinitionBlock ("SndwDevTopologySt02Ssdt.aml", "SSDT", 2, "INTEL", "St02Ssdt", 0x1000) {
 
   External(\_SB.PC00.HDAS.IDA.SNDW, DeviceObj)
 

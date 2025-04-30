@@ -30,11 +30,11 @@ VERSION_STRING       = 1.0
 [Sources]
   SndwDevTopologySt00Ssdt/SndwDevTopologySt00Ssdt.asl
   SndwDevTopologySt01Ssdt/SndwDevTopologySt01Ssdt.asl
+  SndwDevTopologySt02Ssdt/SndwDevTopologySt02Ssdt.asl
+  SndwDevTopologySt03Ssdt/SndwDevTopologySt03Ssdt.asl
   SndwDevTopologySt04Ssdt/SndwDevTopologySt04Ssdt.asl
   SndwDevTopologySt05Ssdt/SndwDevTopologySt05Ssdt.asl
   SndwDevTopologySt06Ssdt/SndwDevTopologySt06Ssdt.asl
-  SndwDevTopologySt09Ssdt/SndwDevTopologySt09Ssdt.asl
-  SndwDevTopologySt10Ssdt/SndwDevTopologySt10Ssdt.asl
 
 [Packages]
   MdePkg/MdePkg.dec
