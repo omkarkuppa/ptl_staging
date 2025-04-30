@@ -78,10 +78,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED FVI_DATA mPlatformFviData[] = {
   FVI_VERSION (GOP_VERSION),
   FVI_VERSION (ROYALPARK_VERSION),
   FVI_VERSION (PLATFORM_VERSION),
-  FVI_VERSION (USBC_PD1_VERSION),
-  FVI_VERSION (USBC_PD2_VERSION),
-  FVI_VERSION (USBC_PD3_VERSION),
-  FVI_VERSION (USBC_PD4_VERSION),
+  FVI_VERSION (TCP0_PD_VERSION),
+  FVI_VERSION (TCP1_PD_VERSION),
+  FVI_VERSION (TCP2_PD_VERSION),
+  FVI_VERSION (TCP3_PD_VERSION),
   FVI_VERSION (USBC_RETIMER0_VERSION),
   FVI_VERSION (USBC_RETIMER1_VERSION),
   FVI_VERSION (USBC_RETIMER2_VERSION),
@@ -102,10 +102,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED FVI_STRINGS mPlatformFviStrings[] = {
   { GOP_FVI_STRING,              NULL, },
   { ROYALPARK_FVI_STRING,        NULL, },
   { PLATFORM_FVI_STRING,         NULL, },
-  { USBC_PD1_FVI_STRING,         USBC_PD1_DEFAULT_VERSION_STRING, },
-  { USBC_PD2_FVI_STRING,         USBC_PD2_DEFAULT_VERSION_STRING, },
-  { USBC_PD3_FVI_STRING,         USBC_PD3_DEFAULT_VERSION_STRING, },
-  { USBC_PD4_FVI_STRING,         USBC_PD4_DEFAULT_VERSION_STRING, },
+  { TCP0_PD_FVI_STRING,          TCP0_PD_DEFAULT_VERSION_STRING, },
+  { TCP1_PD_FVI_STRING,          TCP1_PD_DEFAULT_VERSION_STRING, },
+  { TCP2_PD_FVI_STRING,          TCP2_PD_DEFAULT_VERSION_STRING, },
+  { TCP3_PD_FVI_STRING,          TCP3_PD_DEFAULT_VERSION_STRING, },
   { USBC_RETIMER0_FVI_STRING,    NULL, },
   { USBC_RETIMER1_FVI_STRING,    NULL, },
   { USBC_RETIMER2_FVI_STRING,    NULL, },
@@ -149,8 +149,8 @@ ReadUsbCPdVersion(
 
   for (Index = 0; Index < FixedPcdGet8 (PcdMaxUsbCPdNumber); Index++) {
     ZeroMem (DataBuffer, sizeof (DataBuffer));
-    Status = GetPDFwVersion (Index + 1, DataBuffer);
-    DEBUG ((DEBUG_INFO, "Get PD%d FW version with status:%r\n", Index + 1, Status));
+    Status = GetPDFwVersion (Index, DataBuffer);
+    DEBUG ((DEBUG_INFO, "Get PD FW version on TCP%d with status:%r\n", Index, Status));
     if (Status == EFI_SUCCESS) {
       TempPdVersion = LShiftU64 (DataBuffer[7], 56) + LShiftU64 (DataBuffer[6], 48) \
                     + LShiftU64 (DataBuffer[5], 40) + LShiftU64 (DataBuffer[4], 32) \
@@ -162,19 +162,19 @@ ReadUsbCPdVersion(
 
     switch (Index) {
       case 0:
-        UsbCPdSetup.UsbCPd1Version = TempPdVersion;
+        UsbCPdSetup.Tcp0PdVersion = TempPdVersion;
         break;
       case 1:
-        UsbCPdSetup.UsbCPd2Version = TempPdVersion;
+        UsbCPdSetup.Tcp1PdVersion = TempPdVersion;
         break;
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 2
       case 2:
-        UsbCPdSetup.UsbCPd3Version = TempPdVersion;
+        UsbCPdSetup.Tcp2PdVersion = TempPdVersion;
         break;
 #endif
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 3
       case 3:
-        UsbCPdSetup.UsbCPd4Version = TempPdVersion;
+        UsbCPdSetup.Tcp3PdVersion = TempPdVersion;
         break;
 #endif
     }
@@ -224,13 +224,13 @@ UpdateUsbCPdVersion (
   UINT32         FwVersion;
   UINT32         SubFwVersion;
   UINT8          Index;
-  CHAR8          Pd1VersionString[18];
-  CHAR8          Pd2VersionString[18];
+  CHAR8          Tcp0PdVersionString[18];
+  CHAR8          Tcp1PdVersionString[18];
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 2
-  CHAR8          Pd3VersionString[18];
+  CHAR8          Tcp2PdVersionString[18];
 #endif
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 3
-  CHAR8          Pd4VersionString[18];
+  CHAR8          Tcp3PdVersionString[18];
 #endif
 
   DEBUG ((DEBUG_INFO, "UpdateUsbCPdVersion - Start\n"));
@@ -252,42 +252,42 @@ UpdateUsbCPdVersion (
   for (Index = 0; Index < FixedPcdGet8 (PcdMaxUsbCPdNumber); Index++) {
     switch (Index) {
       case 0:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;
+        UsbCPdVersion = UsbCPdSetup.Tcp0PdVersion;
         if (UsbCPdVersion != 0) {
           FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
           SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
-          AsciiSPrint (Pd1VersionString, sizeof (Pd1VersionString), "%08x.%08x", FwVersion, SubFwVersion);
-          CopyMem (mPlatformFviStrings[USBC_PD1_VER].VersionString, Pd1VersionString, sizeof (Pd1VersionString));
+          AsciiSPrint (Tcp0PdVersionString, sizeof (Tcp0PdVersionString), "%08x.%08x", FwVersion, SubFwVersion);
+          CopyMem (mPlatformFviStrings[TCP0_PD_VER].VersionString, Tcp0PdVersionString, sizeof (Tcp0PdVersionString));
         }
         break;
       case 1:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd2Version;
+        UsbCPdVersion = UsbCPdSetup.Tcp1PdVersion;
         if (UsbCPdVersion != 0) {
           FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
           SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
-          AsciiSPrint (Pd2VersionString, sizeof (Pd2VersionString), "%08x.%08x", FwVersion, SubFwVersion);
-          CopyMem (mPlatformFviStrings[USBC_PD2_VER].VersionString, Pd2VersionString, sizeof (Pd2VersionString));
+          AsciiSPrint (Tcp1PdVersionString, sizeof (Tcp1PdVersionString), "%08x.%08x", FwVersion, SubFwVersion);
+          CopyMem (mPlatformFviStrings[TCP1_PD_VER].VersionString, Tcp1PdVersionString, sizeof (Tcp1PdVersionString));
         }
         break;
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 2
       case 2:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd3Version;
+        UsbCPdVersion = UsbCPdSetup.Tcp2PdVersion;
         if (UsbCPdVersion != 0) {
           FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
           SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
-          AsciiSPrint (Pd3VersionString, sizeof (Pd3VersionString), "%08x.%08x", FwVersion, SubFwVersion);
-          CopyMem (mPlatformFviStrings[USBC_PD3_VER].VersionString, Pd3VersionString, sizeof (Pd3VersionString));
+          AsciiSPrint (Tcp2PdVersionString, sizeof (Tcp2PdVersionString), "%08x.%08x", FwVersion, SubFwVersion);
+          CopyMem (mPlatformFviStrings[TCP2_PD_VER].VersionString, Tcp2PdVersionString, sizeof (Tcp2PdVersionString));
         }
         break;
 #endif
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 3
       case 3:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd4Version;
+        UsbCPdVersion = UsbCPdSetup.Tcp3PdVersion;
         if (UsbCPdVersion != 0) {
           FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
           SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
-          AsciiSPrint (Pd4VersionString, sizeof (Pd4VersionString), "%08x.%08x", FwVersion, SubFwVersion);
-          CopyMem (mPlatformFviStrings[USBC_PD4_VER].VersionString, Pd4VersionString, sizeof (Pd4VersionString));
+          AsciiSPrint (Tcp3PdVersionString, sizeof (Tcp3PdVersionString), "%08x.%08x", FwVersion, SubFwVersion);
+          CopyMem (mPlatformFviStrings[TCP3_PD_VER].VersionString, Tcp3PdVersionString, sizeof (Tcp3PdVersionString));
         }
 #endif
         break;

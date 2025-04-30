@@ -236,7 +236,7 @@
                                                           // [63:48] - TCP3
 #define EC_C_PD_VERSION_INFO_CMD                  0xDF    // Get PD information data
                                                           // Send:
-                                                          // 1 byte: PD index
+                                                          // 1 byte: TCP index
                                                           // Receive:
                                                           // 4 bytes: PD info data
 #define EC_C_PD_VERSION_INFO_CMD_4BYTE            0xDF

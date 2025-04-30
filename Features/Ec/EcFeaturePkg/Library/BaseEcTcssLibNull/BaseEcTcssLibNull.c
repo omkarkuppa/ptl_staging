@@ -204,7 +204,7 @@ NotifyEcToRestorePL4Value (
 /**
   Execute the PD Vendor Command via EC private port
 
-  @param[in]  PdCntrlIndex       PD controller index (0-based).
+  @param[in]  TcpIndex           TCP index which PD Bridge is connected to.
   @param[in]  VendorCmd          PD Vendor command data
   @param[in]  Lock               Need to Lock the EC PD I2C target or not
   @param[in]  InputData          A pointer to input data
@@ -218,7 +218,7 @@ NotifyEcToRestorePL4Value (
 EFI_STATUS
 EFIAPI
 EcPdExecuteVendorCommand (
-  IN  UINT8    PdCntrlIndex,
+  IN  UINT8    TcpIndex,
   IN  UINT8    VendorCmd,
   IN  BOOLEAN  Lock,
   IN  UINT8    *InputData,

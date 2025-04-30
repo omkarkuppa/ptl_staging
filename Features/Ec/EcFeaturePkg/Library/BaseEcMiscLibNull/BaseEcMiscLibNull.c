@@ -522,7 +522,7 @@ LpcEcResetEcInNormalMode (
 /**
   Get PD firmware version
 
-  @param[in]      PDIndex           PD Index
+  @param[in]      TcpIndex          Return the PD version responsible for the specific TCP index.
   @param[in, out] Data              PD information
 
   @retval         EFI_SUCCESS       Get PD information success
@@ -536,7 +536,7 @@ LpcEcResetEcInNormalMode (
 EFI_STATUS
 EFIAPI
 GetPDFwVersion (
-  IN     UINT8      PDIndex,
+  IN     UINT8      TcpIndex,
   IN OUT UINT8      *Data
   )
 {
