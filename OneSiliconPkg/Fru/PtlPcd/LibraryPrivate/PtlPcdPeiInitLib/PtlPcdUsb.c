@@ -98,9 +98,7 @@ UsbDeviceControllerDisable (
   IN    USB_HANDLE *UsbHandle
   )
 {
-  //
   // Disable xDCI function.
-  //
   PtlPcdPsfDisableXdci ();
 }
 
@@ -139,9 +137,7 @@ CreateUsbHandle (
 
   DEBUG ((DEBUG_VERBOSE, "%a entry\n", __FUNCTION__));
 
-  //
   // Create private config values
-  //
   UsbPrivateConfig->IsPortResetMessagingSupported = TRUE;
   UsbPrivateConfig->IpVersion = V19_3;
   UsbPrivateConfig->Location  = Standalone;
@@ -155,15 +151,12 @@ CreateUsbHandle (
 
   UsbHandle->PrivateConfig = UsbPrivateConfig;
 
-  //
   // Populate callbacks pointers
-  //
   UsbCallback->UsbDeviceControllerDisable = UsbDeviceControllerDisable;
-  UsbCallback->DelayForUs           = UsbDelayForUs;
+  UsbCallback->DelayForUs = UsbDelayForUs;
   UsbHandle->Callback = UsbCallback;
-  //
+
   // Set config pointer
-  //
   Status = GetConfigBlock ((VOID *)SiPolicy, &gUsbConfigGuid, (VOID *)&UsbConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -182,8 +175,7 @@ CreateUsbHandle (
   @param[in]    MmioAccess          Memory Mappied IO access
   @param[in]    SbMmioAccess        Sideband MMIO Access protocol
   @param[in]    P2SbController      Primary to Sideband controller
-  @param[out]   UsbController       Instance of UsbController structure that
-                                    will describe PCH USB Host Controller
+  @param[out]   UsbController       Instance of UsbController
 **/
 STATIC
 VOID
@@ -197,9 +189,8 @@ CreateUsbDeviceController (
 {
   EFI_STATUS      Status;
   P2SB_PORT_16_ID Pid = { .Pid16bit = PTL_SID_F2_PID_XDCI };
-  //
+
   // PCIe config space access
-  //
   PciConfigAccessInit (
     DEFAULT_PCI_SEGMENT_NUMBER_PCH,
     DEFAULT_PCI_BUS_NUMBER_PCH,
@@ -209,16 +200,12 @@ CreateUsbDeviceController (
     );
   UsbController->PcieConfigAccess = (REGISTER_ACCESS *) PcieConfigAccess;
 
-  //
   // Memory Mapped IO access
-  //
   MmioAccessInit (PcdGet32 (PcdSiliconInitTempMemBaseAddr), MmioAccess);
   UsbController->MmioAccess = (REGISTER_ACCESS *) MmioAccess;
   UsbController->ReservedMmio = PcdGet32 (PcdSiliconInitTempMemBaseAddr);
 
-  //
   // Get Sideband bridge data
-  //
   Status = PtlPcdGetP2SbController (P2SbController, Pid);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -576,14 +563,10 @@ PtlPcdUsbHostControllerInit (
 
   DEBUG ((DEBUG_VERBOSE, "%a entry\n", __FUNCTION__));
 
-  //
   // Clear structures data
-  //
   ZeroMem (&IpUsb3Inst, sizeof (IP_USB3_INST));
 
-  //
   // Init Ip instance with config block data and SoC specific settings
-  //
   InitIpInstance (&IpUsb3Inst, SiPolicy);
 
   IpUsb3Inst.TuningList = TuningList;
@@ -591,9 +574,7 @@ PtlPcdUsbHostControllerInit (
   IpUsb3Inst.FeatureList = FeatureList;
   IpUsb3Inst.FeatureListEntryCount = ARRAY_SIZE (FeatureList);
 
-  //
   // Calling instance init to setup register access
-  //
   if (IpUsb3InstInit (&IpUsb3Inst) != IpCsiStsSuccess) {
     DEBUG ((DEBUG_WARN, "Error during instance initialization\n"));
     return;
@@ -602,9 +583,7 @@ PtlPcdUsbHostControllerInit (
   DEBUG ((DEBUG_INFO, "USB3 IPSD version: %08X\n", IpUsb3GetVersion (&IpUsb3Inst, IpCsiVerIdIpFw)));
   DEBUG ((DEBUG_INFO, "CSI version: %08X\n", IpUsb3GetVersion (&IpUsb3Inst, IpCsiVerIdCsi)));
 
-  //
   // Calling single full init API instead of various function calls
-  //
   Status = IpUsb3HostControllerFullInit (&IpUsb3Inst);
   if (Status != IpCsiStsSuccess) {
     DEBUG ((DEBUG_WARN, "Error during IpUsb3HostControllerFullInit\n"));
@@ -636,9 +615,7 @@ PtlPcdUsbDeviceControllerInit (
 
   DEBUG ((DEBUG_VERBOSE, "%a entry\n", __FUNCTION__));
 
-  //
   // Clear structures data
-  //
   ZeroMem (&DeviceController, sizeof (USB_CONTROLLER));
   ZeroMem (&UsbPrivateConfig, sizeof (USB_PRIVATE_CONFIG));
   ZeroMem (&UsbCallback, sizeof (USB_CALLBACK));
@@ -664,9 +641,7 @@ PtlPcdUsbDeviceControllerInit (
 
   XdciConfigure (&UsbHandle);
   if (UsbHandle.UsbConfig->XdciConfig.Enable) {
-    //
     // Configure xDCI interrupt
-    //
     ItssGetDevIntConfig (
       SiPolicy,
       PchXdciDevNumber (),
@@ -675,9 +650,7 @@ PtlPcdUsbDeviceControllerInit (
       &Irq
       );
 
-    //
     // Set Interrupt Pin and IRQ number
-    //
     XdciConfigureInterrupt (&UsbHandle, InterruptPin, Irq);
   }
 }

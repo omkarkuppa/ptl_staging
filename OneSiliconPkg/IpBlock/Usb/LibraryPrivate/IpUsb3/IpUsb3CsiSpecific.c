@@ -267,6 +267,20 @@ IpUsb3GetControl (
       return IpUsb3FeatValDbcTraceInEpDis;
       break;
 
+    case IpUsb3FeatIdDwbEnable:
+      Data = IP_WR_READ_32 (pInst->RegCntxtMem, R_XHCI_MEM_TRB_PRF_CTRL_REG4);
+      if (pCsiSts != NULL) {
+        *pCsiSts = IpCsiStsSuccess;
+      }
+      if ((Data & B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_HS) &&
+          (Data & B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS) &&
+          (Data & B_XHCI_MEM_TRB_PRF_CTRL_REG4_PRFTCHHOLDEN) &&
+          (((Data & B_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT) >> N_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT) == V_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT)) {
+        return IpUsb3FeatValDwbEnable;
+      } else {
+        return IpUsb3FeatValDwbDisable;
+      }
+
     case IpUsb3FeatIdUnknown:
     default:
       PRINT_WARNING ("Invalid FeatureId provided to %s\n", __FUNCTION__);
@@ -299,6 +313,9 @@ IpUsb3SetControl (
   UINT32           FeatureVal
   )
 {
+  UINT32   Data32And;
+  UINT32   Data32Or;
+
   if (pInst == NULL) {
     PRINT_ERROR_NULL_INST ("Instance pointer cannot be NULL\n");
     return IpCsiStsErrorNullPtr;
@@ -461,6 +478,31 @@ IpUsb3SetControl (
         PRINT_WARNING ("Invalid parameter provided to %s\n", __FUNCTION__);
         return IpCsiStsErrorBadParam;
       }
+      break;
+
+    case IpUsb3FeatIdDwbEnable:
+      if (FeatureVal == IpUsb3FeatValDwbEnable) {
+        Data32Or = (UINT32) (B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_HS |
+                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS |
+                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_PRFTCHHOLDEN |
+                            (V_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT << N_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT));
+      } else if (FeatureVal == IpUsb3FeatValDwbDisable) {
+        Data32Or = B_XHCI_MEM_TRB_PRF_CTRL_REG4_EVENTRUN125_EN;
+      } else {
+        PRINT_WARNING ("Invalid parameter provided to %s\n", __FUNCTION__);
+        return IpCsiStsErrorBadParam;
+      }
+
+      Data32And = (UINT32)~(B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_HS |
+                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS |
+                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_EVENTRUN125_EN |
+                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_PRFTCHHOLDEN |
+                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK |
+                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT);
+
+      Data32Or |= (UINT32)(V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK << N_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK);
+
+      IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_TRB_PRF_CTRL_REG4, Data32And, Data32Or);
       break;
 
     case IpUsb3FeatIdUnknown:
