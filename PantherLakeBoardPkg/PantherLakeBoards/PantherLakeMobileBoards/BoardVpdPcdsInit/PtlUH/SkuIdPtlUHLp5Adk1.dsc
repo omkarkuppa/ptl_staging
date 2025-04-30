@@ -578,16 +578,14 @@
 
   # PTL-UH Adk1 power meter table
   gBoardModuleTokenSpaceGuid.VpdPcdPowerMeter|*|{CODE(
-  { 6,    // DeviceSize
+  { 4,    // DeviceSize
     '3',  // I2C_Scope
     {
      //BaseAddress, {RailName, ResistorValue}
-     {    0x11,     {{"V3P3A_MEM_SNS",        5}, {"VBATA_VDD2H_SENS",      5}, {"VBATA_VCCCORE_SENSE",   2}, {"SNS_VBATA",          2}}},
-     {    0x10,     {{"SNS_V3P3X_SSD",        5}, {"VBATA_VCCGT_SENSE",     2}, {"SNS_V3P3A_DP",          1}, {"SNS_V1P8A",          5}}},
-     {    0x13,     {{"VBATA_VNNAON_SENSE",   2}, {"VBATA_LP_ECORE_SENSE",  2}, {"VBATA_VCCIO_SENSE",     5}, {"VBATA_VCCSA_SENSE",  2}}},
-     {    0x12,     {{"SNS_VCC_EDP_BKLT_DP", 10}, {"SNS_V3P3A_LIDBRD_DP",  10}, {"SNS_V3P3A_EDP",        10}, {"SNS_V5P0A_DP",       2}}},
-     {    0x14,     {{"SNS_V3P3A_WLAN_DP",    1}, {"V3P3A_KBC_EC_CS",       5}, {"SNS_V_CHGR_EMI_VIN_P", 10}, {"SNS_V_BATT_OUT_FET", 5}}},
-     {    0x17,     {{"SENSE_3P3A_IR_CAM_DP", 5}, {"SENSE_3P3A_RGB_CAM_DP", 5}, {"NA",                    0}, {"NA",                 0}}},
+     {    0x11,     {{"SNS_VBATA",          2},   {"VBATA_VCCCORE_SENSE",   2}, {"VBATA_VDD2H_SENS",      5}, {"V3P3A_MEM_SNS",      5}}},
+     {    0x10,     {{"SNS_V1P8A",          5},   {"SNS_V3P3A",             1}, {"VBATA_VCCGT_SENSE",     2}, {"SNS_V3P3X_SSD",      2}}},
+     {    0x13,     {{"VBATA_VCCSA_SENSE",  2},   {"VBATA_VCCIO_SENSE",     5}, {"VBATA_LP_ECORE_SENSE",  2}, {"VBATA_VNNAON_SENSE", 2}}},
+     {    0x12,     {{"SNS_V5P0A",          2},   {"SNS_V_CHGR_EMI_VIN",   10}, {"V3P3A_KBC_EC_CS",       5}, {"SNS_V3P3A_WLAN",     5}}},
     }
   })}
 
