@@ -53,7 +53,6 @@ DefinitionBlock (
   External (\_SB.PC00.GFX0.CDCK)
   External (\_SB.PC00.GFX0.DD1F, DeviceObj)
   External (\_SB.PC00.GFX0.GDCK, MethodObj)
-  External (\_SB.PC00.GFX0.GLID, MethodObj)
   External (\_SB.PC00.HDAS.PPMS, MethodObj)
   External (\_SB.PR00._PSS, MethodObj)
   External (\_SB.PR00.LPSS, PkgObj)
