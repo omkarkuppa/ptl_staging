@@ -53,6 +53,11 @@
 #include <PcdSbPortIds.h>
 #include <Library/PerformanceLib.h>
 
+#define PCD_PCIE_NO_SUCH_CLOCK  0xFF
+#define PCD_MAX_PCIE_CLOCK_7    7
+#define PCD_PCIE_CLOCK_8        7
+#define PCD_PCIE_CLOCK_9        8
+
 /*
   Performs PCH ISH Controller initialization
 
@@ -287,6 +292,14 @@ PtlPcdInit (
   //
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_POSTMEM_INIT_SSE);
   PtlPcdSseInit (SiPolicy);
+
+  //
+  // Disable the clock 8 and 9 for PTL PCD-P
+  //
+  if (PtlIsPcdP () && (GetPchMaxPcieClockNum () == PCD_MAX_PCIE_CLOCK_7)) {
+    DisableClockBufferProgramming (PCH_PCIE_NO_SUCH_CLOCK, PCD_PCIE_CLOCK_8);
+    DisableClockBufferProgramming (PCH_PCIE_NO_SUCH_CLOCK, PCD_PCIE_CLOCK_9);
+  }
 
   //
   // Issue Reset based on SiScheduleResetHob

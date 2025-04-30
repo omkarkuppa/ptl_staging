@@ -71,10 +71,6 @@ DisableClockBufferProgramming (
   P2SB_SIDEBAND_REGISTER_ACCESS  IsClkAccess;
   P2SB_PORT_16_ID                P2SBPid;
 
-  if (ClockNumber >= GetPchMaxPcieClockNum ()) {
-    ASSERT (FALSE);
-    return;
-  }
   P2SBPid.Pid16bit = PTL_SID_F2_PID_ICLK;
   PtlPcdGetP2SbController (&P2SbController, P2SBPid);
   BuildP2SbSidebandAccess (

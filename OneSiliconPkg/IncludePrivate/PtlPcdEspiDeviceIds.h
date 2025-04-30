@@ -40,8 +40,8 @@
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_1         0xE401          ///< LPC/eSPI Controller P SuperSKU
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_2         0xE402          ///< LPC/eSPI Controller P Premiun
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_3         0xE403          ///< LPC/eSPI Controller P Base/Mainstream
-#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_4         0xE404          ///< LPC/eSPI Controller
-#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_5         0xE405          ///< LPC/eSPI Controller
+#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_4         0xE404          ///< LPC/eSPI Controller NEX INDU SuperSKU
+#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_5         0xE405          ///< LPC/eSPI Controller NEX INDU Premium
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_6         0xE406          ///< LPC/eSPI Controller
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_7         0xE407          ///< LPC/eSPI Controller
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_8         0xE408          ///< LPC/eSPI Controller

@@ -39,6 +39,7 @@
 #include <Register/PchRegs.h>
 #include <Register/EspiRegs.h>
 #include <IndustryStandard/Pci30.h>
+#include <PcdEspiDeviceIds.h>
 #include "PchInfoLibPrivate.h"
 
 /**
@@ -342,7 +343,11 @@ GetPchMaxPcieClockNum (
   VOID
   )
 {
-  if (PtlIsPcdP()) {
+  if (PtlIsPcdP ()) {
+    if ((PtlPcdGetEspiDid () == V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_4) ||\
+        (PtlPcdGetEspiDid () == V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_5)) {
+      return 9;
+    }
     return 7;
   } else {
     return 9;

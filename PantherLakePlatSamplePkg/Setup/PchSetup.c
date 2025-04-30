@@ -481,6 +481,15 @@ PchSetupScs (
 
 STATIC
 VOID
+PchSetupClock (
+  OUT SETUP_VOLATILE_DATA *SetupVolatileData
+)
+{
+  SetupVolatileData->MaxPcieClockNumber = GetPchMaxPcieClockNum ();
+}
+
+STATIC
+VOID
 PchSetupPcie (
   IN  EFI_HII_HANDLE        HiiHandle,
   OUT SETUP_VOLATILE_DATA*  SetupVolatileData
@@ -757,7 +766,7 @@ InitSBStrings (
     PchSetupIsh (&VolatileData);
     PchSetupPSOn (&VolatileData);
     PchSetupCrid (&VolatileData);
-
+    PchSetupClock (&VolatileData);
     VolatileData.PchSeries = PchSeries ();
 
     // Send PDT Unlock Message to ISH

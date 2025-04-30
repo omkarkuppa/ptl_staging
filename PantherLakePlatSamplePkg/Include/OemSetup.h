@@ -71,6 +71,7 @@ extern "C" {
   <b>Revision 11</b>: - Added MemorySizeIn32MB, McCount
   <b>Revision 12</b>: - Added TotalNumberOfTypeCPortsSupported
   <b>Revision 13</b>: - Added IsS3Supported
+  <b>Revision 14</b>: - Added MaxPcieClockNumber
 **/
 
 #define SETUP_VOLATILE_DATA_REVISION 15
@@ -133,6 +134,7 @@ typedef struct _SETUP_VOLATILE_DATA
   UINT16 TypeCPortsSupportedMap;
   BOOLEAN IsS3Supported;
   UINT32 TpmLocation;
+  UINT8  MaxPcieClockNumber;
 } SETUP_VOLATILE_DATA;
 
 /**
