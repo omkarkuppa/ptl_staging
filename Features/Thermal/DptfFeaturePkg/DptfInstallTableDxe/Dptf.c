@@ -443,6 +443,7 @@ LoadAcpiTables(
               ///
               *(UINT16 *) (CurrPtr + 1 + sizeof (*Signature) + 2 + sizeof (UINT32) + 1) = sizeof (DPTF_NVS_AREA);
               DEBUG ((DEBUG_INFO, "Intel(R) Dynamic Tuning Technology: Update NVS Area\n"));
+              break;
             }
           }
         break;

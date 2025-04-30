@@ -139,8 +139,13 @@ LpssUartDriverSupported (
     EndPath    = NextDevicePathNode (EndPath);
   }
 
+  // Validate the size of the Device Path Node
+  if (DevicePathNodeLength (DevicePath) < sizeof (LPSS_UART_ACPI_EXTENDED_DEVICE_PATH)) {
+    return EFI_UNSUPPORTED;
+  }
+
   if (DevicePath->Type == ACPI_DEVICE_PATH && DevicePath->SubType == ACPI_EXTENDED_DP) {
-    DeviceId =  (UINT16) (((LPSS_UART_ACPI_EXTENDED_DEVICE_PATH*) DevicePath)->DeviceId);
+    DeviceId = (UINT16) (((LPSS_UART_ACPI_EXTENDED_DEVICE_PATH*) DevicePath)->DeviceId);
   } else {
     return EFI_UNSUPPORTED;
   }
