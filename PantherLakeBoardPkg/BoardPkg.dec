@@ -49,6 +49,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gOcAcpiTableStorageGuid         =  {0x22d85435, 0xf24a, 0x43db, {0x7d, 0x04, 0x01, 0x56, 0x06, 0xdf, 0x21, 0xb1}}
   gRcAcpiTableStorageGuid         =  {0x6b5c8fe5, 0x70dd, 0x4e17, {0xbf, 0xf4, 0xd2, 0x1c, 0x26, 0x58, 0x6e, 0xb3}}
   gGopConfigDriverHobGuid          = {0xf603c5d8, 0xca59, 0x4854, {0x91, 0xf1, 0xd3, 0x44, 0xe6, 0x1b, 0x7b, 0xe3}}
+  gStructPcdTokenSpaceGuid        =  {0x3f1406f4, 0x2b, 0x487a,   {0x8b, 0x69, 0x74, 0x29, 0x1b, 0x36, 0x16, 0xf4}}
 
   #
   # IFWI
@@ -239,6 +240,9 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # PCH Misc Configuration
   gBoardModuleTokenSpaceGuid.PcdMipiCamGpioEnable|FALSE|BOOLEAN|0x00000065
   gBoardModuleTokenSpaceGuid.PcdSmbiosMainSlotEntry|0|UINT64|0x00000103
+
+  # Ufs device detect status
+  gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected |FALSE|BOOLEAN|0x00000149
 
   # Feature Override Funciton
   gBoardModuleTokenSpaceGuid.PcdFuncPeiBoardSpecificInitPostMem|0|UINT64|0x00000F11
@@ -1941,11 +1945,12 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     GpioV2Config.h
   }
   # Ufs device detect Gpio pin
-  gBoardModuleTokenSpaceGuid.VpdPcdGpioUfsDetect              |{0}|GPIOV2_INIT_CONFIG[]|0x50000025 {
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioUfsDetect              |{0}|VPD_GPIO_PAD|0x50000025 {
   <HeaderFiles>
     Register/GpioV2PcdPins.h
     GpioV2Config.h
     PlatformGpioConfig.h
+    PlatformBoardConfig.h
   <Packages>
     MdePkg/MdePkg.dec
     OneSiliconPkg/SiPkg.dec
@@ -1956,9 +1961,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 # VPD PCD's End #
 #################################################################
 
-[PcdsDynamic, PcdsDynamicEx]
-  # Ufs device detect status
-  gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected       |FALSE|BOOLEAN|0x00000149
 [PcdsPatchableInModule]
 
 [PcdsFeatureFlag]
@@ -1978,10 +1980,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gPlatformModuleTokenSpaceGuid.PcdAhciPeiMmioBase|0xB1000000|UINT32|0x0000C10E
   gPlatformModuleTokenSpaceGuid.PcdAhciPeiMmioLimit|0xB10FFFFF|UINT32|0x0000C10F
 
-[Guids]
-  gStructPcdTokenSpaceGuid = {0x3f1406f4, 0x2b, 0x487a, {0x8b, 0x69, 0x74, 0x29, 0x1b, 0x36, 0x16, 0xf4}}
-
-[PcdsFixedAtBuild,PcdsPatchableInModule,PcdsDynamic,PcdsDynamicEx]
 gStructPcdTokenSpaceGuid.PcdAmtMacPassThroughConfig|{0}|AMT_MAC_PASSTHROUGH_CONFIG|0XFCD00001{
  <HeaderFiles>
   Include/AmtMacPassThroughConfigVariable.h

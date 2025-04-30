@@ -106,6 +106,7 @@ Defines Platform BoardIds
 // WildcatLake Board Id
 #define BoardIdWclNDdr5Rvp1                0x20
   #define BomIdWclDdr5PnpRvp1              0x02
+  #define BomIdWclDdr5Rvp1                 0x04
   #define BomIdWclDdr5McioRvp1             0x07
 #define BoardIdWclLp5xRvp2                 0x21
   #define BomIdWclLp5SktRvp2               0x01
@@ -169,6 +170,8 @@ Defines Platform BoardIds
 // WildcatLake Sku Id
 #define SkuIdWclNDdr5Rvp1                 0x08000020
 #define SkuIdWclNDdr5Rvp1HDMI             0x0A000020
+#define SkuIdWclDdr5Rvp1Bom               0x08040020
+#define SkuIdWclNDdr5Rvp1HDMIBom          0x0A040020
 #define SkuIdWclLp5Rvp2                   0x08000021
 #define SkuIdWclDdr5PnpRvp1               0x08020020
 #define SkuIdWclDdr5PnpRvp1HDMI           0x0A020020
