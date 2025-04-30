@@ -2955,7 +2955,7 @@
 
   # !BSF NAME:{HD Audio Microphone Privacy Mode} TYPE:{Combo} OPTION:{0: No Microphone Privacy Support, 1: HW Managed Microphone Privacy, 2: FW Managed Microphone Privacy, 3: Force Microphone Mute}
   # !BSF HELP:{HD Audio Microphone Privacy Mode: 0: No Microphone Privacy Support; 1: HW Managed Microphone Privacy; 2: FW Managed Microphone Privacy; 3: Force Microphone Mute}
-  gPlatformFspPkgTokenSpaceGuid.PchHdaMicPrivacyMode        | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.PchHdaMicPrivacyMode        | * | 0x01 | 0x00
 
   # !BSF NAME:{HD Audio Microphone Privacy Deglitch} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{HD Audio Microphone Privacy Deglitch: 0: Disable, 1: Enable}

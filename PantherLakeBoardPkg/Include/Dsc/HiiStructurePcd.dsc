@@ -1415,7 +1415,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyHwModeSoundWire1|0x1       
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyHwModeSoundWire2|0x1                          # SNDW #2
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyHwModeSoundWire3|0x1                          # SNDW #3
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyHwModeSoundWire4|0x1                          # SNDW #4
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyMode|0x1                                      # Microphone Privacy Mode
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyMode|0x0                                      # Microphone Privacy Mode
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyTimeout|0x28                                  # Timeout
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaSndwClockSrcSelect|0x0                                  # SoundWire clock source
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIoApic24119Entries|0x1                                     # IOAPIC 24-119 Entries
