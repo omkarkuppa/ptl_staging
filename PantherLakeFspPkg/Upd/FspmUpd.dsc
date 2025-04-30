@@ -1779,7 +1779,7 @@
 
   # !BSF NAME:{Serial Io Uart Debug Mmio Base} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdLpssUartMode = SerialIoUartPci.}
-  gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugMmioBase           | * | 0x04 | 0xFE036000
+  gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugMmioBase           | * | 0x04 | 0xFE02C000
 
   # !BSF NAME:{PcdSerialDebugLevel} TYPE:{Combo}
   # !BSF OPTION:{0:Disable, 1:Error Only, 2:Error and Warnings, 3:Load Error Warnings and Info, 4:Load Error Warnings and Info & Event, 5:Load Error Warnings Info and Verbose}
