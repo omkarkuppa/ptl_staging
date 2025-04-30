@@ -246,7 +246,7 @@
 #string STR_MONITOR_MWAIT_PROMPT_HELP           #language en-US "Enable/Disable MonitorMWait, if Disable MonitorMwait, the AP threads Idle Manner should not set in MWAIT Loop"
 
 #string STR_ACTIVE_CORE_COUNT_PROMPT                      #language en-US "Active Performance-cores"
-#string STR_ACTIVE_CORE_COUNT_PROMPT_HELP                 #language en-US "Number of P-cores to enable in each processor package. Note: Number of P-cores, E-cores and LP E-cores are looked at together. When all are {0,0,0}, Pcode will enable all cores."
+#string STR_ACTIVE_CORE_COUNT_PROMPT_HELP                 #language en-US "Number of P-cores to enable in each processor package. Note: P-Cores must be greater than zero as per Reset HAS."
 #string STR_ACTIVE_ATOM_CORE_COUNT_PROMPT                 #language en-US "Active Efficient-cores"
 #string STR_ACTIVE_ATOM_CORE_COUNT_PROMPT_HELP            #language en-US "Number of E-cores to enable in each processor package. Note: Number of P-cores, E-cores and LP E-cores are looked at together. When all are {0,0,0}, Pcode will enable all cores."
 #string STR_ACTIVE_LP_ATOM_CORE_COUNT_PROMPT              #language en-US "Active LP Efficient-cores"

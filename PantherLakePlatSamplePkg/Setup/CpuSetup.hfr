@@ -186,7 +186,6 @@
         ALL_BIG_CORE_COUNT(2)
         ALL_BIG_CORE_COUNT(1)
 
-        option text   = STRING_TOKEN (STR_0), value = 0, flags = RESET_REQUIRED;
       endoneof;
     endif; // grayoutif
 
