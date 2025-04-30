@@ -29,6 +29,7 @@
 #include <Library/PmcLib.h>
 #include <Library/P2SbSidebandAccessLib.h>
 #include <Library/PmcLib.h>
+#include <Library/PcdInfoLib.h>
 #include <Defines/PcdPchBdfAssignment.h>
 #include <MeHandle.h>
 #include "MePcdInitLib.h"
@@ -46,6 +47,9 @@ PtlPcdInitMeHandle (
 {
   MeHandlePrivate->HeciTempMmio                        = 0;
   MeHandlePrivate->PmcPwrmBase                         = PmcGetPwrmBase ();
+  MeHandlePrivate->XhciPciCfgBase                      = PtlPcdGetXhciPciCfgBase ();
+  MeHandlePrivate->UsbrKvmPortNum                      = PtlPcdGetUsbrKvmPortNum ();
+  MeHandlePrivate->UsbrStoragePortNum                  = PtlPcdGetUsbrStoragePortNum ();
   MeHandlePrivate->Callbacks->GetCsmeHeciSbAccess      = PtlPcdGetCsmeHeciSbAccess;
   MeHandlePrivate->Callbacks->GetCsmeHeciPciCfgBase    = PtlPcdGetCsmeHeciPciCfgBase;
   MeHandlePrivate->Callbacks->GetPseHeciPciCfgBase     = PtlPcdGetPseHeciPciCfgBase;
