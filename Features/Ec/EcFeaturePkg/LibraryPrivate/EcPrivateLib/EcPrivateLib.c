@@ -325,7 +325,7 @@ SendEcCommandTimeout (
   //
   IoWrite8 (mEcIdIoList[EcId].CommandPort, Command);
 
-  DEBUG ((DEBUG_INFO, "SendEcCommandTimeout sent %x \n", Command));
+  DEBUG ((DEBUG_INFO, "Send EC command :0x%x \n", Command));
 
   return EFI_SUCCESS;
 }
