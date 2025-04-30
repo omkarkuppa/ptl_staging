@@ -90,35 +90,33 @@ Scope (\_GPE)
   // TCSS PCI Express caused the wake event.
   // GPE0
   //
-  Method (_L76, 0, serialized) {
-    If (CondRefOf (GP1E)) {
-      If (LEqual (GP1E, 1)) {
-        Return ()
+  If (CondRefOf (GP1E)) {
+    If (LEqual (GP1E, 0)) {
+      Method (_L76, 0, serialized) {
+        ADBG ("L76 Event")
+
+        SL76 ()
       }
     }
-    ADBG ("L76 Event")
-
-    SL76 ()
   }
 
   //
   // TCSS PCI Express Hot-Plug caused the wake event.
   // GPE0
   //
-  Method (_L77)
-  {
-    If (CondRefOf (GP1E)) {
-      If (LEqual (GP1E, 1)) {
-        Return ()
+  If (CondRefOf (GP1E)) {
+    If (LEqual (GP1E, 0)) {
+      Method (_L77)
+      {
+        ADBG ("L77 Event")
+        Add (L01C, 1, L01C)  // Increment L01 Entry Count.
+
+        P8XH (0, 0x01)       // Output information to Port 80h.
+        P8XH (1, L01C)
+
+        SL77 ()
       }
     }
-    ADBG ("L77 Event")
-    Add (L01C,1,L01C)  // Increment L01 Entry Count.
-
-    P8XH (0,0x01)      // Output information to Port 80h.
-    P8XH (1,L01C)
-
-    SL77 ()
   }
 
   // PCI Express Hot-Plug caused the wake event.
