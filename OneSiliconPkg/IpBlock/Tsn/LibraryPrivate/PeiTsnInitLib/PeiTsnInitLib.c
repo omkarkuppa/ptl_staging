@@ -1,5 +1,5 @@
 /** @file
-  Initializes TSN mGBE Controller (TSN).
+  Initializes Timed Sensitive Network (TSN) mGBE Controller.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -30,7 +30,7 @@
 #include <IndustryStandard/Pci30.h>
 
 /**
-  Configures Timed Sensitive Network (TSN) Controller Registers and MAC Programming
+  Configures TSN Controller MAC
 
   @param[in] TsnHandle   Pointer to TSN Handle
 **/
@@ -94,7 +94,7 @@ TsnConfigureRegisters (
 }
 
 /**
-  Configures Timed Sensitive Network (TSN) Controller Interrupt
+  Configures TSN Controller Interrupt
 
   @param[in] TsnHandle   Pointer to TSN Handle
 **/
@@ -119,6 +119,29 @@ TsnConfigureInterrupt (
   Data32And =~(UINT32) (B_TSN_PCR_PCICFGCTR_PCI_IRQ | B_TSN_PCR_PCICFGCTR_ACPI_IRQ | B_TSN_PCR_PCICFGCTR_IPIN1);
 
   TsnPcrAccess->AndThenOr32 (TsnPcrAccess, R_TSN_PCR_PCICFGCTRL, Data32And, Data32Or);
+
+  DEBUG ((DEBUG_VERBOSE, "%a () - End.\n", __FUNCTION__));
+}
+
+/**
+  Configures TSN Controller Power Management (Clock and Power Gating)
+
+  @param[in] TsnHandle   Pointer to TSN Handle
+**/
+STATIC
+VOID
+TsnConfigurePowerManagement (
+  IN  TSN_HANDLE    *TsnHandle
+  )
+{
+  REGISTER_ACCESS      *TsnPcrAccess;
+
+  TsnPcrAccess = TsnHandle->Controller->TsnPcrAccess;
+
+  DEBUG ((DEBUG_VERBOSE, "%a () - Start.\n", __FUNCTION__));
+
+  // Enable clock gating
+  TsnPcrAccess->Or32 (TsnPcrAccess, R_TSN_PCR_PMCTL, (UINT32) (B_TSN_PCR_PMCTL_AXI_TRUNK_GATE_EN | B_TSN_PCR_PMCTL_IOSF_SB_TRUNK_GATE_EN | B_TSN_PCR_PMCTL_IOSF_PRIM_TRUNK_GATE_EN));
 
   DEBUG ((DEBUG_VERBOSE, "%a () - End.\n", __FUNCTION__));
 }
@@ -151,6 +174,8 @@ TsnInit (
   TsnConfigureRegisters (TsnHandle);
 
   TsnConfigureInterrupt (TsnHandle);
+
+  TsnConfigurePowerManagement (TsnHandle);
 
   DEBUG ((DEBUG_VERBOSE, "%a () - End.\n", __FUNCTION__));
 

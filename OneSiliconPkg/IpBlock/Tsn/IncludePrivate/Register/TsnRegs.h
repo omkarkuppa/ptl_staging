@@ -66,6 +66,11 @@
 //
 // TSN Iosf2Ocp bridge configuration registers
 //
+#define R_TSN_PCR_PMCTL                              0x1D0        // Power Management control of the Bridge
+#define B_TSN_PCR_PMCTL_AXI_TRUNK_GATE_EN            BIT0         // AXI clock gate enable
+#define B_TSN_PCR_PMCTL_IOSF_SB_TRUNK_GATE_EN        BIT1         // Sideband clock gate enable
+#define B_TSN_PCR_PMCTL_IOSF_PRIM_TRUNK_GATE_EN      BIT2         // IOSF Primary trunk gate enable
+
 #define R_TSN_PCR_PCICFGCTRL                         0x200                         ///< PCI Configuration Control
 #define B_TSN_PCR_PCICFGCTR_PCI_IRQ                  0x0FF00000                    ///< PCI IRQ number
 #define N_TSN_PCR_PCICFGCTR_PCI_IRQ                  20
