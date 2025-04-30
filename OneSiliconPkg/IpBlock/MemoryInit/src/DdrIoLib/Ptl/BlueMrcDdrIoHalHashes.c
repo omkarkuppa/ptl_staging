@@ -502,7 +502,7 @@ MrcGetDdrIoCfgHash (
     case GsmClkDccRankEn:
       HashPtr->Data = CH0CCC_CR_DCCFSMCONTROL_RankEn_HSH;
       break;
-      
+
     case GsmWckDccRankEn:
       HashPtr->Data = DDRDATA_SHARED0_CR_WCKDCCFSMCONTROL_RankEn_HSH;
       break;

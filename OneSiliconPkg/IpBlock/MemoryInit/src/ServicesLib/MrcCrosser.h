@@ -63,6 +63,9 @@
 // Re-centering loop count
 #define CCC_RE_CENTER_LOOP_COUNT (10)
 
+// Loop count for final re-centering within training
+#define RE_CENTER_LOOP_COUNT_ACC (15)
+
 /// Power optimization re-centering step size
 #define T_RECENTERING_STEP_SIZE (2)
 #define V_RECENTERING_STEP_SIZE (3)
@@ -175,6 +178,9 @@
 
 // test loopcount used to calculate UPMs
 #define UPM_LOOPCOUNT (17)
+
+// test loopcount used for BER with Error count 32
+#define ERR32_LOOPCOUNT (12)
 
 // test loopcount used to calculate UPMs in Early TCO training
 #define WEAK_LOOPCOUNT (8)
@@ -371,7 +377,7 @@ typedef struct {
 #define DFE_NUM_LP5   (LPDDR5_DIMM_DFE_TAP_RANGE + 1)
 #define TX_DQS_DCC_MAX        (15) // post silicon optimization experiment result
 #define TX_DQS_DCC_MIN        (-5) // post silicon optimization experiment result
-#define TX_DQS_DCC_RANGE      (TX_DQS_DCC_MAX - TX_DQS_DCC_MIN + 1) //edges included // 21 
+#define TX_DQS_DCC_RANGE      (TX_DQS_DCC_MAX - TX_DQS_DCC_MIN + 1) //edges included // 21
 
 typedef struct {
   UINT16  OptLastParams[2];
@@ -507,7 +513,7 @@ MrcRetrainMarginCheck (
 
   @param[in, out] MrcData - Include all MRC global data.
 
-  @retval MrcStatus -  mrcSuccess if succeded
+  @returns MrcStatus - mrcSuccess if succeded
 **/
 MrcStatus
 MrcMarginLimitCheck (

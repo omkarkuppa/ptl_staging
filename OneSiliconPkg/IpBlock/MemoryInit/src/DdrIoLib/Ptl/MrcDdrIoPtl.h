@@ -39,4 +39,11 @@ extern const INT8 DqRxEqTableLp5Type4[MAX_RANK_IN_DIMM][DFE_TAP_NUM];
 
 #define VALID_DDR_SAFE_MODES             (VALID_DDR_SAFE_MODES_1 | VALID_DDR_SAFE_MODES_2 | VALID_DDR_SAFE_MODES_3)
 
+typedef enum {
+  SelLvrVccIog,
+  SelLvrVccDdq,
+  SelLvrVccClk,
+  SelLvrVccMax
+} SelLvrSetting;
+
 #endif // MRC_DDR_IO_PTL_H_

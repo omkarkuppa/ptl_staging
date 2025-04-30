@@ -25,16 +25,7 @@
 #include "MrcHalRegisterAccess.h"
 #include "MrcCommon.h"
 #include "MrcDdrIoDefines.h"
-
-/// Defines
-// @todo: Write unit test to catch if these defines ever change from the expected values
-// Generic constant values coming from a difference of any DDRDATAxCHy_Reg - DDRDATA_Base_Reg
-// these constants are needed to get the correct DATAxCHy offset to access
-// e.g. Where DATA0CH0_CR_DDRCRDATACONTROL0_REG is the DDRDATA_Base_Reg
-//      DATA0CH1_CR_DDRCRDATACONTROL0_REG - DATA0CH0_CR_DDRCRDATACONTROL0_REG = 0x180
-//      DATA1CH0_CR_DDRCRDATACONTROL0_REG - DATA0CH0_CR_DDRCRDATACONTROL0_REG = 0x300
-#define INTRA_CH_OFFSET       0x180
-#define INTRA_STRB_OFFSET     0x300
+#include "MrcDdrIoHalOffsetsPrivate.h"
 
 /// Structs
 typedef struct {
@@ -784,7 +775,6 @@ GetDdrIoVttLaneOffsets (
   UINT32 Offset;
 
   Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRCCCCH0LANE0_REG, DDRDATA_SHARED1_CR_DDRCRCCCCH0LANE0_REG, Channel);
-  //Offset += (DDRDATA_SHARED0_CR_DDRCRCCCCH1LANE0_REG - DDRDATA_SHARED0_CR_DDRCRCCCCH0LANE0_REG) * (Channel % 2);
   VolatileMask->Data = DDRDATA_SHARED0_CR_DDRCRCCCCH0LANE0_VOLATILE_BITFIELDS_MSK;
 
   return Offset;

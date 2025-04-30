@@ -920,7 +920,7 @@ DispositionFailRangesWithPprFlow (
       NumRepairsSuccessful = 0;
 
       // For each bank pair
-      for (Bank = 0; Bank < (1 << PprAmtData->BaseBits); Bank++) {
+      for (Bank = 0; Bank < (UINT8)(1 << PprAmtData->BaseBits); Bank++) {
         CurAddr.Data = 0;
         CurAddr.Bits.BankPair = Bank;
         CurAddr.Bits.Rank = PprAmtData->Rank;

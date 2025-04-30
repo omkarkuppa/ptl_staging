@@ -324,10 +324,16 @@ MrcUcExecuteGreen (
       BlueMrcPrintGreenLog (MrcData, CommBuffer.LogSize);
     }
     // Call DebugHook if PostCode has changed
-    if (CommBuffer.TaskControl.PostCodes.Start != PostCode) {
+    if (CommBuffer.TaskControl.PostCodes.Start != 0) {
       PostCode = CommBuffer.TaskControl.PostCodes.Start;
       // MrcDebugHook will update the CommBuffer's StopPostCode for the next CMOS breakpoint if the current breakpoint was triggered
       MrcCall->MrcDebugHook (MrcData, PostCode);
+
+      // Notify Green that this POST code was processed
+      // Read the CommBuffer again as DebugHook might have modified the PostCodes.Stop
+      BlueMrcReadUcData (MrcData, gUcCommBufferAddress, (UINT32 *) (UINTN) &CommBuffer, MRC_BLUE_GREEN_COMM_CONTROLS_SIZE);
+      CommBuffer.TaskControl.PostCodes.Start = 0;
+      BlueMrcWriteUcData (MrcData, (UINT32 *) (UINTN) &CommBuffer, gUcCommBufferAddress, MRC_BLUE_GREEN_COMM_CONTROLS_SIZE);
     }
     if (CommBuffer.Misc.Bits.DoToggleVoltage) {
       // Toggle VDDQ for DVFSQ

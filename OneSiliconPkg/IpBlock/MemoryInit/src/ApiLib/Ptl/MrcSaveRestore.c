@@ -38,9 +38,6 @@
 #include "MrcRefreshConfiguration.h"
 #include "MrcReset.h"
 
-#define MRC_NUM_BYTE_GROUPS_UY  (8)
-#define MRC_NUM_BYTE_GROUPS_H   (10)
-
 #define SAVE_DATA_CONTROL_SIZE(x) (sizeof (x) / sizeof (SaveDataControl))
 
 //
@@ -814,12 +811,13 @@ MrcSaveMCValues (
   MrcContSave           *ControllerSave;
   MrcChannelSave        *ChannelSave;
   MrcProfile            Profile;
+  MrcSaGvPoint          SaGvPoint;
   MrcStatus             Status;
   UINT8                 *SpdBegin;
   UINT8                 Controller;
   UINT8                 Channel;
   UINT8                 Dimm;
-  MrcSaveOrRestore      SaveRestoreType;  // @todo used for future simplification of single save/restore function call.
+  MrcSaveOrRestore      SaveRestoreType;
   BOOLEAN               SkipPrint;
   UINT32                PostCodesDone;
   UINT32                PostCodesTotal;
@@ -832,14 +830,15 @@ MrcSaveMCValues (
   SaveHeader  = &MrcData->Save.Header;
   Debug       = &Outputs->Debug;
 
-  SaveRestoreType  = MrcSaveEnum; // @todo used for future simplification of single save/restore function call. Filled from input parameter.
+  SaveRestoreType  = MrcSaveEnum;
   SkipPrint        = TRUE;
 
   MrcFlushRegisterCachedData (MrcData);
 
   SaveData->Ratio = Outputs->Ratio;
+  SaGvPoint   = Outputs->SaGvPoint;
 
-  if (Outputs->SaGvPoint == MrcSaGvPoint0 || Outputs->FreqMax >= SaveData->Frequency[Outputs->SaGvPoint - 1]) {
+  if (SaGvPoint == MrcSaGvPoint0 || Outputs->FreqMax >= SaveData->Frequency[SaGvPoint - 1]) {
     // Save Timing only when current frequency is higher than previous Sagv points.
     for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
       MrcCall->MrcCopyMem ((UINT8 *) &SaveData->Timing[Profile], (UINT8 *) &Outputs->Timing[Profile], sizeof (MrcTiming));
@@ -919,7 +918,7 @@ MrcSaveMCValues (
 
   // Copy specified memory controller MMIO registers to the data area that will be saved.
   // Start with the common section.
-  if ((MrcIsSaGvEnabled (MrcData)) && (Outputs->SaGvPoint != Outputs->SaGvLast)) {
+  if ((MrcIsSaGvEnabled (MrcData)) && (SaGvPoint != Outputs->SaGvLast)) {
      // If SA GV is enabled, only save the Common registers at the last point (currently High).
   } else {
     Status = SaveRestoreExecution (MrcData, StCommon, SaveRestoreType, SkipPrint);
@@ -937,7 +936,7 @@ MrcSaveMCValues (
   MrcVersionGet (MrcData, &SaveData->Version);
   SaveData->McIpVersion.Data       = Inputs->McIpVersion.Data;
   SaveData->DdrIoIpVersion.Data    = Inputs->DdrIoIpVersion.Data;
-  SaveData->Frequency[Outputs->SaGvPoint] = Outputs->Frequency;
+  SaveData->Frequency[SaGvPoint]   = Outputs->Frequency;
   SaveData->BurstLength            = Outputs->BurstLength;
   SaveData->MemoryClock            = Outputs->MemoryClock;
   SaveData->EccSupport             = Outputs->EccSupport;
@@ -955,7 +954,7 @@ MrcSaveMCValues (
   SaveData->Vdd2Mv                 = Outputs->Vdd2Mv;
   SaveData->MeStolenSize           = Inputs->MeStolenSize;
   SaveData->ImrAlignment           = Inputs->ImrAlignment;
-  SaveData->GearMode[Outputs->SaGvPoint] = Outputs->GearMode;
+  SaveData->GearMode[SaGvPoint]    = Outputs->GearMode;
   SaveData->FreqMax                = Outputs->FreqMax;
   SaveData->MaxDqBits              = Outputs->MaxDqBits;
   SaveData->MaxRanks               = Outputs->MaxRanks;
@@ -969,9 +968,9 @@ MrcSaveMCValues (
   SaveData->SaMemCfgCrc = Inputs->SaMemCfgCrcForSave;
 
   // PostCodesDone/Total should not be counted into CRC because their values will keep changing until the end of the calltable
-  PostCodesDone = SaveData->PostCodesDone;
+  PostCodesDone  = SaveData->PostCodesDone;
   PostCodesTotal = SaveData->PostCodesTotal;
-  SaveData->PostCodesDone = 0;
+  SaveData->PostCodesDone  = 0;
   SaveData->PostCodesTotal = 0;
 
   SaveHeader->Crc       = MrcCalculateCrc32 ((UINT8 *) SaveData, sizeof (MrcSaveData));
@@ -979,7 +978,7 @@ MrcSaveMCValues (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Saved data CRC = %xh\n", SaveHeader->Crc);
 
   // Restore the values of PostCodesDone/Total that were temporarily zeroed-out for the CRC
-  SaveData->PostCodesDone = PostCodesDone;
+  SaveData->PostCodesDone  = PostCodesDone;
   SaveData->PostCodesTotal = PostCodesTotal;
 
   return Status;
@@ -1013,9 +1012,9 @@ MrcUpdateSavedMCValues (
   SaveData->MeStolenSize           = Inputs->MeStolenSize;
   SaveData->ImrAlignment           = Inputs->ImrAlignment;
   // PostCodesDone/Total should not be counted into CRC.
-  PostCodesDone = SaveData->PostCodesDone;
+  PostCodesDone  = SaveData->PostCodesDone;
   PostCodesTotal = SaveData->PostCodesTotal;
-  SaveData->PostCodesDone = 0;
+  SaveData->PostCodesDone  = 0;
   SaveData->PostCodesTotal = 0;
 
   SaveData->SaMemCfgCrc = Inputs->SaMemCfgCrcForSave;
@@ -1023,7 +1022,7 @@ MrcUpdateSavedMCValues (
   MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "Saved data CRC = %xh\n", SaveHeader->Crc);
 
   // Restore the values of PostCodesDone/Total that were temporarily zeroed-out for the CRC
-  SaveData->PostCodesDone = PostCodesDone;
+  SaveData->PostCodesDone  = PostCodesDone;
   SaveData->PostCodesTotal = PostCodesTotal;
 
   return Status;
@@ -1298,8 +1297,6 @@ MrcRestoreTrainingValues (
   SkipPrint        = TRUE;
   SaveRestoreType  = MrcRestoreEnum;
 
-  // @todo - RCOMP must be executed by MRC first.
-
   // First restore the SAGV section to restore NIL/IL
   // SaGv Register Restore
   Status = SaveRestoreExecution (MrcData, StSaGv, SaveRestoreType, SkipPrint);
@@ -1331,7 +1328,7 @@ MrcRestoreTrainingValues (
 
   // Restore Host structure data for CmdPiCode/CtlPiCode and update cache for RcvEn, TxDqs, TxDq
   // This is needed for MarginLimitCheck / RMT on Fast flow.
-  if (Inputs->BootMode == bmFast && (Inputs->ExtInputs.Ptr->MarginLimitCheck != Margin_Check_Disable)) {
+  if (Inputs->BootMode == bmFast) {
     MrcRestoreCCCHostStructure (MrcData);
   }
 

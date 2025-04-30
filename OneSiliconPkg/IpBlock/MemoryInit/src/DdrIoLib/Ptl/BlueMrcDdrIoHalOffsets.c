@@ -24,7 +24,7 @@
 #include "MrcHalRegisterAccess.h"
 #include "MrcCommon.h"
 #include "MrcDdrIoDefines.h"
-#include "MrcDdrIoHalOffsetsPrivate.h"
+#include "MrcDdrIoHalOffsets.h"
 
 /*
   This function returns the offset to access specific Clk of Channel/Rank of DCCFSMCONTROL.

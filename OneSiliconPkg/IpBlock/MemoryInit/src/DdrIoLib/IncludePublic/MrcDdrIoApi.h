@@ -315,13 +315,6 @@ typedef struct {
 // Half UI
 #define MRC_0p5UI_IN_PI  (32)
 #define PCTLE_VOUT       (730)
-typedef enum {
-  SelLvrVccIog,
-  SelLvrVccDdq,
-  SelLvrVccClk,
-  SelLvrVccDll, // @todo - LNL[1309699097]: need to confirm with DE team the VTarget for VccDll
-  SelLvrVccMax
-} SelLvrSetting;
 
 #define SAL_USE_PMOS_MV  (400)
 

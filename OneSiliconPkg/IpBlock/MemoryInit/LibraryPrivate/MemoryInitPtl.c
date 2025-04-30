@@ -3112,8 +3112,7 @@ DEBUG_CODE_END();
   // LPDDR4: Bitmask of ranks that have CA bus terminated. Rank0 is terminating and Rank1 is non-terminating
   ExtInputs->CmdRanksTerminated = 0x01;
 
-  Inputs->CleanMemory = 0;
-  // Inputs->CleanMemory = (UINT8) MemConfigNoCrc->CleanMemory;
+  Inputs->CleanMemory = (UINT8) MemConfigNoCrc->CleanMemory;
 
   //
   // Besides STD profile, XMP3.0 supports XMP1, XMP2, XMP3, USER4, USER5 profiles

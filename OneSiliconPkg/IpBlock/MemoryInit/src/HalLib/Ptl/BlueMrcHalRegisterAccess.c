@@ -60,6 +60,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "RxDqsNDelay",
   "RxVref",
   "RxDqVref",
+  "RxDbiVref",
   "RxDqVrefByte",
   "RxVocRise",
   "McOdtDelay",

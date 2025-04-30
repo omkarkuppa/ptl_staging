@@ -66,7 +66,6 @@ MrcEccClean (
   INT64                 MR4PeriodSave[MAX_CONTROLLER][MAX_CHANNEL];
   UINT32                Offset;
   UINT32                tRFC;
-  UINT32                SdramCapacity;
   UINT8                 Rank;
   UINT8                 IpChannel;
   UINT8                 Channel;
@@ -192,12 +191,13 @@ MrcEccClean (
       for (Channel = 0; Channel < MaxChannels; Channel++) {
         RankToDimm = RANK_TO_DIMM_NUMBER (Rank);
         DimmOut = &ControllerOut->Channel[Channel].Dimm[RankToDimm];
-        SdramCapacity = SdramCapacityTable[DimmOut->DensityIndex] * 8;
-        if ((SdramCapacity & (SdramCapacity - 1)) > 0) {
+        if (!IS_CAPACITY_POWER2_DENSITY_INDEX_CHECK (DimmOut->DensityIndex)) {
           CapNotPowerOf2[Rank][Controller][Channel] = TRUE;
         }
         McChBitMask |= SelectReutRanks (MrcData, Controller, Channel, 1 << Rank, FALSE);
-        EnableRefresh (MrcData, Controller, Channel, 1 << Rank);
+        if (MrcChannelExist (MrcData, Controller, Channel) && (!IS_MC_SUB_CH (IsLpddr, Channel))) {
+          EnableRefresh (MrcData, Controller, Channel, 1 << Rank);
+        }
       }
     }
 
@@ -232,7 +232,9 @@ MrcEccClean (
       for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
         for (Channel = 0; Channel < MaxChannels; Channel++) {
           McChBitMask |= SelectReutRanks (MrcData, Controller, Channel, 1 << Rank, FALSE);
-          EnableRefresh (MrcData, Controller, Channel, 1 << Rank);
+          if (MrcChannelExist (MrcData, Controller, Channel) && (!IS_MC_SUB_CH (IsLpddr, Channel))) {
+            EnableRefresh (MrcData, Controller, Channel, 1 << Rank);
+          }
         }
       }
       // Update the Bank/Row/Col sizes per current rank population

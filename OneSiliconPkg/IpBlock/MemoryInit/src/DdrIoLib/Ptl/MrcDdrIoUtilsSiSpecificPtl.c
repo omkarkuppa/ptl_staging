@@ -805,7 +805,7 @@ MrcGetTxDqFifoDelay(
   IsGear4 = (Outputs->GearMode) ? 1 : 0;
   MrcGetPrePostamble (MrcData, GetTimingWrite, &WrPreambleT, &WrPreambleLow, NULL);
 
-  *tCWL4TxDqFifoWrEn = tCWL;  // @todo_lnl should also include a programmable delay from Dunit
+  *tCWL4TxDqFifoWrEn = tCWL;
   *tCWL4TxDqFifoRdEn = tCWL;
 
   // tcwl4txdqfifowren = ((tech==DDRPHY_LPDDR5) ? ((gears==2 ? ((cwls*4)-'h8) : ((cwls*2)-8)) -4):

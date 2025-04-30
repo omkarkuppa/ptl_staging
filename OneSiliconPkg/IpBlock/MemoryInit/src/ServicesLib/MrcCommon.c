@@ -41,6 +41,9 @@
 #define CR_SPEED_FLAG
 #endif
 
+#define RX_DQS_PICODE_MIN_MARGIN    (0)
+#define RX_DQS_PICODE_MAX_MARGIN    (159)
+
 #ifdef CR_SPEED_FLAG
 #include "MrcOemPlatform.h"
 #include "GreenRegAccess.h"
@@ -2463,8 +2466,8 @@ MrcTrainedStateTrace (
   }
 
   if ((PostCode == MRC_EARLY_WRITE_TIMING_2D) || (PostCode == MRC_WRITE_VOLTAGE_1D) ||
-    (PostCode == MRC_WRITE_DS) || (PostCode == MRC_WRITE_VREF_2D) ||
-    (PostCode == MRC_WRITE_TIMING_2D) || (PostCode == MRC_CMP_OPT)) {
+      (PostCode == MRC_WRITE_VREF_2D) ||
+      (PostCode == MRC_WRITE_TIMING_2D) || (PostCode == MRC_CMP_OPT)) {
     MrcPrintMR (MrcData, "MR_PRINT_Results", MrWrV);
   }
 
@@ -3940,4 +3943,271 @@ MrcUpdateVref (
     // Set FSP-OP = 1, set High frequency
     MrcLpddrSwitchToHigh (MrcData, MRC_PRINTS_OFF);
   }
+}
+
+/**
+  This function returns the maximim (Tx or Cmd) Vref margin for a given Channel.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to calculate max margin.
+  @param[in] Channel    - Channel to calculate max margin.
+  @param[in] RankMask   - Bit mask of ranks to consider.
+  @param[in] Byte       - Zero based byte number.
+  @param[in] Param      - Parameter of Vref to use
+  @param[in] Sign       - Sign of the margins (0 - negative/min, 1 - positive/max).
+  @param[in] MaxMargin  - Current max margin value.
+  @param[in] Pda        - Use PDA or not.
+
+  @retval The max Vref margin, either MaxMargin or value from stored margins.
+**/
+UINT8
+MrcCalcMaxVrefMargin (
+  IN MrcParameters  *const MrcData,
+  IN const UINT8           Controller,
+  IN const UINT8           Channel,
+  IN const UINT8           RankMask,
+  IN const UINT8           Byte,
+  IN const UINT8           Param,
+  IN const UINT8           Sign,
+  IN       UINT8           MaxMargin,
+  IN       BOOLEAN         Pda
+  )
+{
+
+  MrcDebug       *Debug;
+  MrcOutput      *Outputs;
+  MrcChannelOut  *ChannelOut;
+  MrcRankOut     *RankOut;
+  MrcDimmOut     *DimmOut;
+  INT32          CurrentVrefOffHigh;
+  INT32          CurrentVrefOffLow;
+  INT32          CurrentVrefOffCmd;
+  INT32          CurrentVrefOffCtl;
+  INT32          MaxRange;
+  INT32          MaxVrefOff;
+  INT32          MinVrefOff;
+  UINT8          Rank;
+  UINT8          DimmIdx;
+  UINT8          MrIndex;
+  BOOLEAN        IsDdr5;
+  INT64          VDLC;
+
+  Outputs          = &MrcData->Outputs;
+  Debug            = &Outputs->Debug;
+  IsDdr5           = Outputs->IsDdr5;
+  CurrentVrefOffHigh = 0;
+  CurrentVrefOffLow  = 0;
+  CurrentVrefOffCmd  = 0;
+  CurrentVrefOffCtl  = 0;
+  MinVrefOff       = 0;
+  MaxVrefOff       = 0;
+
+  // Get maximal offset by comparing MaxRange with the distance of the current offset from the min/max offset.
+  // Algorithm:
+  // 1. Get MinVrefOffset, MaxVrefOffset, CurrentVref.
+  // 2. Initialize MaxRange = MaxMargin.
+  // 3. For all channels, ranks:
+  //      a. MaxRange = MIN (MaxRange, (CurrentVrefOffLow - MinVrefOff)) (for negative sign)
+  //      b. MaxRange = MIN (MaxRange, (MaxVrefOff - CurrentVrefOffHigh)) (for positive sign)
+
+  ChannelOut = &MrcData->Outputs.Controller[Controller].Channel[Channel];
+  MaxRange = MaxMargin;
+  MaxVrefOff = GetVrefOffsetLimits (MrcData, Param);
+  MinVrefOff = -1 * MaxVrefOff;
+  for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+    if (MrcRankExist (MrcData, Controller, Channel, Rank) & RankMask) {
+      DimmIdx = (Outputs->IsLpddr) ? dDIMM0 : Rank / MAX_RANK_IN_DIMM;
+      DimmOut = &ChannelOut->Dimm[DimmIdx];
+      RankOut = &DimmOut->Rank[Rank % MAX_RANK_IN_DIMM];
+      if (IsDdr5) {
+        if (Param == CmdV) {
+          CurrentVrefOffCmd = MrcVrefToOffsetDdr5 (Pda ? RankOut->DdrPdaVrefCmd[Byte] : RankOut->MR[mrIndexMR11], Param);
+          CurrentVrefOffCtl = MrcVrefToOffsetDdr5 (DDR5_VREFCS_RAW (RankOut->MR[mrIndexMR12]), Param);
+
+          if (CurrentVrefOffCmd > CurrentVrefOffCtl) {
+            CurrentVrefOffHigh = CurrentVrefOffCmd;
+            CurrentVrefOffLow = CurrentVrefOffCtl;
+          } else {
+            CurrentVrefOffHigh = CurrentVrefOffCtl;
+            CurrentVrefOffLow = CurrentVrefOffCmd;
+          }
+        } else {
+          CurrentVrefOffHigh = MrcVrefToOffsetDdr5 (Pda ? RankOut->DdrPdaVrefDq[Byte] : RankOut->MR[mrIndexMR10], Param);
+          CurrentVrefOffLow = CurrentVrefOffHigh;
+        }
+      } else { // Lpddr5
+        if (Param == CmdV) {
+          MrIndex = mrIndexMR12;
+        } else {
+          MrIndex = mrIndexMR14;
+          if (DimmOut->SdramWidth == 16) {
+            VDLC = (RankOut->MR[MrIndex] >> 7) & 1;
+            if (VDLC && Byte) {
+              // Vref (DQ[15:7]) follow MR15 OP[6:0]
+              MrIndex = mrIndexMR15;
+            }
+          }
+        }
+        MrcVrefEncToOffsetLpddr5 (MrcData, (RankOut->MR[MrIndex] & 0x7F), &CurrentVrefOffHigh);
+        CurrentVrefOffLow = CurrentVrefOffHigh;
+      }
+      if (Sign == 0) {
+        MaxRange = MIN (MaxRange, (CurrentVrefOffLow - MinVrefOff));
+      } else { // Sign == 1
+        MaxRange = MIN (MaxRange, (MaxVrefOff - CurrentVrefOffHigh));
+      }
+    }
+  } // for Rank
+
+  if (MaxRange < 0) {
+    MRC_DEBUG_MSG(Debug, MSG_LEVEL_ERROR, "Error Param %d Got MaxRange %d < 0\n", Param, MaxRange);
+    MaxRange = 0;
+  }
+
+  return (UINT8) MaxRange;
+}
+
+/**
+  This function returns the maximum Rx margin for a given Channel, Rank(s), byte and bits.
+  RankMask is assumed to either be 0xFF or a RankMask with only 1 bit set.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Param      - Test parameter.
+  @param[in] Controller - Memory Controller
+  @param[in] Channel    - Channel to calculate max Rx margin.
+  @param[in] RankMask   - RankMask indicating a single rank or 0xFF causes all ranks to be considered.
+  @param[in] Byte       - Byte to check.
+  @param[in] Bit        - Bit to check, Optional Param. If bit = MRC_IGNORE_ARG_8 then the composite bit values are used to calculate the byte margins
+  @param[in] Sign       - Sign of the margins (0 - negative/min, 1 - positive/max).
+  @param[in] MaxMargin  - Current max margin value.
+
+  @retval The max Rx margin, either MaxMargin or value from stored margins.
+**/
+UINT8
+MrcCalcMaxRxMargin (
+  IN MrcParameters  *const MrcData,
+  IN UINT8                 Param,
+  IN const UINT8           Controller,
+  IN const UINT8           Channel,
+  IN const UINT8           RankMask,
+  IN const UINT8           Byte,
+  IN const UINT8           Bit, OPTIONAL
+  IN const UINT8           Sign,
+  IN UINT16                MaxMargin
+  )
+{
+  const MRC_FUNCTION *MrcCall;
+  const MrcInput     *Inputs;
+  INT64         GetSetVal;
+  INT64         GetSetMin;
+  INT64         GetSetMax;
+  INT32         RxDqsP;
+  INT32         RxDqsN;
+  INT32         BitOffsetRxDqs;
+  INT32         BitDelayRxDqs;
+  INT32         SignedValue;
+  UINT16        ParamList[2];
+  UINT8         ParamLen;
+  UINT8         ParamStart;
+  UINT8         Idx;
+  UINT8         Start;
+  UINT8         Stop;
+  UINT8         Rank;
+  UINT16        MinRange;
+  UINT16        MaxRange;
+  BOOLEAN       ReadVoltageParam;
+  GSM_GT        Group;
+
+  Inputs  = &MrcData->Inputs;
+  MrcCall = Inputs->Call.Func;
+  MrcCall->MrcSetMem ((UINT8 *) ParamList, sizeof (ParamList), 0);
+
+  // Check for saturation on Rx Timing
+  Start = GetRankToStoreResults (MrcData, RankMask);
+  Stop = (RankMask == 0xFF) ? MAX_RANK_IN_CHANNEL : Start + 1;
+
+  ParamLen  = 1;
+  ParamStart = 0;
+  GetSetMin = 0;
+  GetSetMax = 0;
+  RxDqsP = RxDqsN = 0;
+  BitOffsetRxDqs = 0;
+  BitDelayRxDqs = 0;
+
+  ReadVoltageParam = (Param == RdV) || (Param == RdVDbi);
+
+  if ((Param == RdT) || (Param == RdTN) || (Param == RdTP)) {
+    // Find Rx Comp Delays
+    MrcCalcCurrentCompDelayRx (MrcData, Controller, Channel, Byte, &RxDqsP, &RxDqsN);
+  }
+
+  for (Rank = Start; Rank < Stop; Rank++) {
+    if (MrcRankExist (MrcData, Controller, Channel, Rank) || ReadVoltageParam) {  // RdV / RdVDbi is not a per-rank parameter, and Rank0 might be not present
+      if ((Param == RdT) || (Param == RdTN) || (Param == RdTP)) {
+        // Set Range for RxDqs PI Code
+        GetSetMin = RX_DQS_PICODE_MIN_MARGIN;
+        GetSetMax = RX_DQS_PICODE_MAX_MARGIN;
+
+        if (Bit == MRC_IGNORE_ARG_8) {
+          // Find MIN/MAX Composite RxDqsBitDeskew and RxDqsBitDeskew Offset per Byte
+          MrcCalcCurrentRxBitDelay (MrcData, Controller, Channel, Rank, Byte, &BitDelayRxDqs, &BitOffsetRxDqs, Sign);
+        } else {
+          MrcGetSetBit (MrcData, Controller, Channel, Rank, Byte, Bit, RxDqsBitDelay, ReadFromCache, &GetSetVal);
+          BitDelayRxDqs = (INT32) GetSetVal;
+          MrcGetSetBit (MrcData, Controller, Channel, Rank, Byte, Bit, RxDqsBitOffset, ReadFromCache, &GetSetVal);
+          BitOffsetRxDqs = (INT32) GetSetVal;
+        }
+        // Find current RxDqsDelay
+        MrcGetSetStrobe (MrcData, Controller, Channel, Rank, Byte, RxDqsPDelay, ReadFromCache, &GetSetVal);
+        // Calculate RxDqs Pi Code for P/N. ParamList[0] = RxDqsP, ParamList[1] = RxDqsN
+        // DQS_P PICode = RxDqsPDelayPi + RxDqsDelayP - 64*DqsPOffsetNUI + RxDqsPiOffset + RxDQPerBitDeskew + RxDQPerBitDeskewOffset[3:1] + RxDQPerBitDeskewOffset[0]
+        // Use of SignedValue to allow for negative value to be RANGE checked below to keep ParamList value from resulting in high unsigned value
+        SignedValue = (INT32) GetSetVal + RxDqsP + Inputs->RxDqsBaseOffset + BitDelayRxDqs + (BitOffsetRxDqs >> 1) + (BitOffsetRxDqs & 1);
+        ParamList[0] = (UINT16) (RANGE (SignedValue, RX_DQS_PICODE_MIN_MARGIN, RX_DQS_PICODE_MAX_MARGIN));
+        MrcGetSetStrobe (MrcData, Controller, Channel, Rank, Byte, RxDqsNDelay, ReadFromCache, &GetSetVal);
+        // DQS_N PICode = RxDqsNDelayPi + RxDqsDelayN - 64*DqsNOffsetNUI + RxDqsPiOffset + RxDQPerBitDeskew - RxDQPerBitDeskewOffset[3:1]
+        // Use of SignedValue to allow for negative value to be RANGE checked below to keep ParamList value from resulting in high unsigned value
+        SignedValue = (INT32) GetSetVal + RxDqsN + Inputs->RxDqsBaseOffset + BitDelayRxDqs - (BitOffsetRxDqs >> 1);
+        ParamList[1] = (UINT16) (RANGE (SignedValue, RX_DQS_PICODE_MIN_MARGIN, RX_DQS_PICODE_MAX_MARGIN));
+
+        if (Param == RdT) {
+          ParamStart = 0;
+          ParamLen = 2;
+        } else if (Param == RdTN) {
+          ParamStart = 1;
+          ParamLen = 2;
+        } else {
+          ParamStart = 0;
+          ParamLen = 1;
+        }
+      } else if (ReadVoltageParam) {
+        Group = (Param == RdV) ? RxVref : RxDbiVref;
+        if (Inputs->IsDdrIoGen1Tc) {
+          Group =  RxDqVrefByte;
+        }
+        MrcGetSetChStrb (MrcData, Controller, Channel, Byte, Group, ReadFromCache, &GetSetVal);
+        ParamList[0] = (UINT16) GetSetVal;
+        MrcGetSetLimits (MrcData, Group, 0, &GetSetMin, &GetSetMax, NULL);
+      }
+      MinRange = (UINT16) GetSetMin;
+      MaxRange = (UINT16) GetSetMax;
+
+      // Find MAX supported margin for each Param
+      for (Idx = ParamStart; Idx < ParamLen; Idx++) {
+        if (Sign == 0) {
+          if (MaxMargin > (ParamList[Idx] - MinRange)) {
+            MaxMargin = (ParamList[Idx] - MinRange);
+          }
+        } else {
+          if (MaxMargin > (MaxRange - ParamList[Idx])) {
+            MaxMargin = (MaxRange - ParamList[Idx]);
+          }
+        }
+      }
+      if (ReadVoltageParam) { // RdV / RdVDbi is not a per-rank parameter
+        break;
+      }
+    }
+  }
+  return (UINT8) MaxMargin;
 }

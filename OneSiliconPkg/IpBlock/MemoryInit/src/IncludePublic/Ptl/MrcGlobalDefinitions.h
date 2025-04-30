@@ -69,4 +69,9 @@ typedef enum {
 // Configure RefreshAbrRelease with the same value like RefreshHpWm
 #define REFRESH_ABR_RELEASE       REFRESH_HP_WM_HIGH
 #define SI_PREMEM_POLICY          SI_PREMEM_POLICY_PPI
+
+// Amount of POST codes that are defined but not used in PTL call table
+// This is used for the progress bar display
+#define MRC_POST_CODES_UNUSED     (30)
+
 #endif

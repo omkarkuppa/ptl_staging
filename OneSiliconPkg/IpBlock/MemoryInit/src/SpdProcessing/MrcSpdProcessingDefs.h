@@ -239,5 +239,11 @@ typedef struct {
 } SpdRecogCallTable;
 
 extern const UINT32 SdramCapacityTable[MrcDensityMax];
+
+// Check if density is power of 2
+#ifndef IS_CAPACITY_POWER2_DENSITY_INDEX_CHECK
+#define IS_CAPACITY_POWER2_DENSITY_INDEX_CHECK(DensityIndex)      (BOOLEAN)((SdramCapacityTable[DensityIndex] & (SdramCapacityTable[DensityIndex] - 1)) == 0)
+#endif
+
 #pragma pack (pop)
 #endif // MrcSpdProcessingnDefs_h_

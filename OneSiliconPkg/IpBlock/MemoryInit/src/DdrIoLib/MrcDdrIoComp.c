@@ -255,7 +255,6 @@ DdrIoSetVddqImpactedCrs (
  )
 {
   MrcStatus         Status;
-  MrcInput          *Inputs;
   MrcOutput         *Outputs;
   MrcDebug          *Debug;
   TOdtValueDqDdr5   Ddr5OdtTableIndex;
@@ -282,7 +281,6 @@ DdrIoSetVddqImpactedCrs (
   GSM_GT            GlobalCompUp;
   GSM_GT            GlobalCompDn;
 
-  Inputs     = &MrcData->Inputs;
   Outputs    = &MrcData->Outputs;
   Debug      = &Outputs->Debug;
   VccDdq     = VccddqVoltageMv;
@@ -292,10 +290,6 @@ DdrIoSetVddqImpactedCrs (
   FirstController = Outputs->FirstPopController;
   FirstChannel = Outputs->Controller[FirstController].FirstPopCh;
   Status = mrcSuccess;
-
-  if (Inputs->ExtInputs.Ptr->SimicsFlag && (Inputs->IsDdrIoDtHalo)) {
-    return mrcSuccess;
-  }
 
   if (Outputs->IsDdr5) {
     Status = GetOdtTableIndex (MrcData, FirstController, FirstChannel, dDIMM0, &Ddr5OdtTableIndex);

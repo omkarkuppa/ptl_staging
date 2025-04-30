@@ -57,12 +57,14 @@ Cpgc20Init (
   UINT32            MaskShift;
   BOOLEAN           IsLpddr;
   BOOLEAN           IsDdr5;
+  MRC_LP5_BANKORG   Lp5BankOrg;
   MC0_REQ0_CR_CPGC_SEQ_CFG_A_STRUCT   CpgcSeqCfgA;
 
   Outputs              = &MrcData->Outputs;
   IsLpddr              = Outputs->IsLpddr;
   IsDdr5               = Outputs->IsDdr5;
   ChannelLoopIncrement = (IsLpddr) ? 2 : 1;
+  Lp5BankOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
 
   // Assign channel to its serial number
   // Activate CPGC Engines on populated channels and subchannels.
@@ -92,7 +94,10 @@ Cpgc20Init (
       MrcWriteCR (MrcData, Offset, CpgcSeqCfgA.Data);
 
       if (IsLpddr) {
-        Cpgc20GetSetBankSequence (MrcData, Controller, Channel, B2BL2p, MAX_CPGC_B2B_BANKS, MRC_SET);
+        if (Lp5BankOrg == MrcLp5BgMode) {
+          // For 16B mode we keep the default L2P bank mapping
+          Cpgc20GetSetBankSequence (MrcData, Controller, Channel, B2BL2p, MAX_CPGC_B2B_BANKS, MRC_SET);
+        }
         Cpgc20LpBankAddrSwizzleUpdate (MrcData, Controller, Channel);
       } else {
         Cpgc20GetSetBankSequence (MrcData, Controller, Channel, BurstIdleBurstDdr5G4L2p , MAX_CPGC_RECEN_BG_BANKS, MRC_SET);
@@ -435,7 +440,6 @@ MrcGetRasterRepoStatus (
 
 /**
   This function will enable or disable CPGC engines on all channels.
-  @todo: Move to GetSet infrastructure.
 
   @param[in] MrcData    - Global MRC data structure
   @param[in] ActiveMode - If true, enable CPGC engines. If false, set to idle mode.

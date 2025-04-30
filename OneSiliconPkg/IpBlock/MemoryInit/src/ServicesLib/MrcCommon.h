@@ -593,9 +593,9 @@ typedef struct {
 
 typedef struct {
   UINT8 TimingType;
-  INT8  TimingMargin;
+  INT16 TimingMargin;
   UINT8 VoltageType;
-  INT8  VoltageMargin;
+  INT16 VoltageMargin;
 } MarginCheckPoint;
 
 #pragma pack (pop)
@@ -1398,6 +1398,20 @@ MrcGetMarginBit (
   );
 
 /**
+  Print MarginResult values for a given Param and Rank
+
+  @param[in] MrcData - The global MrcData
+  @param[in] Param   - Param to work on
+  @param[in] Rank    - Rank to work on
+**/
+VOID
+MrcPrintMarginResult (
+  IN MrcParameters *  const MrcData,
+  IN MrcMarginTypes         Param,
+  IN UINT32                 Rank
+  );
+
+/**
   Assume REUT test has already been fully setup to run
   Finds the margin for all channels/all bytes
   The margin sweep is parameterized
@@ -1438,11 +1452,12 @@ MrcGetBERMargin (
 /**
   Check whether there is errors at Point RdT/RdV or WrT/WrV
 
-  @param[in]      MrcData     - Include all MRC global data.
-  @param[in]      McChBitmask - Bit mask of present MC channels
-  @param[in]      RankMask    - Bit mask of Ranks to change margins for
-  @param[in]      MarginPoint - Margin Point to test
-  @param[in]      ParamType   - MrcMarginTypes: WrV, WrT, RdT, RdV.
+  @param[in]  MrcData            - Include all MRC global data.
+  @param[in]  McChBitMask        - Bit mask of present MC channels
+  @param[in]  RankMask           - Bit mask of Ranks to change margins for
+  @param[in]  MarginPoint        - Margin Point to test
+  @param[in]  ParamType          - MRC_MarginTypes: WrV, WrT, RdT, RdV.
+  @param[in]  UsePerDeviceValues - Use per device margin values
 
   @retval MrcStatus - mrcSuccess if point successful pass, otherwise returns an error status.
 **/
@@ -1452,7 +1467,8 @@ MrcDataPointTest (
   IN     UINT8             McChBitmask,
   IN     UINT8             RankMask,
   IN     MarginCheckPoint  *MarginPoint,
-  IN     MrcMarginTypes    ParamType
+  IN     MrcMarginTypes    ParamType,
+  IN     BOOLEAN           UsePerDeviceValues
   );
 
 /**
@@ -4383,6 +4399,19 @@ MrcTristateCa (
   IN OUT MrcParameters *const MrcData,
   IN     BOOLEAN              IsTristate,
   IN     INT64                TriCaSave
+  );
+
+/**
+  Rank Margin Tool for Blue MRC.
+  Measure Margins across various parameters.
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @returns MrcStatus - mrcSuccess if succeded
+**/
+MrcStatus
+MrcRankMarginToolCpgc (
+  IN OUT MrcParameters *const MrcData
   );
 
 #endif //_MrcCommon_h_

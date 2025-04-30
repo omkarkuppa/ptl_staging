@@ -405,6 +405,7 @@ typedef enum {
 
 /// Error Counter for Failure in BER
 #define MRC_BER_ERROR_COUNTER_FOR_FAILURE  (1)  ///< Number of errors before considered failure
+#define MRC_BER_ERROR_COUNTER_FOR_TRAINING (32) ///< Used in advanced training 
 
 /// CCC PerBit defines
 #define MAX_DDR5_CMD_PINS          (13)      ///< CA0-CA12
@@ -989,6 +990,7 @@ typedef enum {
 #define f11333      (11333)
 #define f11467      (11467)
 #define f11600      (11600)
+#define f11700      (11700)
 #define f11733      (11733)
 #define f11867      (11867)
 #define f12000      (12000)
@@ -1158,6 +1160,7 @@ typedef UINT32 MrcFrequency;
 #define MRC_DDR_11333_TCK_MIN    176471
 #define MRC_DDR_11467_TCK_MIN    174419
 #define MRC_DDR_11600_TCK_MIN    172414
+#define MRC_DDR_11700_TCK_MIN    170940
 #define MRC_DDR_11733_TCK_MIN    170455
 #define MRC_DDR_11867_TCK_MIN    168539
 #define MRC_DDR_12000_TCK_MIN    166667

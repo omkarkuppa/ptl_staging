@@ -1317,6 +1317,7 @@ MrcIssueWraCmd (
   MRC_EXT_INPUTS_TYPE *ExtInputs;
   UINT32 Byte;
   MRC_GEN_MRH_COMMAND MrhCommand;
+  UINT8 IsDefaultBL16Ui;
 
   Outputs     = &MrcData->Outputs;
   Inputs      = &MrcData->Inputs;
@@ -1324,6 +1325,7 @@ MrcIssueWraCmd (
   Timing      = &Outputs->Timing[ExtInputs->MemoryProfile];
   GetSetDis   = 0;
 
+  IsDefaultBL16Ui = Outputs->BurstLength == 8 ? 1 : 0;
   tMpcNck     = MrcGetTmod (MrcData, Timing->tCK);
   tMpcNckFs   = tMpcNck * Outputs->MemoryClock;
   tMpcNs      = DIVIDECEIL (tMpcNckFs, FEMTOSECONDS_PER_NANOSECOND);
@@ -1359,7 +1361,7 @@ MrcIssueWraCmd (
   MrcFlushRegisterCachedData (MrcData); // Override DQ to LOW
 
   MrhCommand.Data = 0;
-  MrhCommand.Ddr5.CA_0 = DDR5_WRA_CMD | ((BankGroup & 0x7) << 8) | ((BankAddress & 0x3) << 6); // WRA
+  MrhCommand.Ddr5.CA_0 = DDR5_WRA_CMD | (IsDefaultBL16Ui << 5) | ((BankGroup & 0x7) << 8) | ((BankAddress & 0x3) << 6); // WRA
   MrhCommand.Ddr5.CA_1 = 0x800; // Not Partial
 
   // Disable multicyccmd

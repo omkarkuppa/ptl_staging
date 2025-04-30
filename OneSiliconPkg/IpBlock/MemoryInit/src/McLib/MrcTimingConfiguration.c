@@ -555,10 +555,12 @@ MrcGetTccdByteCasDelta (
 
   MrcOutput *Outputs = &MrcData->Outputs;
   if (Outputs->IsLpddr5) {
-    if (Outputs->Frequency > f3200) {
+    if (Outputs->Frequency <= f3200) {
+      Result = 8;
+    } else if (Outputs->Frequency < f10667) {
       Result = 16;
     } else {
-      Result = 8;
+      Result = 4;
     }
   } else if (Outputs->IsDdr5) {
     tCCD_L_WR  = Timing->tCCD_L_WR;

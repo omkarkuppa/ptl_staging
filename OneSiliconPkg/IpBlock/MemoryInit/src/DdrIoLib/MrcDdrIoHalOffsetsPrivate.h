@@ -28,49 +28,13 @@
 // DO NOT REMOVE: Ensures this header is only included once in the code
 PRIVATE_HEADER_DEFENDER(MrcDdrIoHalOffsetsPrivate)
 
-/**
-  This function returns the offset to access specific Channel/Strobe of DataTrainFeedback.
-
-  @param[in]  Channel - 0-based index of Channel to access.
-  @param[in]  Strobe  - 0-based index of Strobe to access.
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-DataTrainFeedbackOffset (
-  IN  UINT32  const Channel,
-  IN  UINT32  const Strobe,
-  OUT UINT64_STRUCT *const VolatileMask
-  );
-
-/**
-  This function returns the offset to access specific Channel/Strobe of DdrCrCmdBusTrain.
-
-  @param[in]  Channel - 0-based index of Channel to access.
-  @param[in]  Strobe  - 0-based index of Strobe to access.
-
-  @returns the offset of the CR
-**/
-UINT32
-CmdBusTrainOffset (
-  IN  UINT32  const Channel,
-  IN  UINT32  const Strobe
-  );
-
-/**
-  This function returns the offset to access specific Channel/Strobe of Data's DCCCALCCONTROL.
-
-  @param[in]  Channel - 0-based index of Channel to access.
-  @param[in]  Strobe  - 0-based index of Strobe to access.
-
-  @returns the offset of the CR
-**/
-UINT32
-DataDccCalcCtlOffset (
-  IN  UINT32  const Channel,
-  IN  UINT32  const Strobe
-  );
+// Generic constant values coming from a difference of any DDRDATAxCHy_Reg - DDRDATA_Base_Reg
+// these constants are needed to get the correct DATAxCHy offset to access
+// e.g. Where DATA0CH0_CR_DDRCRDATACONTROL0_REG is the DDRDATA_Base_Reg
+//      DATA0CH1_CR_DDRCRDATACONTROL0_REG - DATA0CH0_CR_DDRCRDATACONTROL0_REG = 0x180
+//      DATA1CH0_CR_DDRCRDATACONTROL0_REG - DATA0CH0_CR_DDRCRDATACONTROL0_REG = 0x300
+#define INTRA_CH_OFFSET       0x180
+#define INTRA_STRB_OFFSET     0x300
 
 /**
   This function returns the offset to access specific Channel/Strobe of Data's DCCFSMSTATUS.
@@ -84,52 +48,6 @@ UINT32
 DataDccFsmStatusOffset (
   IN  UINT32  const Channel,
   IN  UINT32  const Strobe
-  );
-
-/**
-  This function returns the offset to access specific Channel/Strobe of WRRETRAINDELTARANK.
-
-  @param[in]  Channel - 0-based index of Channel to access.
-  @param[in]  Strobe  - 0-based index of Strobe to access.
-
-  @returns the offset of the CR
-**/
-UINT32
-WrReTrainDeltaRankOffset (
-  IN  UINT32  const Channel,
-  IN  UINT32  const Strobe
-  );
-
-/**
-  This function returns the offset to access specific Channel/Strobe of DllStatus
-
-  @param[in]  Channel - 0-based index of Channel to access.
-  @param[in]  Strobe  - 0-based index of Strobe to access.
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-DllStatusOffset (
-  IN  UINT32  const   Channel,
-  IN  UINT32  const   Strobe,
-  OUT UINT64_STRUCT *const  VolatileMask
-  );
-
-/**
-  This function returns the offset to access specific Channel/Strobe of DllControl0.
-
-  @param[in]  Channel - 0-based index of Channel to access.
-  @param[in]  Strobe  - 0-based index of Strobe to access.
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-DllControl0Offset (
-  IN  UINT32  const Channel,
-  IN  UINT32  const Strobe,
-  OUT UINT64_STRUCT *const VolatileMask
   );
 
 /**
@@ -147,24 +65,6 @@ DataRxEqTapOffset (
   );
 
 /**
-  This function returns the offset to access specific Channel/Rank/Strobe of DataDqs.
-
-  @param[in]  Channel - 0-based index of Channel to access.
-  @param[in]  Rank    - 0-based index of Rank to access.
-  @param[in]  Strobe  - 0-based index of Strobe to access.
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR
-**/
-UINT32
-DataDqsOffset (
-  IN  UINT32  const Channel,
-  IN  UINT32  const Rank,
-  IN  UINT32  const Strobe,
-  OUT UINT64_STRUCT *const  VolatileMask
-  );
-
-/**
   Function used to get the CR Offset for DATATCOCONTROL0/1.
 
   @param[in]  Channel - DDR Channel Number within the processor socket (0-based).
@@ -178,24 +78,6 @@ GetDdrIoDataTcoControl(
   IN  UINT32  const Channel,
   IN  UINT32  const Strobe,
   IN  UINT32  const Bit
-  );
-
-/**
-  Function used to get the CR Offset for Retrain offset Groups.
-
-  @param[in]  Group        - DDRIO group being accessed.
-  @param[in]  Channel      - DDR Channel Number within the processor socket (0-based).
-  @param[in]  Strobe       - Dqs data group within the rank (0-based).
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @returns the offset of the CR.
-**/
-UINT32
-GetDdrIoReTrainOffsets (
-  IN  GSM_GT               Group,
-  IN  UINT32               Channel,
-  IN  UINT32               Strobe,
-  OUT UINT64_STRUCT *const VolatileMask
   );
 
 /**

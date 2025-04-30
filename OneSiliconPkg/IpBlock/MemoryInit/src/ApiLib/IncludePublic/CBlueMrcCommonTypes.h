@@ -36,6 +36,7 @@ typedef enum {
   RxDqsNDelay,                  ///< Linear delay (PI ticks), where the positive increment moves the RX DQS strobe for "odd" chunks later in time relative to the RX DQ signal. Odd chunks are 1, 3, 5, 7 within the 0 to 7 chunks of an 8 burst length cacheline, for example.
   RxVref,                       ///< Linear increment (Vref ticks), where the positive increment moves the strobe RX Vref to a higher voltage.
   RxDqVref,                     ///< Linear increment (Vref ticks), where the positive increment moves the bitlane RX Vref to a higher voltage.
+  RxDbiVref,                    ///< Linear increment (Vref ticks), where the positive increment moves the DBI bitlane RX Vref to a higher voltage.
   RxDqVrefByte,                 ///< Linear increment (Vref ticks), where the positive increment moves the byte RX Vref to a higher voltage.
   RxVocRise,                    ///< Monotonic increment (Sense Amp setting), where the positive increment moves the byte/nibble/bitlane's effective switching point to a lower Vref value.
   McOdtDelay,                   ///< Dq Odt Control

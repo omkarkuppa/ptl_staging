@@ -1639,7 +1639,7 @@ Cpgc20SetCommandSequence (
   Outputs       = &MrcData->Outputs;
   Debug         = &Outputs->Debug;
   //###########################################################
-  // Program Command Instuctions @todo set this up in GetSet cached and then flushed
+  // Program Command Instuctions
   //###########################################################
   // Write CMD [0]
   Cpgc2CmdInstruction[0].Data          = 0;

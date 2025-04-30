@@ -244,7 +244,7 @@ src/DdrIoLib/MrcDdrIo.h
 src/DdrIoLib/IncludePublic/MrcDdrIoApi.h
 src/DdrIoLib/Ptl/MrcDdrIoApiPtl.c
 src/DdrIoLib/MrcDdrIoUtilsSiSpecific.c
-src/DdrIoLib/MrcDdrIoHalOffsetsPrivate.h
+src/DdrIoLib/MrcDdrIoHalOffsets.h
 src/McLib/MrcChipRouting.h
 src/McLib/MrcAddressDecodeConfiguration.h
 src/McLib/MrcMaintenance.h

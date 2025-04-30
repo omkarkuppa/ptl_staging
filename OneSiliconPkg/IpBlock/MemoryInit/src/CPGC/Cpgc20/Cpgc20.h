@@ -24,7 +24,6 @@
 /// Definitions
 
 /// Bank and Bank Group definitions
-//@todo confirm that these are correct
 #define CPGC20_MAX_BANKS_PER_CHANNEL            (32)
 #define CPGC20_BANK_GROUP_FIELD_OFFSET_DDR5     (2)
 #define CPGC20_BANK_GROUP_FIELD_OFFSET_LPDDR5   (2)

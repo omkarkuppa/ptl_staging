@@ -454,15 +454,8 @@ MrcWrappedStartMemoryConfiguration (
   }
   SaGvNumPoints = MrcCountBitsEqOne (SaGvWpMask);
 
-#ifdef MRC_MINIBIOS_BUILD
-  // We do not update the PostCodesDone/Total values during the MiniBIOS boots
-  // since the progress bar feature is only used during the full BIOS boots.
   SaveData->PostCodesDone  = 0;
-  SaveData->PostCodesTotal = 0;
-#else
-  SaveData->PostCodesDone  = 0;
-  SaveData->PostCodesTotal = (MRC_POST_CODE_LAST - MRC_INITIALIZATION_START) * SaGvNumPoints;
-#endif
+  SaveData->PostCodesTotal = (MRC_POST_CODE_LAST - MRC_INITIALIZATION_START - MRC_POST_CODES_UNUSED) * SaGvNumPoints;
 
   if (SaGv) {
     // Regular SAGV case - reorder the points in Warm / S3 resume flow
@@ -470,7 +463,7 @@ MrcWrappedStartMemoryConfiguration (
       // Set the last point to this one, so that we take DRAM out of Self-Refresh at the same frequency that it entered Warm/S3.
       // MRC reports to Pcode on each point that is configured so order of the other points is not important but it is importent to exit in the entered point
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Previous SAGV point before Warm/S3: %u\n", SaGvBeforeReset);
-      for (SaGvPoint = MrcSaGvPoint0, index = 0; index < (SaGvNumPoints - 1); SaGvPoint++) {
+      for (SaGvPoint = MrcSaGvPoint0, index = 0; index < (UINT16)(SaGvNumPoints - 1); SaGvPoint++) {
         if (SaGvPoint != SaGvBeforeReset) {
           SaGvOrder[index++] = SaGvPoint;
         }

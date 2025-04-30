@@ -25,9 +25,10 @@
 #include "MrcDdrIoLvr.h"
 #include "MrcDdrIoUtils.h"
 
-#include "MrcDdrIoApi.h"  // for prototypes of files implemented here
-#include "MrcHalApi.h"  // for MrcGetSetPartitionBlock()
-#include "MrcLpddr5.h" // for MrcGetBankBgOrg()
+#include "MrcDdrIoApi.h"
+#include "MrcDdrIoPtl.h"
+#include "MrcHalApi.h"
+#include "MrcLpddr5.h"
 
 
 /**
@@ -77,11 +78,6 @@ MrcVoltageSensorTargetSetup (
 
     case SelLvrVccClk:
       PartitionMask[PG_MASK]     = DtHalo ? SEL_LVR_VCCCLK_DT_PG_MASK   : SEL_LVR_VCCCLK_PG_MASK;
-      break;
-
-    case SelLvrVccDll:
-      PartitionMask[PG_MASK]     = DtHalo ? SEL_LVR_VCCDLL_DT_PG_MASK  : SEL_LVR_VCCDLL_PG_MASK;
-      LvrSelCount = DtHalo ? PG1 : (MRC_BIT2 | MRC_BIT1);
       break;
 
     case SelLvrVccDdq:
@@ -346,11 +342,6 @@ MrcCurrentSensorTargetSetup (
       PartitionMask[DATA_MASK]  = DtHalo ? (CUR_SENS_SEL_LVR_VCCCLK_DT_DATA_MASK | CUR_SENS_SEL_LVR_NBIASFF_DT_DATA_MASK) : CUR_SENS_SEL_LVR_NBIASFF_DATA_MASK;
       PartitionMask[CCC_MASK]   = DtHalo ? CUR_SENS_SEL_LVR_VCCCLK_DT_CCC_MASK  : CUR_SENS_SEL_LVR_VCCCLK_CCC_MASK;
       LvrCompTarget = DtHalo ? TRUE : FALSE;
-      break;
-
-    case SelLvrVccDll:
-      PartitionMask[DATA_MASK]  = DtHalo ? CUR_SENS_SEL_LVR_VCCDLL_DT_DATA_MASK : CUR_SENS_SEL_LVR_VCCDLL_DATA_MASK;
-      PartitionMask[CCC_MASK]   = CUR_SENS_SEL_LVR_VCCDLL_CCC_MASK;
       break;
 
     case SelLvrVccDdq:
@@ -708,7 +699,6 @@ GetVTarget (
       Vtol1 = 3;
       Target = Outputs->VccIogVoltage;
       break;
-    case SelLvrVccDll:
     case 1: //VccDDQ
       Vtol1 = 4;
       Target = Outputs->VccddqVoltage;

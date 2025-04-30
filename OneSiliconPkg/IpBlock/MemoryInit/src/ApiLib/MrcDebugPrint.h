@@ -42,6 +42,7 @@ typedef struct MrcDebug MrcDebug;
 #define MSG_LEVEL_CTE         MRC_BIT8
 #define MSG_LEVEL_TIME        MRC_BIT10
 #define MSG_LEVEL_INTERPRETER MRC_BIT11
+#define MSG_LEVEL_PROGRESS    MRC_BIT12
 #define MSG_LEVEL_ALL         MRC_INT32_MAX
 
 // 0:Disable, 1:Error Only, 2:Error & Warnings, 3:Load, Error, Warnings & Info, 4:Load, Error, Warnings, Info & Event, 5:Load, Error, Warnings, Info & Verbose.
