@@ -445,20 +445,21 @@ typedef struct {
   UINT32   LchIrqGpioPin;                           ///< Offset 2341    Lch Host Interrupt/IRQ pin
   UINT32   LchResetGpioPin;                         ///< Offset 2345    Lch Reset pin
   UINT8    PcdMipiCamSensor;                        ///< Offset 2349    Mipi Camera Sensor
-  UINT8    PcdZPoddConfig;                          ///< Offset 2350    ZPODD
-  UINT8    PcdRGBCameraAdr;                         ///< Offset 2351    RGB Camera Address
-  UINT8    PcdDepthCameraAdr;                       ///< Offset 2352    Depth Camera Addresy
-  UINT8    PcdConvertableDockSupport;               ///< Offset 2353    Convertable Dock Support
-  UINT8    PcdVirtualGpioButtonSupport;             ///< Offset 2354    Virtual Button Support
-  UINT8    PcdAcpiEnableAllButtonSupport;           ///< Offset 2355    Acpi Enable All Button Support
-  UINT8    PcdAcpiHidDriverButtonSupport;           ///< Offset 2356    Acpi Hid Driver Button Support
+  UINT8    PcdEcUart;                               ///< Offset 2350    EC UART
+  UINT8    PcdZPoddConfig;                          ///< Offset 2351    ZPODD
+  UINT8    PcdRGBCameraAdr;                         ///< Offset 2352    RGB Camera Address
+  UINT8    PcdDepthCameraAdr;                       ///< Offset 2353    Depth Camera Addresy
+  UINT8    PcdConvertableDockSupport;               ///< Offset 2354    Convertable Dock Support
+  UINT8    PcdVirtualGpioButtonSupport;             ///< Offset 2355    Virtual Button Support
+  UINT8    PcdAcpiEnableAllButtonSupport;           ///< Offset 2356    Acpi Enable All Button Support
+  UINT8    PcdAcpiHidDriverButtonSupport;           ///< Offset 2357    Acpi Hid Driver Button Support
   //
   // UCMC setup option, GPIO Pad
   //
-  UINT8    UCMS;                                    ///< Offset 2357    Option to select UCSI Version
-  UINT32   UcmcPort1Gpio;                           ///< Offset 2358    Gpio for UCMC Port 1 Interrupt
-  UINT32   UcmcPort2Gpio;                           ///< Offset 2362    Gpio for UCMC Port 2 Interrupt
-  UINT8    Reserved17[11];                          ///< Offset 2366:2376
+  UINT8    UCMS;                                    ///< Offset 2358    Option to select UCSI Version
+  UINT32   UcmcPort1Gpio;                           ///< Offset 2359    Gpio for UCMC Port 1 Interrupt
+  UINT32   UcmcPort2Gpio;                           ///< Offset 2363    Gpio for UCMC Port 2 Interrupt
+  UINT8    Reserved17[10];                          ///< Offset 2367:2376
   UINT8    Ufp2DfpGlobalFlag;                       ///< Offset 2377    Upstream Facing port or Downstream Facing port Global Flag from LPC EC
   UINT8    Ufp2DfpUsbPort;                          ///< Offset 2378    Upstream Facing port or Downstream Facing port number from LPC EC
   UINT8    DbcGlobalFlag;                           ///< Offset 2379    Debug Mode Global Flag from LPC EC

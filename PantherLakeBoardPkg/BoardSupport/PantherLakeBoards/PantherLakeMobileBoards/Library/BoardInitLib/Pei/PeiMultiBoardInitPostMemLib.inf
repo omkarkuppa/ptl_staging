@@ -155,6 +155,7 @@
   gBoardModuleTokenSpaceGuid.PcdBoardRtd3TableSignature
 
   gBoardModuleTokenSpaceGuid.PcdMipiCamSensor
+  gBoardModuleTokenSpaceGuid.PcdEcUart
   gBoardModuleTokenSpaceGuid.PcdZPoddConfig
 
   gBoardModuleTokenSpaceGuid.PcdSmcRuntimeSciPin
@@ -257,6 +258,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecI2cBusNumber
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor
+  gBoardModuleTokenSpaceGuid.VpdPcdEcUart
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig
   gBoardModuleTokenSpaceGuid.VpdPcdConvertableDockSupport
   gBoardModuleTokenSpaceGuid.VpdPcdEcHotKeyF3Support

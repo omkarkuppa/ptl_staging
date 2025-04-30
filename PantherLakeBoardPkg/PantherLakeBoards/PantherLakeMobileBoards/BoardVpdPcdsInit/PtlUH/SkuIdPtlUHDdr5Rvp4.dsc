@@ -316,6 +316,8 @@
   # EC FailSafe Fan Speed Setting
   gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|65
 
+  gBoardModuleTokenSpaceGuid.VpdPcdEcUart|*|TRUE
+
   # Touch Panel1 Table
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableTouchPanel0|*|{CODE({
   // Touch Panel 0, Same pins shared between THC and I2C based Panel,

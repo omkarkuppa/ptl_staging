@@ -97,6 +97,7 @@
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength                    ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdMipiCamSensor                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcUart                              ## CONSUMES
   #gBoardModuleTokenSpaceGuid.PcdZPODD                              ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdRGBCameraAdr                        ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdDepthCameraAdr                      ## CONSUMES

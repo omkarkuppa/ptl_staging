@@ -186,6 +186,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdOddPowerInitEnable|*|FALSE
+  gBoardModuleTokenSpaceGuid.VpdPcdEcUart|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdSmbusAlertEnable|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionCpuTemp|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|0x0

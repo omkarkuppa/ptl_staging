@@ -462,20 +462,21 @@
   LDGP, 32, // Offset(2341),  Lch Host Interrupt/IRQ pin
   LRGP, 32, // Offset(2345),  Lch Reset pin
   SCSS, 8,  // Offset(2349),  Mipi Camera Sensor
-  ZPOD, 8,  // Offset(2350),  ZPODD
-  RGBC, 8,  // Offset(2351),  RGB Camera Address
-  DPTC, 8,  // Offset(2352),  Depth Camera Addresy
-  CEDS, 8,  // Offset(2353),  Convertable Dock Support
-  VBST, 8,  // Offset(2354),  Virtual Button Support
-  AEAB, 8,  // Offset(2355),  Acpi Enable All Button Support
-  AHDB, 8,  // Offset(2356),  Acpi Hid Driver Button Support
+  EUAR, 8,  // Offset(2350),  EC UART
+  ZPOD, 8,  // Offset(2351),  ZPODD
+  RGBC, 8,  // Offset(2352),  RGB Camera Address
+  DPTC, 8,  // Offset(2353),  Depth Camera Addresy
+  CEDS, 8,  // Offset(2354),  Convertable Dock Support
+  VBST, 8,  // Offset(2355),  Virtual Button Support
+  AEAB, 8,  // Offset(2356),  Acpi Enable All Button Support
+  AHDB, 8,  // Offset(2357),  Acpi Hid Driver Button Support
   //
   // UCMC setup option, GPIO Pad
   //
-  UCMS, 8,  // Offset(2357),  Option to select UCSI Version
-  UCG1, 32, // Offset(2358),  Gpio for UCMC Port 1 Interrupt
-  UCG2, 32, // Offset(2362),  Gpio for UCMC Port 2 Interrupt
-  // Offset(2366) : Offset(2376), Reserved bytes
+  UCMS, 8,  // Offset(2358),  Option to select UCSI Version
+  UCG1, 32, // Offset(2359),  Gpio for UCMC Port 1 Interrupt
+  UCG2, 32, // Offset(2363),  Gpio for UCMC Port 2 Interrupt
+  // Offset(2367) : Offset(2376), Reserved bytes
   Offset(2377),
   UDGF, 8,  // Offset(2377),  Upstream Facing port or Downstream Facing port Global Flag from LPC EC
   UDUP, 8,  // Offset(2378),  Upstream Facing port or Downstream Facing port number from LPC EC

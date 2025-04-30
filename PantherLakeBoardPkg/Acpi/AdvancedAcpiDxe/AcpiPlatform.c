@@ -3633,6 +3633,7 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->UsbTypeCSupport                      = PcdGet8 (VpdPcdUsbCUcmMode);
   mPlatformNvsAreaProtocol.Area->PcdTsOnDimmTemperature               = PcdGetBool (PcdTsOnDimmTemperature);
   mPlatformNvsAreaProtocol.Area->PcdMipiCamSensor                     = PcdGetBool (PcdMipiCamSensor);
+  mPlatformNvsAreaProtocol.Area->PcdEcUart                            = PcdGetBool (PcdEcUart);
   mPlatformNvsAreaProtocol.Area->PcdConvertableDockSupport            = PcdGetBool (PcdConvertableDockSupport);
   mPlatformNvsAreaProtocol.Area->PcdAcpiEnableAllButtonSupport        = PcdGetBool (PcdAcpiEnableAllButtonSupport);
   mPlatformNvsAreaProtocol.Area->PcdAcpiHidDriverButtonSupport        = PcdGetBool (PcdAcpiHidDriverButtonSupport);

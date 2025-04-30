@@ -259,6 +259,8 @@
   # EC FailSafe Fan Speed Setting
   gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|100
 
+  gBoardModuleTokenSpaceGuid.VpdPcdEcUart|*|FALSE
+
   # Cnvd Gpio Table
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableLch|*|{CODE({
     { GPIOV2_PTL_PCD_XXGPP_F_20, {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirIn,  GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic,  GpioV2ResetHost,    GpioV2TermNone,  GpioV2Unlock, GpioV2Lock}}, // CVS_HST_WAKE

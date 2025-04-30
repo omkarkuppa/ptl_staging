@@ -657,7 +657,10 @@ PtlInitCommonPlatformPcdPostMem (
   // MIPI CSI Camera
   //
   PcdSetBoolS (PcdMipiCamGpioEnable, PcdGetBool (VpdPcdMipiCamGpioEnable));
-
+  //
+  // EC UART
+  //
+  PcdSetBoolS (PcdEcUart, PcdGetBool (VpdPcdEcUart));
   //
   // ZPODD
   //

@@ -98,6 +98,7 @@
   gBoardModuleTokenSpaceGuid.PcdSpdAddressOverride
 
   gBoardModuleTokenSpaceGuid.PcdMipiCamSensor
+  gBoardModuleTokenSpaceGuid.PcdEcUart
   gBoardModuleTokenSpaceGuid.PcdZPoddConfig
 
   gBoardModuleTokenSpaceGuid.PcdSmcRuntimeSciPin

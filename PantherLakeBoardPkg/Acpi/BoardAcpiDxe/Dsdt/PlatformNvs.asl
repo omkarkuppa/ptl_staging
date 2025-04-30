@@ -1170,6 +1170,7 @@
   Offset(1865),   RBY1, 8,  // Offset(1865),  Real Battery 1 Control
   Offset(1866),   RBY2, 8,  // Offset(1866),  Real Battery 2 Control
   Offset(1867),   SCSS, 8,  // Offset(1867),  Mipi Camera Sensor
+  Offset(1868),   EUAR, 8,  // Offset(2347),  EC UART
   Offset(1872),   ZPOD, 8,  // Offset(1872),  ZPODD
   Offset(1873),   RGBC, 8,  // Offset(1873),  RGB Camera Address
   Offset(1874),   DPTC, 8,  // Offset(1874),  Depth Camera Addresy

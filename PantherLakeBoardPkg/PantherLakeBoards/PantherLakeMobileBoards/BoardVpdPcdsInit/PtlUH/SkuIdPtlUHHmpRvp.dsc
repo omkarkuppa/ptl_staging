@@ -217,6 +217,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSmbusAlertEnable|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionCpuTemp|*|85
   gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|65
+  gBoardModuleTokenSpaceGuid.VpdPcdEcUart|*|FALSE
 
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableTouchPanel0|*|{CODE({

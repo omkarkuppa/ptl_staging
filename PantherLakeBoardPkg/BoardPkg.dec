@@ -626,6 +626,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # ASL PCDs
   gBoardModuleTokenSpaceGuid.PcdMipiCamSensor                        |FALSE|BOOLEAN|0x00100105
+  gBoardModuleTokenSpaceGuid.PcdEcUart                               |FALSE|BOOLEAN|0x00100106
   gBoardModuleTokenSpaceGuid.PcdZPoddConfig                          |0x00|UINT8|0x0010010E
   gBoardModuleTokenSpaceGuid.PcdSmcRuntimeSciPin                     |0x00|UINT32|0x00100111
   gBoardModuleTokenSpaceGuid.PcdConvertableDockSupport               |FALSE|BOOLEAN|0x00100112
@@ -1522,6 +1523,9 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # Sky Camera Sensor
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor            |FALSE|BOOLEAN|0x00001281
+
+  # EC UART
+  gBoardModuleTokenSpaceGuid.VpdPcdEcUart                   |FALSE|BOOLEAN|0x00001283
 
   # ZPODD
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig              |0x0|UINT8|0x00001287

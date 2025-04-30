@@ -328,6 +328,7 @@
   gBoardModuleTokenSpaceGuid.PcdPcieSlot3RootPort
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable
   gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel
+  gBoardModuleTokenSpaceGuid.PcdEcUart
 
   # UsbCCapsuleFeaturePkg
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel
