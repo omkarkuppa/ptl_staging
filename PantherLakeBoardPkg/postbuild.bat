@@ -809,6 +809,10 @@ copy /b %BUILD_DIR%\FV\ClientBios.fd %BUILD_DIR%\FV\ClientBios_Post_Fit.fd /Y
 
 setlocal ENABLEDELAYEDEXPANSION
 @set FSPM_LOADING_POLICY=0x0
+@if %FSPM_COMPRESSED% EQU TRUE (
+  @set /A FSPM_LOADING_POLICY= !FSPM_LOADING_POLICY! + 0x2
+  )
+
 @if %STARTUP_ACM_ENABLE% EQU TRUE (
   @REM
   @REM Gerneate Bsis binary for both FSP Signing and non FSP Signing cases.
@@ -818,14 +822,9 @@ setlocal ENABLEDELAYEDEXPANSION
 
   @echo generate BSIS binary
   @if %FSP_SIGNED% EQU TRUE (
-    @if %MULTI_IBB_BUILD% EQU TRUE (
-      @set FSPM_LOADING_POLICY=0x0
-    ) else (
-      @set FSPM_LOADING_POLICY=0x1
+    @if %MULTI_IBB_BUILD% EQU FALSE (
+      @set /A FSPM_LOADING_POLICY= !FSPM_LOADING_POLICY! + 0x1
     )
-  )
-  @if %FSPM_COMPRESSED% EQU TRUE (
-    @set /A FSPM_LOADING_POLICY= !FSPM_LOADING_POLICY! + 0x2
   )
 
   @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%PLATFORM_BOARD_PACKAGE%\BoardSupport\Tools\BsssGen\BsssGen.py ^
