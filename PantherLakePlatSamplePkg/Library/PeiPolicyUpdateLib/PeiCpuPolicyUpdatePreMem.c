@@ -702,9 +702,9 @@ GetVrPowerDeliveryDesign (
         ///
         /// If detected board is Intel RVP, BIOS set PD3 (95W PL2) as default.
         ///
-        if ((CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+4Xe
+        if (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) { // 4+8+4+4Xe
           VrPowerDeliveryDesign = 0x1C; // PD3: EnumPtlH4Xe65Watt48Pd3CpuId
-        } else if ((CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+12Xe
+        } else if (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) { // 4+8+4+12Xe
           VrPowerDeliveryDesign = 0x1D; // PD3: EnumPtlH12Xe65Watt48Pd3CpuId
         }
       } else {
@@ -712,9 +712,9 @@ GetVrPowerDeliveryDesign (
         ///
         /// If detected board is not Intel RVP, BIOS sets PD2 as default for H 4Xe/12Xe 4+8+4.
         ///
-        if ((CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+4Xe
+        if (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) { // 4+8+4+4Xe
           VrPowerDeliveryDesign = 0x1A; // PD2: EnumPtlH4Xe65Watt48Pd2CpuId
-        } else if ((CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+12Xe
+        } else if (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) { // 4+8+4+12Xe
           VrPowerDeliveryDesign = 0x1B; // PD2: EnumPtlH12Xe65Watt48Pd2CpuId
         }
       }
@@ -732,9 +732,9 @@ GetVrPowerDeliveryDesign (
     ///
     DEBUG ((DEBUG_INFO, "CustomPowerLimit1Power is - %x, CustomPowerLimit2Power is - %x \n", CustomPowerLimit1Power, CustomPowerLimit2Power));
     if ((IsRvpBoard) && (CustomPowerLimit2Power == 0x13880) && (CustomPowerLimit1Power == 0xAFC8)) {
-      if ((CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+4Xe
+      if (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) { // 4+8+4+4Xe
         VrPowerDeliveryDesign = 0x1A; // PD2: EnumPtlH4Xe65Watt48Pd2CpuId
-      } else if ((CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+12Xe
+      } else if (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) { // 4+8+4+12Xe
         VrPowerDeliveryDesign = 0x1B; // PD2: EnumPtlH12Xe65Watt48Pd2CpuId
       }
     }
