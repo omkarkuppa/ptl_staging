@@ -45,7 +45,6 @@ CONSTRUCTOR                    = PeiBootGuardEventLogConstructor
   SecurityPkg/SecurityPkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
   CryptoPkg/CryptoPkg.dec
-  BoardModulePkg/BoardModulePkg.dec
   OneSiliconPkg/SiPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
 
@@ -77,7 +76,6 @@ CONSTRUCTOR                    = PeiBootGuardEventLogConstructor
   gTcgEventDataHobGuid                                                ## CONSUMES ## HOB
 
 [Ppis]
-  gPeiFvMeasurementExcludedPlatformPpiGuid                            ## SOMETIMES PRODUCES
   gEdkiiTcgPpiGuid                                                    ## CONSUMES
 
 [Pcd]
@@ -87,4 +85,4 @@ CONSTRUCTOR                    = PeiBootGuardEventLogConstructor
   gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable                  ## CONSUMES
 
 [Depex]
-  gBiosInfoGuid
+  TRUE

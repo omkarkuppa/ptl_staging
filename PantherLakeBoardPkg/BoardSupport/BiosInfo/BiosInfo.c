@@ -34,6 +34,15 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/SpiAccessLib.h>
 #include <Guid/MigratedFvInfo.h>
+#include <Library/BootGuardLib.h>
+#include <Library/BaseBpmAccessLib.h>
+#include <Library/IoLib.h>
+
+EFI_STATUS
+EFIAPI
+InstallMeasurementExcludedFvList (
+  VOID
+  );
 
 #if FixedPcdGetBool (PcdMultiIbbFeatureEnable) == 1
   #define BASE_FV_SIZE 12
@@ -301,20 +310,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mBiosInfoPpiList = {
   &mBiosInfo
 };
 
-EFI_STATUS
-EFIAPI
-InstallMeasurementExcludedFvListCallback (
-  IN EFI_PEI_SERVICES              **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR     *NotifyDescriptor,
-  IN VOID                          *Ppi
-  );
-
-static EFI_PEI_NOTIFY_DESCRIPTOR mExcludeFvNotifyList = {
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
-    &gPeiFvMeasurementExcludedPlatformPpiGuid,
-    InstallMeasurementExcludedFvListCallback
-};
-
 #if FixedPcdGetBool(PcdCapsuleEnable) == 1
 #define BIOS_RECOVERY_INFO_SIGNATURE  SIGNATURE_64 ('$', 'B', 'I', 'O', 'S', 'R', 'I', '$')
 #define BIOS_RECOVERY_INFO_STRUCT_SIZE 2
@@ -439,8 +434,12 @@ BiosInfoEntryPoint (
   IN CONST EFI_PEI_SERVICES     **PeiServices
   )
 {
-  EFI_STATUS  Status;
-  VOID        *HobData;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  ACM_BIOS_POLICY    AcmPolicySts;
+  EFI_STATUS         Status;
+  VOID               *HobData;
+
+  GuidHob = NULL;
 
 #if FixedPcdGetBool(PcdCapsuleEnable) == 1
   if (IsDeferredBiosCheckOnObbFvs ()) {
@@ -467,10 +466,16 @@ BiosInfoEntryPoint (
     ASSERT_EFI_ERROR (Status);
 
     //
-    // Notify PPI so other PEI module can run the callbacks as needed.
+    // If Boot Guard or FSP already measured IBB, we do not need let TPM measure it again.
+    // If S-CRTM status is set, ACM has done the measurement
+    // If gTcgEventDataHobGuid is be found, FSP has done the measurement
     //
-    Status = PeiServicesNotifyPpi (&mExcludeFvNotifyList);
-    ASSERT_EFI_ERROR (Status);
+    GuidHob = GetFirstGuidHob (&gTcgEventDataHobGuid);
+    AcmPolicySts.Data = MmioRead64 (MMIO_ACM_POLICY_STATUS);
+
+    if ((AcmPolicySts.Bits.SCrtmStatus != 0) || GuidHob != NULL) {
+      InstallMeasurementExcludedFvList ();
+    }
 
     //
     // Build hob, so that DXE module can also get the data.
@@ -495,10 +500,7 @@ BiosInfoEntryPoint (
 **/
 EFI_STATUS
 EFIAPI
-InstallMeasurementExcludedFvListCallback (
-  IN EFI_PEI_SERVICES              **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR     *NotifyDescriptor,
-  IN VOID                          *Ppi
+InstallMeasurementExcludedFvList (
   )
 {
   EFI_STATUS                   Status;
@@ -511,11 +513,11 @@ InstallMeasurementExcludedFvListCallback (
   EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_FV  FvListTmp [BIOS_INFO_STRUCT_SIZE];
   EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_PPI *IbbFvPpi;
 
-  DEBUG ((DEBUG_INFO, "InstallMeasurementExcludedFvListCallback : Creating Exclude FV List from Measurement\n"));
+  DEBUG ((DEBUG_INFO, "InstallMeasurementExcludedFvList : Creating Exclude FV List from Measurement\n"));
 
   Status = PeiServicesLocatePpi (&gBiosInfoGuid, 0, NULL, (VOID **) &BiosInfoHeader);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "InstallMeasurementExcludedFvListCallback : BiosInfo PPI not found\n"));
+    DEBUG ((DEBUG_ERROR, "InstallMeasurementExcludedFvList : BiosInfo PPI not found\n"));
     ASSERT_EFI_ERROR (Status);
     return EFI_NOT_FOUND;
   }
@@ -542,21 +544,21 @@ InstallMeasurementExcludedFvListCallback (
 
   IbbFvPpi = (EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_PPI *) AllocateZeroPool (sizeof (UINT32) + IbbFvCount * sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_FV));
   if (IbbFvPpi == NULL) {
-    DEBUG ((DEBUG_ERROR, "InstallMeasurementExcludedFvListCallback : buffer allocation failure\n"));
+    DEBUG ((DEBUG_ERROR, "InstallMeasurementExcludedFvList : buffer allocation failure\n"));
     Status = RETURN_OUT_OF_RESOURCES;
     ASSERT_EFI_ERROR (Status);
     return Status;
   }
   IbbFvPpi->Count = IbbFvCount;
   CopyMem (IbbFvPpi->Fv, FvListTmp,(IbbFvCount * sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_FV)));
-  DEBUG ((DEBUG_INFO, "InstallMeasurementExcludedFvListCallback :\n"));
+  DEBUG ((DEBUG_INFO, "InstallMeasurementExcludedFvList :\n"));
   for (Index = 0; Index < IbbFvPpi->Count; Index++) {
     DEBUG ((DEBUG_INFO, "     %x FV FvBase   =  0x%x\n", Index, IbbFvPpi->Fv [Index].FvBase));
     DEBUG ((DEBUG_INFO, "           FvLength =  0x%x\n", IbbFvPpi->Fv [Index].FvLength));
   }
   PeiFirmwareVolumeInfoMeasurementExcludedPpi = AllocatePool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
   if (PeiFirmwareVolumeInfoMeasurementExcludedPpi == NULL) {
-    DEBUG((DEBUG_ERROR, "InstallMeasurementExcludedFvListCallback : buffer allocation failure\n"));
+    DEBUG((DEBUG_ERROR, "InstallMeasurementExcludedFvList : buffer allocation failure\n"));
     Status = RETURN_OUT_OF_RESOURCES;
     ASSERT_EFI_ERROR(Status);
     return Status;

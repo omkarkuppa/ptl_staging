@@ -43,6 +43,9 @@
   MemoryAllocationLib
   DebugLib
   SpiAccessLib
+  BootGuardLib
+  BpmAccessLib
+  IoLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -123,7 +126,6 @@
 
 [Ppis]
   gEfiPeiFirmwareVolumeInfoMeasurementExcludedPpiGuid    ## PRODUCES
-  gPeiFvMeasurementExcludedPlatformPpiGuid               ## NOTIFY
   gEfiPeiMemoryDiscoveredPpiGuid
 
 [Guids]
@@ -131,6 +133,7 @@
   gBiosInfoRecoveryGuid                         ## SOMETIMES_PRODUCES
   gSysFwUpdateProgressGuid                      ## COMSUMES
   gEdkiiMigratedFvInfoGuid                      ## COMSUMES
+  gTcgEventDataHobGuid                          ## CONSUMES ## HOB
 
 [Depex]
   gEfiPeiMasterBootModePpiGuid

@@ -42,7 +42,6 @@
 
 #include <Guid/TcgEventHob.h>
 #include <Protocol/Tcg2Protocol.h>
-#include <Ppi/FirmwareVolumeInfoMeasurementExcluded.h>
 
 #include <Register/Cpuid.h>
 #include <Register/GenerationMsr.h>
@@ -71,12 +70,6 @@ STATIC TPMI_ALG_HASH SortedAlgIds[] = {
 STATIC EFI_TCG2_EVENT_INFO_STRUCT mTcg2EventInfo[] = {
   {&gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2},
   {&gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2},
-};
-
-EFI_PEI_PPI_DESCRIPTOR  mMeasurementExcludeFvPlatformPpiList = {
-  EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
-  &gPeiFvMeasurementExcludedPlatformPpiGuid,
-  NULL
 };
 
 #if FixedPcdGetBool(PcdBootGuardPerformanceEnable) == 1
@@ -862,20 +855,6 @@ CreatePolicyDataMeasurementEvent (
 }
 
 /**
-  If Boot Guard already measured IBB, we do not need let TPM measure it again.
-  So we let BiosInfo PEIM register the Measurement Exclude PPI
-  and TPM driver knows this Fv should be excluded.
-**/
-VOID
-ExcludeIbbFv (
-  VOID
-  )
-{
-  DEBUG ((DEBUG_INFO, "Excluding IBB FVs as Boot Guard did Measurement of PEI FV\n"));
-  PeiServicesInstallPpi (&mMeasurementExcludeFvPlatformPpiList);
-}
-
-/**
   Create IBB Measurement event log
 
   All digests must be retrieved from BPM and placed into TPML_DIGEST_VALUES using the ascending
@@ -1433,12 +1412,6 @@ CreateBootguardEventLogEntriesCallback (
       DEBUG ((DEBUG_ERROR, "CreateFspMeasuredIbbEvent() error status: %r\n", Status));
       return Status;
     }
-  }
-  //
-  // If Boot Guard already measured IBB, we do not need let TPM measure it again.
-  //
-  if (IsMeasuredBoot ()) {
-    ExcludeIbbFv ();
   }
 
   //
