@@ -71,8 +71,12 @@ set EDK_TOOLS_BIN=%WORKSPACE_CORE%\BaseTools\Bin\Win32
   set PYTHON_COMMAND=py -3
 )
 
-@if not defined FSP_SIGNED (
-  @set FSP_SIGNED=FALSE
+for %%a in (%*) do (
+  if /i "%%a"=="fspsigned" (
+    @set FSP_SIGNED =TRUE
+  ) else (
+    @set FSP_SIGNED=FALSE
+  )
 )
 
 @if not defined FSP_RESET (
