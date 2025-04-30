@@ -3322,8 +3322,8 @@
   gPlatformFspPkgTokenSpaceGuid.TcssXhciEn                | * | 0x01 | 0x01
 
   # !BSF NAME:{IomUsbCDpConfig}
-  # !BSF OPTION:{$EN_DIS}
-  # !BSF HELP:{Set IomUsbCDpConfig. 0:Disabled  1:Enabled - Must be enabled if xDCI is enabled below}
+  # !BSF TYPE:{Combo} OPTION:{0:Disabled, 1:IOM_DP, 2:IOM_HDMI, 3: IOM_EDP}
+  # !BSF HELP:{Set IomUsbCDpConfig expect 4 values from 0 to 3}
   gPlatformFspPkgTokenSpaceGuid.IomUsbCDpConfig           | * | 0x04 | {0x00, 0x00, 0x00, 0x00}
 
   # !BSF NAME:{TCSS Type C Port 0}
@@ -3400,8 +3400,8 @@
   # !BSF HELP:{Size of memory preallocated for internal graphics.}
   gPlatformFspPkgTokenSpaceGuid.IgdDvmt50PreAlloc           | * | 0x02 | 0x2
 
-  # !BSF NAME:{Internal Graphics} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/disable internal graphics.}
+  # !BSF NAME:{Internal Graphics} TYPE:{Combo} OPTION:{2:AUTO, 1:Enable, 0:Disable}
+  # !BSF HELP:{Expect 3 values from 0 to 2}
   gPlatformFspPkgTokenSpaceGuid.InternalGraphics                 | * | 0x01 | 0x02
 
   ## IGPU_PEI_PREMEM_CONFIG End
