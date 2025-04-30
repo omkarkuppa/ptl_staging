@@ -40,14 +40,55 @@
 #include <Register/ArchitecturalMsr.h>
 #include <Library/SmmRelocationLib.h>
 
-UINTN           mTileSize;
-EFI_BOOT_MODE   mBootMode;
+UINTN                                mTileSize;
+EFI_BOOT_MODE                        mBootMode;
+VOID                                 *gSmmInfoEntry = NULL;
+
 ///
 /// Used to patch the initial value of MSR_SMM_SUPOVR_STATE_LOCK(0x141) in SmiEntry.asm.
 /// Should ensure that Supovr State Lock not be enabled in S3 flow when first entering _SmiEntryPoint.
 ///
 #define SMM_SUPOVR_STATE_LOCK_DATA_PATCH_SIG_STR  "L_D_P_S"
 #define SMM_SUPOVR_STATE_LOCK_DATA_OFFSET  2
+
+#define SMM_ENTRY_POINT_INFO_USER_MODE_ENABLE    0x80
+#define SMM_ENTRY_POINT_INFO_SUPOVR_STATE_LOCK   0x5
+#define SMM_ENTRY_POINT_INFO_END                 0xFF
+
+#define SMM_ENTRY_POINT_INFORMATION_TABLE_SIGNATURE  SIGNATURE_64 ('S', 'M', 'M', '_', 'I', 'N', 'F', 'O')
+
+#pragma pack (push, 1)
+
+//
+// SMM EntryPoint info table
+//
+typedef struct {
+  UINT8     JmpInstruction[2]; // 0xEB 0x04
+  UINT32    InfoTableAddress;
+} SMM_ENTRY_POINT_HEADER;
+
+typedef struct {
+  UINT8     SMM_SHA1[20];
+  UINT8     SMM_SHA256[32];
+  UINT8     SMM_SHA384[48];
+  UINT8     SMM_SM3_256[32];
+  UINT8     SMM_Reserved[64];
+} PPAM_META_RSC_SMM_ENTRY_HASH_DATA;
+
+typedef struct {
+  UINT64                               Signature; // 'SMM_INFO'
+  UINT32                               Version;
+  UINT32                               SmmEntryPointSize;
+  PPAM_META_RSC_SMM_ENTRY_HASH_DATA    SpsHash;
+} SMM_ENTRY_POINT_INFORMATION_TABLE;
+
+typedef struct {
+  UINT8     Type;
+  UINT8     DataSize;
+  UINT16    DataOffset;
+} SMM_ENTRY_POINT_INFORMATION_ENTRY;
+
+#pragma pack (pop)
 
 ///
 /// Encapsulate all information AP procedure needs into a structure.
@@ -58,7 +99,6 @@ typedef struct {
   UINT64                            *SmBaseForAllCpu;
   UINTN                             BspNumber;
 } SMM_BASE_SETTING_CONTEXT;
-
 
 /**
   Finds a specific signature within a given SMI handler address range.
@@ -126,6 +166,79 @@ ZeroSmmSupovrStateLockData (
 }
 
 /**
+  Copies the data into SMM Entry Info Table
+
+  @param[in] SmmEntryPointHeader  Points to the SMM Entry Point Header.
+  @param[in] Type                 SMM Entry point Information type.
+  @param[in] Data                 Points to Data to be copied.
+  @param[in] DataSize             Size of Data.
+**/
+VOID
+EFIAPI
+PatchSmmEntryPoint (
+    IN VOID    *SmmEntryPointHeader,
+    IN UINT8   Type,
+    IN VOID    *Data,
+    IN UINT8   DataSize
+)
+{
+  SMM_ENTRY_POINT_INFORMATION_ENTRY  *SmmInfoEntry;
+
+  SmmInfoEntry = ((SMM_ENTRY_POINT_INFORMATION_ENTRY *)(gSmmInfoEntry));
+
+  //
+  // Note: Do not include debug messages in the for loop while copying the data.
+  // Printing debug messages during this time will cause exception due to parallel 
+  // processing of multi processor SMM Initialization
+  //
+  for (; ; SmmInfoEntry++) {
+    if (SmmInfoEntry->Type == SMM_ENTRY_POINT_INFO_END) {
+      break;
+    }
+    if (SmmInfoEntry->Type == Type) {
+      ASSERT (SmmInfoEntry->DataSize == DataSize);
+      CopyMem ((UINT8*)SmmEntryPointHeader + SmmInfoEntry->DataOffset, Data, SmmInfoEntry->DataSize);
+      break;
+    }
+  }
+
+  if (SmmInfoEntry->Type != Type) {
+    //
+    // Asserting the system in case if any Entry field is missed to update in SMM Entry Info Table.
+    // Not required in release build as this is only to catch if any field is missed.
+    //
+    DEBUG ((DEBUG_ERROR, "SMM Entry not found for the given Type 0x%x in SMM Info Table. Asserting...\n", Type));
+    ASSERT (FALSE);
+  }
+}
+
+/**
+  Unlock Supervisor state lock data and Enable Ring0 support.
+
+  This function searches for the SMM_ENTRY_POINT_INFO_SUPOVR_STATE_LOCK & SMM_ENTRY_POINT_INFO_USER_MODE_ENABLE type within SMM Entry Info Table.
+  If the type is found, it updates the data with a zero value to unlock Supervisor state lock data and Enable Ring 0 support.
+
+  @param[in] Base   Pointer to the SMI handler address.
+
+  @retval EFI_SUCCESS       The operation completed successfully.
+**/
+EFI_STATUS
+ZeroSmmSupovrAndRing3Support (
+  IN UINT8  *Base
+  )
+{
+  BOOLEAN  SmmDgrRing3Supported;
+  UINT64   SmmDgrSupovrStateLockData;
+  
+  SmmDgrSupovrStateLockData = 0;
+  PatchSmmEntryPoint ((VOID*)(Base), SMM_ENTRY_POINT_INFO_SUPOVR_STATE_LOCK, &SmmDgrSupovrStateLockData, sizeof (SmmDgrSupovrStateLockData));
+  SmmDgrRing3Supported = 0;
+  PatchSmmEntryPoint ((VOID*)(Base), SMM_ENTRY_POINT_INFO_USER_MODE_ENABLE, &SmmDgrRing3Supported, sizeof (SmmDgrRing3Supported));
+
+  return EFI_SUCCESS;
+}
+
+/**
   Program to the SMBASE Register for each thread.
 
   @param[in,out] Buffer     Pointer to SMM_BASE_SETTING_CONTEXT.
@@ -137,9 +250,11 @@ ProgramSmmRelocationRegisters (
   IN OUT VOID *Buffer
   )
 {
-  EFI_STATUS                     Status;
-  SMM_BASE_SETTING_CONTEXT       *Context;
-  UINTN                          CpuNumber;
+  EFI_STATUS                         Status;
+  SMM_BASE_SETTING_CONTEXT           *Context;
+  UINTN                              CpuNumber;
+  SMM_ENTRY_POINT_HEADER             *SmmInfoHeader;
+  SMM_ENTRY_POINT_INFORMATION_TABLE  *SmmDgrEntryPointInfoTable;
 
   Context = (SMM_BASE_SETTING_CONTEXT*) Buffer;
 
@@ -152,14 +267,33 @@ ProgramSmmRelocationRegisters (
 
   AsmWriteMsr64 (MSR_IA32_SMBASE, Context->SmBaseForAllCpu[CpuNumber]);
 
-  //
-  // Zero SmmSupovrStateLock Data for S3
-  //
   if (mBootMode == BOOT_ON_S3_RESUME) {
     Status = ZeroSmmSupovrStateLockData ((UINT8 *) Context->SmBaseForAllCpu[CpuNumber] + SMM_HANDLER_OFFSET, mTileSize);
     if (EFI_ERROR (Status)) {
       if (CpuNumber == Context->BspNumber) {
         DEBUG ((DEBUG_ERROR, "S3: Failed to Zero SmmSupovrStateLock Data!\n"));
+      }
+    }
+
+    SmmInfoHeader = (SMM_ENTRY_POINT_HEADER*) ((UINT8*) Context->SmBaseForAllCpu[CpuNumber] + SMM_HANDLER_OFFSET);
+    if ((SmmInfoHeader->JmpInstruction[0] == 0xEB) && (SmmInfoHeader->JmpInstruction[1] == 0x4)) {
+      SmmDgrEntryPointInfoTable = (VOID*)(UINTN)(SmmInfoHeader->InfoTableAddress);
+
+      if (SmmDgrEntryPointInfoTable->Signature == SMM_ENTRY_POINT_INFORMATION_TABLE_SIGNATURE) {
+        gSmmInfoEntry = (VOID *) ((UINT8 *) SmmDgrEntryPointInfoTable + sizeof (SMM_ENTRY_POINT_INFORMATION_TABLE));
+      }
+    }
+
+    //
+    // gSmmInfoEntry will be NULL if DGR is disabled
+    //
+    if (gSmmInfoEntry != NULL) {
+	  Status = ZeroSmmSupovrAndRing3Support ((UINT8 *) Context->SmBaseForAllCpu[CpuNumber] + SMM_HANDLER_OFFSET);
+
+      if (EFI_ERROR (Status)) {
+        if (CpuNumber == Context->BspNumber) {
+          DEBUG ((DEBUG_ERROR, "S3: Failed to ZeroSmmSupovrAndRing3Support Data!\n"));
+        }
       }
     }
   }
