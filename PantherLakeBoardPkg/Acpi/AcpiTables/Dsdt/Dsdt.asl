@@ -400,7 +400,7 @@ DefinitionBlock (
       } else {
         If (LAnd (CondRefOf (\_SB.PC00.CVSS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1))) {
           ADBG ("CVS : Return dependency for Lch specific Camera")
-          Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1"})
+          Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1", "\\_SB.DSC0"})
         }
       }
       Return (0)
@@ -488,10 +488,10 @@ DefinitionBlock (
             //
             // Virtual GPIOs from RGB Camera
             //
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x01}
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x02}
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x03}
             GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x04}
+            GpioIo (Exclusive, PullDefault, 0, 0, IoRestrictionNone, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x05}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x0A}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x02}
           })
           Return(ADSC)
         }
@@ -501,10 +501,10 @@ DefinitionBlock (
             //
             // Virtual GPIOs from RGB Camera
             //
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x01}
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x02}
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x03}
             GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x04}
+            GpioIo (Exclusive, PullDefault, 0, 0, IoRestrictionNone, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x05}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x0A}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x02}
           })
           Return(VDSC)
         }
