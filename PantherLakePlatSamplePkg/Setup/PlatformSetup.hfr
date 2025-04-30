@@ -346,16 +346,8 @@
     form formid = AUTO_ID(DPTF_FORM_ID),
     title = STRING_TOKEN(STR_DPTF_CONFIG_FORM_TITLE);
 
-      SUBTITLE(STRING_TOKEN(STR_DPTF_CONFIG_FORM_TITLE))
+      SUBTITLE(STRING_TOKEN(STR_IPF_CONFIG_FORM_TITLE))
       SEPARATOR
-
-      oneof varid    = SETUP_DATA.IpfEnable,
-        prompt      = STRING_TOKEN(STR_DPTF_PROMPT),
-        help        = STRING_TOKEN(STR_DPTF_HELP),
-        default     = 1, defaultstore = MyStandardDefault,
-        option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = 0;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
-      endoneof;
 
 #if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
       suppressif ideqval SETUP_DATA.IpfEnable == 0;

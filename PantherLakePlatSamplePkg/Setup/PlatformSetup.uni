@@ -39,6 +39,8 @@
 #string STR_DPTF_CONFIG_FORM_TITLE                    #language en-US "Intel(R) Innovation Platform Framework Configuration"
 #string STR_DPTF_CONFIG_FORM_HELP                     #language en-US "Intel(R) Innovation Platform Framework Configuration options"
 
+#string STR_IPF_CONFIG_FORM_TITLE                    #language en-US "IPF is enabled by default. XmlCli could be used to disable it."
+
 #string STR_OEM_OBJ_CONFIG_FORM_TITLE                 #language en-US "OEM variable and Object"
 #string STR_OEM_OBJ_CONFIG_FORM_HELP                  #language en-US "OEM variable and Object options"
 
@@ -222,7 +224,7 @@
 #string STR_POR                                       #language en-US "POR"
 #string STR_0LEN                                      #language en-US ""
 
-#string STR_PPCC_STEP_SIZE                            #language en-US " PPCC Step Size"
+#string STR_PPCC_STEP_SIZE                            #language en-US "PPCC Step Size"
 #string STR_PPCC_STEP_SIZE_HELP                       #language en-US "Step size for Turbo power limit (RAPL) control"
 #string STR_500_MW                                    #language en-US "0.5 Watts"
 #string STR_1000_MW                                   #language en-US "1.0 Watts"
