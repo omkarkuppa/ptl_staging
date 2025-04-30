@@ -3434,6 +3434,11 @@
   # !BSF HELP:{Enables/Disable Mrc Failure On Unsupported Dimm}
   gPlatformFspPkgTokenSpaceGuid.MrcFailureOnUnsupportedDimm | * | 0x01 | 0x00
 
+  # !BSF NAME:{Use 1p5 Read Postamble}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disable using 1p5 tCK Read Postamble for higher freqencies}
+  gPlatformFspPkgTokenSpaceGuid.Use1p5ReadPostamble      | * | 0x01 | 0x00
+
   # !BSF NAME:{Fore Single Rank config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Fore Single Rank config}

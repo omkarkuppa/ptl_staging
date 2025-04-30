@@ -1542,6 +1542,9 @@
 #string STR_MRC_FAILURE_ON_UNSUPPORTED_DIMM_PROMPT  #language en-US "Mrc Failure On Unsupported Dimm"
 #string STR_MRC_FAILURE_ON_UNSUPPORTED_DIMM_HELP    #language en-US "Enables/Disable Mrc Failure On Unsupported Dimm"
 
+#string STR_USE_1P5_READ_POSTAMBLE_PROMPT       #language en-US "Use 1p5 Read Postamble"
+#string STR_USE_1P5_READ_POSTAMBLE_HELP         #language en-US "Enables/Disable using 1p5 tCK Read Postamble for higher freqencies"
+
 //
 // DVMT5.0 Graphics Memory
 //

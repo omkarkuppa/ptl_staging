@@ -377,6 +377,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.RetrainToWorkingChannel = FspmUpd->FspmConfig.RetrainToWorkingChannel;
   MemConfig->ExternalInputs.RowPressEn             = FspmUpd->FspmConfig.RowPressEn;
   MemConfig->ExternalInputs.MrcFailureOnUnsupportedDimm = FspmUpd->FspmConfig.MrcFailureOnUnsupportedDimm;
+  MemConfig->ExternalInputs.Use1p5ReadPostamble    = FspmUpd->FspmConfig.Use1p5ReadPostamble;
   //
   // SA:End
   //

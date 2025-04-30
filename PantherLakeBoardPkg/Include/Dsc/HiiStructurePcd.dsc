@@ -3595,6 +3595,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5XTALK|0x0                               
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5WCKDCA|0x1                                               #           BIT25 - DRAM DCC for LP5 WCK DCA
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXUNMATCHEDCAL|0x1                                             #           BIT26 - Unmatched Rx Calibaration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x1                                                 #           BIT27 - DIMM DFE Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x1                                             #           BIT29 - DRAM DCC for DDR5 READ DCA
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                                   # Offset 56 BIT0 - RXDQS Duty Cycle Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
@@ -3825,8 +3826,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DisableSwitchDfiToMc|0x0                    
 gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
 gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 # Offset 325 - DLL Weak Lock Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsDelayCompEn|0x0                                           # Offset 326 - Rx DQS Delay Comp Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFailureOnUnsupportedDimm|0x0                                # Offset 328 - Enable/disable MRC failure policy for unsupported memory type.
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x1                                             # Offset 329 - DRAM DCC for DDR5 READ DCA
+gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFailureOnUnsupportedDimm|0x0                                # Offset 328 - Enable/disable MRC failure policy for unsupported memory type
+gStructPcdTokenSpaceGuid.PcdSaSetup.Use1p5ReadPostamble|0x0                                        # Offset 329 - Enables/Disable using 1p5 tCK Read Postamble for higher freqencies
 
 ##############################
 # MRC - ExtInputs end
