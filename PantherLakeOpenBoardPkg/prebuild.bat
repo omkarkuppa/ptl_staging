@@ -219,6 +219,34 @@ cl
 
 :EndCapsulePrep
 @echo.
+@echo  Call this script to pad each Microcode patch under PantherLakeBinPkg\Binaries\Microcode\
+@echo  And also create MicrocodeVersion.data
+@echo.
+
+@REM @set PAYLOAD_WORKSPACE=%CD%
+@set SLOT_SIZE=0x37000
+@set FW_VERSION=0x0001
+@set LSV=0x0001
+@set FW_VERSION_STRING="Version 0.0.0.1"
+@REM @set TARGET_PLATFORM=PantherLake
+@set PLATFORM_BIN_PACKAGE=PantherLakeBinPkg
+
+set MICROCODE_PADDING_FDF=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Include\Fdf\FvMicrocode.fdf
+%PYTHON_COMMAND% %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\PayloadManagement\FitPayloads\microcode_padding.py ^
+  --opt padding ^
+  --fw-version %FW_VERSION% ^
+  --lsv %LSV% ^
+  --fw-version-string %FW_VERSION_STRING% ^
+  --slotsize %SLOT_SIZE% ^
+  --fdf %MICROCODE_PADDING_FDF%
+@if %ERRORLEVEL% NEQ 0 (
+  @echo !!! ERROR: microcode_padding.py execute failure !!!
+  @echo py -3 microcode_padding.py --opt padding --fw-version %FW_VERSION% --lsv %LSV% --fw-version-string %FW_VERSION_STRING% --slotsize %SLOT_SIZE%
+  set SCRIPT_ERROR=1
+)
+
+
+@echo.
 @echo   Prebuild is complete.
 @echo   Current Directory    = %CD%
 @echo   EFI_SOURCE           = %EFI_SOURCE%
