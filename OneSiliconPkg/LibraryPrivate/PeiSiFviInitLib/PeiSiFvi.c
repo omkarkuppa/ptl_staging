@@ -119,7 +119,7 @@ BuildFviHob (
   )
 {
   EFI_STATUS                        Status;
-  UINT8                             Index;
+  UINT16                            Index;
   UINTN                             SizeOfStrings;
   CHAR8                             *StringPtr;
   CHAR8                             **StringArray;
@@ -141,7 +141,7 @@ BuildFviHob (
   StringArray = (CHAR8 **) Strings;
   Count = (UINT8)(DataSize / sizeof (INTEL_FIRMWARE_VERSION_INFO));
 
-  for (Index = 0; Index < (Count * FVI_NUMBER_OF_STRINGS); Index++) {
+  for (Index = 0; Index < ((UINT16) Count * FVI_NUMBER_OF_STRINGS); Index++) {
     if (StringArray[Index] != NULL) {
       SizeOfStrings += AsciiStrSize (StringArray[Index]);
       StringCount++;
@@ -190,7 +190,7 @@ BuildFviHob (
   /// Copy the strings to the end of the record
   ///
   StringPtr = ((CHAR8 *) &(Record->Fvi[0])) + (Count * sizeof (INTEL_FIRMWARE_VERSION_INFO));
-  for (Index = 0; Index < (Count * FVI_NUMBER_OF_STRINGS); Index++) {
+  for (Index = 0; Index < ((UINT16) Count * FVI_NUMBER_OF_STRINGS); Index++) {
     if (StringArray[Index] != NULL) {
       AsciiStrCpyS (StringPtr, SizeOfStrings, StringArray[Index]);
       StringPtr += AsciiStrSize (StringArray[Index]);

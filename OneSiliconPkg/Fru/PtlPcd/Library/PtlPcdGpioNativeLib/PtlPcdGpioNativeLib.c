@@ -1844,7 +1844,7 @@ PtlPcdGpioConfigureIoStandbyState (
   VOID
   )
 {
-  UINT8                   SignalIndex;
+  UINT32                  SignalIndex;
   UINT32                  NativeSignalIndex;
   GPIOV2_PAD_MODE         GpioPadMode;
   EFI_STATUS              Status;

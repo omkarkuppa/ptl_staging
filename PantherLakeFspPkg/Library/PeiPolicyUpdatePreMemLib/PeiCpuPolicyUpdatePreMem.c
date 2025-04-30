@@ -45,7 +45,7 @@ FspUpdatePeiCpuPolicyPreMem (
   CPU_INIT_PREMEM_CONFIG                       *CpuInitPreMemConfig;
   CPU_POWER_MGMT_VR_CONFIG                     *CpuPowerMgmtVrConfig;
   CPU_POWER_DELIVERY_CONFIG                    *CpuPowerDeliveryConfig;
-  UINT8                                        Index;
+  UINT16                                       Index;
   EFI_STATUS                                   Status;
   UINT16                                       MaxNumVrs;
 
