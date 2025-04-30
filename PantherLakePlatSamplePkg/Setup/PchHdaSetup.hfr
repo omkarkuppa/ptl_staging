@@ -547,6 +547,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     // ACX/SDCA
@@ -565,6 +566,7 @@
         help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
         flags    = 0 | RESET_REQUIRED,
         key      = 0,
+        default  = FALSE, defaultstore = MyStandardDefault,
       endcheckbox;
     endif;
 
@@ -607,6 +609,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
 
@@ -616,6 +619,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     // Post Processing Module 28 - Waves Full and Reduced for Cirrus
@@ -624,6 +628,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     // Custom Pre/Post-Processing modules with GUID entered by user
@@ -632,6 +637,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[29] == 0x0;
@@ -650,6 +656,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[30] == 0x0;
@@ -668,6 +675,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[31] == 0x0;
@@ -686,6 +694,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[25] == 0x0;
@@ -704,6 +713,7 @@
       help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
       flags    = 0 | RESET_REQUIRED,
       key      = 0,
+      default  = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[26] == 0x0;
@@ -751,6 +761,7 @@
         help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
         flags    = 0 | RESET_REQUIRED,
         key      = 0,
+        default  = TRUE, defaultstore = MyStandardDefault,
       endcheckbox;
 
       checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire1,
@@ -758,6 +769,7 @@
         help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
         flags    = 0 | RESET_REQUIRED,
         key      = 0,
+        default  = TRUE, defaultstore = MyStandardDefault,
       endcheckbox;
 
       checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire2,
@@ -765,6 +777,7 @@
         help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
         flags    = 0 | RESET_REQUIRED,
         key      = 0,
+        default  = TRUE, defaultstore = MyStandardDefault,
       endcheckbox;
 
       checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire3,
@@ -772,6 +785,7 @@
         help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
         flags    = 0 | RESET_REQUIRED,
         key      = 0,
+        default  = TRUE, defaultstore = MyStandardDefault,
       endcheckbox;
 
       checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire4,
@@ -779,6 +793,7 @@
         help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
         flags    = 0 | RESET_REQUIRED,
         key      = 0,
+        default  = TRUE, defaultstore = MyStandardDefault,
       endcheckbox;
 
       checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeDmic,
@@ -786,6 +801,7 @@
         help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
         flags    = 0 | RESET_REQUIRED,
         key      = 0,
+        default  = TRUE, defaultstore = MyStandardDefault,
       endcheckbox;
 
     endif;

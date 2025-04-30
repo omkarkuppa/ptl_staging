@@ -68,6 +68,7 @@ form formid = AUTO_ID(AMT_FORM_ID),
   checkbox varid = ME_SETUP.UnConfigureMe,
     prompt       = STRING_TOKEN(STR_MEBX_UNCONFIGURE_ME_PROMPT),
     help         = STRING_TOKEN(STR_MEBX_UNCONFIGURE_ME_HELP),
+    // a DEFAULT value. CHECKBOX_DEFAULT = ON, 0 = off
     flags        = 0 | RESET_REQUIRED,
     key          = 0,
   endcheckbox;

@@ -546,6 +546,7 @@
      checkbox varid = OC_SETUP.PerCoreDisable[0],
        prompt   = STRING_TOKEN(STR_CORE_BIT0),
        help     = STRING_TOKEN(STR_CORE_BIT0_HELP),
+       // a DEFAULT value.  CHECKBOX_DEFAULT = ON, 0 = off
        flags    = RESET_REQUIRED,
      endcheckbox;
    endif;

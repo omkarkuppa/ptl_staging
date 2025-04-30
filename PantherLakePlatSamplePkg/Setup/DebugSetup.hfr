@@ -36,7 +36,7 @@ form formid = AUTO_ID(DEBUG_FORM_ID),
     oneof varid  = PCH_SETUP.SerialIoDebugUartPowerGating,
       prompt   = STRING_TOKEN(STR_PCH_DBG_UART_PG),
       help     = STRING_TOKEN(STR_PCH_DBG_UART_PG_HELP),
-      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
     endoneof;
   endif; // supressif SETUP_DATA.OsDebugPort == 0

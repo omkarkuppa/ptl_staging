@@ -697,7 +697,7 @@ form formid = 122,
       help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
       default  = 1, defaultstore = MyStandardDefault,
       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
     endoneof;
 
     oneof varid  = PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C3],
@@ -942,13 +942,15 @@ form formid = 122,
     checkbox varid  = PCH_SETUP.PchAdditionalSerialIoDevices,
       prompt      = STRING_TOKEN(STR_SERIAL_IO_TEST_DEVICES),
       help        = STRING_TOKEN(STR_SERIAL_IO_TEST_DEVICES_HELP),
-      flags   = RESET_REQUIRED, key = 0,
+      flags       = RESET_REQUIRED, key = 0,
+      default     = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
     checkbox varid  = SETUP_DATA.PchSerialIoUseTimingParameters,
       prompt        = STRING_TOKEN(STR_SERIAL_IO_TIMING),
       help          = STRING_TOKEN(STR_SERIAL_IO_TIMING_HELP),
       flags         = RESET_REQUIRED, key = 0,
+      default       = FALSE, defaultstore = MyStandardDefault,
     endcheckbox;
 
 endform; //End of SerialIo Options Form ID
@@ -1805,6 +1807,7 @@ endform;
         checkbox varid  = PCH_SETUP.PchIshPdtUnlock,
           prompt   = STRING_TOKEN(STR_ISH_PDT_UNLOCK_PROMPT),
           help     = STRING_TOKEN(STR_ISH_PDT_UNLOCK_HELP),
+          // a DEFAULT value.  1 = ON, 0 = off
           flags    = 0 | RESET_REQUIRED,
           key      = 0,
         endcheckbox;

@@ -25,7 +25,7 @@ suppressif ideqval SETUP_VOLATILE_DATA.PchUsb2PortCount <= PCH_HS_PORT_INDEX;
       prompt      = STRING_TOKEN(CONCATENATE3(STR_PCH_USB_HS_PORT,PCH_HS_PORT_INDEX,_PROMPT)),
       help        = STRING_TOKEN(STR_PCH_USB_PORT_DIS_HELP),
       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
     endoneof;
   endif;
 endif;
