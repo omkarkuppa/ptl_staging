@@ -2978,6 +2978,74 @@ CheckPrimaryDisplay (
   DEBUG ((DEBUG_ERROR, "%a End\n", __FUNCTION__));
 }
 
+/**
+  Clear the IO bar for 0 2 0 during the exit boot services event.
+
+  @param[in] Event    The event that triggered this notification function.
+  @param[in] Context  Pointer to the notification function's context.
+**/
+VOID
+EFIAPI
+IGpuDisablePciIoSpace (
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
+  )
+{
+  UINT64     McD2BaseAddress;
+  UINT16     Command;
+
+  //
+  // IGPU device
+  //
+  McD2BaseAddress = PCI_SEGMENT_LIB_ADDRESS (0, 0, 2, 0, 0);
+
+  //
+  // Read the current value of the Command Register
+  //
+  Command = (PciSegmentRead16 (McD2BaseAddress + PCI_COMMAND_OFFSET));
+
+  //
+  // Clear the IOAE bit (BIT0)
+  //
+  Command &= ~BIT0;
+
+  //
+  // Write the updated value back to the Command Register
+  //
+  PciSegmentWrite16 (McD2BaseAddress + PCI_COMMAND_OFFSET, Command);
+
+  DEBUG ((DEBUG_INFO, "IO Space disabled for IGfx\n"));
+}
+
+
+/**
+  Registers an event to disable IGfx PCI I/O space at Exit Boot Services.
+  This function creates an event that will be triggered at the Exit Boot Services phase
+  to disable the IGfx PCI I/O space. The event is registered with the EFI Boot Services.
+
+  @retval EFI_SUCCESS           The event was successfully created.
+  @retval EFI_OUT_OF_RESOURCES  There are not enough resources to create the event.
+  @retval EFI_INVALID_PARAMETER One or more parameters are invalid.
+**/
+EFI_STATUS
+EFIAPI
+RegisterIGpuDisablePciIoSpace (
+  VOID
+  )
+{
+  EFI_STATUS  Status;
+  EFI_EVENT   Event;
+
+  Status = gBS->CreateEventEx(
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  IGpuDisablePciIoSpace,
+                  NULL,
+                  &gEfiEventExitBootServicesGuid,
+                  &Event
+                  );
+  return Status;
+}
 
 /**
   Platform Bds init. Include the platform firmware vendor, revision
@@ -3013,6 +3081,7 @@ PlatformBootManagerBeforeConsole (
   ESRT_MANAGEMENT_PROTOCOL            *EsrtManagement;
   EFI_BOOT_MODE                       BootMode;
   EFI_EVENT                           BeforeEndOfDxeEvent;
+  UINT64                              McD2BaseAddress;
 
   ZeroMem (
     &AttemptUsbFirstHotkeyInfo,
@@ -3147,6 +3216,13 @@ PlatformBootManagerBeforeConsole (
       VideoHandle = GetExternalVideoController ();
       if (VideoHandle != NULL) {
         DEBUG ((DEBUG_INFO, "[PlatformBds] Video controller on PCIe port as primary display.\n"));
+        //
+        // Check if IGPU is force enabled.
+        //
+        McD2BaseAddress = PCI_SEGMENT_LIB_ADDRESS (0, 0, 2, 0, 0);
+        if (PciSegmentRead16 (McD2BaseAddress + PCI_VENDOR_ID_OFFSET) != 0xFFFF) {
+          RegisterIGpuDisablePciIoSpace ();
+        }
         break;
       }
 
