@@ -38,10 +38,10 @@
 # define CLUSTER_CRU_14   Package(2) {"mipi-sdca-control-0x10-subproperties", "CI14"}
 # define CLUSTER_MFPU_14  Package(2) {"mipi-sdca-control-0x10-subproperties", "CI26"}
 
-# define CLUSTER_ID_LIST_DMIC Package(2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x14, 0x23, 0x26} }
+# define CLUSTER_ID_LIST_DMIC Package(2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x14, 0x23, 0x26, 0xF0} }
 
 // This is one really long line, since the preprocessor will not except line extenders '\'.
-# define CLUSTER_INIT_DMIC    Package(2) {"mipi-sdca-cluster-id-0x11-subproperties",  "CL11"},  Package(2) {"mipi-sdca-cluster-id-0x14-subproperties",  "CL14"},  Package(2) {"mipi-sdca-cluster-id-0x23-subproperties",  "CL23"},  Package(2) {"mipi-sdca-cluster-id-0x26-subproperties",  "CL26"}
+# define CLUSTER_INIT_DMIC    Package(2) {"mipi-sdca-cluster-id-0x11-subproperties",  "CL11"},  Package(2) {"mipi-sdca-cluster-id-0x14-subproperties",  "CL14"},  Package(2) {"mipi-sdca-cluster-id-0x23-subproperties",  "CL23"},  Package(2) {"mipi-sdca-cluster-id-0x26-subproperties",  "CL26"},  Package (2) {"mipi-sdca-cluster-id-0xF0-subproperties", "CLF0"}
 
 // +-----------------------+
 // | Clusters for IT11     |
@@ -321,5 +321,64 @@ Name(CM26, Buffer()
     0x01, 0x00,    // 1 row
     0x01, 0x00, 0x00, 0x00, 0x26, 0x00, 0x00, 0x00    // ClusterIndex 01 --> ClusterID 26
 }) // End CMP1
+
+// +--------------------------+
+// | Clusters for Posture L/R |
+// +--------------------------+
+
+//
+// Stereo LEFT-RIGHT
+//
+Name(CLF0, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 2 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CH_L" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CH_R" },
+    }
+})
+
+Name(CH_L, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 1 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_LEFT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+
+Name(CH_R, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_RIGHT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO} ,
+    }
+})
+
+// +------------------------------------+
+// | Default Posture for Cohen          |
+// +------------------------------------+
+Name(PMAP, Buffer()
+{
+    0x0B, 0x00,    // 12 32 bit entries per row
+    0x01, 0x00,    // 1 row
+    0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00,  // Pitch Min, Max (0, 359)
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // Roll Min, Max (0, 0) => NotRotated
+    0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00,  // Yaw Min, Max (0, 359)
+    0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00,  // Hinge Angle Min, Max (0, 359)
+    0x00, 0x00, 0x00, 0x00,                          // System Extension Value
+    0x00, 0x00, 0x00, 0x00,                          // Posture number 0
+    0xF0, 0x00, 0x00, 0x00                           // Cluster id 0xF0 which is the output of PPU11
+})
 
 #endif // defined ENABLE_CLUSTERS

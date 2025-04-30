@@ -28,10 +28,23 @@
 # define CLUSTER_UDMPU_23
 # define CLUSTER_UDMPU_25
 
-#define CLUSTER_ID_LIST_JAMERSON
+#define CLUSTER_ID_LIST_SMART_AMP
 #define CLUSTER_INIT_JAMERSON
 
 #else
+
+//
+// Let's assume that initially 4 AMP channels relationships are available unless 2 are selected.
+//
+# define POSTURE_CLUSTER_FOUR_REL
+
+# ifdef CHANNEL_RIGHT
+#  undef POSTURE_CLUSTER_FOUR_REL
+# endif
+
+# ifdef CHANNEL_LEFT
+#  undef POSTURE_CLUSTER_FOUR_REL
+# endif
 
 # define CLUSTER_IT_21    Package(2) {"mipi-sdca-control-0x10-subproperties", "CI21"}
 # define CLUSTER_IT_26    Package(2) {"mipi-sdca-control-0x10-subproperties", "CI26"}
@@ -40,10 +53,18 @@
 # define CLUSTER_UDMPU_23 Package(2) {"mipi-sdca-control-0x10-subproperties", "CI23"}
 # define CLUSTER_UDMPU_25 Package(2) {"mipi-sdca-control-0x10-subproperties", "CI25"}
 
-# define CLUSTER_ID_LIST_JAMERSON Package (2) {"mipi-sdca-cluster-id-list", Package() {0x1, 0x21, 0x23, 0x25, 0x26, 0x29, 0xF0} }
+# ifdef POSTURE_CLUSTER_FOUR_REL
+#  define CLUSTER_ID_LIST_SMART_AMP Package (2) {"mipi-sdca-cluster-id-list", Package() {0x1, 0x21, 0x23, 0x25, 0x26, 0x29, 0xF0, 0xF1, 0xF2, 0xF3} }
+# else
+#  define CLUSTER_ID_LIST_SMART_AMP Package (2) {"mipi-sdca-cluster-id-list", Package() {0x1, 0x21, 0x23, 0x25, 0x26, 0x29, 0xF0, 0xF1} }
+# endif
 
 // This is one really long line, since the preprocessor will not except line extenders '\'.
-# define CLUSTER_INIT_JAMERSON    Package (2) {"mipi-sdca-cluster-id-0x1-subproperties",  "CL29"}, Package (2) {"mipi-sdca-cluster-id-0x21-subproperties", "CL21"}, Package (2) {"mipi-sdca-cluster-id-0x23-subproperties", "CL23"}, Package (2) {"mipi-sdca-cluster-id-0x25-subproperties", "CL25"}, Package (2) {"mipi-sdca-cluster-id-0x26-subproperties", "CL26"}, Package (2) {"mipi-sdca-cluster-id-0x29-subproperties", "CL29"}, Package (2) {"mipi-sdca-cluster-id-0xF0-subproperties", "CLF0"}
+# ifdef POSTURE_CLUSTER_FOUR_REL
+#  define CLUSTER_INIT_JAMERSON    Package (2) {"mipi-sdca-cluster-id-0x1-subproperties",  "CL29"}, Package (2) {"mipi-sdca-cluster-id-0x21-subproperties", "CL21"}, Package (2) {"mipi-sdca-cluster-id-0x23-subproperties", "CL23"}, Package (2) {"mipi-sdca-cluster-id-0x25-subproperties", "CL25"}, Package (2) {"mipi-sdca-cluster-id-0x26-subproperties", "CL26"}, Package (2) {"mipi-sdca-cluster-id-0x29-subproperties", "CL29"}, Package (2) {"mipi-sdca-cluster-id-0xF0-subproperties", "CLF0"}, Package (2) {"mipi-sdca-cluster-id-0xF1-subproperties", "CLF1"}, Package (2) {"mipi-sdca-cluster-id-0xF2-subproperties", "CLF2"}, Package (2) {"mipi-sdca-cluster-id-0xF3-subproperties", "CLF3"}
+# else
+#  define CLUSTER_INIT_JAMERSON    Package (2) {"mipi-sdca-cluster-id-0x1-subproperties",  "CL29"}, Package (2) {"mipi-sdca-cluster-id-0x21-subproperties", "CL21"}, Package (2) {"mipi-sdca-cluster-id-0x23-subproperties", "CL23"}, Package (2) {"mipi-sdca-cluster-id-0x25-subproperties", "CL25"}, Package (2) {"mipi-sdca-cluster-id-0x26-subproperties", "CL26"}, Package (2) {"mipi-sdca-cluster-id-0x29-subproperties", "CL29"}, Package (2) {"mipi-sdca-cluster-id-0xF0-subproperties", "CLF0"}, Package (2) {"mipi-sdca-cluster-id-0xF1-subproperties", "CLF1"}
+# endif
 
 // +-----------------------+
 // | Clusters for IT29     |
@@ -197,21 +218,23 @@ Name(CM21, Buffer()
     0x01, 0x00, 0x00, 0x00, 0x21, 0x00, 0x00, 0x00    // ClusterIndex 01 --> ClusterID 21
 }) // End CMP1
 
-// +-------------------+
-// | Clusters for IT26 |
-// | Amp Render Stream |
-// +-------------------+
+
+// +------------------------------+
+// |       Clusters for IT26      |
+// | Amp Ultrasonic Render Stream |
+// +------------------------------+
 Name(CL26, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        Package(2) { "mipi-sdca-channel-count", 1 },
+        Package(2) { "mipi-sdca-channel-count", 2 },
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHR4" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CHR5" },
     }
 })
 
@@ -221,7 +244,18 @@ Name(CHR4, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 1 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_MONO },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_LEFT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
+    }
+})
+
+Name(CHR5, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_RIGHT },
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
     }
 })
@@ -251,8 +285,9 @@ Name(CM26, Buffer()
     0x01, 0x00, 0x00, 0x00, 0x26, 0x00, 0x00, 0x00    // ClusterIndex 01 --> ClusterID 26
 }) // End CMP1
 
+
 // +------------------------+
-// |  Clusters for UDMDP23  |
+// |  Clusters for UDMPU23  |
 // | Amp Transducer Mapping |
 // +------------------------+
 Name(CL23, Package()
@@ -260,12 +295,19 @@ Name(CL23, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
+#ifdef COHEN_AMP
+        Package(2) { "mipi-sdca-channel-count", 2 },
+#else
         Package(2) { "mipi-sdca-channel-count", 1 },
+#endif
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHR6" },
+#ifdef COHEN_AMP
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CHR7" },
+#endif
     }
 })
 
@@ -276,7 +318,22 @@ Name(CHR6, Package()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 0 },
        Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_PRIMARY_TRANSDUCER },
+#ifdef COHEN_AMP
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHR_GENERIC_LEFT },
+#else
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+#endif
+    }
+})
+
+Name(CHR7, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 0 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_PRIMARY_TRANSDUCER },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHR_GENERIC_RIGHT },
     }
 })
 
@@ -309,6 +366,7 @@ Name(CM23, Buffer()
 // | Clusters for UDMDP25 |
 // | Amp Reference Stream |
 // +----------------------+
+// @@@@ Is this correct or channel-count 2?
 Name(CL25, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -362,25 +420,34 @@ Name(CM25, Buffer()
 // +--------------------------+
 // | Clusters for Posture L/R |
 // +--------------------------+
-#ifndef CHANNEL_STEREO
-Name(CLF0, Package()
+
+# ifdef COHEN_CLUSTER
+
+Name(CH_L, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-    Package()
+    Package ()
     {
-        Package(2) { "mipi-sdca-channel-count", 1 },
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-    Package () {
-#ifdef CHANNEL_LEFT
-       Package (2) { "mipi-sdca-channel-1-subproperties", "CHR1" },
-#else
-       Package (2) { "mipi-sdca-channel-1-subproperties", "CHR2" },
-#endif
+       Package (2) { "mipi-sdca-cluster-channel-id", 1 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_LEFT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
     }
 })
-#else
-// Switch the left and right channels.
+
+Name(CH_R, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_RIGHT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO} ,
+    }
+})
+
+//
+// Stereo channel, normal, LEFT-RIGHT
+//
 Name(CLF0, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -390,26 +457,523 @@ Name(CLF0, Package()
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package () {
-       Package (2) { "mipi-sdca-channel-1-subproperties", "CHR1" },
-       Package (2) { "mipi-sdca-channel-2-subproperties", "CHR2" },
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CH_L" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CH_R" },
     }
 })
-#endif
+
+//
+// Stereo channel, swapped, RIGHT-LEFT
+//
+Name(CLF1, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 2 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CH_R" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CH_L" },
+    }
+})
 
 // +------------------------------------+
-// | Default Posture for Jamerson/Cohen |
+// | Default Posture for Cohen          |
 // +------------------------------------+
-Name(PMAP, Package()
+Name(PMAP, Buffer()
 {
-    0x0B, 0x00,    // 12 32 bit entries per row
-    0x01, 0x00,    // 1 row
-    0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00,  // Pitch Min, Max (0, 359)
-    0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00,  // Roll Min, Max (0, 359)
-    0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00,  // Yaw Min, Max (0, 359)
-    0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00,  // Hinge Angle Min, Max (0, 359)
-    0x00, 0x00, 0x00, 0x00,                          // System Extension Value
-    0x01, 0x00, 0x00, 0x00,                          // Posture number 1
-    0xF0, 0x00, 0x00, 0x00                           // Cluster id 0xF0 which is the output of PPU21
+    0x0b, 0x00,  // Range type 0x0b (Elevens)
+#  ifdef ENABLE_POSTURE
+    0x02, 0x00,  // Count of ranges = 0x2
+#  else
+    0x01, 0x00,  // Count of ranges = 0x1
+#  endif
+
+    // Entry 0
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0x00, 0x00, 0x00, 0x00,  // Roll Min
+    0x00, 0x00, 0x00, 0x00,  // Roll Max (Roll 0,0 => NotRotated
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x00, 0x00, 0x00, 0x00,  // Posture Number = 0
+    0xF0, 0x00, 0x00, 0x00,  // Cluster ID = 0xF0
+
+#  ifdef ENABLE_POSTURE
+    // Entry 1
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0xb4, 0x00, 0x00, 0x00,  // Roll Min
+    0xb4, 0x00, 0x00, 0x00,  // Roll Max (Roll 180,180 => Rotated180CounterClockwise
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x01, 0x00, 0x00, 0x00,  // Posture Number = 1
+    0xF1, 0x00, 0x00, 0x00,  // Cluster ID = 0xF1
+#  endif
 })
+
+# endif  // COHEN_CLUSTER
+
+# ifdef JAMERSON_CLUSTER
+
+#  ifdef POSTURE_CLUSTER_FOUR_REL
+
+#   ifndef AMP3_UID
+Name(CHTC, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 1 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_COMBINED },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+#   else
+Name(CHTL, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 1 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_TOP_LEFT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+#   endif
+
+Name(CHBL, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 1 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_BOTTOM_LEFT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+
+#   ifndef AMP3_UID
+Name(CHBC, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_COMBINED },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+#   else
+Name(CHTR, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_TOP_RIGHT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+#   endif
+
+Name(CHBR, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_BOTTOM_RIGHT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+
+
+
+//
+//             rotation ->
+//   +-----------------+
+//   |       Oo        |
+//   +-----------------+
+//   | TL           TR |
+//   |                 |
+//   |                 |
+//   |                 |
+//   | BL           BR |
+//   +-----------------+
+// <- rotation
+//
+// Rotations are in 90deg steps, clockwise
+//
+
+//
+// Signle channel, no rotation.
+//
+Name(CLF0, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 1 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package ()
+    {
+#   ifdef CHANNEL_TOP_LEFT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTL" },
+#   else      // !CHANNEL_TOP_LEFT
+#    ifdef CHANNEL_BOTTOM_LEFT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
+#    else     // !CHANNEL_BOTTOM_LEFT
+#     ifdef CHANNEL_TOP_RIGHT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTR" },
+#     else    // !CHANNEL_TOP_RIGHT
+#      ifdef CHANNEL_BOTTOM_RIGHT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
+#      else   // !CHANNEL_BOTTOM_RIGHT
+#       error "No channel relationship defined"
+#      endif  // CHANNEL_BOTTOM_RIGHT
+#     endif   // CHANNEL_TOP_RIGHT
+#    endif    // CHANNEL_BOTTOM_LEFT
+#   endif     // CHANNEL_TOP_LEFT
+    }
+})
+
+//
+// Single channel, rotated 90.
+//
+Name(CLF1, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 1 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+#   ifdef CHANNEL_TOP_LEFT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTR" },
+#   else      // !CHANNEL_TOP_LEFT
+#    ifdef CHANNEL_BOTTOM_LEFT
+#     ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTC" },
+#     else
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTL" },
+#     endif
+#    else     // !CHANNEL_BOTTOM_LEFT
+#     ifdef CHANNEL_TOP_RIGHT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
+#     else    // !CHANNEL_TOP_RIGHT
+#      ifdef CHANNEL_BOTTOM_RIGHT
+#       ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBC" },
+#       else
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
+#       endif
+#      else   // !CHANNEL_BOTTOM_RIGHT
+#       error "No channel relationship defined"
+#      endif  // CHANNEL_BOTTOM_RIGHT
+#     endif   // CHANNEL_TOP_RIGHT
+#    endif    // CHANNEL_BOTTOM_LEFT
+#   endif     // CHANNEL_TOP_LEFT
+    }
+})
+
+//
+// Single channel, rotated 180.
+//
+Name(CLF2, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 1 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+#   ifdef CHANNEL_TOP_LEFT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
+#   else      // !CHANNEL_TOP_LEFT
+#    ifdef CHANNEL_BOTTOM_LEFT
+#     ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
+#     else
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTR" },
+#     endif
+#    else     // !CHANNEL_BOTTOM_LEFT
+#     ifdef CHANNEL_TOP_RIGHT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
+#     else    // !CHANNEL_TOP_RIGHT
+#      ifdef CHANNEL_BOTTOM_RIGHT
+#       ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
+#       else
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTL" },
+#       endif
+#      else   // !CHANNEL_BOTTOM_RIGHT
+#       error "No channel relationship defined"
+#      endif  // CHANNEL_BOTTOM_RIGHT
+#     endif   // CHANNEL_TOP_RIGHT
+#    endif    // CHANNEL_BOTTOM_LEFT
+#   endif     // CHANNEL_TOP_LEFT
+    }
+})
+
+//
+// Single channel, rotated 270.
+//
+Name(CLF3, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 1 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+#   ifdef CHANNEL_TOP_LEFT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
+#   else      // !CHANNEL_TOP_LEFT
+#    ifdef CHANNEL_BOTTOM_LEFT
+#     ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBC" },
+#     else
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
+#     endif
+#    else     // !CHANNEL_BOTTOM_LEFT
+#     ifdef CHANNEL_TOP_RIGHT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTL" },
+#     else    // !CHANNEL_TOP_RIGHT
+#      ifdef CHANNEL_BOTTOM_RIGHT
+#       ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTC" },
+#       else
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTR" },
+#       endif
+#      else   // !CHANNEL_BOTTOM_RIGHT
+#       error "No channel relationship defined"
+#      endif  // CHANNEL_BOTTOM_RIGHT
+#     endif   // CHANNEL_TOP_RIGHT
+#    endif    // CHANNEL_BOTTOM_LEFT
+#   endif     // CHANNEL_TOP_LEFT
+    }
+})
+
+Name (PMAP, Buffer ()
+{
+    0x0b, 0x00,  // Range type 0x0b (Elevens)
+#   ifdef ENABLE_POSTURE
+    0x05, 0x00,  // Count of ranges = 0x5
+#   else
+    0x01, 0x00,  // Count of ranges = 0x1
+#   endif
+
+    // Entry 0
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0x00, 0x00, 0x00, 0x00,  // Roll Min
+    0x00, 0x00, 0x00, 0x00,  // Roll Max (Roll 0,0 => NotRotated
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x00, 0x00, 0x00, 0x00,  // Posture Number = 0
+    0xF0, 0x00, 0x00, 0x00,  // Cluster ID = 0xF0
+
+#   ifdef ENABLE_POSTURE
+    // Entry 1
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0x5a, 0x00, 0x00, 0x00,  // Roll Min
+    0x5a, 0x00, 0x00, 0x00,  // Roll Max (Roll 90,90 => Rotated270CounterClockwise
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x02, 0x00, 0x00, 0x00,  // Posture Number = 2
+    0xF1, 0x00, 0x00, 0x00,  // Cluster ID = 0xF1
+
+    // Entry 2
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0xb4, 0x00, 0x00, 0x00,  // Roll Min
+    0xb4, 0x00, 0x00, 0x00,  // Roll Max (Roll 180,180 => Rotated180CounterClockwise
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x01, 0x00, 0x00, 0x00,  // Posture Number = 1
+    0xF2, 0x00, 0x00, 0x00,  // Cluster ID = 0xF2
+
+    // Entry 3
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0x0e, 0x01, 0x00, 0x00,  // Roll Min
+    0x0e, 0x01, 0x00, 0x00,  // Roll Max (Roll 270,270 => Rotated90CounterClockwise
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x03, 0x00, 0x00, 0x00,  // Posture Number = 3
+    0xF3, 0x00, 0x00, 0x00,  // Cluster ID = 0xF3
+
+    // Entry 4
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0x00, 0x00, 0x00, 0x00,  // Roll Min 0
+    0x67, 0x01, 0x00, 0x00,  // Roll Max 359
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Max 0 (Hinge 0,0 => LidClosed)
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x04, 0x00, 0x00, 0x00,  // Posture Number = 4
+    0xF0, 0x00, 0x00, 0x00,  // Cluster ID = 0xF0
+#   endif
+})
+
+#  else  // !POSTURE_CLUSTER_FOUR_REL
+
+Name(CH_L, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 1 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_LEFT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+
+Name(CH_R, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_RIGHT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO} ,
+    }
+})
+
+//
+// Signle channel, no rotation.
+//
+Name(CLF0, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 1 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package ()
+    {
+#   ifdef CHANNEL_LEFT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CH_L" },
+#   else     // !CHANNEL_LEFT
+#    ifdef CHANNEL_RIGHT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CH_R" },
+#    else     // !CHANNEL_RIGHT
+#     error "No channel relationship defined"
+#    endif    // CHANNEL_RIGHT
+#   endif    // CHANNEL_LEFT
+    }
+})
+
+//
+// Single channel, rotated 180.
+//
+Name(CLF1, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 1 },
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package ()
+    {
+#   ifdef CHANNEL_LEFT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CH_R" },
+#   else     // !CHANNEL_LEFT
+#    ifdef CHANNEL_RIGHT
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CH_L" },
+#    else     // !CHANNEL_RIGHT
+#     error "No channel relationship defined"
+#    endif    // CHANNEL_RIGHT
+#   endif    // CHANNEL_LEFT
+    }
+})
+
+// +------------------------------------+
+// | Default Posture for Jamerson       |
+// +------------------------------------+
+Name(PMAP, Buffer()
+{
+    0x0b, 0x00,  // Range type 0x0b (Elevens)
+#   ifdef ENABLE_POSTURE
+    0x03, 0x00,  // Count of ranges = 0x3
+#   else
+    0x01, 0x00,  // Count of ranges = 0x1
+#   endif
+
+    // Entry 0
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0x00, 0x00, 0x00, 0x00,  // Roll Min
+    0x00, 0x00, 0x00, 0x00,  // Roll Max (Roll 0,0 => NotRotated
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x00, 0x00, 0x00, 0x00,  // Posture Number = 0
+    0xF0, 0x00, 0x00, 0x00,  // Cluster ID = 0xF0: regular channel
+
+#   ifdef ENABLE_POSTURE
+    // Entry 1
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0xb4, 0x00, 0x00, 0x00,  // Roll Min
+    0xb4, 0x00, 0x00, 0x00,  // Roll Max (Roll 180,180 => Rotated180CounterClockwise
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x67, 0x01, 0x00, 0x00,  // Hinge Angle Max 359
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x01, 0x00, 0x00, 0x00,  // Posture Number = 1
+    0xF1, 0x00, 0x00, 0x00,  // Cluster ID = 0xF1: swapped channel
+
+    // Entry 2
+    0x00, 0x00, 0x00, 0x00,  // Pitch Min 0
+    0x67, 0x01, 0x00, 0x00,  // Pitch Max 359
+    0x00, 0x00, 0x00, 0x00,  // Roll Min 0
+    0x67, 0x01, 0x00, 0x00,  // Roll Max 359
+    0x00, 0x00, 0x00, 0x00,  // Yaw Min 0
+    0x67, 0x01, 0x00, 0x00,  // Yaw Max 359
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Min 0
+    0x00, 0x00, 0x00, 0x00,  // Hinge Angle Max 0 (Hinge 0,0 => LidClosed)
+    0x00, 0x00, 0x00, 0x00,  // System Extension 0
+    0x04, 0x00, 0x00, 0x00,  // Posture Number = 4
+    0xF0, 0x00, 0x00, 0x00,  // Cluster ID = 0xF0: regular channel
+#   endif
+})
+
+#  endif // POSTURE_CLUSTER_FOUR_REL
+
+# endif  // JAMERSON_CLUSTER
 
 #endif // defined ENABLE_CLUSTERS

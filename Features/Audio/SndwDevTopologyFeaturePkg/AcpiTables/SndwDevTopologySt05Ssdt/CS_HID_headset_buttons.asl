@@ -26,7 +26,7 @@ Name(_DSD, Package()
     Package() {
         Package(2) { "mipi-sdw-sw-interface-revision", 0x00020001 },  // Revision 2.1
         Package(2) { "mipi-sdca-control-list", (CTL_E0_FUNCTION_VERSION | CTL_E0_FUNCTION_ID | CTL_E0_FUNCTION_MANUFACTURER_ID |
-                                                CTL_E0_FUNCTION_TYPE | CTL_E0_FUNCTION_SDCA_VERSION | CTL_E0_FUNCTION_STATUS_COND |
+                                                CTL_E0_FUNCTION_TYPE | CTL_E0_FUNCTION_SDCA_VERSION | CTL_E0_FUNCTION_STATUS |
                                                 CTL_E0_DEVICE_MANUFACTURER_ID | CTL_E0_DEVICE_PART_ID | CTL_E0_DEVICE_VERSION | CTL_E0_DEVICE_SDCA_VERSION
                                                 )}, // Function-Level Controls
         Package(2) { "mipi-sdca-entity-id-list", Package() { 0x1 } }, // HIDE1
@@ -40,9 +40,7 @@ Name(_DSD, Package()
         Package(2) { "mipi-sdca-control-0x6-subproperties", "C006"},
         Package(2) { "mipi-sdca-control-0x7-subproperties", "C007"},
         Package(2) { "mipi-sdca-control-0x8-subproperties", "C008"},
-#ifndef EXCLUDE_FUN_STS
         Package(2) { "mipi-sdca-control-0x10-subproperties", "C010"},
-#endif
         Package(2) { "mipi-sdca-control-0x2C-subproperties", "C02C"},
         Package(2) { "mipi-sdca-control-0x2D-subproperties", "C02D"},
         Package(2) { "mipi-sdca-control-0x2E-subproperties", "C02E"},
@@ -56,9 +54,7 @@ Name(_DSD, Package()
     {
         Package(2) { "mipi-sdca-hid-descriptor", "BUF0"},
         Package(2) { "mipi-sdca-report-descriptor", "BUF1"},
-#ifndef EXCLUDE_FUN_STS
         Package(2) { "mipi-sdca-function-initialization-table", "IBUF"},
-#endif
     }
 }) // End _DSD
 
@@ -124,7 +120,6 @@ Name(C008, Package()
     }
 }) // End C008
 
-#ifndef EXCLUDE_FUN_STS
 Name(C010, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -133,11 +128,9 @@ Name(C010, Package()
         // Class, RW1C, Function_Status
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_RW1C},
-        Package(2) { "mipi-sdca-control-interrupt-position", 9},
+        Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_HID_FUNC_STATUS_INT},
     }
 }) // End C010
-#endif
-
 
 Name(C02C, Package()
 {
@@ -201,7 +194,7 @@ Name(E001, Package()
     {
         Package(2) { "mipi-sdca-entity-type", 0x31 },
         Package(2) { "mipi-sdca-entity-label", "HIDE1"},
-        Package(2) { "mipi-sdca-hide-related-audio-function", Package() {0x3}}, // AF03 - UAJ
+        Package(2) { "mipi-sdca-hide-related-audio-function-list", Package() {0x3}}, // AF03 - UAJ
         //Package(2) { "mipi-sdca-hide-tx-report-type", Package() {0x22}}, // HID Report Descriptor Type, follo with MSFT
         Package(2) { "mipi-sdca-HIDTx-supported-report-ids", Package() {0x1, 0x2}}, // HID report ID = 1, 2
         Package(2) { "mipi-sdca-control-list", 0xD0000}, // HIDTx_???
@@ -219,10 +212,10 @@ Name(CS10, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
-    {   // HIDTx_CurrentOwner, Class, R/W
-        Package(2) { "mipi-sdca-control-access-layer", 4},         // Class
-        Package(2) { "mipi-sdca-control-access-mode", 3},          // RW1S
-        Package(2) { "mipi-sdca-control-interrupt-position", 4},   // HID interrupt bit position
+    {   // HIDTx_CurrentOwner, Class, RO
+        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_RO},
+        Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT},   // HID interrupt bit position
     }
 }) // End CS10
 
@@ -230,9 +223,9 @@ Name(CS12, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
-    {   // HIDTx_MessageOffset, Class, R
-        Package(2) { "mipi-sdca-control-access-layer", 4}, // Class
-        Package(2) { "mipi-sdca-control-access-mode", 5},  // DC
+    {   // HIDTx_MessageOffset, Class, DC
+        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
         Package(2) { "mipi-sdca-control-dc-value", 0x0},   // Begining of the UMP buffer
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
@@ -254,9 +247,9 @@ Name(CS13, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
-    {   // HIDTx_MessageLength, Class, R
-        Package(2) { "mipi-sdca-control-access-layer", 4}, // Class
-        Package(2) { "mipi-sdca-control-access-mode", 5},  // DC
+    {   // HIDTx_MessageLength, Class, DC
+        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
         Package(2) { "mipi-sdca-control-dc-value", 0x4},   // 4B
     }
 }) // End CS13
@@ -360,8 +353,6 @@ Name(BUF1, Buffer()
     0xc0            // End Collection
 })  // End BUF1
 
-
-#ifndef EXCLUDE_FUN_STS
 // Function initialization-table
 Name(IBUF, Buffer()
 {
@@ -396,4 +387,3 @@ Name(IBUF, Buffer()
     // FDL config ends here
     //
 }) // End IBUF
-#endif

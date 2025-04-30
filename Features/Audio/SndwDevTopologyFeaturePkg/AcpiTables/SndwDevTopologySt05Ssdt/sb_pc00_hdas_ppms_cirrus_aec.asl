@@ -19,7 +19,7 @@
 @par Specification Reference:
 **/
 
-If ((Arg0 == ToUUID ("4bc75ffd-83a1-434b-83f4-f9f73bb8d48e") /* Cirrus AEC */))
+If (Arg0 == ToUUID ("4bc75ffd-83a1-434b-83f4-f9f73bb8d48e")) /* Cirrus AEC */
 {
-    Return (One)
+    Return (1)
 }

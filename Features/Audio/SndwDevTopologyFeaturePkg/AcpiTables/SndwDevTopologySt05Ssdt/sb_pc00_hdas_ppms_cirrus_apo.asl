@@ -19,7 +19,11 @@
 @par Specification Reference:
 **/
 
-If ((Arg0 == ToUUID ("4dba4525-0cb8-4a09-b73d-e915fd8bc7bc") /* Cirrus APO */))
+If (Arg0 == ToUUID ("76171558-7b4d-42ee-8900-74b3ed69775a")) /* Cirrus MFX APO */
 {
-    Return (One)
+    Return (1)
+}
+If (Arg0 == ToUUID ("4dba4525-0cb8-4a09-b73d-e915fd8bc7bc")) /* Cirrus EFX APO */
+{
+    Return (1)
 }

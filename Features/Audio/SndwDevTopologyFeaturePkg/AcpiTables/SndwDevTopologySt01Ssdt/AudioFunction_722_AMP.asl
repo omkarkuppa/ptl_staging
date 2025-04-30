@@ -26,24 +26,32 @@ Name(_DSD, Package()
   Package()
   {
     Package(2) {"mipi-sdw-sw-interface-revision", 0x00020001}, // v2.1
-    Package(2) {"mipi-sdw-sdca-interface-revision", 0x0801}, // v0.8r01
     Package (2) {"mipi-sdw-clockstopprepare-timeout", 0x4E5}, // 335ms + 54ms + 785ms*1.1
-    Package(2) {"mipi-sdca-function-topology-features", 0xB00}, // No secondary transducer, ultrasound render, DtoD stream
+    Package(2) {"mipi-sdca-function-topology-features", 0x0020}, // Reference Stream (05)
     //Package(2) {"mipi-sdca-control-list", Package() {0x4, 0x5, 0x6, 0x7, 0x8} }, // Function level controls
-    Package(2) {"mipi-sdca-control-list", 0x01F0}, // Bitmap: 0x4, 0x5, 0x6, 0x7, 0x8 - Function level controls
+    Package(2) {"mipi-sdca-control-list", 0xF000000301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
     Package(2) {"mipi-sdca-entity-id-list", Package() {0x30, 0x2, 0x6, 0x4, 0x7, 0x4C, 0x51, 0x41, 0x42, 0x4D, 0x32, 0x31, 0x21, 0x4E} }, // List of entities in this function
     // Cluster Library
     Package (2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x21, 0x22, 0x23, 0x24, 0x31, 0x41, 0x42, 0x51} },
+    // Behavior Set Library
+    Package(2) {"mipi-sdca-behavior-set-id-list", Package() {0x1, 0x2} },
   },
 
   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
   Package()
   {
-    Package(2) {"mipi-sdca-control-0x4-subproperties", "C004"},
-    Package(2) {"mipi-sdca-control-0x5-subproperties", "C005"},
-    Package(2) {"mipi-sdca-control-0x6-subproperties", "C006"},
-    Package(2) {"mipi-sdca-control-0x7-subproperties", "C007"},
-    Package(2) {"mipi-sdca-control-0x8-subproperties", "C008"},
+    Package(2) {"mipi-sdca-control-0x1-subproperties", "C042"},//Commit_Group_Mask, Class, RW
+    Package(2) {"mipi-sdca-control-0x4-subproperties", "C004"},//Function_SDCA_Version
+    Package(2) {"mipi-sdca-control-0x5-subproperties", "C005"},//Function_Topology
+    Package(2) {"mipi-sdca-control-0x6-subproperties", "C006"},//Function_ManufacturerId
+    Package(2) {"mipi-sdca-control-0x7-subproperties", "C007"},//Function_ID
+    Package(2) {"mipi-sdca-control-0x8-subproperties", "C008"},//Function_Version
+    Package(2) {"mipi-sdca-control-0x10-subproperties", "C043"},//Function_Status, Class, RW1C
+    Package(2) {"mipi-sdca-control-0x11-subproperties", "C044"},//Function_Action, Class, RW1S
+    Package(2) {"mipi-sdca-control-0x2C-subproperties", "C02C"},//Device_Manufacturer_ID
+    Package(2) {"mipi-sdca-control-0x2D-subproperties", "C02D"},//Device_Part_ID
+    Package(2) {"mipi-sdca-control-0x2E-subproperties", "C02E"},//Device_Version
+    Package(2) {"mipi-sdca-control-0x2F-subproperties", "C02F"},//Device_SDCA_Version
     Package(2) {"mipi-sdca-entity-id-0x30-subproperties", "E030"},
     Package(2) {"mipi-sdca-entity-id-0x2-subproperties", "E002"},
     Package(2) {"mipi-sdca-entity-id-0x6-subproperties", "E006"},
@@ -74,6 +82,9 @@ Name(_DSD, Package()
     Package (2) {"mipi-sdca-cluster-id-0x41-subproperties", "CL41"},
     Package (2) {"mipi-sdca-cluster-id-0x42-subproperties", "CL42"},
     Package (2) {"mipi-sdca-cluster-id-0x51-subproperties", "CL51"},
+    // Behavior Set subproperties
+    Package(2) {"mipi-sdca-behavior-set-id-0x1-subproperties", "BSP1"},
+    Package(2) {"mipi-sdca-behavior-set-id-0x2-subproperties", "BSP2"},
   },
 
   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
@@ -92,10 +103,7 @@ Name(BUF0, Buffer()
   0x00, 0x20, 0x81, 0x05, 0x70, // 0x05812000, 0x70
   0x00, 0x00, 0x81, 0x05, 0x2C, // 0x05810000, 0x2C
 
-        0x00, 0x20, 0x81, 0x05, 0x70, // 0x05812000, 0x70
-  0x00, 0x00, 0x81, 0x05, 0x2D, // 0x05810000, 0x2D
-
-  0x00, 0x20, 0x81, 0x05, 0xF0, // 0x05812000, 0xF0
+  0x00, 0x20, 0x81, 0x05, 0x70, // 0x05812000, 0x70
   0x00, 0x00, 0x81, 0x05, 0x2D, // 0x05810000, 0x2D
 
   0x29, 0x20, 0x10, 0x06, 0x41, // 0x06102029, 0x41
@@ -104,23 +112,121 @@ Name(BUF0, Buffer()
   0x55, 0x20, 0x10, 0x06, 0x00, // 0x06102055, 0x00
   0x55, 0x00, 0x10, 0x06, 0x02, // 0x06100055, 0x02
 
-        0x38, 0x20, 0x00, 0x02, 0x79, // 0x02002038, 0x79     2w/4ohm
+  0x38, 0x20, 0x00, 0x02, 0x89, // 0x02002038, 0x89     20241121 fine-tune speaker power to meet 2w/4ohm
   0x38, 0x00, 0x00, 0x02, 0x0A, // 0x02000038, 0x0A
 
   0x00, 0x81, 0x38, 0x41, 0x04, // 0x41388100, 0x04
 
   0x03, 0x2F, 0x00, 0x00, 0x06, // 0x00002F03, 0x06 (PHYtiming TDZ/TZD control)
+
+  0x37, 0x20, 0x00, 0x02, 0xFC, // 0x02002037, 0xFC  silence detect to power down class-D
+  0x37, 0x00, 0x00, 0x02, 0x15, // 0x02000037, 0x15
+
+  0x00, 0x20, 0xD1, 0x05, 0x99, // 0x05D12000, 0x99    AGC limit to 0dB for non Dolby case
+  0x00, 0x00, 0xD1, 0x05, 0xFF, // 0x05D10000, 0xFF
+
+  0x02, 0x20, 0xD1, 0x05, 0x00, // 0x05D12002, 0x00
+  0x02, 0x00, 0xD1, 0x05, 0x00, // 0x05D10002, 0x00
+
+  0x03, 0x20, 0xD1, 0x05, 0x00, // 0x05D12003, 0x00
+  0x03, 0x00, 0xD1, 0x05, 0x25, // 0x05D10003, 0x25    //Coefficient for low pass filter in ALC set 2^-9, move 3dB frequency to 200Hz
+
+  0x04, 0x20, 0xD1, 0x05, 0x5F, // 0x05D12004, 0x5F
+  0x04, 0x00, 0xD1, 0x05, 0x5F, // 0x05D10004, 0x5F
+
 }) //End BUF0
+
+Name(C042, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    //Commit_Group_Mask, Class, RW
+    Package(2) {"mipi-sdca-control-access-layer", 0x4},
+    Package(2) {"mipi-sdca-control-access-mode", 0},
+  }
+}) //End AF04.C042
+
+Name(C043, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    //Function_Status, Class, RW1C
+    Package(2) {"mipi-sdca-control-access-layer", 0x4},
+    Package(2) {"mipi-sdca-control-access-mode", 2},
+    Package(2) {"mipi-sdca-control-interrupt-position", 27}, //IntStat_SDCA_27
+  }
+}) //End AF04.C043
+
+Name(C044, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    //Function_Action, Class, RW1S
+    Package(2) {"mipi-sdca-control-access-layer", 0x4},
+    Package(2) {"mipi-sdca-control-access-mode", 4},
+  }
+}) //End AF04.C044
+
+Name(C02C, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    //Device_Manufacturer_ID = 0x025d, Class, DC
+    Package(2) {"mipi-sdca-control-access-layer", 0x4},
+    Package(2) {"mipi-sdca-control-access-mode", 5},
+    Package(2) {"mipi-sdca-control-dc-value", 0x025D},
+  }
+}) //End AF04.C02C
+
+Name(C02D, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    //Device_Part_ID = 0x722, Class, DC
+    Package(2) {"mipi-sdca-control-access-layer", 0x4},
+    Package(2) {"mipi-sdca-control-access-mode", 5},
+    Package(2) {"mipi-sdca-control-dc-value", 0x0722},
+  }
+}) //End AF04.C02D
+
+Name(C02E, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    //Device_Version, Class, DC
+    Package(2) {"mipi-sdca-control-access-layer", 0x4},
+    Package(2) {"mipi-sdca-control-access-mode", 5},
+    Package(2) {"mipi-sdca-control-dc-value", 0x1},
+  }
+}) //End AF04.C02E
+
+Name(C02F, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    //Device_SDCA_Version, Class, DC
+    Package(2) {"mipi-sdca-control-access-layer", 0x4},
+    Package(2) {"mipi-sdca-control-access-mode", 5},
+    Package(2) {"mipi-sdca-control-dc-value", 0x10},
+  }
+}) //End AF04.C02F
 
 Name(C004, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package()
   {
-    // Function_SDCA_Version = 0.8, Class, DC
+    // Function_SDCA_Version = 1.0, Class, DC
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x8},
+    Package(2) {"mipi-sdca-control-dc-value", 0x10},
   }
 }) //End C004
 
@@ -212,15 +318,11 @@ Name(C311, Package()
 Name(BUF1, Buffer()
 {
   0x02, 0x00, // Range type 0x0002
-  0x02, 0x00, // Count of ranges = 0x2
-  //0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
+  0x03, 0x00, // Count of ranges = 0x3
   0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
   0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
-  //0x0D, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000D, 0x0002EE00(192000)
+  0x0D, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000D, 0x0002EE00(192000)
 }) //End BUF1
-
-
-
 
 Name(E030, Package()
 {
@@ -244,17 +346,17 @@ Name(E030, Package()
     Package(2) {"mipi-sdca-terminal-clock-connection", "E031"},
   },
 
-  ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  Package()
-  {
-    Package(2) {"mipi-sdca-terminal-dp-numbers","BUF2"},
-  }
+  // ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  // Package()
+  // {
+  //   Package(2) {"mipi-sdca-terminal-dp-numbers","BUF2"},
+  // }
 }) //End E030
 
-Name(BUF2, Buffer()
-{
-  0x0, 0x3, // DP_Index: 0x0 DP_Num: 0x3
-}) //End BUF2
+// Name(BUF2, Buffer()
+// {
+//   0x0, 0x3, // DP_Index: 0x0 DP_Num: 0x3
+// }) //End BUF2
 
 Name(C304, Package()
 {
@@ -275,7 +377,7 @@ Name(C304, Package()
 Name(USG1, Buffer()
 {
   0x07, 0x00,  // Range type 0x0007 (Septuples)
-  0x04, 0x00,  // Count of ranges = 0x4
+  0x02, 0x00,  // Count of ranges = 0x2
   0x01, 0x00, 0x00, 0x00, // Usage Number
   0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1ae) Full band and Near-ultrasound
   0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
@@ -283,23 +385,9 @@ Name(USG1, Buffer()
   0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
   0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
   0x00, 0x00, 0x00, 0x00, // Usage Tag
-        0x01, 0x00, 0x00, 0x00, // Usage Number
+  0x01, 0x00, 0x00, 0x00, // Usage Number
   0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1ae) Full band and Near-ultrasound
   0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
-  0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
-  0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
-  0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
-  0x00, 0x00, 0x00, 0x00, // Usage Tag
-  0x01, 0x00, 0x00, 0x00, // Usage Number
-  0xe0, 0x01, 0x00, 0x00, // Usage CBN, 480 (0x1e0) HiFi Full band & Ultrasound40
-  0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
-  0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
-  0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
-  0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
-  0x00, 0x00, 0x00, 0x00, // Usage Tag
-        0x01, 0x00, 0x00, 0x00, // Usage Number
-  0xe0, 0x01, 0x00, 0x00, // Usage CBN, 480 (0x1e0) HiFi Full band & Ultrasound40
-  0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
   0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
   0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
   0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
@@ -350,11 +438,24 @@ Name(C301, Package()
     // DataPortIndex, Class, DC
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0},
+    Package(2) {"mipi-sdca-control-dc-value", 0x0001}, // DP_Index_D=0x0(0xFF, no DP), DP_Index_C=0x0(0xFF,no DP), DP_Index_B=0x0(0xFF, no DP), DP_Index_A=0x01(0x03, DP3)
+  },
+  ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  Package()
+  {
+    Package(2) {"mipi-sdca-control-range", "DPS1"},
   }
-}) //End C111
+}) //End C301
 
-
+Name(DPS1, Buffer()
+{
+  0x10, 0x00,  // Range type 0x0010
+  0x04, 0x00,  // Count of ranges = 0x4
+  0xFF, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_A
+  0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_B
+  0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_C
+  0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_D
+}) //End DPS1
 
 Name(E002, Package()
 {
@@ -432,10 +533,10 @@ Name(C601, Package()
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package()
   {
-    // Mute, User/Class, RW
-    Package(2) {"mipi-sdca-control-access-layer", 0x5},
+    // Mute, User, RW
+    Package(2) {"mipi-sdca-control-access-layer", 0x1},
     Package(2) {"mipi-sdca-control-access-mode", 0},
-    //Package(2) {"mipi-sdca-control-cn-list", Package() {0x1, 0x2} },
+    Package(2) {"mipi-sdca-control-default-value", 0x0000}, // unmute
     Package(2) {"mipi-sdca-control-cn-list", 0x6 },
   }
 }) //End C601
@@ -445,12 +546,11 @@ Name(C602, Package()
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package()
   {
-    // Volume, User/Class, RW
-    Package(2) {"mipi-sdca-control-access-layer", 0x5},
+    // Volume, User, RW
+    Package(2) {"mipi-sdca-control-access-layer", 0x1},
     Package(2) {"mipi-sdca-control-access-mode", 0},
     Package(2) {"mipi-sdca-control-default-value", 0x0000}, // 0dB
     //Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
-    //Package(2) {"mipi-sdca-control-cn-list", Package() {0x1, 0x2} },
     Package(2) {"mipi-sdca-control-cn-list", 0x6 },
   },
 
@@ -711,8 +811,6 @@ Name(AP56, Package()
   }
 }) //End AP56
 
-
-
 Name(E004, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -745,8 +843,6 @@ Name(C401, Package()
     Package(2) {"mipi-sdca-control-access-mode", 0},
   }
 }) //End C401
-
-
 
 Name(E007, Package()
 {
@@ -790,12 +886,44 @@ Name(C711, Package()
   {
     // Protection_Status, Class, RO
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0},
+    Package(2) {"mipi-sdca-control-access-mode", 3},
+  },
+  ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  Package()
+  {
+    Package(2) {"mipi-sdca-control-range", "BMT1"},
   }
 }) //End C711
 
+Name(BMT1, Buffer()
+{
+  0x03, 0x00,  // Range type 3 parameters
+  0x02, 0x00,  // Count of ranges = 0x2
+  0x00, 0x00, 0x00, 0x00, // BitNumber 0
+  0x01, 0x00, 0x00, 0x00, // Behavior Set ID 0x1 (BSP1)
+  0x00, 0x00, 0x00, 0x00, // String Number, Null string
+  0x01, 0x00, 0x00, 0x00, // BitNumber 1
+  0x02, 0x00, 0x00, 0x00, // Behavior Set ID 0x2 (BSP2)
+  0x00, 0x00, 0x00, 0x00, // String Number, Null string
+}) //End BMT1
 
+Name(BSP1, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    Package(2) {"mipi-sdca-behavior-set-cbn-list", Package() { 1060 } }, // Internal Condition
+  }
+}) //End BSP1
+
+Name(BSP2, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  Package()
+  {
+    Package(2) {"mipi-sdca-behavior-set-cbn-list", Package() { 1100 } }, // Catastrophic Fault
+  }
+}) //End BSP2
 
 Name(E04C, Package()
 {
@@ -821,8 +949,9 @@ Name(C4C1, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package()
-  {  // ClusterIndex, Class, DC
-    Package(2) {"mipi-sdca-control-access-layer", 4 },
+  {
+    // ClusterIndex, Class, DC
+    Package(2) {"mipi-sdca-control-access-layer", 4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
     Package(2) {"mipi-sdca-control-dc-value", 1},
   },
@@ -840,29 +969,25 @@ Name(CLM3, Buffer()
   0x01, 0x00, 0x00, 0x00, 0x31, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x31
 }) //End CLM3
 
-
-
 // FU 0x15 should be platform access only
 Name(E051, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
   {
-    Package (2) {"mipi-sdca-entity-type", 0x07},
-    Package (2) {"mipi-sdca-entity-label", "FU 23"},
-    //Package (2) {"mipi-sdca-control-list", Package() {0x10} }, // Latency
-    Package (2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10 - Latency
-    Package (2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+    Package(2) {"mipi-sdca-entity-type", 0x07},
+    Package(2) {"mipi-sdca-entity-label", "FU 23"},
+    Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10 - Latency
+    Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
   },
 
   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
   Package ()
   {
-    Package (2) {"mipi-sdca-input-pin-1", "E04C"}, // Input Pin 1 connected to UDMPU 23
-    Package (2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
+    Package(2) {"mipi-sdca-input-pin-1", "E04C"}, // Input Pin 1 connected to UDMPU 23
+    Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
   }
 }) //End E015
-
 
 Name(E041, Package()
 {
@@ -944,8 +1069,6 @@ Name(AP41, Package()
   }
 }) //End AF04.E041.AP41
 
-
-
 Name(E042, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -955,8 +1078,8 @@ Name(E042, Package()
     Package(2) {"mipi-sdca-entity-label", "OT 23"},
     Package(2) {"mipi-sdca-terminal-type", 0x0380}, // Primary Full Speaker
     Package(2) {"mipi-sdca-input-pin-list", 0x2},
-    //Package(2) {"mipi-sdca-control-list", Package() {0x4, 0x8} }, // Usage, Latency
     Package(2) {"mipi-sdca-control-list", 0x0110}, // Bitmap: 0x4 - Usage, 0x8 - Latency
+    Package(2) {"mipi-sdca-terminal-transducer-count", 2},  // 2 speakers
   },
 
   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
@@ -998,7 +1121,6 @@ Name(USG2, Buffer()
   0x00, 0x00, 0x00, 0x00, // Usage Tag
 }) //End USG2
 
-
 Name(E04D, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -1007,8 +1129,7 @@ Name(E04D, Package()
     Package(2) {"mipi-sdca-entity-type", 0x21},
     Package(2) {"mipi-sdca-entity-label", "UDMPU 25"},
     Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-    //Package(2) {"mipi-sdca-control-list", Package() {0x6, 0x10} }, // Latency, ClusterIndex
-    Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6 - Latency, 0x10 - Latency
+    Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6 - Latency, 0x10 - ClusterIndex
   },
 
   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
@@ -1043,8 +1164,6 @@ Name(CLM4, Buffer()
   0x01, 0x00, 0x00, 0x00, 0x51, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x51
 }) //End CLM4
 
-
-
 Name(E032, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -1052,7 +1171,7 @@ Name(E032, Package()
   {
     Package(2) {"mipi-sdca-entity-type", 0x03},
     Package(2) {"mipi-sdca-entity-label", "OT 25"},
-    Package(2) {"mipi-sdca-terminal-type", 0x0188},
+    Package(2) {"mipi-sdca-terminal-type", 0x0188},    // Reference Stream Source Data Port
     Package(2) {"mipi-sdca-input-pin-list", 0x2},
     //Package(2) {"mipi-sdca-control-list", Package() {0x4, 0x8, 0x11} }, // Latency, DataPortIndex
     Package(2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4 - Usage, 0x8 - Latency, 0x11 - DataPortIndex
@@ -1068,17 +1187,17 @@ Name(E032, Package()
     Package(2) {"mipi-sdca-control-0x11-subproperties", "C321"},
   },
 
-  ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  Package()
-  {
-    Package(2) {"mipi-sdca-terminal-dp-numbers","BUF4"},
-  }
+  // ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  // Package()
+  // {
+  //   Package(2) {"mipi-sdca-terminal-dp-numbers","BUF4"},
+  // }
 }) //End E032
 
-Name(BUF4, Buffer()
-{
-  0x0, 0xA, // DP_Index: 0x0 DP_Num: 0xA
-}) //End BUF4
+// Name(BUF4, Buffer()
+// {
+//   0x0, 0xA, // DP_Index: 0x0 DP_Num: 0xA
+// }) //End BUF4
 
 Name(C320, Package()
 {
@@ -1117,11 +1236,24 @@ Name(C321, Package()
     // DataPortIndex, Class, DC
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0},
+    Package(2) {"mipi-sdca-control-dc-value", 0x0001}, // DP_Index_D=0x0(0xFF, no DP), DP_Index_C=0x0(0xFF,no DP), DP_Index_B=0x0(0xFF, no DP), DP_Index_A=0x01(0x0A, DP10)
+  },
+  ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  Package()
+  {
+    Package(2) {"mipi-sdca-control-range", "DPS2"},
   }
 }) //End C251
 
-
+Name(DPS2, Buffer()
+{
+  0x10, 0x00,  // Range type 0x0010
+  0x04, 0x00,  // Count of ranges = 0x4
+  0xFF, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_A
+  0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_B
+  0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_C
+  0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, // DP_Index_D
+}) //End DPS2
 
 Name(E021, Package()
 {
@@ -1202,7 +1334,7 @@ Name(C431, Package()
   }
 })
 
-    //=============================================================================
+//=============================================================================
 
 Name(E044, Package()
 {
@@ -1273,7 +1405,7 @@ Name(C444, Package()
   }
 })
 
-  //=============================================================================
+//=============================================================================
 
 Name(E045, Package()
 {
@@ -1399,6 +1531,7 @@ Name(EXT0, Package()
 
 //==============================================================================================
 
+// Cluster Library
 Name(CL11, Package()  // Stream-LR-Spatial
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),

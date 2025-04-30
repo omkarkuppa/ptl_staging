@@ -70,7 +70,7 @@
 // To disable jack type define it as 0 before common.h file is included.
 // Example:
 // #define COHEN_UAJ_LINE_IN_EN (0)
-// #include "CirrusAudio/common.h"
+// #include "common.h"
 //
 #ifndef COHEN_UAJ_UNKNOWN_EN
 # define COHEN_UAJ_UNKNOWN_EN   (1 << 1)

@@ -32,10 +32,6 @@
 #define UAJ_RENDER_192KHZ  1
 #define JAMERSON_96K       1
 
-//
-// 24-bit sample depth for DMIC capture
-// This MUST be defined for all non MTL or later platforms which use 24 bit or greater mic sample sizes.
-//
 #ifdef DMIC_16BIT
 # undef DMIC_16BIT
 #endif
@@ -43,6 +39,13 @@
 #ifdef SIX_SPEAKERS
 # define INTEL_DSP_NUM_AMPS 6
 #endif
+
+// SDCA version 1.0
+#define CTL_E0_FUNCTION_SDCA_VERSION_VAL        0x10
+#define CTL_E0_DEVICE_SDCA_VERSION_VAL          0x10
+
+// SDCA interface version 1.0
+#define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x1000
 
 //
 // Prevent the class driver from creating volume and mute nodes.
@@ -66,30 +69,30 @@
 #define FEATURE_BIT_NO_VOL_MUTE_R   0x00000020   /* Opt-out XU from creating render volume controls. */
 
 //
-// Supported jack types mask
+// Supported jack types mask for Cohen and Phife codecs
 // (Based on eDetectedMode type.)
 // To disable jack type define it as 0 before common.h file is included.
 // Example:
-// #define COHEN_UAJ_LINE_IN_EN (0)
-// #include "CirrusAudio/common.h"
+// #define COHEN_PHIFE_UAJ_LINE_IN_EN (0)
+// #include "common.h"
 //
-#ifndef COHEN_UAJ_UNKNOWN_EN
-# define COHEN_UAJ_UNKNOWN_EN   (1 << 1)
+#ifndef COHEN_PHIFE_UAJ_UNKNOWN_EN
+# define COHEN_PHIFE_UAJ_UNKNOWN_EN   (1 << 1)
 #endif
-#ifndef COHEN_UAJ_HEADPHONE_EN
-# define COHEN_UAJ_HEADPHONE_EN (1 << 3)
+#ifndef COHEN_PHIFE_UAJ_HEADPHONE_EN
+# define COHEN_PHIFE_UAJ_HEADPHONE_EN (1 << 3)
 #endif
-#ifndef COHEN_UAJ_HEADSET_EN
-# define COHEN_UAJ_HEADSET_EN   (1 << 4)
+#ifndef COHEN_PHIFE_UAJ_HEADSET_EN
+# define COHEN_PHIFE_UAJ_HEADSET_EN   (1 << 4)
 #endif
-#ifndef COHEN_UAJ_LINE_OUT_EN
-# define COHEN_UAJ_LINE_OUT_EN  (1 << 5)
+#ifndef COHEN_PHIFE_UAJ_LINE_OUT_EN
+# define COHEN_PHIFE_UAJ_LINE_OUT_EN  (1 << 5)
 #endif
-#ifndef COHEN_UAJ_LINE_IN_EN
-# define COHEN_UAJ_LINE_IN_EN   (1 << 6)
+#ifndef COHEN_PHIFE_UAJ_LINE_IN_EN
+# define COHEN_PHIFE_UAJ_LINE_IN_EN   (1 << 6)
 #endif
-#ifndef COHEN_UAJ_MIC_EN
-# define COHEN_UAJ_MIC_EN       (1 << 7)
+#ifndef COHEN_PHIFE_UAJ_MIC_EN
+# define COHEN_PHIFE_UAJ_MIC_EN       (1 << 7)
 #endif
 
 /*
@@ -104,8 +107,8 @@
 #endif
 
 //
-// two Jamerson woofers connected via ASP. COHEN_TWEETER_JAMERSON_WOOFER is
 // COHEN_BRIDGE enables the Cohen amp function to drive two Cohen tweeters and
+// two Jamerson woofers connected via ASP. COHEN_TWEETER_JAMERSON_WOOFER is
 // the legacy define and is still supported, but differs from COHEN_BRIDGE in
 // that it also implies COHEN_ONLY, which removes the non-bridge Jamersons
 // from the ACPI tables.
@@ -150,11 +153,7 @@
 // To ensure compatibility with ACPI tables for already release projects,
 // opt-out XU driver from handling Function_Status bits.
 //
-#ifdef EXCLUDE_FUN_STS
-# define FEATURE_NO_FUN_STS 0x00000000
-#else
-# define FEATURE_NO_FUN_STS 0x00000008
-#endif
+#define FEATURE_NO_FUN_STS 0x00000008
 
 #define FEATURE_STR_HWKWS "_kws"
 #define FEATURE_STR_WT    "_wt"
@@ -215,6 +214,32 @@
 #define JAMERSON_US_RENDER_DATA_PORT      0x2
 #define JAMERSON_REF_STREAM_DATA_PORT     0x4
 
+#define PHIFE_MIC_CAPTURE_DATA_PORT       0x1
+#define PHIFE_ULS_CAPTURE_DATA_PORT       0x2
+#define PHIFE_SECONDARY_STREAM_DATA_PORT  0x3
+#define PHIFE_UAJ_CAPTURE_DATA_PORT       0x4
+#define PHIFE_UAJ_RENDER_DATA_PORT        0x5
+
+
+#define COHEN_SDCA_AMP_FUNC_STATUS_INT            6
+#define COHEN_SDCA_MIC_FUNC_STATUS_INT            7
+#define COHEN_SDCA_UAJ_FUNC_STATUS_INT            8
+#define COHEN_SDCA_HID_FUNC_STATUS_INT            9
+#define COHEN_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT  4
+#define COHEN_SDCA_UAJ_JACK_MODE_UPDATE_INT       11
+#define COHEN_SDCA_MIC_TRIGGET_STATUS_INT         13
+
+#define JAMERSON_B_SDCA_FUNC_STATUS_INT           1
+#define JAMERSON_B_SDCA_FDL_CURRENT_OWNER_INT     8
+#define JAMERSON_B_SDCA_PROTECTION_MODE_INT       10
+
+#define PHIFE_SDCA_MIC_FUNC_STATUS_INT            2
+#define PHIFE_SDCA_UAJ_FUNC_STATUS_INT            3
+#define PHIFE_SDCA_HID_FUNC_STATUS_INT            4
+#define PHIFE_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT  10
+#define PHIFE_SDCA_UAJ_JACK_MODE_UPDATE_INT       12
+#define PHIFE_SDCA_MIC_TRIGGET_STATUS_INT         14
+
 
 /*
  * AEC
@@ -260,7 +285,7 @@
 # define COHEN_AMP
 # define COHEN_DISABLE_REF_STREAM
 # define JAMERSON_DISABLE_REF_STREAM
-# define JAMERSON_DISABLE_US_STREAM
+# define DISABLE_US_STREAM
 #endif
 
 #ifdef SIDECAR_GPIO_SPEAKER_SELECT
@@ -289,6 +314,19 @@
 # endif
 #endif
 
+//
+// The Linux drivers are generalized and do not have an .inf like configuration
+// file for each platform to select between competing sources of information -
+// only one source for the speaker ID should be enabled at a time.
+//
+#ifdef COHEN_BRIDGE
+# ifdef SIDECAR_VARIABLE_SPEAKER_SELECT
+#  ifdef SIDECAR_GPIO_SPEAKER_SELECT
+#   error Multiple SPEAKER_SELECT sources defined
+#  endif
+# endif
+#endif
+
 #ifdef COHEN_BRIDGE
 //
 // Bridge configuration, COHEN_NEED_CONFIGS = 0x800000B3
@@ -301,8 +339,10 @@
 //
 // Standard configuration, COHEN_NEED_CONFIGS = 0x80000031
 //
-#ifndef COHEN_NEED_CONFIGS_JACK
-# define COHEN_NEED_CONFIGS_JACK
+#ifndef COHEN_EXCLUDE_CONFIGS_JACK
+# ifndef COHEN_NEED_CONFIGS_JACK
+#  define COHEN_NEED_CONFIGS_JACK
+# endif
 #endif
 
 #ifndef COHEN_NEED_CONFIGS_CODEC
@@ -544,6 +584,15 @@
 #define CHR_SILENCED_MIC         0x56
 #define CHR_ECHO_REF_1           0x71
 
+// Posture channel Relationship
+#define CHR_EQUIPMENT_LEFT          0x02
+#define CHR_EQUIPMENT_RIGHT         0x03
+#define CHR_EQUIPMENT_COMBINED      0x47
+#define CHR_EQUIPMENT_TOP_LEFT      0x4A
+#define CHR_EQUIPMENT_BOTTOM_LEFT   0x4B
+#define CHR_EQUIPMENT_TOP_RIGHT     0x4C
+#define CHR_EQUIPMENT_BOTTOM_RIGHT  0x4D
+
 /*
  * See section 11.4.3 in in the SDCA Spec, v1.0 for Channel Purpose
  */
@@ -595,25 +644,6 @@
 #define CAL_DEVICE      (1 << 4)
 #define CAL_EXTENSION   (1 << 5)
 
-#ifdef EXCLUDE_FUN_STS
-# define CTL_E0_FUNCTION_STATUS_COND     (0)
-#else
-# define CTL_E0_FUNCTION_STATUS_COND     (1 << 0x10)
-#endif
-
-//
-// MSFT class driver checks for Function_Status control
-// presence on SDCA 1.0 compliant audio functions.
-//
-#ifdef EXCLUDE_FUN_STS
-// Must downgrade SDCA revision supported to 0.6r42
-# ifdef CTL_E0_FUNCTION_SDCA_VERSION_VAL
-#  undef CTL_E0_FUNCTION_SDCA_VERSION_VAL
-# endif
-// Function_SDCA_Version = SDCA 0.6
-# define CTL_E0_FUNCTION_SDCA_VERSION_VAL   0x06
-#endif
-
 //
 // MSFT class driver checks for cluster definitions
 // presence on SDCA 1.0 compliant audio functions.
@@ -625,6 +655,13 @@
 # endif
 // Function_SDCA_Version = SDCA 0.6
 # define CTL_E0_FUNCTION_SDCA_VERSION_VAL   0x06
+
+// 'mipi-sdw-sdca-interface-revision'
+// Must downgrade SDCA revision supported to 0.9r02
+# ifdef MIPI_SDW_SDCA_INTERFACE_REVISION_VAL
+#  undef MIPI_SDW_SDCA_INTERFACE_REVISION_VAL
+# endif
+# define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x0902
 #endif
 
 //
@@ -638,21 +675,37 @@
 # endif
 // Function_SDCA_Version = SDCA 0.6
 # define CTL_E0_FUNCTION_SDCA_VERSION_VAL   0x06
+
+// 'mipi-sdw-sdca-interface-revision'
+// Must downgrade SDCA revision supported to 0.9r02
+# ifdef MIPI_SDW_SDCA_INTERFACE_REVISION_VAL
+#  undef MIPI_SDW_SDCA_INTERFACE_REVISION_VAL
+# endif
+# define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x0902
 #endif
 
+//
+// The default advertised SDCA version is 0.6r42/0.9r02
+//
 #ifndef MIPI_SDW_SDCA_INTERFACE_REVISION_VAL
-// mipi-sdw-sdca-interface-revision = SDCA 1.0
-# define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x1000
+// mipi-sdw-sdca-interface-revision = SDCA 0.9r42
+# define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x0902
 #endif
 
 #ifndef CTL_E0_FUNCTION_SDCA_VERSION_VAL
-// Function_SDCA_Version = SDCA 1.0
-# define CTL_E0_FUNCTION_SDCA_VERSION_VAL   0x10
+// Function_SDCA_Version = SDCA 0.6
+# define CTL_E0_FUNCTION_SDCA_VERSION_VAL   0x06
 #endif
 
 #ifndef CTL_E0_DEVICE_SDCA_VERSION_VAL
-// Device_SDCA_Version = SDCA 1.0
-# define CTL_E0_DEVICE_SDCA_VERSION_VAL   0x10
+// Device_SDCA_Version = SDCA 0.6
+# define CTL_E0_DEVICE_SDCA_VERSION_VAL   0x06
+#endif
+
+#ifdef UAJ_RENDER_192KHZ_DEFAULT
+# ifndef UAJ_RENDER_192KHZ
+#  define UAJ_RENDER_192KHZ
+# endif
 #endif
 
 #endif /* __COMMON_6CH_H__ */

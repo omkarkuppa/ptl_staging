@@ -19,7 +19,6 @@
 @par Specification Reference:
 **/
 
-// abb 5.9.22 - Added MS Audio compositor driver to _SB Scope
 Scope (_SB)
 {
     Device (AUDC) // MS Audio compositor driver

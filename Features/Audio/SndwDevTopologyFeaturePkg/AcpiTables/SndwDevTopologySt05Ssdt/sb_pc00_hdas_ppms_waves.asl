@@ -19,11 +19,11 @@
 @par Specification Reference:
 **/
 
-If ((Arg0 == ToUUID ("faacc8cc-b365-4964-b4b8-bd4deb18d922") /* Waves Reduced */))
+If (Arg0 == ToUUID ("faacc8cc-b365-4964-b4b8-bd4deb18d922")) /* Waves Reduced */
 {
-    Return (One)
+    Return (1)
 }
-If ((Arg0 == ToUUID ("52983d04-2414-88b4-a2a2-c1397e13b022") /* Waves Full */))
+If (Arg0 == ToUUID ("52983d04-2414-88b4-a2a2-c1397e13b022")) /* Waves Full */
 {
-    Return (One)
+    Return (1)
 }

@@ -19,7 +19,19 @@
 @par Specification Reference:
 **/
 
-// abb 5.9.22 - Added MS Audio compositor driver to _SB Scope
+#ifndef JAMERSON_1_HWID
+#define JAMERSON_1_HWID 0x3556
+#endif
+#ifndef JAMERSON_2_HWID
+#define JAMERSON_2_HWID 0x3556
+#endif
+#ifndef JAMERSON_3_HWID
+#define JAMERSON_3_HWID 0x3556
+#endif
+#ifndef JAMERSON_4_HWID
+#define JAMERSON_4_HWID 0x3556
+#endif
+
 Scope (_SB)
 {
     Device (AUDC) // MS Audio compositor driver
@@ -37,7 +49,7 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     // Jamerson 1
     Device (SWD2)
     {
-        Name (_ADR, ((0x000<<52)|(JAMERSON_1_LID << 48)|(3<<44)|(JAMERSON_1_UID << 40)|0x01FA355601) )  // _ADR: Address
+        Name (_ADR, ((0x000<<52)|(JAMERSON_1_LID << 48)|(3<<44)|(JAMERSON_1_UID << 40)|(JAMERSON_1_HWID << 8)|0x01FA000001) )  // _ADR: Address
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
@@ -62,9 +74,56 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         Device(AF01)
         {
             Name(_ADR, 0x1)
-            #define CHANNEL_LEFT
+
+# ifdef JAMERSON_1_TOP_LEFT
+        // JAMERSON_1 is TOP-LEFT channel.
+#  define CHANNEL_TOP_LEFT
+# else      // !JAMERSON_1_TOP_LEFT
+#  ifdef JAMERSON_1_BOTTOM_LEFT
+        // JAMERSON_1 is BOTTOM-LEFT channel.
+#   define CHANNEL_BOTTOM_LEFT
+#  else     // !JAMERSON_1_BOTTOM_LEFT
+#   ifdef JAMERSON_1_TOP_RIGHT
+        // JAMERSON_1 is TOP-RIGHT channel.
+#    define CHANNEL_TOP_RIGHT
+#   else    // !JAMERSON_1_TOP_RIGHT
+#    ifdef JAMERSON_1_BOTTOM_RIGHT
+        // JAMERSON_1 is BOTTOM-RIGHT channel.
+#     define CHANNEL_BOTTOM_RIGHT
+#    else   // !JAMERSON_1_BOTTOM_RIGHT
+#     ifdef JAMERSON_1_RIGHT
+        // JAMERSON_1 is RIGHT channel.
+#      define CHANNEL_RIGHT
+#     else  // !JAMERSON_1_RIGHT
+        // By default JAMERSON_1 is LEFT channel.
+#      define CHANNEL_LEFT
+#     endif // JAMERSON_1_RIGHT
+#    endif  // JAMERSON_1_BOTTOM_RIGHT
+#   endif   // JAMERSON_1_TOP_RIGHT
+#  endif    // JAMERSON_1_BOTTOM_LEFT
+# endif     // JAMERSON_1_TOP_LEFT
+
             #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-            #undef CHANNEL_LEFT
+
+#ifdef CHANNEL_LEFT
+# undef CHANNEL_LEFT
+#endif
+#ifdef CHANNEL_RIGHT
+# undef CHANNEL_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_RIGHT
+# undef CHANNEL_BOTTOM_RIGHT
+#endif
+#ifdef CHANNEL_TOP_RIGHT
+# undef CHANNEL_TOP_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_LEFT
+# undef CHANNEL_BOTTOM_LEFT
+#endif
+#ifdef CHANNEL_TOP_LEFT
+# undef CHANNEL_TOP_LEFT
+#endif
+
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
             Name (GPIA, ResourceTemplate ()
@@ -85,7 +144,7 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     // Jamerson 2
     Device (SWD3)
     {
-        Name (_ADR, ((0x000<<52)|( JAMERSON_2_LID << 48 )|(3<<44)|( JAMERSON_2_UID << 40 )|0x01FA355601) )  // _ADR: Address
+        Name (_ADR, ((0x000<<52)|( JAMERSON_2_LID << 48 )|(3<<44)|( JAMERSON_2_UID << 40 )|(JAMERSON_2_HWID << 8)|0x01FA000001) )  // _ADR: Address
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
@@ -110,9 +169,56 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         Device(AF01)
         {
             Name(_ADR, 0x1)
-            #define CHANNEL_LEFT
+
+# ifdef JAMERSON_2_TOP_LEFT
+        // JAMERSON_2 is TOP-LEFT channel.
+#  define CHANNEL_TOP_LEFT
+# else      // !JAMERSON_2_TOP_LEFT
+#  ifdef JAMERSON_2_BOTTOM_LEFT
+        // JAMERSON_2 is BOTTOM-LEFT channel.
+#   define CHANNEL_BOTTOM_LEFT
+#  else     // !JAMERSON_2_BOTTOM_LEFT
+#   ifdef JAMERSON_2_TOP_RIGHT
+        // JAMERSON_2 is TOP-RIGHT channel.
+#    define CHANNEL_TOP_RIGHT
+#   else    // !JAMERSON_2_TOP_RIGHT
+#    ifdef JAMERSON_2_BOTTOM_RIGHT
+        // JAMERSON_2 is BOTTOM-RIGHT channel.
+#     define CHANNEL_BOTTOM_RIGHT
+#    else   // !JAMERSON_2_BOTTOM_RIGHT
+#     ifdef JAMERSON_2_RIGHT
+        // JAMERSON_2 is RIGHT channel.
+#      define CHANNEL_RIGHT
+#     else  // !JAMERSON_2_RIGHT
+        // By default JAMERSON_2 is LEFT channel.
+#      define CHANNEL_LEFT
+#     endif // JAMERSON_2_RIGHT
+#    endif  // JAMERSON_2_BOTTOM_RIGHT
+#   endif   // JAMERSON_2_TOP_RIGHT
+#  endif    // JAMERSON_2_BOTTOM_LEFT
+# endif     // JAMERSON_2_TOP_LEFT
+
             #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-            #undef CHANNEL_LEFT
+
+#ifdef CHANNEL_LEFT
+# undef CHANNEL_LEFT
+#endif
+#ifdef CHANNEL_RIGHT
+# undef CHANNEL_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_RIGHT
+# undef CHANNEL_BOTTOM_RIGHT
+#endif
+#ifdef CHANNEL_TOP_RIGHT
+# undef CHANNEL_TOP_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_LEFT
+# undef CHANNEL_BOTTOM_LEFT
+#endif
+#ifdef CHANNEL_TOP_LEFT
+# undef CHANNEL_TOP_LEFT
+#endif
+
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
             Name (GPIA, ResourceTemplate ()
@@ -133,7 +239,7 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     // Jamerson 3
     Device (SWD4)
     {
-        Name (_ADR, ((0x000<<52)|( JAMERSON_3_LID << 48 )|(3<<44)|( JAMERSON_3_UID << 40 )|0x01FA355601) )  // _ADR: Address
+        Name (_ADR, ((0x000<<52)|( JAMERSON_3_LID << 48 )|(3<<44)|( JAMERSON_3_UID << 40 )|(JAMERSON_3_HWID << 8)|0x01FA000001) )  // _ADR: Address
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
@@ -158,9 +264,56 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         Device(AF01)
         {
             Name(_ADR, 0x1)
-            #define CHANNEL_RIGHT
+
+# ifdef JAMERSON_3_TOP_LEFT
+        // JAMERSON_3 is TOP-LEFT channel.
+#  define CHANNEL_TOP_LEFT
+# else      // !JAMERSON_3_TOP_LEFT
+#  ifdef JAMERSON_3_BOTTOM_LEFT
+        // JAMERSON_3 is BOTTOM-LEFT channel.
+#   define CHANNEL_BOTTOM_LEFT
+#  else     // !JAMERSON_3_BOTTOM_LEFT
+#   ifdef JAMERSON_3_TOP_RIGHT
+        // JAMERSON_3 is TOP-RIGHT channel.
+#    define CHANNEL_TOP_RIGHT
+#   else    // !JAMERSON_3_TOP_RIGHT
+#    ifdef JAMERSON_3_BOTTOM_RIGHT
+        // JAMERSON_3 is BOTTOM-RIGHT channel.
+#     define CHANNEL_BOTTOM_RIGHT
+#    else   // !JAMERSON_3_BOTTOM_RIGHT
+#     ifdef JAMERSON_3_LEFT
+        // JAMERSON_3 is LEFT channel.
+#      define CHANNEL_LEFT
+#     else  // !JAMERSON_3_LEFT
+        // By default JAMERSON_3 is RIGHT channel.
+#      define CHANNEL_RIGHT
+#     endif // JAMERSON_3_LEFT
+#    endif  // JAMERSON_3_BOTTOM_RIGHT
+#   endif   // JAMERSON_3_TOP_RIGHT
+#  endif    // JAMERSON_3_BOTTOM_LEFT
+# endif     // JAMERSON_3_TOP_LEFT
+
             #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-            #undef CHANNEL_RIGHT
+
+#ifdef CHANNEL_LEFT
+# undef CHANNEL_LEFT
+#endif
+#ifdef CHANNEL_RIGHT
+# undef CHANNEL_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_RIGHT
+# undef CHANNEL_BOTTOM_RIGHT
+#endif
+#ifdef CHANNEL_TOP_RIGHT
+# undef CHANNEL_TOP_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_LEFT
+# undef CHANNEL_BOTTOM_LEFT
+#endif
+#ifdef CHANNEL_TOP_LEFT
+# undef CHANNEL_TOP_LEFT
+#endif
+
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
             Name (GPIA, ResourceTemplate ()
@@ -181,7 +334,7 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     // Jamerson 4
     Device (SWD5)
     {
-        Name (_ADR, ((0x000<<52)|( JAMERSON_4_LID << 48 )|(3<<44)|( JAMERSON_4_UID << 40 )|0x01FA355601) )  // _ADR: Address
+        Name (_ADR, ((0x000<<52)|( JAMERSON_4_LID << 48 )|(3<<44)|( JAMERSON_4_UID << 40 )|(JAMERSON_4_HWID << 8)|0x01FA000001) )  // _ADR: Address
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
@@ -206,9 +359,56 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         Device(AF01)
         {
             Name(_ADR, 0x1)
-            #define CHANNEL_RIGHT
+
+# ifdef JAMERSON_4_TOP_LEFT
+        // JAMERSON_4 is TOP-LEFT channel.
+#  define CHANNEL_TOP_LEFT
+# else      // !JAMERSON_4_TOP_LEFT
+#  ifdef JAMERSON_4_BOTTOM_LEFT
+        // JAMERSON_4 is BOTTOM-LEFT channel.
+#   define CHANNEL_BOTTOM_LEFT
+#  else     // !JAMERSON_4_BOTTOM_LEFT
+#   ifdef JAMERSON_4_TOP_RIGHT
+        // JAMERSON_4 is TOP-RIGHT channel.
+#    define CHANNEL_TOP_RIGHT
+#   else    // !JAMERSON_4_TOP_RIGHT
+#    ifdef JAMERSON_4_BOTTOM_RIGHT
+        // JAMERSON_4 is BOTTOM-RIGHT channel.
+#     define CHANNEL_BOTTOM_RIGHT
+#    else   // !JAMERSON_4_BOTTOM_RIGHT
+#     ifdef JAMERSON_4_LEFT
+        // JAMERSON_4 is LEFT channel.
+#      define CHANNEL_LEFT
+#     else  // !JAMERSON_4_LEFT
+        // By default JAMERSON_4 is RIGHT channel.
+#      define CHANNEL_RIGHT
+#     endif // JAMERSON_4_LEFT
+#    endif  // JAMERSON_4_BOTTOM_RIGHT
+#   endif   // JAMERSON_4_TOP_RIGHT
+#  endif    // JAMERSON_4_BOTTOM_LEFT
+# endif     // JAMERSON_4_TOP_LEFT
+
             #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-            #undef CHANNEL_RIGHT
+
+#ifdef CHANNEL_LEFT
+# undef CHANNEL_LEFT
+#endif
+#ifdef CHANNEL_RIGHT
+# undef CHANNEL_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_RIGHT
+# undef CHANNEL_BOTTOM_RIGHT
+#endif
+#ifdef CHANNEL_TOP_RIGHT
+# undef CHANNEL_TOP_RIGHT
+#endif
+#ifdef CHANNEL_BOTTOM_LEFT
+# undef CHANNEL_BOTTOM_LEFT
+#endif
+#ifdef CHANNEL_TOP_LEFT
+# undef CHANNEL_TOP_LEFT
+#endif
+
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
             Name (GPIA, ResourceTemplate ()

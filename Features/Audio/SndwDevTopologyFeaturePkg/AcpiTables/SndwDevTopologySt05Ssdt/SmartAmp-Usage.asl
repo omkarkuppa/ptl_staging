@@ -65,7 +65,7 @@ Name(UB26, Buffer()
     0x01, 0x00,  // NumRows = 1
     // Usage Index 0 - Wildcard Sample Rate - Streaming terminals
     0x26, 0x00, 0x00, 0x00, // UsageNumber 0x26
-    0x9A, 0x01, 0x00, 0x00, // CBN 410 Full band
+    0xAE, 0x01, 0x00, 0x00, // CBN 430 Full band & near ultrasound
     0x00, 0x00, 0x00, 0x00, // Wildcard (0x0) - any sample rate should use these samples rates (opt. - see Table 143 CBN Fidelity Levels used in DisCo Usage Map)
     0x18, 0x00, 0x00, 0x00, // 24-bit (opt. - see Table 143 CBN Fidelity Levels used in DisCo Usage Map)
     0x00, 0x00, 0x00, 0x00, // Full Scale (dBSPL) (opt)
@@ -83,8 +83,8 @@ Name(UN21, Package()
     Package ()
     {   // Usage: Class, R/W
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
-        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package (2) {"mipi-sdca-control-default-value", 0x21},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_DC},
+        Package (2) {"mipi-sdca-control-dc-value", 0x21},
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
     Package()
@@ -96,29 +96,14 @@ Name(UN21, Package()
 Name(UB21, Buffer()
 {
     0x07, 0x00,  // Range type 0x0007 (Septuples)
-#ifdef JAMERSON_96K
-    0x02, 0x00,  // NumRows = 2
-#else
     0x01, 0x00,  // NumRows = 1
-#endif
-    // Usage Index 0 - 48000Hz Sample Rate - Streaming terminals
     0x21, 0x00, 0x00, 0x00, // UsageNumber 0x21
-    0x9A, 0x01, 0x00, 0x00, // CBN 410 Full band
-    0x80, 0xBB, 0x00, 0x00, // 48000
+    0x9A, 0x01, 0x00, 0x00, // CBN 410 Full band (20 Hz to 20 kHz)
+    0x00, 0x00, 0x00, 0x00, // Wildcard (0x0) - any sample rate should use these samples rates (opt. - see Table 185 Fidelity Level CBNs Used in DisCo Usage Map)
     0x18, 0x00, 0x00, 0x00, // 24-bit
     0x00, 0x00, 0x00, 0x00, // Full Scale (dBSPL) (opt)
     0x00, 0x00, 0x00, 0x00, // Noise Floor (dBSPL) (opt)
     0x00, 0x00, 0x00, 0x00, // Usage Tag
-#ifdef JAMERSON_96K
-    // Usage Index 1 - 96000Hz Sample Rate - Streaming terminals
-    0x22, 0x00, 0x00, 0x00, // UsageNumber 0x22
-    0xCC, 0x01, 0x00, 0x00, // CBN 460 HiFI Full band
-    0x00, 0x77, 0x01, 0x00, // 96000
-    0x18, 0x00, 0x00, 0x00, // 24-bit
-    0x00, 0x00, 0x00, 0x00, // Full Scale (dBSPL) (opt)
-    0x00, 0x00, 0x00, 0x00, // Noise Floor (dBSPL) (opt)
-    0x00, 0x00, 0x00, 0x00, // Usage Tag
-#endif
 })
 
 //  +----------------------+

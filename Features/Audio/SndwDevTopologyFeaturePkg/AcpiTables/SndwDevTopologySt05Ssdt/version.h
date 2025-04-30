@@ -1,0 +1,1 @@
+#define RELEASE_VERSION	"6.19.2"

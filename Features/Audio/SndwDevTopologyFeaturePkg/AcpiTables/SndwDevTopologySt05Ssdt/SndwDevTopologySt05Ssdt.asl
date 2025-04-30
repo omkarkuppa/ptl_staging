@@ -31,6 +31,55 @@
 #ifdef AIC_V2
 // See Table 88 in the MIPI soundwire spec and Table 3 in the DisCo spec for data on the address.
 # ifndef COHEN_ONLY
+# ifdef COHEN_JAMERSON_AMP_AGGREGATION
+# define COHEN_AMP
+# ifdef ALL_AMPS_ON_THE_SAME_BUS
+// UID_3, SNDW_2
+#  define JAMERSON_1_LID              2
+#  define JAMERSON_1_UID              3
+#  define JAMERSON_1_LR_CHANNEL_MASK  0x01
+// UID_0, SNDW_2
+#  define JAMERSON_2_LID              2
+#  define JAMERSON_2_UID              0
+#  define JAMERSON_2_LR_CHANNEL_MASK  0x02
+// UID_4, SNDW_1
+#  define JAMERSON_3_LID              1
+#  define JAMERSON_3_UID              4
+#  define JAMERSON_3_LR_CHANNEL_MASK  0x08
+// UID_5, SNDW_1
+#  define JAMERSON_4_LID              1
+#  define JAMERSON_4_UID              5
+#  define JAMERSON_4_LR_CHANNEL_MASK  0x04
+# else
+// UID_3, SNDW_1
+#  define JAMERSON_1_LID              1
+#  define JAMERSON_1_UID              3
+#  define JAMERSON_1_LR_CHANNEL_MASK  0x01
+// UID_0, SNDW_1
+#  define JAMERSON_2_LID              1
+#  define JAMERSON_2_UID              0
+#  define JAMERSON_2_LR_CHANNEL_MASK  0x02
+// UID_4, SNDW_1
+#  define JAMERSON_3_LID              1
+#  define JAMERSON_3_UID              4
+#  define JAMERSON_3_LR_CHANNEL_MASK  0x08
+// UID_5, SNDW_1
+#  define JAMERSON_4_LID              1
+#  define JAMERSON_4_UID              5
+#  define JAMERSON_4_LR_CHANNEL_MASK  0x04
+# endif
+# else
+
+# ifdef AEP
+// UID_3, SNDW_2
+#  define JAMERSON_1_LID              2
+#  define JAMERSON_1_UID              3
+#  define JAMERSON_1_LR_CHANNEL_MASK  0x01
+// UID_0, SNDW_2
+#  define JAMERSON_2_LID              2
+#  define JAMERSON_2_UID              0
+#  define JAMERSON_2_LR_CHANNEL_MASK  0x02
+# else
 // UID_1, SNDW_2
 #  define JAMERSON_1_LID              2
 #  define JAMERSON_1_UID              1
@@ -39,14 +88,15 @@
 #  define JAMERSON_2_LID              2
 #  define JAMERSON_2_UID              2
 #  define JAMERSON_2_LR_CHANNEL_MASK  0x02
+# endif
 // UID_4, SNDW_1
 #  define JAMERSON_3_LID              1
 #  define JAMERSON_3_UID              4
-#  define JAMERSON_3_LR_CHANNEL_MASK  0x10
+#  define JAMERSON_3_LR_CHANNEL_MASK  0x08
 // UID_5, SNDW_1
 #  define JAMERSON_4_LID              1
 #  define JAMERSON_4_UID              5
-#  define JAMERSON_4_LR_CHANNEL_MASK  0x08
+#  define JAMERSON_4_LR_CHANNEL_MASK  0x04
 #  ifdef SIX_SPEAKERS
 //  Modify channel masks for Jamerson_3&4
 #   undef JAMERSON_3_LR_CHANNEL_MASK
@@ -63,6 +113,7 @@
 #   define JAMERSON_6_LR_CHANNEL_MASK  0x20
 #  endif // SIX_SPEAKERS
 # endif  // COHEN_ONLY
+# endif // COHEN_JAMERSON_AMP_AGGREGATION
 // UID_0, SNDW_0
 # define COHEN_1_LID                 3
 # define COHEN_1_UID                 0
@@ -118,6 +169,8 @@
 #define COHEN_1_MIC_DEV_NAME    "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF02"
 #define COHEN_1_UAJ_DEV_NAME    "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF03"
 #define COHEN_1_HID_DEV_NAME    "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF04"
+
+#define DSP_ACPI_ACD_DEVICE_NAMESTRING  "\\_SB.PC00.HDAS.IDA.ISSW"
 
 // Uncomment or define one of these on the command line to to enable Cohen
 // headset 96K or 192K playback.
@@ -216,6 +269,11 @@ DefinitionBlock ("SndwDevTopologySt05Ssdt.aml", "SSDT", 2, "INTEL", "St05Ssdt", 
     External(\_SB, DeviceObj)
     External(\_SB.PC00.HDAS.IDA.SNDW, DeviceObj)
 
+    /*Addition for Cirrus includes*/
+#ifdef SIX_SPEAKERS
     #include <Cirrus_Topology_6_Jamerson_1_Cohen.asl>
+#else
+    #include <Cirrus_Topology_4_Jamerson_1_Cohen.asl>
+#endif
     /*End of addition for Cirrus includes*/
 }

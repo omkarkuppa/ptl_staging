@@ -19,10 +19,6 @@
 @par Specification Reference:
 **/
 
-//
-// _DSD package moved to a separate file.
-//
-
 #ifdef COHEN_ONLY
 # define SPEAKER_RENDER_DATA_PORT       5
 #else   // !COHEN_ONLY
@@ -147,9 +143,13 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-config-type", "Streaming_Speaker"},
 
 #ifdef _AMD
-       Package (2) {"amd-sdw-default-stream-dp-number", 0x1},    // Raw Stream Data port number on SPK device
-
+       Package (2) {"amd-sdw-default-stream-dp-number", SPEAKER_RENDER_DATA_PORT}, // Raw Stream Data port number on SPK device
 #else   // !_AMD
+
+# ifdef DEFAULT_STREAMING_SPK_VOL
+       Package (2) {"acpi-vendor-endpoint-default-volume", DEFAULT_STREAMING_SPK_VOL},
+# endif
+
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x0380},
        Package (2) {"acpi-vendor-amp-degraded-mode", 0},
        Package (2) {"acpi-acd-connection-count", 2},

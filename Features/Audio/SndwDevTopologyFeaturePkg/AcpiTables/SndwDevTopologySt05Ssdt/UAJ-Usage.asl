@@ -50,8 +50,8 @@ Name(UN41, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package ()
     {    // Class, DC, Usage
-        Package (2) {"mipi-sdca-control-access-layer", 4},
-        Package (2) {"mipi-sdca-control-access-mode", 5},
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_DC},
         Package (2) {"mipi-sdca-control-dc-value", 0x41},
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
@@ -274,7 +274,7 @@ Name(UB36, Buffer()
     0x01, 0x00,  // NumRows = 1
     0x36, 0x00, 0x00, 0x00, // UsageNumber 0x36
     0x9A, 0x01, 0x00, 0x00, // CBN 410 Full band
-    0x80, 0xBB, 0x00, 0x00, // Sample Rate = 48kHz (0xbb80)
+    0x00, 0x00, 0x00, 0x00, // Wildcard - support all rates in clock source entity
 //!!! ATR
 #ifdef DMIC_16BIT
     0x10, 0x00, 0x00, 0x00, // Sample Width = 16 or 24 bit

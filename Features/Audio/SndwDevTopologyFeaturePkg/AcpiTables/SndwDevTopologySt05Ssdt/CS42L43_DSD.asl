@@ -53,13 +53,15 @@ Name (_DSD, Package()   // _DSD: Device-Specific Data
         //Package(2) {"mipi-sdw-port15-read-behavior", 0},                        // Boolean
         //Package(2) {"mipi-sdw-manager-list", 0x0},                              // Bitmap
         Package(2) {"mipi-sdw-source-port-list", 0x1E},                         // Bitmap: DP1(MIC), DP2(UAJ_MIC), DP3(AMP_REF), DP4(MIC_HWKWS) (connected to OT113, OT36, OT25, OT13)
-        Package(2) {"mipi-sdw-sink-port-list", 0x60},                           // Bitmap: DP5(AMP), DP6(UAJ_SPK) (connected to IT21, IT41)
+        Package(2) {"mipi-sdw-sink-port-list", 0xE0},                           // Bitmap: DP5(AMP), DP6(UAJ_SPK), DP7(AMP_ULS) (connected to IT21, IT41, IT26)
         Package(2) {"mipi-sdw-dp-0-supported", 1},                              // Boolean
         Package(2) {"mipi-sdw-sdca-interrupt-register-list", 0xf},              // Bitmap
         Package(2) {"mipi-sdw-commit-register-supported", 1},                   // Boolean
 #ifdef ENABLE_MULTILANE
         Package(2) {"mipi-sdw-lane-1-mapping", "mipi-sdw-manager-lane-1"},      // Package Name
         Package(2) {"mipi-sdw-lane-1-bus-holder", 0},                           // Boolean
+        Package(2) {"mipi-sdw-lane-2-mapping", "mipi-sdw-manager-lane-2"},      // Package Name
+        Package(2) {"mipi-sdw-lane-2-bus-holder", 0},                           // Boolean
 #endif
 #ifdef SIDECAR_GPIO_SPEAKER_SELECT
         Package()
@@ -81,6 +83,7 @@ Name (_DSD, Package()   // _DSD: Device-Specific Data
         Package(2) {"mipi-sdw-dp-4-source-subproperties", "PDP4"},              // Package Name
         Package(2) {"mipi-sdw-dp-5-sink-subproperties", "PDPN"},                // Package Name
         Package(2) {"mipi-sdw-dp-6-sink-subproperties", "PDPN"},                // Package Name
+        Package(2) {"mipi-sdw-dp-7-sink-subproperties", "PDPN"},                // Package Name
     },
 }) //End _DSD
 
@@ -127,7 +130,7 @@ Name(PDPN, Package()
         Package(2) {"mipi-sdw-port-wordlength-configs", Package() {8,16,24}},   // Package
         Package(2) {"mipi-sdw-data-port-type", 0},                              // Integer
         Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1} },         // Allow channels 0 and 1.
-        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}},      // Package
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3, 0x2, 0x1}},      // Package
         Package(2) {"mipi-sdw-port-encoding-type", 0x01},                       // PCM twos compliment
         Package(2) {"mipi-sdw-modes-supported", 0x01},                          // Isochronous mode only
         Package(2) {"mipi-sdw-max-async-buffer", 0},                            // Do not buffer
@@ -139,10 +142,15 @@ Name(PDPN, Package()
         //Package(2) {"mipi-sdw-block-packing-mode", 0},                          // Bitmap
         Package(2) {"mipi-sdw-port-encoding-type", 0x02},                       // Bitmap
 #ifdef ENABLE_MULTILANE
-        Package(2) {"mipi-sdw-lane-list", Package() {0, 1} },                   // Preferred priority for Lane use.
+        Package(2) {"mipi-sdw-lane-list", Package() {1, 0} },                   // Preferred priority for Lane use.
 #endif
     },
 }) //End PDPN
+
+// IT11: mipi-sdca-terminal-transducer-count = usNumberOfMicrophones
+#ifndef CS42L43_IT11_NUM_OF_MIC
+# define CS42L43_IT11_NUM_OF_MIC 2
+#endif
 
 Name(PDP1, Package()
 {
@@ -151,8 +159,23 @@ Name(PDP1, Package()
     {
         Package(2) {"mipi-sdw-port-wordlength-configs", Package() {DP1_WORDLENGTH}},   // Package
         Package(2) {"mipi-sdw-data-port-type", 0},                              // Integer
+#if CS42L43_IT11_NUM_OF_MIC > 3
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1, 2, 3} },   // Allow channels 0, 1, 2 and 3.
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0xf}},      // Valid channel combination bitmap
+#else
+# if CS42L43_IT11_NUM_OF_MIC > 2
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1, 2} },      // Allow channels 0, 1, and 2.
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x7}},      // Valid channel combination bitmap
+# else
+#  if CS42L43_IT11_NUM_OF_MIC > 1
         Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1} },         // Allow channels 0 and 1.
-        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}},      // Package
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}},      // Valid channel combination bitmap
+#  else
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0} },            // Allow channels 0 and 1.
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x1}},      // Valid channel combination bitmap
+#  endif
+# endif
+#endif
         Package(2) {"mipi-sdw-port-encoding-type", 0x01},                       // PCM twos compliment
         Package(2) {"mipi-sdw-modes-supported", 0x01},                          // Isochronous mode only
         Package(2) {"mipi-sdw-max-async-buffer", 0},                            // Do not buffer
@@ -164,7 +187,7 @@ Name(PDP1, Package()
         //Package(2) {"mipi-sdw-block-packing-mode", 0},                          // Bitmap
         Package(2) {"mipi-sdw-port-encoding-type", 0x02},                       // Bitmap
 #ifdef ENABLE_MULTILANE
-        Package(2) {"mipi-sdw-lane-list", Package() {0, 1} },                   // Preferred priority for Lane use.
+        Package(2) {"mipi-sdw-lane-list", Package() {1, 0} },                   // Preferred priority for Lane use.
 #endif
     },
 }) //End PDP1
