@@ -253,6 +253,15 @@ call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOpt
 @if %FSP_BINARY_BUILD_ONLY% EQU TRUE goto :BldEnd
 
 :SkipFspBinaryBuild
+
+@if %FSP_SIGNED% EQU TRUE (
+  @if not exist %WORKSPACE_COMMON%\PantherLakeFspBinPkg\Fbm.bin (
+    @echo !!! ERROR: FBM binary file is missing !!!
+    @set SCRIPT_ERROR=1
+    goto :BldFail
+  )
+)
+
 @if %FSP_BINARY_BUILD_ONLY% EQU TRUE goto :SkipPatchFspBinFvsBaseAddress
 del /f %WORKSPACE_SILICON%\%PLATFORM_FSP_BIN_PACKAGE%\Fsp_Rebased*.fd
 
