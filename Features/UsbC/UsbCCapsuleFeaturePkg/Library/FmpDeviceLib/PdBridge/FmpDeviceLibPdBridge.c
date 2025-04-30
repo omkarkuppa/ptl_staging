@@ -785,7 +785,7 @@ FmpDeviceSetImageWithStatus (
   for (Index = 0; Index < PdBridgePayloadHeader->PayloadCount; Index++, PdBridgePayloadItem++) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_COUNT, (UINT32) (Index + 1), PdBridgePayloadHeader->PayloadCount);
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_IMAGE_OFFSET_SIZE, PdBridgePayloadItem->ImageOffset, PdBridgePayloadItem->ImageSize);
-    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_CNTRL_INDEX_SHARE_FLASH_MODE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_CNTRL_INDEX_SHARE_FLASH_MODE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.TcpIndex, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode);
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_PD_BRIDGE_TYPE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType, 0);
     if ((PdBridgePayloadItem->ImageOffset + PdBridgePayloadItem->ImageSize) > ImageSize) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_OUT_BOUNDS2, 0, 0);
@@ -831,10 +831,7 @@ FmpDeviceSetImageWithStatus (
                );
     if (!EFI_ERROR (Status)) {
       PdBridgeVersion = 0;
-      ///
-      /// The PdCntrlIndex for GetPDFwVersion is 1-based.
-      ///
-      Status = PdBridgeProtocol->GetVersion (PdBridgeProtocol, PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex + 1, &PdBridgeVersion);
+      Status = PdBridgeProtocol->GetVersion (PdBridgeProtocol, PdBridgePayloadItem->PrivateData.PdBridge.TcpIndex, &PdBridgeVersion);
       if (!EFI_ERROR (Status)) {
         FwVersion    = (UINT32) (PdBridgeVersion & 0xFFFFFFFF);
         SubFwVersion = (UINT32) ((PdBridgeVersion >> 32) & 0xFFFFFFFF);

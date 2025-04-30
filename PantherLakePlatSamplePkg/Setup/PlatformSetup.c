@@ -522,25 +522,28 @@ UpdatePDInformation (
     goto Exit;
   }
 
-
   for (Index = 0; Index < FixedPcdGet8 (PcdMaxUsbCPdNumber); Index++) {
     switch (Index) {
       case 0:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;
-        TokenToUpdate = STRING_TOKEN (STR_PD1_VERSION_VALUE);
+        UsbCPdVersion = UsbCPdSetup.Tcp0PdVersion;
+        TokenToUpdate = STRING_TOKEN (STR_TCP0_PD_VERSION_VALUE);
         break;
       case 1:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd2Version;
-        TokenToUpdate = STRING_TOKEN (STR_PD2_VERSION_VALUE);
+        UsbCPdVersion = UsbCPdSetup.Tcp1PdVersion;
+        TokenToUpdate = STRING_TOKEN (STR_TCP1_PD_VERSION_VALUE);
         break;
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 2
       case 2:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd3Version;
-        TokenToUpdate = STRING_TOKEN (STR_PD3_VERSION_VALUE);
+        UsbCPdVersion = UsbCPdSetup.Tcp2PdVersion;
+        TokenToUpdate = STRING_TOKEN (STR_TCP2_PD_VERSION_VALUE);
         break;
+#endif
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 3
       case 3:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd4Version;
-        TokenToUpdate = STRING_TOKEN (STR_PD4_VERSION_VALUE);
+        UsbCPdVersion = UsbCPdSetup.Tcp3PdVersion;
+        TokenToUpdate = STRING_TOKEN (STR_TCP3_PD_VERSION_VALUE);
         break;
+#endif
     }
     //
     // if success then update string
@@ -557,7 +560,7 @@ UpdatePDInformation (
         SubFwVersion
         );
     } else {
-      DEBUG ((DEBUG_INFO, "[USBC] PD%d Version is not found.\n", Index + 1));
+      DEBUG ((DEBUG_INFO, "[USBC] TCP%d PD Version is not found.\n", Index));
     }
   }
 

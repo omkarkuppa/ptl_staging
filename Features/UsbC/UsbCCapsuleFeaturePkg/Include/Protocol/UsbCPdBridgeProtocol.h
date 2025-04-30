@@ -104,7 +104,7 @@ extern EFI_GUID  gUsbCPdBridgeProtocolGuid;
   The function to get PD Bridge version via EC command
 
   @param[in]  This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
-  @param[in]  PdCntrlIndex     PD controller index (1-based).
+  @param[in]  TcpIndex         Return the PD version responsible for the specific TCP index.
   @param[in]  PdBridgeVersion  A Pointer to PD Bridge version
 
   @retval EFI_SUCCESS          Get PD Bridge Version successfully
@@ -115,7 +115,7 @@ typedef
 EFI_STATUS
 (*GET_PD_BRIDGE_VERSION) (
   IN USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN UINT8                    PdCntrlIndex,
+  IN UINT8                    TcpIndex,
   IN UINT64                   *PdBridgeVersion
   );
 
@@ -141,7 +141,7 @@ EFI_STATUS
   Execute the PD Vendor Command via EC private port
 
   @param[in]  This               Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
-  @param[in]  PdCntrlIndex       PD controller index (0-based).
+  @param[in]  TcpIndex           TCP index which PD Bridge is connected to.
   @param[in]  VendorCmd          PD Vendor command data
   @param[in]  Lock               Need to Lock the EC PD I2C target or not
   @param[in]  InputData          A pointer to input data
@@ -161,7 +161,7 @@ typedef
 EFI_STATUS
 (*EXECUTE_VENDOR_CMD) (
   IN  USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN  UINT8                    PdCntrlIndex,
+  IN  UINT8                    TcpIndex,
   IN  UINT8                    VendorCmd,
   IN  BOOLEAN                  Lock,
   IN  UINT8                    *InputData,

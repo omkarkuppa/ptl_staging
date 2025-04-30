@@ -1147,45 +1147,45 @@
       SUBTITLE(STRING_TOKEN(STR_PD_INFORMATION))
 
       //
-      // PD1
+      // PD for TCP0
       //
       text
-        help  = STRING_TOKEN(STR_PD1_VERSION_HELP),
-        text  = STRING_TOKEN(STR_PD1_VERSION_NAME),
-        text  = STRING_TOKEN(STR_PD1_VERSION_VALUE),
+        help  = STRING_TOKEN(STR_TCP0_PD_VERSION_HELP),
+        text  = STRING_TOKEN(STR_TCP0_PD_VERSION_NAME),
+        text  = STRING_TOKEN(STR_TCP0_PD_VERSION_VALUE),
         flags = 0,
         key   = 0;
 #endif
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) >= 2
       //
-      // PD2
+      // PD for TCP1
       //
       text
-        help  = STRING_TOKEN(STR_PD2_VERSION_HELP),
-        text  = STRING_TOKEN(STR_PD2_VERSION_NAME),
-        text  = STRING_TOKEN(STR_PD2_VERSION_VALUE),
+        help  = STRING_TOKEN(STR_TCP1_PD_VERSION_HELP),
+        text  = STRING_TOKEN(STR_TCP1_PD_VERSION_NAME),
+        text  = STRING_TOKEN(STR_TCP1_PD_VERSION_VALUE),
         flags = 0,
         key   = 0;
 #endif
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) >= 3
       //
-      // PD3
+      // PD for TCP2
       //
       text
-        help  = STRING_TOKEN(STR_PD3_VERSION_HELP),
-        text  = STRING_TOKEN(STR_PD3_VERSION_NAME),
-        text  = STRING_TOKEN(STR_PD3_VERSION_VALUE),
+        help  = STRING_TOKEN(STR_TCP2_PD_VERSION_HELP),
+        text  = STRING_TOKEN(STR_TCP2_PD_VERSION_NAME),
+        text  = STRING_TOKEN(STR_TCP2_PD_VERSION_VALUE),
         flags = 0,
         key   = 0;
 #endif
 #if FixedPcdGet8 (PcdMaxUsbCPdNumber) >= 4
       //
-      // PD4
+      // PD for TCP3
       //
       text
-        help  = STRING_TOKEN(STR_PD4_VERSION_HELP),
-        text  = STRING_TOKEN(STR_PD4_VERSION_NAME),
-        text  = STRING_TOKEN(STR_PD4_VERSION_VALUE),
+        help  = STRING_TOKEN(STR_TCP3_PD_VERSION_HELP),
+        text  = STRING_TOKEN(STR_TCP3_PD_VERSION_NAME),
+        text  = STRING_TOKEN(STR_TCP3_PD_VERSION_VALUE),
         flags = 0,
         key   = 0;
 #endif

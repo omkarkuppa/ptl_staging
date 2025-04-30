@@ -67,7 +67,7 @@ InitialVendorCommandData (
   The command to read data up to 32bytes from NVM.
 
   @param[in]  This            The UsbC PD Bridge PROTOCOL Instance.
-  @param[in]  PdBridgeIndex   The index of PD Bridge (0-based).
+  @param[in]  TcpIndex        TCP index which PD Bridge is connected to.
   @param[in]  NvmOffset       This field contains the first address to be read relative to the base address of the
                               region being read. NVM Offset is specified in DWs.
   @param[in]  Length          Number of DoubleWords that shall be read starting from the NVM Offset field
@@ -82,7 +82,7 @@ InitialVendorCommandData (
 EFI_STATUS
 NvmRead (
   IN   USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN   UINT8                    PdBridgeIndex,
+  IN   UINT8                    TcpIndex,
   IN   UINT32                   NvmOffset,
   IN   UINT8                    Length,
   OUT  UINT8                    *OutputData,
@@ -95,7 +95,7 @@ NvmRead (
   The address is specified in DWs.
 
   @param[in]  This           The UsbC PD Bridge PROTOCOL Instance.
-  @param[in]  PdBridgeIndex  The index of PD Bridge (0-based).
+  @param[in]  TcpIndex       TCP index which PD Bridge is connected to.
   @param[in]  NvmOffset      This field contains the first address to be written relative to the base address of the
                              region been written.
 
@@ -106,7 +106,7 @@ NvmRead (
 EFI_STATUS
 NvmSetOffset (
   IN  USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN  UINT8                    PdBridgeIndex,
+  IN  UINT8                    TcpIndex,
   IN  UINT32                   NvmOffset
   );
 
@@ -116,7 +116,7 @@ NvmSetOffset (
   this command (even if the write operation fails).
 
   @param[in]  This           The UsbC PD Bridge PROTOCOL Instance.
-  @param[in]  PdBridgeIndex  The index of PD Bridge (0-based).
+  @param[in]  TcpIndex       TCP index which PD Bridge is connected to.
   @param[in]  Buffer         Data need to be written to NVM.
   @param[in]  BufferSize     The size of Data need to be written to NVM.
 
@@ -127,7 +127,7 @@ NvmSetOffset (
 EFI_STATUS
 NvmWrite (
   IN  USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN  UINT8                    PdBridgeIndex,
+  IN  UINT8                    TcpIndex,
   IN  UINT8                    *Buffer,
   IN  UINT8                    BufferSize
   );
@@ -137,7 +137,7 @@ NvmWrite (
   The PD Bridge performs an authentication check over the data written.
 
   @param[in]  This           The UsbC PD Bridge PROTOCOL Instance.
-  @param[in]  PdBridgeIndex  The index of PD Bridge (0-based).
+  @param[in]  TcpIndex       TCP index which PD Bridge is connected to.
 
   @retval EFI_SUCCESS        send the command successfully
   @retval others             write data to NVM failed
@@ -146,7 +146,7 @@ NvmWrite (
 EFI_STATUS
 NvmAuthenticateWrite (
   IN  USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN  UINT8                    PdBridgeIndex
+  IN  UINT8                    TcpIndex
   );
 
 /**
@@ -155,7 +155,7 @@ NvmAuthenticateWrite (
   until it gets the RESET command.
 
   @param[in]  This           The UsbC PD Bridge PROTOCOL Instance.
-  @param[in]  PdBridgeIndex  The index of PD Bridge (0-based).
+  @param[in]  TcpIndex       TCP index which PD Bridge is connected to.
 
   @retval EFI_SUCCESS        send the command successfully
   @retval others             write data to NVM failed
@@ -164,7 +164,7 @@ NvmAuthenticateWrite (
 EFI_STATUS
 NvmStallNvmAccess (
   IN  USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN  UINT8                    PdBridgeIndex
+  IN  UINT8                    TcpIndex
   );
 
 /**
@@ -173,7 +173,7 @@ NvmStallNvmAccess (
   all the memories/data from the NVM.
 
   @param[in]  This           The UsbC PD Bridge PROTOCOL Instance.
-  @param[in]  PdBridgeIndex  The index of PD Bridge (0-based).
+  @param[in]  TcpIndex       TCP index which PD Bridge is connected to.
 
   @retval EFI_SUCCESS        send the command successfully
   @retval others             write data to NVM failed
@@ -182,7 +182,7 @@ NvmStallNvmAccess (
 EFI_STATUS
 NvmReset (
   IN  USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN  UINT8                    PdBridgeIndex
+  IN  UINT8                    TcpIndex
   );
 
 /**

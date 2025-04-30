@@ -616,27 +616,27 @@
 #string STR_TCSS_RETIMER_PD_3_PROMPT                   #language en-US "Type C Port 3"
 #string STR_TCSS_RETIMER_PD_3_HELP                     #language en-US "Enable/Disable Compliance Mode on Type C Port 3"
 //
-// TCSS: PD Information
+// USBC: PD Information
 //
-#string STR_PD_INFORMATION                               #language en-US "PD Information"
-#string STR_PD1_VERSION_HELP                             #language en-US "PD1 Version"
-#string STR_PD1_VERSION_NAME                             #language en-US "PD1 Version"
-#string STR_PD1_VERSION_VALUE                            #language en-US "N/A"
+#string STR_PD_INFORMATION                             #language en-US "PD Information"
+#string STR_TCP0_PD_VERSION_HELP                       #language en-US "PD version for TCP0"
+#string STR_TCP0_PD_VERSION_NAME                       #language en-US "PD version for TCP0"
+#string STR_TCP0_PD_VERSION_VALUE                      #language en-US "N/A"
 
-#string STR_PD2_VERSION_HELP                             #language en-US "PD2 Version"
-#string STR_PD2_VERSION_NAME                             #language en-US "PD2 Version"
-#string STR_PD2_VERSION_VALUE                            #language en-US "N/A"
+#string STR_TCP1_PD_VERSION_HELP                       #language en-US "PD version for TCP1"
+#string STR_TCP1_PD_VERSION_NAME                       #language en-US "PD version for TCP1"
+#string STR_TCP1_PD_VERSION_VALUE                      #language en-US "N/A"
 
-#string STR_PD3_VERSION_HELP                             #language en-US "PD3 Version"
-#string STR_PD3_VERSION_NAME                             #language en-US "PD3 Version"
-#string STR_PD3_VERSION_VALUE                            #language en-US "N/A"
+#string STR_TCP2_PD_VERSION_HELP                       #language en-US "PD version for TCP2"
+#string STR_TCP2_PD_VERSION_NAME                       #language en-US "PD version for TCP2"
+#string STR_TCP2_PD_VERSION_VALUE                      #language en-US "N/A"
 
-#string STR_PD4_VERSION_HELP                             #language en-US "PD4 Version"
-#string STR_PD4_VERSION_NAME                             #language en-US "PD4 Version"
-#string STR_PD4_VERSION_VALUE                            #language en-US "N/A"
+#string STR_TCP3_PD_VERSION_HELP                       #language en-US "PD version for TCP3"
+#string STR_TCP3_PD_VERSION_NAME                       #language en-US "PD version for TCP3"
+#string STR_TCP3_PD_VERSION_VALUE                      #language en-US "N/A"
 
 //
-// TCSS: Retimer Information
+// USBC: Retimer Information
 //
 #string STR_RETIMER_INFORMATION                          #language en-US "Retimer Information"
 #string STR_RETIMER0_VERSION_HELP                        #language en-US "Retimer0 Version"

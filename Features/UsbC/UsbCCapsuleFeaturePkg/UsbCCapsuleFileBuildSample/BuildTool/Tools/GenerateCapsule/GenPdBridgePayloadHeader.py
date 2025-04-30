@@ -49,8 +49,8 @@ else:
 #
 # typedef union {
 #   struct {
-#     UINT8  PdCntrlIndex;
-#     UINT8  ShareFlashMode;  // 0: Disable, 1:Enabled
+#     UINT8  TcpIndex;        ///< TCP index which PD Bridge is connected to.
+#     UINT8  ShareFlashMode;  ///< 0: Disable, 1:Enabled
 #     UINT8  Reserved[14];
 #   } PdBridge;  // FirmwareType 3: PdBridge
 
@@ -98,7 +98,7 @@ def gen_pd_bridge_header_from_ini (inifile):
 
   for Section in config.sections():
     FwType          = config.getint(Section, 'FirmwareType')
-    PdCntrlIndex    = config.getint(Section, 'PdCntrlIndex')
+    TcpIndex        = config.getint(Section, 'TcpIndex')
     ShareFlashMode  = config.getint(Section, 'ShareFlashMode')
     PdBridgeType    = config.getint(Section, 'PdBridgeType')
     File            = config.get(Section, 'FileName')
@@ -115,7 +115,7 @@ def gen_pd_bridge_header_from_ini (inifile):
       print ("Failed to open %s" % PdBridgeFwFile)
       sys.exit (1)
 
-    PdBridgeItemHeader = struct.pack (ItemStruct, PdCntrlIndex, ShareFlashMode, PdBridgeType, B'', ImageOffset, ImageSize, FwType, B'')
+    PdBridgeItemHeader = struct.pack (ItemStruct, TcpIndex, ShareFlashMode, PdBridgeType, B'', ImageOffset, ImageSize, FwType, B'')
     ImageOffset = ImageOffset + ImageSize
     ItemHeaderBuffer = ItemHeaderBuffer + PdBridgeItemHeader
     PdBridgeFwBuffer = PdBridgeFwBuffer + PdBridgeFw
