@@ -2512,8 +2512,9 @@ MrcGetPrePostamble (
   UINT8             WrPostamble;    // Write Postamble time in tCK.
   UINT8             RdPreambleT;    // Read Preamble Toggle time in tCK.
   UINT8             RdPreambleLow;  // Read Preamble low time in tCK.
-  UINT8             RdPostamble;    // Read Postable Toggle time in tCK. Currently always 0
+  UINT8             RdPostamble;    // Read Postable Toggle time in tCK.
   DDR5_MR8_tRPRE    RpreVal;
+  DDR5_MR8_tRPOST   RpostVal;
   DDR5_MR8_tWPRE    WpreVal;
   DDR5_MR8_tWPOST   WpostVal;
   LPDDR5_MR10_tRPRE Lp5RpreVal;
@@ -2592,6 +2593,11 @@ MrcGetPrePostamble (
     if (MrcDdr5GetWritePostambleSetting (MrcData, &WpostVal) == mrcSuccess) {
       // DDR5 WRPST is either 0.5tCK or 1.5 tCK; rounding up to 1 or 2 clocks.
       WrPostamble = (WpostVal == Ddr5tWPOST_0pt5tCK_0) ? 1 : 2;
+    } else {
+      Status = mrcWrongInputParameter;
+    }
+    if (MrcDdr5GetReadPostambleSetting (MrcData, &RpostVal) == mrcSuccess) {
+      RdPostamble = (UINT8) RpostVal;
     } else {
       Status = mrcWrongInputParameter;
     }

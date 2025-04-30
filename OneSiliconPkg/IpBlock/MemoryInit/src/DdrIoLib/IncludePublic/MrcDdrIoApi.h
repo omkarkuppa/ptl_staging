@@ -130,11 +130,11 @@ extern const char *GlobalCompOffsetStr[];
 #define MAX_LVR_VCM      520 // Max allowed input common mode in mV for LVR analog feedback loop
 #define MIN_LVR_VCM      320 // Min allowed input common mode in mV for LVR analog feedback loop
 
-//Maps datashared partition to the 2 channels in that partition
-static const INT8 Data2ChLp5[MRC_DATA_DT_NUM][2] = { {0,1}, {0,1}, {2,3}, {2,3}, {4,5}, {4,5}, {6,7}, {6,7}, {-1,-1}, {-1,-1} };
-static const INT8 Data2ChDdr5NIL[MRC_DATA_DT_NUM][2] = { {0,0}, {0,0}, {1,1}, {1,1}, {2,2}, {2,2}, {3,3}, {3,3}, {-1,-1}, {-1,-1} };
-static const INT8 Data2ChDdr5ILEcc[MRC_DATA_DT_NUM][2] = { {0,1}, {0,1}, {0,1}, {0,1}, {2,3}, {2,3}, {2,3}, {2,3}, {0, 1}, {2, 3} };
-static const INT8 Data2ChDdr5IL[MRC_DATA_DT_NUM][2] = { {0,1}, {0,1}, {0,1}, {0,1}, {2,3}, {2,3}, {2,3}, {2,3}, {-1,-1}, {-1,-1} };
+// Maps datashared partition to the 2 channels in that partition
+extern const INT8 Data2ChLp5[MRC_DATA_DT_NUM][MRC_DATA_CH_NUM];
+extern const INT8 Data2ChDdr5NIL[MRC_DATA_DT_NUM][MRC_DATA_CH_NUM];
+extern const INT8 Data2ChDdr5ILEcc[MRC_DATA_DT_NUM][MRC_DATA_CH_NUM];
+extern const INT8 Data2ChDdr5IL[MRC_DATA_DT_NUM][MRC_DATA_CH_NUM];
 
 //DCC DLL Constants
 #define DCC_DLL_CODE_1        (8)
@@ -190,31 +190,17 @@ typedef enum {
 #define CCC_PART_MASK   (MRC_BIT0 << CccRailPartion)  // ccc bit1
 #define COMP_PART_MASK  (MRC_BIT0 << CompRailPartion) // comp bit2
 
-//Mapping Table: Maps each voltage rail to a list containing the [+/- AC Tolerance (% of Target), +/- DC Tolerance (mV)]
-//hese tolerance numbers are combined with the target voltage and used by runLvrRMT to check if voltage is within spec.
-//All are x1000 to avoid using float number.
-                                            // VCCCLKRX0    VCCCLKRX1    VCCCLKTX     NBIASFF     VCCIOG        VCCPLL     VCCDIST     VCCCLKQ      VCCMEMG      VCCDD2G      VCCDDQG
-static const UINT32 RailTol[MaxRail][2] =     {{15,  5000}, {15,  5000}, {15, 5000}, {10, 5000}, {30,  8000}, { 5, 5000}, {10, 5000}, {20, 15000}, {50, 50000}, {50, 50000}, {50, 50000}};
-static const UINT8 SelVSense[MaxRail] =       { 1,            2,          3,           5,          4,            2,         1,          3,           6,          5,           7};
-static const UINT8 SelLvrAutoTrim[MaxRail] =  { 0,            1,          2,           4,          3,            1,         0,          2,           0,          0,           0};
-static const UINT8 RailPartsMask[MaxRail] =   { DATA_PART_MASK,                                   // VCCCLKRX0
-                                                DATA_PART_MASK,                                   // VCCCLKRX1
-                                                DATA_PART_MASK | CCC_PART_MASK,                   // VCCCLKTX
-                                                DATA_PART_MASK,                                   // NBIASFF
-                                                DATA_PART_MASK | CCC_PART_MASK | COMP_PART_MASK,  // VCCIOG
-                                                                                 COMP_PART_MASK,  // VCCPLL
-                                                                                 COMP_PART_MASK,  // VCCDIST
-                                                                                 COMP_PART_MASK,  // VCCCLKQ
-                                                DATA_PART_MASK | CCC_PART_MASK | COMP_PART_MASK,  // VCCMEMG
-                                                                 CCC_PART_MASK | COMP_PART_MASK,  // VCCDD2G
-                                                DATA_PART_MASK | CCC_PART_MASK | COMP_PART_MASK}; // VCCDDQG
+extern const UINT32 RailTol[MaxRail][2];
+extern const UINT8 SelVSense[MaxRail];
+extern const UINT8 SelLvrAutoTrim[MaxRail];
+extern const UINT8 RailPartsMask[MaxRail];
 
 #ifdef MRC_DEBUG_PRINT
-static const CHAR8* const RailStr[MaxRail] = {"VCCCLKRX0", "VCCCLKRX1", "VCCCLKTX", "NBIASFF", "VCCIOG", "VCCPLL", "VCCDIST", "VCCCLKQ", "VCCMEMG", "VCCDD2G", "VCCDDQG"};
-static const CHAR8* const PartStr[MaxRailPartion] = {"Data", "Ccc", "Comp"};
+extern const CHAR8* const RailStr[MaxRail];
+extern const CHAR8* const PartStr[MaxRailPartion];
 #endif
 
-static const UINT8 PartInstanceNum[MaxRailPartion] = {MRC_DATA_SHARED_NUM , MRC_CCC_SHARED_NUM , MRC_COMP_NUM};
+extern const UINT8 PartInstanceNum[MaxRailPartion];
 
 typedef struct {
   INT64 RxPiPwrDnDis;

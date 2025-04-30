@@ -95,6 +95,15 @@ const UINT8 Lp5ReadLatencyDvfscEnabledSet0[6] = { 3, 5, 7, 8, 10, 12 };
 const UINT8 Lp5ReadLatencyDvfscEnabledSet1[6] = { 3, 5, 7, 8, 10, 12 };
 const UINT8 Lp5ReadLatencyDvfscEnabledSet2[6] = { 3, 5, 7, 10, 12, 14 };
 
+// This table is the list of possible terminations the DRAM can achieve using ZQ Resistor.
+const UINT16 Lp5RzqValues[LP5_RZQ_NUM_VALUES] = { 0xFFFF, 240, 120, 80, 60, 48, 40 };
+
+// Valid Config Table for PU-Cal versus Soc ODT
+const BOOLEAN  PuCalSocOdtValidLp5[OdtMax] = {
+  // Disable,  240,  120,  80,    60,    48,    40  (Ohms)
+  FALSE,   TRUE, TRUE, TRUE,  TRUE,  TRUE,  TRUE //  Vddq/3 mV
+};
+
 /**
   This function checks that the Vref requested is within the spec defined range for LPDDR5.
 

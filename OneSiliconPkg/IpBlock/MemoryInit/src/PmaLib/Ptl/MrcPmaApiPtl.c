@@ -31,7 +31,7 @@
   @retval Returns mrcSuccess if the Board Details are supported otherwise mrcFail.
 **/
 MrcStatus
-MrcBoardDesignFreqCheck (
+MrcBoardAndSkuFreqCheck (
   IN OUT MrcParameters *const  MrcData
   )
 {
@@ -41,21 +41,40 @@ MrcBoardDesignFreqCheck (
   MrcStatus             Status;
   MrcFrequency          FreqMax;
   BOOLEAN               IsLpddr5;
+  BOOLEAN               IsDdr5;
   BOOLEAN               IsFreqLimitedBoard;
+  MrcSkuType            SkuType;
 
   Inputs             = &MrcData->Inputs;
   BoardDetails       = &Inputs->ExtInputs.Ptr->BoardDetails;
   Outputs            = &MrcData->Outputs;
   IsLpddr5           = Outputs->IsLpddr5;
+  IsDdr5             = Outputs->IsDdr5;
   FreqMax            = fInvalid;
   Status             = mrcSuccess;
   IsFreqLimitedBoard = (BoardDetails->BoardStackUp == 1);
+  SkuType            = Inputs->SkuType;
 
-  if (IsFreqLimitedBoard && IsLpddr5) {
-    FreqMax = f7500;
+  if (IsFreqLimitedBoard && IsLpddr5) { // T3
+    if (SkuType == MrcSkuTypeU) {
+      FreqMax = f6800;
+    } else {
+      FreqMax = f7467;
+    }
   }
+
   if (Inputs->Lpddr5Camm) {
-    FreqMax = f7467;
+    if (SkuType == MrcSkuTypeU) {
+      FreqMax = f6800;
+    } else {
+      FreqMax = f7467;
+    }
+  }
+
+  if (IsDdr5) {
+    if (SkuType == MrcSkuTypeU) {
+      FreqMax = f6400;
+    }
   }
 
   Outputs->FreqMax = MIN (Outputs->FreqMax, FreqMax);

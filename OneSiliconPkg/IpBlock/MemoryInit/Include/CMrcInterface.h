@@ -2178,10 +2178,11 @@ typedef struct {
   UINT8               BibIdleType;
   BOOLEAN             CaTristateForISenseRmt;      ///< Enable calling MrcTriStateCa in IoReset for Current Sensor RMT
   BOOLEAN             SrOnRmt;                     ///< TRUE if Idle stress is enabled during MTG test (Power Down or Self-Refresh)
+  BOOLEAN             IdleStress;                  ///< TRUE if Idle stress is enabled during RunIoTest (Power Down or Self-Refresh)
   UINT16              DivCode0;
   UINT16              DivCode2;
   UINT16              DivCode3;
-  UINT8               ReservedBytesForAlignment[1]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  UINT8               ReservedBytesForAlignment[4]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;

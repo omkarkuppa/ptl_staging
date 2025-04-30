@@ -384,21 +384,6 @@ typedef union {
   UINT32 Data32;
 } LpDdr5ActStruct;
 
-/**
-  This function is only used with LPDDR and will return 1 if the current channel should be skipped in SW looping, 0 otherwise.
-  The function checks against ChannelOut->CpgcChAssign variable to know whether a Channel should be skipped
-  @param[in]  MrcData - Pointer to MRC global data.
-  @param[in]  Controller - Desired Memory Controller.
-  @param[in]  Channel - Desired Channel.
-  @retval Returns TRUE if the current channel should be skipped in SW, otherwise FALSE is returned.
-**/
-BOOLEAN
-LpddrIpChannelCheck (
-  IN  MrcParameters* const  MrcData,
-  IN  UINT32                Controller,
-  IN  UINT32                Channel
-  );
-
 ///
 /// Constants
 ///
@@ -406,13 +391,10 @@ LpddrIpChannelCheck (
 #define LP5_RZQ_NUM_VALUES (7)     ///< Number of ODT encodings in LPDDR MR's
 
 // This table is the list of possible terminations the DRAM can achieve using ZQ Resistor.
-static const UINT16 Lp5RzqValues[LP5_RZQ_NUM_VALUES] = { 0xFFFF, 240, 120, 80, 60, 48, 40 };
+extern const UINT16 Lp5RzqValues[LP5_RZQ_NUM_VALUES];
 
 // Valid Config Table for PU-Cal versus Soc ODT
-static const BOOLEAN  PuCalSocOdtValidLp5[OdtMax] = {
-  // Disable,  240,  120,  80,    60,    48,    40  (Ohms)
-  FALSE,   TRUE, TRUE, TRUE,  TRUE,  TRUE,  TRUE //  Vddq/3 mV
-};
+extern const BOOLEAN  PuCalSocOdtValidLp5[OdtMax];
 
 ///
 /// External functions

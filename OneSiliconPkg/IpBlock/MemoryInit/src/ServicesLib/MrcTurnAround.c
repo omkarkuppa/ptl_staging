@@ -506,6 +506,7 @@ GetDdr5tRdWr (
   UINT8  WrPreambleT;
   UINT8  WrPreambleLow;
   UINT8  WrPostamble;
+  UINT8  RdPostamble;
   UINT8  tADCMin;
   UINT8  tADCMax;
   UINT8  Guardband;
@@ -522,6 +523,7 @@ GetDdr5tRdWr (
   RightShift = 7;
   Guardband = 8;
 
+  MrcGetPrePostamble (MrcData, GetTimingRead, NULL, NULL, &RdPostamble);
   MrcGetPrePostamble (MrcData, GetTimingWrite, &WrPreambleT, &WrPreambleLow, &WrPostamble);
   GetDdr5tDQSS (MrcData, &tDQSSMax, &tDQSSMin, WrPreambleLow);
 
@@ -535,7 +537,7 @@ GetDdr5tRdWr (
   ChFlightTimePI = (ChFlightTime * PI_PER_TCK) / PHClk;
   TA1 = ChFlightTimePI - tADCMin;
   ChFlightTimePI = MAX (0, TA1);
-  TA1 = (PI_PER_TCK * (tCL - tCWL + WrPreambleLow + WrPreambleT)) + tADCMax + ChFlightTimePI + DeltaTxDqsPiCode;
+  TA1 = (PI_PER_TCK * (tCL - tCWL + WrPreambleLow + WrPreambleT + RdPostamble)) + tADCMax + ChFlightTimePI + DeltaTxDqsPiCode;
   TA1 += Guardband - MRC_DDR5_tDQSOFFSET_MIN - tDQSSMin;
   TA2 = (PI_PER_TCK * (tCL - tCWL - MinOdtWrOn)) + 128 * (NTODTRd ? MaxOdtRdOff : 0) + DeltaTxDqsPiCode + ChFlightTimePI + Guardband;
   TA3 = (MAX ((UINT32)TA1, (UINT32)TA2) >> RightShift) + 1 + Outputs->BurstLength;

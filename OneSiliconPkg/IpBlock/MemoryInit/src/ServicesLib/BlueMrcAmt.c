@@ -1303,14 +1303,11 @@ SetupIOTestAmt (
 
   TestDataEngineSetLoopCount (MrcData, McChBitMask,BlockRepeats);
   //Set Number of CL transactions per algorithm instruction within 1 BlockRepeat
-  Cpgc20BaseRepeats (MrcData, McChBitMask, MAX (NumCL, 1), 1); //@TODO supposed to be part of SetSequence
+  Cpgc20BaseRepeats (MrcData, McChBitMask, MAX (NumCL, 1), 1);
 
-                                                               // @todo: Need to check that PDWN registers is programmed already.
-                                                               //Removed functionality was intended to configure test during Power Down event but was unused
-
-                                                               //###########################################################
-                                                               // Program Data Pattern Controls.  PGs are selected for Data
-                                                               //###########################################################
+  //###########################################################
+  // Program Data Pattern Controls.  PGs are selected for Data
+  //###########################################################
   if (!IsPatSrcAllZeroes) {
     // Setup the Pattern Generator for the test.
     //   StaticPattern: The caller programs the pattern

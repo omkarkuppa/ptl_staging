@@ -32,48 +32,6 @@
 #include "MrcReset.h"
 
 /**
-  This function is only used with LPDDR and will return 1 if the current channel should be skipped in SW looping, 0 otherwise.
-  The function checks against ChannelOut->CpgcChAssign variable to know whether a Channel should be skipped
-  @param[in]  MrcData - Pointer to MRC global data.
-  @param[in]  Controller - Desired Memory Controller.
-  @param[in]  Channel - Desired Channel.
-  @retval Returns TRUE if the current channel should be skipped in SW, otherwise FALSE is returned.
-**/
-BOOLEAN
-LpddrIpChannelCheck (
-  IN  MrcParameters* const  MrcData,
-  IN  UINT32                Controller,
-  IN  UINT32                Channel
-  )
-{
-  MrcOutput       *Outputs;
-  MrcChannelOut   *ChannelOut;
-  UINT32          ChAssignMask;
-  UINT32          IpChannel;
-  BOOLEAN         Lpddr;
-
-  Outputs = &MrcData->Outputs;
-  Lpddr = Outputs->IsLpddr;
-  if (Lpddr) {
-    // Check for channel existence
-    if (!(MC_CH_MASK_CHECK (Outputs->McChBitMask, Controller, Channel, Outputs->MaxChannels))) {
-      return TRUE;  // Channel does not exist; skip
-    }
-
-    IpChannel = LP_IP_CH (Lpddr, Channel);
-    ChannelOut = &Outputs->Controller[Controller].Channel[2 * IpChannel]; // Only the 0, 2 ChannelOut instances have valid CpgcChAssign values
-    ChAssignMask = ChannelOut->CpgcChAssign >> (2 * IpChannel); // Shift CpgcChAssign to compare the Channels currently used in the IP Channel
-
-    if ((ChAssignMask == 0x3) || (ChAssignMask == 0x1)) { // Check if CpgcChAssign indicates testing for default 0x3 value or Channel 0 or 2 only.
-      return IS_MC_SUB_CH (Lpddr, Channel);               // Default behavior, return FALSE when Channel is 1 or 3
-    } else if (ChAssignMask == 0x2) {                     // Check if CpgcChAssign is only set for the uppper SubChannel (Channel 1 or 3)
-      return !(IS_MC_SUB_CH (Lpddr, Channel));            // Special case, returns TRUE when Channel is 1 or 3 and FALSE for Channels 0 or 2, currently only used during PPR for single-subchannel test
-    }
-  }
-  return FALSE;  // Return FALSE for non-LP systems
-}
-
-/**
   Check if Adaptive Refresh Management (ARFM) is supported in MR1
 
    @param[in]  MrcData        - Pointer to global MRC data

@@ -541,6 +541,34 @@ MrcDdr5GetWritePostambleSetting (
   *EncVal = WritePostambleSettings;
   return mrcSuccess;
 }
+
+/**
+  This function returns the Read Postamble Setting MR8 encoded value.
+
+  @param[in]  MrcData   - Pointer to global MRC data.
+  @param[out] EncVal    - Encoded Mode Register value.
+
+  @retval MrcStatus - mrcSuccess if the timing is supported.  Else mrcWrongInputParameter.
+**/
+MrcStatus
+MrcDdr5GetReadPostambleSetting (
+  IN  MrcParameters   *MrcData,
+  OUT DDR5_MR8_tRPOST *EncVal
+  )
+{
+  DDR5_MR8_tRPOST  ReadPostambleSettings;
+  if (EncVal == NULL) {
+    return mrcWrongInputParameter;
+  }
+  if (MrcData->Outputs.Frequency <= f4800 || (MrcData->Inputs.ExtInputs.Ptr->Use1p5ReadPostamble == FALSE)) {
+    ReadPostambleSettings = Ddr5tRPOST_0pt5tCK_0;
+  } else {
+    ReadPostambleSettings = Ddr5tRPOST_1pt5tCK_010;
+  }
+  *EncVal = ReadPostambleSettings;
+  return mrcSuccess;
+}
+
 // List of MR array indexes to initialize during DDR5 Jedec Init
 MrcModeRegister Ddr5MrInitList [] = {
   mrMR0,
@@ -758,6 +786,7 @@ Ddr5JedecInitVal (
   TOdtValueCccDdr5 CccOdtTableIndex[2];
   TDFEValueDdr5    DFETableIndex;
   DDR5_MR8_tRPRE   RpreVal;
+  DDR5_MR8_tRPOST  RpostVal;
   DDR5_MR8_tWPRE   WpreVal;
   DDR5_MR8_tWPOST  WpostVal;
   DDR5_MR10_VREF   VrefDqCalVal;
@@ -901,7 +930,11 @@ Ddr5JedecInitVal (
       }
       Mr8->Bits.WritePreambleSettings = WpreVal;
 
-      // Mr8->Bits.ReadPostambleSettings = 0;  // 0.5 tCK - 0 Pattern
+      if (MrcDdr5GetReadPostambleSetting (MrcData, &RpostVal) != mrcSuccess) {
+        Status = mrcWrongInputParameter;
+      }
+      Mr8->Bits.ReadPostambleSettings = RpostVal;
+
       if (MrcDdr5GetWritePostambleSetting (MrcData, &WpostVal) != mrcSuccess) {
         Status = mrcWrongInputParameter;
       }
@@ -1620,8 +1653,8 @@ InitMrwDdr5 (
           switch (CurMrAddr) {
             case mrMR34:
               Mr34 = (DDR5_MODE_REGISTER_34_TYPE *) &MrPtr[MrIndex];
-              OdtDecodeValue1 = LpddrOdtDecode (Mr34->Bits.RttWr);
-              OdtDecodeValue2 = LpddrOdtDecode (Mr34->Bits.RttPark);
+              OdtDecodeValue1 = Ddr5RttOdtDecode (Mr34->Bits.RttWr);
+              OdtDecodeValue2 = Ddr5RttOdtDecode (Mr34->Bits.RttPark);
               MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RttWr=%d RttPark=%d", OdtDecodeValue1, OdtDecodeValue2);
               break;
             default:
@@ -3645,6 +3678,61 @@ MrcSetDdr5Mr8ReadPreamble (
   MrcIssueMrwMulticast (MrcData, Outputs->ValidRankMask, mrMR8, Mr8.Data8, MRC_PRINTS_OFF);
 
   return Status;
+}
+
+/**
+  This function converts from DDR5 MR Rtt ODT encoding to Ohms.
+
+  @param[in]  DecodeVal - Encoded Rtt ODT value.
+
+  @retval INT16 - ODT Value in Ohms if valid. Else, -1.
+**/
+INT16
+Ddr5RttOdtDecode (
+  IN  UINT16 DecodeVal
+  )
+{
+    INT16      OdtValue;
+
+    switch (DecodeVal) {
+      case Rtt_RTT_OFF:
+        OdtValue = 0;
+        break;
+
+      case Rtt_RZQ_240:
+        OdtValue = 240;
+        break;
+
+      case Rtt_RZQ_2_120:
+        OdtValue = 120;
+        break;
+
+      case Rtt_RZQ_3_80:
+        OdtValue = 80;
+        break;
+
+      case Rtt_RZQ_4_60:
+        OdtValue = 60;
+        break;
+
+      case Rtt_RZQ_5_48:
+        OdtValue = 48;
+        break;
+
+      case Rtt_RZQ_6_40:
+        OdtValue = 40;
+        break;
+
+      case Rtt_RZQ_7_34:
+        OdtValue = 34;
+        break;
+
+      default:
+        OdtValue = -1;
+        break;
+    }
+
+    return OdtValue;
 }
 
 /**

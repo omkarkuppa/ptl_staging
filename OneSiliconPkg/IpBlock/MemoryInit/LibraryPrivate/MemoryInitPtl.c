@@ -2939,7 +2939,41 @@ MrcGetSkuType (
   VOID
   )
 {
-  return MrcSkuTypeH12Xe;
+  MrcSkuType SkuType;
+  UINT16     CpuDid;
+
+  CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+
+  switch (CpuDid) {
+      case PTL_U_SA_DEVICE_ID_4C:
+      case PTL_U_SA_DEVICE_ID_2C:
+      case PTL_U_NEX_SA_DEVICE_ID_4C:
+      case PTL_U_NEX_SA_DEVICE_ID_2C:
+        SkuType = MrcSkuTypeU;
+        break;
+
+      case PTL_H_12XE_SA_DEVICE_ID_4C_8A:
+      case PTL_H_12XE_SA_DEVICE_ID_4C_4A:
+      case PTL_H_12XE_SA_DEVICE_ID_2C_8A:
+      case PTL_H_12XE_SA_DEVICE_ID_2C_4A:
+        SkuType = MrcSkuTypeH12Xe;
+        break;
+
+      case PTL_H_4XE_SA_DEVICE_ID_4C_8A:
+      case PTL_H_4XE_SA_DEVICE_ID_4C_4A:
+      case PTL_H_4XE_SA_DEVICE_ID_2C_8A:
+      case PTL_H_4XE_SA_DEVICE_ID_2C_4A:
+      case PTL_H_4XE_SA_DEVICE_ID_4C:
+        SkuType = MrcSkuTypeH4Xe;
+        break;
+
+      default:
+        SkuType = MrcSkuTypeUnspecified;
+        break;
+  }
+
+  DEBUG ((DEBUG_INFO, "MrcGetSkuType 0x%x\n", SkuType));
+  return SkuType;
 }
 
 /**

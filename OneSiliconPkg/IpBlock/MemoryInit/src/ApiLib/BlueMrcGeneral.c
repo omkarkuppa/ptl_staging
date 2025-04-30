@@ -184,10 +184,16 @@ SyncLpddrFspOp (
                 MrcData,
                 Outputs->Controller[FirstController].Channel[FirstChannel].ValidRankBitMask
                 );
+
+  GetSetVal = 0xF;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOn, WriteCached | PrintValue, &GetSetVal);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOverride, WriteCached | PrintValue, &GetSetVal);
   MrcIssueMrr (MrcData, FirstController, FirstChannel, FirstRank, mrMR16, MrrResult);
   GetSetVal = ((LPDDR5_MODE_REGISTER_16_TYPE *) &MrrResult[0])->Bits.FspOp;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccLpddrCurrentFsp, WriteCached | PrintValue, &GetSetVal);
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccLpddrCurrentFspTrk, WriteCached | PrintValue, &GetSetVal);
+  GetSetVal = 0x0;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOverride, WriteCached | PrintValue, &GetSetVal);
 }
 
 /**
@@ -499,9 +505,6 @@ MrcNormalMode (
     }
   }
 
-  Outputs->CpgcModeLocked = FALSE; // Unlocking CPGC mode
-  MrcSetNormalMode (MrcData, TRUE);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "CPGC Mode Unlocked\n");
 
   if (IsLpddr) {
     {
@@ -509,6 +512,10 @@ MrcNormalMode (
       SyncLpddrFspOp (MrcData);
     }
   }
+
+  Outputs->CpgcModeLocked = FALSE; // Unlocking CPGC mode
+  MrcSetNormalMode (MrcData, TRUE);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "CPGC Mode Unlocked\n");
 
   {
     if (!MemInSr) {
@@ -518,7 +525,7 @@ MrcNormalMode (
   }
 
   GetSetVal = 1;
-  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccEnableRefresh, WriteCached, &GetSetVal);
+  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccEnableRefresh, ReadCrWriteCached, &GetSetVal);
 
   if (SaveData->IsCs2NEver && !MemInSr && !Outputs->IsCs2NEnabled) {
     Status = NormalModeCsGeardownExitFlow (MrcData, &CsGearDownSaveData);
@@ -956,7 +963,6 @@ MrcGetBootMode (
   Inputs    = &MrcData->Inputs;
   MrcCall   = Inputs->Call.Func;
 
-//@todo ICL PCH may have changed this
   RegisterVal32 = MrcCall->MrcMmioRead32((UINTN)PCH_PWRM_BASE_ADDRESS + R_PCH_PWRM_GEN_PMCON_A);
   if (((RegisterVal32 & B_PCH_PWRM_GEN_PMCON_A_MEM_SR_MRC) != 0) && ((RegisterVal32 & B_PCH_PWRM_GEN_PMCON_A_DISB_MRC) != 0))  {
     BootMode = bmWarm;
@@ -1272,6 +1278,9 @@ MrcSetOverrides (
   Lp5BankOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
 
   MrcReadTemperature (MrcData, &Temperature);
+
+  Outputs->OdtMode  = ExtInputs->IoOdtMode;
+
   // Project specific overides
   MrcSetPrjOverrides (MrcData);
 

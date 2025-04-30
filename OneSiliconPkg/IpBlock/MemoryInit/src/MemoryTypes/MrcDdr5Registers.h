@@ -137,6 +137,14 @@ typedef enum {
 } DDR5_MR8_tWPRE;
 
 /**
+  DDR5 MR8 Read Postamble Settings
+**/
+typedef enum {
+  Ddr5tRPOST_0pt5tCK_0,
+  Ddr5tRPOST_1pt5tCK_010
+} DDR5_MR8_tRPOST;
+
+/**
   DDR5 MR8 Write Postamble Settings
 **/
 typedef enum {

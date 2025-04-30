@@ -586,6 +586,20 @@ MrcDdr5GetWritePostambleSetting (
   );
 
 /**
+  This function returns the Read Postamble Setting MR8 encoded value.
+
+  @param[in]  MrcData   - Pointer to global MRC data.
+  @param[out] EncVal    - Encoded Mode Register value.
+
+  @retval MrcStatus - mrcSuccess if the timing is supported.  Else mrcWrongInputParameter.
+**/
+MrcStatus
+MrcDdr5GetReadPostambleSetting (
+  IN  MrcParameters   *MrcData,
+  OUT DDR5_MR8_tRPOST *EncVal
+  );
+
+/**
   This function returns the Read Preamble Setting MR8 encoded value.
 
   @param[in]  MrcData   - Pointer to global MRC data.

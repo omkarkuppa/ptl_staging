@@ -284,7 +284,8 @@ typedef struct {
 
   UINT8   MrcFailureOnUnsupportedDimm;    ///< Offset 328 Enable/disable MRC failure policy for unsupported memory type.
   UINT8   WckModeOverride;                ///< Offset 329 Overrides the WckMode currently set: 0 = WckModeAutoCtrl, 1 = WckModeAlwaysOn, 2 = WckModeNoOverride (don't override)
-  UINT8   Reserved330[58];                ///< Offset 330 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
+  UINT8   Use1p5ReadPostamble;            ///< Offset 330 Enable using 1p5 tCK Read Postamble for higher freqencies.
+  UINT8   Reserved331[57];                ///< Offset 331 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

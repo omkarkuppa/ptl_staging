@@ -510,28 +510,6 @@ MrcCkdGetSetCW (
   IN OUT  INT64         *const  Value
   );
 
-// TODO: Remove when GREEN/BLUE code is separated correctly. Satisfy compiler
-#define GET_SET_MEM_SS_SKIP
-/**
-  Top level function used to interact with MemSS parameters.
-  This function ignores unused parameters to reduce code space.
-  It sets registers for MemSS so it doesn't accept the Mptu/Channel/Rank parameters
-
-  @param[in]      MrcData     - Pointer to global data structure.
-  @param[in]      Group       - MemSS group to access.
-  @param[in]      Mode        - Bit-field flags controlling Get/Set.
-  @param[in,out]  Value       - Pointer to value for Get/Set to operate on.  Can be offset or absolute value based on mode.
-
-  @retval MrcStatus
-**/
-MrcStatus
-MrcGetSetMemSS (
-  IN      MrcParameters* const  MrcData,
-  IN      GSM_GT        const   Group,
-  IN      UINT32                Mode,
-  IN OUT  INT64* const  Value
-);
-
 /**
   Top level function used to perform Smbus read transaction.
 

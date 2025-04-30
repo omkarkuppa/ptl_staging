@@ -31,6 +31,7 @@
 #include "CMrcStartMemoryConfiguration.h"
 #include "MrcBlueGreenCommunication.h"
 #include "CMrcStatsTracker.h"  // for MrcStatsBeginCallTablePhase()
+#include "MrcPmaApi.h"  //for MrcSaGvCapabilityCheck()
 
 
 /**
@@ -407,10 +408,6 @@ MrcWrappedStartMemoryConfiguration (
   Run              = 1;
   TotalTime        = 0;
   LowestStackAddr  = Debug->LowestStackAddr.DataN;
-  SaGv             = MrcIsSaGvEnabled (MrcData);
-  SaGvWpMask       = ExtInputs->SaGvWpMask;
-  SaGvFirst        = MrcSaGvPointMax;
-  SaGvLast         = MrcSaGvPointMax;
 
   if (BootMode == bmCold) {
     SaveData->IsXmpSagvEnabled = (ExtInputs->DynamicMemoryBoost || ExtInputs->RealtimeMemoryFrequency);
@@ -421,6 +418,13 @@ MrcWrappedStartMemoryConfiguration (
         SaveData->IsXmpSagvEnabled ? "is running": "failed",
         ExtInputs->MemoryProfile);
   }
+
+  MrcSaGvCapabilityCheck (MrcData);
+
+  SaGv             = MrcIsSaGvEnabled (MrcData);
+  SaGvWpMask       = ExtInputs->SaGvWpMask;
+  SaGvFirst        = MrcSaGvPointMax;
+  SaGvLast         = MrcSaGvPointMax;
 
   // Determine if the SaGv configuration is allowed
   MrcStatus = MrcSaGvBoundsCheck (MrcData);

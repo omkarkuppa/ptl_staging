@@ -1472,13 +1472,18 @@
   # !BSF NAME:{PPR Retry Limit}
   # !BSF TYPE:{EditNum, HEX, (0x00, 0xFF)}
   # !BSF HELP:{Sets a limit on the number of times Memory Testing will be retried after attempting to repair using PPR.}
-  gPlatformFspPkgTokenSpaceGuid.PprRetryLimit                  | * | 0x01 | 0x0A
+  gPlatformFspPkgTokenSpaceGuid.PprRetryLimit               | * | 0x01 | 0x0A
+
+  # !BSF NAME:{Use 1p5 Read Postamble}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disable using 1p5 tCK Read Postamble for higher freqencies}
+  gPlatformFspPkgTokenSpaceGuid.Use1p5ReadPostamble         | * | 0x01 | 0x00
 
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 19  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 18  | {0x00}
 
   #
   # MRC Block End
@@ -3433,11 +3438,6 @@
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Mrc Failure On Unsupported Dimm}
   gPlatformFspPkgTokenSpaceGuid.MrcFailureOnUnsupportedDimm | * | 0x01 | 0x00
-
-  # !BSF NAME:{Use 1p5 Read Postamble}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable using 1p5 tCK Read Postamble for higher freqencies}
-  gPlatformFspPkgTokenSpaceGuid.Use1p5ReadPostamble      | * | 0x01 | 0x00
 
   # !BSF NAME:{Fore Single Rank config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

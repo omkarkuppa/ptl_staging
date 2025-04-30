@@ -174,9 +174,8 @@ VOID MrcPmaSetPtrrSeed (
 
   @retval Returns mrcSuccess if the Board Details are supported otherwise mrcFail.
 **/
-
 MrcStatus
-MrcBoardDesignFreqCheck (
+MrcBoardAndSkuFreqCheck (
   IN OUT MrcParameters *const  MrcData
   );
 

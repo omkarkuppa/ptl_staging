@@ -21,8 +21,8 @@
 //
 // Include files
 //
-#include "MrcUcPayloadData.h"
 #include "CMrcTypes.h"
+#include "MrcUcPayloadData.h"
 
 //
 // This data is automatically harvested from the Green MRC binary.
@@ -51,6 +51,7 @@ MRC_PAYLOAD_SECTION gUcPayloadSections[MRC_FAST_PAYLOAD_END] = {
   {0x7d2ec, 0x2005f970, 0x0000000c},
   {0x7d2fc, 0x2005f980, 0x00000298},
   {0x7d59c, 0x2005fc20, 0x000019b8},
+
 #else // Release
   {0x0, 0x1ffa0000, 0x00000004},
   {0x118, 0x1ffc0000, 0x00000100},
@@ -69,9 +70,10 @@ MRC_PAYLOAD_SECTION gUcPayloadSections[MRC_FAST_PAYLOAD_END] = {
   {0x5cd28, 0x20043ba0, 0x0000000c},
   {0x5cd38, 0x20043bb0, 0x00000298},
   {0x5cfd8, 0x20043e50, 0x0000054c},
+
 #endif
 };
 
-UINT32 gUcMrcDataAddress = 0x20066680;
+UINT32 gUcMrcDataAddress = 0x20068b80;
 UINT32 gUcCommBufferAddress = 0x1ffb7eec;
 UINT32 gUcExtInputsAddress = 0x20081b80;

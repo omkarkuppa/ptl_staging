@@ -641,8 +641,8 @@ typedef struct {
 
 /// Structure to store which Bit has the worst centering margin
 typedef struct {
-  INT16             Width[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
-  UINT8             BitLocation[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  INT16             Width[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL];
+  UINT8             BitLocation[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL];
 } Worst1DPerBitMargin;
 
 
@@ -1082,7 +1082,6 @@ MrcChannelDisable (
   @param[in]  Channel     - the channel to work on
   @param[in]  Param       - Specifies which type of error status read will be executed.
   @param[out] Buffer      - Pointer to buffer which register values will be read into.
-                              Error status bits will be returned starting with bit zero. Logical shifting will not be handled by this function.
 
   @retval Returns mrcWrongInputParameter if Param value is not supported by this function, otherwise mrcSuccess.
 **/
@@ -1094,6 +1093,31 @@ MrcGetErrorStatus (
   IN  UINT32           const  Channel,
   IN  MRC_ERR_STATUS_TYPE     Param,
   OUT INT64           *const  Buffer
+  );
+
+/**
+  This function returns the Error status results of the specified Error Type.
+
+  @param[in]  MrcData     - Include all MRC global data.
+  @param[in]  Controller  - Controller number (0-based)
+  @param[in]  Channel     - the channel to work on
+  @param[in]  Param       - Specifies which type of error status read will be executed.
+  @param[out] Buffer      - Pointer to buffer which register values will be read into (Rising if BufferFall is supplied otherwise is the composite of rise and fall)
+                              Error status bits will be returned starting with bit zero. Logical shifting will not be handled by this function.
+  @param[out] BufferFall  - Pointer to buffer which register values will be read into (Falling and OPTIONAL).
+                              Error status bits will be returned starting with bit zero. Logical shifting will not be handled by this function.
+
+  @retval Returns mrcWrongInputParameter if Param value is not supported by this function, otherwise mrcSuccess.
+**/
+MRC_IRAM0_FUNCTION
+MrcStatus
+MrcGetErrorStatusPlusArgs (
+  IN  MrcParameters   *const  MrcData,
+  IN  UINT32           const  Controller,
+  IN  UINT32           const  Channel,
+  IN  MRC_ERR_STATUS_TYPE     Param,
+  OUT INT64           *const  Buffer,
+  OUT INT64           *const  BufferFall OPTIONAL
   );
 
 /**

@@ -220,7 +220,7 @@ MrcMcCapabilityPreSpd (
   }
   Outputs->FreqMax = ((Inputs->FreqMax > fNoInit) && (Inputs->FreqMax < fInvalid)) ? Inputs->FreqMax : FreqMax;
   if (Inputs->FreqMax == fNoInit) {
-    Status = MrcBoardDesignFreqCheck (MrcData); // Limit Outputs->FreqMax by board layout if needed
+    Status = MrcBoardAndSkuFreqCheck (MrcData); // Limit Outputs->FreqMax by board layout if needed
     if (Status != mrcSuccess) {
       return Status;
     }

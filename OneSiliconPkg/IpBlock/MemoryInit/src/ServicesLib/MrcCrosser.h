@@ -300,8 +300,9 @@ typedef enum {
 
 // LP5 DCA type
 typedef enum {
-  DcaTypeTx,  // WCK DCA MR30
-  DcaTypeRx   // Read DCA MR69
+  DcaTypeTx,    // WCK DCA MR30
+  DcaTypeRx,    // Read DCA MR69
+  DcaTypeRxIdle // Read DCA MR69 with WCK idle stress
 } MrcDcaType;
 
 #define MAX_OPT_POINTS        (64)

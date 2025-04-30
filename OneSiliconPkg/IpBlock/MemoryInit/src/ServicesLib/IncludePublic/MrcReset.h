@@ -31,7 +31,6 @@
 
   @retval mrcSuccess Perform JEDEC reset sequence and init sequence successfully
   @retval mrcFail Failed to perform Jeddec reset and init sequence
-  //@TODO (HSD_14016775949) Remove after MCIP testing is done
 **/
 extern
 MrcStatus
