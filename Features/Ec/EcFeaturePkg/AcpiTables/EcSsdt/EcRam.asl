@@ -260,10 +260,14 @@ UVTH, 16,     // 251, 252   Under Voltage Threshold
 Method (MOBS) {
   If (CondRefOf (UCMS)) {
     If (LEqual (UCMS, 1)) {
-      Return (20) // UCSI 1.2
+      Store (20, Local0)
+      ADBG (Concatenate ("EC MSG-OUT Buffer Offset: ", ToDecimalString (Local0)))
+      Return (Local0) // UCSI 1.2
     }
   }
-  Return (24) // UCSI 2.x
+  Store (24, Local0)
+  ADBG (Concatenate ("EC MSG-OUT Buffer Offset: ", ToDecimalString (Local0)))
+  Return (Local0) // UCSI 2.x
 }
 
 OperationRegion (ECF4, EmbeddedControl, MOBS (), 0x14)
