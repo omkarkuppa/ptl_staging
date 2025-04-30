@@ -24,7 +24,7 @@
 
 #define BIOS_EC_COMMAND             0x00 ///< BIOS EC Command
 #define COMMAND_EXECUTION_STATUS    0x01 ///< Command execution status
-#define TCP_INDEX                   0x02 ///< TCP index which PD controller is connected to
+#define PD_CONTROLLER_INDEX         0x02 ///< PD controller index (0-based).
 #define VENDOR_REGISTER_OR_COMMAND  0x03 ///< PD Vendor register offset or command data
 #define I2C_COMMUNICATION_LOCK      0x04 ///< when the offset is set to 1, EC shall freeze other
                                          ///< EC-PD communication

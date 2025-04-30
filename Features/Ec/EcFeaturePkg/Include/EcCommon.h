@@ -38,7 +38,7 @@
 #define EC_SET_PD_MODE_WAIT_TIME_IN_FACTOR_OF_50_MS  10
 
 //
-// Currently EC is supporting PD controller by TCP and following BIT MAP for each
+// Currently EC is supporting PD controller by TCP port and following BIT MAP for each
 // controller.
 //    BIT0 - 1 - PD1 I2C cmd successful (0 - fail )
 //    BIT1 - 1 - PD1 in FORCE TBT Mode  (0 - not in force tbt mode)

@@ -45,7 +45,7 @@ typedef struct {
 
 typedef union {
   struct {
-    UINT8  TcpIndex;        ///< TCP index which PD Bridge is connected to.
+    UINT8  PdCntrlIndex;
     UINT8  ShareFlashMode;  ///< 0: Disabled, 1:Enabled
     UINT8  PdBridgeType;    ///< 0: Gothic Bridge, Others: Reserved
     UINT8  Reserved[13];

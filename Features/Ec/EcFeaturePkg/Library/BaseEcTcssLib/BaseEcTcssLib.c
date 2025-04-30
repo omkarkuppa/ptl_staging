@@ -283,16 +283,16 @@ GetPdControllerMode (
       // Get PdRetimerFwMode (Bit1) information.
       PdRetimerFwMode     = (UINT8)((TempBuffer[0] >> (Index * GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER)) & RETIMER_FW_UPDATE_MODE);
 
-      DEBUG ((DEBUG_INFO, "GetPdMode - PD on TCP%d Bit0 = %d\n", Index, PdI2cCommandSuccess));
-      DEBUG ((DEBUG_INFO, "GetPdMode - PD on TCP%d Bit1 = %d\n", Index, PdRetimerFwMode));
+      DEBUG ((DEBUG_INFO, "GetPdMode - PD%d Bit0 = %d\n", Index + 1, PdI2cCommandSuccess));
+      DEBUG ((DEBUG_INFO, "GetPdMode - PD%d Bit1 = %d\n", Index + 1, PdRetimerFwMode));
 
       // Bit0 = 0 (PD I2C Command fail)
       if (PdI2cCommandSuccess != 0) {
-        DEBUG ((DEBUG_INFO, "PD on TCP%d I2C command successful.\n", Index));
+        DEBUG ((DEBUG_INFO, "PD%d I2C command successful.\n", Index + 1));
       }
       // Bit1 = 0 (Not in force TBT mode)
       if (PdRetimerFwMode != 0) {
-        DEBUG ((DEBUG_INFO, "PD on TCP%d in Retimer FW update mode.\n", Index));
+        DEBUG ((DEBUG_INFO, "PD%d in Retimer FW update mode.\n", Index + 1));
       }
       // Set PdControllerModeBuffer to RetimerFirmWareUpdateEnableMode if PdI2cCommandSuccess and PdRetimerFwMode not 0.
       if ((PdI2cCommandSuccess != 0) && (PdRetimerFwMode != 0)) {
@@ -364,7 +364,7 @@ UpdateUsbCHostFlagsToEc (
 /**
   Execute the PD Vendor Command via EC private port
 
-  @param[in]  TcpIndex           TCP index which PD Bridge is connected to.
+  @param[in]  PdCntrlIndex       PD controller index (0-based).
   @param[in]  VendorCmd          PD Vendor command data
   @param[in]  Lock               Need to Lock the EC PD I2C target or not
   @param[in]  InputData          A pointer to input data
@@ -383,7 +383,7 @@ UpdateUsbCHostFlagsToEc (
 EFI_STATUS
 EFIAPI
 EcPdExecuteVendorCommand (
-  IN  UINT8    TcpIndex,
+  IN  UINT8    PdCntrlIndex,
   IN  UINT8    VendorCmd,
   IN  BOOLEAN  Lock,
   IN  UINT8    *InputData,
@@ -410,10 +410,10 @@ EcPdExecuteVendorCommand (
   }
 
   ///
-  /// Write the TCP index
+  /// Write the PD controller index
   ///
-  DataBuffer[1] = TcpIndex;
-  DataBuffer[0] = TCP_INDEX;
+  DataBuffer[1] = PdCntrlIndex;
+  DataBuffer[0] = PD_CONTROLLER_INDEX;
   Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
   if (EFI_ERROR (Status)) {
     goto ERROR_EXIT;

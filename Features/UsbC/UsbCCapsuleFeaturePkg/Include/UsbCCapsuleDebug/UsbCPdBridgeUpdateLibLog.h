@@ -37,41 +37,41 @@
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_READ_OUTPUT_DATA_NULL              ((EVT_ID_USBC_PD_BRIDGE_NVM_READ_OUTPUT_DATA_NULL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_OUTPUT_DATA_NULL))
 #define STR_ID_USBC_PD_BRIDGE_NVM_READ_OUTPUT_DATA_NULL                "NvmRead: OutputData or OutputDataSize is NULL\n"
 ///
-/// NvmRead - Read data Start at Offset:0x%x Length:0x%x
+/// NvmRead - Read data Start at Offset:%x Length:%x
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_OFFSET_LENGTH                 2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_READ_OFFSET_LENGTH                 ((EVT_ID_USBC_PD_BRIDGE_NVM_READ_OFFSET_LENGTH << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_OFFSET_LENGTH))
-#define STR_ID_USBC_PD_BRIDGE_NVM_READ_OFFSET_LENGTH                   "NvmRead: Read data Start at Offset:0x%x Length:0x%x "
+#define STR_ID_USBC_PD_BRIDGE_NVM_READ_OFFSET_LENGTH                   "NvmRead: Read data Start at Offset:%x Length:%x "
 ///
-/// NvmRead - for PdBridge on TCP%d
+/// NvmRead - for PdBridgeIndex:%d
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_DATA_INDEX                    1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_READ_DATA_INDEX                    ((EVT_ID_USBC_PD_BRIDGE_NVM_READ_DATA_INDEX << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_DATA_INDEX))
-#define STR_ID_USBC_PD_BRIDGE_NVM_READ_DATA_INDEX                      "for PdBridge on TCP%d\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_READ_DATA_INDEX                      "for PdBridgeIndex:%d\n"
 ///
-/// NvmRead - Execute Vendor command code :0x%x failed, Status:%r
+/// NvmRead - Execute Vendor command code :%x failed, Status:%r
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL                    2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL                    ((EVT_ID_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL))
-#define STR_ID_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL                      "NvmRead: Execute Vendor command code :0x%x failed, Status:%r\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL                      "NvmRead: Execute Vendor command code :%x failed, Status:%r\n"
 ///
-/// NvmSetOffset - SetOffset to 0x%x for PdBridge on TCP%d
+/// NvmSetOffset - SetOffset to :%x for PdBridgeIndex:%d
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX                   2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX                   ((EVT_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX))
-#define STR_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX                     "NvmSetOffset: SetOffset to 0x%x for PdBridge on TCP%d\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX                     "NvmSetOffset: SetOffset to :%x for PdBridgeIndex:%d\n"
 ///
 /// NvmSetOffset - Execute Vendor command code :%x failed, Status:%r
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL         2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL         ((EVT_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL))
-#define STR_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL           "NvmSetOffset: Execute Vendor command code :0x%x failed, Status:%r\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL           "NvmSetOffset: Execute Vendor command code :%x failed, Status:%r\n"
 ///
-/// NvmSetOffset - SetOffset to 0x%x for PdBridge on TCP%d successfully
+/// NvmSetOffset - SetOffset to :%x for PdBridgeIndex:%d successfully
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_SET_OFFSET_SUCCESS                 2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_SUCCESS                 ((EVT_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_SUCCESS << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_SET_OFFSET_SUCCESS))
-#define STR_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_SUCCESS                   "NvmSetOffset: SetOffset to 0x%x for PdBridge on TCP%d successfully\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_SET_OFFSET_SUCCESS                   "NvmSetOffset: SetOffset to :%x for PdBridgeIndex:%d successfully\n"
 ///
 /// NvmWrite - Buffer is NULL
 ///
@@ -85,65 +85,65 @@
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                ((EVT_ID_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER))
 #define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                  "NvmWrite: BufferSize is larger than %d\n"
 ///
-/// NvmWrite - Execute Vendor command code :0x%x failed, Status:%r
+/// NvmWrite - Execute Vendor command code :%x failed, Status:%r
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL              2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL              ((EVT_ID_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL))
-#define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL                "NvmWrite: Execute Vendor command code :0x%x failed, Status:%r\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL                "NvmWrite: Execute Vendor command code :%x failed, Status:%r\n"
 ///
-/// NvmAuthenticateWrite - Send NVM Authenticate Write command to PdBridge on TCP%d
+/// NvmAuthenticateWrite - Send NVM Authenticate Write command to PdBridgeIndex:%d
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX                     1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX                     ((EVT_ID_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX))
-#define STR_ID_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX                       "NvmAuthenticateWrite: Send NVM Authenticate Write command to PdBridge on TCP:%d\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX                       "NvmAuthenticateWrite: Send NVM Authenticate Write command to PdBridgeIndex:%d\n"
 ///
-/// NvmAuthenticateWrite - Execute Vendor command code :0x%x failed, Status:%r
+/// NvmAuthenticateWrite - Execute Vendor command code :%x failed, Status:%r
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL               2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL               ((EVT_ID_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL))
-#define STR_ID_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL                 "NvmAuthenticateWrite: Execute Vendor command code :0x%x failed, Status:%r\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL                 "NvmAuthenticateWrite: Execute Vendor command code :%x failed, Status:%r\n"
 ///
-/// NvmAuthenticateWrite - Send NVM Authenticate Write command to PdBridge on TCP%d successfully
+/// NvmAuthenticateWrite - Send NVM Authenticate Write command to PdBridgeIndex:%d successfully
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_AUTH_WRITE_CMD_SUCCESS             1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_WRITE_CMD_SUCCESS             ((EVT_ID_USBC_PD_BRIDGE_NVM_AUTH_WRITE_CMD_SUCCESS << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_AUTH_WRITE_CMD_SUCCESS))
-#define STR_ID_USBC_PD_BRIDGE_NVM_AUTH_WRITE_CMD_SUCCESS               "NvmAuthenticateWrite: Send NVM Authenticate Write command to PdBridge on TCP%d successfully\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_AUTH_WRITE_CMD_SUCCESS               "NvmAuthenticateWrite: Send NVM Authenticate Write command to PdBridgeIndex:%d successfully\n"
 ///
-/// NvmStallNvmAccess - Send Stall NVM Access command to PdBridge on TCP%d
+/// NvmStallNvmAccess - Send Stall NVM Access command to PdBridgeIndex:%d
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_STALL_INDEX                        1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_INDEX                        ((EVT_ID_USBC_PD_BRIDGE_NVM_STALL_INDEX << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_STALL_INDEX))
-#define STR_ID_USBC_PD_BRIDGE_NVM_STALL_INDEX                          "NvmStallNvmAccess: Send Stall NVM Access command to PdBridge on TCP%d\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_STALL_INDEX                          "NvmStallNvmAccess: Send Stall NVM Access command to PdBridgeIndex:%d\n"
 ///
-/// NvmStallNvmAccess - Execute Vendor command code :0x%x failed, Status:%r
+/// NvmStallNvmAccess - Execute Vendor command code :%x failed, Status:%r
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL              1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL              ((EVT_ID_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL))
-#define STR_ID_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL                "NvmStallNvmAccess: Execute Vendor command code :0x%x failed, Status:%r\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL                "NvmStallNvmAccess: Execute Vendor command code :%x failed, Status:%r\n"
 ///
-/// NvmStallNvmAccess - Send Stall NVM Access command to PdBridge on TCP%d successfully
+/// NvmStallNvmAccess - Send Stall NVM Access command to PdBridgeIndex:%d successfully
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_STALL_CMD_SUCCESS                  1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_CMD_SUCCESS                  ((EVT_ID_USBC_PD_BRIDGE_NVM_STALL_CMD_SUCCESS << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_STALL_CMD_SUCCESS))
-#define STR_ID_USBC_PD_BRIDGE_NVM_STALL_CMD_SUCCESS                    "NvmStallNvmAccess: Send Stall NVM Access command to PdBridge on TCP%d successfully\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_STALL_CMD_SUCCESS                    "NvmStallNvmAccess: Send Stall NVM Access command to PdBridgeIndex:%d successfully\n"
 ///
-/// NvmReset - Send NVM Reset command to PdBridge on TCP%d
+/// NvmReset - Send NVM Reset command to PdBridgeIndex:%d
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_RESET_INDEX                        1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_INDEX                        ((EVT_ID_USBC_PD_BRIDGE_NVM_RESET_INDEX << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_RESET_INDEX))
-#define STR_ID_USBC_PD_BRIDGE_NVM_RESET_INDEX                          "NvmReset: Send NVM Reset command to PdBridge on TCP%d\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_RESET_INDEX                          "NvmReset: Send NVM Reset command to PdBridgeIndex:%d\n"
 ///
-/// NvmReset - Execute Vendor command code :0x%x failed, Status:%r
+/// NvmReset - Execute Vendor command code :%x failed, Status:%r
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL              2
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL              ((EVT_ID_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL))
-#define STR_ID_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL                "NvmReset: Execute Vendor command code :0x%x failed, Status:%r\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL                "NvmReset: Execute Vendor command code :%x failed, Status:%r\n"
 ///
-/// NvmReset - Send NVM Reset command to PdBridge on TCP%d successfully
+/// NvmReset - Send NVM Reset command to PdBridgeIndex:%d successfully
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS                  1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS                  ((EVT_ID_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS))
-#define STR_ID_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS                    "NvmReset: Send NVM Reset command to PdBridge on TCP%d successfully\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS                    "NvmReset: Send NVM Reset command to PdBridgeIndex:%d successfully\n"
 ///
 /// UpdatePdBridgeNvmFirmware - UpdatePdBridgeNvmFirmware START (0x%06x bytes to write):
 ///

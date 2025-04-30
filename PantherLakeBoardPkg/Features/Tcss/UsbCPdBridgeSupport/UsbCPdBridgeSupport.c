@@ -41,7 +41,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED USBC_PD_BRIDGE_PROTOCOL  mUsbCPdBridgeProtocol;
   The function to get PD Bridge version via EC command
 
   @param[in]  This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
-  @param[in]  TcpIndex         Return the PD version responsible for the specific TCP index.
+  @param[in]  PdCntrlIndex     PD controller index (1-based).
   @param[in]  PdBridgeVersion  A Pointer to PD Bridge version
 
   @retval EFI_SUCCESS          Get PD Bridge Version successfully
@@ -51,7 +51,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED USBC_PD_BRIDGE_PROTOCOL  mUsbCPdBridgeProtocol;
 EFI_STATUS
 GetPdBridgeVersion (
   IN USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN UINT8                    TcpIndex,
+  IN UINT8                    PdCntrlIndex,
   IN UINT64                   *PdBridgeVersion
   )
 {
@@ -73,14 +73,14 @@ GetPdBridgeVersion (
   }
 
   ZeroMem (DataBuffer, sizeof (DataBuffer));
-  Status = GetPDFwVersion (TcpIndex , DataBuffer);
+  Status = GetPDFwVersion (PdCntrlIndex , DataBuffer);
   if (!EFI_ERROR (Status)) {
     *PdBridgeVersion = LShiftU64 (DataBuffer[7], 56) + LShiftU64 (DataBuffer[6], 48) \
                      + LShiftU64 (DataBuffer[5], 40) + LShiftU64 (DataBuffer[4], 32) \
                      + LShiftU64 (DataBuffer[3], 24) + LShiftU64 (DataBuffer[2], 16) \
                      + LShiftU64 (DataBuffer[1], 8) + DataBuffer[0];
   } else {
-    DEBUG ((DEBUG_ERROR, "Get PD FW version on TCP%d failed with status:%r\n", TcpIndex, Status));
+    DEBUG ((DEBUG_ERROR, "Get PD%d FW version failed with status:%r\n", PdCntrlIndex + 1, Status));
     return Status;
   }
 
@@ -98,18 +98,18 @@ GetPdBridgeVersion (
     return Status;
   }
 
-  switch (TcpIndex) {
+  switch (PdCntrlIndex) {
     case 0:
-      UsbCPdSetup.Tcp0PdVersion = *PdBridgeVersion;
+      UsbCPdSetup.UsbCPd1Version = *PdBridgeVersion;
       break;
     case 1:
-      UsbCPdSetup.Tcp1PdVersion = *PdBridgeVersion;
+      UsbCPdSetup.UsbCPd2Version = *PdBridgeVersion;
       break;
     case 2:
-      UsbCPdSetup.Tcp2PdVersion = *PdBridgeVersion;
+      UsbCPdSetup.UsbCPd3Version = *PdBridgeVersion;
       break;
     case 3:
-      UsbCPdSetup.Tcp3PdVersion = *PdBridgeVersion;
+      UsbCPdSetup.UsbCPd4Version = *PdBridgeVersion;
       break;
   }
 
@@ -125,7 +125,6 @@ GetPdBridgeVersion (
 
   return Status;
 }
-
 
 /**
   Send Command to EC to lock/unlock EC-PD regular communication
@@ -168,7 +167,7 @@ EcPdLockCommunication (
  Execute the PD Vendor Command via EC private port
 
  @param[in]  This               Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
- @param[in]  TcpIndex           TCP index which PD Bridge is connected to.
+ @param[in]  PdCntrlIndex       PD controller index (0-based).
  @param[in]  VendorCmd          PD Vendor command data
  @param[in]  Lock               Need to Lock the EC PD I2C target or not
  @param[in]  InputData          A pointer to input data
@@ -187,7 +186,7 @@ EcPdLockCommunication (
 EFI_STATUS
 PdBridgeExecuteVendorCommand (
   IN  USBC_PD_BRIDGE_PROTOCOL  *This,
-  IN  UINT8                    TcpIndex,
+  IN  UINT8                    PdCntrlIndex,
   IN  UINT8                    VendorCmd,
   IN  BOOLEAN                  Lock,
   IN  UINT8                    *InputData,
@@ -203,7 +202,7 @@ PdBridgeExecuteVendorCommand (
     return EFI_INVALID_PARAMETER;
   }
 
-  return EcPdExecuteVendorCommand (TcpIndex, VendorCmd, Lock, InputData, InputDataSize, OutputData, OutputDataSize);
+  return EcPdExecuteVendorCommand (PdCntrlIndex, VendorCmd, Lock, InputData, InputDataSize, OutputData, OutputDataSize);
 }
 
 /**
