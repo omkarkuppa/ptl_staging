@@ -228,7 +228,7 @@ PtlTcssInitEndOfPei (
   // TCSS initialization procedure for End of PEI
   //
   CsiStatus = SsTcssInitEndOfPei (&TcssInst);
-  if (CsiStatus) {
+  if (CsiStatus != 0) {
     DEBUG ((DEBUG_ERROR, "ERROR: PTL TCSS End of PEI initialization fail!\n"));
     if (CsiStatus == IpCsiStsNotReady) {
       DEBUG ((DEBUG_ERROR, "ERROR: TBT or MG FW not loaded to IMR - Disable TCSS devices!\n"));
@@ -242,7 +242,7 @@ PtlTcssInitEndOfPei (
   // Read TCSS info data. The data will be used to update TCSS HOB
   //
   CsiStatus = SsTcssGetInfo (&TcssInst);
-  if (CsiStatus) {
+  if (CsiStatus != 0) {
     DEBUG ((DEBUG_ERROR, "ERROR: PTL TCSS - Cannot read info data completely!\n"));
     Status = EFI_DEVICE_ERROR;
   }
