@@ -205,7 +205,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mTsegMemoryTestInitPpi = {
   - gSaPeiInitPpiGuid
   - gEfiPeiMasterBootModePpiGuid
   Note:\n
-  If TXT is not implemented(TXT_PREMEM_CONFIG->TxtImplemented == 0), gEfiPeiMasterBootModePpiGuid will be the last dependency of the notify PPI registration to perform MemoryInit.\n
 
   @retval EFI_SUCCESS          - MRC callback has been registered successfully
   @retval EFI_OUT_OF_RESOURCES - Fail to allocate required buffer for MRC callback control.
@@ -252,10 +251,7 @@ InstallMrcCallback (
   MrcInstance->NotifyDescriptor.Notify  = PrememoryInitCallBack;
   MrcInstance->FileHandle               = NULL;
   MrcInstance->MrcExecuted              = FALSE;
-  if (TxtPreMemConfig->TxtImplemented == 0) {
-    MrcInstance->NotifyDescriptor.Guid    = &gEfiPeiMasterBootModePpiGuid;
-    DEBUG ((DEBUG_INFO, "[InstallMrcCallback] Register PeiMasterBootModePpi Notify Status = %r\n", Status));
-  }
+  MrcInstance->NotifyDescriptor.Guid    = &gEfiPeiMasterBootModePpiGuid;
   Status = PeiServicesNotifyPpi (&MrcInstance->NotifyDescriptor);
   ASSERT_EFI_ERROR (Status);
   return Status;
