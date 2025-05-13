@@ -75,6 +75,12 @@ DefinitionBlock (
  External (\_SB.PC0X.I2C3, DeviceObj)
  External (\_SB.PC0X.I2C4, DeviceObj)
  External (\_SB.PC0X.I2C5, DeviceObj)
+ External (\L0PV, IntObj)
+ External (\L0PU, IntObj)
+ External (\L1PV, IntObj)
+ External (\L1PU, IntObj)
+ External (\L2PV, IntObj)
+ External (\L2PU, IntObj)
 
  ADBG ("[MipiCam MipiCamTabl SSDT][AcpiTableEntry]")
 
@@ -2013,8 +2019,8 @@ Scope (\_SB) {
         0x00,0x00,0x00,0x00,  // Reserved                       (offset 91)
         0x00,                 // PMIC Position                  (offset 95)
         0x00,                 // Voltage Rail                   (offset 96)
-        0x00,                 // Reserved                       (offset 97)
-        0x00,                 // Reserved                       (offset 98)
+        0x00,                 // PPR Value                      (offset 97)
+        0x00,                 // PPR Unit                       (offset 98)
         0x00,                 // Flash ID                       (offset 99)
         0x00,                 // Phy Configuration              (offset 100)
         0x00,                 // Lane Configuration             (offset 101)
@@ -2037,6 +2043,12 @@ Scope (\_SB) {
       Store (L0CL, Index (PAR, 90)) // Control Logic
       Store (L0PP, Index (PAR, 95)) // PMIC Position
       Store (L0VR, Index (PAR, 96)) // Voltage Rail
+      If (CondRefOf(L0PV)) {
+        Store (L0PV, Index (PAR, 97)) // PL4/PMAX PPR Value
+      }
+      If (CondRefOf(L0PU)) {
+        Store (L0PU, Index (PAR, 98)) // PL4/PMAX PPR Unit
+      }
       Store (L0FI, Index (PAR, 99)) // Flash ID
       Store (L0PC, Index (PAR, 100)) // Phy Configuration
       Store (L0LA, Index (PAR, 101)) // Lane Configuration
@@ -2381,8 +2393,8 @@ Scope (\_SB) {
         0x00,0x00,0x00,0x00,  // Reserved                     (offset 91)
         0x00,                 // PMIC Position                (offset 95)
         0x00,                 // Voltage Rail                 (offset 96)
-        0x00,                 // Reserved                     (offset 97)
-        0x00,                 // Reserved                     (offset 98)
+        0x00,                 // PPR Value                    (offset 97)
+        0x00,                 // PPR Unit                     (offset 98)
         0x00,                 // Flash ID                     (offset 99)
         0x00,                 // Phy Configuration            (offset 100)
         0x00,                 // Lane Configuration           (offset 101)
@@ -2405,6 +2417,12 @@ Scope (\_SB) {
       Store (L1CL, Index (PAR, 90)) // Control Logic
       Store (L1PP, Index (PAR, 95)) // PMIC Position
       Store (L1VR, Index (PAR, 96)) // Voltage Rail
+      If (CondRefOf(L1PV)) {
+        Store (L1PV, Index (PAR, 97)) // PL4/PMAX PPR Value
+      }
+      If (CondRefOf(L1PU)) {
+        Store (L1PU, Index (PAR, 98)) // PL4/PMAX PPR Unit
+      }
       Store (L1FI, Index (PAR, 99)) // Flash ID
       Store (L1PC, Index (PAR, 100)) // Phy Configuration
       Store (L1LA, Index (PAR, 101)) // Lane Configuration
@@ -2749,8 +2767,8 @@ Scope (\_SB) {
         0x00,0x00,0x00,0x00,  // Reserved                     (offset 91)
         0x00,                 // PMIC Position                (offset 95)
         0x00,                 // Voltage Rail                 (offset 96)
-        0x00,                 // Reserved                     (offset 97)
-        0x00,                 // Reserved                     (offset 98)
+        0x00,                 // PPR Value                    (offset 97)
+        0x00,                 // PPR Unit                     (offset 98)
         0x00,                 // Flash ID                     (offset 99)
         0x00,                 // Phy Configuration            (offset 100)
         0x00,                 // Lane Configuration           (offset 101)
@@ -2773,6 +2791,12 @@ Scope (\_SB) {
       Store (L2CL, Index (PAR, 90)) // Control Logic
       Store (L2PP, Index (PAR, 95)) // PMIC Position
       Store (L2VR, Index (PAR, 96)) // Voltage Rail
+      If (CondRefOf(L2PV)) {
+        Store (L2PV, Index (PAR, 97)) // PL4/PMAX PPR Value
+      }
+      If (CondRefOf(L2PU)) {
+        Store (L2PU, Index (PAR, 98)) // PL4/PMAX PPR Unit
+      }
       Store (L2FI, Index (PAR, 99)) // Flash ID
       Store (L2PC, Index (PAR, 100)) // Phy Configuration
       Store (L2LA, Index (PAR, 101)) // Lane Configuration
