@@ -102,8 +102,8 @@ NvmRead (
   UINT32                 DataSize;
   UINT8                  VendorCmd;
 
-  if ((Length > 32) || (Length == 0)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID, 0, 0);
+  if ((Length > VENDOR_SPECIFIC_CMD_VENDOR_CMD_DATA_MAX_BYTES) || (Length == 0)) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID, Length, 0);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -211,8 +211,8 @@ NvmWrite (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (BufferSize > PD_BRIDGE_MAX_TO_WRITE) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER, PD_BRIDGE_MAX_TO_WRITE, 0);
+  if ((BufferSize > VENDOR_SPECIFIC_CMD_VENDOR_CMD_DATA_MAX_BYTES) || (BufferSize == 0)) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_INVALID_BUFFER_SIZE, BufferSize, 0);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -428,7 +428,7 @@ UpdatePdBridgeNvmFirmware (
 
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_TOTAL_SIZE, (UINT32) ImageSize, 0);
 
-    for (Offset = 0; Offset < ImageSize; Offset += PD_BRIDGE_MAX_TO_WRITE) {
+    for (Offset = 0; Offset < ImageSize; Offset += VENDOR_SPECIFIC_CMD_VENDOR_CMD_DATA_MAX_BYTES) {
       if ((Progress != NULL) & (DisplayLength > 0) && ((Offset & 0xFF) == 0)) {
         ///
         /// Display current progress
@@ -440,7 +440,7 @@ UpdatePdBridgeNvmFirmware (
         CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_WRITTEN_SO_FAR, (UINT32) (Offset * 4), 0);
       }
 
-      WriteLength = (ImageSize - Offset) >= PD_BRIDGE_MAX_TO_WRITE ? PD_BRIDGE_MAX_TO_WRITE :
+      WriteLength = (ImageSize - Offset) >= VENDOR_SPECIFIC_CMD_VENDOR_CMD_DATA_MAX_BYTES ? VENDOR_SPECIFIC_CMD_VENDOR_CMD_DATA_MAX_BYTES :
                     (UINT8) (ImageSize - Offset);
 
       Status = NvmWrite (This, TcpIndex, (UINT8 *) (BufferPointer + Offset), WriteLength);

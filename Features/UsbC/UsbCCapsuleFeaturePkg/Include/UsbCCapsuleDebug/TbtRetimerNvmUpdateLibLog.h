@@ -1393,6 +1393,24 @@
 #define EVT_CODE_TBT_DRV_DMA_CTOR_ALLOCATE_BUF_FAIL          ((EVT_ID_TBT_DRV_DMA_CTOR_ALLOCATE_BUF_FAIL << 2) | (EVT_ARGS_TBT_DRV_DMA_CTOR_ALLOCATE_BUF_FAIL))
 #define STR_ID_TBT_DRV_DMA_CTOR_ALLOCATE_BUF_FAIL            "TbtNvmDrvDmaCtor: AllocateBuffer failed, Status = %r\n"
 ///
+/// TbtNvmDrvDmaCtor - Function number is invalid
+///
+#define EVT_ARGS_TBT_DRV_DMA_CTOR_INVALID_FUNCTION_NUMBER    0
+#define EVT_CODE_TBT_DRV_DMA_CTOR_INVALID_FUNCTION_NUMBER    ((EVT_ID_TBT_DRV_DMA_CTOR_INVALID_FUNCTION_NUMBER << 2) | (EVT_ARGS_TBT_DRV_DMA_CTOR_INVALID_FUNCTION_NUMBER))
+#define STR_ID_TBT_DRV_DMA_CTOR_INVALID_FUNCTION_NUMBER      "TbtNvmDrvDmaCtor: Function number is invalid.\n"
+///
+/// TbtNvmDrvDmaCtor - Use PeiDmaBuf to initialize.
+///
+#define EVT_ARGS_TBT_DRV_DMA_CTOR_USE_PEI_DMA_BUF            0
+#define EVT_CODE_TBT_DRV_DMA_CTOR_USE_PEI_DMA_BUF            ((EVT_ID_TBT_DRV_DMA_CTOR_USE_PEI_DMA_BUF << 2) | (EVT_ARGS_TBT_DRV_DMA_CTOR_USE_PEI_DMA_BUF))
+#define STR_ID_TBT_DRV_DMA_CTOR_USE_PEI_DMA_BUF              "TbtNvmDrvDmaCtor: Use PeiDmaBuf to initialize.\n"
+///
+/// TbtNvmDrvDmaCtor - PeiDmaBuf does not exist
+///
+#define EVT_ARGS_TBT_DRV_DMA_CTOR_PEI_DMA_BUF_DOES_NOT_EXIST  0
+#define EVT_CODE_TBT_DRV_DMA_CTOR_PEI_DMA_BUF_DOES_NOT_EXIST  ((EVT_ID_TBT_DRV_DMA_CTOR_PEI_DMA_BUF_DOES_NOT_EXIST << 2) | (EVT_ARGS_TBT_DRV_DMA_CTOR_PEI_DMA_BUF_DOES_NOT_EXIST))
+#define STR_ID_TBT_DRV_DMA_CTOR_PEI_DMA_BUF_DOES_NOT_EXIST    "TbtNvmDrvDmaCtor: PeiDmaBuf does not exist.\n"
+///
 /// TbtNvmDrvDmaCtor - Map failed, Status=%r
 ///
 #define EVT_ARGS_TBT_DRV_DMA_CTOR_MAP_FAIL                   1

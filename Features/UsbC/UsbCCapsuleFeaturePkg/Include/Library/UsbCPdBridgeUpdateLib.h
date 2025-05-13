@@ -28,8 +28,6 @@
 #include <Protocol/UsbCPdBridgeProtocol.h>
 #include <Protocol/FirmwareManagement.h>
 
-typedef VOID  *PD_BRIDGE_DEV_INSTANCE;
-
 #define SHARE_FLASH_MODE_DISABLE 0
 #define SHARE_FLASH_MODE_ENABLE  1
 

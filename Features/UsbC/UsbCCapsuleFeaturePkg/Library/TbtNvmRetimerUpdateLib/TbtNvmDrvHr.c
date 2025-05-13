@@ -596,7 +596,7 @@ TbtNvmDrvHrCtor (
   if ( (FirmwareType == DISCRETE_TBT_RETIMER)
     || (FirmwareType == DISCRETE_TBT))
   {
-    RootPortIndex           = PcieRpConfig->PcieRootPort;  //TBD
+    RootPortIndex           = PcieRpConfig->PcieRootPort;
     DTbtInfoHob             = GetFirstGuidHob (&gDTbtInfoHobGuid);
     MaxDTbtControllerNumber = PcdGet8 (PcdBoardDTbtControllerNumber);
 

@@ -26,7 +26,6 @@
 #include <PiDxe.h>
 #include "UsbCPdBridgeRetimer.h"
 
-#define PD_BRIDGE_MAX_TO_WRITE        64
 #define PD_BRIDGE_NVM_VERSION_OFFSET  2
 #define PD_BRIDGE_NVM_OFFSET          0
 #define PD_BRIDGE_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE 1
@@ -48,12 +47,13 @@
 ///
 /// VENDOR_SPECIFIC_CMD Data format offset
 ///
-#define VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET       0x00 ///< Vendor command offset in Data field
-#define VENDOR_SPECIFIC_CMD_VENDOR_ID_OFFSET        0x04 ///< Vendor ID (VID) offset in Data field
-#define VENDOR_SPECIFIC_CMD_PRODUCT_ID_OFFSET       0x06 ///< Product ID (PID) offset in Data field
-#define VENDOR_SPECIFIC_CMD_DATA_OFFSET             0x08 ///< from byte 16 to 79
-#define VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES      8    ///< 1 Byte for command, 3 Bytes for reserved and 4 Bytes for VID + PID
-#define VENDOR_SPECIFIC_CMD_DATA_TOTAL_BYTES        72   ///< from byte 8 to 79
+#define VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET          0x00 ///< Vendor command offset in Data field
+#define VENDOR_SPECIFIC_CMD_VENDOR_ID_OFFSET           0x04 ///< Vendor ID (VID) offset in Data field
+#define VENDOR_SPECIFIC_CMD_PRODUCT_ID_OFFSET          0x06 ///< Product ID (PID) offset in Data field
+#define VENDOR_SPECIFIC_CMD_DATA_OFFSET                0x08 ///< from byte 16 to 79
+#define VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES         8    ///< 1 Byte for command, 3 Bytes for reserved and 4 Bytes for VID + PID
+#define VENDOR_SPECIFIC_CMD_VENDOR_CMD_DATA_MAX_BYTES  64   ///< 64 Bytes for data buffer
+#define VENDOR_SPECIFIC_CMD_DATA_TOTAL_BYTES           72   ///< from byte 8 to 79
 
 ///
 /// PD BRIDGE Vendor ID (VID) and Product ID (PID)
@@ -170,6 +170,21 @@ EFI_STATUS
   OUT UINT8                    *OutputDataSize OPTIONAL
   );
 
+/**
+  Initiate EC reset sequence by sending command.
+
+  @param[in] This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
+
+  @retval EFI_SUCCESS         Initiate EC Reset sequence successfully
+  @retval others              Failed to Initiate EC Reset sequence.
+
+**/
+typedef
+EFI_STATUS
+(*INITIATE_EC_RESET) (
+  IN  USBC_PD_BRIDGE_PROTOCOL  *This
+  );
+
 ///
 /// Interface structure for the PD Bridge Protocol
 ///
@@ -178,6 +193,7 @@ struct _USBC_PD_BRIDGE_PROTOCOL {
   GET_PD_BRIDGE_VERSION  GetVersion;        ///< Get PD Bridge version
   LOCK_COMMUNICATION     Lock;              ///< Lock/Unlock EC-PD regular communication
   EXECUTE_VENDOR_CMD     ExecuteVendorCmd;  ///< Execute the PD Vendor Command via EC private port
+  INITIATE_EC_RESET      InitiateEcReset;   ///< Initiate EC Reset sequence by sending command
 };
 
 typedef struct {

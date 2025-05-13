@@ -728,6 +728,7 @@ FmpDeviceSetImageWithStatus (
   UINT32                   SubFwVersion;
   UINT16                   ProductId;
   UINT32                   InitLastAttemptStatus;
+  BOOLEAN                  InitiateEcResetNeeded;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_SET_IMAGE_START, 0, 0);
 
@@ -770,7 +771,7 @@ FmpDeviceSetImageWithStatus (
   PdBridgePayloadHeader = (PAYLOAD_HEADER *) Image;
   PdBridgePayloadItem   = (PD_BRIDGE_PAYLOAD_ITEM *) (PdBridgePayloadHeader + 1);
   ProductId             = 0;
-
+  InitiateEcResetNeeded = FALSE;
   ///
   /// Send Lock command to EC to stop EC-PD regular communication.
   ///
@@ -830,6 +831,7 @@ FmpDeviceSetImageWithStatus (
                LastAttemptStatus
                );
     if (!EFI_ERROR (Status)) {
+      InitiateEcResetNeeded = TRUE;
       PdBridgeVersion = 0;
       Status = PdBridgeProtocol->GetVersion (PdBridgeProtocol, PdBridgePayloadItem->PrivateData.PdBridge.TcpIndex, &PdBridgeVersion);
       if (!EFI_ERROR (Status)) {
@@ -853,6 +855,12 @@ UnLockEcPdCommunication:
   ///
   PdBridgeProtocol->Lock (PdBridgeProtocol, UNLOCK_I2C);
 
+  ///
+  /// Initiate EC Reset sequence if the firmware update is successful.
+  ///
+  if (InitiateEcResetNeeded) {
+    PdBridgeProtocol->InitiateEcReset (PdBridgeProtocol);
+  }
 Exit:
   Progress (100);
 

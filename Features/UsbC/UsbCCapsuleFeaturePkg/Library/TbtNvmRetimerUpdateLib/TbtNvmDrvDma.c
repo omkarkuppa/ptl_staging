@@ -199,7 +199,7 @@ TbtNvmDrvWaitForRxResponse (
     Cmd = *(((UINT32*)This->Impl->pSharedMem->rxBuf[ConsIndex] + 2));
     MsgLen = (UINT32)(RxDescPtr->attributes & DESC_ATTR_LEN_MASK);
     CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_FRAME_INFO, PtrAddr, Cmd);
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_FRAME_INFO2, MsgLen, ConsIndex);    
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_FRAME_INFO2, MsgLen, ConsIndex);
 
     PtrAddr = (UINT32) (UINTN) RxDescPtr;
     PhyHAddr = (UINT32) ((RxDescPtr->Phys) >> 32);
@@ -490,7 +490,7 @@ TbtNvmDrvDmaCtor (
       // Need to use the buffer which reserved in PEI phase via Iommu Ppi to access DMA at that time.
       //
       if (FunctionNumber < 2) {
-        DEBUG ((DEBUG_ERROR, "TbtNvmDrvDmaCtor: Function number is invalid\n"));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_CTOR_INVALID_FUNCTION_NUMBER, 0, 0);
         goto free_shared_mem;
       }
       HobPtr = NULL;
@@ -498,7 +498,7 @@ TbtNvmDrvDmaCtor (
       if (HobPtr != NULL) {
         Usb4PlatformHob = GET_GUID_HOB_DATA (HobPtr);
         if (Usb4PlatformHob->Usb4PlatformInfo.Usb4Hr[HR_INDEX (FunctionNumber)].PeiDmaBufBase != 0) {
-          DEBUG ((DEBUG_INFO, "TbtNvmDrvDmaCtor: Use PeiDmaBuf to initialize.\n"));
+          CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_CTOR_USE_PEI_DMA_BUF, 0, 0);
           DmaImplPtr->PciIoProtoPtr->FreeBuffer (
                                        DmaImplPtr->PciIoProtoPtr,
                                        EFI_SIZE_TO_PAGES (sizeof (*DmaImplPtr->pSharedMem)),
@@ -507,7 +507,7 @@ TbtNvmDrvDmaCtor (
           DmaImplPtr->pSharedMem = (VOID *) Usb4PlatformHob->Usb4PlatformInfo.Usb4Hr[HR_INDEX (FunctionNumber)].PeiDmaBufBase;
           DmaImplPtr->PhyAddr = Usb4PlatformHob->Usb4PlatformInfo.Usb4Hr[HR_INDEX (FunctionNumber)].PeiDmaBufBase;
         } else {
-          DEBUG ((DEBUG_ERROR, "TbtNvmDrvDmaCtor: PeiDmaBuf is not exist.\n"));
+          CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_CTOR_PEI_DMA_BUF_DOES_NOT_EXIST, 0, 0);
           goto free_shared_mem;
         }
       }

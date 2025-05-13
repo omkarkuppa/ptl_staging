@@ -27,9 +27,9 @@
 ///
 /// NvmRead - Length is Invalid
 ///
-#define EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID                0
+#define EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID                1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID                ((EVT_ID_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID))
-#define STR_ID_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID                  "NvmRead: Length is Invalid\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID                  "NvmRead: Invalid Length %d.\n"
 ///
 /// NvmRead - OutputData or OutputDataSize is NULL
 ///
@@ -79,11 +79,11 @@
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_NULL                         ((EVT_ID_USBC_PD_BRIDGE_NVM_WRITE_NULL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_NULL))
 #define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_NULL                           "NvmWrite: Buffer is NULL\n"
 ///
-/// NvmWrite - BufferSize is larger than PD_BRIDGE_MAX_TO_WRITE
+/// NvmWrite - Invalid BufferSize %d
 ///
-#define EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                1
-#define EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                ((EVT_ID_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER))
-#define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                  "NvmWrite: BufferSize is larger than %d\n"
+#define EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_INVALID_BUFFER_SIZE          1
+#define EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_INVALID_BUFFER_SIZE          ((EVT_ID_USBC_PD_BRIDGE_NVM_WRITE_INVALID_BUFFER_SIZE << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_INVALID_BUFFER_SIZE))
+#define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_INVALID_BUFFER_SIZE            "NvmWrite: Invalid BufferSize %d\n"
 ///
 /// NvmWrite - Execute Vendor command code :0x%x failed, Status:%r
 ///

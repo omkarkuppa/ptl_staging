@@ -56,16 +56,10 @@ GetPdBridgeVersion (
   )
 {
   EFI_STATUS               Status;
-  USBC_PD_BRIDGE_INSTANCE  *Instance;
   UINT8                    DataBuffer[8];
   USBC_PD_SETUP            UsbCPdSetup;
   UINT32                   VarAttributes;
   UINTN                    VarSize;
-
-  Instance = USBC_PD_BRIDGE_FROM_THIS (This);
-  if (Instance->Signature != PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE) {
-    return EFI_INVALID_PARAMETER;
-  }
 
   if (PdBridgeVersion == NULL ) {
     DEBUG ((DEBUG_ERROR, "PdBridgeVersion is NULL\n"));
@@ -144,13 +138,6 @@ EcPdLockCommunication (
   IN  UINT8                    Lock
   )
 {
-  USBC_PD_BRIDGE_INSTANCE  *Instance;
-
-  Instance = USBC_PD_BRIDGE_FROM_THIS (This);
-  if (Instance->Signature != PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE) {
-    return EFI_INVALID_PARAMETER;
-  }
-
   //
   // Control the Ec Debug Info Print Level to DEBUG_VERBOSE before executing any command for PD Bridge
   // And revert back to DEBUG_INFO after executing the command
@@ -196,14 +183,24 @@ PdBridgeExecuteVendorCommand (
   OUT UINT8                    *OutputDataSize OPTIONAL
   )
 {
-  USBC_PD_BRIDGE_INSTANCE  *Instance;
-
-  Instance = USBC_PD_BRIDGE_FROM_THIS (This);
-  if (Instance->Signature != PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE) {
-    return EFI_INVALID_PARAMETER;
-  }
-
   return EcPdExecuteVendorCommand (TcpIndex, VendorCmd, Lock, InputData, InputDataSize, OutputData, OutputDataSize);
+}
+
+/**
+  Initiate EC reset sequence by sending command.
+
+  @param[in] This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
+
+  @retval EFI_SUCCESS         Initiate EC Reset sequence successfully
+  @retval others              Failed to Initiate EC Reset sequence.
+
+**/
+EFI_STATUS
+PdBridgeInitiateEcReset (
+  IN  USBC_PD_BRIDGE_PROTOCOL  *This
+  )
+{
+  return LpcEcResetEcInNormalMode ();
 }
 
 /**
@@ -240,6 +237,7 @@ UsbCPdBridgeSupportEntryPoint (
   Instance->PdBridgeProtocol.GetVersion       = GetPdBridgeVersion;
   Instance->PdBridgeProtocol.Lock             = EcPdLockCommunication;
   Instance->PdBridgeProtocol.ExecuteVendorCmd = PdBridgeExecuteVendorCommand;
+  Instance->PdBridgeProtocol.InitiateEcReset  = PdBridgeInitiateEcReset;
 
   ///
   /// Install PD Bridge Protocol
