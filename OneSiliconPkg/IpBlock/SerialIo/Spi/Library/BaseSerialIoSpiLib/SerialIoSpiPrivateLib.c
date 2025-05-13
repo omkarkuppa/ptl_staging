@@ -367,7 +367,7 @@ SerialIoSpiInitializeWriteRead (
   //
   // 3. Spi initalization
   //
-  SerialIoSpiControllerBusInit ((UINTN) *SpiBaseAddress, (UINT32) Frequency, ClockIdlePolarity, ClockPhase, CsActivePolarity);
+  SerialIoSpiControllerBusInit ((UINTN) *SpiBaseAddress, (UINT32) Frequency, ClockPhase, ClockIdlePolarity, CsActivePolarity);
   //
   // 4. Make sure SPI is not running
   //
