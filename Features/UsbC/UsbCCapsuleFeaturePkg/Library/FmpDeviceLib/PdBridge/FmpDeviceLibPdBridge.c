@@ -32,9 +32,10 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UsbCPdBridgeUpdateLib.h>
+#include <Library/UsbcCapsuleDebugLib.h>
 #include <Guid/SystemResourceTable.h>
 #include <Protocol/UsbCPdBridgeProtocol.h>
-#include <Library/UsbcCapsuleDebugLib.h>
+#include <UsbCPdSetup.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 
@@ -723,9 +724,6 @@ FmpDeviceSetImageWithStatus (
   PD_BRIDGE_PAYLOAD_ITEM   *PdBridgePayloadItem;
   UINTN                    Index;
   USBC_PD_BRIDGE_PROTOCOL  *PdBridgeProtocol;
-  UINT64                   PdBridgeVersion;
-  UINT32                   FwVersion;
-  UINT32                   SubFwVersion;
   UINT16                   ProductId;
   UINT32                   InitLastAttemptStatus;
   BOOLEAN                  InitiateEcResetNeeded;
@@ -832,18 +830,18 @@ FmpDeviceSetImageWithStatus (
                );
     if (!EFI_ERROR (Status)) {
       InitiateEcResetNeeded = TRUE;
-      PdBridgeVersion = 0;
-      Status = PdBridgeProtocol->GetVersion (PdBridgeProtocol, PdBridgePayloadItem->PrivateData.PdBridge.TcpIndex, &PdBridgeVersion);
-      if (!EFI_ERROR (Status)) {
-        FwVersion    = (UINT32) (PdBridgeVersion & 0xFFFFFFFF);
-        SubFwVersion = (UINT32) ((PdBridgeVersion >> 32) & 0xFFFFFFFF);
-        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_FW_VERSION_INDEX, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.TcpIndex, 0);
-        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_FW_VERSION, (UINT32) FwVersion, SubFwVersion);
-        ///
-        /// Update the version to gUsbCPdBridgeVersionGuid
-        ///
-        UpdatePdBridgeVersion (FwVersion);
-      }
+      ///
+      /// Clean the Variable to let BIOS read PD version in the next boot.
+      /// If read PD version before initiating Ec reset, the version still the one before updating.
+      ///
+      Status = gRT->SetVariable (
+                      USBC_PD_NAME,
+                      &gUsbCPdSetupGuid,
+                      0,
+                      0,
+                      NULL
+                      );
+      ASSERT_EFI_ERROR (Status);
     } else {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_UPDATE_FAILED_AT_INDEX, (UINT32) Status, (UINT32) Index);
     }
