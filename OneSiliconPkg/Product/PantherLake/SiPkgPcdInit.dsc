@@ -22,6 +22,7 @@
 
 [PcdsFixedAtBuild]
   gSiPkgTokenSpaceGuid.PcdWclSupport                   |FALSE
+  gSiPkgTokenSpaceGuid.PcdWhPSupport                   |FALSE
 
   gSiPkgTokenSpaceGuid.PcdFclwPtlSiSupport             |FALSE
 
