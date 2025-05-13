@@ -588,12 +588,18 @@ GetCpuSkuIdentifier (
           if (PackageTdp == CPU_TDP_15_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-U 4+0 15W\n"));
             CpuIdentifier = EnumPtlU15Watt40CpuId;
+          } else if (PackageTdp == CPU_TDP_25_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-U 4+0 25W\n"));
+            CpuIdentifier = EnumPtlU15Watt40CpuId;
           }
           break;
         case PTL_U_SA_DEVICE_ID_2C:
         case PTL_U_NEX_SA_DEVICE_ID_2C:
           if (PackageTdp == CPU_TDP_15_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-U 2+0 15W\n"));
+            CpuIdentifier = EnumPtlU15Watt20CpuId;
+          } else if (PackageTdp == CPU_TDP_25_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-U 2+0 25W\n"));
             CpuIdentifier = EnumPtlU15Watt20CpuId;
           }
           break;
