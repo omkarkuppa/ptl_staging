@@ -349,6 +349,7 @@
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
   gBoardModuleTokenSpaceGuid.PcdEcEspiFlashSharingMode
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable                        ## CONSUMES
 
   gPlatformModuleTokenSpaceGuid.PcdTpmEnable
   gSiPkgTokenSpaceGuid.PcdTxtEnable                                     ## CONSUMES

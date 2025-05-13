@@ -230,7 +230,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdMaxPchUsb3PortNumber     |0x00       |UINT8  |0x20000A66
 
   # MAC Address update to NVM region
-  gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable|TRUE|BOOLEAN|0x20000A69
+  gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable|FALSE|BOOLEAN|0x20000A69
 
   # Memory Diagnostic Test Enable
   gBoardModuleTokenSpaceGuid.PcdMemoryDiagnosticTestEnable|FALSE|BOOLEAN|0xE0000001

@@ -149,7 +149,6 @@
   gBoardModuleTokenSpaceGuid.PcdTerminalEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdOverclockEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable|FALSE
-  gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable|TRUE
 
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable|0x0
   gSiPkgTokenSpaceGuid.PcdAmtEnable|TRUE

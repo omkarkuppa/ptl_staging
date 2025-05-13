@@ -277,7 +277,7 @@
   gBoardModuleTokenSpaceGuid.PcdModularCryptoEnable|FALSE
   gBoardModuleTokenSpaceGuid.PcdSipkgBinaryEnable|FALSE
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable|TRUE
-  gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable|TRUE
+  gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable|FALSE
 
   # Multi-IBB support
   gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable|FALSE

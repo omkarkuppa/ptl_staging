@@ -4144,7 +4144,11 @@ gStructPcdTokenSpaceGuid.PcdSetup.SensorStandby|0x0                             
 gStructPcdTokenSpaceGuid.PcdSetup.SerialPortAcpiDebug|0x0                                          # Print to Serial Port
 gStructPcdTokenSpaceGuid.PcdSetup.SkipHIIUpdate|0x1                                                # Skip Setup HII Update
 gStructPcdTokenSpaceGuid.PcdSetup.SkipObbHashVerification|0x2                                      # Skip OBB HASH Verify
-gStructPcdTokenSpaceGuid.PcdSetup.GbeFwUpdateEnable|0x1                                            # GBE Firmware Update Support
+!if gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable == TRUE
+  gStructPcdTokenSpaceGuid.PcdSetup.GbeFwUpdateEnable|0x1                                          # GBE Firmware Update Support
+!else
+  gStructPcdTokenSpaceGuid.PcdSetup.GbeFwUpdateEnable|0x0                                          # GBE Firmware Update Support
+!endif
 gStructPcdTokenSpaceGuid.PcdSetup.StorageRtd3Support|0x1                                           # D3 Setting for Storage
 gStructPcdTokenSpaceGuid.PcdSetup.StorageDynamicLinkManagement|0x1                                 # StorageDynamicLinkManagement
 gStructPcdTokenSpaceGuid.PcdSetup.SysFwUpdateLoadDefault|0x0                                       # Restore Setup Default
