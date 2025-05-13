@@ -48,6 +48,7 @@
   MemoryAllocationLib
   DebugLib
   PcdLib
+  UefiBootManagerLib
 
 [Protocols]
 

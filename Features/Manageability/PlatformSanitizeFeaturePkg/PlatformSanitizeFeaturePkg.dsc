@@ -66,6 +66,7 @@ gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport       |TRUE
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
   PciCf8Lib|MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
+  UefiBootManagerLib|MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
   MeFwStsLib|OneSiliconPkg/IpBlock/Me/Library/BaseMeFwStsLib/BaseMeFwStsLib.inf
   DxeAmtSupportLib|OneSiliconPkg/IpBlock/Amt/Library/DxeAmtSupportLibNull/DxeAmtSupportLibNull.inf
   Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf

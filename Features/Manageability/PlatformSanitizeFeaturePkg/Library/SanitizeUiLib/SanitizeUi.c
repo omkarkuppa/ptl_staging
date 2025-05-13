@@ -19,12 +19,15 @@
 @par Specification Reference:
 **/
 
+#include <PiDxe.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/UefiBootManagerLib.h>
+#include <Protocol/SimpleTextOut.h>
 #include "SanitizeUi.h"
 
 #define PLATFORM_ERASE_HORIZONTAL_RESOLUTION 800
@@ -236,8 +239,14 @@ InitUiLib (
   VOID
   )
 {
+  EFI_STATUS    Status;
+
   DEBUG ((DEBUG_INFO, "Platform Erase :: %a\n", __FUNCTION__));
   SetPlatformEraseConsoleMode ();
+
+  Status = EfiBootManagerConnectConsoleVariable (ConIn);
+  DEBUG ((DEBUG_INFO, "Platform Erase :: Connect ConIn = %r\n", Status));
+
   gST->ConOut->EnableCursor (gST->ConOut, FALSE);
   gST->ConOut->QueryMode (gST->ConOut, gST->ConOut->Mode->Mode, &mConOutCols, &mConOutRows);
 
