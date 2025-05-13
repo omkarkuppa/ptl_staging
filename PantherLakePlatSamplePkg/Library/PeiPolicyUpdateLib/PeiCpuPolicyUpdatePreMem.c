@@ -87,12 +87,6 @@ UpdateBiosGuardModulePtr (
   BiosGuardModuleAddr    = 0;
   BiosGuardModuleSize    = 0;
   BiosGuardModuleGuidPtr = &gBiosGuardModuleBinGuid;
-
-  if (IsSimicsEnvironment ()) {
-    BiosGuardModuleGuidPtr = &gBiosGuardModuleSimBinGuid;
-    DEBUG ((DEBUG_INFO, "Searching for Simics BIOS Guard Module binary\n"));
-  }
-
   ///
   /// Locate Firmware Volume header
   ///

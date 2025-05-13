@@ -85,7 +85,6 @@
 [Guids]
   gEfiSmmSmramMemoryGuid                        ## CONSUMES
   gCpuSecurityPreMemConfigGuid                  ## CONSUMES
-  gBiosGuardModuleSimBinGuid                    ## CONSUMES
   gPlatformInitFvLocationGuid                   ## PRODUCES
   gPchSetupVariableGuid                         ## CONSUMES
   gSetupVariableGuid                            ## CONSUMES
