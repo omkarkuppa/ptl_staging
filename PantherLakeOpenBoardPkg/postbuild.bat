@@ -100,7 +100,7 @@ for /f "usebackq tokens=3" %%i in (`FINDSTR /b /c:"VERSION_MAJOR" %BIOS_ID_FILE%
 
 @set BIOS_PREFIX=PTL_P_OpenBoard
 @set ROM_FILENAME_SPECIAL_BUILD_TYPE=
-@if defined FSP_SIGNED (
+@if not defined FSP_SIGNED (
   @set FSP_SIGNED=TRUE
   @set ROM_FILENAME_SPECIAL_BUILD_TYPE=_FSPSIGNED
 ) else (
