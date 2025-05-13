@@ -304,10 +304,11 @@ set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
   set NOTIMESTAMP=1
 ) else if /i "ibbsign" == "%1" (
   set IBBSIGN=TRUE
-) else if /i "WhPBuild" == "%1" (
-  echo "WhPBuild"
+) else if /i "whp" == "%1" (
+  echo "Whp Build"
+  set ROM_FILENAME_SPECIAL_BUILD_TYPE=_Whp
   @if /i "r" == "%2" (
-    echo "WhPBuild Release"
+    echo "Whp Release Build"
     set PrepRELEASE=RELEASE
     echo gSiPkgTokenSpaceGuid.PcdWhPSupport ^|TRUE
     set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
@@ -364,7 +365,7 @@ goto SkipHelp
 cd %TIP_DIR%
 @echo Preparation for BIOS build.
 @echo.
-@echo prep [ptlp][non_upl][r][rp][s][c][rc][clang][fsp32][fsp64][tr][perf][catalog][notimestamp][WhPBuild][help]
+@echo prep [ptlp][non_upl][r][rp][s][c][rc][clang][fsp32][fsp64][tr][perf][catalog][notimestamp][whp][help]
 @echo.
 @echo   r         To do release build. Default is debug build. See note 1
 @echo   rp        To do release build with Symbols - For source level debugging. See note 1
@@ -402,7 +403,7 @@ cd %TIP_DIR%
 @echo   stage4      To set gMinPlatformPkgTokenSpaceGuid.PcdBootStage^|4. Stage 4 build
 @echo   stage5      To set gMinPlatformPkgTokenSpaceGuid.PcdBootStage^|5. Stage 5 build
 @echo   stage6      To set gMinPlatformPkgTokenSpaceGuid.PcdBootStage^|6. Stage 6 build
-@echo   WhPBuild    To set gSiPkgTokenSpaceGuid.PcdWhPSupport TRUE
+@echo   whp         To set gSiPkgTokenSpaceGuid.PcdWhPSupport TRUE
 goto PrepDone
 
 :SkipHelp
