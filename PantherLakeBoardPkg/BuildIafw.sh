@@ -43,7 +43,6 @@ export PLATFORM_BOARD_PACKAGE=PantherLakeBoardPkg
 export PLATFORM_SI_PACKAGE=OneSiliconPkg
 export PLATFORM_BIN_PACKAGE=PantherLakeBinPkg
 export FSP_PKG_NAME=PantherLakeFspPkg
-export PLATFORM_FSP_BIN_PACKAGE=PantherLakeFspBinPkg
 export NOTIMESTAMP=
 
 export PTL_BUILD=TRUE

@@ -769,13 +769,13 @@ copy %BUILD_DIR%\FV\ClientBios.fd %BUILD_DIR%\FV\ClientBios_FitPre.fd /Y
     @echo FIXED_FBM_LOCATION: !FIXED_FBM_LOCATION!
 
     @set BuildFitArgs=%BuildFitArgs% ^
-      -O 0x0C RESERVE 0xA00 ^
+      -O 0x0C RESERVE 0x800 ^
       -O 0x0D !FIXED_FBM_LOCATION! 0x800 ^
       -P 0xA 0x70 0x71 0x1 0x4 0x2a ^
       -T %FIXED_FIT_LOCATION%
   ) else (
     @set BuildFitArgs=%BuildFitArgs% ^
-      -O 0x0C RESERVE 0xA00 ^
+      -O 0x0C RESERVE 0x800 ^
       -P 0xA 0x70 0x71 0x1 0x4 0x2a ^
       -T %FIXED_FIT_LOCATION%
   )
