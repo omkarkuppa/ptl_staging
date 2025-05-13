@@ -140,7 +140,7 @@ LpssUartDriverSupported (
   }
 
   // Validate the size of the Device Path Node
-  if (DevicePathNodeLength (DevicePath) < sizeof (LPSS_UART_ACPI_EXTENDED_DEVICE_PATH)) {
+  if (DevicePathNodeLength (DevicePath) != sizeof (LPSS_UART_ACPI_EXTENDED_DEVICE_PATH)) {
     return EFI_UNSUPPORTED;
   }
 

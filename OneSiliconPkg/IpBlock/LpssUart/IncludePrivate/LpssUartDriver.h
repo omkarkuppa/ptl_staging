@@ -29,6 +29,7 @@
 #define LPSS_UART_NAME             L"LPSS UART Driver Controller #%d"
 #define LPSS_UART_DEV_FROM_THIS(a) CR (a, LPSS_UART_DEV, SerialIoProtocol, LPSS_UART_DEV_SIGNATURE)
 
+#pragma pack (1)
 typedef struct {
   ACPI_EXTENDED_HID_DEVICE_PATH   AcpiExtendedPath;
   CHAR8                           HidString[8];
@@ -36,6 +37,7 @@ typedef struct {
   UINT16                          DeviceId;
   UINT8                           UartIndex;
 } LPSS_UART_ACPI_EXTENDED_DEVICE_PATH;
+#pragma pack ()
 
 typedef struct {
   UINTN                     Signature;
