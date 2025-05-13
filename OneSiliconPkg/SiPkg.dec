@@ -63,6 +63,7 @@ IpBlock/IsClk/AcpiTables
 IpBlock/LpssI2c/Include
 IpBlock/LpssUart/Include
 IpBlock/LpssI3c/Include
+IpBlock/LpssSpi/Include
 IpBlock/P2sb/AcpiTables
 IpBlock/IpPcieSip17/AcpiTables
 IpBlock/Pmc/AcpiTables
@@ -1481,6 +1482,7 @@ gSiPkgTokenSpaceGuid.PcdExtendedBiosRegionSupport    |FALSE|BOOLEAN|0xF000004E
 gSiPkgTokenSpaceGuid.PcdBiosGuardLegacyAcpi          |FALSE|BOOLEAN|0xF000004F
 gSiPkgTokenSpaceGuid.PcdSpiDmaEnable                 |TRUE |BOOLEAN|0xF0000053
 gSiPkgTokenSpaceGuid.PcdWclSupport                   |FALSE|BOOLEAN|0xF0000051
+gSiPkgTokenSpaceGuid.PcdWhPSupport                   |FALSE|BOOLEAN|0xF000005A
 gSiPkgTokenSpaceGuid.PcdFclwPtlSiSupport             |FALSE|BOOLEAN|0xF0000055
 gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove       |TRUE|BOOLEAN|0xF0000056
 gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable   |FALSE|BOOLEAN|0xF0000057
