@@ -676,7 +676,14 @@ UpdatePeiSaPolicyPreMem (
   TishDataHob = (TISH_CONFIG_HOB*) GetFirstGuidHob (&gTishDataHobGuid);
   if (TishDataHob != NULL) {
     if ((TishDataHob->SafeLoadingBiosEnableState == 1) || (TishDataHob->TsegMemoryTestStatus == EFI_SUCCESS)) {
-      TishDataHob->PprRecoveryStatusEnable = 1;
+      TishDataHob->PprRecoveryStatusEnable = SaSetup.PprRunWCHMATS8    ||
+                                             SaSetup.PprRunRetention   ||
+                                             SaSetup.PprRunXMarch      ||
+                                             SaSetup.PprRunXMarchG     ||
+                                             SaSetup.PprRunYMarchShort ||
+                                             SaSetup.PprRunYMarchLong  ||
+                                             SaSetup.PprRunMmrw
+                                             ? 1 : 0;
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SafeLoadingBiosEnableState, MemConfigNoCrc->SafeLoadingBiosEnableState, TishDataHob->SafeLoadingBiosEnableState);
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRecoveryStatusEnable, MemConfigNoCrc->PprRecoveryStatusEnable, TishDataHob->PprRecoveryStatusEnable);
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TsegMemoryTestStatus, MemConfigNoCrc->TsegMemoryTestStatus, TishDataHob->TsegMemoryTestStatus);
