@@ -43,8 +43,8 @@ CHAR16 *mBoardIdIndex[] = {
   L"PTL-H LP5 GCS2",                        // 0x12
   L"TBD",                                   // 0x13
   L"TBD",                                   // 0x14
-  L"TBD",                                   // 0x15
-  L"TBD",                                   // 0x16
+  L"PTL-H LP5 ADK1",                        // 0x15
+  L"PTL-H LP5 ADK2",                        // 0x16
   L"TBD",                                   // 0x17
   L"TBD",                                   // 0x18
   L"TBD",                                   // 0x19
