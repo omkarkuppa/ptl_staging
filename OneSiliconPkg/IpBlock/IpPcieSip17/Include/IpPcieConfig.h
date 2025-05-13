@@ -272,7 +272,8 @@ typedef struct {
   BOOLEAN                    DisableDmiPg;
   BOOLEAN                    ApmsL0sSupported;
   UINT8                      DefaultVc0Mapping;
-  UINT8                      Reserved[8];               ///< Reserved space for future use
+  UINT8                      Pxpsuldcgen;
+  UINT8                      Reserved[7];               ///< Reserved space for future use
 } IP_PCIE_ROOT_PORT_PRIVATE_CONFIG;
 
 /**

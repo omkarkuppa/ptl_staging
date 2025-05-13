@@ -918,6 +918,11 @@ PcieUpdatePrivateConfig (
   }
 
   PcieGetProjectDefaultEqConfiguration (pInst, &pInst->PrivateConfig.Gen3EqSettings, &pInst->PrivateConfig.Gen4EqSettings, &pInst->PrivateConfig.Gen5EqSettings);
+  if (PtlIsPcdH () && pInst->RpIndex > 9) {
+    pInst->PrivateConfig.Pxpsuldcgen = 0;
+  } else {
+    pInst->PrivateConfig.Pxpsuldcgen = 1;
+  }
 }
 /**
   Update Private Config for PCIE IP Instance

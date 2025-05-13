@@ -376,7 +376,7 @@ SipConfigureDynamicClockGating (
   DcgEn2.Bits.pxfruldcgen = 1;
   DcgEn2.Bits.pxftuldcgen = 1;
   DcgEn2.Bits.pxpbuldcgen = 1;
-  DcgEn2.Bits.pxpsuldcgen = 1;
+  DcgEn2.Bits.pxpsuldcgen = pInst->PrivateConfig.Pxpsuldcgen;
   DcgEn2.Bits.pxpiuldcgen = 1;
   IpWrRegWrite (pInst->RegCntxt_Mem_Rcrb, DCGEN2_PCIE_MEM_RCRB_REG, DcgEn2.Data, IpWrRegFlagSize32Bits);
 
