@@ -31,6 +31,15 @@
 #define SEGMENT_ARRAY_PTR(FspElement)  \
   (REGION_SEGMENT *)((UINT8 *)(FspElement) + sizeof (BSPM_ELEMENT))
 
+#define FSPM_UPD_DIGEST_PTR(FspElement, BspSegCount, FspUpdSegCount)  \
+  (UINT8 *)(FspElement) + sizeof (BSPM_ELEMENT) + BspSegCount * sizeof (REGION_SEGMENT) + BspSegCount * BSPM_SUPPORTED_SHAX_HASHSTRUCTS_SIZE + FspUpdSegCount * sizeof (REGION_SEGMENT)
+   
+#define FSPS_UPD_DIGEST_PTR(FspElement, BspSegCount, FspUpdSegCount)  \
+  FSPM_UPD_DIGEST_PTR(FspElement, BspSegCount, FspUpdSegCount) + BSPM_SUPPORTED_SHAX_HASHSTRUCTS_SIZE
+
+#define BSPM_SUPPORTED_SHAX_HASHSTRUCTS_SIZE  \
+  sizeof (SHA384_HASH_STRUCTURE) + sizeof (SHA1_HASH_STRUCTURE) + sizeof (SHA256_HASH_STRUCTURE) + sizeof (SHA256_HASH_STRUCTURE)
+
 //
 // Data structure definitions
 //
@@ -96,21 +105,11 @@ typedef struct {
   UINT64                      TpmBaseAddress;
 
   //
-  // FSP Signing Enabled:  BspSegmentCount and BspDigestData should describe BspPreMem segments and digest
-  // FSP Signing Disabled: BspSegmentCount should be 0, BspDigestData should be NULL
+  // FSP Signing Enabled:  BspSegmentCount should describe BspPreMem segment count
+  // FSP Signing Disabled: BspSegmentCount should be 0
   //
   UINT32                      BspSegmentCount;
-
-  UINT8                       Reserved1[20];
-
-  /* REGION_SEGMENT and SHAX_HASH_STRUCTURE is presnt in the BSPM binary after this (BSPM_ELEMENT)
-     structure in the consecutive oerder. Size of REGION_SEGMENT depends on BspSegmentCount as
-     illustrated below.
-
-     REGION_SEGMENT            BspSegmentArray[SegmentCount];
-     SHAX_HASH_STRUCTURE       BspDigestData;
-
-  */
+  UINT32                      FspConfigRegSegmentCount;
 } BSPM_ELEMENT;
 
 #pragma pack ()
