@@ -78,6 +78,8 @@ HeciControlEntryPoint (
 
   DEBUG ((DEBUG_INFO, "%a %a () - Start\n", HECI_CONTROL_DEBUG, __FUNCTION__));
 
+  PERF_INMODULE_BEGIN ("HeciControlPei");
+
   Status          = EFI_SUCCESS;
   HeciControl     = NULL;
   HeciControlPpi  = NULL;
@@ -92,6 +94,7 @@ HeciControlEntryPoint (
 
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a () - End. HECI Control already installed\n", __FUNCTION__));
+    PERF_INMODULE_END ("HeciControlPei");
     return EFI_SUCCESS;
   }
 
@@ -109,6 +112,7 @@ HeciControlEntryPoint (
     DEBUG ((DEBUG_ERROR, "ME-BIOS: HECI Control PPI Exit - No HECI Transport Installed.\n"));
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_ME_HECI_CONTROL_PPI_EXIT_ERR_HECIDEV); //PostCode (0xE83)
     DEBUG ((DEBUG_INFO, "There are no HECI Transport installed, skip HECI Control installation\n"));
+    PERF_INMODULE_END ("HeciControlPei");
     return EFI_ABORTED;
   }
 
@@ -117,6 +121,7 @@ HeciControlEntryPoint (
     DEBUG ((DEBUG_ERROR, "ME-BIOS: HECI Control PPI Exit - Error by HECI device error.\n"));
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_ME_HECI_CONTROL_PPI_EXIT_ERR_HECIDEV); //PostCode (0xE83)
     DEBUG ((DEBUG_ERROR, "%a () - Memory allocation failed!\n", __FUNCTION__));
+    PERF_INMODULE_END ("HeciControlPei");
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -126,6 +131,7 @@ HeciControlEntryPoint (
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_ME_HECI_CONTROL_PPI_EXIT_ERR_HECIDEV); //PostCode (0xE83)
     DEBUG ((DEBUG_ERROR, "%a () - Memory allocation failed!\n", __FUNCTION__));
     FreePool (HeciControlPpi);
+    PERF_INMODULE_BEGIN ("HeciControlPei");
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -143,6 +149,7 @@ HeciControlEntryPoint (
     DEBUG ((DEBUG_ERROR, "%a () - HeciControll PPI installation failed!\n", __FUNCTION__));
     FreePool (HeciControlPpi);
     FreePool (HeciControl);
+    PERF_INMODULE_END ("HeciControlPei");
     return EFI_ABORTED;
   }
 
@@ -153,6 +160,7 @@ HeciControlEntryPoint (
     DEBUG ((DEBUG_ERROR, "%a Callback installation failed!\n", HECI_CONTROL_DEBUG));
     FreePool (HeciControlPpi);
     FreePool (HeciControl);
+    PERF_INMODULE_END ("HeciControlPei");
     return EFI_ABORTED;
   }
 
@@ -160,6 +168,7 @@ HeciControlEntryPoint (
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_ME_HECI_CONTROL_PPI_EXIT_SUCCESS); //PostCode (0xE23)
   DEBUG ((DEBUG_INFO, "%a %a () - End\n", HECI_CONTROL_DEBUG, __FUNCTION__));
 
+  PERF_INMODULE_END ("HeciControlPei");
   return Status;
 }
 
@@ -188,6 +197,8 @@ HeciControlReinstallCallback (
   HECI_CONTROL_PRIVATE      *HeciControlOld;
   HECI_CONTROL_PRIVATE      *HeciControl;
 
+  PERF_INMODULE_BEGIN ("HeciControlCallback");
+
   DEBUG ((DEBUG_INFO, "%a %a () - Start\n", HECI_CONTROL_DEBUG, __FUNCTION__));
 
   Status = PeiServicesLocatePpi (
@@ -198,12 +209,14 @@ HeciControlReinstallCallback (
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a %a () - HECI Control is not installed!\n", HECI_CONTROL_DEBUG, __FUNCTION__));
+    PERF_INMODULE_END ("HeciControlCallback");
     return EFI_NOT_FOUND;
   }
 
   HeciControl = AllocateZeroPool (sizeof (HECI_CONTROL_PRIVATE));
   if (HeciControl == NULL) {
     DEBUG ((DEBUG_ERROR, "%a Memory allocation failed!\n", HECI_CONTROL_DEBUG));
+    PERF_INMODULE_END ("HeciControlCallback");
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -214,6 +227,7 @@ HeciControlReinstallCallback (
   if (HeciControlPpi == NULL) {
     DEBUG ((DEBUG_ERROR, "%a Memory allocation failed!\n", HECI_CONTROL_DEBUG));
     FreePool (HeciControl);
+    PERF_INMODULE_END ("HeciControlCallback");
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -226,11 +240,13 @@ HeciControlReinstallCallback (
     DEBUG ((DEBUG_ERROR, "%a HeciControll PPI reinstallation failed!\n", HECI_CONTROL_DEBUG));
     FreePool (HeciControl);
     FreePool (HeciControlPpi);
+    PERF_INMODULE_END ("HeciControlCallback");
     return EFI_ABORTED;
   }
 
   DEBUG ((DEBUG_INFO, "%a () - Reinstalled HECI Control PPI\n", HECI_CONTROL_DEBUG));
   DEBUG ((DEBUG_INFO, "%a %a () - End\n", HECI_CONTROL_DEBUG, __FUNCTION__));
 
+  PERF_INMODULE_END ("HeciControlCallback");
   return EFI_SUCCESS;
 }

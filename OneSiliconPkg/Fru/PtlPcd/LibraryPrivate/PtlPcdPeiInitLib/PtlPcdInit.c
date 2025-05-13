@@ -168,7 +168,9 @@ PtlPcdInit (
   BuildPchInfoHob ();
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_POSTMEM_INIT_PCIE_RP);
+  PERF_INMODULE_BEGIN ("PcdPcieRpInit");
   PtlPcdPcieRpInit (SiPolicy);
+  PERF_INMODULE_END ("PcdPcieRpInit");
   //
   // Handle PCH PSF Disable
   //

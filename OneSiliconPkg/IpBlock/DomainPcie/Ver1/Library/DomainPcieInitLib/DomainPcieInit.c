@@ -58,6 +58,7 @@
 #include <Library/PeiVtdInitFruLib.h>
 #include <Library/HobLib.h>
 #include <Register/PmcRegs.h>
+#include <Library/PerformanceLib.h>
 #define PCH_PWRM_BASE_ADDRESS 0xFE000000 // PMC MBAR MMIO base address
 
 #define TIMEOUT_100_MS  100000000  // 100 ms in Nanoseconds
@@ -996,7 +997,9 @@ DomainPcieInstSingleInit (
   //
   pInst->PcieRpCommonConfig.PcieSpeed = MaxLinkSpeed;
 
+  PERF_INMODULE_BEGIN ("IpPcieRpSpdChangeStart");
   IpPcieRpSpeedChangeStart (pInst, MaxLinkSpeed);
+  PERF_INMODULE_END ("IpPcieRpSpdChangeStart");
 
   TimeStampAfterPcieLinkRetrainSet = GetTimeInNanoSecond (GetPerformanceCounter ());
 

@@ -39,6 +39,7 @@ IoLib
 PciSegmentLib
 VtdInfoLib
 PeiVtdInitFruLib
+PerformanceLib
 
 [Packages]
 MdePkg/MdePkg.dec

@@ -460,9 +460,9 @@ TempRamExit (
   //
   // Disable CAR
   //
-  PERF_INMODULE_BEGIN ("DisabelCacheAsRam");
+  PERF_INMODULE_BEGIN ("DisableCacheAsRam");
   DisableCacheAsRam (TRUE);
-  PERF_INMODULE_END ("DisabelCacheAsRam");
+  PERF_INMODULE_END ("DisableCacheAsRam");
   //
   // Program MTRR values.
   //

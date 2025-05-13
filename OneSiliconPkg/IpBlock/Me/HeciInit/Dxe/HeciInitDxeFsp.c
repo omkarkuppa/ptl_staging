@@ -27,6 +27,7 @@
 #include <Library/DxeMeLib.h>
 #include <Library/HeciInitLib.h>
 #include <Library/MeChipsetLib.h>
+#include <Library/PerformanceLib.h>
 #include "MeInit.h"
 
 EFI_EVENT mExitBootServicesEvent     = NULL;
@@ -111,6 +112,7 @@ HeciInitDxeFspEntryPoint (
 
   DEBUG ((DEBUG_INFO, "%a () Start\n", __FUNCTION__));
 
+  PERF_INMODULE_BEGIN ("HeciInitDxeFsp");
   ///
   /// Create a Ready to Boot event.
   ///
@@ -146,6 +148,8 @@ HeciInitDxeFspEntryPoint (
                   &mExitBootServicesEvent
                   );
   ASSERT_EFI_ERROR (Status);
+
+  PERF_INMODULE_END ("HeciInitDxeFsp");
 
   DEBUG ((DEBUG_INFO, "%a () End\n", __FUNCTION__));
   return EFI_SUCCESS;

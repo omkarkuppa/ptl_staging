@@ -78,12 +78,15 @@ InitializeHeciTransportCallback (
   UINTN                          HeciTransportInstance;
   BOOLEAN                        Reinstall;
 
+  PERF_INMODULE_BEGIN ("HeciTransportCallback");
+
   Reinstall = FALSE;
 
   DEBUG ((DEBUG_INFO, "%a %a () - Start\n", HECI_TRANSPORT_DEBUG, __FUNCTION__));
 
   if (Ppi == NULL) {
     DEBUG ((DEBUG_ERROR, "%a HeciAccess is NULL!\n", HECI_TRANSPORT_DEBUG));
+    PERF_INMODULE_END ("HeciTransportCallback");
     return EFI_INVALID_PARAMETER;
   }
 
@@ -92,6 +95,7 @@ InitializeHeciTransportCallback (
   HeciTransportPpi = (EFI_PEI_PPI_DESCRIPTOR *) AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
   if (HeciTransportPpi == NULL) {
     DEBUG ((DEBUG_ERROR, "%a Memory allocation failed!\n", HECI_TRANSPORT_DEBUG));
+    PERF_INMODULE_END ("HeciTransportCallback");
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -99,6 +103,7 @@ InitializeHeciTransportCallback (
   if (HeciTransportPrivate == NULL) {
     DEBUG ((DEBUG_ERROR, "%a Memory allocation failed!\n", HECI_TRANSPORT_DEBUG));
     FreePool (HeciTransportPpi);
+    PERF_INMODULE_END ("HeciTransportCallback");
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -119,6 +124,7 @@ InitializeHeciTransportCallback (
       DEBUG ((DEBUG_ERROR, "%a Initialization failed!\n", HECI_TRANSPORT_DEBUG));
       FreePool (HeciTransportPpi);
       FreePool (HeciTransportPrivate);
+      PERF_INMODULE_END ("HeciTransportCallback");
       return Status;
     }
 
@@ -143,6 +149,7 @@ InitializeHeciTransportCallback (
       DEBUG ((DEBUG_ERROR, "%a PPI with given index could not be found!\n", HECI_TRANSPORT_DEBUG));
       FreePool (HeciTransportPpi);
       FreePool (HeciTransportPrivate);
+      PERF_INMODULE_END ("HeciTransportCallback");
       return Status;
     }
   } else {
@@ -151,6 +158,7 @@ InitializeHeciTransportCallback (
       DEBUG ((DEBUG_ERROR, "%a PPI installation failed!\n", HECI_TRANSPORT_DEBUG));
       FreePool (HeciTransportPpi);
       FreePool (HeciTransportPrivate);
+      PERF_INMODULE_END ("HeciTransportCallback");
       return Status;
     }
   }
@@ -164,6 +172,7 @@ InitializeHeciTransportCallback (
     ));
   DEBUG ((DEBUG_INFO, "%a %a () - End\n", HECI_TRANSPORT_DEBUG, __FUNCTION__));
 
+  PERF_INMODULE_END ("HeciTransportCallback");
   return Status;
 }
 
@@ -189,6 +198,8 @@ HeciTransportEntryPoint (
 
   DEBUG ((DEBUG_INFO, "%a %a () - Start\n", HECI_TRANSPORT_DEBUG, __FUNCTION__));
 
+  PERF_INMODULE_BEGIN ("HeciTransportPei");
+
   Status = PeiServicesLocatePpi (
              &gHeciTransportPpiGuid,
              0,
@@ -197,6 +208,7 @@ HeciTransportEntryPoint (
              );
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a %a () - End. HeciTransport already installed.\n", HECI_TRANSPORT_DEBUG, __FUNCTION__));
+    PERF_INMODULE_END ("HeciTransportPei");
     return EFI_SUCCESS;
   }
 
@@ -206,10 +218,11 @@ HeciTransportEntryPoint (
   Status = PeiServicesNotifyPpi (&mInitializeHeciTransportPpiNotifyList);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "%a Notify registration failed! Status: %r\n", HECI_TRANSPORT_DEBUG, Status));
+    PERF_INMODULE_END ("HeciTransportPei");
     return Status;
   }
 
   DEBUG ((DEBUG_INFO, "%a %a () - Exit: %r\n", HECI_TRANSPORT_DEBUG, __FUNCTION__, Status));
-
+  PERF_INMODULE_END ("HeciTransportPei");
   return EFI_SUCCESS;
 }

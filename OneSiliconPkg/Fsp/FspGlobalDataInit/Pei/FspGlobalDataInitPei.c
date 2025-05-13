@@ -27,6 +27,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PerformanceLib.h>
 #include <FspsUpd.h>
 
 /**
@@ -75,6 +76,8 @@ FspGlobalDataInitEntryPoint (
   EFI_PEI_PPI_DESCRIPTOR  *PpiDescriptor;
   VOID                    *FsptUpdLocationPpi;
 
+  PERF_INMODULE_BEGIN ("FspGlobalDataInitPei");
+
   Status = EFI_SUCCESS;
   FsptUpdLocationPpi = NULL;
   FspData = GetFspGlobalDataPointer ();
@@ -86,6 +89,7 @@ FspGlobalDataInitEntryPoint (
     FspData = NULL;
     FspData = (FSP_GLOBAL_DATA *) AllocateZeroPool (sizeof (FSP_GLOBAL_DATA));
     if (FspData == NULL) {
+      PERF_INMODULE_END ("FspGlobalDataInitPei");
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -120,6 +124,7 @@ FspGlobalDataInitEntryPoint (
   if (FspData->FspMode == FSP_IN_DISPATCH_MODE) { // FSP_MODE_CHECK
     PpiDescriptor = AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
     if (PpiDescriptor == NULL) {
+      PERF_INMODULE_END ("FspGlobalDataInitPei");
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -136,6 +141,7 @@ FspGlobalDataInitEntryPoint (
     Status = PeiServicesNotifyPpi (&mPeiMemoryDiscoveredNotifyDesc);
     ASSERT_EFI_ERROR (Status);
   }
+  PERF_INMODULE_END ("FspGlobalDataInitPei");
   return Status;
 }
 

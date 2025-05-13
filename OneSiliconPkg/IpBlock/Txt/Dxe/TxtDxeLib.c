@@ -36,6 +36,7 @@
 #include <Register/PmcRegs.h>
 #include <Register/GenerationMsr.h>
 #include <Library/BootGuardLib.h>
+#include <Library/PerformanceLib.h>
 #include <IntelRcStatusCode.h>
 
 
@@ -661,6 +662,7 @@ TxtDxeLibLaunchBiosAcm (
   EFI_PROCESSOR_INFORMATION   ProcContext;
   UINT8                       *ValidProcList;
 
+  PERF_INMODULE_BEGIN("TxtDxeLibLaunchBiosAcm");
   ///
   /// Initialize local variables
   ///
@@ -669,6 +671,7 @@ TxtDxeLibLaunchBiosAcm (
   AlignedAddr      = 0;
 
   if (TxtDxeCtx->TxtInfoData == NULL) {
+    PERF_INMODULE_END("TxtDxeLibLaunchBiosAcm");
     return EFI_INVALID_PARAMETER;
   }
   ///
@@ -687,6 +690,7 @@ TxtDxeLibLaunchBiosAcm (
     ///
     DEBUG ((DEBUG_ERROR, "TXTDXE: BiosAcmBase and BiosAcmSize = 0 from HOB, can not load\n"));
     ASSERT (FALSE);
+    PERF_INMODULE_END("TxtDxeLibLaunchBiosAcm");
     return EFI_NOT_FOUND;
   } else {
     ///
@@ -702,6 +706,7 @@ TxtDxeLibLaunchBiosAcm (
     ///
     DEBUG ((DEBUG_INFO, "TXTDXE: Unable to retrieve Number of Processors\n"));
     ASSERT (FALSE);
+    PERF_INMODULE_END("TxtDxeLibLaunchBiosAcm");
     return Status;
   }
 
@@ -711,6 +716,7 @@ TxtDxeLibLaunchBiosAcm (
   if (CpuCount > NumberOfProcessors) {
     DEBUG ((DEBUG_ERROR, "TXTDXE: Unsupported configuration: Number of logical CPU =%d\n",CpuCount));
     ASSERT (FALSE);
+    PERF_INMODULE_END("TxtDxeLibLaunchBiosAcm");
     return EFI_NOT_FOUND;
   }
 
@@ -721,6 +727,7 @@ TxtDxeLibLaunchBiosAcm (
     ///
     DEBUG ((DEBUG_INFO, "TXTDXE: ValidProcList = NULL\n"));
     ASSERT (FALSE);
+    PERF_INMODULE_END("TxtDxeLibLaunchBiosAcm");
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -744,6 +751,7 @@ TxtDxeLibLaunchBiosAcm (
       DEBUG ((DEBUG_INFO, "TXTDXE: Unable to GetProcessorInfo\n"));
       FreePool (ValidProcList);
       ASSERT (FALSE);
+      PERF_INMODULE_END("TxtDxeLibLaunchBiosAcm");
       return Status;
     }
     if (ProcContext.StatusFlag & PROCESSOR_ENABLED_BIT) {
@@ -782,7 +790,9 @@ TxtDxeLibLaunchBiosAcm (
   DEBUG ((DEBUG_INFO, "TXTDXE::Running of LaunchBiosAcm\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
   OldTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
+  PERF_INMODULE_BEGIN("LaunchBiosAcm");
   LaunchBiosAcm (AlignedAddr, AcmFunction);
+  PERF_INMODULE_END("LaunchBiosAcm");
   gBS->RestoreTPL (OldTpl);
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
 
@@ -790,6 +800,7 @@ TxtDxeLibLaunchBiosAcm (
   ///
   /// Restart APs that were enabled before this function was called
   ///
+  PERF_INMODULE_BEGIN("RestartAPs");
   for (Index = 0; Index < CpuCount; Index++) {
     if ((Index != MyCpuNumber) & (ValidProcList[Index])) {
       DEBUG ((DEBUG_INFO, "TXTDXE: restart AP Index=%x\n", Index));
@@ -802,11 +813,13 @@ TxtDxeLibLaunchBiosAcm (
       ASSERT_EFI_ERROR (Status);
     }
   }
+  PERF_INMODULE_END("RestartAPs");
 
   DisableSmiSources (TxtDxeCtx, FALSE);
 
   FreePool (ValidProcList);
 
+  PERF_INMODULE_END("TxtDxeLibLaunchBiosAcm");
   return EFI_SUCCESS;
 }
 

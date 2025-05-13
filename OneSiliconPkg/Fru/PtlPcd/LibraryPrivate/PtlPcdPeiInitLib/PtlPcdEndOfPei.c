@@ -164,7 +164,9 @@ PtlPcdOnEndOfPei (
   // Configure P2SB at the end of EndOfPei
   // This must be done before POSTBOOT_SAI programming.
   //
+  PERF_INMODULE_BEGIN ("PtlPcdP2sbLock");
   PtlPcdP2sbLock (SiPolicy);
+  PERF_INMODULE_END ("PtlPcdP2sbLock");
   if (!PtlPcdIsSecondP2SbHidden ()) {
     PtlPcdSecondP2sbLock (SiPolicy);
   }

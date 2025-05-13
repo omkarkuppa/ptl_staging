@@ -290,16 +290,22 @@ SiInitOnEndOfPei (
   //
   // Initializes PCH after End of Pei
   //
+  PERF_INMODULE_BEGIN ("PtlPcdOnEndOfPei");
   PtlPcdOnEndOfPei ();
+  PERF_INMODULE_END ("PtlPcdOnEndOfPei");
 
   DEBUG ((DEBUG_INFO, "SubsystemID programming on Pch Pcie rootports\n"));
+  PERF_INMODULE_BEGIN ("SiPcieProgramSsid");
   SiPcieProgramSsid (SiConfig);
+  PERF_INMODULE_END ("SiPcieProgramSsid");
 
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "Set WAC and CP for IMRGLOBAL_BM\n"));
+  PERF_INMODULE_BEGIN ("SetImrGlobalSai");
   SetImrGlobalSai ();
+  PERF_INMODULE_END ("SetImrGlobalSai");
 
   if ((BootMode == BOOT_ON_FLASH_UPDATE) && (SiConfig->SkipBiosDoneWhenFwUpdate)) {
     DEBUG ((DEBUG_INFO, "Skip BIOS_DONE when updating flash.\n"));
@@ -310,7 +316,9 @@ SiInitOnEndOfPei (
       SetBiosDone ();
   }
 
+  PERF_INMODULE_BEGIN ("CpuInitAtEndOfPei");
   CpuInitAtEndOfPei ();
+  PERF_INMODULE_END ("CpuInitAtEndOfPei");
 
   //
   // Set BIOS_RESET_CPL to indicate BIOS initialization completed
@@ -320,14 +328,18 @@ SiInitOnEndOfPei (
   ///
   /// Set BIOS_RESET_CPL
   ///
+  PERF_INMODULE_BEGIN ("SetBiosResetCpl");
   SetBiosResetCpl ();
+  PERF_INMODULE_END ("SetBiosResetCpl");
 
   ///
   /// Graphics PM initialization after BIOS_RESET_CPL
   ///
   DEBUG ((DEBUG_INFO, "IGpuPmInit Start\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_IGPU_PM_INIT_START); //PostCode (0xA63)
+  PERF_INMODULE_BEGIN ("IGpuPmInit");
   IGpuPmInit (IGpuPreMemConfig, IGpuConfig);
+  PERF_INMODULE_END ("IGpuPmInit");
 
   ///
   /// Enable DMA buffer for IGD VT-d
@@ -340,7 +352,9 @@ SiInitOnEndOfPei (
   ///
   DEBUG ((DEBUG_INFO, "Initializing Pei Display\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_PEI_DISPLAY_INIT); //PostCode (0xA03)
+  PERF_INMODULE_BEGIN ("PeiDisplayInit");
   IGpuPeiDisplayInit (IGpuPreMemConfig, IGpuConfig);
+  PERF_INMODULE_END ("PeiDisplayInit");
   PeiServicesInstallPpi (&mIDispCodecReadyPpi);
 
   ///
@@ -371,7 +385,9 @@ SiInitOnEndOfPei (
   // Clear Graphics Temp BARs at End Of PEI
   //
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_S3_RESUME_CALLBACK_EXIT); //PostCode (0xA7F)
+  PERF_INMODULE_BEGIN ("IGpuEndOfPei");
   IGpuEndOfPei ();
+  PERF_INMODULE_END ("IGpuEndOfPei");
 
   //
   // PMON populate discovery table
@@ -792,7 +808,9 @@ SiInitPostMemOnPolicy (
       if (pInst->PcieRpCommonConfig.EnableDtr) {
         MaxLinkSpeed = PcieDtrSpeedDetermine (pInst, MaxLinkSpeed);
       }
+      PERF_INMODULE_BEGIN ("IpPcieRpSpdChangeEnd");
       IpPcieRpSpeedChangeEnd (pInst, MaxLinkSpeed, PcieGetTimeoutValue ());
+      PERF_INMODULE_END ("IpPcieRpSpdChangeEnd");
     }
     SipLockCapRegisters (pInst);
     GuidHob = GetNextGuidHob (&gIpPcieInstHobGuid, GET_NEXT_HOB(GuidHob));

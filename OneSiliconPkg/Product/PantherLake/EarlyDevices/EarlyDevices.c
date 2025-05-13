@@ -36,6 +36,7 @@
 #include <Library/PciIoLib.h>
 #include <Defines/PcdPchBdfAssignment.h>
 #include <Library/PreSiliconEnvDetectLib.h>
+#include <Library/PerformanceLib.h>
 #include <Ppi/MemoryDiscovered.h>
 
 EFI_STATUS
@@ -188,6 +189,7 @@ EarlyDevicesEntryPoint (
   EDKII_PCI_DEVICE_PPI                *SmbusPpi;
   EFI_PEI_PPI_DESCRIPTOR              *SmbusPpiDescriptor;
 
+  PERF_INMODULE_BEGIN ("EarlyDevices");
   CreatePciDeviceIoFromSbdf (
     0,
     0,
@@ -232,5 +234,6 @@ EarlyDevicesEntryPoint (
   EarlyMeInit ();
   HdaInitEarlyPei ();
 
+  PERF_INMODULE_END ("EarlyDevices");
   return EFI_SUCCESS;
 }

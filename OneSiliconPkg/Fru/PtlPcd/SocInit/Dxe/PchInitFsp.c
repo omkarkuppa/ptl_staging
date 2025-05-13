@@ -21,6 +21,7 @@
 #include <Library/DebugLib.h>
 #include <Library/FspCommonLib.h>
 #include <Library/PeiServicesLib.h>
+#include <Library/PerformanceLib.h>
 #include "PchInit.h"
 
 EFI_STATUS
@@ -112,7 +113,9 @@ PchOnPciEnumCompleteFsp (
 {
   DEBUG ((DEBUG_INFO, "PchOnPciEnumCompleteFsp() Start\n"));
 
+  PERF_INMODULE_BEGIN ("PchOnPciEnumCompCommon");
   PchOnPciEnumCompleteCommon ();
+  PERF_INMODULE_END ("PchOnPciEnumCompCommon");
 
   DEBUG ((DEBUG_INFO, "PchOnPciEnumCompleteFsp() End\n"));
 
@@ -129,7 +132,9 @@ PchOnEndOfSiInitFsp (
 {
   DEBUG ((DEBUG_INFO, "PchOnEndOfSiInitFsp() Start\n"));
 
+  PERF_INMODULE_BEGIN ("PchOnEndOfSiInitFsp");
   PchInitEntryPointCommon ();
+  PERF_INMODULE_END ("PchOnEndOfSiInitFsp");
 
   DEBUG ((DEBUG_INFO, "PchOnEndOfSiInitFsp() End\n"));
 

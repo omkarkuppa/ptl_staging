@@ -45,6 +45,7 @@
   MeFruInitLib
   PciIoLib
   FspSerialIoUartDebugHelperLib
+  PerformanceLib
 
 [Packages]
   MdePkg/MdePkg.dec

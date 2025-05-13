@@ -42,6 +42,7 @@
   PcdLib
   PostCodeLib
   Rsc2PostCodeMapLib
+  PerformanceLib
 
 [Packages]
   MdePkg/MdePkg.dec

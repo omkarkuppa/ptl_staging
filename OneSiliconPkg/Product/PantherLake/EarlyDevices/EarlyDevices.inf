@@ -44,6 +44,7 @@
   MeInitLib
   MeFruInitLib
   PciIoLib
+  PerformanceLib
 
 [Packages]
   MdePkg/MdePkg.dec

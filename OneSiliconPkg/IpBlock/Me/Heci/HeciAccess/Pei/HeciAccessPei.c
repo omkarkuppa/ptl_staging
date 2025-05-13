@@ -91,6 +91,8 @@ ReinstallHeciAccessPpis (
   UINTN                     PpiIndex;
   VOID                      *MemoryDiscoveredPpi;
 
+  PERF_INMODULE_BEGIN ("ReinstallHeciAccessPpis");
+
   DEBUG ((DEBUG_INFO, "%a %a () - Start\n", HECI_ACCESS_DEBUG, __FUNCTION__));
 
   Status = PeiServicesLocatePpi (
@@ -101,6 +103,7 @@ ReinstallHeciAccessPpis (
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a Called before memory initialization - Exit\n", HECI_ACCESS_DEBUG));
+    PERF_INMODULE_END ("ReinstallHeciAccessPpis");
     return EFI_ABORTED;
   }
 
@@ -154,6 +157,7 @@ ReinstallHeciAccessPpis (
   DEBUG ((DEBUG_INFO, "%a Reinstalled %d PPIs\n", HECI_ACCESS_DEBUG, PpiIndex));
   DEBUG ((DEBUG_INFO, "%a %a () - Exit\n", HECI_ACCESS_DEBUG, __FUNCTION__));
 
+  PERF_INMODULE_END ("ReinstallHeciAccessPpis");
   return EFI_SUCCESS;
 }
 
@@ -267,6 +271,8 @@ HeciAccessEntryPoint (
 
   DEBUG ((DEBUG_INFO, "%a %a () - Start\n", HECI_ACCESS_DEBUG, __FUNCTION__));
 
+  PERF_INMODULE_BEGIN ("HeciAccessPei");
+
   Status = PeiServicesLocatePpi (
              &gHeciAccessPpiGuid,
              0,
@@ -275,11 +281,13 @@ HeciAccessEntryPoint (
              );
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a %a () - End. HeciAccess already installed.\n", HECI_ACCESS_DEBUG, __FUNCTION__));
+    PERF_INMODULE_END ("HeciAccessPei");
     return EFI_SUCCESS;
   }
 
   if (PmcIsDwrBootMode ()) {
     DEBUG ((DEBUG_WARN, "%a DWR detected - Exit\n", HECI_ACCESS_DEBUG));
+    PERF_INMODULE_END ("HeciAccessPei");
     return EFI_SUCCESS;
   }
 
@@ -291,14 +299,17 @@ HeciAccessEntryPoint (
     Status = PeiServicesNotifyPpi (&mReinitializeHeciAccessNotifyList);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_WARN, "%a Notify registration failed! Status: %r.\n", HECI_ACCESS_DEBUG, Status));
+      PERF_INMODULE_END ("HeciAccessPei");
       return Status;
     }
   } else {
     DEBUG ((DEBUG_ERROR, "%a Initialization failed! Status: %r\n", HECI_ACCESS_DEBUG, Status));
+    PERF_INMODULE_END ("HeciAccessPei");
     return Status;
   }
 
   DEBUG ((DEBUG_INFO, "%a %a () - Exit: %r.\n", HECI_ACCESS_DEBUG, __FUNCTION__, Status));
 
+  PERF_INMODULE_END ("HeciAccessPei");
   return Status;
 }

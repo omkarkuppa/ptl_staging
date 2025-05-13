@@ -33,6 +33,7 @@
 #include <Library/ReportStatusCodeLib.h>
 #include <Library/PciSegmentLib.h>
 #include <Library/DxeSaInitFruLib.h>
+#include <Library/PerformanceLib.h>
 
 
 /**
@@ -84,6 +85,8 @@ SiInitEntryPointDxeFsp (
 
   DEBUG ((DEBUG_INFO, "SiInitEntryPointDxeFsp Start\n"));
 
+  PERF_INMODULE_BEGIN ("SiInitDxeFsp");
+
   ///
   /// Create PCI Enumeration Completed callback for Silicon
   ///
@@ -117,6 +120,8 @@ SiInitEntryPointDxeFsp (
       );
   }
   ASSERT_EFI_ERROR (Status);
+
+  PERF_INMODULE_END ("SiInitDxeFsp");
 
   DEBUG ((DEBUG_INFO, "SiInitEntryPointDxeFsp End\n"));
 

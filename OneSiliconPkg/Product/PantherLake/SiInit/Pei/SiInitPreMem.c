@@ -651,7 +651,9 @@ SiInitPreMemOnPolicy (
   InstallMrcCallback ();
   PERF_INMODULE_END ("InstallMrcCallback");
 
+  PERF_INMODULE_BEGIN ("PtlPcdOnMemoryDiscovered");
   PtlPcdOnMemoryDiscovered();
+  PERF_INMODULE_END ("PtlPcdOnMemoryDiscovered");
 
   DEBUG ((DEBUG_INFO, "SiInitPreMemOnPolicy() - End\n"));
   return EFI_SUCCESS;
@@ -822,6 +824,7 @@ ResetMemoryAddressOneSilicon (
   FSP_GLOBAL_DATA                *FspData;
   EFI_PHYSICAL_ADDRESS           FsptUpdAddress;
 
+  PERF_INMODULE_BEGIN ("ResetMemAddressOneSi");
   FspData = NULL;
 
   DEBUG ((DEBUG_INFO, "Reset RpList\n"));
@@ -863,6 +866,7 @@ ResetMemoryAddressOneSilicon (
     }
   }
 
+  PERF_INMODULE_END ("ResetMemAddressOneSi");
   return EFI_SUCCESS;
 }
 

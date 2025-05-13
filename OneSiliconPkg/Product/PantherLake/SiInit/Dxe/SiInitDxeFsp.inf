@@ -47,6 +47,7 @@ HobLib
 ReportStatusCodeLib
 DxeSaInitFruLib
 HostBridgeInfoFruLib
+PerformanceLib
 
 [Packages]
 MdePkg/MdePkg.dec

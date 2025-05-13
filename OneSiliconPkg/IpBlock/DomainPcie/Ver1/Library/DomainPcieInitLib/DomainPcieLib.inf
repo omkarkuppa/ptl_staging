@@ -43,6 +43,7 @@
   BasePcieHelperLib
   PeiItssLib
   P2SbSocLib
+  PerformanceLib
 
 [Packages]
   MdePkg/MdePkg.dec

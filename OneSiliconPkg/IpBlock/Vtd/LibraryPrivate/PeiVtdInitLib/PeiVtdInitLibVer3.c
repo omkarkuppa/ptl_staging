@@ -35,6 +35,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Register/VtdRegs.h>
 #include <Library/PeiVtdInitFruLib.h>
+#include <Library/PerformanceLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -87,6 +88,8 @@ VtdEnableDmaBuffer (
 
   DEBUG ((DEBUG_INFO, "%a(%d) - start\n", __FUNCTION__, VtdEngineNumber));
 
+  PERF_INMODULE_BEGIN("VtdEnableDmaBuffer");
+
   Status = PeiServicesLocatePpi (
              &gSiPreMemPolicyPpiGuid,
              0,
@@ -95,22 +98,26 @@ VtdEnableDmaBuffer (
              );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
+    PERF_INMODULE_END ("VtdEnableDmaBuffer");
     return Status;
   }
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gVtdConfigGuid, (VOID *) &Vtd);
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
+    PERF_INMODULE_END ("VtdEnableDmaBuffer");
     return Status;
   }
 
   if (IsVtdDisabled(Vtd)) {
     DEBUG ((DEBUG_WARN, "VT-d disabled\n"));
+    PERF_INMODULE_END ("VtdEnableDmaBuffer");
     return EFI_UNSUPPORTED;
   }
 
   if (!IsVtdEngineEnabled (VtdEngineNumber)) {
     DEBUG ((DEBUG_WARN, "VT-d engine %d disabled\n", VtdEngineNumber));
+    PERF_INMODULE_END ("VtdEnableDmaBuffer");
     return EFI_UNSUPPORTED;
   }
 
@@ -131,6 +138,7 @@ VtdEnableDmaBuffer (
     DEBUG ((DEBUG_WARN, "DMA buffer for VT-d engine %d not enabled, status: %r\n", VtdEngineNumber, Status));
   }
 
+  PERF_INMODULE_END ("VtdEnableDmaBuffer");
   return Status;
 }
 

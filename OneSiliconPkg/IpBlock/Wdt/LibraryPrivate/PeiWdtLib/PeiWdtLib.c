@@ -29,6 +29,7 @@
 #include <Ppi/PlatformSpecificResetNotification.h>
 #include <WatchDogConfig.h>
 #include <Register/PmcRegs.h>
+#include <Library/PerformanceLib.h>
 
 STATIC EFI_GUID mResetCallbackPtrGuid = { 0x1c9057fb, 0x1f2c, 0x4219, { 0xac, 0xf8, 0xbe, 0xa3, 0x57, 0xe4, 0x7f, 0xdf }};
 
@@ -197,6 +198,8 @@ ResetHandlerRegisterAfterMemoryDiscovered (
   EFI_HOB_GUID_TYPE               *GuidHob;
   RESET_CALLBACK_PTR_HOB          *PtrHob;
 
+  PERF_INMODULE_BEGIN ("WdtResethandler");
+
   Status = PeiServicesLocatePpi (
             &gEdkiiPlatformSpecificResetNotificationPpiGuid,
             0,
@@ -211,12 +214,14 @@ ResetHandlerRegisterAfterMemoryDiscovered (
     GuidHob = GetFirstGuidHob (&mResetCallbackPtrGuid);
     if (GuidHob == NULL) {
       ASSERT (FALSE);
+      PERF_INMODULE_END ("WdtResethandler");
       return EFI_NOT_FOUND;
     }
     PtrHob = (RESET_CALLBACK_PTR_HOB *) GET_GUID_HOB_DATA (GuidHob);
     ResetNotify->UnregisterResetNotify (ResetNotify, PtrHob->ResetFunction);
     ResetNotify->RegisterResetNotify (ResetNotify, WdtResetNotificationCallback);
   }
+  PERF_INMODULE_END ("WdtResethandler");
   return EFI_SUCCESS;
 }
 

@@ -294,6 +294,7 @@ static EFI_PEI_NOTIFY_DESCRIPTOR  mReinitializeGpioPpiNotifyList = {
                                 EFI_PEI_PPI_DESCRIPTOR_PPI bit set in the Flags field.
   @retval EFI_OUT_OF_RESOURCES  There is no additional space in the PPI database.
 **/
+///Intel
 EFI_STATUS
 EFIAPI
 GpioV2PpiPeiEntryPoint (

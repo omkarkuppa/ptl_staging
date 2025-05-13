@@ -28,6 +28,7 @@
 #include <Ppi/FspRsc2PostCodeMapService.h>
 #include <Library/PostCodeLib.h>
 #include <Library/Rsc2PostCodeMapLib.h>
+#include <Library/PerformanceLib.h>
 
 
 
@@ -75,8 +76,10 @@ FspRsc2PostCodeMapServiceEntryPoint (
 {
   EFI_STATUS               Status;
 
+  PERF_INMODULE_BEGIN ("FspRsc2PostCodeMapServicePei");
   Status = PeiServicesInstallPpi (&mPpiList[0]);
   ASSERT_EFI_ERROR (Status);
 
+  PERF_INMODULE_END ("FspRsc2PostCodeMapServicePei");
   return EFI_SUCCESS;
 }

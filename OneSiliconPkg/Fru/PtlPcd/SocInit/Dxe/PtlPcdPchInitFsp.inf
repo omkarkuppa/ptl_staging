@@ -65,7 +65,7 @@ LpssControllerInfoLib
 LpssI2cSocLib
 P2sbPrivateLib
 GpioV2AccessLib
-
+PerformanceLib
 
 [Packages]
 MdePkg/MdePkg.dec
