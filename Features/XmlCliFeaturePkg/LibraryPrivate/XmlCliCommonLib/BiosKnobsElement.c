@@ -1827,6 +1827,7 @@ GenerateReadonlyKnobs (
             continue;
           } else {
             VarSize = KnobBinHdr->NvarSize;
+            DataPtr = (VOID*)(UINTN)KnobParamData->CurrGetSetVarBuffer;
           }
         } else {
           DataPtr = (VOID*)(UINTN)KnobParamData->CurrGetSetVarBuffer;
