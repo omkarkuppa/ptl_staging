@@ -847,7 +847,7 @@ LpssSpiInitializeWriteRead (
   //
   // 3. Spi initalization
   //
-  LpssSpiControllerBusInit (*SpiBaseAddress, (UINT32) Frequency, ClockIdlePolarity, ClockPhase, CsActivePolarity);
+  LpssSpiControllerBusInit (*SpiBaseAddress, (UINT32) Frequency, ClockPhase, ClockIdlePolarity, CsActivePolarity);
   //
   // 4. Make sure SPI is not running
   //
