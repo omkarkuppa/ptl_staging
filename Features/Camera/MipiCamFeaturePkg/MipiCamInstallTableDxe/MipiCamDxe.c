@@ -1018,7 +1018,7 @@ LoadAcpiTables (
         DEBUG ((DEBUG_INFO, "Mipi Camera: Found Mipi Camera SSDT signature.\n"));
 
         // Update the MipiCamNvs.asl Operation Region to the allocated address
-        for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length) - sizeof(*Signature) ; CurrPtr++) {
+        for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); CurrPtr < ((UINT8 *) TableHeader + TableHeader->Length) - sizeof(*Signature) ; CurrPtr++) {
           Signature = (UINT32 *) (CurrPtr + 1);
           if (*Signature == SIGNATURE_32 ('P', 'C', '0', 'X')) {  //Update PchScope
             *Signature = MipiPchScope;
