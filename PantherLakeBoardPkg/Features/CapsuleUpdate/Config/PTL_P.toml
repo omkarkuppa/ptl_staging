@@ -160,7 +160,7 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
 
     [Firmware.Fsp.Offset.Resiliency.Debug.Default]
       FspS  = { Offset = '0x00D40000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00DA0000', Size = '0x00100000' }
+      FspM  = { Offset = '0x00DA0000', Size = '0x000F0000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
       FspRV = { Offset = '0x00FFFFF0', Size = '0x00000010' }
