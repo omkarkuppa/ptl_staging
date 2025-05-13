@@ -217,14 +217,22 @@ set WORKSPACE_FSP_BIN=%WORKSPACE%\Intel
 @set FSPBINARYTIMESTAMP=%time%
 @if %SILENT_MODE% EQU TRUE goto FspSilent
 
-call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOption% %FSP_BUILD_PARAMETER%
+@if %FSP_SIGNED% EQU TRUE (
+  call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOption% %FSP_BUILD_PARAMETER% fspsigned
+) else (
+  call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOption% %FSP_BUILD_PARAMETER%
+)
 @if %errorlevel% NEQ 0 (
   @goto FspBuildEnd
 )
 @goto FspBuildEnd
 
 :FspSilent
-call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOption% %FSP_BUILD_PARAMETER% 1>> %WORKSPACE%\Build.log 2>&1
+@if %FSP_SIGNED% EQU TRUE (
+ call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOption% %FSP_BUILD_PARAMETER% % 1 fspsigned >> %WORKSPACE%\Build.log 2>&1
+) else (
+  call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOption% %FSP_BUILD_PARAMETER% % 1 >> %WORKSPACE%\Build.log 2>&1
+)
 
 :FspBuildEnd
 @if %ERRORLEVEL% NEQ 0 (
