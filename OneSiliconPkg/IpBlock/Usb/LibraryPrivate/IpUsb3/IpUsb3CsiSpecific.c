@@ -703,10 +703,7 @@ IpUsb3ApplyTuningList (
 
       case IpUsb3TuningParamIdSsBackbonePxpTrunkClkGtEn:
         if (pTuningList[Index].ParamData > 0xF) {
-          PRINT_ERROR (
-            "%s - Invalid tuning value provided to IpUsb3TuningParamIdSsBackbonePxpTrunkClkGtEn\n",
-            __FUNCTION__
-            );
+          PRINT_ERROR ("%s - Invalid tuning value provided to IpUsb3TuningParamIdSsBackbonePxpTrunkClkGtEn\n", __FUNCTION__);
           return IpCsiStsErrorBadParam;
         }
 
@@ -714,6 +711,30 @@ IpUsb3ApplyTuningList (
                             R_XHCI_CFG_XHCLKGTEN,
                             ~(B_XHCI_CFG_XHCLKGTEN_SSTCGE),
                             ((pTuningList[Index].ParamData << N_XHCI_CFG_XHCLKGTEN_SSTCGE) & B_XHCI_CFG_XHCLKGTEN_SSTCGE));
+        break;
+
+      case IpUsb3TuningParamIdIdleHysteresisScale:
+        if (pTuningList[Index].ParamData > 0x2) {
+          PRINT_ERROR ("%s - Invalid tuning value provided to IpUsb3TuningParamIdIdleHysteresisScale\n", __FUNCTION__);
+          return IpCsiStsErrorBadParam;
+        }
+
+        IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem,
+                            R_XHCI_MEM_PWR_SCHED_CTRL2,
+                            ~(B_XHCI_MEM_PWR_SCHED_CTRL2_IDLE_SCALE),
+                            ((pTuningList[Index].ParamData << N_XHCI_MEM_PWR_SCHED_CTRL2_IDLE_SCALE) & B_XHCI_MEM_PWR_SCHED_CTRL2_IDLE_SCALE));
+        break;
+
+      case IpUsb3TuningParamIdMinIdleSpan:
+        if (pTuningList[Index].ParamData > 0xFF) {
+          PRINT_ERROR ("%s - Invalid tuning value provided to IpUsb3TuningParamIdMinIdleSpan\n", __FUNCTION__);
+          return IpCsiStsErrorBadParam;
+        }
+
+        IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem,
+                            R_XHCI_MEM_PWR_SCHED_CTRL0,
+                            ~(B_XHCI_MEM_PWR_SCHED_CTRL0_EIH),
+                            ((pTuningList[Index].ParamData << N_XHCI_MEM_PWR_SCHED_CTRL0_EIH) & B_XHCI_MEM_PWR_SCHED_CTRL0_EIH));
         break;
 
       case IpUsb3TuningParamIdUnknown:

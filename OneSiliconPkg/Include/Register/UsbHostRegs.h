@@ -148,11 +148,15 @@
 #define B_XHCI_MEM_USB2_PROTOCOL_GAP_TIMER_REG_HI_LSTX_GAP_TIME  (BIT23 | BIT22 | BIT21 | BIT20 | BIT19 | BIT18 | BIT17 | BIT16)
 #define N_XHCI_MEM_USB2_PROTOCOL_GAP_TIMER_REG_HI_LSTX_GAP_TIME  16
 #define R_XHCI_MEM_PWR_SCHED_CTRL0              0x8140  ///< HOST_IF_PWR_CTRL_REG0 - Power Scheduler Control 0
-#define B_XHCI_MEM_PWR_SCHED_CTRL0_BPSAW        0xFFF000 ///< FPSAW - Fabric PLL Shutdown Advance Wake
-#define N_XHCI_MEM_PWR_SCHED_CTRL0_BPSAW        12      ///< FPSAW - Fabric PLL Shutdown Advance Wake
+#define B_XHCI_MEM_PWR_SCHED_CTRL0_BPSAW        0xFFF000      ///< FPSAW - Fabric PLL Shutdown Advance Wake
+#define N_XHCI_MEM_PWR_SCHED_CTRL0_BPSAW        12            ///< FPSAW - Fabric PLL Shutdown Advance Wake
+#define B_XHCI_MEM_PWR_SCHED_CTRL0_EIH          0xFF000000    ///< Minimum idle span observed to set power state flags
+#define N_XHCI_MEM_PWR_SCHED_CTRL0_EIH          24            ///< Minimum idle span observed to set power state flags
 #define R_XHCI_MEM_PWR_SCHED_CTRL2              0x8144  ///< HOST_IF_PWR_CTRL_REG1 - Power Scheduler Control 1
-#define B_XHCI_MEM_PWR_SCHED_CTRL2_NDE_SBMSG_EN BIT24   ///< Enable NDE Sideband Messaging
-#define B_XHCI_MEM_PWR_SCHED_CTRL2_HS_INT_IN_ALRM         BIT8    ///< HS Interrupt-IN Alarm
+#define B_XHCI_MEM_PWR_SCHED_CTRL2_NDE_SBMSG_EN      BIT24   ///< Enable NDE Sideband Messaging
+#define B_XHCI_MEM_PWR_SCHED_CTRL2_IDLE_SCALE        (BIT11 | BIT10)  ///< Engine Idle Hysteresis Scale
+#define N_XHCI_MEM_PWR_SCHED_CTRL2_IDLE_SCALE        10               ///< Engine Idle Hysteresis Scale
+#define B_XHCI_MEM_PWR_SCHED_CTRL2_HS_INT_IN_ALRM    BIT8    ///< HS Interrupt-IN Alarm
 #define R_XHCI_MEM_AUX_CTRL_REG2                0x8154  ///< AUX Power Management Control
 #define B_XHCI_MEM_AUX_CTRL_REG2_EN_U2_P3       BIT13   ///< Enable U2 P3 Mode
 #define R_XHCI_MEM_USB_LPM_PARAM                0x8170  ///< USB LPM Parameters

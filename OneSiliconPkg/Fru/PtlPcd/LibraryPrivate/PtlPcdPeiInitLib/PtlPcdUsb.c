@@ -217,7 +217,7 @@ CreateUsbDeviceController (
     P2SbController,
     Pid.PortId.LocalPid,
     0,
-    P2SbMemory,
+    P2SbPrivateConfig,
     P2SbMmioAccess,
     FALSE,
     SbMmioAccess
@@ -552,6 +552,8 @@ PtlPcdUsbHostControllerInit (
     { IpUsb3TuningParamIdGapTimeAfterLsTx,    0x16},
     { IpUsb3TuningParamIdU2ExitLatency,       0x3E8},
     { IpUsb3TuningParamIdHbufWaterMark,       0x2},
+    { IpUsb3TuningParamIdIdleHysteresisScale, 0x1},
+    { IpUsb3TuningParamIdMinIdleSpan,         0x1E},
   };
 
   IP_USB3_FEATURE_LIST_ENTRY  FeatureList[] = {

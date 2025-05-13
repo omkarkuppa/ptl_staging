@@ -155,6 +155,8 @@ typedef enum {
   IpUsb3TuningParamIdU2ExitLatency,             // U2 Device Exit Latency
   IpUsb3TuningParamIdHbufWaterMark,             // HBUF Water Mark
   IpUsb3TuningParamIdSsBackbonePxpTrunkClkGtEn, // SS Backbone PXP Trunk Clock Gate Enable
+  IpUsb3TuningParamIdIdleHysteresisScale,       // Controls the engine idle hysteresis scale
+  IpUsb3TuningParamIdMinIdleSpan,               // Minimum idle time observed from engine to set the power state flags
 } IP_USB3_TUNING_PARAM_ID;
 
 //
