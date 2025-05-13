@@ -119,6 +119,7 @@
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
+  gSiPkgTokenSpaceGuid.PcdEnableFspmCompression                       ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection                 ## CONSUMES
 
 [Sources]

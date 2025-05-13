@@ -75,6 +75,10 @@ InstallMeasurementExcludedFvList (
 
 #define BIOS_INFO_STRUCT_SIZE (BASE_FV_SIZE + FSP_WRAPPER_FV_SIZE + TSN_MAC_ADDRESS_FV_SIZE + EXTENDED_REGION_FV_SIZE)
 
+#if FixedPcdGetBool (PcdSignedFspEnable) == 1
+  #define SIGNED_FSP_EXCLUDE_LIST_SIZE (4)
+#endif
+
 
 /*
   BIOS_INFO structure is the base of the firmware volume layout for Intel platform BIOS implementation
@@ -98,6 +102,19 @@ typedef struct {
   BIOS_INFO_STRUCT  Entry[BIOS_INFO_STRUCT_SIZE];
 } BIOS_INFO;
 #pragma pack ()
+
+#if FixedPcdGetBool (PcdSignedFspEnable) == 1
+EFI_PHYSICAL_ADDRESS SignedFspExcludeList[SIGNED_FSP_EXCLUDE_LIST_SIZE] = {
+    /*FSP-T*/
+    FixedPcdGet32 (PcdFlashFvFspTBase),
+    /*FSP-O*/
+    FixedPcdGet32 (PcdFlashFvFspOBase),
+    /*FSP-M*/
+    FixedPcdGet32 (PcdFlashFvFspMBase),
+    /*BSP-PreMem*/
+    FixedPcdGet32 (PcdFlashFvPreMemoryBase)
+};
+#endif
 
 GLOBAL_REMOVE_IF_UNREFERENCED BIOS_INFO  mBiosInfo = {
   {
@@ -418,6 +435,12 @@ EFI_PEI_NOTIFY_DESCRIPTOR  mSetFspmBaseAfterMemoryDiscovered = {
   (EFI_PEIM_NOTIFY_ENTRY_POINT) SetFspmFvNewBaseAddress
 };
 
+EFI_PEI_NOTIFY_DESCRIPTOR  mInstallExcludelistAfterMemoryDiscovered = {
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  &gEfiPeiMemoryDiscoveredPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) InstallMeasurementExcludedFvList
+};
+
 /**
   Installs BiosInfo Ppi.
 
@@ -474,7 +497,8 @@ BiosInfoEntryPoint (
     AcmPolicySts.Data = MmioRead64 (MMIO_ACM_POLICY_STATUS);
 
     if ((AcmPolicySts.Bits.SCrtmStatus != 0) || GuidHob != NULL) {
-      InstallMeasurementExcludedFvList ();
+      Status = PeiServicesNotifyPpi (&mInstallExcludelistAfterMemoryDiscovered);
+      ASSERT_EFI_ERROR (Status);
     }
 
     //
@@ -529,6 +553,21 @@ InstallMeasurementExcludedFvList (
    - FvLength is filled with the value read FV Header, which has the exact installed size information.
    Note: BiosInfo structure's size values may not be the exact size of actually installed FV (example FSP FVs).
   */
+#if FixedPcdGetBool (PcdSignedFspEnable) == 1
+  IbbFvCount = 0;
+  for (Index = 0; Index < SIGNED_FSP_EXCLUDE_LIST_SIZE; Index++) {
+    if((SignedFspExcludeList [Index] == PcdGet32 (PcdFlashFvFspMBase))) {
+      if(FixedPcdGetBool (PcdEnableFspmCompression) == 1) {
+        SetFspmFvNewBaseAddress ();
+        SignedFspExcludeList [Index] = PcdGet32 (PcdFspmBaseAddress);
+      }
+    }
+    FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) SignedFspExcludeList [Index];
+    FvListTmp [IbbFvCount].FvBase = (EFI_PHYSICAL_ADDRESS) SignedFspExcludeList [Index];
+    FvListTmp [IbbFvCount].FvLength = FvHeader->FvLength;
+    IbbFvCount++;
+  }
+#else
   IbbFvCount = 0;
   for (Index = 0; Index < BiosInfoHeader->EntryCount; Index++) {
     if (BiosInfoStruct [Index].Type != FIT_TYPE_07_BIOS_STARTUP_MODULE) {
@@ -541,6 +580,7 @@ InstallMeasurementExcludedFvList (
       IbbFvCount++;
     }
   }
+#endif
 
   IbbFvPpi = (EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_PPI *) AllocateZeroPool (sizeof (UINT32) + IbbFvCount * sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_FV));
   if (IbbFvPpi == NULL) {
