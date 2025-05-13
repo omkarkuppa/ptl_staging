@@ -109,6 +109,7 @@ typedef struct {
   UINT8        SndwLinkSupport[PCH_MAX_HDA_SNDW_LINK_NUM];
   UINT8        SndwMultilaneSupport[PCH_MAX_HDA_SNDW_MULTILANE_NUM];
   UINT8        OsDebugPort;
+  UINT32       FiaLos;
 } PCH_INFO_HOB;
 
 #pragma pack (pop)

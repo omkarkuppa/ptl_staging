@@ -632,7 +632,7 @@ PcieSipConfigurePtm (
   IN PCIE_ROOT_PORT_DEV  *RpDev,
   IN PTM_CONFIGURATION   *PtmConfig
   );
-  
+
 /**
   Configure 10-Bit Tag
 
@@ -860,7 +860,7 @@ UINT8
 PcieSipGetNegotiatedLinkWidth (
   PCIE_ROOT_PORT_DEV  *RpDev
   );
-  
+
 /**
   Initialize PCIe root ports.
 
@@ -913,7 +913,8 @@ PcieSipConfigureRpfnMapping (
 **/
 VOID
 PcieSipHideDisableRootPorts (
-  IN PCIE_ROOT_PORT_LIST  *RpList
+  IN PCIE_ROOT_PORT_LIST  *RpList,
+  IN UINT32               LosValue
   );
 
 /**

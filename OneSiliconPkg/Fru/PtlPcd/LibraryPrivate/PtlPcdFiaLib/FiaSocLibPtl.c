@@ -245,6 +245,22 @@ PtlPcdFiaGetUsb3LaneNum (
   return (PtlPcdFiaGetLaneOwner (FiaInst, *LaneNum) == PchFiaOwnerUsb3);
 }
 
+VOID
+FiaP5X8GetLosRegister (
+  OUT UINT32* LosValue
+)
+{
+  FIA_INSTANCE                   FiaInst;
+  P2SB_SIDEBAND_REGISTER_ACCESS  FiaSbAccess;
+  P2SB_CONTROLLER                P2SbController;
+  P2SB_PORT_16_ID                P2SBPid;
+
+  P2SBPid.Pid16bit = PTL_H_SID_F2_PID_FIA_P5X8;
+  FiaInst = FiaGetInstance (P2SBPid, &FiaSbAccess, &P2SbController);
+
+  *LosValue = FiaInst.RegisterAccess->Read32 (FiaInst.RegisterAccess, R_PCH_FIA_19_PCR_LOS1_REG_BASE);
+}
+
 /**
   Returns number of FIA lanes
 

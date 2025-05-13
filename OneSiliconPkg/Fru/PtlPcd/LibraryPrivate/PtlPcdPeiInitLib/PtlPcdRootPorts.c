@@ -1619,6 +1619,7 @@ PtlPcdPciePrePolicyInit (
   IP_PCIE_INST                 *pInst;
   UINT8                        Index;
   UINT8                        MaxRootPortNum;
+  UINT32                       LosValue;
 
   PtlPcdRpListPpi = (EFI_PEI_PPI_DESCRIPTOR *) AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
   RpListPrivate = (PCIE_ROOT_PORT_LIST_PRIVATE*) AllocateZeroPool (sizeof (PCIE_ROOT_PORT_LIST_PRIVATE));
@@ -1641,7 +1642,8 @@ PtlPcdPciePrePolicyInit (
   }
 
   PtlPcdPcieInitRpList (RpListPrivate);
-  PcieSipHideDisableRootPorts (&RpListPrivate->RpList);
+  FiaP5X8GetLosRegister (&LosValue);
+  PcieSipHideDisableRootPorts (&RpListPrivate->RpList, LosValue);
   PcieSipEarlyDecodeEnable (&RpListPrivate->RpList);
 
   MaxRootPortNum = GetMaxPciePortNum ();
@@ -1694,6 +1696,7 @@ BuildPcieInfoHob (
   PCIE_ROOT_PORT_DEV_PRIVATE   *RpDevPrivate;
   EFI_STATUS                   Status;
   UINT32                       ControllerIndex;
+  UINT32                       LosValue;
 
   Status = PeiServicesLocatePpi (&gPtlPcdRpListPpiGuid, 0, NULL, (VOID **) &RpListPrivate);
   if (EFI_ERROR (Status)) {
@@ -1701,8 +1704,18 @@ BuildPcieInfoHob (
     return;
   }
 
+  DEBUG ((DEBUG_INFO, "%a start\n", __FUNCTION__));
+
   PchInfoHob->PciePortFuses       = 0;
   PchInfoHob->PciePortLaneEnabled = 0;
+
+  FiaP5X8GetLosRegister (&LosValue);
+
+  if (LosValue == 0x55555555) {
+    PchInfoHob->FiaLos = 0x1;
+  } else if (LosValue == 0xBBBB5555) {
+    PchInfoHob->FiaLos = 0x0;
+  }
 
   RpList = &RpListPrivate->RpList;
   for (Status = RpList->ResetToFirst (RpList, &ControllerDev); Status == EFI_SUCCESS; Status = RpList->GetNextController (RpList, &ControllerDev)) {

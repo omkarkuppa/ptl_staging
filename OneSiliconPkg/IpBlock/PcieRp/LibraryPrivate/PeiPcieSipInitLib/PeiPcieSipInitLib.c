@@ -277,7 +277,6 @@ PcieSipGetControllerBifurcation (
     DEBUG ((DEBUG_ERROR, "Failed to get controller config, defaulting to Pcie4x1\n"));
     return V_PCH_PCIE_CFG_STRPFUSECFG_RPC_1_1_1_1;
   }
-
   return (UINT8)((Data32 & B_PCIE_CFG_STRPFUSECFG_RPC) >> N_PCIE_CFG_STRPFUSECFG_RPC);
 }
 
@@ -916,20 +915,30 @@ PcieSipConfigureRpfnMapping (
 **/
 VOID
 PcieSipHideDisableRootPorts (
-  IN PCIE_ROOT_PORT_LIST  *RpList
+  IN PCIE_ROOT_PORT_LIST  *RpList,
+  IN UINT32               LosValue
   )
 {
   PCIE_ROOT_PORT_DEV  *RpDev;
   PCIE_ROOT_PORT_DEV  *ControllerDev;
   EFI_STATUS          Status;
-  UINT8               RpDisableMask;
+  UINT8               RpDisableMask = 0x0;
 
   DEBUG ((DEBUG_INFO, "%a start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "LosValue = %x\n", LosValue));
 
   for (Status = RpList->ResetToFirst (RpList, &ControllerDev); Status == EFI_SUCCESS; Status = RpList->GetNextController (RpList, &ControllerDev)) {
     switch (PcieSipGetControllerBifurcation (ControllerDev)) {
       case V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4:
-        RpDisableMask = 0xE;
+        if (ControllerDev->Id != 11) {
+          RpDisableMask = 0xE;
+        } else {
+          if (LosValue == 0xBBBB5555) {
+            RpDisableMask = 0x0;
+          } else if (LosValue == 0x55555555) {
+            RpDisableMask = 0x1;
+          }
+        }
         break;
       case V_PCH_PCIE_CFG_STRPFUSECFG_RPC_2_2:
         if (ControllerDev->Id >= 8) {

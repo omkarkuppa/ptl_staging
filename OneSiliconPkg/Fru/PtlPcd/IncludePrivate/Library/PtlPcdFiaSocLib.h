@@ -169,4 +169,9 @@ PtlPcdFiaIsUsb3PortConnected (
   IN UINT32  Usb3PortIndex
   );
 
+VOID
+FiaP5X8GetLosRegister (
+  OUT UINT32* LosValue
+  );
+
 #endif

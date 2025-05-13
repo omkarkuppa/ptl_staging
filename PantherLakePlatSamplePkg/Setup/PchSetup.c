@@ -363,15 +363,21 @@ IsPciePortShadowed (
   Controller = Index / PCH_PCIE_CONTROLLER_PORTS;
   Port = Index % PCH_PCIE_CONTROLLER_PORTS;
 
-  if ((Index == 9) && (PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4)) {
-    return TRUE;
-  } else if ((Port == 1 && Index != 9) && (PchInfoHob->PcieControllerBifurcation[Controller] != V_PCH_PCIE_CFG_STRPFUSECFG_RPC_1_1_1_1)) {
-    return TRUE;
-  } else if ((Port == 2) && ((PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4))) {
-    return TRUE;
-  } else if ((Port == 3) && ((PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4) ||
-                             (PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_2_2))) {
-    return TRUE;
+  if (Index <= 9) {
+    if ((Index == 9) && (PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4)) {
+      return TRUE;
+    } else if ((Port == 1 && Index != 9) && (PchInfoHob->PcieControllerBifurcation[Controller] != V_PCH_PCIE_CFG_STRPFUSECFG_RPC_1_1_1_1)) {
+      return TRUE;
+    } else if (Port == 2 && ((PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4))) {
+      return TRUE;
+    } else if ((Port == 3) && ((PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4) ||
+                              (PchInfoHob->PcieControllerBifurcation[Controller] == V_PCH_PCIE_CFG_STRPFUSECFG_RPC_2_2))) {
+      return TRUE;
+    }
+  } else {
+    if (Index == 11 && PchInfoHob->FiaLos == 0x1) {
+      return TRUE;
+    }
   }
   return FALSE;
 }
@@ -517,9 +523,6 @@ PchSetupPcie (
     } else {
       SetupVolatileData->PciePortCfg[Index] = PCH_RP_AVAILABLE;
     }
-  }
-  for (Index = GetPchMaxPciePortNum (); Index < ARRAY_SIZE (SetupVolatileData->PciePortCfg); Index ++) {
-    SetupVolatileData->PciePortCfg[Index] = PCH_RP_NOT_IMPLEMENTED;
   }
   for (Index = 0; Index < ARRAY_SIZE (SetupVolatileData->PciePortCfg); Index ++) {
     DEBUG ((DEBUG_INFO, "VolatileData.PciePortCfg[%d] = %d\n", Index, SetupVolatileData->PciePortCfg[Index]));
