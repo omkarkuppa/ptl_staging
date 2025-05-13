@@ -20,7 +20,7 @@
 
 #include <Library/IoLib.h>
 #include <Library/DebugLib.h>
-#include <Library/LpssSpiLib.h>
+#include <Library/LpssSpiBaseLib.h>
 #include <IndustryStandard/Pci30.h>
 #include <Register/LpssSpiRegs.h>
 #include <LpssSpiConfig.h>

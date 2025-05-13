@@ -26,7 +26,7 @@
 #include <IndustryStandard/Pci30.h>
 #include <LpssSpiConfig.h>
 #include <Library/IoLib.h>
-#include <Library/LpssSpiLib.h>
+#include <Library/LpssSpiBaseLib.h>
 
 VOID
 LpssSpiEnableMse (

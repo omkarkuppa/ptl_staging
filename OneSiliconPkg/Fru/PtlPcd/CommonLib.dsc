@@ -103,7 +103,8 @@ LpssInitLib|$(PLATFORM_SI_PACKAGE)/Subsystem/Lpss/LpssLib/LpssInitLib.inf
 LpssUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartLib/PeiLpssUartLib.inf
 LpssI3cPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssI3c/LibraryPrivate/PeiDxeSmmI3cPrivateLib/PeiDxeSmmI3cPrivateLib.inf
 LpssControllerInfoLib | $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/LpssControllerInfoLib/PtlPcdLpssControllerInfoLib.inf
-LpssSpiBaseLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssSpi/LibraryPrivate/LpssSpiBaseLib/LpssSpiBaseLib.inf
+LpssSpiBaseLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssSpi/Library/LpssSpiBaseLib/LpssSpiBaseLib.inf
+LpssSpiPrivatelib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssSpi/LibraryPrivate/LpssSpiPrivateLib/LpssSpiPrivateLib.inf
 LpssUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartDebugPropertyPcdLib/LpssUartDebugPropertyPcdLib.inf
 LpssI2cPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssI2c/LibraryPrivate/PeiDxeSmmLpssI2cPrivateLib/PeiDxeSmmLpssI2cPrivateLib.inf
 

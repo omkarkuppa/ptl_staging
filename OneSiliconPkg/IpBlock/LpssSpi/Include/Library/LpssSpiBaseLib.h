@@ -18,8 +18,8 @@
 @par Specification Reference:
 **/
 
-#ifndef _LPSS_SPI_LIB_H_
-#define _LPSS_SPI_LIB_H_
+#ifndef _LPSS_SPI_BASE_LIB_H_
+#define _LPSS_SPI_BASE_LIB_H_
 
 /**
   Configure Initial Chip Select settings
@@ -153,4 +153,4 @@ LpssSpiWriteRead (
   IN BOOLEAN      AssertCs
   );
 
-#endif //_LPSS_SPI_LIB_H_
+#endif //_LPSS_SPI_BASE_LIB_H_

@@ -32,13 +32,11 @@
   DebugLib
   TimerLib
   PciSegmentLib
+  LpssSpiPrivatelib
 
 [Packages]
   MdePkg/MdePkg.dec
   OneSiliconPkg/SiPkg.dec
-  CsiApiPkg/CsiApiPkg.dec
 
 [Sources]
-  LpssSpiPrivateLib.c
   LpssSpiLib.c
-
