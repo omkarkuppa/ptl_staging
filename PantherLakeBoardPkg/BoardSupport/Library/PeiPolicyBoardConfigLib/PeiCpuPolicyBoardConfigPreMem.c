@@ -188,7 +188,11 @@ Exit:
   DEBUG ((DEBUG_INFO, "ACM Module Location: %x\n", *BiosAcmBase));
 
   // found Startup ACM; check for 256KB alignment
-  ASSERT (((((UINTN)(*BiosAcmBase)) & 0x3FFFF) == 0) ? TRUE : FALSE);
+  // note: no longer strictly enforced on PTL+
+  if ((((EFI_PHYSICAL_ADDRESS)(BiosAcmBase)) & (EFI_PHYSICAL_ADDRESS) 0x3FFFF) != 0) {
+    DEBUG ((DEBUG_INFO, "ACM not 256KB aligned\n"));
+    DEBUG ((DEBUG_INFO, "This is okay on PTL+ though\n"));
+  }
 
   return EFI_SUCCESS;
 }
