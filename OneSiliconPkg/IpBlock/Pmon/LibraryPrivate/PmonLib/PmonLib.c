@@ -34,6 +34,7 @@
 #include <Library/PmonDataLib.h>
 #include <Register/CpuGenRegs.h>
 #include <Register/SncuRegs.h>
+#include <Library/IoLib.h>
 
 /**
   Program the PMON allocated memory so that PMON Software can consume it.
@@ -105,16 +106,16 @@ PmonMemoryAddressProgram (
 }
 
 /**
-  Get the register address for PMON block.
+  Get the register address for PMON Global block.
 
-  @param[in]  PmonDiscoveryTableType   The Pmon discovery table type, Global or Unit.
+  @param[in]  PmonDiscoveryTableType   The Pmon discovery table type, Global.
   @param[in]  PortId                   Pmon port id.
   @param[out] OutputData               Output address in bar for the Pmon.
 
   @retval EFI_SUCCESS                  success to get the address
 **/
 EFI_STATUS
-PmonGetAddress (
+PmonGetGlobalAddress (
   IN PMON_DISCOVERY_TABLE_TYPE   PmonDiscoveryTableType,
   IN UINT16                      PortId,
   IN OUT UINT64                  *OutputData
@@ -125,6 +126,53 @@ PmonGetAddress (
   UINT64        RegisterAddress;
   UINT64        AddressOffset;
   UINT64        BarAddress;
+
+  if (OutputData == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  AddressOffset = *OutputData;
+
+  BaseAddress = PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, SA_MC_BUS, SA_MC_DEV, SA_MC_FUN, SAFBAR_HOSTBRIDGE_CFG_REG);
+      BarL = (PciSegmentRead32 (BaseAddress));
+      if ((BarL & DEV0_BAR_EN) == DEV0_BAR_EN) {
+        BarL &= (~DEV0_BAR_EN);
+        BarAddress = BarL | (LShiftU64 (PciSegmentRead32 (BaseAddress + 4), 32));
+        RegisterAddress = BarAddress;
+        RegisterAddress += SAFBAR_MEMORY_ADDRESS (SEGMENT_ID_C_DIE, PortId, AddressOffset);
+        DEBUG ((DEBUG_INFO, "%a: SAFBAR :0x%016lx, RegisterAddress:0x%016lx.\n", __FUNCTION__, BarAddress, RegisterAddress));
+        *OutputData = RegisterAddress;                    
+        return EFI_SUCCESS;
+      } else {
+        DEBUG ((DEBUG_INFO, "%a: SAFBAR is not programmed!\n", __FUNCTION__));
+        return EFI_NOT_READY;
+      }
+}
+
+
+/**
+  Get the register address for PMON Unit block.
+
+  @param[in]  PmonDiscoveryTableType   The Pmon discovery table type, Unit.
+  @param[in]  PortId                   Pmon port id.
+  @param[out] OutputData               Output address in bar for the Pmon.
+  @param[in]  UnitPtr                  The Pmon discovery table address
+
+  @retval EFI_SUCCESS                  success to get the address
+**/
+EFI_STATUS
+PmonGetUnitAddress (
+  IN PMON_DISCOVERY_TABLE_TYPE   PmonDiscoveryTableType,
+  IN UINT16                      PortId,
+  IN OUT UINT64                  *OutputData,
+  IN OUT PMON_UNIT_DISCOVERY     *UnitPtr               
+  )
+{
+  UINT64        BaseAddress;
+  UINT32        BarL;
+  UINT64        RegisterAddress;
+  UINT64        AddressOffset;
+  UINT64        BarAddress;
+  UINT32        UnitCtrlAddr;
 
   if (OutputData == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -147,6 +195,13 @@ PmonGetAddress (
 
         DEBUG ((DEBUG_INFO, "%a: MCHBAR :0x%lx, RegisterAddress:0x%016lx.\n", __FUNCTION__, BarAddress, RegisterAddress));
         *OutputData = RegisterAddress;
+        UnitCtrlAddr = MmioRead32(RegisterAddress);
+        if (UnitCtrlAddr == 0xFFFFFFFF){
+              if (UnitPtr == NULL) {
+                  return EFI_INVALID_PARAMETER;
+              }
+              ZeroMem(UnitPtr, sizeof(PMON_UNIT_DISCOVERY));              
+        }
         return EFI_SUCCESS;
       } else {
         DEBUG ((DEBUG_INFO, "%a: MCHBAR is not programmed!\n", __FUNCTION__));
@@ -166,6 +221,13 @@ PmonGetAddress (
         RegisterAddress += SAFBAR_MEMORY_ADDRESS (SEGMENT_ID_C_DIE, PortId, AddressOffset);
         DEBUG ((DEBUG_INFO, "%a: SAFBAR :0x%016lx, RegisterAddress:0x%016lx.\n", __FUNCTION__, BarAddress, RegisterAddress));
         *OutputData = RegisterAddress;
+        UnitCtrlAddr = MmioRead32(RegisterAddress);
+        if (UnitCtrlAddr == 0xFFFFFFFF){
+              if (UnitPtr == NULL) {
+                  return EFI_INVALID_PARAMETER;
+              }
+              ZeroMem(UnitPtr, sizeof(PMON_UNIT_DISCOVERY));                            
+        }
         return EFI_SUCCESS;
       } else {
         DEBUG ((DEBUG_INFO, "%a: SAFBAR is not programmed!\n", __FUNCTION__));
@@ -258,10 +320,10 @@ PmonPopulateDiscoveryTable (
       //
       GlobalPtr = (PMON_GLOBAL_DISCOVERY*) (UINTN) PmonAddress;
       CopyMem (GlobalPtr, DataPtr, Size);
-      Status = PmonGetAddress (
+      Status = PmonGetGlobalAddress (
                 GLOBAL_DISCOVERY_TABLE,
                 PMON_PORTID_NCU,
-                &GlobalPtr->GlobalControlAddress
+                &GlobalPtr->GlobalControlAddress                
                 );
       if (EFI_ERROR(Status)) {
         GlobalPtr->GlobalControlAddress = INVALID_ADDRESS_64 ;
@@ -280,10 +342,11 @@ PmonPopulateDiscoveryTable (
         while ((Index < GlobalPtr->NumBlockStatusBitsCtrl) && (Size > 0)) {
           if (GetPmonPortSupport ((UINT16)UnitSrcPtr->PmonBlockId)) {
             CopyMem (UnitPtr, UnitSrcPtr, sizeof (PMON_UNIT_DISCOVERY));
-            Status = PmonGetAddress (
+            Status = PmonGetUnitAddress (
               UNIT_DISCOVERY_TABLE,
               (UINT16) UnitPtr->PmonBlockId,
-              &(UnitPtr->UnitControlAddress)
+              &(UnitPtr->UnitControlAddress),
+              UnitPtr            
               );
             if (EFI_ERROR(Status)) {
               UnitPtr->UnitControlAddress = INVALID_ADDRESS_64 ;
