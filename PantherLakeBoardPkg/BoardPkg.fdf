@@ -2151,6 +2151,7 @@ FvNameGuid         = 8B98AB22-E354-42f0-88B9-049810F0FDAA
 
 !include $(PLATFORM_BIN_PACKAGE)/Include/Fdf/FvFwBinaries.fdf
 
+
 !if gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable == TRUE
   !if gBoardModuleTokenSpaceGuid.PcdFspPeiGopDisable == TRUE
     FILE PEIM = 76ed893a-b2f9-4c7d-a05f-1ea170ecf6cd {
