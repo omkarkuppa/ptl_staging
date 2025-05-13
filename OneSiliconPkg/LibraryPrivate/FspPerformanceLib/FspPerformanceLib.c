@@ -30,7 +30,7 @@
 
 //
 // Global array of enum and string pairs
-// Max String size = PEI_PERFORMANCE_STRING_SIZE
+// Max String size = STRING_SIZE = 10 (including null termination)
 //
 FSP_PERF_DATA  FspPerfData[FspMaxPerf] = {
   { FspuGopPerf,     "uGOPInit" },
@@ -53,14 +53,14 @@ CreateFspPerformanceHob (
 
   PerformanceHob = BuildGuidHob (
                                  &gFspPerfHobGuid,
-                                 sizeof (PEI_PERFORMANCE_LOG_ENTRY) * FspMaxPerf
+                                 sizeof (FSP_PERFORMANCE_HOB) * FspMaxPerf
                                  );
   ASSERT (PerformanceHob != NULL);
   if (PerformanceHob == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  ZeroMem ((VOID *)PerformanceHob, sizeof (PEI_PERFORMANCE_LOG_ENTRY) * FspMaxPerf);
+  ZeroMem ((VOID *)PerformanceHob, sizeof (FSP_PERFORMANCE_HOB) * FspMaxPerf);
   return EFI_SUCCESS;
 }
 
@@ -93,7 +93,7 @@ LogFspPerformanceData (
   )
 {
   EFI_HOB_GUID_TYPE          *GuidHob;
-  PEI_PERFORMANCE_LOG_ENTRY  *PerfRecord;
+  FSP_PERFORMANCE_HOB        *PerfRecord;
   UINT64                     EndTime;
 
   if (Identifier >= FspMaxPerf) {
@@ -113,9 +113,9 @@ LogFspPerformanceData (
   //
   // Navigate and fill the performance data as per the identifier
   //
-  PerfRecord  = (PEI_PERFORMANCE_LOG_ENTRY *)(GET_GUID_HOB_DATA (GuidHob));
+  PerfRecord  = (FSP_PERFORMANCE_HOB *)(GET_GUID_HOB_DATA (GuidHob));
   PerfRecord += Identifier;
-  CopyMem (PerfRecord->Module, FspPerfData[Identifier].String, PEI_PERFORMANCE_STRING_SIZE);
+  AsciiStrCpyS (PerfRecord->Module, STRING_SIZE, FspPerfData[Identifier].String);
   PerfRecord->StartTimeStamp = DivU64x32 (GetTimeInNanoSecond (StartTime), 1000000);
   PerfRecord->EndTimeStamp   = DivU64x32 (GetTimeInNanoSecond (EndTime), 1000000);
 
@@ -135,7 +135,7 @@ GetFspModuleTime (
   )
 {
   EFI_HOB_GUID_TYPE          *GuidHob;
-  PEI_PERFORMANCE_LOG_ENTRY  *PerfRecord;
+  FSP_PERFORMANCE_HOB  *PerfRecord;
   UINT64                     TimeElapsed;
 
   if (Identifier >= FspMaxPerf) {

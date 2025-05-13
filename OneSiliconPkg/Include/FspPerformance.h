@@ -25,6 +25,15 @@
 #define FSP_PERFORMANCE_HOB_GUID  \
   { 0xaa4d127a, 0x6c1f, 0x4833, {0xa4, 0x6c, 0x07, 0xf2, 0x27, 0x14, 0x71, 0x69} }
 
+#define STRING_SIZE    (10)
+typedef struct {
+  EFI_PHYSICAL_ADDRESS    Handle;
+  CHAR8                   Token[STRING_SIZE];  ///< Measured token string name.
+  CHAR8                   Module[STRING_SIZE]; ///< Module string name.
+  UINT64                  StartTimeStamp;      ///< Start time point.
+  UINT64                  EndTimeStamp;        ///< End time point.
+} FSP_PERFORMANCE_HOB;
+
 //
 // Performance Entries currently present
 //

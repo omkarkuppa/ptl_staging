@@ -22,7 +22,6 @@
 #ifndef _FSP_PERFORMANCE_LIB_H_
 #define _FSP_PERFORMANCE_LIB_H_
 
-#include <Guid/Performance.h>
 #include <FspPerformance.h>
 
 #define BASE_IDENTIFIER  0x1150
