@@ -1111,21 +1111,33 @@ SetVccIo (
   IN MrcParameters *const MrcData
   )
 {
+  MrcInput  *Inputs;
   MrcOutput *Outputs;
   MrcDebug  *Debug;
 
+  Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
 
   if (Outputs->IsDdr5) {
     Outputs->VccIogVoltage = 800;
   } else {
-    if (Outputs->Frequency <= f7467) {
-      Outputs->VccIogVoltage = 750;
-    } else if (Outputs->Frequency <= f8533) {
-      Outputs->VccIogVoltage = 850;
+    if (Inputs->IsDdrIoMbA0) {
+      if (Outputs->Frequency < f4800) {
+        Outputs->VccIogVoltage = 780;
+      } else if (Outputs->Frequency <= f7467) {
+        Outputs->VccIogVoltage = 800;
+      } else {
+        Outputs->VccIogVoltage = 850;
+      }
     } else {
-      Outputs->VccIogVoltage = 850;
+      if (Outputs->Frequency <= f7467) {
+        Outputs->VccIogVoltage = 750;
+      } else if (Outputs->Frequency <= f8533) {
+        Outputs->VccIogVoltage = 850;
+      } else {
+        Outputs->VccIogVoltage = 850;
+      }
     }
   }
 
