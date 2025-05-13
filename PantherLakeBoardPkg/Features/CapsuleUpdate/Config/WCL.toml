@@ -123,16 +123,16 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
     IsEnabled = true
 
     [Firmware.Btgacm.Offset.Normal.Debug.Default]
-      Fv = { Offset = '0x00840000', Size = '0x00040000' }
+      Fv = { Offset = '0x00801000', Size = '0x00048000' }
 
     [Firmware.Btgacm.Offset.Normal.Release.Default]
-      Fv = { Offset = '0x00A40000', Size = '0x00040000' }
+      Fv = { Offset = '0x00A01000', Size = '0x00048000' }
 
     [Firmware.Btgacm.Offset.Resiliency.Default]
-      Fv = { Offset = '0x00C40000', Size = '0x00040000' }
+      Fv = { Offset = '0x00C01000', Size = '0x00048000' }
 
     [Firmware.Btgacm.Slotsize]
-      Default = '0x40000'
+      Default = '0x48000'
 
   [Firmware.Fsp]
     Version   = 1
