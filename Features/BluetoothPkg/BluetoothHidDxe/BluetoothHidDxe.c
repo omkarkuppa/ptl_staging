@@ -142,6 +142,9 @@ UpdateHogpHandles (
     BtHidDev->ReportMapHandle = Attr.Header.AttributeHandle;
     BtHidDev->ReportMapLen = BT_HID_REPORT_MAP_LEN;
     BtHidDev->ReportMap = AllocateZeroPool (BtHidDev->ReportMapLen);
+    if (!BtHidDev->ReportMap) {
+      return EFI_OUT_OF_RESOURCES;
+    }
     Status = HidGetReportMap(
                &BtHidDev->Hid,
                &BtHidDev->ReportMapLen,

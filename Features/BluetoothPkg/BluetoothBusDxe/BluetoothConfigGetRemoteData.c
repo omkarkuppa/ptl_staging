@@ -167,7 +167,7 @@ BtLeConfigGetRemoteAdvDataHandler (
     return EFI_NOT_FOUND;
   }
 
-  CopyMem (Data, BtLeDevInfo->AdvertisementData, BLUETOOTH_LE_ADV_DATA_MAX_SIZE);
+  CopyMem (Data, BtLeDevInfo->AdvertisementData, BtLeDevInfo->AdvertisementDataSize);
   *DataSize = BLUETOOTH_LE_ADV_DATA_MAX_SIZE;
 
   return EFI_SUCCESS;

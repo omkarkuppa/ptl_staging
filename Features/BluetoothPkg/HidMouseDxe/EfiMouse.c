@@ -214,6 +214,10 @@ OnMouseInterruptComplete (
   UINT32             BytePosition;
   UINT32             BitPosition;
 
+  if (!Data || !DataLength) {
+    return EFI_DEVICE_ERROR;
+  }
+
   DataPtr = (UINT8*)Data;
   BytePosition = 0;
   BitPosition  = 0;

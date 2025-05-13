@@ -301,6 +301,9 @@ BtHidSendRequest (
   KeyboardReportId   = 0;
 #endif
 
+  if ( (Length > 0 && Data == NULL) || (Length == 0 && Data!=NULL) ) {
+    return EFI_INVALID_PARAMETER;
+  }
   //DEBUG ((EFI_D_INFO, "HidSendRequest!\n"));
   Status = EFI_SUCCESS;
   switch (Request) {

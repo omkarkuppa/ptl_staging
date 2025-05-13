@@ -1149,6 +1149,9 @@ gatt_read_resp_cb (
   buffer_t  *in_buffer
   )
 {
+  if (!in_buffer) {
+    return;
+  }
   pm_on_read_attribute_cb (conn_id, att_opcode, ATT_SUCCESS, get_device_data_saved_handle (conn_id), in_buffer);
 }
 
@@ -1163,6 +1166,9 @@ gatt_read_multiple_rsp_cb (
     /* Read multiple attribute completed. Let profile manager know.*/
 
     set_device_data_on_going_proc (conn_id, GATT_OPERATION_IDLE);
+    if (!in_buffer) {
+      return;
+    }
     pm_on_read_attribute_cb (conn_id, att_opcode, ATT_SUCCESS, get_device_data_saved_handle (conn_id), in_buffer);
   }
 }
@@ -1174,6 +1180,9 @@ gatt_write_resp_cb (
   buffer_t  *in_buffer
   )
 {
+  if (!in_buffer) {
+    return;
+  }
   pm_on_attribute_write_cb (conn_id, att_opcode, ATT_SUCCESS, get_device_data_saved_handle (conn_id), 0, in_buffer);
 }
 
@@ -1209,6 +1218,9 @@ gatt_exec_write_resp_cb (
   buffer_t  *in_buffer
   )
 {
+  if (!in_buffer) {
+    return;
+  }
   pm_on_attribute_write_cb (conn_id, att_opcode, ATT_SUCCESS, 0, 0, NULL);
 }
 

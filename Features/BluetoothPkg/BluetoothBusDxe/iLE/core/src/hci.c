@@ -411,6 +411,10 @@ hci_process_evt (
     return;
   }
 
+  if (!buffer) {
+    return;
+  }
+
   STREAM_TO_UINT8 (event_code, buffer);
   switch (event_code) {
     case HCI_EVENT_CMD_CMPL:

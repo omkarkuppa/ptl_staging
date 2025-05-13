@@ -1072,6 +1072,12 @@ init_log_files (
   CHAR16  *final_log_file_name = append_file_name (file_path, log_file_name);
   if (!final_log_file_name) {
     loge ("Failed to append Log File!");
+    if (file_path) {
+      free(file_path);
+    }
+    if (simple_fs_handle) {
+      FreePool (simple_fs_handle);
+    }
     return;
   }
 
@@ -1084,6 +1090,12 @@ init_log_files (
   CHAR16  *final_snoop_file_name = append_file_name (file_path, snoop_file_name);
   if (!final_snoop_file_name) {
     loge ("Failed to append snoop File!");
+    if (file_path) {
+      free(file_path);
+    }
+    if (simple_fs_handle) {
+      FreePool (simple_fs_handle);
+    }
     return;
   }
 
@@ -1097,6 +1109,10 @@ init_log_files (
     FreePool (simple_fs_handle);
   }
 
+  if (file_path) {
+   free(file_path);
+  }
+ 
  #endif /* (FILE_LOGGING == TRUE) || (BTSNOOPDISP_INCLUDED == TRUE) */
 }
 

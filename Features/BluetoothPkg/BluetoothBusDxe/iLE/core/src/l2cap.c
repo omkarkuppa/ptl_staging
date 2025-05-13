@@ -1175,17 +1175,26 @@ l2cap_act_recv_data (
   UINT8               *data
   )
 {
-  l2cap_recv_data_pkt_t  *data_pkt = (l2cap_recv_data_pkt_t *)(void *)data;
+  l2cap_recv_data_pkt_t  *data_pkt;
   UINT16                 cid;
   UINT16                 l2cap_payload_length_total;
-  UINT16                 l2cap_payload_length_this_pkt = data_pkt->data_length;
+  UINT16                 l2cap_payload_length_this_pkt;
   INT8                   ret;
 
   logi ("");
 
+  if (!data)
+	    return STATUS_ERR_INVALID_PARAM;
+  
   if (!device) {
     return STATUS_ERR_INVALID_PARAM;
   }
+
+  data_pkt = (l2cap_recv_data_pkt_t *)(void *)data;
+  if (!data_pkt->data_length)
+    return STATUS_ERR_INVALID_PARAM;
+
+  l2cap_payload_length_this_pkt = data_pkt->data_length;
 
   logd ("pb_flag:0x%x", data_pkt->pb_flag);
   if (data_pkt->pb_flag == L2CAP_PB_FLAG_FIRST_FLUSHABLE_PKT) {
@@ -2290,15 +2299,18 @@ l2cap_recv_data (
   l2cap_recv_data_pkt_t  data_pkt;
 
   data_pkt.pb_flag     = pb_flag;
-  data_pkt.data        = data;
-  data_pkt.data_length = data_length;
   logi ("");
   logd (">>l2cap_recv_data:%p", data_pkt.data);
 
+  if (!data) {
+    return;
+  }
+  data_pkt.data        = data;
   if (data_length < L2CAP_HDR_SIZE) {
     loge ("Invalid L2CAP PDU length: %d", data_length);
     return;
   }
+  data_pkt.data_length = data_length;
 
   l2cap_csm_handler (L2CAP_EVT_RECV_DATA, device, (UINT8 *)&data_pkt);
 }

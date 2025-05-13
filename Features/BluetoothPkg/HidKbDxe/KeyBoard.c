@@ -944,6 +944,9 @@ KeyboardHandler (
 
   ASSERT (Context != NULL);
   BitsRemaning = 8;
+  if (!Data || !DataLength) {
+    return EFI_DEVICE_ERROR;
+  }
   DataPtr = (UINT8*)Data;
 
   // Extract the ReportId

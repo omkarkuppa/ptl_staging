@@ -2389,6 +2389,9 @@ gap_handle_adv_report (
   discovered_device_t  *device     = &g_local_adapter.gap_data.discovered_device;
 
   memcpy (direct_addr, zero_addr, BD_ADDR_LEN);
+  if (buffer == NULL) {
+    return STATUS_ERR_INVALID_PARAM;
+  }
   STREAM_TO_UINT8 (num_reports, buffer);
   logd ("Got adv report, num_reports = %u", num_reports);
   /* fix for Out Of Bound memory. JIRA: BT-123203*/
@@ -2442,7 +2445,10 @@ gap_handle_adv_report (
     if (length_data > 0) {
       while (pos < (length_data - 1)) {
         elem_len = data[pos++];
-        elem_len--;                         // Except the Type field
+        elem_len--;
+        if (elem_len == 0 || pos + elem_len > length_data) {  
+          break;  //prevent out-of-bounds access
+        }                        // Except the Type field
         switch (data[pos++]) {
           case GAP_DATA_SHORTENED_LOCAL_NAME:
           case GAP_DATA_COMPLETE_LOCAL_NAME:

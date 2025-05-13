@@ -1969,13 +1969,14 @@ smp_l2cap_recv_data_cb (
   )
 {
   UINT8     cmd_opcode;
-  UINT8     *pp     = data;
+  UINT8     *pp;
   smp_cb_t  *cur_cb = &g_local_adapter.smp_data.smp_cur_cb;
 
-  if (data_len < sizeof (cmd_opcode)) {
+  if ( (data_len < sizeof (cmd_opcode)) || !device || !data ) {
     return STATUS_ERR_INVALID_PARAM;
   }
-
+  
+  pp = data;
   STREAM_TO_UINT8 (cmd_opcode, pp);
   if ((cmd_opcode != SMP_PAIRING_REQ) && (cmd_opcode != SMP_SEC_REQ)) {
     logd ("cmd_opcode = %d", cmd_opcode);

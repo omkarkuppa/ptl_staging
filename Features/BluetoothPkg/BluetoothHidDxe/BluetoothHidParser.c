@@ -307,6 +307,9 @@ BtHidParseReportMap (
 
   do {
 
+    if (Cur > (BtHidDev->ReportMapLen-1)) {
+        return;
+      }
     // Skip long items
     if (IS_LONG_ITEM(Map[Cur])) {
       Cur += Map[Cur + 1];
