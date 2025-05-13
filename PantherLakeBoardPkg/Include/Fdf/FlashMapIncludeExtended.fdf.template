@@ -30,7 +30,6 @@ DEFINE FLASH_NUM_BLOCKS                                             = 0x00000300
 DEFINE EXTENDED_REGION_MEMMAP_ADDRESS                               = 0xF8000000  #
 DEFINE EXTENDED_REGION_SIZE                                         = 0x02000000  #
 DEFINE EXTENDED_REGION_IN_USE                                       = 0x00100000  #
-DEFINE ACM_ALIGNMENT_ON_FV_BASE                                     = 4K          #
 #=================================================================================#
 
 ####

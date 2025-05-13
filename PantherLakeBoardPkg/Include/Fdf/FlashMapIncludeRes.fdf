@@ -26,7 +26,6 @@ DEFINE FLASH_BASE                                                   = 0xFF000000
 DEFINE FLASH_SIZE                                                   = 0x01000000  #
 DEFINE FLASH_BLOCK_SIZE                                             = 0x00010000  #
 DEFINE FLASH_NUM_BLOCKS                                             = 0x00000100  #
-DEFINE ACM_ALIGNMENT_ON_FV_BASE                                     = 4K          #
 #=================================================================================#
 
 !if $(TARGET) == DEBUG
