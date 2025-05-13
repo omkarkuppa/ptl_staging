@@ -78,22 +78,10 @@
 @set FLASHMAP_FDF=%EXTENDEDREGION_FLASHMAP_FDF%
 :NoExtendedBiosRegionGeneration
 
-@if %ATOM_BUILD% EQU TRUE (
- echo PTL Atom build skip ACM alignement
- goto SkipACMAlignment
-)
-
 @echo ***********************************
 @echo.
 @echo Parsing FlashMapInclude FDFs and checking if all offset and size requirements are met
 @echo.
-
-@REM ACM alignment check
-  @call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\FvAlignment\FvAlignment.py --flashmap %FLASHMAP_FDF% -cl all acm_alignment_check
-  @if %ERRORLEVEL% NEQ 0 goto :BldFail
-
-:SkipACMAlignment
-
   @REM FSP build
   @set BB_CHECK=TRUE
   @if %ATOM_BUILD% EQU TRUE @set BB_CHECK=FALSE

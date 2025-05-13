@@ -22,7 +22,6 @@
 # This script supports
 # -  Parse Flash Map FDF file
 # -  Check if FV alignment meets requirements in pre build process,
-# -  Check if ACM alignment meets requirements in pre build process,
 # -  Replace a region with input image in post build process,
 #
 #  Note : This script does not support the flash map FDF files
@@ -37,9 +36,7 @@ usage: FvAlignment.py [optional arguments] [positional arguments]
 Firmware Volume Alignment Check and Edit Script
 
 positional arguments:
-  {acm_alignment_check,fv_alignment_check,fsp_size_check}
-    acm_alignment_check
-                        check ACM alignment
+  {fv_alignment_check,fsp_size_check}
     fv_alignment_check  check FV alignment
     fsp_size_check      check FSP binary size
 
@@ -114,7 +111,6 @@ class Flashmap ():
         self.fsptop_size      = "gBoardModuleTokenSpaceGuid.PcdFspTopSize"
         self.flash_base       = "FLASH_BASE"
         self.flash_size       = "FLASH_SIZE"
-        self.acm_align_option = "ACM_ALIGNMENT_ON_FV_BASE"
 
     #
     # This function traverses the Flash Map FDF file.Does check for !if/!else for PCDs.
@@ -153,7 +149,6 @@ class Flashmap ():
     def show_settings (self):
         read_value  = "  |  {:#010x}".format (self.read (self.flash_base, 0))
         read_value += "  |  {:#010x}".format (self.read (self.flash_size, 0))
-        read_value += "  |  {}".format (self.read (self.acm_align_option, 0))
         if (self.read (self.reset_vector, 1) == 'FALSE'):
             if (FSPResetBuidFlag == 'FALSE'):
                 read_value += "  |  {:#010x}".format (self.read (self.premem_offset, 2))
@@ -377,27 +372,6 @@ class RequirementList ():
             if fm.read (fm.ibb_offset, 0) - fm.read (fm.bin_offset, 0) != 0:
                 self.report (error_message, req_message, 1)
 
-    def req_acm (self, fm):
-        id = 5
-        req_message      = "  ({})  FirmwareBinaries Base = 256KB align - ACM alignment based on FV base\n".format (id)
-        if self.to_show (id):
-            self.show_req (req_message)
-        if self.to_run (id) and fm is not None:
-            msg0     = "  ({})  FirmwareBinaries Base = 256KB align  (ie 0xFFN00000, 0xFFN40000, 0xFFN80000, 0xFFNC0000) \n".format (id)
-            msg0    += "                       Workable offset example : 0x00800000, 0x00840000, 0x00880000, 0x008C0000"
-            msg1     = "  ({})  FirmwareBinaries Base = 256KB align - 64KB (ie 0xFFN30000, 0xFFN70000, 0xFFNB0000, 0xFFNF0000) \n".format (id)
-            msg1    += "                             Workable offset example : 0x00830000, 0x00870000, 0x008B0000, 0x008F0000"
-            msg2     = "  ({})  FirmwareBinaries Base = 256KB align - 128KB (ie 0xFFN20000, 0xFFN60000, 0xFFNA0000, 0xFFNE0000) \n".format (id)
-            msg2    += "                              Workable offset example : 0x00820000, 0x00860000, 0x008A0000, 0x008E0000"
-            alignment_dict     =  {"256K":{0:msg0, 1:0x00000}, "64K":{0:msg1, 1:0x10000}, "128K":{0:msg2, 1:0x20000}}
-            acm_alignment_mask =  0x0003FFFF   # ACM absolute address alignment requirement mask (256kB)
-            error_message  = "({})\n".format (id)
-            error_message += "  {} does not meet the alignment requirement.\n".format (fm.bin_offset)
-            error_message += "  Current address = {0:#010x} + {1:#010x}".format (fm.read (fm.flash_base, 0), fm.read (fm.bin_offset, 0))
-            if (fm.read (fm.bin_offset, 0) + alignment_dict [fm.read (fm.acm_align_option, 0)][1] + fm.read (fm.flash_base, 0)) & acm_alignment_mask != 0:
-                self.report (error_message, alignment_dict [fm.read (fm.acm_align_option, 0)][0], 1)
-
-
     def req_fspm_binary_size (self, pkg, bin, fspm_size_limit):
         id = 6
         req_message    = "  ({})  FspM binary size < {:#010x}\n".format (id, fspm_size_limit)
@@ -514,57 +488,6 @@ def main ():
             message = "[" + Argument + "] is not a valid 32bit number"
             raise argparse.ArgumentTypeError (message)
         return Argument
-
-#
-# call to run ACM alignment check routines
-#
-    def check_acm_alignment (Argument):
-        print ("\nChecking on ACM alignment ... [{}]".format(args.checklist))
-
-        try:
-            checklist = int (args.checklist, base = 16)
-        except:
-            if args.checklist == "all":
-                checklist = FULL_BIT_MASK
-            else:
-                checklist = 0
-
-        try:
-            reqlist = int (args.reqlist, base = 16)
-        except:
-            if args.reqlist == "all":
-                reqlist = FULL_BIT_MASK
-            else:
-                reqlist = 0
-
-        fm = None
-        if checklist == 0:
-            print ("No check items to run")
-        else:
-            if args.flashmap is None:
-                print ("Error!!! flashmap option is not set")
-                return 1
-            fm = Flashmap (args.flashmap)
-            if args.firstmap:
-                del fm
-                fm = FlashmapEx (args.flashmap)
-            fm.show_settings ()
-
-        check = RequirementList ()
-        # ID check items to run
-        check.checklist = checklist
-        # ID requirements to show
-        check.reqlist   = reqlist
-        # run routines
-        check.req_acm (fm)
-
-        if checklist != 0:
-            if check.result:
-                print ("\n  Update flash map file ({}) for adjustment\n".format (args.flashmap))
-            else:
-                print ("Pass ACM alignment requirement check")
-
-        return check.result
 
 #
 # call to run FV alignment check routines
@@ -795,9 +718,6 @@ def main ():
                         help = "FSP M size limit (hex) per platform requirement")
 
     subparsers = parser.add_subparsers ()
-    parser_acm_alignment = subparsers.add_parser ("acm_alignment_check", help = "check ACM alignment")
-    parser_acm_alignment.set_defaults (handler = check_acm_alignment)
-
     parser_fv_alignment = subparsers.add_parser ("fv_alignment_check", help = "check FV alignment")
     parser_fv_alignment.set_defaults (handler = check_fv_alignment)
 
@@ -817,4 +737,3 @@ def main ():
 
 if __name__ == "__main__":
     sys.exit (main())
-

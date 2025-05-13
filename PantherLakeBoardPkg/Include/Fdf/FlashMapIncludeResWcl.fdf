@@ -26,7 +26,7 @@ DEFINE FLASH_BASE                                                   = 0xFF000000
 DEFINE FLASH_SIZE                                                   = 0x01000000  #
 DEFINE FLASH_BLOCK_SIZE                                             = 0x00010000  #
 DEFINE FLASH_NUM_BLOCKS                                             = 0x00000100  #
-DEFINE ACM_ALIGNMENT_ON_FV_BASE                                     = 256K        #
+DEFINE ACM_ALIGNMENT_ON_FV_BASE                                     = 4K          #
 #=================================================================================#
 
 !if $(TARGET) == DEBUG
@@ -96,9 +96,6 @@ SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbRSize                 = 0x004000
 #
 SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset                = 0x00C00000  # Flash addr (0xFFC00000)
 SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize                  = 0x00400000  #
-## Firmware binaries FV absolute address requires (256KB align - ACM_ALIGNMENT_ON_FV_BASE).
-## Use ACM_ALIGNMENT_ON_FV_BASE = 256KB for an effective use of flash space based on the FV layout.
-## Build script checks the requirement.
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesOffset       = 0x00C00000  # Flash addr (0xFFC00000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A0000  #
 #
@@ -136,7 +133,7 @@ SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x001200
 ##    components come from FSP build directly, which require base and size MUST align with the settings under
 ##    XXXFspPkg\XXXFspPkg.fdf - PcdFlashFvFsptSize/PcdFlashFvFspoSize
 ## 2. FspTopAt4G may have a padding file at start for 64KB alignment requirement or reserve size for future use.
-##    So make sure PcdFspTopSize - (PcdFlashFvFspTSize + PcdFlashFvFspOSize) is at least 0x2000 (FBM_OFFSET_TO_FSPT) 
+##    So make sure PcdFspTopSize - (PcdFlashFvFspTSize + PcdFlashFvFspOSize) is at least 0x2000 (FBM_OFFSET_TO_FSPT)
 SET gBoardModuleTokenSpaceGuid.PcdFspTopOffset                        = 0x00FE0000  # Flash addr (0xFFFE0000)
 SET gBoardModuleTokenSpaceGuid.PcdFspTopSize                          = 0x00020000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x0000A000  # Resiliency debug build use release build FSP due to space shortage.
@@ -216,9 +213,6 @@ SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbRSize                 = 0x004000
 #
 SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset                = 0x00C00000  # Flash addr (0xFFC00000)
 SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize                  = 0x00400000  #
-## Firmware binaries FV absolute address requires (256KB align - ACM_ALIGNMENT_ON_FV_BASE).
-## Use ACM_ALIGNMENT_ON_FV_BASE = 256KB for an effective use of flash space based on the FV layout.
-## Build script checks the requirement.
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesOffset       = 0x00C00000  # Flash addr (0xFFC00000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A0000  #
 #
@@ -256,7 +250,7 @@ SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x000E00
 ##    components come from FSP build directly, which require base and size MUST align with the settings under
 ##    XXXFspPkg\XXXFspPkg.fdf - PcdFlashFvFsptSize/PcdFlashFvFspoSize
 ## 2. FspTopAt4G may have a padding file at start for 64KB alignment requirement or reserve size for future use.
-##    So make sure PcdFspTopSize - (PcdFlashFvFspTSize + PcdFlashFvFspOSize) is at least 0x2000 (FBM_OFFSET_TO_FSPT) 
+##    So make sure PcdFspTopSize - (PcdFlashFvFspTSize + PcdFlashFvFspOSize) is at least 0x2000 (FBM_OFFSET_TO_FSPT)
 SET gBoardModuleTokenSpaceGuid.PcdFspTopOffset                        = 0x00FE0000  # Flash addr (0xFFFE0000)
 SET gBoardModuleTokenSpaceGuid.PcdFspTopSize                          = 0x00020000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x0000A000  #
