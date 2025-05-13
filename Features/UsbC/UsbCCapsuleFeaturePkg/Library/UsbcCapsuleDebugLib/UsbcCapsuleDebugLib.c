@@ -18,6 +18,7 @@
 
 @par Specification Reference:
 **/
+
 #include <Uefi.h>
 #include <Library/DebugLib.h>
 #include <Library/UsbcCapsuleDebugLib.h>
@@ -48,75 +49,52 @@ CapsuleLogWrite (
   IN UINT32  EvtArg1
   )
 {
-  EFI_STATUS                       Status;
+#ifndef MDEPKG_NDEBUG
+  CHAR8                            LogStr[200];
+  UINT32                           Argc;
+  UINT32                           NumOfEntries;
+#else
   USBC_CAPSULE_DEBUG_PROTOCOL      *CapsuleDebugProtocol;
   UINT8                            CapsuleReleaseEnable;
-  CHAR8                            LogStr[200];
+#endif
+  EFI_STATUS                       Status;
   UINT32                           EvtId;
-  UINT32                           Argc;
-  const CAPSULE_LOG_MAPPING_ENTRY  *Mappings;
+  const CAPSULE_LOG_MAPPING_ENTRY  *MappingTable;
 
-  CapsuleReleaseEnable = PcdGet8 (PcdUsbCCapsuleDebugLevel);
-
-  Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProtocolGuid, NULL, (VOID**) &CapsuleDebugProtocol);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to locate gUsbCCapsuleDebugProtocolGuid (%r).\n", Status));
-    return Status;
-  }
-
+#ifndef MDEPKG_NDEBUG
   ///
   /// Make sure Event ID is same with Log Mapping Entry number
   ///
+  NumOfEntries = mUsbCCapsuleLogMappingEntries;
   EvtId = ((EventCode) >> 2);
-  if (EvtId >= CapsuleDebugProtocol->LogMappingEntries) {
+  if (EvtId >= NumOfEntries) {
     DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Invalid Event ID 0x%x for Log Mapping table\n", EvtId));
-    Status = EFI_UNSUPPORTED;
-    return Status;
+    return EFI_UNSUPPORTED;
   }
 
-  Mappings = CapsuleDebugProtocol->LogMappingTable;
+  MappingTable = mUsbCCapsuleLogMappingTable;
   ///
-  /// Make sure Event code of Log mapping entry is same with Log data Event code
+  /// Get the argument count of event from lower two bits of Event code
   ///
-  if (Mappings[EvtId].EvtCode != EventCode) {
-    DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Event ID and Event code mismatch in Log mapping table\n"));
-    Status = EFI_UNSUPPORTED;
-    return Status;
+  Argc = EventCode & 0x3;
+
+  switch (Argc) {
+    case 0:
+      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+      break;
+    case 1:
+      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+      break;
+    case 2:
+      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+      break;
+    default:
+      DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Unsupported argument number %d\n", Argc));
+      Status = EFI_UNSUPPORTED;
+      break;
   }
 
-  if (CapsuleReleaseEnable != USBC_CAPSULE_DBG_DISABLED && (PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) == 0) {
-    ///
-    /// Record debug messages when the BIOS is release build
-    ///
-    CapsuleDebugProtocol->LogWrite (CapsuleDebugProtocol, LogLevel, EventCode, EvtArg0, EvtArg1);
-  } else if ((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) != 0) {
-    ///
-    /// Get the argument count of event from lower two bits of Event code
-    ///
-    Argc = EventCode & 0x3;
-
-    switch (Argc) {
-      case 0:
-        if (LogDataToStr (LogStr, sizeof (LogStr), Mappings[EvtId].LogStr) == 0) {
-          Status = EFI_UNSUPPORTED;
-        }
-        break;
-      case 1:
-        if (LogDataToStr (LogStr, sizeof (LogStr), Mappings[EvtId].LogStr, EvtArg0) == 0) {
-          Status = EFI_UNSUPPORTED;
-        }
-        break;
-      case 2:
-        if (LogDataToStr (LogStr, sizeof (LogStr), Mappings[EvtId].LogStr, EvtArg0, EvtArg1) == 0) {
-          Status = EFI_UNSUPPORTED;
-        }
-        break;
-      default:
-        DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Unsupported argument number %d\n", Argc));
-        Status = EFI_UNSUPPORTED;
-        break;
-    }
-
+  if (!EFI_ERROR (Status)) {
     switch (LogLevel) {
       case USBC_CAPSULE_DBG_VERBOSE:
         DEBUG ((DEBUG_VERBOSE, LogStr));
@@ -134,6 +112,41 @@ CapsuleLogWrite (
         return EFI_INVALID_PARAMETER;
     }
   }
+  return Status;
+#else
+  Status = EFI_SUCCESS;
+  CapsuleReleaseEnable = PcdGet8 (PcdUsbCCapsuleDebugLevel);
+  
+  if (CapsuleReleaseEnable != USBC_CAPSULE_DBG_DISABLED) {
+    Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProtocolGuid, NULL, (VOID**) &CapsuleDebugProtocol);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+    ///
+    /// Make sure Event ID is same with Log Mapping Entry number
+    ///
+    EvtId = ((EventCode) >> 2);
+    if (EvtId >= CapsuleDebugProtocol->LogMappingEntries) {
+      DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Invalid Event ID 0x%x for Log Mapping table\n", EvtId));
+      Status = EFI_UNSUPPORTED;
+      return Status;
+    }
 
-  return EFI_SUCCESS;
+    MappingTable = CapsuleDebugProtocol->LogMappingTable;
+    ///
+    /// Make sure Event code of Log mapping entry is same with Log data Event code
+    ///
+    if (MappingTable[EvtId].EvtCode != EventCode) {
+      DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Event ID and Event code mismatch in Log mapping table\n"));
+      Status = EFI_UNSUPPORTED;
+      return Status;
+    }
+
+    ///
+    /// Record debug messages when the BIOS is release build
+    ///
+    Status = CapsuleDebugProtocol->LogWrite (CapsuleDebugProtocol, LogLevel, EventCode, EvtArg0, EvtArg1);
+  }
+  return Status;
+#endif // MDEPKG_NDEBUG
 }

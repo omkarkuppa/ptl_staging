@@ -23,6 +23,11 @@
 
 #include <Uefi.h>
 #include <UsbCCapsuleDebugProtocol.h>
+#include <UsbCCapsuleLogEvents.h>
+#include <Library/CapsuleLogMappingEntry.h>
+
+extern const CAPSULE_LOG_MAPPING_ENTRY  mUsbCCapsuleLogMappingTable [];
+extern UINT32  mUsbCCapsuleLogMappingEntries;
 
 /**
   Write Log data to the next available Log entry in Log buffer

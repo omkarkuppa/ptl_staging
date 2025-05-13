@@ -41,6 +41,7 @@
 [Sources]
   UsbcCapsuleDebugLib.c
   CapsuleDebugLib.c
+  UsbCCapsuleLogMappingTable.c
 
 [Protocols]
   gUsbCCapsuleDebugProtocolGuid                     ## PRODUCES

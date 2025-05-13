@@ -27,25 +27,21 @@
 #include <Library/CapsuleDebugLib.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
-#include <UsbCCapsuleDebug/UsbCCapsuleLogMappingTable.h>
 
 ///
 /// Pointer to Capsule Debug Protocol instance
 ///
 USBC_CAPSULE_DEBUG_PROTOCOL   *mRetimerCapsuleLog = NULL;
-extern const CAPSULE_LOG_MAPPING_ENTRY  mUsbCCapsuleLogMappingTable [];
-extern UINT32 mUsbCCapsuleLogMappingEntries;
 
 /**
   Install USBC Capsule Debug Protocol.
-
 **/
 VOID
 InstallCapsuleDebugProtocol (
   VOID
   )
 {
-  EFI_STATUS   Status;
+  EFI_STATUS  Status;
 
   Status = InstallCapsuleDebugLibProtocol (
              &gUsbCCapsuleDebugProtocolGuid,
@@ -65,7 +61,6 @@ InstallCapsuleDebugProtocol (
     DEBUG ((DEBUG_ERROR, "NULL USBC Capsule Debug Protocol is returned\n"));
     mRetimerCapsuleLog = NULL;
   }
-
 }
 
 /**
