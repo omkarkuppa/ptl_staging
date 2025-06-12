@@ -482,14 +482,13 @@ UpdateLpssSpiConfig (
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiMisoPinMux[Index], LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Miso, 0x0);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiMosiPinMux[Index], LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Mosi, 0x0);
   }
-  // Lpss SPI Pin Mux tbd
+  
   if (PtlIsPcdH () || PtlIsPcdP ()) {
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiCsPinMux[0], LpssSpiConfig->SpiDeviceConfig[0].PinMux.Cs[0], GPIOV2_PTL_PCD_MUXING__XXGPP_E_17__GSPI0_CS0_B);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiClkPinMux[0], LpssSpiConfig->SpiDeviceConfig[0].PinMux.Clk, GPIOV2_PTL_PCD_MUXING__XXGPP_E_11__GSPI0_CLK);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiMisoPinMux[0], LpssSpiConfig->SpiDeviceConfig[0].PinMux.Miso, GPIOV2_PTL_PCD_MUXING__XXGPP_E_13__GSPI0_MISO);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiMosiPinMux[0], LpssSpiConfig->SpiDeviceConfig[0].PinMux.Mosi, GPIOV2_PTL_PCD_MUXING__XXGPP_E_12__GSPI0_MOSI);
   }
-
   for (Index = 0; Index < GetMaxSpiInterfacesNum (); Index++) {
     for (CsIndex = 0; CsIndex < PCH_MAX_SERIALIO_SPI_CHIP_SELECTS; CsIndex++) {
 #if FixedPcdGet8(PcdFspModeSelection) == 0
