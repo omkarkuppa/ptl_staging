@@ -3552,7 +3552,6 @@ ConfigurePad (
     }
 
     if ((PadConfig->InterruptConfig >> 1) & (GpioV2IntApic >> 1)) {
-      GpioInterface->Public.SetGpiIe (&(GpioInterface->Public), GpioPad, TRUE);
       GpioInterface->Public.SetRouteIoxApic (&(GpioInterface->Public), GpioPad, TRUE);
     }
 
