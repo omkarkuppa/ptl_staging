@@ -32,7 +32,7 @@ from typing import Dict
 PLATFORM_FULL_NAME: str = 'PantherLake'
 
 PTL_MOBILE_PLAT_NAME_STR: str = 'PTLP'
-PTL_MOBILE_PREFIX_STR   : str = 'PTL_U_P_H'
+PTL_MOBILE_PREFIX_STR   : str = 'PTL_P'
 
 WCL_MOBILE_PLAT_NAME_STR: str = 'WCL'
 WCL_MOBILE_PREFIX_STR   : str = 'WCL'
