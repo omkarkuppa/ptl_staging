@@ -126,16 +126,19 @@ cd %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%
 copy /y /b %WORKSPACE_SILICON%\%PLATFORM_FSP_BIN_PACKAGE%\Fsp_Rebased_S.fd+%WORKSPACE_SILICON%\%PLATFORM_FSP_BIN_PACKAGE%\Fsp_Rebased_M.fd+%WORKSPACE_SILICON%\%PLATFORM_FSP_BIN_PACKAGE%\Fsp_Rebased_T.fd %WORKSPACE_SILICON%\%PLATFORM_FSP_BIN_PACKAGE%\Fsp_Rebased.fd
 :SkipPatchFspBinFvsBaseAddress
 
+@set MAX_CONCURRENT_THREADS=%NUMBER_OF_PROCESSORS%
+@ for /f %%G in ('%PYTHON_COMMAND% %WORKSPACE_COMMON%\OneSiliconPkg\Tools\Containers\MaxConcurrentThreads.py') do @set MAX_CONCURRENT_THREADS=%%G
+
 @echo Current Directory = %CD%
 @echo ********************* BLD.BAT *****************************
-@echo SILENT_MODE          = %SILENT_MODE%
-@echo NUMBER_OF_PROCESSORS = %NUMBER_OF_PROCESSORS%
-@echo REBUILD_MODE         = %REBUILD_MODE%
-@echo EXT_BUILD_FLAGS      = %EXT_BUILD_FLAGS%
+@echo SILENT_MODE            = %SILENT_MODE%
+@echo MAX_CONCURRENT_THREADS = %MAX_CONCURRENT_THREADS%
+@echo REBUILD_MODE           = %REBUILD_MODE%
+@echo EXT_BUILD_FLAGS        = %EXT_BUILD_FLAGS%
 
 @if %SILENT_MODE% EQU TRUE goto BldSilent
 @set BUILDTIMESTAMP=%time%
-call build -n %NUMBER_OF_PROCESSORS% %REBUILD_MODE% %EXT_BUILD_FLAGS%
+call build -n %MAX_CONCURRENT_THREADS% %REBUILD_MODE% %EXT_BUILD_FLAGS%
 
 @echo %CD%
 @echo ********************* BLD.BAT *****************************
@@ -163,7 +166,7 @@ echo SCRIPT_ERROR= %SCRIPT_ERROR%
 @echo ********************************************************************
 @echo.
 @set BUILDTIMESTAMP=%time%
-call build -n %NUMBER_OF_PROCESSORS% %REBUILD_MODE% %EXT_BUILD_FLAGS% 1>>%WORKSPACE%\Build.log 2>&1
+call build -n %MAX_CONCURRENT_THREADS% %REBUILD_MODE% %EXT_BUILD_FLAGS% 1>>%WORKSPACE%\Build.log 2>&1
 @echo ERRORLEVEL=%ERRORLEVEL% 1>>%WORKSPACE%\Build.log 2>&1
 
 @if %ERRORLEVEL% NEQ 0 goto BldFail

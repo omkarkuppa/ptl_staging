@@ -69,15 +69,16 @@ export UPL_SPEC_REVISION=0.9
 export ROM_FILENAME_SPECIAL_BUILD_TYPE=
 
 #
-# If NUMBER_OF_PROCESSORS environment variable is uninitialized
+# If MAX_CONCURRENT_THREADS environment variable is uninitialized
 #
-if [ ! $NUMBER_OF_PROCESSORS ]; then
+if [ ! $MAX_CONCURRENT_THREADS ]; then
   if [ "$(uname)" = "Darwin" ]; then
-    export NUMBER_OF_PROCESSORS=$(sysctl -n hw.ncpu)
+    export MAX_CONCURRENT_THREADS=$(sysctl -n hw.ncpu)
   else
-    export NUMBER_OF_PROCESSORS=$(nproc)
+    export MAX_CONCURRENT_THREADS=$(python3 $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Tools/Containers/MaxConcurrentThreads.py)
   fi
 fi
+
 #
 # VAR_BUILD_FLAGS contains user build flags, it is not modified by build scripts
 #
