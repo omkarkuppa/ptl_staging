@@ -365,7 +365,7 @@ InstallSmbiosType17 (
           switch (ModuleType & DDR_MTYPE_SPD_MASK) {
             case DDR_MTYPE_LPDIMM_LP5:
             case DDR_MTYPE_CAMM:
-              SmbiosTableType17Data.FormFactor = 0x11;
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorCamm;
               break;
 
             case DDR_MTYPE_MEM_DOWN_LP5:
@@ -393,7 +393,7 @@ InstallSmbiosType17 (
               break;
 
             case DDR_MTYPE_CAMM:
-              SmbiosTableType17Data.FormFactor = 0x11;
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorCamm;
               break;
 
             case DDR_MTYPE_UDIMM:

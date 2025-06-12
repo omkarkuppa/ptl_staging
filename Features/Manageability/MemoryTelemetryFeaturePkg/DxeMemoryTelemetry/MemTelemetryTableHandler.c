@@ -46,7 +46,7 @@ GetFormFactor (
     switch (ModuleType & DDR_MTYPE_SPD_MASK) {
       case DDR_MTYPE_LPDIMM_LP5:
       case DDR_MTYPE_CAMM:
-        return MEMORY_FORM_FACTOR_CAM;
+        return MemoryFormFactorCamm;
       case DDR_MTYPE_MEM_DOWN_LP5:
       default:
         return MemoryFormFactorRowOfChips;
