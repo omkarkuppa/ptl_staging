@@ -180,7 +180,8 @@
 #define MRC_LATE_DDRIO_FINALIZE         (0xDD88)
 #define MRC_QCLK_PH_ALIGN_CAL           (0xDD89)
 #define MRC_LVR_RMT                     (0xDD8A)
+#define MRC_PER_DEVICE_UPDATE           (0xDD8B)
 
-#define MRC_POST_CODE_LAST              (MRC_LVR_RMT) // IMPORTANT: Keep aligned to the largest post code
+#define MRC_POST_CODE_LAST              (MRC_PER_DEVICE_UPDATE) // IMPORTANT: Keep aligned to the largest post code
 
 #endif

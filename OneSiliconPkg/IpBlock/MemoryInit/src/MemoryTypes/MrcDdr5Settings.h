@@ -39,57 +39,64 @@ typedef enum {
 } CardEnum;
 
 typedef enum {
-    Card_default_1R_6400 = 0,
-    Card_default_1R_7200 = 1,
-    Card_default_2R_6400 = 2,
-    Card_default_2R_7200 = 3,
-    Card_240C_1R_6400 = 4,
-    Card_246C_1R_6400 = 5,
-    Card_246C_1R_7200 = 6,
-    Card_269C_1R_6400 = 7,
-    Card_279C_1R_6400 = 8,
-    Card_279C_1R_7200 = 9,
-    Card_207G_2R_6400 = 10,
-    Card_241G_2R_6400 = 11,
-    Card_256B_2R_6400 = 12,
-    Card_256B_2R_7200 = 13,
+  Card_default_1R_6400 = 0,
+  Card_default_1R_7200 = 1,
+  Card_default_2R_6400 = 2,
+  Card_default_2R_7200 = 3,
+  Card_240C_1R_6400 = 4,
+  Card_246C_1R_6400 = 5,
+  Card_246C_1R_7200 = 6,
+  Card_269C_1R_6400 = 7,
+  Card_279C_1R_6400 = 8,
+  Card_279C_1R_7200 = 9,
+  Card_207G_2R_6400 = 10,
+  Card_241G_2R_6400 = 11,
+  Card_256B_2R_6400 = 12,
+  Card_256B_2R_7200 = 13,
+  Card_NotFound
 } Ddr5ParamIndex;
 
-extern const char* CardPnArray[];
-
 typedef struct {
-    INT8 ddr5_dfe_tap1;
-    INT8 ddr5_dfe_tap2;
-    INT8 ddr5_rtt_wr;
-    INT8 ddr5_rtt_nom_wr;
-    INT8 ddr5_rtt_park_rx;
-    INT8 ddr5_ron_up;
-    INT8 ddr5_ron_dn;
+  INT8 ddr5_dfe_tap1;
+  INT8 ddr5_dfe_tap2;
+  INT8 ddr5_rtt_wr;
+  INT8 ddr5_rtt_nom_wr;
+  INT8 ddr5_rtt_park_rx;
+  INT8 ddr5_ron_up;
+  INT8 ddr5_ron_dn;
 } Ddr5InitailSettings;
 
 typedef struct {
-    INT8 cpu_ron;
-    INT8 dq_tco;
-    INT8 dq_odt;
-    INT8 rxtap0;
-    INT8 rxtap1;
-    INT8 ctle_r;
-    INT8 ctle_c;
-    INT8 ctle_rcmn;
-    INT8 ctle_dccmn;
-    INT8 ctle_eq;
-    INT8 ctle_tailctl;
+  INT8 cpu_ron;
+  INT8 dq_tco;
+  INT8 dq_odt;
+  INT8 rxtap0;
+  INT8 rxtap1;
+  INT8 ctle_r;
+  INT8 ctle_c;
+  INT8 ctle_rcmn;
+  INT8 ctle_dccmn;
+  INT8 ctle_eq;
+  INT8 ctle_tailctl;
 } Ddr5PhyInitailSettings;
 
+extern const char* CardPartNumber[];
 extern const Ddr5InitailSettings Ddr5InitailSettingsParams[];
-
 extern const Ddr5PhyInitailSettings Ddr5PhyParams[];
 
-Ddr5ParamIndex GetDdr5ParamIndex (
-    MrcFrequency Frequency,
-    UINT32 NumOfRanks,
-    CardEnum Card
-);
+/**
+  This function returns index NN Flex csv according to to Dimm/Rank/Freq.
+  @param[in] Frequency   - Frequency config.
+  @param[in] NumOfRanks  - Rank config - 1/2.
+  @param[in  Card        - Dimm module card id.
+  @returns corresponding card row index in NN Flex csv to struct table. default if not exists.
+**/
+Ddr5ParamIndex
+GetDdr5ParamIndex (
+  IN MrcFrequency Frequency,
+  IN UINT32 NumOfRanks,
+  IN CardEnum Card
+  );
 
 // AUTO-GENERATED CARD ENUM AND TABLE DECLARATIONS END
 
@@ -165,6 +172,18 @@ SelectDfeTableDdr5 (
   IN const UINT32         Controller,
   IN const UINT32         Channel,
   IN const UINT32         Dimm
+  );
+
+/**
+  This function is used to get the corresponding card for a given dram part number.
+
+  @param[in]  ModulePartNumber - Dram module part number from SPD.
+
+  @returns - The corresponding card index.
+**/
+CardEnum
+GetCardEnumFromPartNumber (
+  IN const char* ModulePartNumber
   );
 
 #endif // MRC_DDR5_SETTINGS_H_

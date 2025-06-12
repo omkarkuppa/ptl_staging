@@ -2943,6 +2943,7 @@ MrcGetSkuType (
   }
 
   DEBUG ((DEBUG_INFO, "MrcGetSkuType 0x%x\n", SkuType));
+
   return SkuType;
 }
 
@@ -3168,7 +3169,8 @@ DEBUG_CODE_END();
   Inputs->RxDqVrefPerBit = TRUE; // Enable the RX DQ VREF PER BIT.
   Inputs->IsKeepUcssPostMrc = 0;
 
-  Inputs->FourToggleReadPreamble = TRUE; // Enable the four toggle read preamble.
+  Inputs->FourToggleReadPreamble = TRUE;
+  Inputs->InitPerDeviceNnFlex = FALSE;
   Inputs->LockUiDiv6Flow = FALSE;
 
   Inputs->EnablePda = TRUE;

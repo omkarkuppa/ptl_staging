@@ -677,6 +677,7 @@ typedef enum {
   OemDimmRxOffsetCal,       ///< before checking Dimm Rx Offset Calibration
   OemMcDeswizzleRegisters,  ///< before MrcMcProgramDeswizzleRegisters
   OemIsDramSupportsDvfsc,   ///< Check if DRAM supports E-DVFSC before finishing SAGV0 training flow
+  OemPerDeviceUpdate,       ///< before Per Device Update
   OemEmphasisTraining,      ///< before Pre-Emphasis LP5 Training
   OemMrcHVMFinalize,        ///< before HVM Finalization
   OemDqLoopbackTest,        ///< before Dq Loopback test
@@ -1983,8 +1984,9 @@ typedef struct {
   UINT8             MaxRanks;                     ///< Maximum number of ranks detected in any channel on the Phy. Per Channel MaxRanks may be different.
   BOOLEAN           IsMrDcaPdaEnabled;            ///< TRUE if PDA programming of MR43/MR44 is used in DDR5
   MrcSaGvPoint      SaGvPprPoint;                 ///< SA GV point at which PPR should be executed
+  UINT8             SagvGeardownMask;             ///< SaGv points mask at which Geardown should be enabled
   MrcMptuChannelConfig MptuChannelMap[MAX_CONTROLLER][MAX_CHANNEL]; ///< System to MPTU channel map
-  UINT8             ReservedBytesAlign[1];        ///< Align to 4 bytes for MrcSavedata
+  UINT8             ReservedBytesAlign[4];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //
@@ -1993,6 +1995,7 @@ typedef struct {
   MrcContSave     Controller[MAX_CONTROLLER];               ///< The following are controller level definitions.
   MrcSaGvOutput   SaGvOutputs;                    ///< Per-SaGv Point output data
   MrcTiming       Timing[MAX_PROFILE];            ///< The Memory Timing Values
+  UINT8           NMode[MAX_PROFILE][MAX_SAGV_POINTS];      ///< The Memory Nmode Values
   UINT16          VCO[NUM_LCPLL][MAX_SAGV_POINTS];          ///< Tracks which VCO frequencies have been allocated in each LCPLL
   INT8            LCPLLWPSel[NUM_LCPLL][MAX_SAGV_POINTS];   ///< Tracks which workpoints have been allocated in each LCPLL
   UINT8           WP2LCPLL[MAX_SAGV_POINTS];                ///< Tracks which LCPLL (0/1) has been selected for the current workpoint
@@ -2376,7 +2379,8 @@ typedef struct {
   UINT8 PprForceRepair;
   UINT8 PprRetryLimit;
   McRegOffsets OffsetKnobs;       ///< Options for MC Register Offset settings
-  UINT8 Reserved3[4];             ///< Reserved to ensure config block size is a multiple of DWORDs
+  BOOLEAN InitPerDeviceNnFlex;
+  UINT8 Reserved3[3];             ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

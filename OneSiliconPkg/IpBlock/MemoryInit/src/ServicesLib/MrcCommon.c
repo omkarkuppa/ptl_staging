@@ -4217,3 +4217,22 @@ MrcCalcMaxRxMargin (
   }
   return (UINT8) MaxMargin;
 }
+
+/**
+  Returns whether Geardown mode is supported for the current configuration.
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @returns TRUE if Geardown supported, FALSE otherwise.
+**/
+BOOLEAN
+MrcIsGeardownSupported (
+  IN MrcParameters *const MrcData
+  )
+{
+  return (MrcData->Outputs.IsDdr5 &&
+          MrcData->Inputs.IsCs2NRequested &&
+          (MrcData->Outputs.Frequency >= f7200) &&
+          (MrcData->Outputs.MaxDimmFreq >= f7200) &&
+          (MrcGetNMode (MrcData) == CA_2_NMODE));
+}

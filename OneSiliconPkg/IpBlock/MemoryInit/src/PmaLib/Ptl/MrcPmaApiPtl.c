@@ -56,25 +56,16 @@ MrcBoardAndSkuFreqCheck (
   SkuType            = Inputs->SkuType;
 
   if (IsFreqLimitedBoard && IsLpddr5) { // T3
-    if (SkuType == MrcSkuTypeU) {
-      FreqMax = f6800;
-    } else {
-      FreqMax = f7467;
-    }
+    FreqMax = f7467;
   }
 
   if (Inputs->Lpddr5Camm) {
-    if (SkuType == MrcSkuTypeU) {
-      FreqMax = f6800;
-    } else {
-      FreqMax = f7467;
-    }
+    FreqMax = f7467;
   }
 
-  if (IsDdr5) {
-    if (SkuType == MrcSkuTypeU) {
-      FreqMax = f6400;
-    }
+  // PTL-U is limited to 6800 (LP5) and 6400 (DDR5)
+  if (SkuType == MrcSkuTypeU) {
+    FreqMax = IsDdr5 ? f6400 : f6800;
   }
 
   Outputs->FreqMax = MIN (Outputs->FreqMax, FreqMax);

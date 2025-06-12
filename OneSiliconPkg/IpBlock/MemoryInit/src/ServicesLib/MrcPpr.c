@@ -1019,6 +1019,8 @@ DispositionFailRangesWithPprFlow (
       Outputs->PprNumSuccessfulRepairs += (UINT16) NumRepairsSuccessful;
     } // Ch
   } // Controller
+
+  MrcPprSetRefresh (MrcData, TRUE);
 } // DispositionFailRangesWithPprFlow
 
 /**

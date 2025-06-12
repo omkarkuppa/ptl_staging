@@ -393,7 +393,7 @@ MrcSchedulerParametersConfig (
   GetSetVal = (ExtInputs->RowPressEn) ? 1 : 0;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccPageOpenPolicyEn, WriteCached, &GetSetVal);
 
-  if ((MrcData->Inputs.IsCs2NRequested) && (Outputs->Frequency >= f7200) && (MrcGetNMode (MrcData) == CA_2_NMODE)) {
+  if (MrcIsGeardownSupported (MrcData)) {
     // We expect to get out of green with CS Geardown enabled
     {
       GetSetVal = 1;

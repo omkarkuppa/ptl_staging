@@ -1997,5 +1997,15 @@ MrcTxDqsDccTraining (
 );
 
 
+/**
+  This function implements NN Flexible parameters per dram device for LPDDR5 & DDR5.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval - mrcSuccess
+**/
+MrcStatus MrcNnFlexPerDeviceUpdate(
+  IN MrcParameters* const MrcData
+);
 #endif // _MrcCrosser_h_
 

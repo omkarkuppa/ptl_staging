@@ -1857,11 +1857,13 @@ MrcPrintInputParameters (
     "\tCmdMirror: 0x%x\n"
     "\tBdatEnable: %u\n"
     "\tBdatTestType: %u\n"
+    "\tIsCs2NRequested: %u\n"
     "\tRowPressEn: %x\n",
     ExtInputs->Lp5CccConfig,
     ExtInputs->CmdMirror,
     Inputs->BdatEnable,
     Inputs->BdatTestType,
+    Inputs->IsCs2NRequested,
     ExtInputs->RowPressEn
     );
 

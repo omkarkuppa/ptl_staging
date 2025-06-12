@@ -1166,6 +1166,7 @@ InitMrwLpddr5 (
         if (Outputs->LpX) {
           Mr19.Bits.CsOdt = CsOdtEnc;
         }
+        Mr19.Bits.WCK2DQOSC = (Outputs->HighFrequency >= f3200) ? 1 : 0;
         MrPtr[mrIndexMR19] = Mr19.Data8;
 
         //MR21 - Default is 0's: All write functions disabled.
@@ -1624,7 +1625,7 @@ MrcSagvMrSeqLpddr5 (
   )
 {
   static const MrcModeRegister SagvMrOrder[] = {
-    mrPreAll, mrREFab, mrMR127, mrMR16, mrMR17, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15,
+    mrREFab, mrMR127, mrMR16, mrMR17, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15,
     mrMR18, mrMR3, mrMR1, mrMR2, mrMR19, mrMR30, mrMR69, mrMR37, mrMR41, mrMR24, mrMR58, mrMR16FspOp, mrREFab
     };
   MrcModeRegister    CurMrAddr;

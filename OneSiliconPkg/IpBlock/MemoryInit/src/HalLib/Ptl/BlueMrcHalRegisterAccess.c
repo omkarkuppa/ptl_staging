@@ -2493,7 +2493,6 @@ MrcGetSetSideEffect (
   IN      INT64         *const  Value
   )
 {
-  //@todo BOOLEAN   Flush;
   GSM_GT    WriteGroup;
   GSM_GT    OffsetGroup;
   GSM_GT    PiGroup;

@@ -706,7 +706,7 @@ MrcGenMrsFsmConfig (
       MrsFsmCtl.Data = MrcReadCR (MrcData, Offset);
       // Configure the MRS_FSM to use the Generic version
       MrsFsmCtl.Bits.generic_mrs_fsm_device_loop_enable = GlobalDevLoopEnable;
-      MrsFsmCtl.Bits.send_preall = 0;
+      MrsFsmCtl.Bits.send_preall = (IsLpddr) ? 0 : (SagvConfig ? 1 : 0);
       //MrsFsmCtl.Bits.do_pda_for_ecc = Outputs->EccSupport ? 1 : 0;
       if (SagvBreakPoint) {
         MrsFsmCtl.Bits.split_transition = 1;
@@ -781,7 +781,7 @@ MrcGenMrsFsmClean (
                 // If the input MrData buffer is NULL, then we will clean all registers
                 IsCleanRequired = TRUE;
               }
-              
+
               if (IsCleanRequired) {
                 GenericMrsFsmMailboxAccess (MrcData, Controller, McCh, GmfMailboxWrite, GmfMailboxTypeControl, MrsFsmControlRegIdx, &Data);
               }

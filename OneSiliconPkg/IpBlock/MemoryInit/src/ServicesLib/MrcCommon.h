@@ -724,6 +724,7 @@ typedef enum {
   LoopBackTasksMax
 } LoopBackTasks;
 
+#pragma pack (push, 1)
 typedef struct {
   UINT64  Signature;
   UINT16  LoopbackResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS];
@@ -736,7 +737,9 @@ typedef struct {
   UINT32  FailedCccSharedMask;    // [0:3] - CccShared[0..3]
   UINT32  FailedCompMask;         // [0]   - COMP
   UINT32  FailedLvrMask;          // Bitmask of (1 << Supply), where Supply is one of LVR_AUTO_TRIM_SUPPLY_TYPE
+  INT16   LeftEdgeResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS];
 } LOOPBACK_RESULT;
+#pragma pack (pop)
 
 ///
 /// External Global constants
@@ -4436,6 +4439,18 @@ MrcTristateCa (
 MrcStatus
 MrcRankMarginToolCpgc (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  Returns whether Geardown mode is supported for the current configuration.
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @returns TRUE if Geardown supported, FALSE otherwise.
+**/
+BOOLEAN
+MrcIsGeardownSupported (
+  IN MrcParameters *const MrcData
   );
 
 #endif //_MrcCommon_h_

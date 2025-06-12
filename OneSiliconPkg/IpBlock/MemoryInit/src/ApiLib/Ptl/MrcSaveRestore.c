@@ -845,6 +845,9 @@ MrcSaveMCValues (
       MrcCall->MrcCopyMem ((UINT8 *) &SaveData->Timing[Profile], (UINT8 *) &Outputs->Timing[Profile], sizeof (MrcTiming));
     }
   }
+  for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
+    SaveData->NMode[Profile][SaGvPoint] = (UINT8) Outputs->Timing[Profile].NMode;
+  }
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     ControllerIn                  = &Inputs->Controller[Controller];
@@ -1085,6 +1088,7 @@ MrcRestoreNonTrainingValues (
 
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
     MrcCall->MrcCopyMem ((UINT8 *) &Outputs->Timing[Profile], (UINT8 *) &SaveData->Timing[Profile], sizeof (MrcTiming));
+    Outputs->Timing[Profile].NMode = SaveData->NMode[Profile][SaGvPoint];
   }
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -1209,6 +1213,7 @@ MrcRestoreNonTrainingValues (
   Outputs->MaxRanks               = SaveData->MaxRanks;
   Outputs->IsCkdSupported         = SaveData->IsCkdSupported;
   Outputs->HighFrequency          = Outputs->Frequency;
+  Outputs->IsCs2NEnabled          = (SaveData->SagvGeardownMask & (1 << SaGvPoint)) ? TRUE : FALSE; 
   if (Outputs->GearMode == 1) {
     Outputs->Gear4Ever = 1;
   }

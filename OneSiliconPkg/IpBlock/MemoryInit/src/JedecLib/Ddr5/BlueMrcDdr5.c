@@ -768,7 +768,6 @@ MrcFinalizeDdr5MrSeq (
   MrcStatus                   Status;
 
   static const MrcModeRegister Ddr5SagvMrOrder[] = {
-    mrPreAll,
     // MR13 tCCD_L is different per speed. The shadow register value is updated
     // here but the new setting is applied automatically during the SREF flow.
     // The mpcDllReset command is not required to apply the new setting.

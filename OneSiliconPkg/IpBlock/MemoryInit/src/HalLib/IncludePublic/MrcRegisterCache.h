@@ -23,50 +23,6 @@
 #include "CMrcInterface.h"  // for MrcParameters
 
 #pragma pack (push, 1)
-#if 0
-// This code is kept for future persuit of multicasting with caching.
-/**
-Multicast Type definitions:
-  Socket              Channel           Rank            Strobe          Bit         Cast Type
-Start   End       Start    End        Start End     Start   End       Start End
-Socket  Socket    Channel  Channel    Rank  Rank    Strobe  Strobe    Bit   Bit     Unicast
-Socket  Socket    Channel  Channel    Rank  Rank    Strobe  Strobe    0     Max     Strobe
-Socket  Socket    Channel  Channel    Rank  Rank    0       Max       X     X       Rank
-Socket  Socket    Channel  Channel    0     Max     0       Max       X     X       Channel
-Socket  Socket    0         Max       0     Max     0       Max       X     X       Socket
-0       Max       0         Max       0     Max     0       Max       X     X       System
-Socket  Socket    0         Max       Rank  Rank    0       Max       X     X       ChannelStrobe
-0       Max       Channel   Channel   Rank  Rank    0       Max       X     X       SocketStrobe
-Socket  Socket    0         Max       0     Max     Strobe  Strobe    X     X       ChannelRank
-0       Max       Channel   Channel   0     Max     Strobe  Strobe    X     X       SocketRank
-0       Max       0         Max       Rank  Rank    0       Max       X     X       SocketChannelStrobe
-**/
-
-typedef enum {
-  MrcBcastUnicast,
-  MrcBcastStrobe,
-  MrcBcastRank,
-  MrcBcastChannel,
-  MrcBcastSocket,
-  MrcBcastSystem,
-  MrcBcastChannelStrobe,
-  MrcBcastSocketStrobe,
-  MrcBcastChannelRank,
-  MrcBcastSocketRank,
-  MrcBcastSocketChannelStrobe,
-  MrcBcastMax,
-  MrcBcastDelimiter = 0x7FFFFFFF
-} MRC_BCAST_TYPES;
-
-// @todo: Fix Names.
-typedef struct {
-  MRC_BCAST_TYPES BCastType;
-  UINT32          BOffset;
-  UINT32          COffset;
-  UINT32          ROffset;
-  UINT32          SOffset;
-} MRC_REG_OFFSETS;
-#endif
 
 /**
   Invalidate the specified offset in the register cache.

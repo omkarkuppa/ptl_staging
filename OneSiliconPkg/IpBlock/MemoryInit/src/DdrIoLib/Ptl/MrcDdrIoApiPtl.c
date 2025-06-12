@@ -113,7 +113,7 @@ MrcSetupDdrIoIpInfo (
   }
 
   if (Status == mrcSuccess) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s\n", Inputs->IsDdrphyx64 ? "PantherLake" : "PantherLake" );
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s\n", Inputs->IsDdrphyx64 ? "WildcatLake" : "PantherLake" );
     MRC_DEBUG_MSG (
       Debug,
       MSG_LEVEL_NOTE,
