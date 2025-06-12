@@ -42,9 +42,9 @@
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_3         0xE403          ///< LPC/eSPI Controller P Base/Mainstream
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_4         0xE404          ///< LPC/eSPI Controller NEX INDU SuperSKU
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_5         0xE405          ///< LPC/eSPI Controller NEX INDU Premium
-#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_6         0xE406          ///< LPC/eSPI Controller
-#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_7         0xE407          ///< LPC/eSPI Controller
-#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_8         0xE408          ///< LPC/eSPI Controller
+#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_6         0xE406          ///< LPC/eSPI Controller U SKU
+#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_7         0xE407          ///< LPC/eSPI Controller U SKU
+#define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_8         0xE408          ///< LPC/eSPI Controller U SKU
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_9         0xE409          ///< LPC/eSPI Controller
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_10        0xE40A          ///< LPC/eSPI Controller
 #define V_PTL_PCD_P_ESPI_CFG_DEVICE_ID_MB_11        0xE40B          ///< LPC/eSPI Controller
@@ -73,9 +73,9 @@
 // PTL PCD H LPC Device IDs
 //
 #define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_0         0xE300          ///< LPC/eSPI Controller
-#define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_1         0xE301          ///< LPC/eSPI Controller P SuperSKU
-#define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_2         0xE302          ///< LPC/eSPI Controller P Premiun
-#define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_3         0xE303          ///< LPC/eSPI Controller P Base/Mainstream
+#define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_1         0xE301          ///< LPC/eSPI Controller H SKU
+#define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_2         0xE302          ///< LPC/eSPI Controller H SKU
+#define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_3         0xE303          ///< LPC/eSPI Controller H SKU
 #define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_4         0xE304          ///< LPC/eSPI Controller
 #define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_5         0xE305          ///< LPC/eSPI Controller
 #define V_PTL_PCD_H_ESPI_CFG_DEVICE_ID_MB_6         0xE306          ///< LPC/eSPI Controller
