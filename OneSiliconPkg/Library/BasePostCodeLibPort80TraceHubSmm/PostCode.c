@@ -92,18 +92,24 @@ DisplaySmbusPostCode (
 {
   UINT8           Index;
   UINT8           WriBuf[4] = {0, 0, 0 ,0};
-  UINT8           Length = 4;
   EFI_STATUS      Status;
   UINTN           SmbusAddress;
 
-  SmbusAddress = SMBUS_LIB_ADDRESS (Address, Command, Length, FALSE);
   Index = 3;
   WriBuf[0] = (UINT8)(PostCodeValue >> (4 * Index-- )) & 0xF;
   WriBuf[1] = (UINT8)(PostCodeValue >> (4 * Index--)) & 0xF;
   WriBuf[2] = (UINT8)(PostCodeValue >> (4 * Index--)) & 0xF;
   WriBuf[3] = (UINT8)(PostCodeValue >> (4 * Index )) & 0xF;
 
-  SmBusWriteBlock (SmbusAddress, WriBuf, &Status);
+  for (Index = 0; Index < 4; Index++) {
+    SmbusAddress = SMBUS_LIB_ADDRESS (Address, Command + Index, 0, FALSE);
+    SmBusWriteDataByte (SmbusAddress, WriBuf[Index], &Status);
+
+    if (EFI_ERROR(Status)) {
+      DEBUG((DEBUG_ERROR, "DisplaySmbusPostCode SmBus Write failed. Status: %r\n", Status));
+      return Status;
+    }
+  }
 
   return Status;
 }
