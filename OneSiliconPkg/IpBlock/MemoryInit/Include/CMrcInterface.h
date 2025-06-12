@@ -405,7 +405,7 @@ typedef enum {
 
 /// Error Counter for Failure in BER
 #define MRC_BER_ERROR_COUNTER_FOR_FAILURE  (1)  ///< Number of errors before considered failure
-#define MRC_BER_ERROR_COUNTER_FOR_TRAINING (32) ///< Used in advanced training 
+#define MRC_BER_ERROR_COUNTER_FOR_TRAINING (32) ///< Used in advanced training
 
 /// CCC PerBit defines
 #define MAX_DDR5_CMD_PINS          (13)      ///< CA0-CA12
@@ -1735,6 +1735,14 @@ typedef struct {
   //UINT8       Device[MAX_SDRAM_IN_DIMM];      ///< Which Bytes are tied to which Device where BIT0 set means Byte 0 - needed for PDA Mapping, not used currently
 } MrcRankOut;
 
+/// This structure stores all MR values that are used to properly program DRAM
+/// for the SAGV point that is used for running the PPR routine. It is needed when
+/// the PPR routine is not run during the last SAGV point initialization.
+typedef struct {
+  UINT8       MR[MAX_MR_IN_DIMM]; ///< DRAM mode register values, indexed by MrcModeRegisterIndex enum.
+} MrcPprRankOut;
+
+
 /// This data structure contains all the "global data" values that are considered output by the MRC.
 /// The following are DIMM level definitions. All ranks on a DIMM are set to these values.
 typedef struct {
@@ -1780,10 +1788,11 @@ typedef struct {
   BOOLEAN        IsPmicSupport10MVStep;   ///< TRUE if PMIC supports 10mv step size. PMIC must support 5mv step size.
   UINT8          PmicDefaultStepSize;     ///< Either 5 or 10.
   MrcFrequency   Speed;                   ///< Max DIMM speed in the current profile - needed  for SMBIOS
-  MrcRankOut     Rank[MAX_RANK_IN_DIMM];  ///< The following are rank level definitions.
   BOOLEAN        IsCkdSupport;            ///< TRUE if CKD is installed on this DIMM.
   BOOLEAN        IsMbistMpprSupport;      ///< TRUE if MBIST/mPPR is supported on this DIMM.
   UINT8          CkdDimmIndex;            ///<  Indicates the index of Physical DIMM (Max up to 4 for 2DPC), this is used when programming CKD Control Word
+  MrcRankOut     Rank[MAX_RANK_IN_DIMM];  ///< The following are rank level definitions.
+  MrcPprRankOut  PprRank[MAX_RANK_IN_DIMM]; ///< The following are rank level definitions for SAGV point that is used for PPR.
 } MrcDimmOut;
 
 /// This data structure contains all the "global data" values that are considered output by the MRC.

@@ -3466,13 +3466,6 @@ MrcLpddr5GetDramCommandMap (
       *DramCmdData = LP5_WS_OFF_CMD_RISE_EDGE;
       break;
 
-    case MrDramCmdMrr:
-      *DramCmdData = (Address << 7) | LP5_MRR_CMD_RISE_EDGE;
-      // Mulitcast fall through to defualt
-      if (!IsMultiCast) {
-        break;
-      }
-
     case MrDramCmdAct:
       LpDdr5ActCommand.Data32 = Data;
       *DramCmdData =
@@ -3484,6 +3477,13 @@ MrcLpddr5GetDramCommandMap (
         (LpDdr5ActCommand.Bits.RowBits14_17 << 3) |
         LP5_ACT1_CMD_RISE_EDGE;
       break;
+
+    case MrDramCmdMrr:
+      *DramCmdData = (Address << 7) | LP5_MRR_CMD_RISE_EDGE;
+      // Mulitcast fall through to defualt
+      if (!IsMultiCast) {
+        break;
+      }
 
     default:
       MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "Invalid MR Command !\n");

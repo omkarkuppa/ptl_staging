@@ -806,9 +806,13 @@ MrcIbecc (
         // Do not run the IBECC Init Ranges FSM when:
         // - The Boot Mode is bmWarm and the IbeccOperationMode has not changed
         // - The IbeccOperationMode is Bypass Mode (IbeccNonProtect)
+        // - The Boot Mode is S3
         Outputs->IsIbeccInitRangesRequired =
           (Inputs->BootMode != bmWarm || (Inputs->BootMode == bmWarm && IbeccOperationMode != Inputs->LastIbeccOperationMode)) &&
           IbeccOperationMode != IbeccNonProtect;
+        if (Inputs->BootMode == bmS3) {
+          Outputs->IsIbeccInitRangesRequired = FALSE;
+        }
 
 
         if (Outputs->IsIbeccInitRangesRequired) {

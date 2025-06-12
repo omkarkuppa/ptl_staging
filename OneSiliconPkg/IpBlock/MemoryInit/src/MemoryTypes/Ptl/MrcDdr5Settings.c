@@ -61,6 +61,90 @@ const TDFEValueDdr5 Ddr5DFETable[MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL] = {
   {{ -12, -2, 0, 0 }}, // CHANNEL 1
 };
 
+// AUTO-GENERATED DDR5 TABLES START
+// AUTO-GENERATED CODE
+Ddr5ParamIndex GetDdr5ParamIndex (MrcFrequency Frequency, UINT32 NumOfRanks, CardEnum Card) {
+    switch (Card) {
+        case Card_207G:
+            if (NumOfRanks == 2 && Frequency <= 6400) return Card_207G_2R_6400;
+            break;
+        case Card_240C:
+            if (NumOfRanks == 1 && Frequency <= 6400) return Card_240C_1R_6400;
+            break;
+        case Card_241G:
+            if (NumOfRanks == 2 && Frequency <= 6400) return Card_241G_2R_6400;
+            break;
+        case Card_246C:
+            if (NumOfRanks == 1 && Frequency <= 6400) return Card_246C_1R_6400;
+            if (NumOfRanks == 1 && Frequency <= 7200) return Card_246C_1R_7200;
+            break;
+        case Card_256B:
+            if (NumOfRanks == 2 && Frequency <= 6400) return Card_256B_2R_6400;
+            if (NumOfRanks == 2 && Frequency <= 7200) return Card_256B_2R_7200;
+            break;
+        case Card_269C:
+            if (NumOfRanks == 1 && Frequency <= 6400) return Card_269C_1R_6400;
+            break;
+        case Card_279C:
+            if (NumOfRanks == 1 && Frequency <= 6400) return Card_279C_1R_6400;
+            if (NumOfRanks == 1 && Frequency <= 7200) return Card_279C_1R_7200;
+            break;
+        default:
+            if (NumOfRanks == 1 && Frequency <= 6400) {
+                return Card_default_1R_6400;
+            } else if (NumOfRanks == 1 && Frequency > 6400) {
+                return Card_default_1R_7200;
+            } else if (NumOfRanks == 2 && Frequency <= 6400) {
+                return Card_default_2R_6400;
+            } else if (NumOfRanks == 2 && Frequency > 6400) {
+                return Card_default_2R_7200;
+            }
+            break;
+    }
+    return -1; // Invalid index
+}
+
+// Ddr5 Parameters Table
+
+// ddr5_dfe_tap1/ ddr5_dfe_tap2/ ddr5_rtt_wr/ ddr5_rtt_nom_wr/ ddr5_rtt_park_rx/ ddr5_ron_up/ ddr5_ron_dn/
+const Ddr5InitailSettings Ddr5InitailSettingsParams[] = {
+    { -23, -5, 120, 60, 60, 40, 48 },
+    { -23, -5, 120, 60, 60, 40, 48 },
+    { -12, -2, 80, 60, 80, 40, 40 },
+    { -12, -2, 80, 60, 80, 40, 40 },
+    { -32, -5, 80, 60, 60, 34, 40 },
+    { -23, -5, 80, 60, 60, 34, 40 },
+    { -23, -5, 80, 60, 60, 34, 40 },
+    { -21, 0, 120, 60, 60, 40, 48 },
+    { -33, -15, 120, 60, 60, 34, 40 },
+    { -33, -8, 80, 60, 60, 40, 40 },
+    { -33, -8, 120, 60, 60, 48, 40 },
+    { -40, 1, 120, 48, 34, 48, 40 },
+    { -25, -5, 120, 80, 80, 40, 40 },
+    { -25, -5, 120, 80, 48, 34, 34 },
+};
+
+// Phy Parameters Table
+
+// cpu_ron/ dq_tco/ dq_odt/ rxtap0/ rxtap1/ ctle_r/ ctle_c/ ctle_rcmn/ ctle_dccmn/ ctle_eq/ ctle_tailctl/
+const Ddr5PhyInitailSettings Ddr5PhyParams[] = {
+    { 26, 9, 35, 0, 0, 1, 0, 1, 1, 6, 1 },
+    { 26, 9, 35, 0, 0, 1, 0, 1, 1, 6, 1 },
+    { 27, -28, 40, 0, 0, 2, 3, 3, 1, 6, 2 },
+    { 27, -28, 40, 0, 0, 2, 3, 3, 1, 6, 2 },
+    { 26, 5, 33, 8, 0, 3, 3, 2, 2, 7, 3 },
+    { 26, 5, 33, 10, -1, 3, 3, 2, 2, 7, 3 },
+    { 26, 5, 33, 10, -1, 3, 3, 2, 2, 7, 3 },
+    { 26, 7, 35, 1, 0, 1, 0, 1, 1, 6, 1 },
+    { 25, -5, 33, 8, 0, 3, 3, 2, 2, 7, 3 },
+    { 25, -3, 35, 6, 1, 1, 0, 3, 1, 7, 1 },
+    { 25, -11, 32, 4, -1, 2, 2, 0, 2, 1, 3 },
+    { 25, 0, 38, 2, -1, 3, 2, 1, 0, 7, 3 },
+    { 26, -12, 40, 4, 1, 2, 3, 3, 1, 6, 2 },
+    { 26, -12, 38, 2, 1, 3, 3, 3, 0, 3, 3 },
+};
+// AUTO-GENERATED DDR5 TABLES END
+
 /**
   This function selects the CCC ODT table according to DIMM/Rank population.
 

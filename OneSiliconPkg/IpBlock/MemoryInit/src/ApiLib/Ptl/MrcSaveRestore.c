@@ -817,6 +817,7 @@ MrcSaveMCValues (
   UINT8                 Controller;
   UINT8                 Channel;
   UINT8                 Dimm;
+  UINT8                 Rank;
   MrcSaveOrRestore      SaveRestoreType;
   BOOLEAN               SkipPrint;
   UINT32                PostCodesDone;
@@ -874,7 +875,7 @@ MrcSaveMCValues (
       SaveData->MrXPdaDfeTap4Enabled |= (ChannelOut->MrXPdaDfeTap4Enabled);
       MrcCall->MrcCopyMem ((UINT8 *) ChannelSave->DqsMapCpu2Dram, (UINT8 *) ChannelIn->DqsMapCpu2Dram, sizeof (ChannelIn->DqsMapCpu2Dram));
       for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
-        MrcCall->MrcCopyMem ((UINT8 *) &ChannelSave->Dimm[Dimm], (UINT8 *) &ChannelOut->Dimm[Dimm], sizeof (MrcDimmOut));
+        MrcCall->MrcCopyMem ((UINT8 *) &ChannelSave->Dimm[Dimm], (UINT8 *) &ChannelOut->Dimm[Dimm], (UINT32) OFFSET_OF (MrcDimmOut, PprRank[rRank0]));
         SpdIn = &ChannelIn->Dimm[Dimm].Spd.Data;
         if (Outputs->IsDdr5) {
           SpdBegin = (UINT8 *) &SpdIn->Ddr5.ManufactureInfo;
@@ -899,6 +900,14 @@ MrcSaveMCValues (
         }
         // Save just enough SPD information so it can be restored during non-cold boot.
         MrcCall->MrcCopyMem ((UINT8 *) &ChannelSave->DimmSpdSave[Dimm].SpdSave[0], SpdBegin, sizeof (ChannelSave->DimmSpdSave[Dimm].SpdSave));
+
+        if (Outputs->IsLpddr5 && Outputs->SaGvPoint == Outputs->SaGvPprPoint) {
+          for (Rank = 0; Rank < MAX_RANK_IN_DIMM; Rank++) {
+              MrcCall->MrcCopyMem ((UINT8 *) &ChannelSave->Dimm[Dimm].PprRank[Rank].MR,
+                                   (UINT8 *) &ChannelOut->Dimm[Dimm].Rank[Rank].MR,
+                                   sizeof (ChannelSave->Dimm[Dimm].PprRank[Rank].MR));
+          }
+        }
 
       } // for Dimm
     } // for Channel
@@ -1063,6 +1072,7 @@ MrcRestoreNonTrainingValues (
   UINT8             Controller;
   UINT8             Channel;
   UINT8             Dimm;
+  UINT8             Rank;
 
   SaveData    = &MrcData->Save.Data;
   Outputs     = &MrcData->Outputs;
@@ -1070,6 +1080,8 @@ MrcRestoreNonTrainingValues (
   Inputs      = &MrcData->Inputs;
   MrcCall     = Inputs->Call.Func;
   SaGvPoint   = Outputs->SaGvPoint;
+
+  Outputs->SaGvPprPoint = SaveData->SaGvPprPoint;
 
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
     MrcCall->MrcCopyMem ((UINT8 *) &Outputs->Timing[Profile], (UINT8 *) &SaveData->Timing[Profile], sizeof (MrcTiming));
@@ -1112,7 +1124,7 @@ MrcRestoreNonTrainingValues (
         DimmOut  = &ChannelOut->Dimm[Dimm];
         if (DimmSave->Status == DIMM_PRESENT || DimmSave->Status == DIMM_DISABLED) {
           SpdIn   = &ChannelIn->Dimm[Dimm].Spd.Data;
-          MrcCall->MrcCopyMem ((UINT8 *) DimmOut, (UINT8 *) DimmSave, sizeof (MrcDimmOut));
+          MrcCall->MrcCopyMem ((UINT8 *) DimmOut, (UINT8 *) DimmSave, (UINT32) OFFSET_OF (MrcDimmOut, PprRank[rRank0]));
           if (SaveData->IsDdr5) {
             SpdBegin = (UINT8 *) &SpdIn->Ddr5.ManufactureInfo;
             SpdIn->Ddr5.Base.DramDeviceType.Data = ChannelSave->DimmSpdSave[Dimm].SpdDramDeviceType;
@@ -1138,6 +1150,14 @@ MrcRestoreNonTrainingValues (
           // If SAGV enabled, only do this on the last pass, due to LPDDR VendorId patching.
           if ((!MrcIsSaGvEnabled (MrcData)) || (SaGvPoint == Outputs->SaGvLast)) {
             MrcCall->MrcCopyMem (SpdBegin, (UINT8 *) &ChannelSave->DimmSpdSave[Dimm].SpdSave[0], sizeof (ChannelSave->DimmSpdSave[Dimm].SpdSave));
+          }
+
+          if (Outputs->IsLpddr5 && Outputs->SaGvPoint == Outputs->SaGvPprPoint) {
+            for (Rank = 0; Rank < MAX_RANK_IN_DIMM; Rank++) {
+              MrcCall->MrcCopyMem ((UINT8 *) &ChannelOut->Dimm[Dimm].Rank[Rank].MR,
+                                   (UINT8 *) &ChannelSave->Dimm[Dimm].PprRank[Rank].MR,
+                                   sizeof (ChannelSave->Dimm[Dimm].PprRank[Rank].MR));
+            }
           }
         } else {
           DimmOut->Status = DimmSave->Status;
@@ -1188,7 +1208,6 @@ MrcRestoreNonTrainingValues (
   Outputs->MaxDqBits              = SaveData->MaxDqBits;
   Outputs->MaxRanks               = SaveData->MaxRanks;
   Outputs->IsCkdSupported         = SaveData->IsCkdSupported;
-  Outputs->SaGvPprPoint           = SaveData->SaGvPprPoint;
   Outputs->HighFrequency          = Outputs->Frequency;
   if (Outputs->GearMode == 1) {
     Outputs->Gear4Ever = 1;
