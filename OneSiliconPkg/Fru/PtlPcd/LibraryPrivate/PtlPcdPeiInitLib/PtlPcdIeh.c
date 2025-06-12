@@ -122,6 +122,33 @@ PtlIehEnableMode (
   IN  IEH_HANDLE      *IehHandle
   )
 {
+  #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  EFI_STATUS                      Status;
+  TRACE_HUB_PREMEM_CONFIG         *TraceHubPreMemConfig;
+  SI_PREMEM_POLICY_PPI             *SiPreMemPolicyPpi;
+
+  PciSegmentWrite32 (IehHandle->PciCfgBase + R_IEH_CFG_GCOERRMSK, 0xFFFFFFFF);
+  PciSegmentWrite32 (IehHandle->PciCfgBase + R_IEH_CFG_GSYSEVTMAP, 0x0);
+  PciSegmentWrite32 (IehHandle->PciCfgBase + R_IEH_CFG_LERRUNCMSK_N0, (UINT32) BIT20);
+  PciSegmentWrite32 (IehHandle->PciCfgBase + R_IEH_CFG_LERRCORMSK_N0, (UINT32) BIT20);
+
+  Status = PeiServicesLocatePpi (
+            &gSiPreMemPolicyPpiGuid,
+            0,
+            NULL,
+            (VOID **) &SiPreMemPolicyPpi
+           );
+  ASSERT_EFI_ERROR (Status);
+
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTraceHubPreMemConfigGuid, (VOID *) &TraceHubPreMemConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  DEBUG ((DEBUG_INFO, "IEH: NPK.EnableMode = 0x%x\n",TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode));
+  if (TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode == 0x1) {
+    PciSegmentAnd32 (IehHandle->PciCfgBase + R_IEH_CFG_LERRUNCMSK_N0, (UINT32) ~BIT20);
+    PciSegmentAnd32 (IehHandle->PciCfgBase + R_IEH_CFG_LERRCORMSK_N0, (UINT32) ~BIT20);
+  }
+#endif
   PciSegmentAndThenOr32 (IehHandle->PciCfgBase + R_IEH_CFG_GSYSEVTMAP, 0x7FFFFFC0, 0x3F);
   PciSegmentAnd32 (IehHandle->PciCfgBase + R_IEH_CFG_IEHTYPEVER, (UINT32)~(B_IEH_CFG_IEHTYPEVER_IEH_BUSNUM));
   PciSegmentAndThenOr32 (IehHandle->PciCfgBase + R_IEH_CFG_ERRPINCTRL, 0xFFFFFFC0, 0x2A);
