@@ -162,9 +162,10 @@
   <b>Revision 4</b>:  - Remove ECBaseCsPwrPolicy.
   <b>Revision 5</b>:  - Add OSSE Pep constraint
   <b>Revision 6</b>:  - Added StorageDynamicLinkManagement
+  <b>Revision 7</b>:  - Added TccMode
 **/
 
-#define SETUP_DATA_REVISION 6
+#define SETUP_DATA_REVISION 7
 
 typedef struct {
   UINT8   Revision;
@@ -807,6 +808,7 @@ typedef struct {
   //
   UINT16  StaticContentSizeAt4Gb;
 
+  UINT8   TccMode;
 } SETUP_DATA;
 
 /**
@@ -1124,7 +1126,7 @@ typedef struct {
   UINT8   ReduceXecores;
 } CPU_SETUP;
 
-#define CPU_SETUP_VOLATILE_DATA_REVISION       1
+#define CPU_SETUP_VOLATILE_DATA_REVISION       2
 typedef struct {
   UINT16  CpuFamilyModel;
   UINT16  CpuExtendedFamilyModel;
@@ -1138,6 +1140,7 @@ typedef struct {
   UINT8  GtVrLocked;
   UINT8  SaVrLocked;
   UINT8  AtomVrLocked;
+  UINT8  TccSupported;
 } CPU_SETUP_VOLATILE_DATA;
 
 #define TBT_SETUP_VOLATILE_DATA_REVISION       1

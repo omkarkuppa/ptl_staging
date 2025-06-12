@@ -30,9 +30,11 @@ extern EFI_GUID gCpuInitConfigGuid;
 
   <b>Revision 1</b>:
   - Initial version.
+  <b>Revision 2</b>:
+  - Added new configuration options for Intel TCC Feature (AcSplitLock)
 **/
 
-#define CPU_INIT_CONFIG_REVISION 1
+#define CPU_INIT_CONFIG_REVISION 2
 
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;                   ///< Config Block Header
@@ -82,8 +84,8 @@ typedef struct {
     - <b>1: Enable</b>
   **/
   UINT32 PmonEnable          : 1;
-  UINT32 RsvdBits            : 25;                ///< Reserved for future use
-  UINT8  Reserved0[3];                            ///< Reserved for future use
+  UINT32 RsvdBits            : 24;                ///< Reserved for future use
+  UINT8  Reserved0[4];                            ///< Reserved for future use
   UINT64 PmonAddress;                             ///< PMON memory address
 } CPU_INIT_CONFIG;
 

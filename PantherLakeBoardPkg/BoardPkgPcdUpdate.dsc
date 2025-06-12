@@ -326,6 +326,15 @@
 !endif
 
 #
+# Embedded Ip Blocks Enabled
+#
+!if ((gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1))
+  gSiPkgTokenSpaceGuid.PcdTccSupport  |TRUE
+!else
+  gSiPkgTokenSpaceGuid.PcdTccSupport  |FALSE
+!endif
+
+#
 # FV Copy Free Space Skip Feature Enable
 #
   gFvCopyPkgTokenSpaceGuid.PcdFreeSpaceSkipFvCopyEnable|TRUE

@@ -60,6 +60,12 @@
   gSiPkgTokenSpaceGuid.PcdPsmiEnable                   |TRUE
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable               |0x0
   gSiPkgTokenSpaceGuid.PcdTsnSupport                   |0x0
+  gSiPkgTokenSpaceGuid.PcdTccSupport                   |0x0
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+  gSiPkgTokenSpaceGuid.PcdTccSupport                   |0x1
+!else
+  gSiPkgTokenSpaceGuid.PcdTccSupport                   |0x0
+!endif
   gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress      |gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress
   gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable            |FALSE
   gSiPkgTokenSpaceGuid.PcdFspVEnable                   |FALSE

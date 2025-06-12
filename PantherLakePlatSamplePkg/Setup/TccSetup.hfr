@@ -1,0 +1,48 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2025 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+
+  // Define forms
+  form formid = AUTO_ID(TCC_MODE_CONFIG_FORM_ID),
+  title     = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_TITLE);
+
+    SUBTITLE(STRING_TOKEN(STR_TCC_MODE_SUBTITLE))
+    SEPARATOR
+    //
+    // AC Split Lock
+    //
+    oneof varid   =  CPU_SETUP.AcSplitLock,
+      prompt   = STRING_TOKEN(STR_AC_SPLIT_LOCK_PROMPT),
+      help     = STRING_TOKEN(STR_AC_SPLIT_LOCK_HELP),
+      option text = STRING_TOKEN (STR_ENABLED_STRING),  value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = SETUP_DATA.TccMode,
+      questionid = AUTO_ID (KEY_TCC_MODE),
+      prompt   = STRING_TOKEN(STR_TCC_MODE_PROMPT),
+      help     = STRING_TOKEN(STR_TCC_MODE_HELP),
+      flags    = INTERACTIVE,
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+  endform;
+

@@ -1,0 +1,66 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2025 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include "VFR.uni"
+
+#string STR_TCC_MODE_CONFIG_FORM_TITLE          #language en-US "Intel(R) Time Coordinated Computing"
+#string STR_TCC_MODE_CONFIG_FORM_HELP           #language en-US "Intel(R) Time Coordinated Computing (Intel(R) TCC) options"
+#string STR_TCC_MODE_SUBTITLE                   #language en-US "Intel(R) Time Coordinated Computing (Intel(R) TCC)"
+
+#string STR_PSF_TCC_PROMPT                      #language en-US "IO Fabric Low Latency"
+#string STR_PSF_TCC_HELP                        #language en-US "Enable or Disable IO Fabric Low Latency. This will turn off some power management in the PCH IO fabrics. This option provides the most aggressive IO Fabric performance setting. S3 state is NOT supported."
+
+//
+// AC Split Lock
+//
+#string STR_AC_SPLIT_LOCK_PROMPT                #language en-US "#AC Split Lock"
+#string STR_AC_SPLIT_LOCK_HELP                  #language en-US "Enable or Disable Alignment Check Exception (#AC). When enabled, this will assert an #AC when any atomic operation has an operand that crosses two cache lines."
+
+//
+// Instruction Fetch Unit
+//
+#string STR_IFU_ENABLE_PROMPT                   #language en-US "IFU Enable"
+#string STR_IFU_ENABLE_HELP                     #language en-US "Enable or Disable Instruction Fetch Unit(IFU). When enabled, Instructions will be prefetch to the cache."
+
+//
+// GP Fault UC Lock
+//
+#string STR_GP_FAULT_UC_LOCK_PROMPT                #language en-US "#GP Fault UC Lock"
+#string STR_GP_FAULT_UC_LOCK_HELP                  #language en-US "Enable or Disable GP Fault Exception (GP#). When enabled, this will assert an GP# when encountering a Lock to un-cacheable memory before the bus is locked."
+
+#string STR_STARV2MED_PRIO_ON_NEW_REQ_DISABLE_PROMPT               #language en-US "MC Starv2med Prio On New Req"
+#string STR_STARV2MED_PRIO_ON_NEW_REQ_DISABLE_HELP                 #language en-US "Enable or Disable MC Starv2med Prio On New Req.Enable will cause a New Request with Critical Priority inserted to RPQ with Medium Priority.When clear a Critical Priority Request will get STARVED Priority"
+
+#string STR_OPIO_RECENTER_PROMPT                #language en-US "OPIO Recentering"
+#string STR_OPIO_RECENTER_HELP                  #language en-US "Enable or Disable Opio Recentering to improve Pcie latency."
+
+//
+// TCC Mode
+//
+#string STR_TCC_MODE_PROMPT                     #language en-US "Intel(R) TCC Mode"
+#string STR_TCC_MODE_HELP                       #language en-US "Enable or Disable Intel(R) TCC Mode. When enabled, this will modify system settings to improve real-time performance. The full list of settings and their current state are displayed below when Intel(R) TCC mode is enabled."
+
+#string STR_TCC_AFFECTED_SETTINGS               #language en-US "Intel(R) TCC Mode Affected Settings"
+
+//
+// TCC PCI Express Form
+//
+#string STR_TCC_CPU_PCIE_OPTIONS_FORM_TITLE     #language en-US "CPU PCI Express Configuration"
+#string STR_TCC_PCH_PCIE_OPTIONS_FORM_TITLE     #language en-US "PCH PCI Express Configuration"

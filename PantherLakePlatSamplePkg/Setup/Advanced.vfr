@@ -22,6 +22,16 @@
 #define DEBUG_INTERFACE_FORM_ENABLE
 #endif
 
+#if FixedPcdGet8(PcdTccSupport) == 0x1
+  #define EMBEDDED_GRAYOUT(x) grayoutif ideqval x == 1;
+  #define EMBEDDED_GRAYOUT_OR(x,y) grayoutif ideqval x == 1 OR ideqval y == 1;
+  #define EMBEDDED_ENDIF endif;
+#else
+  #define EMBEDDED_GRAYOUT(x)
+  #define EMBEDDED_GRAYOUT_OR(x,y)
+  #define EMBEDDED_ENDIF
+#endif
+
 #include <SetupPrivate.h>
 #include <SaSetup.h>
 #include "MeSetup.h"
@@ -271,9 +281,9 @@ efivarstore SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE,
       help   = STRING_TOKEN(STR_POWER_CONFIGURATION_HELP);
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-    //goto TCC_MODE_CONFIG_FORM_ID,
-    //  prompt = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_TITLE),
-    //  help = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_HELP);
+    goto TCC_MODE_CONFIG_FORM_ID,
+      prompt = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_TITLE),
+      help = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_HELP);
 
     //goto FUSA_FORM_ID,
     //  prompt = STRING_TOKEN(STR_FUSA_FORM_TITLE),
@@ -359,6 +369,7 @@ efivarstore SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE,
   #include "TbtSetup.hfr"
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  #include "TccSetup.hfr"
   #include "FusaSetup.hfr"
 #endif
 #ifdef DEBUG_INTERFACE_FORM_ENABLE

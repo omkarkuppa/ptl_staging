@@ -127,6 +127,10 @@
   # !BSF NAME:{AC Split Lock} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable #AC check on split lock. <b>0: Disable</b>; 1: Enable.}
   gPlatformFspPkgTokenSpaceGuid.AcSplitLock                  | * | 0x1 | 0x0
+
+  # !BSF NAME:{TccMode enable/disable} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{DEPRECATED.Enable will activate TCC Mode and disable will deactivate TCC Mode .This is temporary to skip some of the TCC related register access in Non-RT SKU's}
+  gPlatformFspPkgTokenSpaceGuid.TccMode | * | 0x01 | 0x00
 !endif
   ## TELEMETRY_PEI_PREMEM_CONFIG Start
 
@@ -840,7 +844,7 @@
   # !BSF HELP:{When FALSE, it disables PCH ACPI timer, and stops TCO timer. NOTE: This will have huge power impact when it's enabled. If TCO timer is disabled, uCode ACPI timer emulation must be enabled, and WDAT table must not be exposed to the OS.}
   gPlatformFspPkgTokenSpaceGuid.EnableTcoTimer              | * | 0x01 | 0x00
 
-!if (gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == TRUE)
+!if (gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1)
   # !BSF NAME:{Enable Timed GPIO0} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Timed GPIO0. When disabled, it disables cross time stamp time-synchronization as extension of Hammock Harbor time synchronization.}
   gPlatformFspPkgTokenSpaceGuid.EnableTimedGpio0             | * | 0x01 | 0x00
@@ -2299,7 +2303,7 @@
   # !BSF HELP:{Enable/disable per USB2 ports. One byte for each port, byte0 for port0, byte1 for port1, and so on.}
   gPlatformFspPkgTokenSpaceGuid.PortUsb20Enable             | * | 0x10 | { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01}
 
-!if (gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == TRUE)
+!if (gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1)
   # !BSF NAME:{Enable USB2 SW Device Mode} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{Enable/disable SW device mode per USB2 ports. One byte for each port, byte0 for port0, byte1 for port1, and so on.}
   gPlatformFspPkgTokenSpaceGuid.PortUsb20SwDeviceModeEnable | * | 0x10 | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}

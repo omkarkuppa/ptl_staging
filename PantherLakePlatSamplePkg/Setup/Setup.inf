@@ -143,6 +143,9 @@
 
   DiscreteTbtOptions.hfr
   DiscreteTbtStringPool.hfr
+#Tcc
+  TccSetup.hfr
+  TccSetup.uni
 
 #Fusa
   FusaSetup.hfr
@@ -356,6 +359,7 @@
   gSiPkgTokenSpaceGuid.PcdTseEnable                                     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdAmtEnable                                     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTccSupport                                    ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdITbtToPcieRegister
   gSiPkgTokenSpaceGuid.PcdPcieToITbtRegister
   gSiPkgTokenSpaceGuid.PcdBiosGuardEnable
