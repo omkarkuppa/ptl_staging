@@ -356,38 +356,6 @@ IsWarmReset (
 }
 
 /**
-  Checks if reset was from system or software update.
-  If yes, update reset reason and cause in reset reason record.
-
-  @param[in]     ResetCauseReg     Pointer to RESET_CAUSE_PM_REGISTERS structure which
-                                   contains PM registers related to reset cause
-  @param[in,out] ResetHealthTable  Reset reason structure
-
-
-  @retval TRUE    Update reset is detected
-  @retval FALSE   Update reset is not detected
-
-**/
-BOOLEAN
-IsUpdateReset (
-  IN     CONST RESET_CAUSE_PM_REGISTERS  *ResetCauseReg,
-     OUT       UINT8                     *Source
-  )
-{
-  if ((ResetCauseReg == NULL) || (Source == NULL)) {
-    return FALSE;
-  }
-//
-//  Todo: Clarify the definition of Update reset
-//  if (GetBootModeHob () == BOOT_ON_FLASH_UPDATE) {
-//    *Source= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_SOFTWARE;
-//    return TRUE;
-//  }
-
-  return FALSE;
-}
-
-/**
   Checks if reset was caused by a fault occured.
   If yes, update reset source.
 
@@ -634,12 +602,6 @@ UpdateSourceAndReasonInRecord (
   if (IsColdBoot (&ResetCauseRegs, PmcSleepState, &(ResetReasonRecord->Source))) {
     ResetReasonRecord->Reason = EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_BOOT;
     DEBUG ((DEBUG_INFO, "Cold boot is detected.\n"));
-    return;
-  }
-
-  if (IsUpdateReset (&ResetCauseRegs, &(ResetReasonRecord->Source))) {
-    ResetReasonRecord->Reason = EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_UPDATE;
-    DEBUG ((DEBUG_INFO, "Update reset is detected.\n"));
     return;
   }
 
