@@ -28,9 +28,9 @@ extern const INT8 DqRxEqTableDdr5[MAX_RANK_IN_DIMM][DFE_TAP_NUM];
 extern const INT8 DqRxEqTableLp5Type3[MAX_RANK_IN_DIMM][DFE_TAP_NUM];
 extern const INT8 DqRxEqTableLp5Type4[MAX_RANK_IN_DIMM][DFE_TAP_NUM];
 
-#define MRC_DACCODE_HI        (1400) // 1024 * 0.5; 10-bit DAC on VccClkMv, default to 0.5*VccClk
-#define MRC_DACCODE_TARG      (0x2CC) // 10-bit DAC on VccClkMv, default to 0.35*VccClk
-#define MRC_DACCODE_LOW       (410) // 10-bit DAC on VccClkMv, default 0.20*vccclk need high enough voltage to account for temp drift, can be very low (0.05) if temp==hot
+#define MRC_DACCODE_HI   (1400)
+#define MRC_DACCODE_TARG (1100)
+#define MRC_DACCODE_LOW  (800)
 
 /// Valid safemodes for PTL
 #define VALID_DDR_SAFE_MODES_1           (DDR_SAFE_SPINEGATE | DDR_SAFE_DCC | DDR_SAFE_DCC_CLK | DDR_SAFE_PERIODIC_COMP | DDR_SAFE_COMP_CLK)
