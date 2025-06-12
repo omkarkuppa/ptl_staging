@@ -2984,7 +2984,7 @@ DEBUG_CODE_END();
 #endif
   UpdateRtcConfig (SiPolicy, &PchSetup);
 #if FixedPcdGetBool (PcdEmbeddedEnable)
-  UpdateFusaConfig (SiPolicy, &PPeiSaPolicyUpdate.cchSetup, &SaSetup);
+  //UpdateFusaConfig (SiPolicy, &PPeiSaPolicyUpdate.cchSetup, &SaSetup);
 #endif
 
   return EFI_SUCCESS;

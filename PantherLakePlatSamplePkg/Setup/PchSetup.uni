@@ -2499,7 +2499,15 @@
 #string STR_TSN_GBE_OPTIONS_FORM_HELP              #language en-US "Tsn Gbe Options help"
 
 #string STR_PCH_TSN_CONTROLLER                     #language en-US "PCH TSN LAN Controller"
+#string STR_PCH_TSN_CONTROLLER1                    #language en-US "PCH TSN LAN Controller 1"
+#string STR_PCH_TSN_CONTROLLER2                    #language en-US "PCH TSN LAN Controller 2"
+#string STR_PCH_TSN_CONTROLLER3                    #language en-US "PCH TSN LAN Controller 3"
+#string STR_PCH_TSN_CONTROLLER4                    #language en-US "PCH TSN LAN Controller 4"
 #string STR_PCH_TSN_CONTROLLER_HELP                #language en-US "Enable/Disable TSN LAN."
+#string STR_PCH_TSN_CONTROLLER1_HELP               #language en-US "Enable/Disable TSN LAN. 1"
+#string STR_PCH_TSN_CONTROLLER2_HELP               #language en-US "Enable/Disable TSN LAN. 2"
+#string STR_PCH_TSN_CONTROLLER3_HELP               #language en-US "Enable/Disable TSN LAN. 3"
+#string STR_PCH_TSN_CONTROLLER4_HELP               #language en-US "Enable/Disable TSN LAN. 4"
 #string STR_PCH_TSN_LINKSPEED_PROMPT               #language en-US "PCH TSN Link Speed"
 #string STR_PCH_TSN_LINKSPEED_HELP                 #language en-US "PCH TSN Link Speed configuration"
 

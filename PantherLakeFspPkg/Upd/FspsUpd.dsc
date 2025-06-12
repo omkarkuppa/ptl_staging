@@ -123,6 +123,11 @@
   # !BSF HELP:{<b>Optional</b> pointer to the boot loader's implementation of EFI_PEI_MP_SERVICES_PPI. If not NULL, FSP will use the boot loader's implementation of multiprocessing. See section 5.1.4 of the FSP Integration Guide for more details.}
   gPlatformFspPkgTokenSpaceGuid.CpuMpPpi                     | * | 0x8 | 0
 
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+  # !BSF NAME:{AC Split Lock} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable #AC check on split lock. <b>0: Disable</b>; 1: Enable.}
+  gPlatformFspPkgTokenSpaceGuid.AcSplitLock                  | * | 0x1 | 0x0
+!endif
   ## TELEMETRY_PEI_PREMEM_CONFIG Start
 
   # !BSF NAME:{Enable/Disable CrashLog} TYPE:{Combo} OPTION:{$EN_DIS}
@@ -484,6 +489,20 @@
   # !BSF HELP:{Integrated Error Handler Mode, 0: Bypass, 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.IehMode | * | 0x01 | 0x00
 
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+  # !BSF NAME:{Fusa Display Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on Display, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.DisplayFusaConfigEnable     | * | 0x01 | 0x01
+  # !BSF NAME:{Fusa Graphics Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on Graphics, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.GraphicFusaConfigEnable     | * | 0x01 | 0x01
+  # !BSF NAME:{Fusa Opio Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on Opio, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.OpioFusaConfigEnable        | * | 0x01 | 0x01
+  # !BSF NAME:{Fusa Psf Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on Psf, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.PsfFusaConfigEnable         | * | 0x01 | 0x00
+!endif
   ## IEH_CONFIG End
 
   ## RTC_CONFIG Start

@@ -59,6 +59,12 @@ typedef struct {
   **/
   UINT32 PpinSupport         : 2;
   /**
+    Enable or Disable #AC machine check on split lock.
+    - <b>0: Disable</b>
+    -    1: Enable
+  **/
+  UINT32 AcSplitLock         : 1;
+  /**
   Enable or Disable Avx.
   -      1: Disable
   -  <b> 0: Enable</b>
@@ -77,7 +83,7 @@ typedef struct {
   **/
   UINT32 PmonEnable          : 1;
   UINT32 RsvdBits            : 25;                ///< Reserved for future use
-  UINT8  Reserved0[4];                            ///< Reserved for future use
+  UINT8  Reserved0[3];                            ///< Reserved for future use
   UINT64 PmonAddress;                             ///< PMON memory address
 } CPU_INIT_CONFIG;
 

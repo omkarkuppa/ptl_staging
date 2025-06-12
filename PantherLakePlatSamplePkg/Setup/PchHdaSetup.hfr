@@ -51,7 +51,10 @@
     //
     // HDA and TSN sharing same GPIO pin. Disabling Thc by default for Embedded
     //
-    grayoutif ideqval PCH_SETUP.PchTsnEnable == 1;
+    grayoutif ideqval PCH_SETUP.PchTsnEnable[0] == 1 OR
+              ideqval PCH_SETUP.PchTsnEnable[1] == 1 OR
+              ideqval PCH_SETUP.PchTsnEnable[2] == 1 OR
+              ideqval PCH_SETUP.PchTsnEnable[3] == 1;
 #endif
     oneof varid  = PCH_SETUP.PchHdAudio,
       prompt   = STRING_TOKEN(STR_PCH_HDA_PROMPT),

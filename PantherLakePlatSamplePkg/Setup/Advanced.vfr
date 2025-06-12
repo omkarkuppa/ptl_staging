@@ -271,13 +271,13 @@ efivarstore SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE,
       help   = STRING_TOKEN(STR_POWER_CONFIGURATION_HELP);
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-    goto TCC_MODE_CONFIG_FORM_ID,
-      prompt = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_TITLE),
-      help = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_HELP);
+    //goto TCC_MODE_CONFIG_FORM_ID,
+    //  prompt = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_TITLE),
+    //  help = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_HELP);
 
-    goto FUSA_FORM_ID,
-      prompt = STRING_TOKEN(STR_FUSA_FORM_TITLE),
-      help = STRING_TOKEN(STR_FUSA_FORM_HELP);
+    //goto FUSA_FORM_ID,
+    //  prompt = STRING_TOKEN(STR_FUSA_FORM_TITLE),
+    //  help = STRING_TOKEN(STR_FUSA_FORM_HELP);
 #endif
 
 #if FixedPcdGetBool (PcdOverclockEnable) == 0x1

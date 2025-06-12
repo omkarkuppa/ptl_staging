@@ -263,8 +263,8 @@ for ((i=1 ; i <= numargs ; i++)); do
     export ROM_FILENAME_SPECIAL_BUILD_TYPE=_Performance
   elif [ "$1" = "embedded" ]; then
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEmbeddedEnable=0x1"
+    export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEmbeddedEnable=0x1"
     export EMBEDDED_BUILD=TRUE
-    export BIOS_ID_FILE=$BUILD_DIR/BiosIdEmb.env
     export ROM_FILENAME_SPECIAL_BUILD_TYPE=_Embedded
   elif [ "$1" = "chksize" ]; then
     FV_SPARE_SPACE_THRESHOLD=`expr $2 + 0`

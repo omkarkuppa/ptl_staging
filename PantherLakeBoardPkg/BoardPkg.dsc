@@ -575,7 +575,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   AhciCommandLib|SataFeaturePkg/Library/AhciCommandLib/AhciCommandLib.inf
 !endif
 
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+!if gSiPkgTokenSpaceGuid.PcdTsnSupport == TRUE
 #
 # Sub Region FVs
 #
@@ -589,6 +589,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   PeiSubRegionLib|$(PLATFORM_FEATURES_PATH)/SubRegion/PeiSubRegionLib/PeiSubRegionLibNull.inf
   PeiTsnFvLib|$(PLATFORM_FEATURES_PATH)/Tsn/PeiTsnFvLib/PeiTsnFvLibNull.inf
 !endif
+
   CcExitLib|UefiCpuPkg/Library/CcExitLibNull/CcExitLibNull.inf
 
 #
@@ -1788,7 +1789,7 @@ $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
 !endif
 
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
-  $(PLATFORM_FEATURES_PATH)/LifeCycleState/LifeCycleState.inf
+#  $(PLATFORM_FEATURES_PATH)/LifeCycleState/LifeCycleState.inf
 !endif
 
 !endif  #PcdAdvancedFeatureEnable

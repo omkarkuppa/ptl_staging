@@ -233,10 +233,12 @@ gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityBase|gMinPlatformPkgTokenSpaceGu
 FV = FvSecurity
 !endif
 
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+!if gSiPkgTokenSpaceGuid.PcdTsnSupport == TRUE
+  !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == TRUE
 gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressOffset|gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressSize
 gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressBase|gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressSize
 FV = FvTsnMacAddress
+  !endif
 !endif
 
 gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize
@@ -381,8 +383,10 @@ FvNameGuid         = 62C98CCD-D8DD-4187-99AC-2B333C87B4CD
 # FvNameGuid must match to the one in FvMicrocode.fdf
 #
 
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
-!include $(COMMON_BIN_PACKAGE)/Include/Fdf/FvTsnMacAddress.fdf
+!if gSiPkgTokenSpaceGuid.PcdTsnSupport == TRUE
+  !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == TRUE
+    !include $(COMMON_BIN_PACKAGE)/Include/Fdf/FvTsnMacAddress.fdf
+  !endif
 !endif
 
 !if gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable == TRUE
@@ -1891,7 +1895,7 @@ INF  $(PLATFORM_FULL_PACKAGE)/Features/DashG/DxeDgOpregionInit.inf
 INF LogoFeaturePkg/LogoDxe/LogoDxe.inf
 
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
-INF  $(PLATFORM_FULL_PACKAGE)/Features/LifeCycleState/LifeCycleState.inf
+#INF  $(PLATFORM_FULL_PACKAGE)/Features/LifeCycleState/LifeCycleState.inf
 !endif
 
 !if gEcFeaturePkgTokenSpaceGuid.PcdEcEnable == TRUE
