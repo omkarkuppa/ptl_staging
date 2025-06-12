@@ -556,18 +556,6 @@ ReportPostMemFv (
     /// Prepare the recovery service
     ///
   } else {
-    //NonFitPayloads
-    DEBUG ((DEBUG_INFO, "Install Non-FIT Payloads FV: start\n"));
-    PeiServicesInstallFvInfo2Ppi(
-      &(((EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) FixedPcdGet32(PcdFlashNonFitPayloadBase))->FileSystemGuid),
-      (VOID *) ((UINTN) FixedPcdGet32(PcdFlashNonFitPayloadBase)),
-      FixedPcdGet32(PcdFlashNonFitPayloadSize),
-      NULL,
-      NULL,
-      0
-      );
-    DEBUG ((DEBUG_INFO, "Install Non-FIT Payloads FV: end\n"));
-
     ///
     /// OBB verification
     ///
