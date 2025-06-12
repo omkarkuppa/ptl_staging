@@ -310,7 +310,7 @@
 
   # !BSF NAME:{Serial Io I2C Device MMIO Base} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Assigns MMIO for Serial Io I2C controller usage in early stage.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cMmioBase              | * | 0x04 | 0xFE028000
+  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cMmioBase              | * | 0x04 | 0x0
 
   # !BSF NAME:{Serial Io I2C Sda Gpio Pin} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo I2C Rts pin. Refer to GPIO_*_MUXING_SERIALIO_I2C*_SDA* for possible values.}
@@ -327,7 +327,7 @@
   # !BSF NAME:{Serial Io I2c Controller Number} TYPE:{EditNum, HEX, (0x0,0xFF)}
   # !BSF OPTION:{0:SerialIoI2c0, 1:SerialIoI2c1, 2:SerialIoI2c2, 0xFF:Disable}
   # !BSF HELP:{Select SerialIo I2C Controller number to be intilizaed during early boot. Default is 0xFF}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cNumber         | * | 0x01 | 0x2
+  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cNumber         | * | 0x01 | 0xFF
 
   # !BSF NAME:{Enable Secondary Data Cache Region} TYPE:{Combo}
   # !BSF OPTION:{0:Disable, 1:Enable}
