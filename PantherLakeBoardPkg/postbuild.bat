@@ -898,6 +898,7 @@ call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\ToolScripts\RomImage\Setu
   goto EndPostBuild
 )
 
+
 @echo ---Prepare the BIOS Decoder Dictionaries for the Release Build and Catalog Build BIOS---
 @if %CATALOG_RELEASE% EQU TRUE (
   @rem Catalog Dictionary Generation script will parse through the source and preprocessed files to prepare the entries for the RELEASE BIOS decoder.
