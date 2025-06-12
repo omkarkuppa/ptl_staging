@@ -41,18 +41,19 @@
   PciSegmentLib
   BasePcieHelperLib
   DxeTbtDisBmeLib
+  ItbtPcieRpLib
 
 [Packages]
   MdePkg/MdePkg.dec
   OneSiliconPkg/SiPkg.dec
   PantherLakePlatSamplePkg/PlatformPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [Sources]
   BrRouterSupportLib.c
 
-[Protocols]
-
 [Guids]
+  gUsb4PlatformHobGuid
 
 [Depex]
   gEfiVariableWriteArchProtocolGuid AND

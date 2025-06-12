@@ -44,4 +44,19 @@ FindBrHierarchyConfiguration  (
   IN SBDF       Sbdf
   );
 
+/**
+  EnableBrBmeCallBack
+
+  Enable BME on BR Host and Device Router tree at EfiPciHostBridgeSetResources
+  to allow MMIO propagation for loading OPROM from MMIO.
+
+  @param[in] Event     - A pointer to the Event that triggered the callback.
+  @param[in] Context   - A pointer to private data registered with the callback function.
+**/
+VOID
+EFIAPI
+EnableBrBmeCallBack (
+  IN OUT VOID
+  );
+
 #endif

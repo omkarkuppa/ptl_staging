@@ -44,7 +44,6 @@
   TcssInfoLib
   PchPciBdfLib
   PcdLib
-  ItbtPcieRpLib
   BrRouterSupportLib
 
 [Packages]
@@ -53,7 +52,6 @@
   PantherLakePlatSamplePkg/PlatformPkg.dec
   OneSiliconPkg/SiPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
-  Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress   ## CONSUMES
@@ -77,7 +75,6 @@
   gEfiGlobalVariableGuid                        ## SOMETIMES_CONSUMES
   gSetupVariableGuid                            ## CONSUMES
   gSaSetupVariableGuid                          ## CONSUMES
-  gUsb4PlatformHobGuid                          ## CONSUMES
 
 [Depex]
   TRUE
