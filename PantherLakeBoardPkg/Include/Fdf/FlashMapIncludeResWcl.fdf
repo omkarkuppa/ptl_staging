@@ -117,15 +117,11 @@ SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x000600
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DC0000  # Flash addr (0xFFDC0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00100000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
-##  PcdFlashFspTOffset base and PcdFlashFvFspTSize + PcdFlashFvPreMemorySize size need to be aligned with cache WayCacheSize 256KB for WCL
-##  to remove the Guard Band need. Note: WCL platform has 16 ways of L2 256KB each to 4MB total
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00EC0000  # Flash addr (0xFFEC0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00ED0000  # Flash addr (0xFFED0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00130000  #
 !else
-## PcdFlashFvPreMemoryOffset base and PcdFlashFvPreMemorySize + PcdFspTopSize size need to be aligned with cache WayCacheSize 256KB for WCL
-## to remove the Guard Band need. Note: WCL platform has 16 ways of L2 256KB each to 4MB total
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00EC0000  # Flash addr (0xFFEC0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00120000  #
 ## 1. FspTopAt4G contains FSP components (FSP-T and FSP-O) which should be put at Top 4G location, these FSP
@@ -234,15 +230,11 @@ SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x000600
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00E00000  # Flash addr (0xFFE00000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00100000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
-##  PcdFlashFspTOffset base and PcdFlashFvFspTSize + PcdFlashFvPreMemorySize size need to be aligned with cache WayCacheSize 256KB for WCL
-##  to remove the Guard Band need. Note: WCL platform has 16 ways of L2 256KB each to 4MB total
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00F00000  # Flash addr (0xFFF00000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00F10000  # Flash addr (0xFFF10000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x000F0000  #
 !else
-## PcdFlashFvPreMemoryOffset base and PcdFlashFvPreMemorySize + PcdFspTopSize size need to be aligned with cache WayCacheSize 256KB for WCL
-## to remove the Guard Band need. Note: WCL platform has 16 ways of L2 256KB each to 4MB total
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00F00000  # Flash addr (0xFFF00000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x000E0000  #
 ## 1. FspTopAt4G contains FSP components (FSP-T and FSP-O) which should be put at Top 4G location, these FSP
