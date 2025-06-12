@@ -331,6 +331,7 @@
   $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
     <LibraryClasses>
       DxeOpromPatchLib|$(PLATFORM_FULL_PACKAGE)/Library/DxeOpromPatchLib/DxeOpromPatchLib.inf
+      BrRouterSupportLib|$(TBT_FEATURES_LIB_PATH)/BrRouterSupportLib/BrRouterSupportLib.inf
   }
 
 !if gSiPkgTokenSpaceGuid.PcdSmmVariableEnable == TRUE

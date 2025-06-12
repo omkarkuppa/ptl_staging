@@ -142,7 +142,6 @@ HasChildBus (
                         on exit, PcieCap offset is updated
   @retval               TRUE when PCIe device exists; FALSE if it's not PCIe or there's no device at all
 **/
-STATIC
 BOOLEAN
 IsPcieDevice (
   IN OUT SBDF *Sbdf

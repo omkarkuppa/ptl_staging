@@ -40,6 +40,11 @@
 #include <PcieRegs.h>
 #include <IGpuConfig.h>
 
+#include <Library/Usb4PlatformHob.h>
+#include <Library/ItbtPcieRpLib.h>
+#include <Library/DxeTbtDisBmeLib.h>
+#include <Library/BrRouterSupportLib.h>
+
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_PCI_PLATFORM_PROTOCOL mPciPlatform = {
   PhaseNotify,
   PlatformPrepController,
@@ -193,6 +198,110 @@ AttemptToSetXhciMse (
   return;
 }
 
+/**
+  EnableBrBmeCallBack
+
+  Enable BME on BR Host and Device Router tree at EfiPciHostBridgeSetResources
+  to allow MMIO propagation for loading OPROM from MMIO.
+
+  @param[in] Event     - A pointer to the Event that triggered the callback.
+  @param[in] Context   - A pointer to private data registered with the callback function.
+**/
+VOID
+EFIAPI
+EnableBrBmeCallBack (
+  IN OUT VOID
+  )
+{
+  UINT8                     HrIndex;
+  UINT8                     Usb4HrCount;
+  SBDF                      Sbdf = {0,0,0,0,0};
+  VOID                      *HobPtr;
+  USB4_PLATFORM_HOB         *Usb4PlatformHob;
+  USB4_PLATFORM_INFO        *Usb4PlatformInfo;
+  USB4_HR_INFO              *Usb4HrInfo;
+  EFI_STATUS                Status;
+  UINTN                     RpDev;
+  UINTN                     RpFunc;
+  UINTN                     RpSegment;
+  UINTN                     RpBus;
+
+  DEBUG ((DEBUG_INFO, "%a() - Start\n", __FUNCTION__));
+
+  HobPtr          = NULL;
+  HobPtr          = GetFirstGuidHob (&gUsb4PlatformHobGuid);
+  Usb4PlatformHob = NULL;
+  Status          = EFI_SUCCESS;
+  RpDev           = 0;
+  RpFunc          = 0;
+  RpSegment       = 0;
+  RpBus           = 0;
+
+  if (HobPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "Unable to find USB4 platform hob!\n"));
+    goto Exit;
+  }
+
+  //
+  // Get USB4 platform info HOB
+  //
+  Usb4PlatformHob = GET_GUID_HOB_DATA (HobPtr);
+  Usb4PlatformInfo = &(Usb4PlatformHob->Usb4PlatformInfo);
+  Usb4HrCount = Usb4PlatformInfo->Usb4HrCount;
+
+  if (Usb4HrCount > USB4_HR_SUPPORT_MAX) {
+    DEBUG ((DEBUG_ERROR, "USB4 HR count invalid\n"));
+    goto Exit;
+  }
+
+  for (HrIndex = 0; HrIndex < MAX_ITBT_PCIE_PORT; HrIndex++) {
+    Status = GetItbtPcieRpInfo ((UINTN) HrIndex, &RpSegment, &RpBus, &RpDev, &RpFunc);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Failed to get port[%d] info, Status: %r\n", HrIndex, Status));
+      continue;
+    }
+    Sbdf.Seg  = (UINT32) RpSegment;
+    Sbdf.Bus  = (UINT32) RpBus;
+    Sbdf.Dev  = (UINT32) RpDev;
+    Sbdf.Func = (UINT32) RpFunc;
+
+    DEBUG ((DEBUG_INFO, "HR[%d] USB4 ITBT Root Port (SBDF) = (%02x/%02x/%02x/%02x)\n",
+            HrIndex,
+            Sbdf.Seg,
+            Sbdf.Bus,
+            Sbdf.Dev,
+            Sbdf.Func
+          ));
+    FindBrHierarchyConfiguration (Sbdf);
+  }
+
+  for (HrIndex = 0; HrIndex < Usb4HrCount; HrIndex++) {
+    Usb4HrInfo = &(Usb4PlatformInfo->Usb4Hr[HrIndex]);
+
+    if (Usb4HrInfo->IntegratedHr) {
+      continue;
+    } else {
+      Sbdf.Seg  = (UINT32) 0;
+      Sbdf.Bus  = (UINT32) Usb4HrInfo->Rp.Bdf.Bus;
+      Sbdf.Dev  = (UINT32) Usb4HrInfo->Rp.Bdf.Dev;
+      Sbdf.Func = (UINT32) Usb4HrInfo->Rp.Bdf.Func;
+
+      DEBUG ((DEBUG_INFO, "HR[%d] USB4 DTBT Root Port (SBDF) = (%02x/%02x/%02x/%02x)\n",
+              HrIndex,
+              Sbdf.Seg,
+              Sbdf.Bus,
+              Sbdf.Dev,
+              Sbdf.Func
+            ));
+
+      FindBrHierarchyConfiguration (Sbdf);
+    }
+  }
+
+Exit:
+  DEBUG((DEBUG_INFO, "%a() - end\n", __FUNCTION__));
+}
+
 EFI_STATUS
 EFIAPI
 PhaseNotify (
@@ -268,6 +377,11 @@ PhaseNotify (
       Status = UsbcGetUsbConnStatus(&EcDataBuffer, Timeout);
       // Do some error checking here to handle failure
     }
+  } else if (Phase == EfiPciHostBridgeSetResources) {
+    //
+    // Enable BME on BR tree for PXE boot
+    //
+    EnableBrBmeCallBack ();  
   }
 
   return EFI_SUCCESS;

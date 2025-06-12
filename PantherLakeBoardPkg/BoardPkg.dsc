@@ -1772,6 +1772,7 @@ $(PLATFORM_FEATURES_PATH)/Hsti/HstiIhvDxe/HstiIhvDxe.inf {
 $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
   <LibraryClasses>
     DxeOpromPatchLib|$(PLATFORM_FULL_PACKAGE)/Library/DxeOpromPatchLib/DxeOpromPatchLib.inf
+    BrRouterSupportLib|$(TBT_FEATURES_LIB_PATH)/BrRouterSupportLib/BrRouterSupportLib.inf
 }
 
 !if gPlatformModuleTokenSpaceGuid.PcdPciHotplugEnable == TRUE
