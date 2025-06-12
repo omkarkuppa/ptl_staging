@@ -1262,9 +1262,10 @@ typedef struct {
   <b>Revision 7</b>:  - Add RDTCIDLE.
   <b>Revision 8</b>:  - Add PprRetryLimit variable.
   <b>Revision 9</b>:  - Add Use1p5ReadPostamble variable.
+  <b>Revision 10</b>:  - Add Ibecc ECC Injection variables.
 **/
 
-#define SA_SETUP_REVISION   9
+#define SA_SETUP_REVISION   10
 
 typedef struct {
   UINT8   Revision;
@@ -1755,7 +1756,11 @@ typedef struct {
   UINT8   RDTCIDLE;
   UINT8   PprRetryLimit;
   UINT8   Use1p5ReadPostamble;
-  UINT8   Rsvd[41];
+  UINT8   IbeccEccInjControl;
+  UINT32  IbeccEccInjAddrBase;
+  UINT8   IbeccEccInjCount;
+
+  UINT8   Rsvd[35];
 } SA_SETUP;
 
 /**

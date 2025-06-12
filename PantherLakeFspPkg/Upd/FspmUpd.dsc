@@ -341,8 +341,11 @@
   # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
   # !BSF HELP:{DIMM DFE Tap2 Step Size for DDR5 OC}
   gPlatformFspPkgTokenSpaceGuid.DFETap2StepSize             | * | 0x01 | 0x00
-  # Added reserved space UnusedUpdSpace3
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd3                | * | 0x01 | 0x00
+
+  # !BSF NAME:{IbeccEccInjControl}
+  # !BSF TYPE:{Combo} OPTION:{0: No Error Injection, 1:Inject Correctable Error Address match, 3:Inject Correctable Error on insertion counter, 5: Inject Uncorrectable Error Address match, 7:Inject Uncorrectable Error on insertion counter}
+  # !BSF HELP:{IBECC Error Injection Control}
+  gPlatformFspPkgTokenSpaceGuid.IbeccEccInjControl          | * | 0x01 | 0x00
 
   # !BSF NAME:{VDD2 override}
   # !BSF TYPE:{EditNum, HEX, (0x00,0xFFFF)}
@@ -514,8 +517,10 @@
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Probeless Trace: 0=Disabled, 1=Enable. Enabling Probeless Trace will reserve 128MB. This also requires IED to be enabled.}
   gPlatformFspPkgTokenSpaceGuid.ProbelessTrace              | * | 0x01 | 0x00
-  # Added reserved space UnusedUpdSpace4
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd4                | * | 0x01 | 0x00
+
+  # !BSF NAME:{IbeccEccInjCount} TYPE:{EditNum, HEX, (0x0,0xFF)}
+  # !BSF HELP:{Number of memory transactions between ECC error injection}
+  gPlatformFspPkgTokenSpaceGuid.IbeccEccInjCount            | * | 0x01 | 0x1
 
   # !BSF NAME:{DDR Frequency Limit}
   # !BSF TYPE:{Combo} OPTION:{1067:1067, 1333:1333, 1600:1600, 1867:1867, 2133:2133, 2400:2400, 2667:2667, 2933:2933, 0:Auto}
@@ -1281,8 +1286,13 @@
   # !BSF TYPE:{EditNum, HEX, (0x00,0x7)}
   # !BSF HELP:{SafeModeOverride[0] Enable DdrSafeMode override, SafeModeOverride[1] Enable McSafeMode override, SafeModeOverride[2] Enable MrcSafeMode override, SafeModeOverride[3] Enable Training Algorithm (TrainingEnables) safe mode override, SafeModeOverride[4] Enable SaGv safe mode override}
   gPlatformFspPkgTokenSpaceGuid.SafeModeOverride            | * | 0x01 | 0xFF
-  # Added reserved space UnusedUpdSpace7[5]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd7                | * | 0x05 | {0x00}
+
+  # Added reserved space UnusedUpdSpace7[1]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd7                | * | 0x01 | 0x00
+
+  # !BSF NAME:{IbeccEccInjAddrBase} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
+  # !BSF HELP:{Address to match against for ECC error injection. Example: 1 = 32MB, 2 = 64MB}
+  gPlatformFspPkgTokenSpaceGuid.IbeccEccInjAddrBase         | * | 0x04 | 0x00
 
   # !BSF NAME:{DDR Phy Safe Mode Support}
   # !BSF TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}

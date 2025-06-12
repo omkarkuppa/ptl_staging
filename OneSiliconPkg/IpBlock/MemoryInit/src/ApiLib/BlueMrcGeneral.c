@@ -673,6 +673,7 @@ MrcIbecc (
   MrcDebug                                      *Debug;
   const MrcInput                                *Inputs;
   MrcOutput                                     *Outputs;
+  const MRC_FUNCTION                            *MrcCall;
   MRC_EXT_INPUTS_TYPE                           *ExtInputs;
   UINT32                                        Offset;
   UINT32                                        TomMinusEdsr;
@@ -689,6 +690,9 @@ MrcIbecc (
   MC0_PARITY_CONTROL_STRUCT                     ParityControl;
   MC0_IBECC_MEMORY_INIT_CONTROL_STRUCT          IbeccMemInit;
   MC0_IBECC_ACTIVATE_STRUCT                     IbeccActivate;
+  MC0_IBECC_ECC_INJ_CONTROL_STRUCT              IbeccEccInjControl;
+  MC0_IBECC_ECC_INJ_ADDR_BASE_STRUCT            IbeccEccInjAddrBase;
+  MC0_IBECC_ECC_INJ_ADDR_MASK_STRUCT            IbeccEccInjAddrMask;
   MC0_IBECC_ADDR_HASH_STRUCT                    IbeccAddrHash;
   MC0_IBECC_ECC_STORAGE_ADDR_RANGE_0_STRUCT     EccStorage;
   MC0_IBECC_PROTECT_ADDR_RANGE_0_STRUCT         IbeccAddressRange;
@@ -697,6 +701,7 @@ MrcIbecc (
   Outputs   = &MrcData->Outputs;
   Debug     = &Outputs->Debug;
   ExtInputs = Inputs->ExtInputs.Ptr;
+  MrcCall   = Inputs->Call.Func;
   ControllerCount       = 0;
   GetSetEnable          = 1;
   TomMinusEdsr          = 0;
@@ -782,6 +787,30 @@ MrcIbecc (
               MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Protected Range %d: BASE = 0x%x, MASK = 0x%x\n", IbeccRegion, IbeccAddressRange.Bits.BASE, IbeccAddressRange.Bits.MASK);
             }
           }
+        }
+
+        if (ExtInputs->IbeccEccInjControl != IbeccEccInjNoErrorInjection) {
+          if ((ExtInputs->IbeccEccInjControl == IbeccEccInjCorrAddressMatch) || (ExtInputs->IbeccEccInjControl == IbeccEccInjUncorrAddressMatch)) {
+            IbeccEccInjAddrBase.Data =  (MrcCall->MrcLeftShift64 (ExtInputs->IbeccEccInjAddrBase, 25));
+            Offset = OFFSET_CALC_CH (MC0_IBECC_ECC_INJ_ADDR_BASE_REG, MC1_IBECC_ECC_INJ_ADDR_BASE_REG, Controller);
+            MrcWriteCR64 (MrcData, Offset, IbeccEccInjAddrBase.Data);
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Inj BASE: 0x%llx\n", IbeccEccInjAddrBase.Data);
+            IbeccEccInjAddrMask.Data = 0x7FFE000000ULL;
+            Offset = OFFSET_CALC_CH (MC0_IBECC_ECC_INJ_ADDR_MASK_REG, MC1_IBECC_ECC_INJ_ADDR_MASK_REG, Controller);
+            MrcWriteCR64 (MrcData, Offset, IbeccEccInjAddrMask.Data);
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Inj MASK: 0x%llx\n", IbeccEccInjAddrMask.Data);
+          }
+
+          IbeccEccInjControl.Data = 0;
+          if ((ExtInputs->IbeccEccInjControl == IbeccEccInjCorrCountInsertion) || (ExtInputs->IbeccEccInjControl == IbeccEccInjUncorrCountInsertion)) {
+            IbeccEccInjControl.Bits.COUNT = ExtInputs->IbeccEccInjCount;
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Inj COUNT: 0x%x\n", IbeccEccInjControl.Bits.COUNT);
+          }
+
+          IbeccEccInjControl.Bits.ECC_INJECT = (ExtInputs->IbeccEccInjControl) & MC0_IBECC_ECC_INJ_CONTROL_ECC_INJECT_MAX;
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Inj ECC_INJECT: %x\n", IbeccEccInjControl.Bits.ECC_INJECT);
+          Offset = OFFSET_CALC_CH (MC0_IBECC_ECC_INJ_CONTROL_REG, MC1_IBECC_ECC_INJ_CONTROL_REG, Controller);
+          MrcWriteCR (MrcData, Offset, IbeccEccInjControl.Data);
         }
 
         Offset = OFFSET_CALC_CH (MC0_IBECC_ACTIVATE_REG, MC1_IBECC_ACTIVATE_REG, Controller);
@@ -1899,6 +1928,16 @@ MrcPrintInputParameters (
     ExtInputs->IbeccOperationMode,
     ExtInputs->IbeccParity
     );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tIbeccEccInjControl: 0x%X\n"
+    "\tIbeccEccInjAddrBase: 0x%X\n"
+    "\tIbeccEccInjCount: 0x%X\n",
+    ExtInputs->IbeccEccInjControl,
+    ExtInputs->IbeccEccInjAddrBase,
+    ExtInputs->IbeccEccInjCount
+    );
+
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tScramblerSupport: %Xh\n"
     "\tLpFreqSwitch: %Xh\n"

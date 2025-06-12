@@ -83,6 +83,17 @@ typedef enum {
   IbeccAllProtect,        ///< Makes all requests protected and ignore range checks
 } IbeccOpMode;
 
+///
+/// IBECC ERROR INJECTION MODE, see MC0_IBECC_ECC_INJ_CONTROL_STRUCT.ECC_INJECT
+///
+typedef enum {
+  IbeccEccInjNoErrorInjection     = 0, ///< No Error Injection
+  IbeccEccInjCorrAddressMatch     = 1, ///< Inject Correctable Error Address match
+  IbeccEccInjCorrCountInsertion   = 3, ///< Inject Correctable Error on insertion counter
+  IbeccEccInjUncorrAddressMatch   = 5, ///< Inject Uncorrectable Error Address match
+  IbeccEccInjUncorrCountInsertion = 7  ///< Inject Uncorrectable Error on insertion counter
+} MrcIbeccErrInjMode;
+
 extern const MrcFrequency SagvFreqPor[CALC_MRC_DDR_TYPE_MAX (MAX_MRC_DDR_TYPE)][MAX_SAGV_POINTS];
 extern const UINT8 SaGvGearPor[CALC_MRC_DDR_TYPE_MAX (MAX_MRC_DDR_TYPE)][MAX_SAGV_POINTS];
 

@@ -1503,6 +1503,19 @@
 #string STR_IBECC_PROTECTED_7_MASK_PROMPT         #language en-US "Protected Region 7 Size"
 #string STR_IBECC_PROTECTED_7_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 7 for enabled IBECC instance (2X if 2 IBECC enabled)."
 
+#string STR_IBECC_ECC_INJ_CONTROL_PROMPT                  #language en-US "In-Band ECC Error Injection Control"
+#string STR_IBECC_ECC_INJ_CONTROL_PROMPT_HELP             #language en-US "Enables IBECC Error Injection"
+#string STR_IBECC_ECC_INJ_ENABLE_WARNING_POPUP            #language en-US "Do not enable in production BIOS"
+#string STR_IBECC_ECC_INJ_NO_ERROR_INJECTION_PROMPT       #language en-US "No Error Injection"
+#string STR_IBECC_ECC_INJ_CORR_ADDRESS_MATCH_PROMPT       #language en-US "Inject Correctable Error Address match"
+#string STR_IBECC_ECC_INJ_CORR_COUNTER_INSERTION_PROMPT   #language en-US "Inject Correctable Error on insertion counter"
+#string STR_IBECC_ECC_INJ_UNCORR_ADDRESS_MATCH_PROMPT     #language en-US "Inject Uncorrectable Error Address match"
+#string STR_IBECC_ECC_INJ_UNCORR_COUNTER_INSERTION_PROMPT #language en-US "Inject Uncorrectable Error on insertion counter"
+#string STR_IBECC_ECC_INJ_ADDRESS_PROMPT                  #language en-US "Error Injection Address Match"
+#string STR_IBECC_ECC_INJ_ADDRESS_PROMPT_HELP             #language en-US "Address to match against for ECC error injection. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_ECC_INJ_COUNT_PROMPT                    #language en-US "Error Injection Insertion Count"
+#string STR_IBECC_ECC_INJ_COUNT_PROMPT_HELP               #language en-US "Number of memory transactions between ECC error injection"
+
 #string STR_REMAP_ENABLE_PROMPT                 #language en-US "Memory Remap"
 #string STR_REMAP_ENABLE_PROMPT_HELP            #language en-US "Enable/Disable Memory Remap above 4GB"
 

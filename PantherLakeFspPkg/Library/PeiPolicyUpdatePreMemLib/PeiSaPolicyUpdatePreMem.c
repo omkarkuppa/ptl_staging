@@ -558,6 +558,10 @@ FspUpdatePeiSaPolicyPreMem (
     MemConfig->ExternalInputs.IbeccProtectedRegionBase[Index]   = FspmUpd->FspmConfig.IbeccProtectedRegionBase[Index];
     MemConfig->ExternalInputs.IbeccProtectedRegionMask[Index]   = FspmUpd->FspmConfig.IbeccProtectedRegionMask[Index];
   }
+  MemConfig->ExternalInputs.IbeccEccInjControl                  = FspmUpd->FspmConfig.IbeccEccInjControl;
+  MemConfig->ExternalInputs.IbeccEccInjAddrBase                 = FspmUpd->FspmConfig.IbeccEccInjAddrBase;
+  MemConfig->ExternalInputs.IbeccEccInjCount                    = FspmUpd->FspmConfig.IbeccEccInjCount;
+
   MemConfig->ExternalInputs.EccCorrectionMode       = FspmUpd->FspmConfig.EccCorrectionMode;
   MemConfig->ExternalInputs.CaVrefHigh              = FspmUpd->FspmConfig.CaVrefHigh;
   MemConfig->ExternalInputs.CsVrefLow               = FspmUpd->FspmConfig.CsVrefLow;

@@ -1123,6 +1123,9 @@ UpdatePeiSaPolicyPreMem (
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccProtectedRegionBase[Index], MemConfig->ExternalInputs.IbeccProtectedRegionBase[Index],   SaSetup.IbeccProtectedRegionBase[Index]  );
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccProtectedRegionMask[Index], MemConfig->ExternalInputs.IbeccProtectedRegionMask[Index],   SaSetup.IbeccProtectedRegionMask[Index]  );
     }
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccEccInjControl,  MemConfig->ExternalInputs.IbeccEccInjControl,  SaSetup.IbeccEccInjControl);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccEccInjAddrBase, MemConfig->ExternalInputs.IbeccEccInjAddrBase, SaSetup.IbeccEccInjAddrBase);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccEccInjCount,    MemConfig->ExternalInputs.IbeccEccInjCount,    SaSetup.IbeccEccInjCount);
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.AllowOppRefBelowWriteThrehold, MemConfig->ExternalInputs.AllowOppRefBelowWriteThrehold, SaSetup.AllowOppRefBelowWriteThrehold);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WriteThreshold, MemConfig->ExternalInputs.WriteThreshold,        SaSetup.WriteThreshold               );

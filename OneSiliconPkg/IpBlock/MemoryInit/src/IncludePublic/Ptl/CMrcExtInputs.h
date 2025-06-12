@@ -285,7 +285,12 @@ typedef struct {
   UINT8   MrcFailureOnUnsupportedDimm;    ///< Offset 328 Enable/disable MRC failure policy for unsupported memory type.
   UINT8   WckModeOverride;                ///< Offset 329 Overrides the WckMode currently set: 0 = WckModeAutoCtrl, 1 = WckModeAlwaysOn, 2 = WckModeNoOverride (don't override)
   UINT8   Use1p5ReadPostamble;            ///< Offset 330 Enable using 1p5 tCK Read Postamble for higher freqencies.
-  UINT8   Reserved331[57];                ///< Offset 331 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
+
+  UINT8   IbeccEccInjControl;             ///< Offset 331 In-band ECC: Error Injection Control 0: No Error Injection, 1:Inject Correctable Error Address match, 3:Inject Correctable Error on insertion counter, 5: Inject Uncorrectable Error Address match, 7:Inject Uncorrectable Error on insertion counter
+  UINT32  IbeccEccInjAddrBase;            ///< Offset 332 Address to match against for ECC error injection, in units of 32MB (Eg. 1 = 32MB, 2 = 64MB, 3 = 96MB)
+  UINT8   IbeccEccInjCount;               ///< Offset 336 Number of memory transactions between ECC error injection
+
+  UINT8   Reserved337[51];                ///< Offset 337 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (337 + 51 bytes) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)
