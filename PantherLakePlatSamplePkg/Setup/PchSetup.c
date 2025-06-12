@@ -524,6 +524,11 @@ PchSetupPcie (
       SetupVolatileData->PciePortCfg[Index] = PCH_RP_AVAILABLE;
     }
   }
+
+  for (Index = GetPchMaxPciePortNum (); Index < ARRAY_SIZE (SetupVolatileData->PciePortCfg); Index ++) {
+    SetupVolatileData->PciePortCfg[Index] = PCH_RP_NOT_IMPLEMENTED;
+  }
+
   for (Index = 0; Index < ARRAY_SIZE (SetupVolatileData->PciePortCfg); Index ++) {
     DEBUG ((DEBUG_INFO, "VolatileData.PciePortCfg[%d] = %d\n", Index, SetupVolatileData->PciePortCfg[Index]));
   }
