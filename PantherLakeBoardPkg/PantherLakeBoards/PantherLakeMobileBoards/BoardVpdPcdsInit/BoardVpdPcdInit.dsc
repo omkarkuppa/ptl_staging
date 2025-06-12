@@ -241,6 +241,7 @@
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdM2Ssd1PowerEnableGpioPolarity|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdM2Ssd1RstGpioPolarity|*|0x0
+  gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable|*|0x1
 
   #Mipi Cam
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamGpioEnable|*|0x0

@@ -465,7 +465,7 @@ UpdatePeiSaPolicy (
     //
     // Intel Platform Framework needs Camarillo device to be enabled.
     //
-    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Device4Enable, HostBridgePeiConfig->Device4Enable, SetupData.IpfEnable);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Device4Enable, HostBridgePeiConfig->Device4Enable, PcdGetBool (VpdPcdIpfEnable));
     COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.NpuEnable, NpuPeiConfig->NpuEnable, SaSetup.NpuEnable);
   }
 

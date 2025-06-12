@@ -268,7 +268,7 @@ LoadAcpiTables(
     return EFI_SUCCESS;
   }
 
-  DptfConfig.EnableDptf = SetupData.IpfEnable;
+  DptfConfig.EnableDptf = PcdGetBool (VpdPcdIpfEnable);
 
   VariableSize = sizeof (DPTF_CONFIG);
   Status = gRT->SetVariable (

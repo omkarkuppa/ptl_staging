@@ -4081,7 +4081,6 @@ gStructPcdTokenSpaceGuid.PcdSetup.I3c2ExtLcntTiming|0x20202020                  
 gStructPcdTokenSpaceGuid.PcdSetup.I3c2ExtTermLcntTiming|0x30000                                    #I3C2 SCL Termination Bit Low Count
 gStructPcdTokenSpaceGuid.PcdSetup.I3c2SdaSwitchDelayTiming|0x10000                                 #I3C2 SDA Hold and Mode Switch Delay Timing
 gStructPcdTokenSpaceGuid.PcdSetup.I3c2BusDelayTiming|0x8                                           #I3C2 Speed Mode Selection
-gStructPcdTokenSpaceGuid.PcdSetup.IpfEnable|0x1                                                    # IPF Manager Device
 gStructPcdTokenSpaceGuid.PcdSetup.PchSerialIoUseTimingParameters|0x0                               # SerialIO timing parameters
 gStructPcdTokenSpaceGuid.PcdSetup.PchUartUtkDevice|0x0                                             # UART Test Device
 gStructPcdTokenSpaceGuid.PcdSetup.PciDelayOptimizationEcr|0x0                                      # PCI Delay Optimization

@@ -1606,6 +1606,8 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     PlatformBoardConfig.h
   }
 
+  gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable                                  |TRUE|BOOLEAN|0x000012AE
+
   # PcdSkuType 1:PTL Simics
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType                                    |0x0|UINT8|0x000012B0
 

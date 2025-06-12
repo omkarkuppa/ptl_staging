@@ -135,6 +135,7 @@ typedef struct _SETUP_VOLATILE_DATA
   BOOLEAN IsS3Supported;
   UINT32 TpmLocation;
   UINT8  MaxPcieClockNumber;
+  UINT8  IpfEnable;
 } SETUP_VOLATILE_DATA;
 
 /**

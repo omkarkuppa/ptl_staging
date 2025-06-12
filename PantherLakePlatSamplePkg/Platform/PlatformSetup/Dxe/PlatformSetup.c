@@ -660,6 +660,7 @@ PlatformSetupEntry (
                   );
   ASSERT (Status == EFI_NOT_FOUND);
   mSetupVolatileData.PlatformFlavor = PcdGet8 (PcdPlatformFlavor); // Platform Reset will check this data for SusPwrDnAck setting
+  mSetupVolatileData.IpfEnable = PcdGetBool (VpdPcdIpfEnable);
   SetupVolAttributes = EFI_VARIABLE_BOOTSERVICE_ACCESS;
   Status = gRT->SetVariable (
                   L"SetupVolatileData",

@@ -42,6 +42,7 @@
   OneSiliconPkg/SiPkg.dec
   PantherLakePlatSamplePkg/PlatformPkg.dec
   DptfFeaturePkg/DptfFeaturePkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
 
 ################################################################################
 #
@@ -73,6 +74,7 @@
 
 [Pcd]
   gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable                  ## CONSUMES
 
 [Protocols]
   gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES

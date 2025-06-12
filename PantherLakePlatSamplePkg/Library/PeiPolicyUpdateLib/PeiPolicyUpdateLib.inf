@@ -170,6 +170,7 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardStackUp   ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardTopology  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable         ## CONSUMES
 
   # HDA Verb Table
   gBoardModuleTokenSpaceGuid.PcdHdaVerbTableDatabase ## CONSUMES

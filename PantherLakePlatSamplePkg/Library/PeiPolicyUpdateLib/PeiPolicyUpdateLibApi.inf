@@ -168,6 +168,7 @@
   gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap       ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardId              ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPlatformModularUsbCIoConfig       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable         ## CONSUMES
 
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase              ## CONSUMES
   gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize           ## CONSUMES

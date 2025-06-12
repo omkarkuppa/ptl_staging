@@ -67,6 +67,7 @@
   gBoardModuleTokenSpaceGuid.PcdFuncBoardHookPlatformSetupOverride
   gBoardModuleTokenSpaceGuid.PcdPlatformFlavor
   gBoardModuleTokenSpaceGuid.PcdPlatformType
+  gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
   gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable               ## PRODUCES
   gEfiMdeModulePkgTokenSpaceGuid.PcdFastPS2Detection             ## PRODUCES

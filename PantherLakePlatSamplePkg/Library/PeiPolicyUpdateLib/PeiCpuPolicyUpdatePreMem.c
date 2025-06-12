@@ -1196,7 +1196,7 @@ UpdatePeiCpuPolicyPreMem (
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TccActivationOffset, CpuPowerDeliveryConfig->TccActivationOffset, CpuSetup.TCCActivationOffset);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TccOffsetLock, CpuPowerDeliveryConfig->TccOffsetLock, CpuSetup.TccOffsetLock);
 
-  if (CpuSetup.ConfigTdpLock == 1 || SetupData.IpfEnable == 1) {
+  if (CpuSetup.ConfigTdpLock == 1 || PcdGetBool (VpdPcdIpfEnable)) {
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpBios, CpuPowerDeliveryConfig->ConfigTdpBios, 0);
   } else {
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpBios, CpuPowerDeliveryConfig->ConfigTdpBios, CpuSetup.ConfigTdpBios);
@@ -1297,7 +1297,7 @@ UpdatePeiCpuPolicyPreMem (
   //
   // Dual Tau Boost
   //
-  if (SetupData.IpfEnable == 1) {
+  if (PcdGetBool (VpdPcdIpfEnable)) {
     UPDATE_POLICY (((FSPM_UPD*) FspmUpd)->FspmConfig.DualTauBoost, CpuPowerDeliveryConfig->DualTauBoost, 0);
   } else {
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD*) FspmUpd)->FspmConfig.DualTauBoost, CpuPowerDeliveryConfig->DualTauBoost, CpuSetup.DualTauBoost);

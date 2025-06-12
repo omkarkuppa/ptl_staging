@@ -119,6 +119,7 @@
   gBoardModuleTokenSpaceGuid.PcdAcpiEnableAllButtonSupport          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdAcpiHidDriverButtonSupport          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTsOnDimmTemperature                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable                        ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId           ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId

@@ -3205,7 +3205,7 @@ InstallAcpiPlatform (
   //
   // BIOS only version of CTDP. (CTDP without using Intel(R) Dynamic Tuning Technology)
   //
-  if (CpuSetup.ConfigTdpLock == 1 || mSystemConfiguration.IpfEnable == 1) {
+  if (CpuSetup.ConfigTdpLock == 1 || PcdGetBool (VpdPcdIpfEnable)) {
     mPlatformNvsAreaProtocol.Area->ConfigTdpBios      = 0;
   } else {
     mPlatformNvsAreaProtocol.Area->ConfigTdpBios      = CpuSetup.ConfigTdpBios;
@@ -3625,7 +3625,7 @@ InstallAcpiPlatform (
     mPlatformNvsAreaProtocol.Area->Ps2MouseEnable = 0;
   }
   mPlatformNvsAreaProtocol.Area->ScanMatrixEnable  = mSystemConfiguration.ScanMatrixEnable;
-  mPlatformNvsAreaProtocol.Area->IpfEnable         = mSystemConfiguration.IpfEnable;
+  mPlatformNvsAreaProtocol.Area->IpfEnable         = PcdGetBool (VpdPcdIpfEnable);
 
   //
   // Feature Specific RVP Details

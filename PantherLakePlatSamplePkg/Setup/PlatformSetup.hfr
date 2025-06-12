@@ -346,11 +346,18 @@
     form formid = AUTO_ID(DPTF_FORM_ID),
     title = STRING_TOKEN(STR_DPTF_CONFIG_FORM_TITLE);
 
-      SUBTITLE(STRING_TOKEN(STR_IPF_CONFIG_FORM_TITLE))
+      suppressif ideqval SETUP_VOLATILE_DATA.IpfEnable == 0;
+        SUBTITLE(STRING_TOKEN(STR_IPF_CONFIG_FORM_TITLE))
+      endif;
+
+      suppressif ideqval SETUP_VOLATILE_DATA.IpfEnable == 1;
+        SUBTITLE(STRING_TOKEN(STR_IPF_CONFIG_DISABLE_FORM_TITLE))
+      endif;
+
       SEPARATOR
 
 #if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
-      suppressif ideqval SETUP_DATA.IpfEnable == 0;
+      suppressif ideqval SETUP_VOLATILE_DATA.IpfEnable == 0;
         oneof varid     = DPTF_CONFIG.PpccStepSize,
           prompt      = STRING_TOKEN(STR_PPCC_STEP_SIZE),
           help        = STRING_TOKEN(STR_PPCC_STEP_SIZE_HELP),
@@ -487,7 +494,7 @@
             option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
           endoneof;
         endif;
-      endif; // suppressif ideqval SETUP_DATA.IpfEnable
+      endif; // suppressif ideqval SETUP_VOLATILE_DATA.IpfEnable
 #endif
     endform; //DPTF _FORM_ID
 
@@ -496,7 +503,7 @@
 
       SUBTITLE(STRING_TOKEN(STR_OEM_OBJ_CONFIG_FORM_TITLE))
 #if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
-      suppressif ideqval SETUP_DATA.IpfEnable == 0;
+      suppressif ideqval SETUP_VOLATILE_DATA.IpfEnable == 0;
         oneof varid    = DPTF_CONFIG.OemDesignVariable0,  // PPS Support
           prompt      = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_0),
           help        = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_HELP_0),
@@ -572,7 +579,7 @@
           option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         endoneof;
-      endif; //suppressif ideqval SETUP_DATA.IpfEnable
+      endif; //suppressif ideqval SETUP_VOLATILE_DATA.IpfEnable
 #endif
 
         oneof varid     = SETUP_DATA.PmaxDevice,

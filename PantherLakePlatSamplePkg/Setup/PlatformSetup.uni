@@ -39,7 +39,8 @@
 #string STR_DPTF_CONFIG_FORM_TITLE                    #language en-US "Intel(R) Innovation Platform Framework Configuration"
 #string STR_DPTF_CONFIG_FORM_HELP                     #language en-US "Intel(R) Innovation Platform Framework Configuration options"
 
-#string STR_IPF_CONFIG_FORM_TITLE                    #language en-US "IPF is enabled by default. XmlCli could be used to disable it."
+#string STR_IPF_CONFIG_FORM_TITLE                     #language en-US "IPF is enabled by default. XmlCli could be used to disable it."
+#string STR_IPF_CONFIG_DISABLE_FORM_TITLE             #language en-US "IPF is disabled. XmlCli could be used to enable it."
 
 #string STR_OEM_OBJ_CONFIG_FORM_TITLE                 #language en-US "OEM variable and Object"
 #string STR_OEM_OBJ_CONFIG_FORM_HELP                  #language en-US "OEM variable and Object options"
