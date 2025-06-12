@@ -130,5 +130,10 @@ MrcLp5GetVrefDq (
   DqVrefMv = Outputs->VccddqVoltage / 4;
   DqVrefMv += ((Outputs->Frequency == f9600) ? 5 : (Outputs->Frequency >= f6400) ? 30 : 10);
 
+  if (Outputs->IsDvfscEnabled) {
+    // DQ ODT is disabled when in E-DVFSC mode, and we need a higher DqVref
+    DqVrefMv += 100;
+  }
+
   return (UINT16) DqVrefMv;
 }

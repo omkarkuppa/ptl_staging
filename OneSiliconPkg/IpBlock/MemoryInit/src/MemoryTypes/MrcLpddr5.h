@@ -295,8 +295,13 @@
 #define LP5_DQ_VREF_HIGH_F_MAX   (225)     ///< mV
 #define LP5_VREF_MIN_UV          (75000)   ///< uV
 #define LP5_VREF_STEP_SIZE       (2500)    ///< uV
-#define LP5_DQ_VREF_MAX_SUPPORTED_MR_CODE (0x46)   ///< 225mV
-#define LP5_DQ_VREF_MAX_SUPPORTED_OFFSET (2)   ///< 225mV
+
+#define LP5_DQ_VREF_MAX_SUPPORTED_MR_CODE (0x46)          ///< 225mV
+#define LP5_DQ_VREF_MAX_SUPPORTED_OFFSET  (2)             ///< 225mV
+
+#define LP5_DQ_VREF_MAX_SUPPORTED_MR_CODE_EDVFSC (0x64)   ///< 300mV
+#define LP5_DQ_VREF_MAX_SUPPORTED_OFFSET_EDVFSC  (32)     ///< 300mV
+
 #define LSB_WCK2DQI_OSQ_MR (35)
 #define MSB_WCK2DQI_OSQ_MR (36)
 #define LP5_DEFAULT_NT_DQ_ODT (0x3) ///< (RZQ/3) Encoded NT DQ ODT for MR41
