@@ -207,7 +207,8 @@ PLATFORM_TSE_EXCLUDE_PROTOCOL mPlatformITbtTseExcludeProtocol = {
 VOID
 EFIAPI
 InstallPlatformITbtTseExcludeProtocol (
-  VOID
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
   )
 {
   EFI_STATUS        Status;
@@ -367,8 +368,6 @@ ITbtEndOfDxeCallback (
 {
   ITbtAcpiEndOfDxeCallback (Event, Context);
 
-  InstallPlatformITbtTseExcludeProtocol ();
-
   gBS->CloseEvent (Event);
 }
 
@@ -394,6 +393,7 @@ ITbtDxeEntryPoint (
   ITBT_POLICY_PROTOCOL    *ITbtPolicy;
   BOOLEAN                 ITbtExisted;
   UINT8                   Index;
+  VOID                    *Registration;
 
   Status                  = EFI_SUCCESS;
   Handle                  = NULL;
@@ -493,6 +493,14 @@ ITbtDxeEntryPoint (
   // Install iTBT Disable Bme protocol for Shell testing purpose
   //
   InstallITbtDisableBmeProtocol ();
+
+  EfiCreateProtocolNotifyEvent (
+    &gEfiPciEnumerationCompleteProtocolGuid,
+    TPL_CALLBACK,
+    InstallPlatformITbtTseExcludeProtocol,
+    NULL,
+    &Registration
+    );
 
 Exit:
   DEBUG ((DEBUG_INFO, "[TBT] ITbtDxeEntryPoint END\n"));

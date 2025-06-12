@@ -63,6 +63,7 @@
   gITbtPolicyProtocolGuid                       ## CONSUMES
   gDisableITbtBmeProtocolGuid                   ## PRODUCES
   gPlatformTseExcludeProtocolGuid               ## PRODUCES
+  gEfiPciEnumerationCompleteProtocolGuid        ## CONSUMES
 
 [Guids]
   gEfiEventExitBootServicesGuid                 ## CONSUMES

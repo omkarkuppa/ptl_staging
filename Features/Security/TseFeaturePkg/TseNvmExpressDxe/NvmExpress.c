@@ -58,46 +58,104 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_NVM_EXPRESS_PASS_THRU_MODE  gEfiNvmExpressPass
    Check if the specified NVM Express media satifies the TSE requirements.
 
    @param[in] Media           A pointer to a BlockIoMedia structure from the NVMe namespace.
+   @param[in] PciIo           A pointer to a PciIo structure from the NVMe namespace.
 
    @retval TRUE               If media satisfies requirements for using TSE.
    @retval FALSE              If media does not satisfy requirements for using TSE.
 **/
 BOOLEAN
 IsMediaSupportedByTse (
-  EFI_BLOCK_IO_MEDIA *Media
+  EFI_BLOCK_IO_MEDIA  *Media,
+  EFI_PCI_IO_PROTOCOL *PciIo
   )
 {
-  BOOLEAN IsTseSupported = FALSE;
+  BOOLEAN IsTseSupported = TRUE;
+  EFI_STATUS                Status;
+  UINTN                     Index;
+  EFI_HANDLE                *HandleBuffer;
+  UINTN                     HandleCount;
+  PLATFORM_TSE_EXCLUDE_PROTOCOL *TseExcludeProtocol;
 
   //
   // Check TSE requirements:
   //
-  while (Media != NULL) {
-    //
-    //  1) NVMe namespace has a supported BlockSize: 512B OR 4KB
-    //
-    if ((Media->BlockSize != (SIZE_1KB / 2)) &&
-        (Media->BlockSize != SIZE_4KB)) {
-      DEBUG ((DEBUG_WARN, "[TseNvmExpress] Media block size is not supported by TSE! Media.BlockSize: 0x%x\n", Media->BlockSize));
-      break;
-    }
-
-    //
-    //  2) TSE alignment requirement: 16B
-    //     If 16B is a multiple of the reported media alignment,
-    //     set the CryptoMedia IoAlign to 16B
-    //     If 16B is NOT a multiple of the reported media alignment
-    //     force TSE to be disabled for this block device.
-    //
-    if ((CRYPTO_MEDIA_16B_ALIGN < Media->IoAlign) ||
-        ((CRYPTO_MEDIA_16B_ALIGN % Media->IoAlign) != 0)) {
-      DEBUG ((DEBUG_WARN, "[TseNvmExpress] Media alignment is not supported by TSE! Media.IoAlign: 0x%x\n", Media->IoAlign));
-      break;
-    }
-
-    IsTseSupported = TRUE;
-    break;
+  if (Media == NULL) {
+    IsTseSupported = FALSE;
+    return IsTseSupported;
   }
+
+  //
+  //  1) NVMe namespace has a supported BlockSize: 512B OR 4KB
+  //
+  if ((Media->BlockSize != (SIZE_1KB / 2)) &&
+      (Media->BlockSize != SIZE_4KB)) {
+    DEBUG ((DEBUG_WARN, "[TseNvmExpress] Media block size is not supported by TSE! Media.BlockSize: 0x%x\n", Media->BlockSize));
+    IsTseSupported = FALSE;
+    return IsTseSupported;
+  }
+
+  //
+  //  2) TSE alignment requirement: 16B
+  //     If 16B is a multiple of the reported media alignment,
+  //     set the CryptoMedia IoAlign to 16B
+  //     If 16B is NOT a multiple of the reported media alignment
+  //     force TSE to be disabled for this block device.
+  //
+  if ((CRYPTO_MEDIA_16B_ALIGN < Media->IoAlign) ||
+      ((CRYPTO_MEDIA_16B_ALIGN % Media->IoAlign) != 0)) {
+    DEBUG ((DEBUG_WARN, "[TseNvmExpress] Media alignment is not supported by TSE! Media.IoAlign: 0x%x\n", Media->IoAlign));
+    IsTseSupported = FALSE;
+    return IsTseSupported;
+  }
+
+  //
+  // Attempt to Open Platform TSE Exclude Protocol
+  //
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gPlatformTseExcludeProtocolGuid,
+                  NULL,
+                  &HandleCount,
+                  &HandleBuffer
+                  );
+
+  if (EFI_ERROR (Status) || (HandleBuffer == NULL) || (HandleCount == 0)) {
+    //
+    // Regarding Board that not support TBT, Bios will not install gPlatformTseExcludeProtocolGuid.
+    // Return TRUE here not to impact TSE driver flow
+    //
+    DEBUG ((DEBUG_INFO, "[TseNvmExpress] Failed to locate gPlatformTseExcludeProtocol, skipping media TBT checks\n"));
+    return IsTseSupported;
+  }
+
+  //
+  // Check if device is not TBT type
+  //
+  for (Index = 0; Index < HandleCount; Index++) {
+    Status = gBS->HandleProtocol (
+                    HandleBuffer[Index],
+                    &gPlatformTseExcludeProtocolGuid,
+                    (VOID **)&TseExcludeProtocol
+                    );
+    if (EFI_ERROR (Status)) {
+      break;
+    }
+
+    Status = TseExcludeProtocol->TseExcludeCheck(TseExcludeProtocol, PciIo, &IsTseSupported);
+    if (EFI_ERROR (Status)) {
+      break;
+    }
+
+    if (IsTseSupported == FALSE) {
+      // BDF is under dTBT or iTBT and is not supported
+      DEBUG ((DEBUG_WARN, "[TseNvmExpress] Device is under TBT and is not supported by TSE!\n"));
+      IsTseSupported = FALSE;
+      break;
+    }
+
+  }
+
+  gBS->FreePool (HandleBuffer);
 
   return IsTseSupported;
 }
@@ -266,7 +324,7 @@ EnumerateNvmeDevNamespace (
     // and if media is supported by TSE
     //
     if (!EFI_ERROR (Status) && (TseProtocol != NULL)) {
-      TseEnabledAndSupported = IsMediaSupportedByTse (&Device->Media);
+      TseEnabledAndSupported = IsMediaSupportedByTse (&Device->Media, Device->Controller->PciIo);
     }
 
     if (TseEnabledAndSupported == TRUE) {
@@ -654,7 +712,7 @@ UnregisterNvmeNamespace (
   // and if media is supported by TSE
   //
   if (!EFI_ERROR (Status) && (TseProtocol != NULL)) {
-    TseEnabledAndSupported = IsMediaSupportedByTse (&Device->Media);
+    TseEnabledAndSupported = IsMediaSupportedByTse (&Device->Media, Device->Controller->PciIo);
   }
 
   if (!TseEnabledAndSupported) {
@@ -989,13 +1047,6 @@ NvmExpressDriverBindingSupported (
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   EFI_PCI_IO_PROTOCOL       *PciIo;
   UINT8                     ClassCode[3];
-  BOOLEAN                   IsTseSupported;
-  UINTN                     Index;
-  EFI_HANDLE                *HandleBuffer;
-  UINTN                     HandleCount;
-  PLATFORM_TSE_EXCLUDE_PROTOCOL *TseExcludeProtocol;
-
-  IsTseSupported = TRUE;
 
   //
   // Check whether device path is valid
@@ -1080,15 +1131,18 @@ NvmExpressDriverBindingSupported (
                         sizeof (ClassCode),
                         ClassCode
                         );
-  if (!EFI_ERROR (Status)) {
-    //
-    // Examine Nvm Express controller PCI Configuration table fields
-    //
-    if ((ClassCode[0] != PCI_IF_NVMHCI) || (ClassCode[1] != PCI_CLASS_MASS_STORAGE_NVM) || (ClassCode[2] != PCI_CLASS_MASS_STORAGE)) {
-      Status = EFI_UNSUPPORTED;
-    }
+  if (EFI_ERROR (Status)) {
+    goto Done;
   }
 
+  //
+  // Examine Nvm Express controller PCI Configuration table fields
+  //
+  if ((ClassCode[0] != PCI_IF_NVMHCI) || (ClassCode[1] != PCI_CLASS_MASS_STORAGE_NVM) || (ClassCode[2] != PCI_CLASS_MASS_STORAGE)) {
+    Status = EFI_UNSUPPORTED;
+  }
+
+Done:
   gBS->CloseProtocol (
          Controller,
          &gEfiPciIoProtocolGuid,
@@ -1096,60 +1150,7 @@ NvmExpressDriverBindingSupported (
          Controller
          );
 
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }  
-
-  //
-  // Attempt to Open Platform TSE Exclude Protocol
-  //
-  Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gPlatformTseExcludeProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuffer
-                  );
-
-  if (EFI_ERROR (Status) || (HandleBuffer == NULL) || (HandleCount == 0)) {
-    //
-    // Regarding Board that not support TBT, Bios will not install gPlatformTseExcludeProtocolGuid.
-    // Return EFI_SUCCESS Status here to not impact the flow of NVME Driver Start.
-    // 
-    DEBUG ((DEBUG_INFO, "Failed to locate gPlatformTseExcludeProtocolGuid\n")); 
-    return EFI_SUCCESS;
-  }
-
-  //
-  // Check if device is not TBT type
-  //
-  for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (
-                    HandleBuffer[Index],
-                    &gPlatformTseExcludeProtocolGuid,
-                    (VOID **)&TseExcludeProtocol
-                    );
-    if (EFI_ERROR (Status)) {
-      break;
-    }
-
-    Status = TseExcludeProtocol->TseExcludeCheck(TseExcludeProtocol, PciIo, &IsTseSupported);
-    DEBUG ((DEBUG_INFO, "IsTseSupported: %x\n", IsTseSupported));
-    if (EFI_ERROR (Status)) {
-      break;
-    }
-
-    if(IsTseSupported == FALSE){
-      // BDF is under dTBT or iTBT and is not supported
-      Status = EFI_UNSUPPORTED;
-      break;
-    }
-
-  }
-
-  gBS->FreePool (HandleBuffer);
   return Status;
-
 }
 
 /**

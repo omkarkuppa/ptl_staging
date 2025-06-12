@@ -390,7 +390,8 @@ PLATFORM_TSE_EXCLUDE_PROTOCOL mPlatformDTbtTseExcludeProtocol = {
 VOID
 EFIAPI
 InstallPlatformDTbtTseExcludeProtocol (
-  VOID
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
   )
 {
   EFI_STATUS        Status;
@@ -691,44 +692,7 @@ DTbtEndOfDxeCallback (
   IN VOID         *Context
   )
 {
-  USB4_PLATFORM_HOB   *Usb4PlatformHob;
-  USB4_PLATFORM_INFO  *Usb4PlatformInfo;
-  VOID                *HobPtr;
-  UINT8               DTbtControllerStatus;
-  UINT8               Index;
-  UINT8               DTbtControllerCount;
-
   DTbtAcpiEndOfDxeCallback (Event, Context);
-
-  //
-  // Check dTBT status in platform USB4 host router information
-  //
-  HobPtr = GetFirstGuidHob (&gUsb4PlatformHobGuid);
-  if (HobPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "gUsb4PlatformHobGuid not found\n"));
-    return;
-  }
-
-  Usb4PlatformHob      = GET_GUID_HOB_DATA (HobPtr);
-  Usb4PlatformInfo     = &(Usb4PlatformHob->Usb4PlatformInfo);
-  //
-  // USB4 host router mask
-  // bit 4 - 7 : Discrete USB4 host router 0 - 3
-  //
-  DTbtControllerStatus = ((Usb4PlatformInfo->Usb4HrMask >> 4) & 0x0F);
-  DTbtControllerCount  = 0;
-  for (Index = 0; Index < PcdGet8 (PcdBoardDTbtControllerNumber); Index++) {
-    if ((DTbtControllerStatus >> Index) & 0x01) {
-      DTbtControllerCount++;
-    }
-  }
-
-  //
-  // Only Install the Protocol when any dTBT device is enabled
-  //
-  if (DTbtControllerCount > 0) {
-    InstallPlatformDTbtTseExcludeProtocol ();
-  }
 
   gBS->CloseEvent (Event);
 }
@@ -752,6 +716,13 @@ DTbtDxeEntryPoint (
   EFI_EVENT                 EndOfDxeEvent;
   EFI_EVENT                 ExitBootServiceEvent;
   DXE_DTBT_POLICY_PROTOCOL  *DxeTbtConfig;
+  VOID                      *Registration;
+  USB4_PLATFORM_HOB         *Usb4PlatformHob;
+  USB4_PLATFORM_INFO        *Usb4PlatformInfo;
+  VOID                      *HobPtr;
+  UINT8                     DTbtControllerStatus;
+  UINT8                     Index;
+  UINT8                     DTbtControllerCount;
 
   Status                    = EFI_SUCCESS;
   Handle                    = NULL;
@@ -859,6 +830,42 @@ DTbtDxeEntryPoint (
     // Install DTbt DisableBme for UEFI-Shell testing
     //
     InstallDTbtDisableBmeProtocol ();
+  }
+
+  //
+  // Check dTBT status in platform USB4 host router information
+  //
+  HobPtr = GetFirstGuidHob (&gUsb4PlatformHobGuid);
+  if (HobPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "gUsb4PlatformHobGuid not found\n"));
+    return EFI_NOT_FOUND;
+  }
+
+  Usb4PlatformHob  = GET_GUID_HOB_DATA (HobPtr);
+  Usb4PlatformInfo = &(Usb4PlatformHob->Usb4PlatformInfo);
+  //
+  // USB4 host router mask
+  // bit 4 - 7 : Discrete USB4 host router 0 - 3
+  //
+  DTbtControllerStatus = ((Usb4PlatformInfo->Usb4HrMask >> 4) & 0x0F);
+  DTbtControllerCount  = 0;
+  for (Index = 0; Index < PcdGet8 (PcdBoardDTbtControllerNumber); Index++) {
+    if ((DTbtControllerStatus >> Index) & 0x01) {
+      DTbtControllerCount++;
+    }
+  }
+
+  //
+  // Only Install the Protocol when any dTBT device is enabled
+  //
+  if (DTbtControllerCount > 0) {
+    EfiCreateProtocolNotifyEvent (
+      &gEfiPciEnumerationCompleteProtocolGuid,
+      TPL_CALLBACK,
+      InstallPlatformDTbtTseExcludeProtocol,
+      NULL,
+      &Registration
+      );
   }
 
 Exit:
