@@ -495,17 +495,23 @@ SsTcssInitPostMemory (
   } else {
     MaxUsb3 = pInst->Config->MaxTcssUsb3Ports;
   }
-  for (Index = 0; Index < MaxUsb3; Index++) {
-    if ((pInst->Config->TcssConvUsbA[Index].Field.Enable == 0) ||
-        (pInst->Config->TcssConvUsbA[Index].Field.MappingPchXhciUsb2 == 0)) {
-      continue;
-    }
-    if (pInst->Callbacks->ConvertUsbCToUsbA != NULL) {
-      pInst->Callbacks->ConvertUsbCToUsbA (
-        Index + 1,
-        pInst->Config->TcssConvUsbA[Index].Field.MappingPchXhciUsb2,
-        pInst->Config->TcssConvUsbA[Index].Field.Orientation
-        );
+  //
+  // Skip sending PMC_CONVERT_TO_TYPE_A during S3 exit and S4 exit when VCCST for S4 support is enabled.
+  //
+  if ((pInst->Config->BootMode != BOOT_ON_S3_RESUME) &&
+      ((pInst->Config->BootMode != BOOT_ON_S4_RESUME) || (pInst->Config->VccSt == 0))) {
+    for (Index = 0; Index < MaxUsb3; Index++) {
+      if ((pInst->Config->TcssConvUsbA[Index].Field.Enable == 0) ||
+          (pInst->Config->TcssConvUsbA[Index].Field.MappingPchXhciUsb2 == 0)) {
+        continue;
+      }
+      if (pInst->Callbacks->ConvertUsbCToUsbA != NULL) {
+        pInst->Callbacks->ConvertUsbCToUsbA (
+          Index + 1,
+          pInst->Config->TcssConvUsbA[Index].Field.MappingPchXhciUsb2,
+          pInst->Config->TcssConvUsbA[Index].Field.Orientation
+          );
+      }
     }
   }
   return IpCsiStsSuccess;
