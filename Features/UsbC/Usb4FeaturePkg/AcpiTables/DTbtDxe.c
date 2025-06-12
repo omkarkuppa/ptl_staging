@@ -308,8 +308,9 @@ InstallDTbtDisableBmeProtocol (
 }
 
 /**
-  ThunderBolt (TBT) NVMe drives are not supported by TSE design currently.
-  The function is for checking if the device is under TBT daisy chain.
+  Any NVMe device subjected to runtime BDF change is not supported by TSE design currently.
+  The function is for checking if the device is under a hotplug able daisy chain, such as TBT
+  daisy chain typically.
 
   @param[in]   This               The Platform TSE Exclude Protocol Instance.
   @param[in]   PciIo              Target Device PciIo Protocol

@@ -116,7 +116,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED FVI_STRINGS mPlatformFviStrings[] = {
   Read USBC PD Version
 **/
 VOID
-ReadUsbCPdVersion(
+ReadUsbCPdVersion (
   VOID
   )
 {

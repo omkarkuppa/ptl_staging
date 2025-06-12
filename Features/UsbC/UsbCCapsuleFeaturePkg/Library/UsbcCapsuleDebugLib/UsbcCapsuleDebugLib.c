@@ -83,10 +83,10 @@ CapsuleLogWrite (
       Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
       break;
     case 1:
-      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr, EvtArg0) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
       break;
     case 2:
-      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr, EvtArg0, EvtArg1) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
       break;
     default:
       DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Unsupported argument number %d\n", Argc));
@@ -116,7 +116,7 @@ CapsuleLogWrite (
 #else
   Status = EFI_SUCCESS;
   CapsuleReleaseEnable = PcdGet8 (PcdUsbCCapsuleDebugLevel);
-  
+
   if (CapsuleReleaseEnable != USBC_CAPSULE_DBG_DISABLED) {
     Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProtocolGuid, NULL, (VOID**) &CapsuleDebugProtocol);
     if (EFI_ERROR (Status)) {
