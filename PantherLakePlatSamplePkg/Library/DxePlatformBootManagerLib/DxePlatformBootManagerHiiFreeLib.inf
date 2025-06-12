@@ -215,6 +215,7 @@
   gCnvFeatureSetupGuid                          ## CONSUMES
   gPsStorageDeviceConnectNotifyGuid             ## CONSUMES
   gOcrConfigVariableGuid                        ## CONSUMES
+  gEfiGraphicsInfoHobGuid                       ## CONSUMES
 
 [Depex.common.DXE_DRIVER]
   gEfiVariableArchProtocolGuid

@@ -83,6 +83,7 @@
 #include <Library/PlatformWdtLib.h>
 #include <CnvVfrSetupMenuHii.h>
 #include <IGpuConfig.h>
+#include <Guid/GraphicsInfoHob.h>
 
 #define BdsDispatchExternalOpromDisable 0x0
 #define BdsDispatchExternalOpromStorage 0x1
@@ -2251,6 +2252,8 @@ UpdateResolutionForDualDisplay (
   UINT32                                ModeNumber;
   UINT32                                HorizontalResolution;
   UINT32                                VerticalResolution;
+  EFI_PEI_GRAPHICS_INFO_HOB             *PlatformGraphicsOutput;
+  EFI_HOB_GUID_TYPE                     *GuidHob;
   UINTN                                 HandleCount;
   EFI_HANDLE                            *HandleBuffer;
   EFI_STATUS                            Status;
@@ -2286,14 +2289,18 @@ UpdateResolutionForDualDisplay (
     return EFI_UNSUPPORTED;
   }
 
+  GuidHob = GetFirstGuidHob (&gEfiGraphicsInfoHobGuid);
 
-  HorizontalResolution = PcdGet32(PcdVideoHorizontalResolution);
-  VerticalResolution = PcdGet32(PcdVideoVerticalResolution);
-
-  if (GraphicsOutput != NULL) {
-    MaxGopMode  = GraphicsOutput->Mode->MaxMode;
+  if (GuidHob == NULL) {
+    DEBUG ((DEBUG_WARN, "Failed to retrieve GraphicsInfoHob\n"));
+    return EFI_NOT_FOUND;
   }
+  PlatformGraphicsOutput = (EFI_PEI_GRAPHICS_INFO_HOB *)GET_GUID_HOB_DATA (GuidHob);
 
+  HorizontalResolution = PlatformGraphicsOutput->GraphicsMode.HorizontalResolution;
+  VerticalResolution   = PlatformGraphicsOutput->GraphicsMode.VerticalResolution;
+
+  MaxGopMode  = GraphicsOutput->Mode->MaxMode;
   //
   // 1. If current video resolution is same with required video resolution,
   //    video resolution need not be changed.
@@ -2315,7 +2322,8 @@ UpdateResolutionForDualDisplay (
     }
   }
   if (ModeNumber == MaxGopMode) {
-    Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber - 1);
+    //Initialize the display to native mode
+    Status = GraphicsOutput->SetMode (GraphicsOutput, 0);
     if (!EFI_ERROR (Status)) {
       //
       // Set PCD to Inform GraphicsConsole to change video resolution.
