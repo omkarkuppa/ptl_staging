@@ -61,7 +61,7 @@ gSiPolicyPpiGuid ## CONSUMES
 gSiPreMemPolicyPpiGuid ## CONSUMES
 gEdkiiPlatformSpecificResetHandlerPpiGuid ## CONSUMES
 gEdkiiPlatformSpecificResetNotificationPpiGuid ## CONSUMES
-gEfiPeiMemoryDiscoveredPpiGuid ## CONSUMES
+gEdkiiPeiMigrateTempRamPpiGuid ## CONSUMES
 
 [Guids]
 gMePeiPreMemConfigGuid

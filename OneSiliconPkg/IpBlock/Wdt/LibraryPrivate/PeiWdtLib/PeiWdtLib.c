@@ -187,7 +187,7 @@ WdtResetNotificationCallback (
 STATIC
 EFI_STATUS
 EFIAPI
-ResetHandlerRegisterAfterMemoryDiscovered (
+ResetHandlerRegisterAfterPeiMigration (
   IN CONST EFI_PEI_SERVICES     **PeiServices,
   IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
   IN VOID                       *Interface
@@ -225,10 +225,10 @@ ResetHandlerRegisterAfterMemoryDiscovered (
   return EFI_SUCCESS;
 }
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mResetNotificationReadyAfterMemoryDiscovered = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mResetNotificationReadyAfterPeiMigration = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
-  &gEfiPeiMemoryDiscoveredPpiGuid,
-  (EFI_PEIM_NOTIFY_ENTRY_POINT) ResetHandlerRegisterAfterMemoryDiscovered
+  &gEdkiiPeiMigrateTempRamPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) ResetHandlerRegisterAfterPeiMigration
 };
 
 /**
@@ -246,6 +246,6 @@ WdtInstallResetCallback (
   DEBUG ((DEBUG_INFO, "(WDT) Readback = 0x%08x\n", Readback));
 
   PeiServicesNotifyPpi (&mResetNotificationReady);
-  PeiServicesNotifyPpi (&mResetNotificationReadyAfterMemoryDiscovered);
+  PeiServicesNotifyPpi (&mResetNotificationReadyAfterPeiMigration);
 
 }

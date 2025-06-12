@@ -41,7 +41,7 @@
 [Ppis]
   gEfiPeiResetPpiGuid                       ## PRODUCES
   gEfiPeiReset2PpiGuid                      ## PRODUCES
-  gEfiPeiMemoryDiscoveredPpiGuid            ## NOTIFY
+  gEdkiiPeiMigrateTempRamPpiGuid            ## NOTIFY
   gEfiPeiMasterBootModePpiGuid              ## PRODUCES
   gFspTempRamExitPpiGuid                    ## CONSUMES
   gFspmArchConfigPpiGuid                    ## SOMETIMES_PRODUCES

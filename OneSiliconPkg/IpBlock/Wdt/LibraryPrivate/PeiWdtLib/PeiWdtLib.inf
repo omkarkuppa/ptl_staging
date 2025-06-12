@@ -44,7 +44,7 @@ OneSiliconPkg/SiPkg.dec
 
 [Ppis]
 gEdkiiPlatformSpecificResetNotificationPpiGuid ## CONSUMES
-gEfiPeiMemoryDiscoveredPpiGuid
+gEdkiiPeiMigrateTempRamPpiGuid
 
 [Guids]
 gWatchDogPreMemConfigGuid

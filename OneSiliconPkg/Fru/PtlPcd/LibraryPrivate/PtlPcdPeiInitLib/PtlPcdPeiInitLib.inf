@@ -176,6 +176,7 @@ gSiPreMemPolicyPpiGuid
 gExtendedBiosDecodeReadyPpiGuid
 gFspmArchConfigPpiGuid
 gEdkiiPlatformSpecificResetNotificationPpiGuid ## CONSUMES
+gEdkiiPeiMigrateTempRamPpiGuid ## CONSUMES
 
 [Guids]
 gPchDeviceTableHobGuid

@@ -234,7 +234,7 @@ Reset2ReadyCallBack (
 STATIC
 EFI_STATUS
 EFIAPI
-Reset2ReadyCallBackAfterMemoryDiscovered (
+Reset2ReadyCallBackAfterPeiMigration (
   IN CONST EFI_PEI_SERVICES     **PeiServices,
   IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
   IN VOID                       *Interface
@@ -275,10 +275,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mReset2Ready = {
   (EFI_PEIM_NOTIFY_ENTRY_POINT) Reset2ReadyCallBack
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mReset2ReadyAfterMemoryDiscovered = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mReset2ReadyAfterPeiMigration = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
-  &gEfiPeiMemoryDiscoveredPpiGuid,
-  (EFI_PEIM_NOTIFY_ENTRY_POINT) Reset2ReadyCallBackAfterMemoryDiscovered
+  &gEdkiiPeiMigrateTempRamPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) Reset2ReadyCallBackAfterPeiMigration
 };
 
 /**
@@ -298,7 +298,7 @@ InstallReinstallFspResetPpiServices (
   UINT8                           Index;
 
   PeiServicesNotifyPpi (&mReset2Ready);
-  PeiServicesNotifyPpi (&mReset2ReadyAfterMemoryDiscovered);
+  PeiServicesNotifyPpi (&mReset2ReadyAfterPeiMigration);
 
   for (Index =0; Index < (sizeof(mPreMemPpiList)/sizeof(EFI_PEI_PPI_DESCRIPTOR)); Index++) {
     //

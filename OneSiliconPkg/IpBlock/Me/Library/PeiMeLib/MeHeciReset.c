@@ -246,7 +246,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mResetHandlerReady = {
 STATIC
 EFI_STATUS
 EFIAPI
-ResetHandlerReadyAfterMemoryDiscovered (
+ResetHandlerReadyAfterPeiMigration (
   IN CONST EFI_PEI_SERVICES     **PeiServices,
   IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
   IN VOID                       *Interface
@@ -303,10 +303,10 @@ ResetHandlerReadyAfterMemoryDiscovered (
   return EFI_SUCCESS;
 }
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mResetHandlerReadyAfterMemoryDiscovered = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mResetHandlerReadyAfterPeiMigration = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
-  &gEfiPeiMemoryDiscoveredPpiGuid,
-  (EFI_PEIM_NOTIFY_ENTRY_POINT) ResetHandlerReadyAfterMemoryDiscovered
+  &gEdkiiPeiMigrateTempRamPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) ResetHandlerReadyAfterPeiMigration
 };
 
 /**
@@ -320,6 +320,6 @@ RegisterMeReset (
 {
   DEBUG ((DEBUG_INFO, "%a () Start\n", __FUNCTION__));
   PeiServicesNotifyPpi (&mResetHandlerReady);
-  PeiServicesNotifyPpi (&mResetHandlerReadyAfterMemoryDiscovered);
+  PeiServicesNotifyPpi (&mResetHandlerReadyAfterPeiMigration);
 }
 

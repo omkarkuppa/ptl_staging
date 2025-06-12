@@ -135,7 +135,7 @@ SpiDmaWaResetNotify (
 STATIC
 EFI_STATUS
 EFIAPI
-SpiDmaWaResetNotifyAfterMemoryDiscovered (
+SpiDmaWaResetNotifyAfterPeiMigration (
   IN CONST EFI_PEI_SERVICES     **PeiServices,
   IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
   IN VOID                       *Interface
@@ -175,10 +175,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mSpiDmaWaResetNotify = 
   (EFI_PEIM_NOTIFY_ENTRY_POINT) SpiDmaWaResetNotify
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mSpiDmaWaResetNotifyAfterMemoryDiscovered = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mSpiDmaWaResetNotifyAfterPeiMigration = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
-  &gEfiPeiMemoryDiscoveredPpiGuid,
-  (EFI_PEIM_NOTIFY_ENTRY_POINT) SpiDmaWaResetNotifyAfterMemoryDiscovered
+  &gEdkiiPeiMigrateTempRamPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) SpiDmaWaResetNotifyAfterPeiMigration
 };
 
 /**
@@ -327,7 +327,7 @@ PtlPcdOnMemoryDiscovered (
   DEBUG ((DEBUG_INFO, "%a - Start\n",__FUNCTION__));
   PtlPcdSpiDmaWaStart ();
   PeiServicesNotifyPpi (&mSpiDmaWaResetNotify);
-  PeiServicesNotifyPpi (&mSpiDmaWaResetNotifyAfterMemoryDiscovered);
+  PeiServicesNotifyPpi (&mSpiDmaWaResetNotifyAfterPeiMigration);
   DEBUG ((DEBUG_INFO, "%a - End\n",__FUNCTION__));
 }
 
