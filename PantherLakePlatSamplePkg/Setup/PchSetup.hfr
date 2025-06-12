@@ -768,25 +768,15 @@ form formid = 122,
       endoneof;
 
       suppressif ideqval SETUP_DATA.OsDebugPort == 1;
-        oneof varid  = PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART0],
+      oneof varid  = PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART0],
         prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART0),
       #ifdef MDEPKG_NDEBUG
-      help = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
-      #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
-              option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-              option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        help = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       #else
-              option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-              option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
-      #endif
-      #else
-      #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
-              help        = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
-              option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      #else
-              help        = STRING_TOKEN(STR_PCH_SERIAL_IO_UART0_DEVICE_HELP),
-              option text = STRING_TOKEN(STR_DBG_ONLY), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      #endif
+        help        = STRING_TOKEN(STR_PCH_SERIAL_IO_UART0_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DBG_ONLY), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       #endif
         option text = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_COM), value = 3, flags = RESET_REQUIRED;
       endoneof;
