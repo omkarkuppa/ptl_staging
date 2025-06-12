@@ -51,9 +51,13 @@
          prompt = STRING_TOKEN(STR_SERIAL_IO_OPTIONS_FORM_TITLE),
          help = STRING_TOKEN(STR_SERIAL_IO_OPTIONS_FORM_HELP);
 
-    goto SCS_OPTIONS_FORM_ID,
-         prompt = STRING_TOKEN(STR_SCS_OPTIONS_FORM_TITLE),
-         help = STRING_TOKEN(STR_SCS_OPTIONS_FORM_HELP);
+    #define UFS_INDEX 0
+      suppressif ideqval SETUP_VOLATILE_DATA.UfsSupported[UFS_INDEX] == 0;
+        goto SCS_OPTIONS_FORM_ID,
+             prompt = STRING_TOKEN(STR_SCS_OPTIONS_FORM_TITLE),
+             help = STRING_TOKEN(STR_SCS_OPTIONS_FORM_HELP);
+      endif;
+    #undef UFS_INDEX
 
     goto ISH_OPTIONS_FORM_ID,
          prompt = STRING_TOKEN(STR_ISH_OPTIONS_FORM_TITLE),

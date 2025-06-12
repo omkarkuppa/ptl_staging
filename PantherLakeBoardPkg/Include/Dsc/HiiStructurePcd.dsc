@@ -1552,7 +1552,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchPmErDebugMode|0x1                       
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchPmcOsIdleModeEnable|0x1                                    # OS IDLE Mode
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchRtcMemoryLock|0x1                                          # RTC Memory Lock
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchS0ixAutoDemotion|0x1                                       # S0ix Auto Demotion
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchScsUfsEnable[0]|0x0                                        # UFS 3.1 Controller 0
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchScsUfsEnable[0]|0x0                                        # UFS 3.1 Controller 0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchScsUfsInlineEncryption[0]|0x1                              # UFS Inline Encryption
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoI2c[0]|0x1                                         # I2C0 Controller
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoI2c[1]|0x1                                         # I2C1 Controller
