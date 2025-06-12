@@ -905,24 +905,17 @@ PcieUpdatePrivateConfig (
   pInst->PrivateConfig.PayLoadConfig.Imrs             = 0x1;
   pInst->PrivateConfig.BlockChainTimer                = V_PGCTRL_PMREQBLKRSPT_25US;
 
-  if (PtlIsPcdH () && (pInst->RpIndex == 10 || pInst->RpIndex == 11)){
+  if (PtlIsPcdH () && (pInst->RpIndex == 10 || pInst->RpIndex == 11)) {
     pInst->PrivateConfig.ClockDcgEnable = FALSE;
+    pInst->PrivateConfig.Pxpsuldcgen = 0;
+    pInst->PrivateConfig.ChainTimersValue = V_PCIE_CFG_COCTL_CT_3NS;
   } else {
     pInst->PrivateConfig.ClockDcgEnable = TRUE;
-  }
-
-  if (pInst->RpIndex <= 10) {
-    pInst->PrivateConfig.ChainTimersValue               = V_PCIE_CFG_COCTL_CT_14NS;
-  } else {
-    pInst->PrivateConfig.ChainTimersValue               = V_PCIE_CFG_COCTL_CT_3NS;
+    pInst->PrivateConfig.Pxpsuldcgen = 1;
+    pInst->PrivateConfig.ChainTimersValue = V_PCIE_CFG_COCTL_CT_14NS;
   }
 
   PcieGetProjectDefaultEqConfiguration (pInst, &pInst->PrivateConfig.Gen3EqSettings, &pInst->PrivateConfig.Gen4EqSettings, &pInst->PrivateConfig.Gen5EqSettings);
-  if (PtlIsPcdH () && pInst->RpIndex > 9) {
-    pInst->PrivateConfig.Pxpsuldcgen = 0;
-  } else {
-    pInst->PrivateConfig.Pxpsuldcgen = 1;
-  }
 }
 /**
   Update Private Config for PCIE IP Instance

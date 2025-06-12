@@ -930,7 +930,7 @@ PcieSipHideDisableRootPorts (
   for (Status = RpList->ResetToFirst (RpList, &ControllerDev); Status == EFI_SUCCESS; Status = RpList->GetNextController (RpList, &ControllerDev)) {
     switch (PcieSipGetControllerBifurcation (ControllerDev)) {
       case V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4:
-        if (ControllerDev->Id != 11) {
+        if (ControllerDev->Id != 11 && ControllerDev->Id != 9) {
           RpDisableMask = 0xE;
         } else {
           if (LosValue == 0xBBBB5555) {
