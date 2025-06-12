@@ -333,6 +333,60 @@ CheckPs2keybaordConInVariable(
 }
 
 /**
+  Detect if Exception occured.
+  
+  @param         none
+  @retval True   If exception occured.
+  @retval Flase  If exception did not occur.
+**/
+BOOLEAN
+IsFastBootException(
+  VOID
+  )
+{
+  EFI_STATUS                    Status;
+  FAST_BOOT_EXCEPTION_PROTOCOL  *FastBootExceptionProtocol;
+  BOOLEAN                       ExceptionOccurred;
+  EFI_HANDLE                    *Handle;
+  UINTN                         Number;
+  UINTN                         Index;
+
+  //
+  // Locate all handles of Fast Boot Exception protocol to find out if any exception has occurred.
+  //
+  ExceptionOccurred = FALSE;
+  Handle            = NULL;
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gFastBootExceptionProtocolGuid,
+                  NULL,
+                  &Number,
+                  &Handle
+                  );
+  if (!EFI_ERROR (Status)) {
+    for (Index = 0; Index < Number; Index++) {
+      Status = gBS->HandleProtocol (
+                      Handle[Index],
+                      &gFastBootExceptionProtocolGuid,
+                      (VOID **) &FastBootExceptionProtocol
+                      );
+      if (EFI_ERROR (Status)) {
+        continue;
+      }
+      if (FastBootExceptionProtocol->FbExceptionType > NoException) {
+        ExceptionOccurred = TRUE;
+        break;
+      }
+    }
+    if (Handle != NULL) {
+      gBS->FreePool (Handle);
+    }
+  }
+
+  return ExceptionOccurred;
+}
+
+/**
   Detect if user changed ConIn device.
   @param                        none
   @retval EFI_SUCCESS           User didn't change the ConIn device
@@ -350,7 +404,7 @@ FastBootEnumConInDevice (
 
   Status = EFI_SUCCESS;
 
-  if (mSystemConfiguration.ConInBehavior == USB_CONSOLE) {
+  if ((!IsFastBootException ()) || (mSystemConfiguration.ConInBehavior == USB_CONSOLE)) {
 
     GetEfiGlobalVariable2 (L"ConIn", (VOID **) &VarConIn, &Size);
     if ((VarConIn == NULL) || (Size < sizeof (EFI_DEVICE_PATH_PROTOCOL))) {
@@ -465,17 +519,19 @@ FastBootUpdateConInVarByConInBehavior (
       break;
 
     case WINDOWS_CONSOLE:
-      //
-      // Remove all device path from ConIn.
-      // BIOS should not enumerate any input devices when Windows Console behavior is used
-      //
-      gRT->SetVariable (
+      if (!IsFastBootException ()) {
+        //
+        // Remove all device path from ConIn.
+        // BIOS should not enumerate any input devices when Windows Console behavior is used
+        //
+        gRT->SetVariable (
              L"ConIn",
              &gEfiGlobalVariableGuid,
              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
              0,
              NULL
              );
+      }
       break;
 
     default:
@@ -503,8 +559,10 @@ FastBootUpdateConsoleVariable (
   if (FastBootEnabled ()) {
     FastBootUpdateConInVarByConInBehavior();
     if(mSystemConfiguration.ConInBehavior != USB_CONSOLE) {
-      UpdateConsoleVariable (L"ConOut", RemoveUsbAndSerial);
-      UpdateConsoleVariable (L"ErrOut", RemoveUsbAndSerial);
+      if (!IsFastBootException ()) {
+        UpdateConsoleVariable (L"ConOut", RemoveUsbAndSerial);
+        UpdateConsoleVariable (L"ErrOut", RemoveUsbAndSerial);
+      }
     }
   }
 }

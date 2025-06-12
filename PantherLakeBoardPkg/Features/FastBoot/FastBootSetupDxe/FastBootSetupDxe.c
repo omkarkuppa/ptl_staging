@@ -47,6 +47,7 @@ OnBootEvent (
   EFI_HANDLE                    *Handle;
   UINTN                         Number;
   UINTN                         Index;
+  UINTN                         VariableSize = 0;
 
   //
   // Locate all handles of Fast Boot Exception protocol to find out if any exception has occurred.
@@ -77,6 +78,15 @@ OnBootEvent (
   }
   gBS->FreePool (Handle);
 
+  VariableSize = sizeof (SETUP_DATA);
+  Status = gRT->GetVariable (
+    L"Setup",
+    &gSetupVariableGuid,
+    NULL,
+    &VariableSize,
+    &mSetupData
+    );
+
   Status = EfiGetSystemConfigurationTable (&gEfiHobListGuid, &HobList);
   if ((EFI_ERROR (Status)) || (HobList == NULL)) {
     return;
@@ -95,8 +105,16 @@ OnBootEvent (
   BootStatus |= (BootMode << 2);
   UpdateFastBootFlagStatus (BootStatus);
 
-  if (ExceptionOccurred ||
-      ((BootMode != BOOT_WITH_MINIMAL_CONFIGURATION) && (BootMode != BOOT_ON_S4_RESUME))) {
+  if (mSetupData.FastBoot == 1 && ExceptionOccurred == 1) {
+    if (FastBootExceptionProtocol->FbExceptionCategory == SpecialBoot) {
+      BootStatus |= SET_BOOT_PROGRESS_EXCEPTION_BIT;
+      UpdateFastBootFlagStatus (BootStatus);
+      DEBUG ((DEBUG_INFO, "Special Boot occured, So Reset system \n"));
+      gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, 0, NULL);
+    }
+  } else if (ExceptionOccurred ||
+             ((BootMode != BOOT_WITH_MINIMAL_CONFIGURATION) && (BootMode != BOOT_ON_S4_RESUME))) {
+    DEBUG ((DEBUG_INFO, "Exceptioned occured, So Reset system \n"));
     gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, 0, NULL);
   }
 

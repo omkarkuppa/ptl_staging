@@ -39,6 +39,7 @@
 #include <Protocol/ResetNotification.h>
 #include <Guid/EventGroup.h>
 #include <Library/EcMiscLib.h>
+#include <Protocol/AsfProtocol.h>
 
 #define BOOT_MANAGER_USB_ENTRY   L"USB Entry for Windows To Go"
 #define INTERNAL_UEFI_SHELL_NAME L"Internal UEFI Shell"
@@ -46,6 +47,60 @@
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_EVENT               mEndOfDxeEvent;
 GLOBAL_REMOVE_IF_UNREFERENCED SETUP_DATA              *mSystemConfiguration = NULL;
 GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN                 mAsfBootOptionsPresent = FALSE;
+
+/**
+  Detect if Exception occured.
+  
+  @param         ExceptionCategory
+  @retval True   If exception occured.
+  @retval Flase  If exception did not occur.
+**/
+BOOLEAN
+DxeFastBootExceptionCheck(
+  FAST_BOOT_EXCEPTION_CATEGORY  *ExceptionCategory
+  )
+{
+  EFI_STATUS                    Status;
+  FAST_BOOT_EXCEPTION_PROTOCOL  *FastBootExceptionProtocol;
+  BOOLEAN                       ExceptionOccurred;
+  EFI_HANDLE                    *Handle;
+  UINTN                         Number;
+  UINTN                         Index;
+
+  //
+  // Locate all handles of Fast Boot Exception protocol to find out if any exception has occurred.
+  //
+  ExceptionOccurred = FALSE;
+  Handle            = NULL;
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gFastBootExceptionProtocolGuid,
+                  NULL,
+                  &Number,
+                  &Handle
+                  );
+  if (!EFI_ERROR (Status)) {
+    for (Index = 0; Index < Number; Index++) {
+      Status = gBS->HandleProtocol (
+                      Handle[Index],
+                      &gFastBootExceptionProtocolGuid,
+                      (VOID **) &FastBootExceptionProtocol
+                      );
+      if (EFI_ERROR (Status)) {
+        continue;
+      }
+      if (FastBootExceptionProtocol->FbExceptionType > NoException) {
+        ExceptionOccurred  = TRUE;
+        *ExceptionCategory = FastBootExceptionProtocol->FbExceptionCategory;
+        break;
+      }
+    }
+    if (Handle != NULL) {
+      gBS->FreePool (Handle);
+    }
+  }
+  return ExceptionOccurred;
+}
 
 /**
   Check Fast Boot is enabled or not
@@ -122,7 +177,25 @@ AsfBootOptionsEventCallBack (
   VOID      *Context
   )
 {
-  if (AsfIsBootOptionsPresent ()) {
+  EFI_STATUS                     Status;
+  FAST_BOOT_EXCEPTION_CATEGORY  ExceptionCategory   = 0;
+  ALERT_STANDARD_FORMAT_PROTOCOL *AsfProtocol;
+
+  Status = gBS->LocateProtocol (
+                  &gAlertStandardFormatProtocolGuid,
+                  NULL,
+                  (VOID **) &AsfProtocol
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a() Locate ASF Protocol failed, Status = %r\n", __FUNCTION__, Status));
+  }
+
+  DxeFastBootExceptionCheck (&ExceptionCategory);
+
+  if (!EFI_ERROR (Status) && AsfIsBootOptionsPresent ()) {
+    if ((ExceptionCategory != BootFailure) && (AsfProtocol->AsfBootOptions.SpecialCommand != ASF_INTEL_OEM_FORCE_PBA_BOOT_CMD)) {
+      RaiseFastBootException (ExceptionType2, SpecialBoot);
+    }
     mAsfBootOptionsPresent = TRUE;
   }
 }
@@ -346,8 +419,16 @@ FastBootResetNotificationCallback (
   IN VOID                     *ResetData OPTIONAL
   )
 {
-  // Clear Boot Progress bit [bit0]
-  UpdateFastBootFlagStatus (GetFastBootFlagStatus () & ~BIT0);
+  FAST_BOOT_EXCEPTION_CATEGORY  ExceptionCategory = 0;
+
+  if ((FastBootEnabled ()) && (DxeFastBootExceptionCheck (&ExceptionCategory))) {
+    if (ExceptionCategory == SpecialBoot) {
+      DEBUG ((DEBUG_INFO, "Do not clear FastBoot Flag \n"));
+    }
+  } else {
+    // Clear Boot Progress bit [bit0]
+    UpdateFastBootFlagStatus (GetFastBootFlagStatus () & ~BIT0);
+  }
 }
 
 
