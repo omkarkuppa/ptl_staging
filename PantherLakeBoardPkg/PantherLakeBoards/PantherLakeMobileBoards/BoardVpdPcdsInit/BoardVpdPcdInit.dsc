@@ -27,6 +27,7 @@
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHHmpRvp.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Rvp3.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHDdr5Rvp4.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHDdr5EmbCrb.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHCammDTbTRvp2.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/Xep/PtlUH/SkuIdPtlUHCammBep.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHLp5Gcs1.dsc

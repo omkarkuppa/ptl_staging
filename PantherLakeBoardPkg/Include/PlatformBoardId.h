@@ -115,6 +115,9 @@ Defines Platform BoardIds
   #define BomIdWclLp5MeccRvp2              0x05
   #define BomIdWclLp5HsioMcioRvp2          0x07
 
+#define BoardIdPtlUHDdr5EmbCrb             0x32
+  #define BomIdPtlUHDdr5EmbCrb             0x01
+
 #define BoardIdUnknown1                   0xffff
 
 // PantherLake UH Sku Id
@@ -166,6 +169,11 @@ Defines Platform BoardIds
 #define SkuIdPtlUHLp5AepBom               0x00010007
 #define SkuIdPtlUHLp5AepBom32Gb           0x00020007
 #define SkuIdPtlUHCammBep                 0x00000008
+
+#define SkuIdPtlUHDdr5EmbCrb              0x01000032
+#define SkuIdPtlUHDdr5EmbCrbBom           0x01010032
+#define SkuIdPtlUHDdr5EmbCrbFabB          0x01000132
+#define SkuIdPtlUHDdr5EmbCrbFabBBom       0x01010132
 
 // WildcatLake Sku Id
 #define SkuIdWclNDdr5Rvp1                 0x08000020

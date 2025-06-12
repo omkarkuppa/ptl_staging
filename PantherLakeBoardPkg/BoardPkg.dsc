@@ -201,6 +201,10 @@
   0x00000007|SkuIdPtlUHLp5Aep|SkuIdPtlUHLp5AepBom
   0x00020007|SkuIdPtlUHLp5AepBom32Gb|SkuIdPtlUHLp5AepBom
   0x00000008|SkuIdPtlUHCammBep
+  0x01000032|SkuIdPtlUHDdr5EmbCrb
+  0x01010032|SkuIdPtlUHDdr5EmbCrbBom|SkuIdPtlUHDdr5EmbCrb
+  0x01000132|SkuIdPtlUHDdr5EmbCrbFabB|SkuIdPtlUHDdr5EmbCrb
+  0x01010132|SkuIdPtlUHDdr5EmbCrbFabBBom|SkuIdPtlUHDdr5EmbCrb
   0x08000020|SkuIdWclNDdr5Rvp1
   0x0A000020|SkuIdWclNDdr5Rvp1HDMI|SkuIdWclNDdr5Rvp1
   0x08040020|SkuIdWclDdr5Rvp1Bom|SkuIdWclNDdr5Rvp1

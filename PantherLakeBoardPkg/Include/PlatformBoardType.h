@@ -32,6 +32,7 @@
 #define BoardTypeUpServer   0x07    // Server Boards
 #define BoardTypeFfvs       0x08    // Form factor Validation system
 #define BoardTypeTdv        0x09    // Technology Development Vehicle
-#define BoardTypeMax        0x0A
+#define BoardTypeEmbCrb     0x0A    // Embedded CRB Boards
+#define BoardTypeMax        0x0B
 
 #endif
