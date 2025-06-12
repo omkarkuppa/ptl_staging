@@ -1304,11 +1304,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchEnergyReport|0x1                        
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchEspiHostC10ReportEnable|0x0                                # HOST_C10 reporting to Target
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchEspiLgmrEnable|0x0                                         # LGMR
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchGpioIrqRoute|0xe                                           # GPIO IRQ Route
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x0
-    gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudio|0x1                                            # HD Audio
-!else
-    gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudio|0x0                                            # HD Audio
-!endif
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudio|0x1                                                # HD Audio
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioCodecSxWakeCapability|0x0                           # Codec Sx Wake Capability
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x0                               # DMIC #0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1
