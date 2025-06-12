@@ -471,7 +471,7 @@ fi
 BIOS_PREFIX=PTL
 
 if [ "$PTL_BUILD" = "TRUE" ]; then
-  BIOS_PREFIX=PTL_P
+  BIOS_PREFIX=PTL_U_P_H
 fi
 
 
