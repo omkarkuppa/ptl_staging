@@ -577,7 +577,6 @@ PeimMemoryInit (
 
   UINT32                       ImrsSize;
   UINT32                       Alignment;
-  MSR_POWER_CTL_REGISTER       MsrPowerCtl;
   VOID                         *PayloadAddress;
   UINTN                        PayloadFvInstance;
   EFI_PEI_FV_HANDLE            PayloadFvHandle;
@@ -1222,11 +1221,6 @@ DEBUG_CODE_END();
         return EFI_DEVICE_ERROR;
     }
   } while ((MrcStatus == mrcColdBootRequired) || (MrcStatus == mrcDramNotSupportEdvfsc));
-
-  // Set the MSR bit VIRTUAL_MSR_CR_POWER_CTL.SAPM_iMC_C2_POLICY(bit2) to 0.
-  MsrPowerCtl.Uint64 = MrcCall->MrcReadMsr64 (MSR_POWER_CTL);
-  MsrPowerCtl.Bits.SapmImcC2Policy = 0;
-  MrcCall->MrcWriteMsr64 (MSR_POWER_CTL, MsrPowerCtl.Uint64);
 
   DEBUG ((
     DEBUG_INFO,
