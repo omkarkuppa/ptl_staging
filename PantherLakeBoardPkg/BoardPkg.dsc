@@ -221,6 +221,8 @@
   0x08050021|SkuIdWclLp5MeccRvp2|SkuIdWclLp5Rvp2
   0x08070021|SkuIdWclLp5McioRvp2|SkuIdWclLp5Rvp2
 
+  0x0800001C|SkuIdWclLp5Bep
+
 # Keeping this section as an example to define SKUs that can inherit parent
 # properties and define a section by its own identifier as well.
 

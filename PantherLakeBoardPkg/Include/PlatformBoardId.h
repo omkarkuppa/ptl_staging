@@ -114,6 +114,7 @@ Defines Platform BoardIds
   #define BomIdWclLp5PnpRvp2               0x04
   #define BomIdWclLp5MeccRvp2              0x05
   #define BomIdWclLp5HsioMcioRvp2          0x07
+#define BoardIdWclLp5xBep                  0x1C
 
 #define BoardIdPtlUHDdr5EmbCrb             0x32
   #define BomIdPtlUHDdr5EmbCrb             0x01
@@ -190,5 +191,6 @@ Defines Platform BoardIds
 #define SkuIdWclLp5PnpRvp2                0x08040021
 #define SkuIdWclLp5MeccRvp2               0x08050021
 #define SkuIdWclLp5HsioMcioRvp2           0x08070021
+#define SkuIdWclLp5Bep                    0x0800001C
 
 #endif // _PLATFORM_BOARD_ID_H_
