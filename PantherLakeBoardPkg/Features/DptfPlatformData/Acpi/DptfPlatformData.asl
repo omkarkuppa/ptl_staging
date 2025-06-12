@@ -153,6 +153,14 @@ Scope(\_SB)
             }
           })
         }
+        Case (Package () {BoardIdPtlUHLp5Aep}) {
+          ADBG ("Use platform GS data vault")
+          Return (Package () {
+            Buffer () {
+              Include ("BiosDataVaultGS.asl") // GS data vault
+            }
+          })
+        }
         Default {
           ADBG ("Use Default data vault")
           Return (Package () {
