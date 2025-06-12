@@ -508,6 +508,8 @@ PsSimulateSanitizeActions (
   // Clear RPE / LPE Boot Flag, so that next boot should be Normal Boot
   //
   PsPetAlert (PsProgressInProgress, PsPetEraseGeneral, PsAllSettingsDecremented);
+  PsPetAlert (PsProgressInProgress, PsPetEraseGeneral, PsClearReservedParameters);
+
   if (((mPsBootParameters->PsRequestedList) & PS_PERFORM_ACTION_MASK) == mPsBootParameters->PsStatus.PsAttemptResult) {
     PsReportBiosStatus (PsSuccess);
   } else {
