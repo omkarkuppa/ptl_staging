@@ -423,34 +423,12 @@
     {0x0}  // terminator
   })}
 
-  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbConnector| * |{CODE(
-  {
-  // Connectable,   Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
-    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN0,  PCH_USB2,       PORT1,       TCSS_USB3,      PORT1}, // TCP0
-    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN1,  PCH_USB2,       PORT2,       TCSS_USB3,      PORT2}, // TCP1
-    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN2,  PCH_USB2,       PORT3,       TCSS_USB3,      PORT3}, // TCP2
-    {UNCONNECTABLE, VISIBLE,    0x09,          VW_OC,        OC_PIN3,  PCH_USB2,       PORT4,       TCSS_USB3,      PORT4}, // Camera
-    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT5,       PCH_USB3,       PORT1}, // Debug
-    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT6,       0,              0    }, // WWAN
-    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT7,       0,              0    }, // FPS
-    {0x0}  // terminator
-  })}
-
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCConnector| * |{CODE(
   {
   // ModularIoSupported, EdpModularIoSupported, RetimerCount, PcieSupported, DpAltModeSupported, Usb4Supported, Tbt3Supported, PdNum,    AuxDpMode, TbtControllerType, TbtControllerNum, DmaPortNum, PcieType, PcieRootPortNum
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT2,  0,        0}, // TCP1
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD2, 0,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT1,  0,        0}, // TCP2
-    {0x0}  // terminator
-  })}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbCConnector| * |{CODE(
-  {
-  // ModularIoSupported, EdpModularIoSupported, RetimerCount, PcieSupported, DpAltModeSupported, Usb4Supported, Tbt3Supported, PdNum,    AuxDpMode, TbtControllerType, TbtControllerNum, DmaPortNum, PcieType, PcieRootPortNum
-    {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
-    {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT2,  0,        0}, // TCP1
-    {MODULAR_IO,         0,                     0,            0,             0,                  0,             0,             USBC_PD3, 2,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT2,  0,        0}, // TCP3, default is HDMI
     {0x0}  // terminator
   })}
 
@@ -652,9 +630,7 @@
     {GPIOV2_PTL_PCD_XXGPP_F_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_H_0,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_V_7,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-
-    {GPIOV2_PTL_PCD_XXGPP_E_10,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
+    {GPIOV2_PTL_PCD_XXGPP_E_10, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     { 0x0 } // terminator
   })}
 
@@ -841,11 +817,98 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cController|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
-[PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom.STANDARD]
+
+[PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom.STANDARD, PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom32Gb.STANDARD]
   #
   # Scan Matrix keyboard
   #
-  gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                    # Scan Matrix Keyboard Support
+  gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                                             # Scan Matrix Keyboard Support
+  !if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == TRUE
+    gStructPcdTokenSpaceGuid.PcdSetup.LchSupport|0x1                                                 # LCH Support
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link2|0x0                                      # Camera3
+
+    # Control Logic 1
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic0|0x1                              # Control Logic 1
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic0_Type|0x1                         # Control Logic Type
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic0_CrdVersion|0x20                  # CRD Version
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic0_InputClock|0x3                   # Input Clock
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic0_PchClockSource|0x0               # PCH Clock Source
+
+    # Control Logic 2
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic1_GpioPinsEnabled|0x3              # Number of GPIO Pins
+      # GPIO Pin 1
+      gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic1_GpioGroupPadNumber[0]|0x01     # Group Pad Number
+      # GPIO Pin 2
+      gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic1_GpioGroupPadNumber[1]|0x08     # Group Pad Number
+      # GPIO Pin 3
+      gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic1_GpioGroupPadNumber[2]|0x13     # Group Pad Number
+
+    # Camera1
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_SensorModel|0x4                          # Sensor Model
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_CrdVersion|0x20               # CRD Version
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_ControlLogic|0x0              # GPIO control
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_CameraPhysicalLocation|0x61              # Camera position
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_FlashSupport|0x2              # Flash Support
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_PrivacyLed|0x0                # Privacy LED
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_Degree|0x0                    # Rotation
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_PhyConfiguration|0x0          # PhyConfiguration
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_LaneConfiguration|0x0         # LaneConfiguration
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_ModuleName|L"KAFE799"                    # Camera module name
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_LinkUsed|0x0                  # MIPI port
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_LaneUsed|0x2                  # LaneUsed
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_Mclk|0x124f800                # MCLK
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_EepromType|0x14               # EEPROM Type
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_DriverData_VcmType|0x0                   # VCM Type
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_I2cDevicesEnabled|0x2                    # Number of I2C Components
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_I2cChannel|0x1                           # I2C Channel
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_I2cAddress[0]|0x10                       # I2C Address
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_I2cDeviceType[0]|0x0                     # Device Type
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_I2cAddress[1]|0x50                       # I2C Address
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_I2cDeviceType[1]|0x2                     # Device Type
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_Customize_Id[0]|0x11                     # Customize Device1 ID Number
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_Customize_Id[1]|0x12                     # Customize Device2 ID Number
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_Customize_Id[2]|0x13                     # Customize Device3 ID Number
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link0_FlashDriverSelection|0x0                 # Flash Driver Selection
+
+    # Camera2
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link1_DriverData_CrdVersion|0x20               # CRD Version
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link1_DriverData_ControlLogic|0x1              # GPIO control
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link1_DriverData_LinkUsed|0x2                  # MIPI port
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link1_I2cChannel|0x0                           # I2C Channel
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Link1_DriverData_FlashID|0x1                   # Flash Driver Selection
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Flash1_I2cChannel|0x0                          # I2C Channel
+    gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_Flash1_I2cAddress|0x67                         # I2C Address
+  !endif
+  gStructPcdTokenSpaceGuid.PcdSaSetup.SaIpuEnable|0x1                                                # IPU Device (B0:D5:F0)
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcAssignment[0]|0x1                                          # THC Port Configuration
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[0]|0x2                                                # THC Mode
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcAssignment[1]|0x2                                          # THC Port Configuration
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[1]|0x2                                                # THC Mode
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cDeviceAddress[1]|0x2C                                # HIDI2C Device address
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cConnectionSpeed[1]|0x61A80                           # Requested Connection Speed
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cAddressingMode[1]|0x0                                # Addressing Mode
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cDeviceDescriptorAddress[1]|0x1                       # Device Descriptor address
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cFastModeSerialClockLineHighPeriod[1]|0x92            # FM SCL HIGH Period
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cFastModeSerialClockLineLowPeriod[1]|0x9C             # FM SCL LOW Period
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcWakeOnTouch[1]|0x1                                         # Wake On Touch
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoI2c[5]|0x0                                         # I2C5 Controller
+
+  # Audio Speakers Enablement
+  gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0xB     # SoundWire codecs topology
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioHdaLinkEnable|0x0                                   # HDA Link
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x1                               # DMIC #0
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x1                               # DMIC #1
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[0]|0x0                               # SNDW #0
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[1]|0x1                               # SNDW #1
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[2]|0x1                               # SNDW #2
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[3]|0x1                               # SNDW #3
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwMultilaneEnable[0]|0x0                          # SNDW #2 Multilane
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwMultilaneEnable[1]|0x0                          # SNDW #3 Multilane
+  gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicMonoEnabled|0x0        # Dmic Mono
+  gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoEnabled|0x0      # Dmic Stereo
+  gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicQuadEnabled|0x1        # Dmic Quad
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x1                                     # ACX/SDCA
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[11]|0x1                                     # ACX/SDCA speaker aggregation
 
 #####################################################################
 #  PTL UH LP5x AEP MEM 32GB
@@ -930,9 +993,3 @@
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 240 - 249
       0, 0, 0, 0, 0, 0                      ///< 250 - 255
   }})}
-
-[PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom32Gb.STANDARD]
-  #
-  # Scan Matrix keyboard
-  #
-  gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                    # Scan Matrix Keyboard Support
