@@ -2698,76 +2698,6 @@ UpdatePchGeneralConfig (
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchLegacyIoLowLatency, PchGeneralConfig->LegacyIoLowLatency, PchSetup->PchLegacyIoLowLatency);
 }
 
-/**
-  Correct mismatch configuration of ISH and Serial IO
-
-  @param[in] SiPolicy             Pointer to SI_POLICY_PPI
-  @param[in] PchSetup             Pointer to PCH_SETUP buffer
-**/
-STATIC
-VOID
-CorrectMismatchConfig (
-  IN SI_POLICY_PPI             *SiPolicy,
-  IN PCH_SETUP                 *PchSetup
-  )
-{
-  UINT8                           I2c2Mode;
-  UINT8                           I2c3Mode;
-  UINT8                           I2c5Mode;
-  UINT8                           Uart1Mode;
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-  ISH_CONFIG                      *IshConfig;
-  SERIAL_IO_CONFIG                *SerialIoConfig;
-  EFI_STATUS                      Status;
-#endif
-
-#if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspsUpd;
-  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
-  ASSERT (FspsUpd != NULL);
-#else
-  IshConfig = NULL;
-  SerialIoConfig = NULL;
-
-  Status = GetConfigBlock ((VOID *) SiPolicy, &gIshConfigGuid, (VOID *) &IshConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return;
-  }
-  Status = GetConfigBlock ((VOID *) SiPolicy, &gSerialIoConfigGuid, (VOID *) &SerialIoConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return;
-  }
-#endif //FSPMode Check
-
-  GET_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.SerialIoI2cMode[2], SerialIoConfig->I2cDeviceConfig[2].Mode, I2c2Mode);
-  if (IsPchH () && I2c2Mode != SerialIoI2cDisabled) {
-    //
-    // ISH UART0 use the same GPIO pins as SerialIo I2C2 on PCH-H
-    //
-    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshUartEnable[0], IshConfig->Uart[0].Enable, FALSE);
-  }
-
-  GET_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.SerialIoUartMode[1], SerialIoConfig->UartDeviceConfig[1].Mode, Uart1Mode);
-  if (Uart1Mode != SerialIoUartDisabled) {
-    //
-    // ISH UART1 use the same GPIO pins as SerialIo UART1
-    //
-    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshUartEnable[1], IshConfig->Uart[1].Enable, FALSE);
-  }
-  GET_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.SerialIoI2cMode[3], SerialIoConfig->I2cDeviceConfig[3].Mode, I2c3Mode);
-  GET_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.SerialIoI2cMode[5], SerialIoConfig->I2cDeviceConfig[5].Mode, I2c5Mode);
-  if ((IsPchLp () && I2c5Mode != SerialIoI2cDisabled) ||
-      (IsPchH ()  && I2c3Mode != SerialIoI2cDisabled)) {
-    //
-    // ISH I2C2 use the same GPIO pins as SerialIo I2C5 on PCH-LP / I2C3 on PCH-H
-    //
-    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshI2cEnable[2], IshConfig->I2c[2].Enable, FALSE);
-  }
-
-}
-
 #if FixedPcdGetBool (PcdEmbeddedEnable)
 /**
   Update Fusa config
@@ -2971,7 +2901,6 @@ DEBUG_CODE_END();
   UpdatePchUsb2PhyConfig (SiPolicy, &PchSetup);
   UpdateUfsConfig (SiPolicy, &PchSetup);
   UpdateIshConfig (SiPolicy, &PchSetup);
-  CorrectMismatchConfig (SiPolicy, &PchSetup);
 #if FixedPcdGetBool (PcdCnvIntegratedSupport) == 1
   UpdateCnviConfig (SiPolicy, &CnvSetup);
 #endif
