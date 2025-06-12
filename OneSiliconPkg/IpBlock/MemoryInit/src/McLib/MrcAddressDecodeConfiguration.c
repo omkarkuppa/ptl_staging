@@ -22,6 +22,7 @@
 #include "MrcAddressDecodeConfigurationPrivate.h"
 #include "MrcMcApi.h"
 #include "MrcSpdProcessingDefs.h"
+#include "MrcGeneral.h"
 
 /**
   This function configures the zone configuration registers MAD-CR and MAD-ZR-CR.
@@ -47,6 +48,8 @@ ZoneConfiguration (
   INT64               HashMask;
   INT64               EccMode;
   INT64               HashLsb;
+  UINT32              MsHashMask;
+  UINT32              MsHashLsb;
   UINT32              Channel;
   BOOLEAN             FullLpChPop;
   BOOLEAN             IsLpddr;
@@ -64,7 +67,8 @@ ZoneConfiguration (
   EccMode = Outputs->EccSupport;
   MrcGetSetMc (MrcData, Controller, GsmMccEccMode, WriteToCache | PrintValue, &EccMode);
 
-  HashLsb = IsLpddr ? 0x2 : 0x3;
+  GetMcIbeccHash (MrcData, &MsHashMask, &MsHashLsb);
+  HashLsb = MsHashLsb;
   MrcGetSetMc (MrcData, Controller, GsmMccHashLsb, WriteToCache | PrintValue, &HashLsb);
 
   FullLpChPop = TRUE;   // Assume all LPDDR channels (4x16) are populated in the controller.

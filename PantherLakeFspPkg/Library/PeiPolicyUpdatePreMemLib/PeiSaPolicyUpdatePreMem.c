@@ -487,6 +487,9 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.SmramMask               = FspmUpd->FspmConfig.SmramMask;
   MemConfig->ExternalInputs.ChHashMask              = FspmUpd->FspmConfig.ChHashMask;
   MemConfig->ExternalInputs.ExtendedBankHashing     = FspmUpd->FspmConfig.ExtendedBankHashing;
+  MemConfig->ExternalInputs.MsHashOverride          = FspmUpd->FspmConfig.MsHashOverride;
+  MemConfig->ExternalInputs.MsHashMask              = FspmUpd->FspmConfig.MsHashMask;
+  MemConfig->ExternalInputs.MsHashInterleaveBit     = FspmUpd->FspmConfig.MsHashInterleaveBit;
   MemConfig->ExternalInputs.TrainingEnables2.DCCPICODELUT            = FspmUpd->FspmConfig.DCCPICODELUT;
   MemConfig->ExternalInputs.TrainingEnables.RDVC1D                   = FspmUpd->FspmConfig.RDVC1D;
   MemConfig->ExternalInputs.TrainingEnables2.TXTCO                   = FspmUpd->FspmConfig.TXTCO;

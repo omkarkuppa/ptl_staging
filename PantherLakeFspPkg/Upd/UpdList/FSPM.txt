@@ -234,6 +234,7 @@ tREFI
 EccSupport
 RemapEnable
 ScramblerSupport
+MsHashOverride
 RmtPerTask
 TrainTrace
 DisPgCloseIdleTimeout
@@ -307,6 +308,8 @@ DATAPILIN
 DDR5XTALK
 DCCLP5WCKDCA
 RXUNMATCHEDCAL
+MsHashInterleaveBit
+MsHashMask
 WRTDIMMDFE
 TXDQSDCC
 RXVREFPERBIT

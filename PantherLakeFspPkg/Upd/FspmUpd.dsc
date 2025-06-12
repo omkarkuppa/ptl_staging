@@ -601,8 +601,11 @@
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{This option enables data scrambling in memory.}
   gPlatformFspPkgTokenSpaceGuid.ScramblerSupport            | * | 0x01 | 0x01
-  # Added reserved space UnusedUpdSpace5
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd5             | * | 0x01 | 0x00
+
+  # !BSF NAME:{Memory Slice Hash Override}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Memory Slice (Controller) Hash Mask and LSB Override. 0 = Use default memory slice hash mask / lsb, 1 = Use values from MsHashMask and MsHashInterleaveBit}
+  gPlatformFspPkgTokenSpaceGuid.MsHashOverride              | * | 0x01 | 0x00
 
   # !BSF NAME:{Memory Voltage}
   # !BSF TYPE:{Combo} OPTION:{0:Default, 1200:1.20 Volts, 1250:1.25 Volts, 1300:1.30 Volts, 1350:1.35 Volts, 1400:1.40 Volts, 1450:1.45 Volts, 1500:1.50 Volts, 1550:1.55 Volts, 1600:1.60 Volts, 1650:1.65 Volts}
@@ -774,8 +777,16 @@
   # !BSF NAME:{PPR Repair Rank}  TYPE:{EditNum, HEX, (0x00,0x01)}
   # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairRank               | * | 0x01 | 0x0
-  # Added reserved space  UnusedUpdSpace0[3]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd773              | * | 0x3 | {0x00}
+
+  # !BSF NAME:{Memory Slice Hash LSB Bit}
+  # !BSF TYPE:{Combo} OPTION:{0:BIT6, 1:BIT7, 2:BIT8, 3:BIT9, 4:BIT10, 5:BIT11, 6:BIT12, 7:BIT13}
+  # !BSF HELP:{Memory Slice (Controller) Hash LSB bit. Valid values are 0..7 for BITS 6..13; used when MsHashOverride is set}
+  gPlatformFspPkgTokenSpaceGuid.MsHashInterleaveBit         | * | 0x01 | 0x02
+
+  # !BSF NAME:{Memory Slice Hash Mask}
+  # !BSF TYPE:{EditNum, HEX, (0x0000, 0x3FFF)}
+  # !BSF HELP:{Memory Slice (Controller) Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum); used when MsHashOverride is set}
+  gPlatformFspPkgTokenSpaceGuid.MsHashMask                  | * | 0x02 | 0x2094
 
   # !BSF NAME:{PPR Repair Row}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Deprecated}

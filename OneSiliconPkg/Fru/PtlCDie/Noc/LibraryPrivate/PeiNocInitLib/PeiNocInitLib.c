@@ -43,6 +43,8 @@
 #include <Library/IGpuInfoLib.h>
 #include <Library/PciSegmentLib.h>
 #include <Library/NguInfoLib.h>
+#include <Ppi/SiPolicy.h>
+#include <MemoryConfig.h>
 
 #define DRAIN_CTL_OFFSET  0x3E0
 #define DRAIN_CTL_REGISTER_ADDRESS(Sid, Pid, Offset) (PcdGet64(PcdSafBarBaseAddress) | ((UINT8)(Sid & 0x1F) << 20) | ((UINT8)(Pid) << 12) | (UINT16)(Offset))
@@ -177,6 +179,13 @@ ProgramMcHash (
   UINT32                               McD0BaseAddress;
   MEMORY_SLICE_HASH_HBO_MEM_STRUCT     MemorySliceHash;
   LOCAL_HOME_SLICE_HASH_HBO_CFG_STRUCT LocalHomeSlice;
+  SI_PREMEM_POLICY_PPI                 *SiPreMemPolicy;
+  MEMORY_CONFIGURATION                 *MemConfig;
+  MRC_EXT_INPUTS_TYPE                  *ExtInputs;
+  EFI_STATUS                           Status;
+
+  SiPreMemPolicy  = NULL;
+  MemConfig       = NULL;
 
   DEBUG ((DEBUG_INFO,"Programming MC Hash\n"));
   DEBUG ((DEBUG_INFO,"Mc0Size %d\nMc1Size %d\n", Mc0Size, Mc1Size));
@@ -190,18 +199,29 @@ ProgramMcHash (
   MemorySliceHash.Bits.hash_enabled = FALSE;
   if (Mc0Size && Mc1Size) {
     MemorySliceHash.Bits.hash_enabled = TRUE;
-    if(IsDdr5){
-    MemorySliceHash.Bits.hash_lsb = 0x3;
-    MemorySliceHash.Bits.hash_mask = 0x2098;
-    LocalHomeSlice.Bits.hash_bit0_lsb = 0x3;
-    LocalHomeSlice.Bits.hash_bit0_mask = 0x2098;
+    if (IsDdr5) {
+      MemorySliceHash.Bits.hash_lsb = 0x3;
+      MemorySliceHash.Bits.hash_mask = 0x2098;
+    } else {
+      MemorySliceHash.Bits.hash_lsb = 0x2;
+      MemorySliceHash.Bits.hash_mask = 0x2094;
     }
-    else{
-    MemorySliceHash.Bits.hash_lsb = 0x2;
-    MemorySliceHash.Bits.hash_mask = 0x2094;
-    LocalHomeSlice.Bits.hash_bit0_lsb = 0x2;
-    LocalHomeSlice.Bits.hash_bit0_mask = 0x2094;
+
+    Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicy);
+    if (!EFI_ERROR (Status) && (SiPreMemPolicy != NULL)) {
+      Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigGuid, (VOID *) &MemConfig);
+      if (!EFI_ERROR (Status) && (MemConfig != NULL)) {
+        ExtInputs = &MemConfig->ExternalInputs;
+        if (ExtInputs->MsHashOverride) {
+          MemorySliceHash.Bits.hash_lsb  = ExtInputs->MsHashInterleaveBit & ((1 << MEMORY_SLICE_HASH_HBO_MEM_HASH_LSB_SIZE) - 1);
+          MemorySliceHash.Bits.hash_mask = ExtInputs->MsHashMask & ((1 << MEMORY_SLICE_HASH_HBO_MEM_HASH_MASK_SIZE) - 1);
+          DEBUG ((DEBUG_INFO, "Override MemorySlice Hash LSB and MASK to %u and 0x%X\n", MemorySliceHash.Bits.hash_lsb, MemorySliceHash.Bits.hash_mask));
+        }
+      }
     }
+    LocalHomeSlice.Bits.hash_bit0_lsb  = MemorySliceHash.Bits.hash_lsb;
+    LocalHomeSlice.Bits.hash_bit0_mask = MemorySliceHash.Bits.hash_mask;
+
     if (Mc1Size > Mc0Size) {
       MemorySliceHash.Bits.slice_l_id = TRUE;
       MemorySliceHash.Bits.zone1_start = (Mc0Size * 2) >> 10; //Convert size into GB

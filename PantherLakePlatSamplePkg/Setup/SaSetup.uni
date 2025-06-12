@@ -222,6 +222,15 @@
 #string STR_BIT12_STRING                        #language en-US "BIT12"
 #string STR_BIT13_STRING                        #language en-US "BIT13"
 
+#string STR_MS_HASH_OVERRIDE_PROMPT             #language en-US "MS Hash Override"
+#string STR_MS_HASH_OVERRIDE_HELP               #language en-US "Memory Slice (Controller) Hash Mask and LSB Override"
+
+#string STR_MS_HASH_MASK_PROMPT                 #language en-US "MS Hash Mask"
+#string STR_MS_HASH_MASK_HELP                   #language en-US "Memory Slice (Controller) Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum)"
+
+#string STR_MS_HASH_LSB_PROMPT                  #language en-US "MS Hash LSB"
+#string STR_MS_HASH_LSB_HELP                    #language en-US "Memory Slice (Controller) Hash LSB bit. Valid values are 0..7 for BITS 6..13"
+
 #string STR_CH_HASH_OVERRIDE_PROMPT             #language en-US "Ch Hash Override"
 #string STR_CH_HASH_OVERRIDE_HELP               #language en-US "Select if Channel Hash setting values will be taken from input parameters or automatically chosen based on DRAM type detected."
 

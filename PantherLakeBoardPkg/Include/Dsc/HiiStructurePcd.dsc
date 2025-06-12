@@ -3805,6 +3805,10 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestDevice[0]|0x0                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRequestDevice[1]|0x0                                        # PPR request device - Request 1
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                                             # When enabled, PPR will issue force repair to the same row many times (90)
 
+gStructPcdTokenSpaceGuid.PcdSaSetup.MsHashOverride|0x0                                             # Memory Slice (Controller) Hash Mask and LSB Override. 0 = Use default memory slice hash mask / lsb, 1 = Use values from MsHashMask and MsHashInterleaveBit
+gStructPcdTokenSpaceGuid.PcdSaSetup.MsHashInterleaveBit|0x2                                        # Memory Slice (Controller) Hash LSB bit. Valid values are 0..7 for BITS 6..13; used when MsHashOverride is set
+gStructPcdTokenSpaceGuid.PcdSaSetup.MsHashMask|0x2094                                              # Memory Slice (Controller) Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum); used when MsHashOverride is set
+
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 316 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 318 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
 gStructPcdTokenSpaceGuid.PcdSaSetup.ForceCkdBypass|0x0                                             # Offset 319 Force CKD in Bypass Mode if CKD DIMM is detected: 0 = Single PLL mode (Default), 1 = Bypass mode.

@@ -44,6 +44,7 @@
   VtdInfoLib
   BaseIGpuInfoLib
   PciSegmentLib
+  ConfigBlockLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -55,5 +56,9 @@
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdSafBarBaseAddress
 
+[Ppis]
+  gSiPreMemPolicyPpiGuid        ## CONSUMES
+
 [Guids]
   gTprInfoHobGuid
+  gMemoryConfigGuid             ## CONSUMES

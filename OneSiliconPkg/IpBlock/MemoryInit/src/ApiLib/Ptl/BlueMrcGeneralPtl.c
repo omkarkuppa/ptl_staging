@@ -102,12 +102,19 @@ GetMcIbeccHash (
   IN OUT UINT32               *HashLsb
   )
 {
-  BOOLEAN   IsDdr5;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
+  BOOLEAN             IsDdr5;
 
   IsDdr5    = MrcData->Outputs.IsDdr5;
+  ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
 
-  *HashMask = IsDdr5 ? 0x2098 : 0x2094;
-  *HashLsb  = IsDdr5 ? 3 : 2;
+  if (ExtInputs->MsHashOverride) {
+    *HashMask = ExtInputs->MsHashMask & MC0_IBECC_ADDR_HASH_HASH_MASK_MAX;
+    *HashLsb  = ExtInputs->MsHashInterleaveBit & MC0_IBECC_ADDR_HASH_HASH_LSB_MAX;
+  } else {
+    *HashMask = IsDdr5 ? 0x2098 : 0x2094;
+    *HashLsb  = IsDdr5 ? 3 : 2;
+  }
 }
 
 /**

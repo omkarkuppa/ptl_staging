@@ -99,7 +99,7 @@ typedef struct {
   UINT32  DqPinsInterleaved:1;                ///<            Bit 2  - Interleaving mode of DQ/DQS pins which depends on board routing: <b>0=Disable</b>, 1=Enable
   UINT32  RankInterleave:1;                   ///<            Bit 3  - Rank Interleave Mode: 0=Disable, <b>1=Enable</b>
   UINT32  EnhancedInterleave:1;               ///<            Bit 4  - Enhanced Interleave Mode: 0=Disable, <b>1=Enable</b>
-  UINT32  Reserved60b5:1;                     ///<            Bit 5  - Reserved
+  UINT32  MsHashOverride:1;                   ///<            Bit 5  - Memory Slice (Controller) Hash Mask and LSB Override. <b>0 = Use default memory slice hash mask / lsb</b>, 1 = Use values from MsHashMask and MsHashInterleaveBit
   UINT32  ChHashEnable:1;                     ///<            Bit 6  - Channel Hash Enable: 0=Disable, <b>1=Enable</b>
   UINT32  EnablePwrDn:1;                      ///<            Bit 7  - Enable Power Down control for DDR: 0=PCODE control, <b>1=BIOS control</b>
   UINT32  EnablePwrDnLpddr:1;                 ///<            Bit 8  - Enable Power Down for LPDDR: 0=PCODE control, <b>1=BIOS control</b>
@@ -137,10 +137,10 @@ typedef struct {
   UINT8   PowerDownMode;          ///< Offset 75 CKE Power Down Mode: <b>0xFF=AUTO</b>, 0=No Power Down, 1= APD mode, 6=PPD-DLL Off mode
   UINT8   PwdwnIdleCounter;       ///< Offset 76 CKE Power Down Mode Idle Counter: 0=Minimal, 255=Maximum, <b>0x80=0x80 DCLK</b>
   UINT8   CmdRanksTerminated;     ///< Offset 77 LPDDR: Bitmask of ranks that have CA bus terminated. <b>0x01=Default, Rank0 is terminating and Rank1 is non-terminating</b>
-  UINT16  MsHashMask;             ///< Offset 78 Controller Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
+  UINT16  MsHashMask;             ///< Offset 78 Memory Slice (Controller) Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum); used when MsHashOverride is set
   UINT32  Lp5CccConfig;           ///< Offset 80 BitMask where bits [3:0] are controller 0 Channel [3:0] and [7:4] are Controller 1 Channel [3:0].  0 selects Ascending mapping and 1 selects Descending mapping.
   UINT8   RMTLoopCount;           ///< Offset 84 Indicates the Loop Count to be used for Rank Margin Tool Testing: 1=Minimal, 32=Maximum, 0=AUTO, <b>0=Default</b>
-  UINT8   MsHashInterleaveBit;    ///< Offset 85 Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9
+  UINT8   MsHashInterleaveBit;    ///< Offset 85 Memory Slice (Controller) Hash LSB bit. Valid values are 0..7 for BITS 6..13; used when MsHashOverride is set
   UINT8   GearRatio;              ///< Offset 86 Gear Ratio when SAGV is disabled: <b>0=Auto</b>, 1=rsvd, 2=Gear2, 3=rsvd, 4=Gear4.
   UINT8   DdrOneDpc;              ///< Offset 87 DDR5 1DPC performance feature: 0 - Disabled; 1 - Enabled on DIMM0 only, 2 - Enabled on DIMM1 only; 3 - Enabled on both DIMMs. (bit [0] - DIMM0, bit [1] - DIMM1)
   UINT16  VddqVoltageOverride;    ///< Offset 88 VccddqVoltage override in # of 1mV, Auto = 0

@@ -1839,9 +1839,15 @@ MrcPrintInputParameters (
     ExtInputs->PerBankRefresh
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tMsHashOverride: %u\n"
+    "\tMsHashMask: %Xh\n"
+    "\tMsHashInterleaveBit: %u\n"
     "\tSubChHashOverride: %Xh\n"
     "\tSubChHashMask: %Xh\n"
     "\tSubChHashInterleaveBit: %u\n",
+    ExtInputs->MsHashOverride,
+    ExtInputs->MsHashMask,
+    ExtInputs->MsHashInterleaveBit,
     ExtInputs->SubChHashOverride,
     ExtInputs->SubChHashMask,
     ExtInputs->SubChHashInterleaveBit

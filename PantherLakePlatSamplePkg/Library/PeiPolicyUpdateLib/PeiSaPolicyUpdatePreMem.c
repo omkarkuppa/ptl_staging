@@ -996,6 +996,9 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashOverride, MemConfig->ExternalInputs.SubChHashOverride,       SaSetup.SubChHashOverride                                 );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ProbelessTrace, MemConfig->ExternalInputs.ProbelessTrace,          SaSetup.ProbelessTrace                                    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChHashInterleaveBit, MemConfig->ExternalInputs.ChHashInterleaveBit,     SaSetup.ChHashInterleaveBit                               );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MsHashOverride,      MemConfig->ExternalInputs.MsHashOverride,      SaSetup.MsHashOverride     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MsHashMask,          MemConfig->ExternalInputs.MsHashMask,          SaSetup.MsHashMask         );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MsHashInterleaveBit, MemConfig->ExternalInputs.MsHashInterleaveBit, SaSetup.MsHashInterleaveBit);
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ECT,   MemConfig->ExternalInputs.TrainingEnables.ECT,             SaSetup.ECT            );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SOT,   MemConfig->ExternalInputs.TrainingEnables.SOT,             SaSetup.SOT            );

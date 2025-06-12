@@ -190,7 +190,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_DqPinsInterleaved      (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RankInterleave         (1)
 #define MRC_EXT_INPUTS_INIT_VAL_EnhancedInterleave     (1)
-#define MRC_EXT_INPUTS_INIT_VAL_Rvsd60b5               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_MsHashOverride         (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ChHashEnable           (1)
 #define MRC_EXT_INPUTS_INIT_VAL_EnablePwrDn            (1)
 #define MRC_EXT_INPUTS_INIT_VAL_EnablePwrDnLpddr       (1)
@@ -571,7 +571,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_DqPinsInterleaved,
     MRC_EXT_INPUTS_INIT_VAL_RankInterleave,
     MRC_EXT_INPUTS_INIT_VAL_EnhancedInterleave,
-    MRC_EXT_INPUTS_INIT_VAL_Rvsd60b5,
+    MRC_EXT_INPUTS_INIT_VAL_MsHashOverride,
     MRC_EXT_INPUTS_INIT_VAL_ChHashEnable,
     MRC_EXT_INPUTS_INIT_VAL_EnablePwrDn,
     MRC_EXT_INPUTS_INIT_VAL_EnablePwrDnLpddr,
