@@ -490,6 +490,12 @@ gVtdConfigGuid  =  {0x03e5cf63, 0xbebb, 0x4041, { 0xb7, 0xe7, 0xbf, 0x54, 0x61, 
 gTraceHubDataHobGuid              = { 0xf1187e54, 0x995f, 0x49d9, { 0xac, 0xee, 0xc5, 0x34, 0xf4, 0x5a, 0x18, 0xc7}}
 gFspTraceHubMemoryResourceHobGuid = { 0x5fb35909, 0x5a1c, 0x4a31, { 0xad, 0xaf, 0x57, 0x7b, 0x54, 0x68, 0x26, 0x3f}}
 
+##
+## TCC
+##
+gTccConfigGuid  =  {0xAE3E7E1D, 0x8179, 0x4F5D, {0xA3, 0x46, 0x04, 0x03, 0x85, 0x1F, 0xBB, 0x58}}
+gTccPreMemConfigGuid  =  {0xAFFE7E1D, 0x8179, 0x4F5D, {0xA3, 0x46, 0x04, 0x03, 0x85, 0x1F, 0xBB, 0x58}}
+
 #
 # NPU
 #
@@ -1279,6 +1285,7 @@ SmbusInfoLib|Include/Library/SmbusInfoLib.h
 SpiAccessLib|Include/Library/SpiAccessLib.h
 SpiLib|Include/Library/SpiLib.h
 TbtCommonLib|Include/Library/TbtCommonLib.h
+TccLib|Include/Library/TccLib.h
 TcssInfoLib|Include/Library/TcssInfoLib.h
 ThermalAccessLib|Include/Library/ThermalAccessLib.h
 TraceHubHookLib|Include/Library/TraceHubHookLib.h
@@ -1339,6 +1346,7 @@ gSiPkgTokenSpaceGuid.PcdPeiCoreEntryBase|0xFFFFFFE0|UINT32|0x30000019
 ## PCD to indicate whether the code is in FSP binary build
 gSiPkgTokenSpaceGuid.PcdFspBinaryEnable|FALSE|BOOLEAN|0x30000010
 gSiPkgTokenSpaceGuid.PcdEmbeddedEnable|0x0|UINT8|0x30000012
+gSiPkgTokenSpaceGuid.PcdTccSupport|0x0|UINT8|0x30000006
 gSiPkgTokenSpaceGuid.PcdTsnSupport|0x0|UINT8|0x30000014
 
 gSiPkgTokenSpaceGuid.PcdPcieIpsdEnabled|FALSE|BOOLEAN|0x30000015
@@ -1723,11 +1731,11 @@ gSiPkgTokenSpaceGuid.PcdSmmTestRsvMemorySize|0x0|UINT32|0x2000000E
 gSiPkgTokenSpaceGuid.PcdStatusCodeUseTraceHub|FALSE|BOOLEAN|0x20000010
 
 ## This PCDs specifies Serial I2C settings for FSPT
-gSiPkgTokenSpaceGuid.PcdSerialIoI2cMmioBase            |0xFE028000 |UINT32|0x20000015
+gSiPkgTokenSpaceGuid.PcdSerialIoI2cMmioBase            |0x0        |UINT32|0x20000015
 gSiPkgTokenSpaceGuid.PcdSerialIoI2cSdaPin              |0x0        |UINT32|0x20000019
 gSiPkgTokenSpaceGuid.PcdSerialIoI2cSclPin              |0x0        |UINT32|0x2000001D
 gSiPkgTokenSpaceGuid.PcdSerialIoI2cPadsTerm            |0x1        |UINT8 |0x20000021
-gSiPkgTokenSpaceGuid.PcdSerialIoI2cNumber              |0x2        |UINT8 |0x20000022
+gSiPkgTokenSpaceGuid.PcdSerialIoI2cNumber              |0xFF       |UINT8 |0x20000022
 
 ## These PCD specifies Serial I2C settings for FSPT
 gSiPkgTokenSpaceGuid.PcdSerialIoSpiCs0Polarity         |0x0 |UINT8|0x20000023                      # This is same as PcdSerialIoSpiCsPolarity[0];
