@@ -567,6 +567,7 @@ DefinitionBlock (
       If (And (OSCC,0x01)) {
         NHPG ()
       }
+
       // PME control granted?
       If (And (OSCC,0x04)) {
         NPME ()
