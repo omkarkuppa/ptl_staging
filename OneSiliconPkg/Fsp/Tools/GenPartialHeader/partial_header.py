@@ -77,9 +77,10 @@ def scan_all_upd(file):
 
 def scan_main_upd(file):
     temp_list=[]
-    for num, line in enumerate(file):
-        #print line.split("\n")[0]
-        temp_list.append(line.split("\n")[0])
+    for line in file:
+        line = line.strip()  # Remove leading and trailing whitespace
+        if line:  # Only add non-empty lines
+            temp_list.append(line)
     return temp_list
 
 def replace_upd(temp):
