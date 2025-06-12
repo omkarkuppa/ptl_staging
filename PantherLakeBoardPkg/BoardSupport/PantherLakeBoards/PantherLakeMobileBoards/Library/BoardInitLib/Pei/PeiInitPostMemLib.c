@@ -175,6 +175,7 @@ TouchPanelGpioInit (
     case BoardIdPtlUHLp5MemSktmRvp:
     case BoardIdPtlUHLp5Adk1:
     case BoardIdPtlUHLp5Adk2:
+    case BoardIdPtlUHLp5DerCore:
       //
       // Verify if THC0 or THC1 panels are enabled before changing GPIO configuration
       //

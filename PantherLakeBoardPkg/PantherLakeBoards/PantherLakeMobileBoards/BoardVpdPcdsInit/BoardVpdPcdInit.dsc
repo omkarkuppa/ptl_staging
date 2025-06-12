@@ -35,6 +35,7 @@
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5MemSktmRvp.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Adk1.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Adk2.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/Xep/PtlUH/SkuIdPtlUHLp5DerCoreBoard.dsc
 
 [Packages]
   PantherLakeBoardPkg/BoardPkg.dec

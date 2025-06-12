@@ -33,7 +33,7 @@ CHAR16 *mBoardIdIndex[] = {
   L"PTL-UH LP CAMM BEP",                    // 0x08
   L"PTL-UH HMP RVP",                        // 0x09
   L"TBD",                                   // 0x0A
-  L"TBD",                                   // 0x0B
+  L"PTL UH LP5x Derivative Core Board",     // 0x0B
   L"TBD",                                   // 0x0C
   L"TBD",                                   // 0x0D
   L"TBD",                                   // 0x0E
