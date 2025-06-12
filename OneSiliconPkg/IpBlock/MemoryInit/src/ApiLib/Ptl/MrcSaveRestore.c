@@ -964,7 +964,8 @@ MrcSaveMCValues (
   SaveData->TmeEnable              = (UINT8) Inputs->TmeEnable;
   SaveData->Ibecc                  = (UINT8) Inputs->ExtInputs.Ptr->Ibecc;
 
-  MrcCall->MrcCopyMem ((UINT8 *) &SaveData->OffsetKnobs, (UINT8 *) &Inputs->ExtInputs.Ptr->OffsetKnobs, sizeof (McRegOffsets));
+  MrcCall->MrcCopyMem ((UINT8 *) &SaveData->OffsetKnobs, (UINT8 *) &Inputs->OffsetKnobs, sizeof (McRegOffsets));
+
   SaveData->SaMemCfgCrc = Inputs->SaMemCfgCrcForSave;
 
   // PostCodesDone/Total should not be counted into CRC because their values will keep changing until the end of the calltable
@@ -1011,6 +1012,7 @@ MrcUpdateSavedMCValues (
   // In Fast Boot, MeStolenSize may have changed. This should be updated within Save Data structure.
   SaveData->MeStolenSize           = Inputs->MeStolenSize;
   SaveData->ImrAlignment           = Inputs->ImrAlignment;
+
   // PostCodesDone/Total should not be counted into CRC.
   PostCodesDone  = SaveData->PostCodesDone;
   PostCodesTotal = SaveData->PostCodesTotal;

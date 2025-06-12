@@ -17,7 +17,6 @@
   in the License.
 
 @par Specification Reference:
-@todo code cleanup for txt memoryinit overlap
 **/
 #ifndef _MemoryInit_h_
 #define _MemoryInit_h_

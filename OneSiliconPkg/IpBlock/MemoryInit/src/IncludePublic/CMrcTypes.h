@@ -162,11 +162,6 @@ typedef enum {
 #define OFFSET_OF(TYPE, Field) ((UINTN) &(((TYPE *)0)->Field))
 #endif
 
-// @todo remove SUB_CH_MASK_CHECK, it's deprecated
-#ifndef SUB_CH_MASK_CHECK
-#define SUB_CH_MASK_CHECK(Mask, Channel, SubChannel) ((Mask) & (1 << ((Channel) * MAX_SUB_CHANNEL + (SubChannel))))
-#endif
-
 #ifndef MC_CH_IDX
 #define MC_CH_IDX(Mc, Ch, MaxCh) ((Mc) * (MaxCh) + (Ch))
 #endif

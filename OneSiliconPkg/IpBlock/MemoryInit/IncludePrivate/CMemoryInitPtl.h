@@ -17,7 +17,6 @@
   in the License.
 
 @par Specification Reference:
-@todo code cleanup for txt memoryinit overlap
 **/
 
 #include <CMrcInterface.h>

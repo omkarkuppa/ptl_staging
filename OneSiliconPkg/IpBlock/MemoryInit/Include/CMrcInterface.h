@@ -1934,7 +1934,6 @@ typedef struct {
   McRegOffsets      OffsetKnobs;                              ///< Options for MC Register Offset settings
   BOOLEAN           DynamicMemoryBoostTrainingFailed;         ///< TRUE if Dynamic Memory Boost failed to train
   BOOLEAN           IsLP5Camm2;                                ///< TRUE if current memory is JEDEC spec LP5 CAMM
-  UINT32            SaMemCfgCrcNoOffsetKnobs;                 ///< The CRC32 of the SA memory configuration without OffsetKnobs.
   UINT8             ValidRankMask;                 ///< Rank bit map.  Includes both channels across memory controllers.
   UINT8             ValidChBitMask;                ///< Channel bit map of the populated channels
   UINT8             ValidMcBitMask;                ///< Memory Controller population bit mask.
@@ -2016,7 +2015,7 @@ typedef struct {
   MrcVddSelect        VppVoltage[MAX_PROFILE];     ///< The voltage (VPP) setting for all DIMMs in the system, per profile.
   MrcFrequency        MemFrequency[MAX_PROFILE];   ///< Every Profile's Frequency
   MrcTiming           Timing[MAX_PROFILE];         ///< The memory timing values.
-  UINT32              VccddqVoltage;               ///< DDR transmitter FIVR voltage rail per technology and per datarate. @todo : Does it need
+  UINT32              VccddqVoltage;               ///< DDR transmitter FIVR voltage rail per technology and per datarate.
   UINT32              VccIogVoltage;               ///< Data Tx PreDriver, Data receive, and analog FIVR voltage rail
   UINT32              VccClkVoltage;               ///< IO Clock and clock distrubition FIVR voltage rail
   UINT32              VccDist;                     ///< Vdd2G LVR that is fixed output
@@ -2330,7 +2329,6 @@ typedef struct {
   BOOLEAN           IbeccInitRangesSkip;           ///< TRUE: Force Skip IbeccInitRanges (CTE param to speed up runs)
   UINT8             LastIbeccOperationMode;        ///< Input from BIOS indicating the last IBECC operation mode. Valid only on warm boot.
   UINT8             Reserved[3];                   ///< Reserved to ensure config block size is a multiple of DWORDs
-  UINT32            SaMemCfgCrcNoOffsetKnobs;      ///< The CRC32 of the SA memory configuration without OffsetKnobs.
   /**
    Sets the serial debug message level\n
      0x00 = Disabled\n
@@ -2368,6 +2366,7 @@ typedef struct {
   UINT8 PprErrorInjection;
   UINT8 PprForceRepair;
   UINT8 PprRetryLimit;
+  McRegOffsets OffsetKnobs;       ///< Options for MC Register Offset settings
   UINT8 Reserved3[4];             ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 

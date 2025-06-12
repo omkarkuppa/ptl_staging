@@ -240,6 +240,17 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfigNoCrc->TsegMemoryTestStatus        = FspmUpd->FspmConfig.TsegMemoryTestStatus;
   MemConfigNoCrc->MrcPprStatus                = FspmUpd->FspmConfig.MrcPprStatus;
   MemConfigNoCrc->RetryCount                  = FspmUpd->FspmConfig.RetryCount;
+  MemConfigNoCrc->CAVrefCtlOffset             = FspmUpd->FspmConfig.CAVrefCtlOffset;
+  MemConfigNoCrc->VrefCtlOffset               = FspmUpd->FspmConfig.VrefCtlOffset;
+  MemConfigNoCrc->ClkPiCodeOffset             = FspmUpd->FspmConfig.ClkPiCodeOffset;
+  MemConfigNoCrc->RcvEnOffset                 = FspmUpd->FspmConfig.RcvEnOffset;
+  MemConfigNoCrc->RxDqsOffset                 = FspmUpd->FspmConfig.RxDqsOffset;
+  MemConfigNoCrc->TxDqOffset                  = FspmUpd->FspmConfig.TxDqOffset;
+  MemConfigNoCrc->TxDqsOffset                 = FspmUpd->FspmConfig.TxDqsOffset;
+  MemConfigNoCrc->VrefOffset                  = FspmUpd->FspmConfig.VrefOffset;
+  MemConfigNoCrc->CntrlrMask                  = FspmUpd->FspmConfig.CntrlrMask;
+  MemConfigNoCrc->ChMask                      = FspmUpd->FspmConfig.ChMask;
+
   //
   // Update ConfigBlock: MemConfig
   //
@@ -341,16 +352,6 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.OpportunisticRead      = FspmUpd->FspmConfig.OpportunisticRead;
   MemConfig->ExternalInputs.Disable2CycleBypass    = FspmUpd->FspmConfig.Disable2CycleBypass;
   MemConfig->ExternalInputs.MCREGOFFSET            = FspmUpd->FspmConfig.MCREGOFFSET;
-  MemConfig->ExternalInputs.OffsetKnobs.CAVrefCtlOffset        = FspmUpd->FspmConfig.CAVrefCtlOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.VrefCtlOffset          = FspmUpd->FspmConfig.VrefCtlOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.ClkPiCodeOffset        = FspmUpd->FspmConfig.ClkPiCodeOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.RcvEnOffset            = FspmUpd->FspmConfig.RcvEnOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.RxDqsOffset            = FspmUpd->FspmConfig.RxDqsOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.TxDqOffset             = FspmUpd->FspmConfig.TxDqOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.TxDqsOffset            = FspmUpd->FspmConfig.TxDqsOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.VrefOffset             = FspmUpd->FspmConfig.VrefOffset;
-  MemConfig->ExternalInputs.OffsetKnobs.CntrlrMask             = FspmUpd->FspmConfig.CntrlrMask;
-  MemConfig->ExternalInputs.OffsetKnobs.ChMask                 = FspmUpd->FspmConfig.ChMask;
   MemConfig->ExternalInputs.Trrsg                  = FspmUpd->FspmConfig.tRRSG;
   MemConfig->ExternalInputs.Trrdg                  = FspmUpd->FspmConfig.tRRDG;
   MemConfig->ExternalInputs.Trrdr                  = FspmUpd->FspmConfig.tRRDR;

@@ -195,7 +195,7 @@ typedef struct {
   UINT8   CaVrefHigh;             ///< Offset 233 DDR5 Ca Sweep High Vref Value
   UINT8   EccCorrectionMode;      ///< Offset 234 0 (Default) = SECDED (Single error correction, double error detection), 1 = ZECTED (Zero error correct triple error detect)
   UINT8   EccGranularity32BEn;    ///< Offset 235 EccGranularity: 0 = 64B(Default), 1 = 32B
-  McRegOffsets    OffsetKnobs;    ///< Offset 236 - 247 Options for MC Register Offset settings
+  McRegOffsets    OffsetKnobs;    ///< Offset 236 - 247 Deprecated
   UINT8   LowerBasicMemTestSize;  ///< Offset 248 LowerBasicMemTestSize
   UINT8   MCREGOFFSET;            ///< Offset 249 MC Register offset
   UINT8   PcuDdrVoltage;          ///< Offset 250 Override for PCU_CR_DDR_VOLTAGE.

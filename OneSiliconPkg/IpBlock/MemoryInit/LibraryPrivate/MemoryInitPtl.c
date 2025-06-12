@@ -2742,7 +2742,6 @@ ColdBootRequired (
   MrcInput             *Inputs;
   MrcSaveData          *SaveData;
   MrcVersion           Version;
-  McRegOffsets         TempOffsets;
   UINT32               CurrPmaCceConfig;
   UINT32               CurrTmeEnable;
   BOOLEAN              RetVal;
@@ -2795,25 +2794,6 @@ ColdBootRequired (
         MrcData->Inputs.SaMemCfgCrc
         ));
       RetVal = TRUE;
-
-      // Check if McRegisterOffset is the only input parameter change if McRegisterOffset training function is enabled.
-      // TODO: move MCREGOFFSET to MEMORY_CONFIG_NO_CRC and clean up this code
-      if (MemConfig->ExternalInputs.MCREGOFFSET) {
-        TempOffsets = MemConfig->ExternalInputs.OffsetKnobs;
-        MemConfig->ExternalInputs.OffsetKnobs = SaveData->OffsetKnobs;
-
-        Inputs->SaMemCfgCrcNoOffsetKnobs = MrcCalculateCrc32 ((UINT8 *) MemConfig, sizeof (MEMORY_CONFIGURATION));
-
-        MemConfig->ExternalInputs.OffsetKnobs = TempOffsets;
-
-        if (Inputs->SaMemCfgCrcNoOffsetKnobs == SaveData->SaMemCfgCrcNoOffsetKnobs) {
-          DEBUG ((
-          DEBUG_INFO,
-          "Only McOffsetKnob inputs changed...ignoring SA input parameter CRC (i.e. try not to retrain).\n"
-          ));
-          RetVal = FALSE;
-        }
-      }
     } // CRC mismatch
   } // MrcBootMode != bmS3
 
@@ -3138,6 +3118,17 @@ DEBUG_CODE_END();
   Inputs->PprRunOnce        = MemConfigNoCrc->PprRunOnce;
   Inputs->PprErrorInjection = MemConfigNoCrc->PprErrorInjection;
   Inputs->PprForceRepair    = MemConfigNoCrc->PprForceRepair;
+
+  Inputs->OffsetKnobs.CAVrefCtlOffset = MemConfigNoCrc->CAVrefCtlOffset;
+  Inputs->OffsetKnobs.VrefCtlOffset   = MemConfigNoCrc->VrefCtlOffset;
+  Inputs->OffsetKnobs.ClkPiCodeOffset = MemConfigNoCrc->ClkPiCodeOffset;
+  Inputs->OffsetKnobs.RcvEnOffset     = MemConfigNoCrc->RcvEnOffset;
+  Inputs->OffsetKnobs.RxDqsOffset     = MemConfigNoCrc->RxDqsOffset;
+  Inputs->OffsetKnobs.TxDqOffset      = MemConfigNoCrc->TxDqOffset;
+  Inputs->OffsetKnobs.TxDqsOffset     = MemConfigNoCrc->TxDqsOffset;
+  Inputs->OffsetKnobs.VrefOffset      = MemConfigNoCrc->VrefOffset;
+  Inputs->OffsetKnobs.CntrlrMask      = MemConfigNoCrc->CntrlrMask;
+  Inputs->OffsetKnobs.ChMask          = MemConfigNoCrc->ChMask;
 
   // LPDDR4: Bitmask of ranks that have CA bus terminated. Rank0 is terminating and Rank1 is non-terminating
   ExtInputs->CmdRanksTerminated = 0x01;

@@ -295,10 +295,6 @@ BlueMrcSetXtensaHardwareHaltState (
   UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_STATUS_STRUCT Status;
   UINT64 Timeout;
 
-  //
-  // @todo: These CR accesses should get absorbed into the HAL
-  //
-
   Ctrl.Data = MrcReadCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_CTRL_REG);
   Ctrl.Bits.xt_runstall = Halt;
   MrcWriteCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_CTRL_REG, Ctrl.Data);
@@ -331,10 +327,6 @@ BlueMrcXtensaSoftReset (
   UINT64 Timeout;
   BOOLEAN Busy;
   UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_CTRL_STRUCT   Ctrl;
-
-  //
-  // @todo: These CR accesses should get absorbed into the HAL
-  //
 
   Ctrl.Data = MrcReadCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_CTRL_REG);
   Ctrl.Bits.xt_soft_reset = MRC_XTENSA_SOFT_RESET;
@@ -380,9 +372,6 @@ BlueMrcSetXtensaFwDownloadDone (
   Ctrl.Bits.xt_debug_en = TRUE;
   MrcWriteCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_CTRL_REG, Ctrl.Data);
 
-  //
-  // @todo: These CR accesses should get absorbed into the HAL
-  //
   DownloadCtrl.Data = MrcReadCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_FW_DNLD_CTRL_REG);
   DownloadCtrl.Bits.fw_dnld_done = MRC_XTENSA_FW_DOWNLOAD_COMPLETE;
 
