@@ -46,7 +46,6 @@
 [Packages]
   MdePkg/MdePkg.dec
   OneSiliconPkg/SiPkg.dec
-  PantherLakePlatSamplePkg/PlatformPkg.dec
   Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [Sources]
