@@ -435,7 +435,6 @@
     {GPIOV2_PTL_PCD_XXGPP_H_0, {GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //STRAP
     {GPIOV2_PTL_PCD_XXGPP_H_2, {GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //STRAP
     {GPIOV2_PTL_PCD_XXGPP_A_13,{GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
-    {GPIOV2_PTL_PCD_XXGPP_A_15,{GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
     {GPIOV2_PTL_PCD_XXGPP_A_16,{GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
     {GPIOV2_PTL_PCD_XXGPP_B_24,{GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
     {GPIOV2_PTL_PCD_XXGPP_B_25,{GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
@@ -451,7 +450,6 @@
     {GPIOV2_PTL_PCD_XXGPP_F_7, {GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
     {GPIOV2_PTL_PCD_XXGPP_F_8, {GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
     {GPIOV2_PTL_PCD_XXGPP_F_20,{GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
-    {GPIOV2_PTL_PCD_XXGPP_V_17,{GpioV2PadModeHardwareDefault, GpioV2HostOwnAcpi, GpioV2DirDefault, GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //Not Supported
     {0x0}  // terminator
   })}
 
