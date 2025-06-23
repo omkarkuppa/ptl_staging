@@ -182,6 +182,7 @@ Include/ConfigBlock/LpssSpi
 Include/ConfigBlock/LpssI2c
 Include/ConfigBlock/Psf
 Include/ConfigBlock/LockDownConfig
+Include/ConfigBlock/Can
 #
 # Security
 #
@@ -282,6 +283,7 @@ IpBlock/VoltageRegulator/IncludePrivate
 IpBlock/Npu/IncludePrivate
 IpBlock/Vtd/IncludePrivate
 IpBlock/Wdt/IncludePrivate
+IpBlock/Can/IncludePrivate
 
 # Cpu
 IpBlock/CpuInit/IncludePrivate
@@ -681,12 +683,14 @@ gPchPcieInfoHobGuid  =  {0x38DF214E, 0x5A12, 0x4980, {0x93, 0x3B, 0xF5, 0x20, 0x
 gPsfConfigGuid = {0x33dd9a75, 0x3b1b, 0x41d8, {0xa5, 0x93, 0x98, 0x71, 0xd2, 0x96, 0x78, 0x50}}
 gLpssSpiConfigGuid = {0x33b59053, 0xc092, 0x46e0, {0xa8, 0xea, 0x6b, 0xa7, 0x26, 0x50, 0xce, 0x54}}
 gLpssUartConfigGuid = {0xefe45d84, 0x5864, 0x49fc, {0x9c, 0x3f, 0x89, 0xf6, 0xdd, 0xd4, 0x84, 0x64}}
+gCanConfigGuid  =  {0x452ec466, 0x6c67, 0x4df5, {0xb0, 0x77, 0x1c, 0xe3, 0x56, 0x4c, 0xfe, 0x73}}
 
 ##
 ## Fusa
 ##
 gFusaConfigGuid =  {0xF9225896, 0xA9C8, 0x4543, {0xBA, 0x9E, 0x53, 0x32, 0xD7, 0xBF, 0x8C, 0x2B}}
 gSiFusaInfoGuid = {0xcc7876ba, 0xee7b, 0x4bd4, {0x99, 0x4b, 0x7e, 0xc9, 0x74, 0xc9, 0xd8, 0x43}}
+gFusaStartupSectionGuid =  {0x2a81105c, 0x2ab6, 0x4c7a, {0xac, 0x9c, 0xe8, 0xae, 0xfa, 0xb8, 0xb2, 0x29}}
 
 ##
 ## SecurityPkg
@@ -1284,6 +1288,7 @@ RtcPrivateLib|Include/Library/RtcPrivateLib.h
 SmbusInfoLib|Include/Library/SmbusInfoLib.h
 SpiAccessLib|Include/Library/SpiAccessLib.h
 SpiLib|Include/Library/SpiLib.h
+PeiSpiDmaLib|IpBlock/Spi/IncludePrivate/Library/PeiSpiDmaLib.h
 TbtCommonLib|Include/Library/TbtCommonLib.h
 TccLib|Include/Library/TccLib.h
 TcssInfoLib|Include/Library/TcssInfoLib.h
@@ -1348,6 +1353,9 @@ gSiPkgTokenSpaceGuid.PcdFspBinaryEnable|FALSE|BOOLEAN|0x30000010
 gSiPkgTokenSpaceGuid.PcdEmbeddedEnable|0x0|UINT8|0x30000012
 gSiPkgTokenSpaceGuid.PcdTccSupport|0x0|UINT8|0x30000006
 gSiPkgTokenSpaceGuid.PcdTsnSupport|0x0|UINT8|0x30000014
+gSiPkgTokenSpaceGuid.PcdFusaSupport|0x0|UINT8|0x40000011
+
+gSiPkgTokenSpaceGuid.PcdCanSupport|0x0|UINT8|0x30000021
 
 gSiPkgTokenSpaceGuid.PcdPcieIpsdEnabled|FALSE|BOOLEAN|0x30000015
 gSiPkgTokenSpaceGuid.PcdDmiIpsdEnabled|FALSE|BOOLEAN|0x30000017
