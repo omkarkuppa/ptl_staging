@@ -37,8 +37,6 @@
 /// EC PD commands that are issued to the EC through the command port (0x6A4).
 /// New commands and command parameters should only be written by the host when I2C_COMMUNICATION_LOCK=0.
 ///
-#define EC_PRIVATE_CMD_WRITE   0x0A ///< Write vendor register
-#define EC_PRIVATE_CMD_READ    0x0B ///< Read vendor register
 #define EC_PRIVATE_CMD_EXECUTE 0x0C ///< Execute vendor register
 #define EC_PRIVATE_CMD_LOCK    0x10 ///< Lock I2C target
 
