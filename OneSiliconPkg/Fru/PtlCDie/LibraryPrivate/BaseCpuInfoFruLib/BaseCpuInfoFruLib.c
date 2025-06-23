@@ -138,6 +138,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mWclPlx[] = {
 //
 STATIC_ASSERT (ARRAY_SIZE (mWclPlx) == ProfileWclMax, "PPM Profile count mismatch!");
 
+
 ///
 /// PowerLimits Override table for all SKUs. Non-cTDP parts would have '0' data for TDP level information.
 ///

@@ -50,3 +50,5 @@ PeiVrFruLib.c
 [Guids]
 gCpuPowerMgmtVrConfigGuid         ## CONSUMES
 
+[Pcd]
+

@@ -181,6 +181,7 @@
 #define CPU_TDP_45_WATTS       4500
 #define CPU_TDP_55_WATTS       5500
 #define CPU_TDP_58_WATTS       5800
+#define CPU_TDP_60_WATTS       6000
 #define CPU_TDP_62_WATTS       6200
 #define CPU_TDP_65_WATTS       6500
 #define CPU_TDP_80_WATTS       8000

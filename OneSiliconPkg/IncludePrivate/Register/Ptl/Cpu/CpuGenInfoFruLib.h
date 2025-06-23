@@ -51,6 +51,7 @@ typedef enum {
   ///
   EnumWclU15Watt10CpuId           = 0x30,
   EnumWclU15Watt20CpuId           = 0x31,
+
 } CPU_IDENTIFIER;
 
 /**

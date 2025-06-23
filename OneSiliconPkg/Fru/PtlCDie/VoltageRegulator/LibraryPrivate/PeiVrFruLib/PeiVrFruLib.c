@@ -240,6 +240,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_LOAD_LINE_PROFILE mWclLoadLine[] = {
 //
 STATIC_ASSERT (ARRAY_SIZE (mWclLoadLine) == ProfileLoadLineWclMax, "Load Line Profile count mismatch!");
 
+
 typedef struct {
   CPU_IDENTIFIER           CpuIdentifier;
 
