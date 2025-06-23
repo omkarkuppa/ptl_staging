@@ -19,7 +19,19 @@
 
 @par Specification Reference:
 **/
+#include <Uefi/UefiBaseType.h>
+#include <Library/BaseLib.h>
+#include <Library/DebugLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/IoLib.h>
+#include <Library/PcdLib.h>
+#include <Uefi/UefiMultiPhase.h>
+#include <Pi/PiBootMode.h>
+#include <Pi/PiHob.h>
+#include <Library/HobLib.h>
 #include <PiPei.h>
+#include <Ppi/MpServices2.h>
+#include <Library/PeiServicesLib.h>
 
 
 /**
@@ -39,6 +51,26 @@ FspDxDiagnosticModeGet (
   )
 {
   return FALSE;
+}
+/**
+  Calculate CRC32 value of a buffer.
+
+  @param[in] *pBuffer   - input buffer for the CRC32 calculation
+  @param[in] Len        - length of the buffer to be
+        CRC32-calculated
+  @param[in] InitVal    - init value use for the CRC32
+        calculation
+
+  @retval calculated CRC32 value
+**/
+UINT32
+AsmCrc32Calc (
+  IN UINT8 *pBuffer,
+  IN UINT32 Len,
+  IN UINT32 InitVal
+  )
+{
+  return 0;
 }
 
 /**

@@ -124,8 +124,17 @@
   PeiThcInitSsidLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdPeiThcSsidInitLib/PtlPcdPeiThcInitSsidLib.inf
   PeiPchPcieClocksLibCommon|$(PLATFORM_SI_PACKAGE)/IpBlock/PcieClocks/LibraryPrivate/PeiPchPcieClocksLib/PeiPchPcieClocksLibCommon.inf
   PeiPchPcieClocksLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdPeiPchPcieClocksLib/PtlPcdPeiPchPcieClocksLib.inf
+!if gSiPkgTokenSpaceGuid.PcdFusaSupport == TRUE
+  PeiFusaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaLib/PeiFusaLib.inf
+  PeiFusaPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaPolicyLib/PeiFusaPolicyLib.inf
+  PeiFusaE2eCtcLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaE2eCtcLib/PeiFusaE2eCtcLib.inf
+  FusaInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/Library/PeiDxeSmmFusaInfoLib/FusaInfoLib.inf
+!else
   PeiFusaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaLibNull/PeiFusaLibNull.inf
   PeiFusaPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaPolicyLibNull/PeiFusaPolicyLibNull.inf
+  PeiFusaE2eCtcLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaE2eCtcLibNull/PeiFusaE2eCtcLibNull.inf
+  FusaInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/Library/PeiDxeSmmFusaInfoLibNull/FusaInfoLibNull.inf
+!endif
   PchInitPreMemFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdPeiPchInitPreMemFruLib/PtlPcdPeiPchInitPreMemFruLib.inf
   PeiLpssI3cPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssI3c/LibraryPrivate/PeiI3cPolicyLib/PeiI3cPolicyLib.inf
   PeiLpssSpiPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssSpi/LibraryPrivate/PeiLpssSpiPolicyLib/PeiLpssSpiPolicyLib.inf

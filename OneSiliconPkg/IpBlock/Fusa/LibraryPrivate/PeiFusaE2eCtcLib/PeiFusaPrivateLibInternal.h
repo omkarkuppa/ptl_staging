@@ -25,7 +25,7 @@
 #include "PeiFusaResultReportingLib.h"
 
 ///MCA Bank numbers
-#define TGL_CBO0_INDEX 8
+#define TGL_CBO0_INDEX 9
 #define MCA_IFU 0
 #define MCA_DCU 1
 #define MCA_DTLB 2
@@ -34,6 +34,7 @@
 #define MCA_MEE1 5
 #define MCA_IOP 6
 #define MCA_PCU 7
+#define MCA_PMIP 8
 #define MCA_CBO0 TGL_CBO0_INDEX
 #define MCA_CBO1 (TGL_CBO0_INDEX+1)
 #define MCA_CBO2 (TGL_CBO0_INDEX+2)
@@ -60,32 +61,60 @@ typedef enum {
   DIP_IOSF_MCMD = 18,
   DIP_UP_CMD_ADDRESS = 19,
   DIP_CMI_CPL_DATA = 21,
-  CBO0_INGRESS = 55,
+  CCF_NCURACU_CR_NCU_IDP_PERRINJ_CTRL = 22,
+  CCF_SBO_CR_WRC_PERR_INJ_CTRL = 23,
+  CBO_Slice0_Egress_eccerrinj_ctrl = 26,
+  CBO_Slice0_Egress_llc_perrinj_ctrl = 27,
+  CBO_Slice1_Egress_eccerrinj_ctrl = 30,
+  CBO_Slice1_Egress_llc_perrinj_ctrl = 31,
+  CBO_Slice2_Egress_eccerrinj_ctrl = 34,
+  CBO_Slice2_Egress_llc_perrinj_ctrl = 35,
+  CBO_Slice3_Egress_eccerrinj_ctrl = 38,
+  CBO_Slice3_Egress_llc_perrinj_ctrl = 39,
+  CBO_Slice4_Egress_eccerrinj_ctrl = 42,
+  CBO_Slice4_Egress_llc_perrinj_ctrl = 43,
+  CBO_Slice5_Egress_eccerrinj_ctrl = 46,
+  CBO_Slice5_Egress_llc_perrinj_ctrl = 47,
+  CBO_Slice6_Egress_eccerrinj_ctrl = 50,
+  CBO_Slice6_Egress_llc_perrinj_ctrl = 51,
+  CBO_Slice7_Egress_eccerrinj_ctrl = 54,
+  CBO_Slice7_Egress_llc_perrinj_ctrl = 55,
+  CBO_Slice8_Egress_eccerrinj_ctrl = 58,
+  CBO_Slice8_Egress_llc_perrinj_ctrl = 59,
+  CBO_Slice9_Egress_eccerrinj_ctrl = 62,
+  CBO_Slice9_Egress_llc_perrinj_ctrl = 63,
+  CBO0_INGRESS = 84,
   CBO1_INGRESS,
   CBO2_INGRESS,
   CBO3_INGRESS,
   CBO4_INGRESS,
   CBO5_INGRESS,
   CBO6_INGRESS,
-  CBO7_INGRESS
+  CBO7_INGRESS,
+  CBO_Slice10_Egress_eccerrinj_ctrl = 106,
+  CBO_Slice10_Egress_llc_perrinj_ctrl = 107,
+  CBO_Slice11_Egress_eccerrinj_ctrl = 110,
+  CBO_Slice11_Egress_llc_perrinj_ctrl = 111,
 } FUSA_IP_INDEX_NUMBER;
 
 #define MSCOD_MASK 0xFFFF0000ULL
 #define MCACOD_MASK 0xFFFFULL
 #define MCASTATUS_VALID BIT63
-
+#define R_SA_MCHBAR (0x48)
+#define R_SA_DMIBAR  (0x68)
 ///<"Index" - Tells uCode which CR should be targeted in the uncore. Thread-Scope
-#define MSR_PERRINJ_AT_IP 0x107U
+//#define MSR_PERRINJ_AT_IP 0x107U
 /**
   "Payload" - Data to be written (in the case of WRMSR instruction) or read (in the case of RDMSR instruction)
   to/from uncore CR.  Core-Scope
   */
-#define MSR_PERRINJ_CTRL  0x108U
+//#define MSR_PERRINJ_CTRL  0x108U
 
 ///Common register definition used by CTC with MCA_IOP usage
 #define R_SA_MCHBAR_FUSA_MCA_REPORTING_EN_0_0_0_MCHBAR_IMPH                      0x6F30U
 #define B_SA_MCHBAR_FUSA_MCA_REPORTING_EN_0_0_0_MCHBAR_IMPH_MCA_REPORTING_EN     BIT0
 
+#define MAX_GRT_COUNT   8
 /**
   Check if it is a supported CPU for this library
 
@@ -128,9 +157,10 @@ McaReportingEnable(
 
 UINT8
 McaBankStatusCheck(
-  IN UINT8  McaBankNum,
-  IN UINT64 McaStatusMask,
-  IN UINT64 ExpectedMcaStatus
+  IN  UINT8  McaBankNum,
+  IN  UINT64 McaStatusMask,
+  IN  UINT64 ExpectedMcaStatus,
+  OUT UINT64 *McaRusultOut
   );
 
 /**

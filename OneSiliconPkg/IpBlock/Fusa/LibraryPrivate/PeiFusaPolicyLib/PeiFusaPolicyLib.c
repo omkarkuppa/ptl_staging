@@ -23,6 +23,7 @@
 #include <Library/ConfigBlockLib.h>
 #include <Ppi/SiPolicy.h>
 #include <FusaConfig.h>
+#include <Library/FusaInfoLib.h>
 
 /**
   Print FUSA_CONFIG and serial out.
@@ -36,19 +37,38 @@ FusaPrintConfig (
   IN SI_POLICY_PPI     *SiPolicyPpi
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS     Status;
   FUSA_CONFIG    *FusaConfig;
 
-  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gFusaConfigGuid, (VOID *) &FusaConfig);
-  ASSERT_EFI_ERROR (Status);
+  if (IsFusaSupported()) {
+    Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gFusaConfigGuid, (VOID *) &FusaConfig);
+    ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "------------------ Fusa Config ------------------------\n"));
-  DEBUG ((DEBUG_INFO, " DisplayFusaConfigEnable: 0x%X\n", FusaConfig->DisplayFusaConfigEnable));
-  DEBUG ((DEBUG_INFO, " GraphicFusaConfigEnable: 0x%X\n", FusaConfig->GraphicFusaConfigEnable));
-  DEBUG ((DEBUG_INFO, " OpioFusaConfigEnable   : 0x%X\n", FusaConfig->OpioFusaConfigEnable));
-  DEBUG ((DEBUG_INFO, " PsfFusaConfigEnable    : 0x%X\n", FusaConfig->PsfFusaConfigEnable));
-  DEBUG ((DEBUG_INFO, " IopFusaConfigEnable    : 0x%X\n", FusaConfig->IopFusaConfigEnable));
-  DEBUG ((DEBUG_INFO, " IopFusaMcaCheckEnable  : 0x%X\n", FusaConfig->IopFusaMcaCheckEnable));
+    DEBUG ((DEBUG_INFO, "-- Fusa Config --\n"));
+    DEBUG ((DEBUG_INFO, "DisplayFusaConfigEnable= 0x%X\n", FusaConfig->DisplayFusaConfigEnable));
+    DEBUG ((DEBUG_INFO, "GraphicFusaConfigEnable= 0x%X\n", FusaConfig->GraphicFusaConfigEnable));
+    DEBUG ((DEBUG_INFO, "OpioFusaConfigEnable= 0x%X\n", FusaConfig->OpioFusaConfigEnable));
+    DEBUG ((DEBUG_INFO, "PsfFusaConfigEnable= 0x%X\n", FusaConfig->PsfFusaConfigEnable));
+    DEBUG ((DEBUG_INFO, "IopFusaConfigEnable= 0x%X\n", FusaConfig->IopFusaConfigEnable));
+    DEBUG ((DEBUG_INFO, "IopFusaMcaCheckEnable= 0x%X\n", FusaConfig->IopFusaMcaCheckEnable));
+    DEBUG ((DEBUG_INFO, "FusaConfigEnable= 0x%X\n", FusaConfig->FusaConfigEnable));
+    DEBUG ((DEBUG_INFO, "FusaRunStartupArrayBist= 0x%X\n", FusaConfig->FusaRunStartupArrayBist));
+    DEBUG ((DEBUG_INFO, "FusaRunStartupScanBist= 0x%X\n", FusaConfig->FusaRunStartupScanBist));
+    DEBUG ((DEBUG_INFO, "FusaRunPeriodicArrayBist= 0x%X\n", FusaConfig->FusaRunPeriodicArrayBist));
+    DEBUG ((DEBUG_INFO, "FusaRunPeriodicScanBist= 0x%X\n", FusaConfig->FusaRunPeriodicScanBist));
+    DEBUG ((DEBUG_INFO, "Module0Lockstep= 0x%X\n", FusaConfig->Module0Lockstep));
+    DEBUG ((DEBUG_INFO, "Module1Lockstep= 0x%X\n", FusaConfig->Module1Lockstep));
+    DEBUG ((DEBUG_INFO, "FusaStartupPatternAddr= 0x%X\n", FusaConfig->FusaStartupPatternAddr));
+    DEBUG ((DEBUG_INFO, "FusaPeriodicPatternAddr= 0x%X\n", FusaConfig->FusaPeriodicPatternAddr));
+    DEBUG ((DEBUG_INFO, "FusaRunStartupArrayBistMod0= 0x%X\n", FusaConfig->FusaRunStartupArrayBistMod0));
+    DEBUG ((DEBUG_INFO, "FusaRunStartupArrayBistMod1= 0x%X\n", FusaConfig->FusaRunStartupArrayBistMod1));
+    DEBUG ((DEBUG_INFO, "FusaRunStartupScanBistMod0= 0x%X\n", FusaConfig->FusaRunStartupScanBistMod0));
+    DEBUG ((DEBUG_INFO, "FusaRunStartupScanBistMod1= 0x%X\n", FusaConfig->FusaRunStartupScanBistMod1));
+    DEBUG ((DEBUG_INFO, "FusaRunPeriodicArrayBistMod0= 0x%X\n", FusaConfig->FusaRunPeriodicArrayBistMod0));
+    DEBUG ((DEBUG_INFO, "FusaRunPeriodicArrayBistMod1= 0x%X\n", FusaConfig->FusaRunPeriodicArrayBistMod1));
+    DEBUG ((DEBUG_INFO, "FusaRunPeriodicScanBistMod0= 0x%X\n", FusaConfig->FusaRunPeriodicScanBistMod0));
+    DEBUG ((DEBUG_INFO, "FusaRunPeriodicScanBistMod1= 0x%X\n", FusaConfig->FusaRunPeriodicScanBistMod1));
+  }
   return EFI_SUCCESS;
 }
 
@@ -65,10 +85,9 @@ FusaLoadConfigDefault (
   FUSA_CONFIG        *FusaConfig;
   FusaConfig = ConfigBlockPointer;
 
-  DEBUG ((DEBUG_INFO, "FusaConfig->Header.GuidHob.Name = %g\n", &FusaConfig->Header.GuidHob.Name));
-  DEBUG ((DEBUG_INFO, "FusaConfig->Header.GuidHob.Header.HobLength = 0x%x\n", FusaConfig->Header.GuidHob.Header.HobLength));
-
-  FusaConfig->IopFusaMcaCheckEnable = 1;
+  if (IsFusaSupported()) {
+    FusaConfig->IopFusaMcaCheckEnable = 1;
+  }
   return;
 }
 
@@ -89,7 +108,10 @@ FusaGetConfigBlockTotalSize (
   VOID
   )
 {
-  return mFusaBlocks.Size;
+  if (IsFusaSupported()) {
+    return mFusaBlocks.Size;
+  }
+  return 0;
 }
 
 /**
@@ -105,5 +127,9 @@ FusaAddConfigBlock (
   IN VOID           *ConfigBlockTableAddress
   )
 {
-  return AddComponentConfigBlocks (ConfigBlockTableAddress, &mFusaBlocks, 1);
+  DEBUG ((DEBUG_INFO, "Adding Fusa config block\n"));
+  if (IsFusaSupported()) {
+    return AddComponentConfigBlocks (ConfigBlockTableAddress, &mFusaBlocks, 1);
+  }
+  return EFI_SUCCESS;
 }

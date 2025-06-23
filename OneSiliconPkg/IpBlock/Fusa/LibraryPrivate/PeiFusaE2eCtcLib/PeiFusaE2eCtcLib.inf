@@ -16,8 +16,6 @@
 #  express or implied warranties, other than those that are expressly stated
 #  in the License.
 #
-# @par Specification Reference:
-#
 ##
 
 
@@ -33,37 +31,43 @@ LIBRARY_CLASS = PeiFusaE2eCtcLib
 [LibraryClasses]
 PmcLib
 DebugLib
-BaseLib
-LocalApicLib
-IoLib
-BaseMemoryLib
-HobLib
+#GraphicsInfoLib
+PchInfoLib
+SiPolicyLib
 PeiServicesLib
-MemoryAllocationLib
-
+FusaInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec
 OneSiliconPkg/SiPkg.dec
 UefiCpuPkg/UefiCpuPkg.dec
+IntelFsp2Pkg/IntelFsp2Pkg.dec
 
 [Sources]
 PeiFusaResultReportingLib.c
 PeiFusaPrivateLibInternal.c
 PeiFusaE2eCtcLib.c
-PeiFusaE2eCtcCoreIdi.c
-PeiFusaE2eCtcLlcEcc.c
-PeiFusaE2eCtcOpiLink.c
-PeiFusaE2eCtcDisplayIsochPort.c
-PeiFusaE2eCtcIoPort.c
+
+PeiFusaMbistMemory.c
+PeiFusaE2eCtcGrtArrayBist.c
+PeiFusaE2eCtcGrtScanBist.c
 
 [Ppis]
 gEdkiiPeiMpServices2PpiGuid      ## CONSUMES
+gEfiPeiMpServicesPpiGuid      ## CONSUMES
+gSiPreMemPolicyPpiGuid        ## CONSUMES
 
 [Guids]
 gSiFusaInfoGuid               ## CONSUMES ## HOB
+#gMemoryConfigGuid             ## PRODUCES
+gFusaStartupSectionGuid       ## CONSUMES
+#gSiMemoryInfoDataGuid         ## CONSUMES
 
 [Pcd]
-gSiPkgTokenSpaceGuid.PcdEmbeddedEnable             ## CONSUMES
-gSiPkgTokenSpaceGuid.PcdSiHpetBaseAddress          ## CONSUMES
+#gSiPkgTokenSpaceGuid.PcdEmbeddedEnable             ## CONSUMES
+#gSiPkgTokenSpaceGuid.PcdSiHpetBaseAddress          ## CONSUMES
+#gSiPkgTokenSpaceGuid.PcdRplpSupport                ## CONSUMES
+#gSiPkgTokenSpaceGuid.PcdRplpsSupport               ## CONSUMES
+#gSiPkgTokenSpaceGuid.PcdFspBinaryEnable            ## CONSUMES
+
 

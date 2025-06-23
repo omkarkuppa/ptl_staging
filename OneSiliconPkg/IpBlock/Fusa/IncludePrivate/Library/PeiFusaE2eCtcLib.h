@@ -34,6 +34,24 @@ typedef enum
 } FUSA_LIB_STATUS;
 
 /**
+  Calculate CRC32 value of a buffer.
+
+  @param[in] *pBuffer   - input buffer for the CRC32 calculation
+  @param[in] Len        - length of the buffer to be
+        CRC32-calculated
+  @param[in] InitVal    - init value use for the CRC32
+        calculation
+
+  @retval calculated CRC32 value
+**/
+UINT32
+AsmCrc32Calc (
+  IN UINT8 *pBuffer,
+  IN UINT32 Len,
+  IN UINT32 InitVal
+  );
+
+/**
   Init and Install Fusa Info Hob
 
   @retval EFI_OUT_OF_RESOURCES if the HOB resource allocation
@@ -82,7 +100,8 @@ FspDxDiagnosticModeGet (
 **/
 VOID
 FspDxCheck (
-  IN  CONST EFI_PEI_SERVICES  **PeiServices
+  IN  CONST EFI_PEI_SERVICES  **PeiServices,
+  IN  UINT32 FusaStartupFileAddr
   );
 
 

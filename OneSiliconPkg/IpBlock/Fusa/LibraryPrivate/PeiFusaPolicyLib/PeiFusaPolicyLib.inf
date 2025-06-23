@@ -33,11 +33,11 @@ LIBRARY_CLASS = PeiFusaPolicyLib
 DebugLib
 ConfigBlockLib
 SiConfigBlockLib
+FusaInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec
 OneSiliconPkg/SiPkg.dec
-CsiApiPkg/CsiApiPkg.dec
 
 [Sources]
 PeiFusaPolicyLib.c

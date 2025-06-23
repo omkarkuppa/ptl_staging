@@ -61,6 +61,11 @@
   gSiPkgTokenSpaceGuid.PcdOverclockEnable|FALSE
 
 #
+# Fusa Ip Blocks Enabled
+#
+  gSiPkgTokenSpaceGuid.PcdFusaSupport|FALSE
+
+#
 # 14 MB BIOS Flash Base Address and Size
 #
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress|0xFF200000

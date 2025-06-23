@@ -19,6 +19,7 @@
 @par Specification Reference:
 **/
 #include <Ppi/SiPolicy.h>
+#include <Library/DebugLib.h>
 
 /**
   Print FUSA_CONFIG and serial out.
@@ -72,5 +73,6 @@ FusaAddConfigBlock (
   IN VOID           *ConfigBlockTableAddress
   )
 {
+  DEBUG ((DEBUG_INFO, "Adding Fusa config block - NULL lib\n"));
   return EFI_SUCCESS;
 }

@@ -52,6 +52,10 @@
 #include <Library/FspWrapperApiLib.h>
 #include <Guid/MigratedFvInfo.h>
 
+#if FixedPcdGetBool(PcdFusaSupport) == 1
+#include <FusaInfoHob.h>
+#include <Library/FusaInfoLib.h>
+#endif
 //
 // Additional pages are used by DXE memory manager.
 // It should be consistent between RetrieveRequiredMemorySize() and GetPeiMemSize()
@@ -768,6 +772,177 @@ DumpFspGraphicsInfoHob (
   }
 }
 
+#if FixedPcdGetBool(PcdFusaSupport) == 1
+/**
+  Map TestResult to its matching string for FuSa test
+
+  @param[in] TestResult
+
+  @return matching string in related to the TestResult value
+**/
+STATIC
+VOID
+TestResultString (
+  IN UINT8 TestResult
+  )
+{
+  switch (TestResult) {
+    case FUSA_TEST_DEVICE_NOTAVAILABLE:
+      DEBUG((DEBUG_INFO, "TEST_DEV_NA\n"));
+      break;
+    case FUSA_TEST_NOTRUN:
+      DEBUG((DEBUG_INFO, "TEST_NOTRUN\n"));
+      break;
+    case FUSA_TEST_FAIL:
+      DEBUG((DEBUG_INFO, "TEST_FAIL\n"));
+      break;
+    case FUSA_TEST_PASS:
+      DEBUG((DEBUG_INFO, "TEST_PASS\n"));
+      break;
+    case FUSA_TEST_NOT_SUPPORTED:
+      DEBUG((DEBUG_INFO, "TEST_NOT_SUPPORTED\n"));
+      break;
+    default:
+      DEBUG((DEBUG_INFO, "ILLEGAL_STATE\n"));
+      break;
+  }
+  return;
+}
+
+#define CRC32C_POLY_NORMAL        0x1EDC6F41
+#define CRC32C_INITIAL_REMAINDER  0xFFFFFFFF
+
+UINT32 mCrc32cTable[256];
+
+/**
+  This internal function reverses bits for 32bit data.
+
+  @param  Value The data to be reversed.
+
+  @return       Data reversed.
+
+**/
+UINT32
+ReverseBits (
+  UINT32  Value
+  )
+{
+  UINTN  Index;
+  UINT32 NewValue;
+
+  NewValue = 0;
+  for (Index = 0; Index < 32; Index++) {
+    if ((Value & (1 << Index)) != 0) {
+      NewValue = NewValue | (1 << (31 - Index));
+    }
+  }
+
+  return NewValue;
+}
+
+
+/**
+  Generate a CRC-32C table that can speed up CRC calculation by table look up.
+**/
+VOID
+Crc32cInit(
+  VOID
+  )
+{
+  UINT32 TableEntry;
+  UINT32 Index;
+  UINT32 CrcVal;
+
+  for (TableEntry = 0; TableEntry < 256; TableEntry++) {
+    CrcVal = ReverseBits ((UINT32) TableEntry);
+    for (Index = 0; Index < 8; Index++) {
+      if ((CrcVal & 0x80000000) != 0) {
+        CrcVal = (CrcVal << 1) ^ CRC32C_POLY_NORMAL;
+      } else {
+        CrcVal = CrcVal << 1;
+      }
+    }
+
+    mCrc32cTable[TableEntry] = ReverseBits (CrcVal);
+  }
+}
+
+/**
+  Check if the TestResult->Crc32 is correct.
+
+  @param[in] pTestResult  Pointer to the test result buffer.
+
+  @retval    TRUE         If the TestResult->Crc32 value is correct.
+  @retval    FALSE        Otherwise.
+**/
+
+BOOLEAN
+Crc32Check (
+  FUSA_TEST_RESULT *pTestResult
+  )
+{
+  UINT32 Len = sizeof (FUSA_TEST_RESULT);
+  UINT32 Crc;
+  UINT32 Index;
+  UINT8  *Ptr;
+  UINT32 Crc32Result;
+
+  if (pTestResult == NULL) {
+    return FALSE;
+  }
+
+  Crc32cInit ();
+
+  Crc = CRC32C_INITIAL_REMAINDER;
+  for (Index = 0, Ptr = ((UINT8 *) pTestResult); Index < Len; Index++, Ptr++) {
+    Crc = (Crc >> 8) ^ mCrc32cTable[(UINT8)Crc ^ *Ptr];
+  }
+
+  Crc32Result = Crc ^ 0xFFFFFFFF;
+
+  return (Crc32Result == 0xFFFFFFFF); //True if the TestResult->Crc32 value is correct.
+}
+
+/**
+  Dump FSP Fusa info HOB
+**/
+VOID
+DumpFspFusaInfoHob (
+  VOID
+  )
+{
+  FUSA_INFO_HOB   *FspFusaInfo;
+  EFI_HOB_GUID_TYPE      *GuidHob;
+
+  GuidHob = NULL;
+  FspFusaInfo = NULL;
+
+  GuidHob = GetFirstGuidHob (&gSiFusaInfoGuid);
+  if (GuidHob != NULL) {
+    FspFusaInfo = (FUSA_INFO_HOB *) GET_GUID_HOB_DATA (GuidHob);
+  }
+  if (FspFusaInfo != NULL) {
+    DEBUG((DEBUG_INFO, "\nFspFusaInfo\n"));
+    DEBUG((DEBUG_INFO, "  |-> Version : %d\n", FspFusaInfo->Version));
+    for (UINT32 TestIndex = 0; TestIndex < FusaTestNumTotal; TestIndex++) {
+      DEBUG((DEBUG_INFO, "  |-> Test Id : %d\n", FspFusaInfo->FspDxCtcTestResult[TestIndex].TestNumber));
+      if (Crc32Check(&(FspFusaInfo->FspDxCtcTestResult[TestIndex]))) {
+        DEBUG((DEBUG_INFO, "    |-> Total checks : %d\n", FspFusaInfo->FspDxCtcTestResult[TestIndex].TotalChecks));
+        DEBUG((DEBUG_INFO, "    |-> Test result : "));
+        TestResultString (FspFusaInfo->FspDxCtcTestResult[TestIndex].TestResult);
+        for (UINT32 CheckIndex = 0; CheckIndex < FspFusaInfo->FspDxCtcTestResult[TestIndex].TotalChecks; CheckIndex++){
+          DEBUG((DEBUG_INFO, "      |-> Check Id %d result: ", CheckIndex ));
+          TestResultString (FspFusaInfo->FspDxCtcTestResult[TestIndex].CheckResults[CheckIndex]);
+        }
+      } else {
+        DEBUG((DEBUG_INFO, "    |-> CRC32 check on test result failed\n"));
+      }
+    }
+    DEBUG((DEBUG_INFO, "\n"));
+  }
+}
+
+#endif
 
 /**
   Post FSP-S HOB process (not Memory Resource Descriptor).
@@ -794,6 +969,20 @@ PostFspsHobProcess (
     //
     ProcessFspHobList (FspHobList);
   }
+
+#if FixedPcdGetBool(PcdFusaSupport) == 1
+  //
+  //IOTG FuSa SKU Key-off processing
+  //
+  if (IsInFusaDiagnosticMode ()) {
+    //Sample code only performs result dumping; in production code, expect passing the result to the MCU
+    DEBUG_CODE_BEGIN ();
+    DumpFspFusaInfoHob ();
+    DEBUG_CODE_END ();
+    CpuDeadLoop (); //expecting the MCU to G3 reset the system
+  }
+#endif
+
   //
   // Get Silicon Config data HOB
   //

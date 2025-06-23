@@ -25,36 +25,20 @@
 #include <Ppi/SiPolicy.h>
 
 /**
-  FusaOverrideProgramming: Override the IGD FUSA register for enabling/disabling FUSA features
+  Retrieve fusa test pattern
 
-  @param[in] SiPolicyPpi        The SI Policy PPI instance
-  @retval     EFI_SUCCESS     - IGD workarounds done
+  @param[in,out] NameGuid    Guid Input
+
+  @param[out] Address        Pointer out to the Fv address
+
+  @param[out] Size           Size of the file
 **/
 EFI_STATUS
-IgdFusaOverrideProgramming (
-   IN  SI_POLICY_PPI    *SiPolicy
-  );
-
-/**
-  FusaOverrideProgramming: Override the Opio FUSA register for enabling/disabling FUSA features
-
-  @param[in] SiPolicyPpi        The SI Policy PPI instance
-  @retval     EFI_SUCCESS     - Opio workarounds done
-**/
-EFI_STATUS
-OpioFusaOverrideProgramming (
-   IN  SI_POLICY_PPI    *SiPolicy
-  );
-
-/**
-  FusaOverrideProgramming: Override the Psf FUSA register for enabling/disabling FUSA features
-
-  @param[in] SiPolicyPpi        The SI Policy PPI instance
-  @retval     EFI_SUCCESS     - Psf workarounds done
-**/
-EFI_STATUS
-PsfFusaOverrideProgramming (
-  IN  SI_POLICY_PPI    *SiPolicy
+EFIAPI
+PeiFusaGetSectionFromFv (
+  IN CONST  EFI_GUID        NameGuid,
+  OUT VOID                  **Address,
+  OUT UINT32                *Size
   );
 
 /**
@@ -83,13 +67,50 @@ IopFusaOverrideProgramming (
 #define R_MCH_IMPH_FUSA_MCA_REPORTING                                            0x6F30U
 
 /**
-  Check is the silicon is supporting fusa.
+  Initialize FUSA Before the MCHECK
 
-  @retval BOOLEAN TRUE/FALSE
+  @param[in] FUSA_CONFIG      FusaConfig
+
+  @retval EFI_SUCCESS          - FUSA initialization complete
 **/
-BOOLEAN
-IsFusaSupported (
-  VOID
+EFI_STATUS
+FusaInitOnEndOfPei (
+  IN  SI_POLICY_PPI    *SiPolicy
   );
 
+/**
+Initialize FUSA
+
+  @param[in] FUSA_CONFIG      FusaConfig
+
+  @retval EFI_SUCCESS          - FUSA initialization complete
+**/
+EFI_STATUS
+FusaInit (
+  IN  SI_POLICY_PPI    *SiPolicy
+  );
+  
+/**
+  Fusa Post Bios Done
+
+  @param[in] SI_POLICY_PPI      SiPolicy
+
+  @retval EFI_SUCCESS          - FUSA initialization complete
+**/
+EFI_STATUS
+FusaPostBiosDone (
+  IN  SI_POLICY_PPI    *SiPolicy
+  );
+
+/**
+  Fusa Get Startup Pattern Addr
+
+  @param[in] SI_POLICY_PPI      SiPolicy
+
+  @retval UINT32          - FUSA Startup Pattern Addr
+**/
+UINT32
+FusaStartupPatternAddr (
+  IN  SI_POLICY_PPI    *SiPolicy
+  );
 #endif // _PEI_FUSA_LIB_H_

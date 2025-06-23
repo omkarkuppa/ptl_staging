@@ -87,6 +87,9 @@
   PeiOcInitLib
   MemorySubSystemPolicyLib
   PeiThcInitSsidLib
+  FusaInfoLib
+  PeiFusaLib
+  PeiFusaE2eCtcLib
   ImrInitLib
   VmdInfoLib
   CpuLib
@@ -128,6 +131,7 @@
   gSiPkgTokenSpaceGuid.PcdBiosGuardEnable            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdVmdEnable                  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdFspConfigHobsEnable        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdFusaSupport                ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTsnSupport                 ## CONSUMES
 
 [Guids]

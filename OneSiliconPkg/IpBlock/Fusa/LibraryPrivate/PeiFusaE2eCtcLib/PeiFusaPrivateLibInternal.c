@@ -24,12 +24,15 @@
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PciSegmentLib.h>
-#include <Register/SaRegsHostBridge.h>
+//#include <Register/SaRegsHostBridge.h>
+#include <Defines/HostBridgeDefines.h>
+//#include <Register/IgdRegs.h>
+#include <Defines/IgdDefines.h>
 #include <Register/Intel/ArchitecturalMsr.h>
-#include <Library/IGpuInfoLib.h>
+//#include <Library/GraphicsInfoLib.h>
 
 #include "PeiFusaPrivateLibInternal.h"
-#include "PeiFusaResultReportingLib.h"
+#include <Register/Ptl/Msr/MsrRegs.h>
 
 /**
   Enable MCA on the targetted bank index for error reporting
@@ -73,17 +76,17 @@ McaReportingEnable(
 
 UINT8
 McaBankStatusCheck(
-  IN UINT8  McaBankNum,
-  IN UINT64 McaStatusMask,
-  IN UINT64 ExpectedMcaStatus
+  IN  UINT8  McaBankNum,
+  IN  UINT64 McaStatusMask,
+  IN  UINT64 ExpectedMcaStatus,
+  OUT UINT64 *McaRusultOut
   )
 {
   UINT8 CheckResult;
-  UINT64 McaStatus;
 
-  McaStatus = AsmReadMsr64 (MSR_IA32_MC0_STATUS + McaBankNum * 4);
+  *McaRusultOut = AsmReadMsr64 (MSR_IA32_MC0_STATUS + McaBankNum * 4);
 
-  if ((McaStatus & (McaStatusMask | MCASTATUS_VALID)) == (ExpectedMcaStatus | MCASTATUS_VALID)) {
+  if ((*McaRusultOut & (McaStatusMask | MCASTATUS_VALID)) == (ExpectedMcaStatus | MCASTATUS_VALID)) {
     CheckResult = FUSA_TEST_PASS;
   } else {
     CheckResult = FUSA_TEST_FAIL;
@@ -155,7 +158,9 @@ McaBankInfoDump(
   )
 {
   DEBUG_CODE_BEGIN();
-    UINT64 Value64 = AsmReadMsr64 (MSR_IA32_MC0_STATUS + McaBankNum * 4);
+    UINT64 Value64 = AsmReadMsr64 (MSR_IA32_MC0_CTL + McaBankNum * 4);
+    DEBUG ((DEBUG_INFO, "MCA Control for bank %d is is 0x%lx\n", McaBankNum, Value64));
+    Value64 = AsmReadMsr64 (MSR_IA32_MC0_STATUS + McaBankNum * 4);
     DEBUG ((DEBUG_INFO, "MCA status for bank %d is is 0x%lx\n", McaBankNum, Value64));
     Value64 = AsmReadMsr64 (MSR_IA32_MC0_ADDR + McaBankNum * 4);
     DEBUG ((DEBUG_INFO, "MCA address for bank %d is is 0x%lx\n", McaBankNum, Value64));
@@ -307,16 +312,30 @@ GttMmBarAddressGet (
 {
   UINT64          McD2BaseAddress;
   UINT64          GttMmAdr;
+  UINT32          Cmd;
   FUSA_LIB_STATUS LibStatus;
 
-  GttMmAdr = IGpuGetGttMmAdrBase ();
+  McD2BaseAddress = PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, IGD_BUS_NUM, IGD_DEV_NUM, IGD_FUN_NUM, 0);
+  PciSegmentReadBuffer (McD2BaseAddress + R_SA_IGD_GTTMMADR, sizeof (GttMmAdr), &GttMmAdr);
   DEBUG ((DEBUG_INFO, "GttMmAdr is 0x%lx\n", GttMmAdr));
-  
+  Cmd = PciSegmentRead32 (McD2BaseAddress + 0U);
+  if (Cmd & BIT1) {
+    GttMmAdr &= ((UINT64) ~0xF);
+    *GttMmBaseAdr = (UINTN) GttMmAdr;
 
-  if (0ULL == GttMmAdr) {
-    LibStatus = FusaDeviceError;
+    if (0ULL == GttMmAdr) {
+      LibStatus = FusaDeviceError;
+    }
+    //32 bit address mode cannot perform 64 bit MMIO addressing that exceeds 4G
+    else if ((sizeof(UINTN) < sizeof(UINT64))
+              && GttMmAdr >= 0x100000000ULL )
+    {
+      LibStatus = FusaDeviceError;
+    } else {
+      LibStatus = FusaNoError;
+    }
   } else {
-    LibStatus = FusaNoError;
+    LibStatus = FusaDeviceError; //GttMmAdr is not enabled
   }
 
   return LibStatus;
@@ -335,21 +354,39 @@ GmBarAddressGet (
   OUT UINTN *GmBaseAdr
   )
 {
+#if 0
   UINT64          McD2BaseAddress;
   UINT64          GmAdr;
   UINT32          Cmd;
   FUSA_LIB_STATUS LibStatus;
 
-  GmAdr = IGpuGetLMemBar ();
+  McD2BaseAddress = PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, IGD_BUS_NUM, IGD_DEV_NUM, IGD_FUN_NUM, 0);
+  PciSegmentReadBuffer (McD2BaseAddress + GetIgfxApertureOffset (), sizeof (GmAdr), &GmAdr);
   DEBUG ((DEBUG_INFO, "GmAdr is 0x%lx\n", GmAdr));
+  Cmd = PciSegmentRead32 (McD2BaseAddress + 0U);
+  if (Cmd & BIT1) {
+    GmAdr &= ((UINT64) ~0xF);
+    *GmBaseAdr = (UINTN) GmAdr;
 
-  if (0ULL == GmAdr) {
-    LibStatus = FusaDeviceError;
+    if (0ULL == GmAdr) {
+      LibStatus = FusaDeviceError;
+    }
+    //32 bit address mode cannot perform 64 bit MMIO addressing that exceeds 4G
+    else if ((sizeof(UINTN) < sizeof(UINT64))
+              && GmAdr >= 0x100000000ULL )
+    {
+      LibStatus = FusaDeviceError;
+    } else {
+      LibStatus = FusaNoError;
+    }
   } else {
-    LibStatus = FusaNoError;
+    LibStatus = FusaDeviceError; //GmAdr is not enabled
   }
 
   return LibStatus;
+#else
+  return FusaNoError;
+#endif
 }
 
 /**
@@ -413,6 +450,7 @@ FusaMsrCtcTestGeneric (
   UINT8 CheckResult;
   FUSA_LIB_STATUS LibStatus;
   UINT32 IpIndex = IpIndexInput | BIT31; //make sure BIT31 is set
+  UINT64 McaRsult;
 
   //effectively disable all MCA reporting because target 0xFF does not exist,
   //it does not prevent the MCA status from reflecting the error routed to MCA
@@ -429,7 +467,7 @@ FusaMsrCtcTestGeneric (
     Count++;
   }
 
-  CheckResult = McaBankStatusCheck(McaBankNum, McaStatusMask, ExpectedMcaStatus);
+  CheckResult = McaBankStatusCheck(McaBankNum, McaStatusMask, ExpectedMcaStatus, &McaRsult);
   if (FUSA_TEST_FAIL == CheckResult) {
     FuSaMsrWrite (IpIndex, 0U);
   }
@@ -438,7 +476,9 @@ FusaMsrCtcTestGeneric (
 
   if (DebugFlag) {
     DEBUG ((DEBUG_INFO, "Repeat %d times reading the contol, its value is 0x%x\n", Count, Data32));
+    DEBUG ((DEBUG_INFO, "IpIndexInput = %d InjectionPayload = %x\n", IpIndexInput, InjectionPayload));
     McaBankInfoDump (McaBankNum);
+    DEBUG ((DEBUG_INFO, "McaRsult = %x, CheckResult = %x\n", McaRsult, CheckResult));
   }
 
   McaBankInfoClear (McaBankNum);

@@ -84,6 +84,7 @@
   CpuPmDataLib
   PerformanceLib
   FspPerformanceLib
+  PeiFusaE2eCtcLib
   HobLib
   PeiMemTelAmtPprLib
 
@@ -126,6 +127,7 @@
   gSiPkgTokenSpaceGuid.PcdOverclockEnable                  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiExtendedBiosRegionBaseAddress  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiExtendedBiosRegionSize         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdFusaSupport                      ## CONSUMES
 
 [Depex]
   TRUE

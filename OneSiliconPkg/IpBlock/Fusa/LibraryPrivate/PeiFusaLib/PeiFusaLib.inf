@@ -31,23 +31,33 @@ LIBRARY_CLASS = PeiFusaLib
 
 [LibraryClasses]
 DebugLib
-CpuRegbarAccessLib
-PciSegmentLib
-IoLib
-BaseIGpuInfoLib
+FusaInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec
+MdeModulePkg/MdeModulePkg.dec
 OneSiliconPkg/SiPkg.dec
-
+UefiCpuPkg/UefiCpuPkg.dec
 
 [Sources]
 PeiFusaLib.c
 
+[Ppis]
+#gEdkiiPeiMpServices2PpiGuid       ## CONSUMES
 
 [Guids]
-gFusaConfigGuid  ## CONSUMES
-
+gFusaConfigGuid                   ## CONSUMES
+#gEfiFirmwareFileSystem2Guid       ## CONSUMES
+#gPlatformInitFvLocationGuid       ## CONSUMES
+#gMPdtFileGuid                     ## CONSUMES
+#gBiosGuardModuleGuid              ## CONSUMES
+gFusaStartupSectionGuid           ## CONSUMES
+#gFvFusaStartupGuid                ## CONSUMES
+#gFusaPeriodicSectionGuid          ## CONSUMES
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                        ## CONSUMES
+#gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport    ## CONSUMES
+#gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupOffset        ## CONSUMES
+#gSiPkgTokenSpaceGuid.PcdFspBinaryEnable                       ## CONSUMES
+#gUefiCpuPkgTokenSpaceGuid.PcdCpuMaxLogicalProcessorNumber     ## CONSUMES

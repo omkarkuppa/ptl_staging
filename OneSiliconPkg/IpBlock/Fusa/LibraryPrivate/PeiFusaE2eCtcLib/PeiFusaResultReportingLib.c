@@ -24,38 +24,6 @@
 #include "PeiFusaResultReportingLib.h"
 
 /**
-  Calculate CRC32 value of a buffer.
-
-  @param[in] *pBuffer   - input buffer for the CRC32 calculation
-  @param[in] Len        - lenght of the buffer to be
-        CRC32-calculated
-  @param[in] InitVal    - init value use for the CRC32
-        calculation
-
-  @retval calculated CRC32 value
-**/
-STATIC
-UINT32
-AsmCrc32Calc (
-  IN UINT8 *pBuffer,
-  IN UINT32 Len,
-  IN UINT32 InitVal
-  )
-{
-  _asm {
-          mov eax, InitVal
-          mov ecx, Len
-          mov edx, pBuffer
-          shr ecx, 2
-        crc_loop1:
-          Crc32 eax, dword ptr [edx]
-          add edx, 4
-          dec ecx
-          jne crc_loop1
-  }
-}
-
-/**
   Generates crc32 for reporting structure except for the last 4
   bytes. It uses IA instruction crc32 for the calculation which
   implies its polynomial is 0x11EDC6F41. It uses 0xffffffff as
@@ -70,14 +38,14 @@ AsmCrc32Calc (
   @retval FusaNoError - if succeed
   @retval FusaInvalidParam - if pStlResult is NULL
 **/
-STATIC
 FUSA_LIB_STATUS
 GenerateCrc(
   IN FUSA_TEST_RESULT * const pFusaTestResult
   )
 {
   FUSA_LIB_STATUS LibStatus;
-  ASSERT ((sizeof(FUSA_TEST_RESULT) & 0x3) == 0); /*expect size to be multiple of 4*/
+  //expect size to be multiple of 4
+  ASSERT ((sizeof(FUSA_TEST_RESULT) & 0x3) == 0);
 
   if (NULL != pFusaTestResult) {
     pFusaTestResult->Crc32  = AsmCrc32Calc (
@@ -181,8 +149,7 @@ UpdateResults(
     {
       pFusaTestResult->CheckResults[CheckNum] = TestCheckVal;
 
-      if ((FUSA_TEST_FAIL != pFusaTestResult->TestResult)
-          && (FUSA_TEST_DEVICE_NOTAVAILABLE != pFusaTestResult->TestResult))
+      if (FUSA_TEST_FAIL != pFusaTestResult->TestResult)
       {
         pFusaTestResult->TestResult = (pFusaTestResult->CheckResults)[CheckNum];
       }
@@ -207,38 +174,32 @@ UpdateResults(
  * @return matching string in related to the TestResult value
  */
 STATIC
-CHAR8*
+VOID
 TestResultString (
   IN UINT8 TestResult
   )
 {
-  STATIC char ResultString[][15] = {
-    "TEST_DEV_NA",
-    "TEST_NOTRUN",
-    "TEST_FAIL",
-    "TEST_PASS",
-    "Illegal state"
-    } ;
-
-  UINT32 ResultIndex;
   switch (TestResult) {
     case FUSA_TEST_DEVICE_NOTAVAILABLE:
-      ResultIndex = 0;
+      DEBUG((DEBUG_INFO, "TEST_DEV_NA\n"));
       break;
     case FUSA_TEST_NOTRUN:
-      ResultIndex = 1;
+      DEBUG((DEBUG_INFO, "TEST_NOTRUN\n"));
       break;
     case FUSA_TEST_FAIL:
-      ResultIndex = 2;
+      DEBUG((DEBUG_INFO, "TEST_FAIL\n"));
       break;
     case FUSA_TEST_PASS:
-      ResultIndex = 3;
+      DEBUG((DEBUG_INFO, "TEST_PASS\n"));
+      break;
+    case FUSA_TEST_NOT_SUPPORTED:
+      DEBUG((DEBUG_INFO, "TEST_NOT_SUPPORTED\n"));
       break;
     default:
-      ResultIndex = 4;
+      DEBUG((DEBUG_INFO, "ILLEGAL_STATE\n"));
       break;
   }
-  return &(ResultString[ResultIndex][0]);
+  return;
 }
 
 /**
@@ -254,10 +215,12 @@ DumpResults(
   )
 {
   DEBUG ((DEBUG_INFO, "Test number = %d \n", pFusaTestResult->TestNumber));
-  DEBUG ((DEBUG_INFO, "Test result = %s \n", TestResultString(pFusaTestResult->TestResult)));
+  DEBUG ((DEBUG_INFO, "Test result = "));
+  TestResultString(pFusaTestResult->TestResult);
   DEBUG ((DEBUG_INFO, "Total checks = %d \n", pFusaTestResult->TotalChecks));
   for (UINT32 i = 0; i < pFusaTestResult->TotalChecks; i++) {
-    DEBUG ((DEBUG_INFO, "  Check#%d result = %s\n", i, TestResultString(pFusaTestResult->CheckResults[i])));
+    DEBUG ((DEBUG_INFO, "  Check#%d result = ", i));
+    TestResultString(pFusaTestResult->CheckResults[i]);
   }
 }
 
@@ -291,7 +254,8 @@ FusaTestAndReporting (
   LibStatus = InitializeResults (TestNum, TotalNumberOfChecks, pFusaTestResult);
 
   if (FusaNoError == LibStatus) {
-    if (NULL == FusaTest) {//Used to imply target device not available
+    //NULL implies target device not available
+    if (NULL == FusaTest) {
       pFusaTestResult->TestResult = FUSA_TEST_DEVICE_NOTAVAILABLE;
     } else {
        LibStatus = FusaTest (pFusaTestResult);

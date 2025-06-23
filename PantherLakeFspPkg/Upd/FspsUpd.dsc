@@ -493,7 +493,7 @@
   # !BSF HELP:{Integrated Error Handler Mode, 0: Bypass, 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.IehMode | * | 0x01 | 0x00
 
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+!if (gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1) OR (gSiPkgTokenSpaceGuid.PcdFusaSupport == 0x1)
   # !BSF NAME:{Fusa Display Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on Display, 0: Disable, 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.DisplayFusaConfigEnable     | * | 0x01 | 0x01
@@ -503,10 +503,84 @@
   # !BSF NAME:{Fusa Opio Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on Opio, 0: Disable, 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.OpioFusaConfigEnable        | * | 0x01 | 0x01
+  # !BSF NAME:{Fusa IOP Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on IOP, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.IopFusaConfigEnable         | * | 0x01 | 0x00
   # !BSF NAME:{Fusa Psf Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature on Psf, 0: Disable, 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.PsfFusaConfigEnable         | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Configuration} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Fusa (Functional Safety) Enable Fusa Feature, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaConfigEnable            | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Start Up Array BIST}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute startup array test during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunStartupArrayBist     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Start Up Scan BIST}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute startup scan test during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunStartupScanBist      | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Periodic Array BIST}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute periodic array test during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunPeriodicArrayBist     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Periodic Scan BIST}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute periodic scan test during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunPeriodicScanBist     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Module 0 Lockstep Configuration}
+  # !BSF TYPE:{Combo} OPTION:{0: Disable lockstep, 1: Enable lockstep for Core 0 with Core 1 and Core 2 with Core 3, 2: Enable lockstep for Core 0 with Core 1, 3: Enable lockstep for Core 2 with Core 3}
+  # !BSF HELP:{Enable/Disable Lockstep for Atom module 0, which has 4 cores; 0: Disable lockstep; 1: Enable lockstep for Core 0 with Core 1, Core 2 with Core 3; 2: Enable lockstep for Core 0 with Core 1; 3: Enable lockstep for Core 2 with Core 3}
+  gPlatformFspPkgTokenSpaceGuid.Module0Lockstep             | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Module 1 Lockstep Configuration}
+  # !BSF TYPE:{Combo} OPTION:{0: Disable lockstep, 1: Enable lockstep for Core 0 with Core 1 and Core 2 with Core 3, 2: Enable lockstep for Core 0 with Core 1, 3: Enable lockstep for Core 2 with Core 3}
+  # !BSF HELP:{Enable/Disable Lockstep for Atom module 1, which has 4 cores; 0: Disable lockstep; 1: Enable lockstep for Core 0 with Core 1, Core 2 with Core 3; 2: Enable lockstep for Core 0 with Core 1; 3: Enable lockstep for Core 2 with Core 3}
+  gPlatformFspPkgTokenSpaceGuid.Module1Lockstep             | * | 0x01 | 0x00
+  # !BSF NAME:{Opio Recentering Ctrl} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Opio Recentering Disabling for Pcie Latency Improvement, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.OpioRecenter                | * | 0x01 | 0x01
+    # !BSF NAME:{Fusa Run Start Up Array BIST for Module 0}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute startup array test for Module 0 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunStartupArrayBistMod0     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Start Up Array BIST for Module 1}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute startup array test for Module 1 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunStartupArrayBistMod1     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Start Up Scan BIST for Module 0}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute startup scan test for module 0 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunStartupScanBistMod0      | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Start Up Scan BIST for Module 1}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute startup scan test for module 1 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunStartupScanBistMod1      | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Periodic Array BIST for Module 0}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute periodic array test for module 0 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunPeriodicArrayBistMod0     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Periodic Array BIST for Module 1}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute periodic array test for module 1 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunPeriodicArrayBistMod1     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Periodic Scan BIST for Module 0}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute periodic scan test for module 0 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunPeriodicScanBistMod0     | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa Run Periodic Scan BIST for Module 1}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enabling this will execute periodic scan test for module 1 during boot, 0: Disable, 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.FusaRunPeriodicScanBistMod1     | * | 0x01 | 0x00
+
+  gPlatformFspPkgTokenSpaceGuid.FusaReserved2FspsUpd         | * | 0x6 | {0x00}
+  # !BSF NAME:{Fusa Startup Pattern File Base Address} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Fusa (Functional Safety) Startup Pattern File Base Address}
+  gPlatformFspPkgTokenSpaceGuid.FusaStartupPatternAddr | * | 0x04 | 0x00000000
+  # !BSF NAME:{Fusa Periodic Pattern File Base Address} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Fusa (Functional Safety) Periodic Pattern File Base Address}
+  gPlatformFspPkgTokenSpaceGuid.FusaPeriodicPatternAddr | * | 0x04 | 0x00000000
 !endif
+
   ## IEH_CONFIG End
 
   ## RTC_CONFIG Start

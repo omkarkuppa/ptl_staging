@@ -81,6 +81,11 @@
 #include <Library/PcdTcssInitLib.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <Library/PeiPcdInitLib.h>
+#if FixedPcdGetBool(PcdFusaSupport) == 1
+#include <Library/PeiFusaLib.h>
+#include <Library/FusaInfoLib.h>
+#include <Library/PeiFusaE2eCtcLib.h>
+#endif
 #include <Library/PeiImrInitLib.h>
 #include <Library/VmdInfoLib.h>
 #include <Register/CpuGenInfoRegs.h>
@@ -962,6 +967,17 @@ SiInitPostMemOnPolicy (
   //
   Status = PeiServicesInstallPpi (&mEndOfSiInit);
   ASSERT_EFI_ERROR (Status);
+
+#if FixedPcdGet8(PcdFusaSupport) == 0x1
+  // call after PchInit simply because PchInitEntryPointFsp execution later expects the HOB generated from the PchInit.
+  // may have the benefit for the LPSS controller initialized which maybe used for MCU communication.
+  if (IsInFusaDiagnosticMode())
+  {
+    DEBUG ((DEBUG_ERROR, "Fusa FspDxCheck Entry\n"));
+    FspDxCheck ((CONST EFI_PEI_SERVICES **)PeiServices, FusaStartupPatternAddr(SiPolicy));
+    DEBUG ((DEBUG_ERROR, "Fusa FspDxCheck Exit\n"));
+  }
+#endif
 
   DEBUG ((DEBUG_INFO, "SiInit () - End\n"));
 

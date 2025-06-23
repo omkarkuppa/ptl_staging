@@ -60,6 +60,26 @@ UpdateResults(
   );
 
 /**
+  Generates crc32 for reporting structure except for the last 4
+  bytes. It uses IA instruction crc32 for the calculation which
+  implies its polynomial is 0x11EDC6F41. It uses 0xffffffff as
+  initial value. The final CRC32 value is not negated.
+
+  @note it expects FUSA_TEST_RESULT structure size to be
+        multiple of 4
+
+  @param[in, out] pFusaTestResult - summarized reporting
+  structure for the whole test
+
+  @retval FusaNoError - if succeed
+  @retval FusaInvalidParam - if pStlResult is NULL
+**/
+FUSA_LIB_STATUS
+GenerateCrc(
+  IN FUSA_TEST_RESULT * const pFusaTestResult
+  );
+
+/**
   Dump Fusa test result for debug purpose. Does nothing in
   release build.
 

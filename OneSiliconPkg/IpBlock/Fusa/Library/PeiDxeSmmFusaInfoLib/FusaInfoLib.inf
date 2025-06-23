@@ -1,9 +1,12 @@
 ## @file
-# Component description file for the FUSA policy library
+# Fusa information library.
+#
+# All function in this library is available for PEI, DXE, and SMM,
+# But do not support UEFI RUNTIME environment call.
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2019 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -23,18 +26,27 @@
 
 [Defines]
 INF_VERSION = 0x00010017
-BASE_NAME = PeiFusaPolicyLib
-FILE_GUID = AA9E3E20-7A74-4C8F-B71C-A41AE7B04FA2
+BASE_NAME = PeiDxeSmmFusaInfoLib
+FILE_GUID = 01C74C30-6C58-4ACC-877C-FA938412977D
 VERSION_STRING = 1.0
-MODULE_TYPE = PEIM
-LIBRARY_CLASS = PeiFusaPolicyLib
+MODULE_TYPE = BASE
+LIBRARY_CLASS = FusaInfoLib
 
 [LibraryClasses]
 DebugLib
+PmcLib
+MemoryAllocationLib
+HobLib
 
 [Packages]
 MdePkg/MdePkg.dec
 OneSiliconPkg/SiPkg.dec
 
 [Sources]
-PeiFusaPolicyLibNull.c
+FusaInfoLib.c
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdFusaSupport                             ## CONSUMES
+
+[Guids]
+gSiFusaInfoGuid                                                 ## CONSUMES

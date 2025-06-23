@@ -24,6 +24,7 @@
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/IoLib.h>
+#include <Library/PcdLib.h>
 #include <Uefi/UefiMultiPhase.h>
 #include <Pi/PiBootMode.h>
 #include <Pi/PiHob.h>
@@ -31,17 +32,27 @@
 #include <PiPei.h>
 #include <Ppi/MpServices2.h>
 #include <Library/PeiServicesLib.h>
+#include <Library/LocalApicLib.h>
 #include <Library/PmcLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include "PeiFusaPrivateLibInternal.h"
 #include "PeiFusaResultReportingLib.h"
 #include "PeiFusaE2eCtcLibInternal.h"
+#include <Library/FusaInfoLib.h>
+#include <Register/Cpuid.h>
+#include <Register/Ptl/Msr/MsrRegs.h>
 
 UINT8 *gpTestData = NULL;
 
 //map unique core to processor number used by MP services, processor number 0 is being ignored as it refers to the BSP
 //use array size of 128 so that we do not need to do array index check, although we expect the initial APIC ID max at
-STATIC UINT32                   mUniqueCoreList[128];
+//(MAX_TGL_CORE_COUNT*2) -1
+STATIC UINT64                   mUniqueCoreList[64];
+
+
+STATIC FUSA_INFO  Fusa_info;
+
+#define MSR_FUSA_CAPABILITIES_A             0x000002D9
 
 extern EFI_GUID                   gEdkiiPeiMpServices2PpiGuid;
 STATIC CONST EFI_PEI_SERVICES     **mPeiServices;
@@ -49,17 +60,134 @@ STATIC EDKII_PEI_MP_SERVICES2_PPI *mMpServices2Ppi = NULL;
 
 
 /**
+  Calculate CRC32 value of a buffer.
+
+  @param[in] *pBuffer   - input buffer for the CRC32 calculation
+  @param[in] Len        - length of the buffer to be
+        CRC32-calculated
+  @param[in] InitVal    - init value use for the CRC32
+        calculation
+
+  @retval calculated CRC32 value
+**/
+UINT32
+AsmCrc32Calc (
+  IN UINT8 *pBuffer,
+  IN UINT32 Len,
+  IN UINT32 InitVal
+  )
+{
+/*  _asm {
+          mov eax, InitVal
+          mov ecx, Len
+          mov edx, pBuffer
+          shr ecx, 2
+        crc_loop1:
+          Crc32 eax, dword ptr [edx]
+          add edx, 4
+          dec ecx
+          jne crc_loop1
+  }*/
+  return 0;
+}
+
+/**
   To retrieve  mUniqueCoreList
 
   @retval mUniqueCoreList
 **/
-CONST UINT32 *
+CONST UINT64 *
 UniqueCoreListGet (
   VOID
   )
 {
   return mUniqueCoreList;
 }
+
+/**
+  To retrieve  mUniqueCoreList
+
+  @retval mUniqueCoreList
+**/
+FUSA_INFO *
+FusaInfoListGet (
+  VOID
+  )
+{
+  return &Fusa_info;
+}
+
+/**
+  To retrieve  TotalCoreProcessor
+
+  @retval TotalCoreProcessor
+**/
+CONST UINTN
+GetNumberofCoreCPU (
+  VOID
+  )
+{
+  return Fusa_info.TotalCoreProcessor;
+}
+
+/**
+  To retrieve  TotalAtomProcessor
+
+  @retval TotalAtomProcessor
+**/
+CONST UINTN
+GetNumberofAtomCPU (
+  VOID
+  )
+{
+  return Fusa_info.TotalAtomProcessor;
+}
+
+/**
+  LLC Error E2E CTC internal main routine
+
+  @param[in,out] pLlcTestParam - conttain result buffer
+       where the test result to be updated to beside core number
+       information
+**/
+VOID
+FspCPUTypeCheckInternal (
+  IN PROCESSOR_INFO *Processor_info
+  )
+{
+    PROCESSOR_INFO *pProcessor_info;
+    CPUID_NATIVE_MODEL_ID_AND_CORE_TYPE_EAX Eax;
+
+    pProcessor_info = Processor_info;
+
+    AsmCpuid (CPUID_HYBRID_INFORMATION, &Eax.Uint32, NULL, NULL, NULL);
+    pProcessor_info->CoreType = Eax.Bits.CoreType;
+
+    pProcessor_info->Fusa_Capabilities.Uint64 = AsmReadMsr64 (MSR_FUSA_CAPABILITIES_A);
+}
+
+/**
+  This function to update variable
+**/
+VOID
+UpdateBSPInfo (
+  VOID
+  )
+{
+  EFI_STATUS Status;
+
+  Status = mMpServices2Ppi->WhoAmI (
+                        mMpServices2Ppi,
+                        &Fusa_info.BspCpu
+                        );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "ERROR who am I! Status: %x\n", Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "Main core's CpuNumber =  %x\n", Fusa_info.BspCpu));
+  }
+}
+
 
 /**
   To execute routine "Routine" with parameters "Param" at AP
@@ -89,6 +217,296 @@ RunAtAp (
   DEBUG ((DEBUG_INFO, "AP number %d calling status = 0x%x\n", ProcessorNumber, Status));
 }
 
+
+/**
+  To execute routine "Routine" with parameters "Param" at
+  All AP, in blocking mode.
+
+  @param[in] Routine - routine to be executed
+  @param[in] ProcessorNumber - target AP processor number
+                         enumerated by the MP services
+  @param[in] Param - parameters to be used by the said routine
+
+**/
+VOID
+RunAllAp (
+  IN AP_PROCEDURE Routine,
+  IN VOID         *Param
+  )
+{
+  EFI_STATUS Status;
+
+  Status = mMpServices2Ppi->StartupAllCPUs (
+                     mMpServices2Ppi,
+                     (EFI_AP_PROCEDURE) Routine,
+                     0,
+                     Param);
+
+  DEBUG ((DEBUG_INFO, "AP All calling status  = 0x%x\n", Status));
+}
+
+
+
+/**
+  Print to debug Fusa Info
+
+  @param[in] Fusa_info
+
+  @return error status if PrintFusa_info was not success
+**/
+STATIC
+EFI_STATUS
+PrintFusa_info (
+    IN FUSA_INFO *Fusa_info_ptr
+    )
+{
+  FUSA_INFO *pFusa_info;
+  pFusa_info = Fusa_info_ptr;
+  UINT32 ProcessorNumber;
+
+  for (ProcessorNumber = 0; ProcessorNumber < pFusa_info->TotalProcessor; ProcessorNumber++) {
+    DEBUG((DEBUG_INFO, "The CurrProcessor 0x%x/0x%x ApicId is 0x%x\n",
+                pFusa_info->TotalProcessor,
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.ProcessorId));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].Location.Package = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.Location.Package));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].Location.Core = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.Location.Core));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].Location.Thread = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.Location.Thread));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].ExtendedInformation.Module = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.ExtendedInformation.Location2.Module));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].ExtendedInformation.Tile = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.ExtendedInformation.Location2.Tile));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].ExtendedInformation.Die = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.ExtendedInformation.Location2.Die));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].ExtendedInformation.Core = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.ExtendedInformation.Location2.Core));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].ExtendedInformation.Thread = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].ProcessorInfo.ExtendedInformation.Location2.Thread));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].CoreType = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].CoreType));
+
+    DEBUG((DEBUG_INFO, "pFusa_info->Processor[0x%x].Fusa_Capabilities = %x\n",
+                ProcessorNumber,
+                pFusa_info->Processor[ProcessorNumber].Fusa_Capabilities));
+  }
+
+  DEBUG((DEBUG_INFO, "pFusa_info->TotalCoreProcessor = %x\n",
+              pFusa_info->TotalCoreProcessor));
+
+  DEBUG((DEBUG_INFO, "pFusa_info->TotalAtomProcessor = %x\n",
+              pFusa_info->TotalAtomProcessor));
+
+  DEBUG((DEBUG_INFO, "pFusa_info->TotalProcessor = %x\n",
+              pFusa_info->TotalProcessor));
+
+  DEBUG((DEBUG_INFO, "pFusa_info->BspCpu = %x\n",
+              pFusa_info->BspCpu));
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Switch to Core CPU as BSP
+
+  @param[in] FUSA_INFO - All the Fusa info
+  @param[in] UINTN Core - switching to target Core
+
+  @return error status if SwitchCoreBSP was not success
+**/
+EFI_STATUS
+Switch2BSP (
+    IN FUSA_INFO *Fusa_info_ptr,
+    IN UINTN Core
+  )
+{
+  EFI_STATUS Status;
+  FUSA_INFO *pFusa_info;
+  pFusa_info = Fusa_info_ptr;
+
+  pFusa_info->BspCpu =  Core;
+
+  DEBUG ((DEBUG_INFO, "Switching over BSP to =  %x\n", pFusa_info->BspCpu));
+  Status = mMpServices2Ppi->SwitchBSP (
+                        mMpServices2Ppi,
+                        pFusa_info->BspCpu,
+                        TRUE
+                        );
+
+  Status = mMpServices2Ppi->WhoAmI (
+                        mMpServices2Ppi,
+                        &pFusa_info->BspCpu
+                        );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "ERROR who am I! Status: %x\n", Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "Main core's CpuNumber =  %x\n", pFusa_info->BspCpu));
+  }
+
+  return Status;
+}
+
+/**
+  Switch to Core CPU as BSP
+
+  @param[in] FUSA_INFO - All the Fusa info
+
+  @return error status if SwitchCoreBSP was not success
+**/
+EFI_STATUS
+SwitchCoreBSP (
+    IN FUSA_INFO *Fusa_info_ptr
+  )
+{
+  EFI_STATUS Status;
+  FUSA_INFO *pFusa_info;
+  pFusa_info = Fusa_info_ptr;
+
+  pFusa_info->BspCpu =  0;
+
+  DEBUG ((DEBUG_INFO, "Switching over BSP to =  %x\n", pFusa_info->BspCpu));
+  Status = mMpServices2Ppi->SwitchBSP (
+                        mMpServices2Ppi,
+                        pFusa_info->BspCpu,
+                        TRUE
+                        );
+
+  Status = mMpServices2Ppi->WhoAmI (
+                        mMpServices2Ppi,
+                        &pFusa_info->BspCpu
+                        );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "ERROR who am I! Status: %x\n", Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "Main core's CpuNumber =  %x\n", pFusa_info->BspCpu));
+  }
+
+  return Status;
+}
+
+#if 0 //unused function
+/**
+  Switch to ATOM CPU as BSP
+
+  @return error status if SwitchATOMBSP was not success
+**/
+STATIC
+EFI_STATUS
+SwitchATOMBSP (
+    IN FUSA_INFO *Fusa_info_ptr
+  )
+{
+  UINT32 ProcessorNumber;
+  EFI_STATUS Status;
+  FUSA_INFO *pFusa_info;
+  pFusa_info = Fusa_info_ptr;
+
+  for (ProcessorNumber = 0; ProcessorNumber < pFusa_info->TotalProcessor; ProcessorNumber++) {
+    if( pFusa_info->Processor[ProcessorNumber].CoreType == CPUID_CORE_TYPE_INTEL_ATOM ) {
+        pFusa_info->BspCpu =  ProcessorNumber;
+        break;
+    }
+  }
+
+  DEBUG ((DEBUG_INFO, "Switching over BSP to =  %x\n", pFusa_info->BspCpu));
+  Status = mMpServices2Ppi->SwitchBSP (
+                        mMpServices2Ppi,
+                        pFusa_info->BspCpu,
+                        TRUE
+                        );
+
+  Status = mMpServices2Ppi->WhoAmI (
+                        mMpServices2Ppi,
+                        &pFusa_info->BspCpu
+                        );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "ERROR who am I! Status: %x\n", Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "Main core's CpuNumber =  %x\n", pFusa_info->BspCpu));
+  }
+
+  return Status;
+}
+#endif
+
+/**
+  Switch to ATOM CPU as BSP
+
+  @return error status if CpuNumPopulate was not success
+**/
+STATIC
+EFI_STATUS
+CpuNumPopulate (
+    IN FUSA_INFO *Fusa_info_ptr
+  )
+{
+  UINT32 ProcessorNumber;
+  FUSA_INFO *pFusa_info;
+  pFusa_info = Fusa_info_ptr;
+
+  pFusa_info->TotalCoreProcessor = 0;
+  pFusa_info->TotalAtomProcessor = 0;
+
+  for (ProcessorNumber = 0; ProcessorNumber < pFusa_info->TotalProcessor; ProcessorNumber++) {
+    if( pFusa_info->Processor[ProcessorNumber].CoreType == CPUID_CORE_TYPE_INTEL_CORE ) {
+      pFusa_info->TotalCoreProcessor++;
+    } else {
+      pFusa_info->TotalAtomProcessor++;
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Find the core Number with Thread 0 to calculate the IPIndex.
+
+  @return error status if CpuIDtoCoreNumber was not success
+**/
+EFI_STATUS
+CpuIDtoCoreNumber (
+    IN UINT32 ProcessorId,
+    OUT UINT8 *CoreIndex
+  )
+{
+  UINT8 ProcessorNumber;
+  UINT8 ProcessorCount = 0;
+
+  for (ProcessorNumber = 0; ProcessorNumber < Fusa_info.TotalProcessor; ProcessorNumber++) {
+    if( Fusa_info.Processor[ProcessorNumber].ProcessorInfo.Location.Thread == 0 ) {
+      if( Fusa_info.Processor[ProcessorNumber].ProcessorInfo.ProcessorId == ProcessorId ) {
+        *CoreIndex = ProcessorCount;
+        return EFI_SUCCESS;
+      }
+      ProcessorCount++;
+    }
+  }
+  return EFI_INVALID_PARAMETER;
+}
+
 /**
   To populate the mUniqueCoreList array with the processor
   number used for multi-processor calling. Array index implies
@@ -107,8 +525,6 @@ CoreInfoPopulate (
     IN  CONST EFI_PEI_SERVICES  **PeiServices
     )
 {
-  UINTN NumberOfProcessors;
-  UINTN NumberOfEnabledProcessors;
   UINT32 ProcessorNumber;
   EFI_STATUS Status;
 
@@ -127,34 +543,45 @@ CoreInfoPopulate (
   } else {
     mMpServices2Ppi->GetNumberOfProcessors (
                       mMpServices2Ppi,
-                      &NumberOfProcessors,
-                      &NumberOfEnabledProcessors
+                      &Fusa_info.TotalProcessor,
+                      &Fusa_info.TotalEnProcessor
                       );
 
-    for (ProcessorNumber = 0; ProcessorNumber < NumberOfProcessors; ProcessorNumber++) {
+
+    Status = mMpServices2Ppi->WhoAmI (
+                      mMpServices2Ppi,
+                      &Fusa_info.BspCpu
+                      );
+
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_INFO, "ERROR who am I! Status: %x\n", Status));
+    } else {
+      DEBUG ((DEBUG_INFO, "Main core's CpuNumber =  %x\n", Fusa_info.BspCpu));
+    }
+
+    /* To avoid buffer underrun */
+    if( MAX_TGL_CORE_COUNT < Fusa_info.TotalProcessor ) ASSERT(FALSE);
+    for (ProcessorNumber = 0; ProcessorNumber < Fusa_info.TotalProcessor; ProcessorNumber++) {
       Status = mMpServices2Ppi->GetProcessorInfo (
                                  mMpServices2Ppi,
                                  ProcessorNumber,
-                                 &(ProcessorInfoBuffer[ProcessorNumber])
+                                 &(Fusa_info.Processor[ProcessorNumber].ProcessorInfo)
                                  );
+
       ASSERT_EFI_ERROR (Status);
-    }
 
-    SetMem ((UINT8 *)mUniqueCoreList, sizeof(mUniqueCoreList), 0 );
+      RunAtAp (
+              (AP_PROCEDURE) FspCPUTypeCheckInternal,
+              ProcessorNumber,
+              &(Fusa_info.Processor[ProcessorNumber]));
 
-    //search for unique core, ProcessorNumber 0 is BSP so we skip it
-    for (ProcessorNumber = 1; ProcessorNumber < NumberOfProcessors; ProcessorNumber++)
-    {
-      UINT8 CoreIndex = (UINT8) (ProcessorInfoBuffer[ProcessorNumber].ProcessorId) >> 1;
-      if (CoreIndex != (UINT8) (ProcessorInfoBuffer[0].ProcessorId) >> 1) //skip the SMT sharing the same core with BSP
-      {
-        //if there were 2 active SMT belong to the same core, then we only remember the last one
-        mUniqueCoreList[CoreIndex] = ProcessorNumber;
-        DEBUG ((DEBUG_INFO, "UniqueCoreList[%d] = %d\n", CoreIndex, ProcessorNumber));
-      }
     }
-    //now all non-zero UniqueCoreList[] contains the unique Cpu number not the same as BSP
+    //Assuming BspCPU is core
+    Fusa_info.Processor[Fusa_info.BspCpu].CoreType = CPUID_CORE_TYPE_INTEL_CORE;
   }
+
+  CpuNumPopulate(&Fusa_info);
+  PrintFusa_info(&Fusa_info);
 
   return Status;
 }
@@ -182,10 +609,14 @@ FspDxDiagnosticModeGet (
 {
   BOOLEAN FusaDiagTestMode;
   UINT32  FusaStsCtl;
-  UINT32  PwrmBaseAddress = PmcGetPwrmBase ();
+  UINTN   PwrmBaseAddress = PmcGetPwrmBase ();
+
+  if (!IsFusaSupported()) {
+    return FALSE;
+  }
 
   FusaStsCtl = MmioRead32 ((UINTN) PwrmBaseAddress + R_PMC_PWRM_FUSA_STS_CTL);
-  DEBUG ((DEBUG_INFO, "DIAGTEST_FEATURE_EN: %d\nDIAGTEST_EN: %d\nDIAGTEST_PCHMODE: %d\n",
+  DEBUG ((DEBUG_INFO, "Fusa DIAGTEST_FEATURE_EN: %d\nDIAGTEST_EN: %d\nDIAGTEST_PCHMODE: %d\n",
           FusaStsCtl & B_PMC_PWRM_FUSA_STS_CTL_DIAGTEST_FEATURE_EN,
           (FusaStsCtl & B_PMC_PWRM_FUSA_STS_CTL_DIAGTEST_EN) >> 2,
           (FusaStsCtl & B_PMC_PWRM_FUSA_STS_CTL_DIAGTEST_PCHMODE) >> 1));
@@ -198,8 +629,8 @@ FspDxDiagnosticModeGet (
   } else {
     FusaDiagTestMode = FALSE;
   }
-
-  DEBUG ((DEBUG_INFO, "Diagnostic Mode detected is %d\n", FusaDiagTestMode));
+  //FusaDiagTestMode = TRUE; // test
+  DEBUG ((DEBUG_INFO, "Fusa Diagnostic Mode detected is %d\n", FusaDiagTestMode));
 
   return FusaDiagTestMode;
 }
@@ -220,6 +651,10 @@ InstallFusaInfoHob (
   FUSA_INFO_HOB     FusaInfo;
   FUSA_INFO_HOB     *pFusaInfoHob;
 
+  if (!IsFusaSupported()) {
+    return EFI_SUCCESS;
+  }
+
   if (FspDxDiagnosticModeGet ()) {
     ZeroMem ( &FusaInfo, sizeof (FusaInfo));
     FusaInfo.Version = FUSA_INFO_VERSION;
@@ -232,6 +667,7 @@ InstallFusaInfoHob (
                        &FusaInfo,
                        sizeof (FUSA_INFO_HOB)
                        );
+
     if (NULL == pFusaInfoHob) {
       Status = EFI_OUT_OF_RESOURCES;
     } else {
@@ -266,17 +702,34 @@ InstallFusaInfoHob (
 **/
 VOID
 FspDxCheck (
-  IN  CONST EFI_PEI_SERVICES  **PeiServices
+  IN  CONST EFI_PEI_SERVICES  **PeiServices,
+  IN  UINT32 FusaStartupFileAddr
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  FUSA_INFO_HOB        *FusaInfo;
-  FUSA_TEST_RESULT     *TestResult;
-  EFI_STATUS Status;
+  EFI_HOB_GUID_TYPE                  *GuidHob;
+  FUSA_INFO_HOB                      *FusaInfo;
+  FUSA_TEST_RESULT                   *TestResult;
+  EFI_STATUS                         Status;
+//  MSR_MISC_FEATURE_CONTROL_REGISTER  MsrMiscFeatureControl;
+
+  if (!IsFusaSupported()) {
+    return;
+  }
 
   GuidHob = NULL;
   FusaInfo = NULL;
-
+#if 0 //todo: since it is WA, still required?
+  //
+  // Disable Prefetcher upon CTC Main Function Entry
+  // WA for GLC FuSa error injection bug
+  //
+  MsrMiscFeatureControl.Uint64 = AsmReadMsr64 (MSR_MISC_FEATURE_CONTROL);
+  MsrMiscFeatureControl.Bits.MlcStreamerPrefetchDisable = 1;
+  MsrMiscFeatureControl.Bits.MlcSpatialPrefetchDisable  = 1;
+  MsrMiscFeatureControl.Bits.DcuStreamerPrefetchDisable = 1;
+  MsrMiscFeatureControl.Bits.DcuIpPrefetchDisable       = 1;
+  AsmWriteMsr64 (MSR_MISC_FEATURE_CONTROL, MsrMiscFeatureControl.Uint64);
+#endif
   GuidHob = GetFirstGuidHob (&gSiFusaInfoGuid);
   if (GuidHob != NULL) {
     FusaInfo = (FUSA_INFO_HOB *) GET_GUID_HOB_DATA (GuidHob);
@@ -297,14 +750,13 @@ FspDxCheck (
     }
 
     if (EFI_SUCCESS == Status) {
-      FspDxCheckCoreIdi (&(TestResult[FusaTestNumCpu0Idi]) );
-      FspDxCheckLlc (&(TestResult[FusaTestNumCboSlice0Ingress]) );
-      FspDxCheckDip (&(TestResult[FusaTestNumDip]));
-      FspDxCheckIoPort (&(TestResult[FusaTestNumIop]));
-      FspDxCheckOpiLink (&(TestResult[FusaTestNumOpiLinkIosfData]));
+      FspDxCheckMemoryMbist(&(TestResult[FusaTestNumMc0Mbist])); //SMID_018_01
+      FspDxCheckGrtArrayAndCRCBist ((&(TestResult[FusaTestNumGrtArray0Bist])), (&(TestResult[FusaTestNumCRCon0PBISTROM]))); //SMID_1016 //SMID_1013
+      FspDxCheckGrtScanBist (FusaStartupFileAddr, (&(TestResult[FusaTestNumGrtScan0Bist]))); //SMID_1014 //requires startup pattern file
     }
   } else {
     ASSERT (FALSE); //expect the existence of the HOB
   }
+  FreePages( gpTestData, EFI_SIZE_TO_PAGES (1028 * 1024));
 }
 
