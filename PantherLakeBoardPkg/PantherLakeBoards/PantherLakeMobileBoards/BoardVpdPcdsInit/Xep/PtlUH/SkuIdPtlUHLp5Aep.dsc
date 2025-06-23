@@ -49,7 +49,7 @@
   # SPD Address Override
   gBoardModuleTokenSpaceGuid.VpdPcdSpdAddressOverride|*|FALSE
 
-  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig|*|TRUE
+  gBoardModuleTokenSpaceGuid.VpdPcdAepConfig|*|TRUE
 
   # Usb2 Physical Tuning Table
   gBoardModuleTokenSpaceGuid.VpdPcdUsb2PhyTuningTable| * |{CODE(
@@ -346,7 +346,7 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableLch|*|{CODE({
     { GPIOV2_PTL_PCD_XXGPP_F_20, {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirIn,  GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic,  GpioV2ResetHost,    GpioV2TermNone,  GpioV2Unlock, GpioV2Lock}}, // CVS_HST_WAKE
-    { GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut, GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,    GpioV2TermDefault}}, // CRD1_RST_N
+    { GPIOV2_PTL_PCD_XXGPP_E_10, {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut, GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,    GpioV2TermDefault}}, // CRD1_RST_N
     { 0x0 }
   })}
 
@@ -356,7 +356,7 @@
   )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdLchResetGpioPin|*|{CODE(
-    { GPIOV2_PTL_PCD_XXGPP_H_1 } // CRD1_RST_N
+    { GPIOV2_PTL_PCD_XXGPP_E_10 } // CRD1_RST_N
   )}
 
   # Vr Alert Enable
@@ -582,7 +582,7 @@
   // Camera
   //
     {GPIOV2_PTL_PCD_XXGPP_C_5,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // RGB_PWRDN_R
-    {GPIOV2_PTL_PCD_XXGPP_H_1,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // CVS_RST_N
+    {GPIOV2_PTL_PCD_XXGPP_E_10,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // CVS_RST_N
     {GPIOV2_PTL_PCD_XXGPP_E_6,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirIn,     GpioV2StateDefault,  GpioV2IntLevel,  GpioV2ResetHost,     GpioV2TermDefault}},  // CAM_PRIVACY_SWITCH_INPUT
     {GPIOV2_PTL_PCD_XXGPP_F_20,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirIn,     GpioV2StateDefault,  GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // CVS_WAKE
     {GPIOV2_PTL_PCD_XXGPP_C_8,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // IR_PWRDN
@@ -604,7 +604,6 @@
   //
     {GPIOV2_PTL_PCD_XXGPP_F_11,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis, GpioV2ResetHostDeep,     GpioV2TermNone}},  // FRCPAD_PAD_STP_N
     {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // FRC_PAD_INT_N
-    {GPIOV2_PTL_PCD_XXGPP_F_22,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault,     GpioV2TermNone}},  // GPP_F22_FRCPAD_DISABLE
 
   //
   // M.2 WLAN
@@ -641,7 +640,7 @@
     {GPIOV2_PTL_PCD_XXGPP_F_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_H_0,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_V_7,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_E_10, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
+    {GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     { 0x0 } // terminator
   })}
 

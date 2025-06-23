@@ -519,10 +519,8 @@ UpdateHdaPreMemPolicy (
     COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspEnable[Index], HdaPreMemConfig->AudioLinkSsp[Index].Enable,  PchSetup->PchHdAudioSspLinkEnable[Index],  Index);
   }
 
-  if (PcdGetBool (VpdPcdDmicReworkConfig) == TRUE){
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_D_16__DMIC_CLK_A_1);
+  if (PcdGetBool (VpdPcdAepConfig) == TRUE){
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_D_17__DMIC_DATA_1);
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[1], HdaPreMemConfig->SndwMultilane[1].PinMux.Data1, GPIOV2_PTL_PCD_MUXING__XXGPP_S_2__SNDW3_DATA1);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_D_16__DMIC_CLK_A_1);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_3__DMIC_DATA_0);
   }

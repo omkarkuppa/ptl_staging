@@ -418,7 +418,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdPchSerialIoI2c7PadInternalTerm|0x1|UINT8|0x00000033
 
   #Xep
-  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig   |FALSE|BOOLEAN|0x00001141
+  gBoardModuleTokenSpaceGuid.VpdPcdAepConfig|FALSE|BOOLEAN|0x00001141
 
   # UCMC GPIO Table
   gBoardModuleTokenSpaceGuid.PcdBoardUcmcGpioTable|0|UINT32|0x00000111

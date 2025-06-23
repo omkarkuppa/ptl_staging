@@ -1642,7 +1642,11 @@ UpdateIshConfig (
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSclPinMuxing[2], IshConfig->I2c[2].PinConfig.Scl.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_19__ISH_I2C2_SCL);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[5], IshConfig->Gp[5].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_22__ISH_GP_5);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[6], IshConfig->Gp[6].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_23__ISH_GP_6);
-    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[8], IshConfig->Gp[8].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_20__ISH_GP_8);
+    if (PcdGetBool (VpdPcdAepConfig) == TRUE) {
+      UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[8], IshConfig->Gp[8].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_F_22__A_ISH_GP_8);
+    } else {
+      UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[8], IshConfig->Gp[8].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_20__ISH_GP_8);
+    }
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[9], IshConfig->Gp[9].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_21__ISH_GP_9);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[10], IshConfig->Gp[10].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_E_2__ISH_GP_10);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[11], IshConfig->Gp[11].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_F_9__ISH_GP_11);

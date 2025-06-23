@@ -48,7 +48,7 @@
   # SPD Address Override
   gBoardModuleTokenSpaceGuid.VpdPcdSpdAddressOverride|*|FALSE
 
-  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig|*|FALSE
+  gBoardModuleTokenSpaceGuid.VpdPcdAepConfig|*|FALSE
 
   # Usb2 Physical Tuning Table
   gBoardModuleTokenSpaceGuid.VpdPcdUsb2PhyTuningTable| * |{CODE(

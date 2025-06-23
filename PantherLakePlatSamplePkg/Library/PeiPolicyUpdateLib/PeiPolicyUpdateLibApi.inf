@@ -341,7 +341,7 @@
   gSiPkgTokenSpaceGuid.PcdTdxActmMac1                    ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTdxActmMac2                    ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTdxActmMac3                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdAepConfig             ## CONSUMES
 
   # Ufs device detect status
   gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected        ## CONSUMES

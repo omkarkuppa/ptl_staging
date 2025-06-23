@@ -50,7 +50,7 @@
   gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cDeviceAddress|*|0x0
   gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cBusNumber|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdSpdAddressOverride|*|FALSE
-  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig|*|FALSE
+  gBoardModuleTokenSpaceGuid.VpdPcdAepConfig|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
    { 0x0 }
   )}
