@@ -26,6 +26,7 @@
 #include <Library/PmcLib.h>
 #include <Library/BootGuardLib.h>
 #include <Txt.h>
+#include <Library/BaseMemoryLib.h>
 
 ///
 /// Below MSR definition is copied from <Register/MsrRegs.h>
@@ -123,6 +124,8 @@ GetBootGuardInfo (
   UINT64             BootGuardBootStatus;
   UINT64             BootGuardAcmPolicyStatus;
   PMC_SLEEP_STATE    SleepType;
+
+  ZeroMem (BootGuardInfo, sizeof (BOOT_GUARD_INFO));
 
   BootGuardInfo->BootGuardCapability = FALSE;
 

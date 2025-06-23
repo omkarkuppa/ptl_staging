@@ -35,6 +35,7 @@ BaseLib
 DebugLib
 SiScheduleResetLib
 PmcLib
+BaseMemoryLib
 
 [Packages]
 MdePkg/MdePkg.dec
