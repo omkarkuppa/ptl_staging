@@ -574,7 +574,7 @@ BiosGuardModuleExecuteBsp (
   )
 {
   BIOSGUARD_INSTANCE *BiosGuardInstance;
-  UINT8              RetryTimeOut;
+  UINT16              RetryTimeOut;
   PERF_INMODULE_BEGIN ("BiosGuardModuleExecute");
   BiosGuardInstance = BiosGuardInstancePtr;
 
@@ -583,7 +583,7 @@ BiosGuardModuleExecuteBsp (
   //
   RetryTimeOut = 0;
 
-  while ((mApThreadCount < (gSmst->NumberOfCpus - 1)) && (RetryTimeOut != BIOSGUARD_AP_SAFE_RETRY_LIMIT)) {
+  while ((mApThreadCount < (gSmst->NumberOfCpus - 1)) && (RetryTimeOut < BIOSGUARD_AP_SAFE_RETRY_LIMIT)) {
     MicroSecondDelay (BIOSGUARD_WAIT_PERIOD);
     RetryTimeOut++;
   }
@@ -591,7 +591,7 @@ BiosGuardModuleExecuteBsp (
   //
   // Signal if all APs checked-in in or not.
   //
-  mWaitTriggerAbort = RetryTimeOut != BIOSGUARD_AP_SAFE_RETRY_LIMIT ? BIOSGUARD_MODULE_EXECUTE_TRIGGER :  BIOSGUARD_MODULE_EXECUTE_ABORT;
+  mWaitTriggerAbort = RetryTimeOut < BIOSGUARD_AP_SAFE_RETRY_LIMIT ? BIOSGUARD_MODULE_EXECUTE_TRIGGER :  BIOSGUARD_MODULE_EXECUTE_ABORT;
 
   //
   // If not all APs check-in, then abort.

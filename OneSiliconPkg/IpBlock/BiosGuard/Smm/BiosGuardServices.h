@@ -61,7 +61,7 @@ UINT8                mBiosGuardUpdatePackageInTseg;
 /// Stall period in microseconds
 ///
 #define BIOSGUARD_WAIT_PERIOD                      1
-#define BIOSGUARD_AP_SAFE_RETRY_LIMIT              1000
+#define BIOSGUARD_AP_SAFE_RETRY_LIMIT              10000
 
 #define BIOSGUARD_MODULE_EXECUTE_WAIT              0
 #define BIOSGUARD_MODULE_EXECUTE_TRIGGER           1
