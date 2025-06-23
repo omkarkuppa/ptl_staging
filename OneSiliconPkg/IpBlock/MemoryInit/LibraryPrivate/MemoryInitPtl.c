@@ -3187,6 +3187,9 @@ DEBUG_CODE_END();
 
   ExtInputs->MemoryProfile = STD_PROFILE;
 
+  ExtInputs->DynamicRangeLow = 0; // Low end of the CPU dynamic temperature range, in degrees C (2's complement). 0 - Auto
+
+
   SpdCount = 0;
   MrcCall->MrcSetMem ((UINT8 *) SpdMatched, sizeof (SpdMatched), 0);
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {

@@ -547,7 +547,6 @@ MrcJedecInitLpddr5 (
             continue;
           }
           // Build array based on MR value in host structure.
-          // @todo - Support to switching over to FSM for frequency switch?
           for (Index = 0, OutIdx = 0; Index < ARRAY_COUNT (MrAddress); Index++) {
             CurMrAddr = MrAddress[Index];
 

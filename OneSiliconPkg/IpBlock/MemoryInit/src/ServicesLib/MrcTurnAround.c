@@ -223,7 +223,7 @@ GetLpddr5tRdWr (
   GB = (Guardband * PHClk) / PI_PER_TCK;
   tWck2Ck_Max = PHClk / 2;
   nCK = PHClk * 4;
-  tWCKDQOmax = (Outputs->Frequency >= f3200) ? MRC_LP5_tWCKDQO_HF_MAX : MRC_LP5_tWCKDQO_LF_MAX;
+  tWCKDQOmax = MrcLpddrIsLowFreq (Outputs->Frequency) ? MRC_LP5_tWCKDQO_LF_MAX : MRC_LP5_tWCKDQO_HF_MAX;
   tODTLon = MrcGetOdtlTiming (MrcData, Outputs->Frequency, LpWrOdt, LpOdtlOn);
   tBLn_min = Outputs->BurstLength + (Outputs->Frequency > f3200 ? 2 : 0);
   tBLn_max = Outputs->BurstLength + (Outputs->Frequency > f3200 ? 4 : 0);

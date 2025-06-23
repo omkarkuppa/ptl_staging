@@ -317,7 +317,7 @@
 
 #define MRC_EXT_INPUTS_INIT_VAL_Interpreter                     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_IoOdtMode                       (MrcOdtModeDefault)
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved273                     (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DynamicRangeLow                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_VddqVoltage                     (VDD_INVALID)
 #define MRC_EXT_INPUTS_INIT_VAL_VppVoltage                      (VDD_INVALID)
 #define MRC_EXT_INPUTS_INIT_VAL_RcompResistor                   (0)
@@ -696,7 +696,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
 
     MRC_EXT_INPUTS_INIT_VAL_Interpreter,
     MRC_EXT_INPUTS_INIT_VAL_IoOdtMode,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved273,
+    MRC_EXT_INPUTS_INIT_VAL_DynamicRangeLow,
     MRC_EXT_INPUTS_INIT_VAL_VddqVoltage,
     MRC_EXT_INPUTS_INIT_VAL_VppVoltage,
     MRC_EXT_INPUTS_INIT_VAL_RcompResistor,

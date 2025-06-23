@@ -943,7 +943,7 @@ MrcGetTrdpden (
   if (Outputs->IsDdr5) {
     Result = tCL + MRC_DDR5_tCCD_ALL_FREQ + 1;
   } else { // LPDDR
-    tWCKDQO_MAX = Outputs->Frequency < f3200 ? MRC_LP5_tWCKDQO_LF_MAX : MRC_LP5_tWCKDQO_HF_MAX;
+    tWCKDQO_MAX = MrcLpddrIsLowFreq (Outputs->Frequency) ? MRC_LP5_tWCKDQO_LF_MAX : MRC_LP5_tWCKDQO_HF_MAX;
     Result = (tCL + tBLn_max + DIVIDECEIL(tWCKDQO_MAX, Outputs->tCKps) + 1);
   }
 
@@ -979,7 +979,7 @@ MrcGetTwrpden (
   if (Outputs->IsDdr5) {
     Result = tCWL + MRC_DDR5_tCCD_ALL_FREQ  + tWR + 1;
   } else { // LPDDR
-    tWCKDQI = Frequency < f3200 ? MRC_LP5_tWCKDQI_LF_MAX :
+    tWCKDQI = MrcLpddrIsLowFreq (Frequency) ? MRC_LP5_tWCKDQI_LF_MAX :
                                  (Frequency <= f6400 ? MRC_LP5_tWCKDQI_MF_MAX : MRC_LP5_tWCKDQI_HF_MAX);
 
     // tWRPDEN = (tCWL + CEIL(tWCKDQImax/tCKPs) + tBL/n_max + tWR + 1) 4
@@ -1988,4 +1988,23 @@ MrcSetIntervalTimerMr (
   }
 
   return Status;
+}
+
+/**
+  This function returns TRUE if LP5 frequency is low frequency (<= 3200 MT/s).
+
+  @param[in]      Frequency     - Frequency to check
+
+  @returns TRUE if LP5 frequency is low frequency (<= 3200 MT/s).
+**/
+BOOLEAN
+MrcLpddrIsLowFreq (
+  IN MrcFrequency Frequency
+  )
+{
+  if (Frequency <= f3200) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }

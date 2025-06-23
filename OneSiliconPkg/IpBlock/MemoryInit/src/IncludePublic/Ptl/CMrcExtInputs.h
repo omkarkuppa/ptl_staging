@@ -221,7 +221,7 @@ typedef struct {
 
   UINT8   Interpreter;            ///< Offset 267 0 = CMOS location detection, 1 = Ctrl-break detection, 2 = Force into interpreter.
   UINT8   IoOdtMode;              ///< Offset 268 This defines the ODT mode the DDRIO is set to: MRC_ODT_MODE_TYPE.
-  UINT8   Reserved273;            ///< Offset 269 Reserved
+  INT8    DynamicRangeLow;        ///< Offset 269 Low end of the CPU dynamic temperature range, in degrees C (2's complement). 0 - Auto
   UINT16  VddqVoltage;            ///< Offset 270 DRAM voltage (Vddq) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc
   UINT16  VppVoltage;             ///< Offset 272 DRAM voltage (Vpp) in millivolts: <b>0=Platform Default (no override)</b>, 1800=1.8V, 2050=2.05V etc
 

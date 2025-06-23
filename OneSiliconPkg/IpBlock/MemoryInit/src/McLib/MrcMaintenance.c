@@ -30,7 +30,6 @@
 #include "MrcMemoryApi.h"
 #include "MrcMcSiSpecific.h"
 
-
 /**
   This function will disable the DQS Oscillator maintenance feature in the Memory Controller.
 

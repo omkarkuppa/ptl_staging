@@ -438,6 +438,58 @@ EncodeDdr5TccdlTdllk (
 }
 
 /**
+  Enable/Disable DDR5 Read Preamble Training mode on DRAM.
+
+  @param[in] MrcData              - Include all MRC global data.
+  @param[in] Rank                 - Rank to work on
+  @param[in] ReadPreambleTraining - Enable/Disable Read Preamble Training mode
+
+  @returns MrcStatus
+**/
+VOID
+MrcDdr5SetReadPreambleTraining (
+  IN MrcParameters  *const MrcData,
+  IN UINT32                Rank,
+  IN UINT8                 ReadPreambleTraining
+  )
+{
+  UINT32                      Controller;
+  UINT32                      Channel;
+  UINT8                       RankMask;
+  UINT32                      DimmId;
+  UINT32                      RankId;
+  UINT32                      ValidRankMask;
+  UINT8                       MaxChannels;
+  MrcChannelOut               *ChannelOut;
+  MrcOutput                   *Outputs;
+  DDR5_MODE_REGISTER_2_TYPE   MR2;
+
+  Outputs       = &MrcData->Outputs;
+  ValidRankMask = Outputs->ValidRankMask;
+  MaxChannels   = Outputs->MaxChannels;
+
+  RankMask = 1 << Rank;
+  if ((RankMask & ValidRankMask) == 0) {
+    return;
+  }
+  DimmId = RANK_TO_DIMM_NUMBER(Rank);
+  RankId = Rank % MAX_RANK_IN_DIMM;
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MaxChannels; Channel++) {
+      if (!(MrcRankExist (MrcData, Controller, Channel, Rank))) {
+        continue;
+      }
+      ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+      MR2.Data8 = ChannelOut->Dimm[DimmId].Rank[RankId].MR[mrIndexMR2];
+      MR2.Bits.ReadPreambleTraining = ReadPreambleTraining;
+      MrcIssueMrw (MrcData, Controller, Channel, Rank, mrMR2, MR2.Data8, FALSE);
+      ChannelOut->Dimm[DimmId].Rank[RankId].MR[mrIndexMR2] = MR2.Data8;
+    }  // for Channel
+  } // Controller
+}
+
+/**
   This function returns the Read Preamble Setting MR8 encoded value.
 
   @param[in]  MrcData   - Pointer to global MRC data.

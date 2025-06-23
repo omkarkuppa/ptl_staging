@@ -970,4 +970,16 @@ MrcSetIntervalTimerMr (
   IN      UINT8                 DqioDuration
   );
 
+/**
+  This function returns TRUE if LP5 frequency is low frequency (<= 3200 MT/s).
+
+  @param[in]      MrcData       - Pointer to global MRC data.
+
+  @returns TRUE if LP5 frequency is low frequency
+**/
+BOOLEAN
+MrcLpddrIsLowFreq (
+  IN MrcFrequency Frequency
+  );
+
 #endif // _MRC_MEMORY_API_H_

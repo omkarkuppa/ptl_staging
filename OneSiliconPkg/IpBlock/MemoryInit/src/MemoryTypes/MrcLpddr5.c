@@ -1102,7 +1102,7 @@ InitMrwLpddr5 (
         if ((Rank == 0) && !Outputs->IsDvfsqEnabled && !Outputs->IsDvfscEnabled) {
           Mr18.Bits.WckOdt = WckOdtEnc; // Ohms
         }
-        Mr18.Bits.WckFreqMode = (Outputs->HighFrequency >= f3200) ? 1 : 0;
+        Mr18.Bits.WckFreqMode = MrcLpddrIsLowFreq (Outputs->HighFrequency) ? 0 : 1;
         // If we have more than 1 rank, we do not use dynamic, so we set Always on = 1.
         // Needs to align with WCK_CONFIG.WCK_MODE
         if (ExtInputs->WckModeOverride < 2) {
@@ -1166,7 +1166,7 @@ InitMrwLpddr5 (
         if (Outputs->LpX) {
           Mr19.Bits.CsOdt = CsOdtEnc;
         }
-        Mr19.Bits.WCK2DQOSC = (Outputs->HighFrequency >= f3200) ? 1 : 0;
+        Mr19.Bits.WCK2DQOSC = MrcLpddrIsLowFreq (Outputs->HighFrequency) ? 0 : 1;
         MrPtr[mrIndexMR19] = Mr19.Data8;
 
         //MR21 - Default is 0's: All write functions disabled.
@@ -1517,15 +1517,14 @@ Lpddr5GmfDelayType (
   }
 
   switch (MrAddr) {
-    case mrMR17:
-    case mrMR11:
-      DelayType = GmfLpddr5Delay_tODTUP;
-      break;
-
+    // MR12, MR11, MR17 need to wait tODTUP/tVREFCA. This delay is absorbed in the final tFC during the last MR16 of the SAGV sequence
     case mrMR12:
     case mrMR12b:
-      DelayType = GmfLpddr5Delay_tVREFCA;
+    case mrMR17:
+    case mrMR11:
+      DelayType = GmfLpddr5Delay_tMRW;
       break;
+
 
     case mrMR16FspOp:
       DelayType = GmfLpddr5Delay_tFC;
@@ -1683,6 +1682,10 @@ MrcSagvMrSeqLpddr5 (
                  &DelayType,
                  Index == (ARRAY_COUNT (SagvMrOrder) - 1)
                  );
+      // There is no VRCG change for MRS FSM, tMRW is sufficient.
+      if (CurMrAddr == mrMR16) {
+        DelayType = GmfLpddr5Delay_tMRW;
+      }                 
       if (Status != mrcSuccess) {
         break;
       }
@@ -3652,7 +3655,7 @@ MrcGetDramWriteDrift (
     Temp = 850;
     Volt = 640;
   } else {
-    if (DdrFrequency < 3200) {
+    if (MrcLpddrIsLowFreq (DdrFrequency)) {
       Temp = MRC_LP5_tWCK2DQI_TEMP_LF;
       Volt = MRC_LP5_tWCK2DQI_VOLT_LF;
     } else {
@@ -3705,7 +3708,7 @@ UINT32 MrcGetTwckdqo (
 
   Outputs = &MrcData->Outputs;
   PhClkPeriod = DIVIDECEIL (2000000, Outputs->Frequency);
-  tWckDqoMaxPs = (Outputs->Frequency >= f3200) ? MRC_LP5_tWCKDQO_HF_MAX : MRC_LP5_tWCKDQO_LF_MAX;
+  tWckDqoMaxPs = MrcLpddrIsLowFreq (Outputs->Frequency) ? MRC_LP5_tWCKDQO_LF_MAX : MRC_LP5_tWCKDQO_HF_MAX;
 
   tWckDqoRound = UDIVIDEROUND (tWckDqoMaxPs, Outputs->Qclkps);
   tWckDqoFloor = DIVIDEFLOOR  (tWckDqoMaxPs, Outputs->Qclkps);
@@ -3752,7 +3755,7 @@ GetLpddr5ReadDrift (
 
   Outputs = &MrcData->Outputs;
 
-  if (Outputs->Frequency < f3200) {
+  if (MrcLpddrIsLowFreq (Outputs->Frequency)) {
     TempDrift = MRC_LP5_tWCK2DQO_TEMP_LF;
     VoltDrift = MRC_LP5_tWCK2DQO_VOLT_LF;
   } else {

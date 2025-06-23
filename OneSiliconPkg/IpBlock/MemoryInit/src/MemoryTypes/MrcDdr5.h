@@ -600,6 +600,22 @@ MrcDdr5GetReadPostambleSetting (
   );
 
 /**
+  Enable/Disable DDR5 Read Preamble Training mode on DRAM.
+
+  @param[in] MrcData              - Include all MRC global data.
+  @param[in] Rank                 - Rank to work on.
+  @param[in] ReadPreambleTraining - Enable/Disable Read Preamble Training mode.
+
+  @returns MrcStatus
+**/
+VOID
+MrcDdr5SetReadPreambleTraining (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Rank,
+  IN UINT8                ReadPreambleTraining
+  );
+
+/**
   This function returns the Read Preamble Setting MR8 encoded value.
 
   @param[in]  MrcData   - Pointer to global MRC data.
@@ -1474,7 +1490,7 @@ MrcDdr5GetVrefDqCalibrationValue (
   OUT DDR5_MR10_VREF *const VrefDqCalVal
   );
 
-/**  
+/**
   Issue VREFCS command.
 
   @param[in] MrcData       - Include all MRC global data.

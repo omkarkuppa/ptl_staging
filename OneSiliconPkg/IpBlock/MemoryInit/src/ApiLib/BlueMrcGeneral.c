@@ -1978,10 +1978,12 @@ MrcPrintInputParameters (
     ExtInputs->RetrainOnFastFail
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tDynamicRangeLow: %d\n"
     "\tIteration: %Xh\n"
     "\tMbist: %Xh\n"
     "\tRemapEnable: %Xh\n"
     "\tVoltageReadout: %u\n",
+    ExtInputs->DynamicRangeLow,
     Inputs->Iteration,
     Inputs->Mbist,
     ExtInputs->RemapEnable,
