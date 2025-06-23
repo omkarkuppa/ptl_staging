@@ -1292,7 +1292,6 @@ MrcSetOverrides (
   UINT8           MemoryProfile;
   BOOLEAN         lDramDqOdtEn;
   MRC_LP5_BANKORG Lp5BankOrg;
-  INT32           Temperature;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
 
   Inputs      = &MrcData->Inputs;
@@ -1309,8 +1308,6 @@ MrcSetOverrides (
 
   Outputs->IpModel = MrcIpModelGet (MrcData);
   Lp5BankOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
-
-  MrcReadTemperature (MrcData, &Temperature);
 
   Outputs->OdtMode  = ExtInputs->IoOdtMode;
 

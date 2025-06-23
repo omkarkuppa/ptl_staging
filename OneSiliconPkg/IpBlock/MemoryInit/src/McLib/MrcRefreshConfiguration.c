@@ -200,6 +200,8 @@ SetTcZqCalReg (
     tZQCAL = ((UINT32) tZQCAL) * WCK_TO_CK_RATIO;
     tZQLAT = ((UINT32) tZQLAT) * WCK_TO_CK_RATIO;
   }
+  // MC tZQCAL must be programmed in 4xtCK (4xWCK for LPDDR5) cycles.
+  tZQCAL = DIVIDECEIL ((UINT32) tZQCAL, 4);
 
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctZQCAL, WriteToCache | PrintValue, &tZQCAL);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttZQLatch, WriteToCache | PrintValue, &tZQLAT);

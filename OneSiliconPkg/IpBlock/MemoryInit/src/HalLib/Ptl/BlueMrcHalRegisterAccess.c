@@ -1274,7 +1274,7 @@ MrcGetSet (
   LsState.Bits.StateInit = 0;
   LsState.Bits.StageIncrement = 0;
   MrcWriteCR64(MrcData, MRC_LOCAL_STUB_STATE_REG, LsState.Data);
-#endif // STUB_FLAG
+#endif // LOCAL_STUB_STATE_FLAG
 
   Status = MrcTranslateSystemToIp (MrcData, &TransController, &TransChannel, &TransRank, &TransStrobe, &TransLane, Group);
 

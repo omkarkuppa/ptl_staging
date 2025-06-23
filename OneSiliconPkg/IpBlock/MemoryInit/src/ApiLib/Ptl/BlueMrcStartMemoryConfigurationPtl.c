@@ -82,7 +82,7 @@ const CallTableEntry  MrcCallTable[] = {
   {MrcUpdateSavedMCValues,          MRC_UPDATE_SAVE_MC_VALUES,     OemUpdateSaveMCValues,  1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Update MC Values in Fast flow", TrainedParamNoPrint)},
   {MrcIbecc,                        MRC_IBECC,                     OemIbecc,               1,           MF_WARM | MF_S3 | MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK ("MRC In-band ECC", TrainedParamNoPrint)},
   {MrcEccClean,                     MRC_ECC_CLEAN_START,           OemHwMemInit,           1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory Scrubbing", TrainedParamNoPrint)},
-  {MrcMarginLimitCheck,             MRC_MARGIN_LIMIT_CHECK,        OemMarginLimitCheck,    1,                             MF_FAST | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Margin Limit Check on Fast flow", TrainedParamNoPrint)},
+  {MrcMarginLimitCheck,             MRC_MARGIN_LIMIT_CHECK,        OemMarginLimitCheck,    1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Margin Limit Check on Fast flow", TrainedParamNoPrint)},
   {MrcNormalMode,                   MRC_NORMAL_MODE,               OemNormalMode,          1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Normal Operation For Fast flow", TrainedParamNoPrint)},
   {MrcEccClean,                     MRC_ECC_CLEAN_START,           OemHwMemInit,           1,           MF_WARM                                               | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory Scrubbing", TrainedParamNoPrint)},
   {MrcNormalMode,                   MRC_NORMAL_MODE,               OemNormalMode,          1,           MF_WARM | MF_S3                                       | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Normal Operation For Warm / S3 flow", TrainedParamNoPrint)},
@@ -185,6 +185,13 @@ MrcInternalCheckPoint (
     case OemMcResetRun:
       if (!TrainingEnables3->JEDECRESET) {
         Status = mrcFail; // Skip this training step
+      }
+      // Blue MRC runs JEDEC reset / init on Fast flow only
+      // We don't need to run it unless it's the last SAGV point or a PPR-enabled point
+      if (Outputs->SaGvPoint != Outputs->SaGvLast) {
+        if ((Inputs->PprEnable && (Outputs->SaGvPoint != Outputs->SaGvPprPoint)) || !Inputs->PprEnable) {
+          Status = mrcFail; // Skip this training step
+        }
       }
       break;
 
