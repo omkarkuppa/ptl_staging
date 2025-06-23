@@ -3901,22 +3901,22 @@ gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieExtraBusRsvd[0]|0x2a                  
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieExtraBusRsvd[1]|0x2a                                     # Extra Bus Reserved
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieExtraBusRsvd[2]|0x2a                                     # Extra Bus Reserved
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieExtraBusRsvd[3]|0x2a                                     # Extra Bus Reserved
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[0]|0x19                                    # Memory Alignment
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[1]|0x19                                    # Memory Alignment
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[2]|0x19                                    # Memory Alignment
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[3]|0x19                                    # Memory Alignment
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[0]|0x60                                          # Reserved Memory
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[1]|0x60                                          # Reserved Memory
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[2]|0x60                                          # Reserved Memory
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[3]|0x60                                          # Reserved Memory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[0]|0x1a                                    # Memory Alignment
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[1]|0x1a                                    # Memory Alignment
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[2]|0x1a                                    # Memory Alignment
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemAddrRngMax[3]|0x1a                                    # Memory Alignment
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[0]|0x80                                          # Reserved Memory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[1]|0x80                                          # Reserved Memory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[2]|0x80                                          # Reserved Memory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieMemRsvd[3]|0x80                                          # Reserved Memory
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemAddrRngMax[0]|0x1c                                   # PMemory Alignment
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemAddrRngMax[1]|0x1c                                   # PMemory Alignment
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemAddrRngMax[2]|0x1c                                   # PMemory Alignment
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemAddrRngMax[3]|0x1c                                   # PMemory Alignment
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[0]|0x8000                                       # Reserved PMemory
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[1]|0x8000                                       # Reserved PMemory
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[2]|0x8000                                       # Reserved PMemory
-gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[3]|0x8000                                       # Reserved PMemory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[0]|0x18000                                      # Reserved PMemory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[1]|0x18000                                      # Reserved PMemory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[2]|0x18000                                      # Reserved PMemory
+gStructPcdTokenSpaceGuid.PcdSetup.ITbtPciePMemRsvd[3]|0x18000                                      # Reserved PMemory
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtRtd3|0x1                                                     # ITBT RTD3
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtRtd3ExitDelay|0x0                                            # ITBT RTD3 EXIT DELAY
 gStructPcdTokenSpaceGuid.PcdSetup.PcieRtd3LinkActiveTimeout|0x0                                    # PCIE RTD3 Polling Link Active Timeout
@@ -4170,16 +4170,16 @@ gStructPcdTokenSpaceGuid.PcdSetup.DiscreteTbtSupport|0x0                        
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtController[0]|0x0                                            # DTBT Controller 0
 gStructPcdTokenSpaceGuid.PcdSetup.DTbthostRouterPortNumber[0]|0x1                                  # TBT Host Router
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[0]|0x2A                                     # Extra Bus Reserved, default value as DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT
-gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[0]|0x60                                          # Reserved Memory, default value as DTBT_PCIE_MEM_RSVD_ONE_PORT_DEFAULT
+gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[0]|0x80                                          # Reserved Memory, default value as DTBT_PCIE_MEM_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemAddrRngMax[0]|0x1A                                    # Memory Alignment, default value as DTBT_PCIE_MEM_ADDRRNGMAX_ONE_PORT_DEFAULT
-gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[0]|0x8000                                       # Reserved PMemory, default value as DTBT_PCIE_PMEM_RSVD_ONE_PORT_DEFAULT
+gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[0]|0x18000                                      # Reserved PMemory, default value as DTBT_PCIE_PMEM_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemAddrRngMax[0]|0x1C                                   # PMemory Alignment, default value as DTBT_PCIE_PMEM_ADDRRNGMAX_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtController[1]|0x0                                            # DTBT Controller 1
 gStructPcdTokenSpaceGuid.PcdSetup.DTbthostRouterPortNumber[1]|0x1                                  # TBT Host Router
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[1]|0x2A                                     # Extra Bus Reserved, default value as DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT
-gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[1]|0x60                                          # Reserved Memory, default value as DTBT_PCIE_MEM_RSVD_ONE_PORT_DEFAULT
+gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[1]|0x80                                          # Reserved Memory, default value as DTBT_PCIE_MEM_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemAddrRngMax[1]|0x1A                                    # Memory Alignment, default value as DTBT_PCIE_MEM_ADDRRNGMAX_ONE_PORT_DEFAULT
-gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[1]|0x8000                                       # Reserved PMemory, default value as DTBT_PCIE_PMEM_RSVD_ONE_PORT_DEFAULT
+gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[1]|0x18000                                      # Reserved PMemory, default value as DTBT_PCIE_PMEM_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemAddrRngMax[1]|0X1C                                   # PMemory Alignment, default value as DTBT_PCIE_PMEM_ADDRRNGMAX_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.Usb4DebugLevel|0x0                                               # USB4 Debug Level
 gStructPcdTokenSpaceGuid.PcdSetup.UsbConnStatusTimeout|0x1f4                                       # Timeout for EC USB enumeration message

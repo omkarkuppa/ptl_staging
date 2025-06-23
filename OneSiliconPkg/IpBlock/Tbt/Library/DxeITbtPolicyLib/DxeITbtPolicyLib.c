@@ -90,9 +90,9 @@ LoadITbtDxeDefault (
 
   for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
     DxeITbtConfig->ITbtResourceConfig[Index].TbtPcieExtraBusRsvd   = 42;
-    DxeITbtConfig->ITbtResourceConfig[Index].TbtPcieMemRsvd        = 194;
-    DxeITbtConfig->ITbtResourceConfig[Index].TbtPcieMemAddrRngMax  = 25;  // 32 MB Allignment
-    DxeITbtConfig->ITbtResourceConfig[Index].TbtPciePMemRsvd       = 448;
+    DxeITbtConfig->ITbtResourceConfig[Index].TbtPcieMemRsvd        = 128;
+    DxeITbtConfig->ITbtResourceConfig[Index].TbtPcieMemAddrRngMax  = 26;  // 64 MB Allignment
+    DxeITbtConfig->ITbtResourceConfig[Index].TbtPciePMemRsvd       = 98304;
     DxeITbtConfig->ITbtResourceConfig[Index].TbtPciePMemAddrRngMax = 28;  // 256 MB Allignment
   }
 

@@ -37,7 +37,7 @@ form formid = CONCATENATE3(ITBT_ROOTPORT,ROOTPORT_INDEX,_FORM_ID),
       minimum     = 1,
       maximum     = 4096,
       step        = 1,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
-      default     = 96,   // 96 MB Default
+      default     = 128,  // 128 MB Default
     endnumeric;
 
     numeric varid = SETUP_DATA.ITbtPcieMemAddrRngMax[ROOTPORT_INDEX],
@@ -47,7 +47,7 @@ form formid = CONCATENATE3(ITBT_ROOTPORT,ROOTPORT_INDEX,_FORM_ID),
       minimum     = 0,
       maximum     = 31,
       step        = 1,
-      default     = 25,   // 32 MB Allignment
+      default     = 26,   // 64 MB Allignment
     endnumeric;
 
     numeric varid = SETUP_DATA.ITbtPciePMemRsvd[ROOTPORT_INDEX],
@@ -55,9 +55,9 @@ form formid = CONCATENATE3(ITBT_ROOTPORT,ROOTPORT_INDEX,_FORM_ID),
       help        = STRING_TOKEN (STR_ITBT_PCIE_RPMEM_HELP),
       flags     = RESET_REQUIRED | INTERACTIVE,
       minimum     = 1,
-      maximum     = 32768,
+      maximum     = 98304,
       step        = 1,        // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
-      default     = 32768,    // 32768 MB Default
+      default     = 98304,    // 98304 MB Default
     endnumeric;
 
     numeric varid = SETUP_DATA.ITbtPciePMemAddrRngMax[ROOTPORT_INDEX],

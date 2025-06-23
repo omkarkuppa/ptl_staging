@@ -127,7 +127,7 @@
 #string STR_PCI_DTBT_CONTROLLER0_PCIE_RMEM_ADDRRNGMAX            #language en-US "Memory Alignment"
 #string STR_DTBT_PCIE_RMEM_RNG_HELP                              #language en-US "Memory Alignment (0-31 bits)"
 #string STR_PCI_DTBT_CONTROLLER0_PCIE_RPMEM_PROMPT               #language en-US "Reserved PMemory"
-#string STR_DTBT_PCIE_RPMEM_HELP                                 #language en-US "Reserved Prefetchable Memory per port for this Root Bridge (1-32768) MB. Reserved memory will be twice for two port host."
+#string STR_DTBT_PCIE_RPMEM_HELP                                 #language en-US "Reserved Prefetchable Memory per port for this Root Bridge (1-98304) MB. Reserved memory will be twice for two port host."
 #string STR_PCI_DTBT_CONTROLLER0_PCIE_RPMEM_ADDRRNGMAX           #language en-US "PMemory Alignment"
 #string STR_DTBT_PCIE_RPMEM_RNG_HELP                             #language en-US "PMemory Alignment (0-31 bits)"
 
@@ -154,7 +154,7 @@
 #string STR_ITBT_RP0_PCIE_RMEM_ADDRRNGMAX                        #language en-US "Memory Alignment"
 #string STR_ITBT_PCIE_RMEM_RNG_HELP                              #language en-US "Memory Alignment (0-31 bits)"
 #string STR_ITBT_RP0_PCIE_RPMEM_PROMPT                           #language en-US "Reserved PMemory"
-#string STR_ITBT_PCIE_RPMEM_HELP                                 #language en-US "Reserved Prefetchable Memory for this Root Bridge (1-32768) MB"
+#string STR_ITBT_PCIE_RPMEM_HELP                                 #language en-US "Reserved Prefetchable Memory for this Root Bridge (1-98304) MB"
 #string STR_ITBT_RP0_PCIE_RPMEM_ADDRRNGMAX                       #language en-US "PMemory Alignment"
 #string STR_ITBT_PCIE_RPMEM_RNG_HELP                             #language en-US "PMemory Alignment (0-31 bits)"
 #string STR_ITBT_RP0_PCIE_RVIO_PROMPT                            #language en-US "Reserved I/O"

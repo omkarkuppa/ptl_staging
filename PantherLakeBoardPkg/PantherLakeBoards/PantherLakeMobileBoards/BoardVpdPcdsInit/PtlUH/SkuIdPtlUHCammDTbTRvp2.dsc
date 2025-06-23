@@ -789,8 +789,8 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PcieRootPortAspm[4]|0x2                                       # ASPM
   gStructPcdTokenSpaceGuid.PcdPchSetup.PcieRootPortSpeed[4]|0x4                                      # PCIe Speed
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[0]|0x51                                     # Extra Bus Reserved
-  gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[0]|0x80                                          # Reserved Memory
-  gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[0]|0x10000                                      # Reserved PMemory
+  gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[0]|0x100                                         # Reserved Memory
+  gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[0]|0x30000                                      # Reserved PMemory
 
 #####################################################################
 #  PTL UH CAMM dTbT T3 - RVP2 BOM
