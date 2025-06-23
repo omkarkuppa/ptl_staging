@@ -358,6 +358,7 @@ PcieUpdateConfig (
   pInst->PcieRpCommonConfig.OverrideEqualizationDefaults  = PcieConfig->RootPort[pInst->RpIndex].PcieRpCommonConfig.OverrideEqualizationDefaults;
   pInst->PcieRpCommonConfig.PcieCfgDump                   = PcieConfig->RootPort[pInst->RpIndex].PcieRpCommonConfig.PcieCfgDump;
   pInst->PcieRpCommonConfig.EqPhBypass                    = PcieConfig->RootPort[pInst->RpIndex].PcieRpCommonConfig.EqPhBypass;
+  pInst->PcieRpCommonConfig.PresetToCoeffConfig           = PcieConfig->RootPort[pInst->RpIndex].PcieRpCommonConfig.PresetToCoeffConfig;
 
   pInst->PcieRpCommonConfig.PcieRpLtrConfig.ForceLtrOverride                  = PcieConfig->RootPort[pInst->RpIndex].PcieRpCommonConfig.PcieRpLtrConfig.ForceLtrOverride;
   pInst->PcieRpCommonConfig.PcieRpLtrConfig.LtrConfigLock                     = PcieConfig->RootPort[pInst->RpIndex].PcieRpCommonConfig.PcieRpLtrConfig.LtrConfigLock;

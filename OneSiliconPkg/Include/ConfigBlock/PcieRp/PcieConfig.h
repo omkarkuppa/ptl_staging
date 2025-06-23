@@ -273,7 +273,8 @@ typedef struct {
   - Enabled               (0x1) : Enable Phase
   **/
   UINT8   EqPhBypass;
-  UINT8   RsvdBytes287[3];
+  UINT8   PresetToCoeffConfig; ///<Configure PresetToCoefficient Mapping registers
+  UINT8   RsvdBytes287[2];
   PCIE_LINK_EQ_PLATFORM_SETTINGS    PcieGen3LinkEqPlatformSettings;  ///< Global PCIe Gen3 link EQ settings that BIOS will use during PCIe link EQ for every port.
   PCIE_LINK_EQ_PLATFORM_SETTINGS    PcieGen4LinkEqPlatformSettings;  ///< Global PCIe Gen4 link EQ settings that BIOS will use during PCIe link EQ for every port.
   PCIE_LINK_EQ_PLATFORM_SETTINGS    PcieGen5LinkEqPlatformSettings;  ///< Global PCIe Gen5 link EQ settings that BIOS will use during PCIe link EQ for every port.

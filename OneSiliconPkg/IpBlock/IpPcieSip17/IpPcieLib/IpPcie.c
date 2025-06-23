@@ -268,6 +268,7 @@ PcieLoadDefaultConfig (
   pInst->PcieRpCommonConfig.VisaClockGating               = TRUE;
   pInst->PcieRpCommonConfig.AutoPowerGating               = TRUE;
   pInst->Integration                                      = IpPchPcie;
+  pInst->PcieRpCommonConfig.PresetToCoeffConfig           = FALSE;
   //
   // Initialize PrivateConfig members of pInst.
   //

@@ -608,7 +608,8 @@ typedef struct {
   //                        ///< Reserved bytes
   UINT32  VisaClockGating;
   UINT32  AutoPowerGating;
-  UINT8   Reserved[8];               ///< Reserved space for future use
+  UINT8   PresetToCoeffConfig;
+  UINT8   Reserved[7];               ///< Reserved space for future use
 } IP_PCIE_ROOT_PORT_COMMON_CONFIG;
 #pragma pack(pop)
 

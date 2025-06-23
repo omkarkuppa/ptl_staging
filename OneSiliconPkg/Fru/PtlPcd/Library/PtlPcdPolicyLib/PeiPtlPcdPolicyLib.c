@@ -128,6 +128,7 @@ LoadPcieRpConfigDefault (
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieSpeed                                         = PcieAuto;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.DetectTimeoutMs                                   = 0;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.CompletionTimeout                                 = 0;
+    PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PresetToCoeffConfig                               = FALSE;
 
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieGen3LinkEqPlatformSettings.Ph1DpTxPreset = 0x0;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieGen3LinkEqPlatformSettings.Ph1UpTxPreset = 0x0;

@@ -2035,6 +2035,10 @@ SipLinkEqualizeInit (
   }
 
   SipClearEqRegisters (pInst);
-  SipConfigurePresetToCoefficientMapping (pInst, PcieGen3LinkEqSettings, PcieGen4LinkEqSettings, PcieGen5LinkEqSettings, PcieSpeed);
+
+  PRINT_LEVEL1 ("PresetToCoeffConfig: %d\n", pInst->PcieRpCommonConfig.PresetToCoeffConfig);
+  if (pInst->PcieRpCommonConfig.PresetToCoeffConfig) {
+    SipConfigurePresetToCoefficientMapping (pInst, PcieGen3LinkEqSettings, PcieGen4LinkEqSettings, PcieGen5LinkEqSettings, PcieSpeed);
+  }
   PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
 }
