@@ -125,7 +125,6 @@ PeiPreMemSiPolicyPrint (
     DciPreMemPrintConfig (SiPreMemPolicyPpi);
     HdaPreMemPrintConfig (SiPreMemPolicyPpi);
     IshPreMemPrintConfig (SiPreMemPolicyPpi);
-    PchPsfPrintConfig (SiPreMemPolicyPpi);
     CnviPreMemPrintConfig (SiPreMemPolicyPpi);
     SocTraceHubPreMemPrintConfig (SiPreMemPolicyPpi);
     SmbusPreMemPrintConfig (SiPreMemPolicyPpi);

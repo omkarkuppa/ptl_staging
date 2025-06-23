@@ -176,6 +176,11 @@ PtlPcdInit (
   //
   PtlPcdPsfDisableP2pDecoding ();
 
+  //
+  // Set Deferred Write Buffer in PSF
+  //
+  PtlPcdPsfProgramDWB (SiPolicy);
+
   PtlPcdUsbInit (SiPolicy);
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_POSTMEM_INIT_P2SB);

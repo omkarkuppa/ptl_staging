@@ -500,11 +500,11 @@ PtlPcdPPsfDisableP2pDecoding (
 /**
   Program Deferred Write Buffer
 
-  @param[in] SiPreMemPolicyPpi            Pointer to a SI_PREMEM_POLICY_PPI
+  @param[in] SiPolicyPpi            Pointer to SI_POLICY_PPI
 **/
 VOID
 PtlPcdPPsfProgramDWB (
-  IN SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
+  IN SI_POLICY_PPI     *SiPolicyPpi
   );
 
 /**

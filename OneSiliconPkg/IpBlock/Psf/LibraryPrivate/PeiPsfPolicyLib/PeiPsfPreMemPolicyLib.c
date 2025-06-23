@@ -25,17 +25,17 @@
 /**
   Print PSF_CONFIG and serial out.
 
-  @param[in] SiPreMemPolicyPpi            Pointer to a SI_PREMEM_POLICY_PPI
+  @param[in] SiPolicyPpi            Pointer to SI_POLICY_PPI
 **/
 VOID
 PchPsfPrintConfig (
-  IN SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
+  IN SI_POLICY_PPI     *SiPolicyPpi
   )
 {
   EFI_STATUS        Status;
   PSF_CONFIG        *PsfConfig;
 
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPsfConfigGuid, (VOID *) &PsfConfig);
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gPsfConfigGuid, (VOID *) &PsfConfig);
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "------------------ PSF Config ------------------\n"));

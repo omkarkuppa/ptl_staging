@@ -60,6 +60,7 @@
 #include <LpssSpiConfig.h>
 #include <HsioConfig.h>
 #include <ConfigBlock/PchGeneralConfig.h>
+#include <PsfConfig.h>
 #if FixedPcdGet8 (PcdTsnSupport) == 0x1
 #include <TsnConfig.h>
 #endif
@@ -1457,6 +1458,31 @@ FspUpdateFivrPolicy (
   FivrConfig->FivrDynPm                            = FspsUpd->FspsConfig.PchFivrDynPm;
 }
 
+
+/**
+  Update Psf PreMem policies.
+
+  @param[in] SiPolicy       Pointer to SI_POLICY_PPI
+  @param[in] FspsUpm        Pointer to FSPS_UPD
+**/
+STATIC
+VOID
+FspUpdatePsfPolicy (
+  IN  SI_POLICY_PPI     *SiPolicy,
+  IN  FSPS_UPD          *FspsUpd
+  )
+{
+  PSF_CONFIG                      *PsfConfig;
+  EFI_STATUS                      Status;
+
+  Status = GetConfigBlock ((VOID *) SiPolicy, &gPsfConfigGuid, (VOID *) &PsfConfig);
+  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
+
+}
+
 /**
   This function performs PCH PEI Policy update.
 
@@ -1507,6 +1533,7 @@ FspUpdatePeiPchPolicy (
   FspUpdateThermalPolicy (SiPolicy, FspsUpd);
   FspUpdateFusaPolicy (SiPolicy, FspsUpd);
   FspUpdateFivrPolicy (SiPolicy, FspsUpd);
+  FspUpdatePsfPolicy (SiPolicy, FspsUpd);
 
   return EFI_SUCCESS;
 }

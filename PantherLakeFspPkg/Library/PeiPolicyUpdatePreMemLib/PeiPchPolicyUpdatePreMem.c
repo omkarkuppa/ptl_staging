@@ -44,7 +44,6 @@
 #include <PchDmiConfig.h>
 #include <ConfigBlock/PchGeneralConfig.h>
 #include <TraceHubConfig.h>
-#include <PsfConfig.h>
 
 /**
   Update TraceHub pre mem policies.
@@ -71,30 +70,6 @@ FspUpdateTraceHubPreMemPolicy (
   TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode  = FspmUpd->FspmConfig.SocTraceHubMode;
   TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg0Size = TRACEHUB_MEM_SIZE (FspmUpd->FspmConfig.SocTraceHubMemReg0Size);
   TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg1Size = TRACEHUB_MEM_SIZE (FspmUpd->FspmConfig.SocTraceHubMemReg1Size);
-
-}
-
-/**
-  Update Psf PreMem policies.
-
-  @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
-**/
-STATIC
-VOID
-FspUpdatePsfPreMemPolicy (
-  IN  SI_PREMEM_POLICY_PPI     *SiPreMemPolicy,
-  IN  FSPM_UPD                 *FspmUpd
-  )
-{
-  PSF_CONFIG                      *PsfConfig;
-  EFI_STATUS                      Status;
-
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gPsfConfigGuid, (VOID *) &PsfConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return;
-  }
 
 }
 
@@ -525,7 +500,6 @@ FspUpdatePeiPchPolicyPreMem (
 {
   FspUpdatePeiDciPreMemPolicy (SiPreMemPolicy, FspmUpd);
   FspUpdateTraceHubPreMemPolicy (SiPreMemPolicy, FspmUpd);
-  FspUpdatePsfPreMemPolicy (SiPreMemPolicy, FspmUpd);
   FspUpdateSmbusPreMemPolicy (SiPreMemPolicy, FspmUpd);
   FspUpdatePcieRpPreMemPolicy (SiPreMemPolicy, FspmUpd);
   FspUpdateHsioPciePreMemPolicy (SiPreMemPolicy, FspmUpd);

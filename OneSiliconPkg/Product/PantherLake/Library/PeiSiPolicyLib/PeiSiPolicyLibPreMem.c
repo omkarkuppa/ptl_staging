@@ -145,7 +145,6 @@ SiCreatePreMemConfigBlocks (
   TotalBlockSize += TxtGetConfigBlockTotalSizePreMem ();
   TotalBlockSize += IpuGetConfigBlockTotalSizePreMem ();
   TotalBlockSize += DciPreMemGetConfigBlockTotalSize ();
-  TotalBlockSize += PchPsfGetConfigBlockTotalSize ();
   TotalBlockSize += IGpuGetConfigBlockTotalSizePreMem ();
   TotalBlockSize += TcssGetConfigBlockTotalSizePreMem ();
   TotalBlockSize += VtdGetConfigBlockTotalSize ();
@@ -244,12 +243,6 @@ SiCreatePreMemConfigBlocks (
 
   // Hybrid Graphics
   Status = HybridGraphicsAddConfigBlocks ((VOID *) SiPreMemPolicy);
-  ASSERT_EFI_ERROR (Status);
-
-  //
-  // PSF
-  //
-  Status = PchPsfAddConfigBlock ((VOID *) SiPreMemPolicy);
   ASSERT_EFI_ERROR (Status);
 
   // CpuInit

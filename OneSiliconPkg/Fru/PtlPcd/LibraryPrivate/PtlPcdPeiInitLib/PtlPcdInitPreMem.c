@@ -416,9 +416,8 @@ PtlPcdOnPolicyInstalled (
   PtlPcdPsfSetPmcAbase (PcdGet16 (PcdAcpiBaseAddress));
 
   //
-  // Set Deferred Write Buffer abd hysteresis value for trunk clock gating in PSF
+  // Set  hysteresis value for trunk clock gating in PSF
   //
-  PtlPcdPsfProgramDWB (SiPreMemPolicyPpi);
   PtlPcdPsfConfigureClkreqHys ();
 
   //

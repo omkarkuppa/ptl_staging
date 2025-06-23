@@ -141,6 +141,7 @@ SiCreateConfigBlocks (
   TotalBlockSize += TsnGetConfigBlockTotalSize ();
 #endif
   TotalBlockSize += PtlPcdIshGetConfigBlockTotalSize ();
+  TotalBlockSize += PchPsfGetConfigBlockTotalSize ();
   TotalBlockSize += ScsGetConfigBlockTotalSize ();
   TotalBlockSize += UsbGetConfigBlockTotalSize ();
   TotalBlockSize += ThcGetConfigBlockTotalSize ();
@@ -214,6 +215,8 @@ SiCreateConfigBlocks (
   Status = HdaAddConfigBlock (SiPolicy);
   ASSERT_EFI_ERROR (Status);
   Status = PtlPcdIshAddConfigBlock (SiPolicy);
+  ASSERT_EFI_ERROR (Status);
+  Status = PchPsfAddConfigBlock ((VOID *) SiPolicy);
   ASSERT_EFI_ERROR (Status);
   Status = ScsAddConfigBlock (SiPolicy);
   ASSERT_EFI_ERROR (Status);

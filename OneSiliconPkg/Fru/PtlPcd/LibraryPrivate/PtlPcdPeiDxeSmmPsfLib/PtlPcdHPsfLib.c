@@ -2591,11 +2591,11 @@ PtlPcdHPsfResetRootspaceConfig (
 /**
   Program Deferred Write Buffer
 
-  @param[in] SiPreMemPolicyPpi            Pointer to a SI_PREMEM_POLICY_PPI
+  @param[in] SiPolicyPpi            Pointer to SI_POLICY_PPI
 **/
 VOID
 PtlPcdHPsfProgramDWB (
-  IN SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
+  IN SI_POLICY_PPI     *SiPolicyPpi
   )
 {
   EFI_STATUS                    Status;
@@ -2606,7 +2606,7 @@ PtlPcdHPsfProgramDWB (
   P2SB_CONTROLLER               P2SbController;
   PSF_REG_BASE                  PsfRegBase;
 
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPsfConfigGuid, (VOID **) &PsfConfig);
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gPsfConfigGuid, (VOID *) &PsfConfig);
   ASSERT_EFI_ERROR (Status);
 
   PsfRegBase.PsfNumber = 6;
