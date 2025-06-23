@@ -52,6 +52,7 @@ NhltEndpointTableLoadPcdConfiguration (
   NhltConfigurationVariable->NhltDmicQuadEnabled     = PcdGet8 (NhltDmicQuadEnabled);
   NhltConfigurationVariable->NhltI2sAlc274Enabled    = PcdGet8 (NhltI2sAlc274Enabled);
   NhltConfigurationVariable->NhltBluetoothEnabled    = PcdGet8 (NhltBluetoothEnabled);
+  NhltConfigurationVariable->NhltI2sAk4604Enabled    = PcdGet8 (NhltI2sAk4604Enabled);
 }
 #endif
 
@@ -172,6 +173,17 @@ GetNhltConfiguration (
       break;
     case NhltBtDisabled:
     case NhltBtFormatInvalid:
+    default:
+      break;
+  }
+
+  switch (NhltConfigurationVariable.NhltI2sAk4604Enabled) {
+    case NhltI2sAK4604Enable:
+      NhltConfiguration->NhltConfigurationEnabled[NhltI2sAk4604] = TRUE;
+      DEBUG((DEBUG_INFO, "Nhlt for I2s Ak4604 enabled.\n"));
+      break;
+    case NhltI2sAK4604Disable:
+    case NhltI2sAk4604FormatInvalid:
     default:
       break;
   }

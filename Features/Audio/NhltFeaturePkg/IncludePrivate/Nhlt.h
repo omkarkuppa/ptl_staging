@@ -41,6 +41,7 @@ typedef enum {
   NhltI2sAlc274Format24Bit96kHzFreq38_4MHz  = 8,
   NhltBtFreq38_4MHzBtDrivesI2sClockHfp      = 9,
   NhltBtFreq38_4MHzDspDrivesI2sClockHfp     = 10,
+  NhltI2sAk4604                             = 11,
   NhltConfigurationMax
 } NHLT_CONFIGURATIONS;
 
@@ -72,6 +73,12 @@ typedef enum {
   NhltI2sClock38_4MHz_Format24b_96kHz  = 0x2,
   NhltI2sFormatInvalid
 } NHLT_I2S_FORMAT_OPTIONS;
+
+typedef enum {
+  NhltI2sAK4604Disable  = 0x0,
+  NhltI2sAK4604Enable   = 0x1,
+  NhltI2sAk4604FormatInvalid
+} NHLT_I2S_AK4604_FORMAT_OPTIONS;
 
 #pragma pack (push, 1)
 
