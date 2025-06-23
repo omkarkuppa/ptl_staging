@@ -905,7 +905,8 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoI2c[5]|0x0                                         # I2C5 Controller
 
   # Audio Speakers Enablement
-  gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0xB     # SoundWire codecs topology
+  gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0xA     # SoundWire codecs topology =  Cirrus AEP Configuration v6.15
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaMicPrivacyMode|0x1                                      # HW Managed Microphone Privacy
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioHdaLinkEnable|0x0                                   # HDA Link
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x1                               # DMIC #0
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x1                               # DMIC #1
