@@ -18,6 +18,7 @@
 
 @par Specification Reference:
 **/
+#include <PiPei.h>
 #include <Library/DebugLib.h>
 #include <Ppi/SiPolicy.h>
 #include <FusaConfig.h>
