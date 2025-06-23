@@ -1752,6 +1752,7 @@
 #string STR_DDR3_FREQ_5400_STRING               #language en-US "5400"
 #string STR_DDR3_FREQ_5600_STRING               #language en-US "5600"
 #string STR_DDR3_FREQ_6400_STRING               #language en-US "6400"
+#string STR_DDR3_FREQ_6800_STRING               #language en-US "6800"
 #string STR_DDR3_FREQ_7200_STRING               #language en-US "7200"
 #string STR_DDR3_FREQ_7467_STRING               #language en-US "7467"
 #string STR_DDR3_FREQ_8533_STRING               #language en-US "8533"
