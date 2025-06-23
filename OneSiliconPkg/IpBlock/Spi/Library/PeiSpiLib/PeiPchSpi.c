@@ -121,7 +121,6 @@ SpiServiceInit (
   } else {
     DEBUG ((DEBUG_INFO, "SPI PPI already installed\n"));
   }
-  DmaServiceInit();
 
   return Status;
 }

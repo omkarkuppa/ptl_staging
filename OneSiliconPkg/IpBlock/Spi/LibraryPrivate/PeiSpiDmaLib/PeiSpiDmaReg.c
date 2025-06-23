@@ -163,6 +163,7 @@ StartSpiDma (
   UINT32      Timeout;
 
   DEBUG ((DEBUG_INFO, "%a %d entry \n", __FUNCTION__, __LINE__));
+  DEBUG ((DEBUG_INFO, "%a: %p\n", __FUNCTION__, StartSpiDma));
   DEBUG ((DEBUG_INFO, "%a %d BufferBaseAddress %08X \n", __FUNCTION__, __LINE__, (UINTN)BufferBaseAddress));
   DEBUG ((DEBUG_INFO, "%a %d BufferSize %08X \n", __FUNCTION__, __LINE__, BufferSize ));
   DEBUG ((DEBUG_INFO, "%a %d BiosRegionOffset %08X \n", __FUNCTION__, __LINE__, BiosRegionOffset));

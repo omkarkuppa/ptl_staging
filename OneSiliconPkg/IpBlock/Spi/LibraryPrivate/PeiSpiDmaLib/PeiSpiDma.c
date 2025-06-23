@@ -373,6 +373,9 @@ PeiSpiDmaRead (
 
   Alignment = 0;
   ToRead = ReadSize;
+  Status = EFI_SUCCESS;
+
+  DEBUG ((DEBUG_INFO, "%a: %p\n", __FUNCTION__, PeiSpiDmaRead));
 
   if ((UINTN)FlashAddress == (UINTN)Destination) {
     return EFI_SUCCESS;
@@ -543,6 +546,7 @@ PeiFirmwareVolumeShadow (
   UINTN                        FvLength;
   EFI_STATUS                   Status;
 
+  DEBUG ((DEBUG_INFO, "%a: %p\n", __FUNCTION__, PeiFirmwareVolumeShadow));
   FwVolHeader = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)FirmwareVolumeBase;
   FvLength = (UINTN)FwVolHeader->FvLength;
   if (FvLength == 0 ||
@@ -583,7 +587,44 @@ PeiSpiDmaImageRead (
   OUT    VOID   *Buffer
   )
 {
+  DEBUG ((DEBUG_INFO, "%a: %p\n", __FUNCTION__, PeiSpiDmaImageRead));
   return PeiSpiDmaRead((VOID *)((UINTN)FileHandle + FileOffset), Buffer, *ReadSize);
+}
+
+/**
+  This function initializes SPI DMA Silicon configuration.
+
+  @retval EFI_STATUS  Results of SPI DMA Silicon Configuration
+**/
+EFI_STATUS
+EFIAPI
+SpiDmaSiliconConfig (
+  VOID
+  )
+{
+  EFI_STATUS        Status;
+
+  Status = EFI_SUCCESS;
+  DEBUG ((DEBUG_INFO, "%a: %p\n", __FUNCTION__, SpiDmaServiceInit));
+  if (IsSimicsEnvironment () || IsHSLEEnvironment ()) {
+    return Status;
+  }
+  // Detect SPI DMA presence on the platform.
+  if (IsSpiDmaSupported ()) {
+    DEBUG ((DEBUG_INFO, "SPI DMA is supported\n"));
+    //
+    // Install notify Lock SPI DMA PPIs to lock SPI DMA after copying FVs at the end of PEI
+    //
+    Status = PeiServicesNotifyPpi (&mLockSpiDmaNotifyList);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a: Lock SpiDma Notify failed\n", __FUNCTION__));
+    }
+    ASSERT_EFI_ERROR (Status);
+  } else {
+    DEBUG ((DEBUG_INFO, "SPI DMA is not supported\n"));
+    return EFI_UNSUPPORTED;
+  }
+  return Status;
 }
 
 /**
@@ -593,51 +634,76 @@ PeiSpiDmaImageRead (
 **/
 EFI_STATUS
 EFIAPI
-DmaServiceInit (
+SpiDmaServiceInit (
   VOID
   )
 {
-  EFI_STATUS        Status;
-  SPI_DMA_READ_PPI  *SpiDmaPpi;
-  EDKII_PEI_FIRMWARE_VOLUME_SHADOW_PPI *FvShadowPpi;
+  EFI_STATUS                            Status;
+  SPI_DMA_READ_PPI                      *SpiDmaPpi;
+  EDKII_PEI_FIRMWARE_VOLUME_SHADOW_PPI  *FvShadowPpi;
+  EFI_PEI_PPI_DESCRIPTOR                *FvShadowPpiDescriptor;
+  EFI_PEI_PPI_DESCRIPTOR                *SpiDmaPpiDescriptor;
+  VOID                                  *MemoryDiscoveredPpi;
 
   Status = EFI_SUCCESS;
-  if (IsSimicsEnvironment () || IsHSLEEnvironment ()){
+  DEBUG ((DEBUG_INFO, "%a: %p\n", __FUNCTION__, SpiDmaServiceInit));
+  if (IsSimicsEnvironment () || IsHSLEEnvironment ()) {
     return Status;
   }
   // Detect SPI DMA presence on the platform.
-  if (IsSpiDmaSupported ()){
+  if (IsSpiDmaSupported ()) {
     Status = PeiServicesLocatePpi (
                &gEdkiiPeiFirmwareVolumeShadowPpiGuid,
                0,
-               NULL,
-               (VOID **) &FvShadowPpi
+               &FvShadowPpiDescriptor,
+               (VOID **)&FvShadowPpi
                );
     if (EFI_ERROR (Status)) {
       Status = PeiServicesInstallPpi (&mFirmwareVolumeShadowPpiList);
       ASSERT_EFI_ERROR (Status);
+    } else {
+      Status = PeiServicesLocatePpi (
+                 &gEfiPeiMemoryDiscoveredPpiGuid,
+                 0,
+                 NULL,
+                 (VOID **)&MemoryDiscoveredPpi
+                 );
+      if (Status == EFI_SUCCESS) {
+        DEBUG ((DEBUG_INFO, "FvShadowPpi re-installed\n"));
+        Status = PeiServicesReInstallPpi (FvShadowPpiDescriptor, &mFirmwareVolumeShadowPpiList);
+        if (EFI_ERROR (Status)) {
+          DEBUG ((DEBUG_ERROR, "%a: FvShadow reinstall failed\n", __FUNCTION__));
+        }
+        ASSERT_EFI_ERROR (Status);
+      }
     }
 
     Status = PeiServicesLocatePpi (
                &gSpiDmaReadPpiGuid,
                0,
-               NULL,
-               (VOID **) &SpiDmaPpi
+               &SpiDmaPpiDescriptor,
+               (VOID **)&SpiDmaPpi
                );
 
-    if (Status != EFI_SUCCESS) {
+    if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_INFO, "Installing SpiDmaReadPpi\n"));
       Status = PeiServicesInstallPpi (&mSpiDmaReadPpiList);
       ASSERT_EFI_ERROR (Status);
       DEBUG ((DEBUG_INFO, "Installed SpiDmaReadPpi\n"));
     } else {
       DEBUG ((DEBUG_INFO, "SpiDmaReadPpi already installed\n"));
+      Status = PeiServicesLocatePpi (
+                 &gEfiPeiMemoryDiscoveredPpiGuid,
+                 0,
+                 NULL,
+                 (VOID **)&MemoryDiscoveredPpi
+                 );
+      if (Status == EFI_SUCCESS) {
+        DEBUG ((DEBUG_INFO, "SpiDmaPpi re-installed\n"));
+        Status = PeiServicesReInstallPpi (SpiDmaPpiDescriptor, &mSpiDmaReadPpiList);
+        ASSERT_EFI_ERROR (Status);
+      }
     }
-
-    //
-    // Install notify PPIs to lock SPI DMA after copying FVs
-    Status = PeiServicesNotifyPpi (&mLockSpiDmaNotifyList);
-    ASSERT_EFI_ERROR (Status);
   } else {
     return EFI_UNSUPPORTED;
   }

@@ -38,6 +38,7 @@
 #include <Library/PreSiliconEnvDetectLib.h>
 #include <Library/PerformanceLib.h>
 #include <Ppi/MemoryDiscovered.h>
+#include <Library/PeiSpiDmaLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -188,8 +189,45 @@ EarlyDevicesEntryPoint (
   UINTN                               FixedMmioBaseAddress;
   EDKII_PCI_DEVICE_PPI                *SmbusPpi;
   EFI_PEI_PPI_DESCRIPTOR              *SmbusPpiDescriptor;
-
+#if FixedPcdGetBool (PcdSpiDmaEnable) == 1
+  EFI_STATUS                          Status;
+  VOID                                *MemoryDiscoveredPpi;
+#endif
   PERF_INMODULE_BEGIN ("EarlyDevices");
+#if FixedPcdGetBool (PcdSpiDmaEnable) == 1
+  //
+  // This is a mitigation to avoid accesses from SPI Flash while SPI DMA is in progress.
+  // We use PeiServicesRegisterForShadow API to register EarlyDevices PEIM for copy when
+  // memory is available. This code causes a re-entry for EarlyDevices which re-installs
+  // the SPI DMA based FirmwareVolumeShadow from SPI Flash to Memory. So we execute from
+  // Memory instead of SPI Flash when SPI DMA is executing.
+  //
+  // This code also assumes that the re-entry of EarlyDevices happens before FvReportPei
+  // executes. EDKII implemention of PeiDispatcher executes re-entry PEIM modules before
+  // any other PEIM modules. If this behaviour changes we would need to redo the change.
+  //
+  // HSD-WA RCR requested till PTL:
+  // Link to the original DPMO issue: https://hsdes.intel.com/appstore/article/#/16024140925
+  //
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiMemoryDiscoveredPpiGuid,
+             0,
+             NULL,
+             (VOID **)&MemoryDiscoveredPpi
+             );
+  if (Status == EFI_NOT_FOUND) {
+    Status = PeiServicesRegisterForShadow (FileHandle);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a: Registering for shadow failed\n", __FUNCTION__));
+    }
+    ASSERT_EFI_ERROR (Status);
+  } else if (Status == EFI_SUCCESS){
+    DEBUG ((DEBUG_INFO, "%a: Re-entry after Memory discovered. re-install SpiDma Ppi\n", __FUNCTION__));
+    SpiDmaServiceInit ();
+    PERF_INMODULE_END ("EarlyDevices");
+    return EFI_SUCCESS;
+  }
+#endif
   CreatePciDeviceIoFromSbdf (
     0,
     0,
@@ -233,6 +271,9 @@ EarlyDevicesEntryPoint (
 
   EarlyMeInit ();
   HdaInitEarlyPei ();
+#if FixedPcdGetBool(PcdSpiDmaEnable) == 1
+  SpiDmaServiceInit();
+#endif
 
   PERF_INMODULE_END ("EarlyDevices");
   return EFI_SUCCESS;

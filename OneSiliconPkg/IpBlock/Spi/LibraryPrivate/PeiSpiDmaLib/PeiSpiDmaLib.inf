@@ -67,3 +67,4 @@
   gEdkiiPeiFirmwareVolumeShadowPpiGuid          ## PRODUCES
   gEdkiiIoMmuPpiGuid                            ## CONSUMES
   gEfiEndOfPeiSignalPpiGuid                     ## CONSUMES
+  gEfiPeiMemoryDiscoveredPpiGuid                ## CONSUMES

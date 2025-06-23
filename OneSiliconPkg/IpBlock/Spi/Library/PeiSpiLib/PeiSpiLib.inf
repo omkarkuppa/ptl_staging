@@ -43,7 +43,6 @@ SpiCommonLib
 PchPciBdfLib
 SpiInitLib
 SpiSocLib
-PeiSpiDmaLib
 
 [Packages]
 MdePkg/MdePkg.dec

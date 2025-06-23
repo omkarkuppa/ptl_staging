@@ -132,6 +132,7 @@ PerformanceLib
 PeiVtdInitFruLib
 CanSsInitLib
 PeiTsnInitLib
+PeiSpiDmaLib
 
 [Packages]
 MdePkg/MdePkg.dec

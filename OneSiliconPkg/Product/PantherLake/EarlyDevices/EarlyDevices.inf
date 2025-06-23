@@ -45,6 +45,7 @@
   MeFruInitLib
   PciIoLib
   PerformanceLib
+  PeiSpiDmaLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -53,6 +54,9 @@
 
 [Sources]
   EarlyDevices.c
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdSpiDmaEnable ## CONSUMES
 
 [Ppis]
   gEdkiiPeiPciDevicePpiGuid       ## PRODUCES

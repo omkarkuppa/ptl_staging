@@ -32,7 +32,18 @@
 **/
 EFI_STATUS
 EFIAPI
-DmaServiceInit (
+SpiDmaServiceInit (
+  VOID
+  );
+
+/**
+  This function initializes SPI DMA Silicon configuration.
+
+  @retval EFI_STATUS  Results of SPI DMA Silicon Configuration
+**/
+EFI_STATUS
+EFIAPI
+SpiDmaSiliconConfig (
   VOID
   );
 

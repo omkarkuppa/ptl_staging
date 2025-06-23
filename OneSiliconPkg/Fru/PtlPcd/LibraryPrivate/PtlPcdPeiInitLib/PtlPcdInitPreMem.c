@@ -64,6 +64,7 @@
 #include <Register/Ptl/Cpu/CpuSbInfo.h>
 #include <Defines/PcdPchBdfAssignment.h>
 #include <Library/CpuRegbarAccessLib.h>
+#include <Library/PeiSpiDmaLib.h>
 
 STATIC EFI_GUID mResetNotificationCallbackPtrGuid = {0xb0d9cc70, 0x5bbf, 0x4eb2, {0xbc, 0x34, 0x53, 0x1b, 0xfe, 0x7f, 0x59, 0xeb}};
 
@@ -669,6 +670,7 @@ PtlPcdInitPrePolicy (
   //
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREPOLICY_INIT_SERVICE_SPI);
   SpiServiceInit ();
+  SpiDmaSiliconConfig();
 
   //
   // Perform PSF early initialization.
