@@ -679,7 +679,7 @@ INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPc
 !endif
 
 FILE FREEFORM = PCD(gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid) {
-  SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/Vbt.bin
+    SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/Vbt.bin
   SECTION UI  = "IntelGopPreMemVbt"
 }
 

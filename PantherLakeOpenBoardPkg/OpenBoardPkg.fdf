@@ -315,7 +315,7 @@ INF $(PLATFORM_PACKAGE)/PlatformInit/SiliconPolicyPei/SiliconPolicyPeiPostMem.in
 
 !if gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable == TRUE
   FILE FREEFORM = PCD(gIntelSiliconPkgTokenSpaceGuid.PcdIntelGraphicsVbtFileGuid) {
-    SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/Vbt.bin
+      SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/Vbt.bin
     SECTION UI  = "IntelGopVbt"
   }
 !endif
