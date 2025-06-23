@@ -708,6 +708,10 @@ PtlPcdGpioEnableTbtLsxInterface (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+    Status = GpioServices->SetResetConfig (GpioServices, TbtLsxGpio[Index].Pad, GpioV2ResetGlobal);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
   }
   return EFI_SUCCESS;
 }
