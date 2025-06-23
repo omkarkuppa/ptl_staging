@@ -117,4 +117,9 @@
 //
 #define PCH_MAX_TSN_PORT                    4
 
+//
+// Number of CAN controllers
+//
+#define PCH_MAX_CAN_PORT                    2
+
 #endif

@@ -63,6 +63,7 @@
 #include <Library/PeiLpssI2cPolicyLib.h>
 #include <Library/PeiLpssSpiPolicyLib.h>
 #include <Library/PeiLpssUartPolicyLib.h>
+#include <Library/PeiCanPolicyLib.h>
 
 /**
   PPI function to print Silicon Policy config block settings
@@ -105,6 +106,9 @@ PeiSiPolicyPrint (
   #if FixedPcdGet8(PcdTsnSupport) == 0x1
     TsnPrintConfig (SiPolicyPpi);
   #endif
+#if FixedPcdGet8(PcdCanSupport) == 0x1
+    CanPrintConfig (SiPolicyPpi);
+#endif
     HdaPrintConfig (SiPolicyPpi);
     IshPrintConfig (SiPolicyPpi);
     EspiPrintConfig (SiPolicyPpi);

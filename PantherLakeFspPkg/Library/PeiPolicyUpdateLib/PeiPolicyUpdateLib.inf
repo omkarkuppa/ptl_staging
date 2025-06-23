@@ -57,6 +57,7 @@
   gSiPkgTokenSpaceGuid.PcdTcssSupport                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdVmdEnable                         ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTsnSupport                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdCanSupport                        ## CONSUMES
 
 [LibraryClasses]
   ConfigBlockLib
@@ -98,6 +99,7 @@
   gThcConfigGuid              ## CONSUMES
   gIehConfigGuid              ## CONSUMES
   gFusaConfigGuid             ## CONSUMES
+  gCanConfigGuid              ## CONSUMES
   gCpuInitConfigGuid                  ## CONSUMES
   gBiosGuardConfigGuid                ## CONSUMES
   gCpuPowerMgmtBasicConfigGuid        ## CONSUMES

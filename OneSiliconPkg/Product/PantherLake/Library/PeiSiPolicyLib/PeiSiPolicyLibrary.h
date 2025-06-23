@@ -78,6 +78,7 @@
 #include <Library/PeiLpssI3cPolicyLib.h>
 #include <Library/PeiLpssSpiPolicyLib.h>
 #include <Library/PeiLpssUartPolicyLib.h>
+#include <Library/PeiCanPolicyLib.h>
 
 #define TEMP_MEM_BASE_ADDRESS 0xFE600000
 #define TEMP_IO_BASE_ADDRESS  0xD000

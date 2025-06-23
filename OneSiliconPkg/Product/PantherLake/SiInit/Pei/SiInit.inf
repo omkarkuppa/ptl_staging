@@ -133,6 +133,7 @@
   gSiPkgTokenSpaceGuid.PcdFspConfigHobsEnable        ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdFusaSupport                ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTsnSupport                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdCanSupport                 ## CONSUMES
 
 [Guids]
   gSiConfigHobGuid            ## CONSUMES

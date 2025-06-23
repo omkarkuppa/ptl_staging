@@ -624,4 +624,14 @@ VOID
 PtlPcdPsfConfigureClkreqHys (
   VOID
   );
+
+/**
+  Disable CAN device at PSF level
+
+  @param[in]  CanNumber                CAN Controller Number (0 based)
+**/
+VOID
+PtlPcdPsfDisableCan (
+  IN  UINT32        CanNumber
+  );
 #endif

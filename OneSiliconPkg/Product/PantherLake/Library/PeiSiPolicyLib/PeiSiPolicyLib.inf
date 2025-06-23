@@ -99,6 +99,7 @@ IpTcssLib
 MemorySubSystemPolicyLib
 FspVPolicyLib
 PeiOcPolicyLib
+PeiCanPolicyLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -129,3 +130,4 @@ gSiPkgTokenSpaceGuid.PcdTcssSupport       ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdFspVEnable        ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdOverclockEnable   ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdTsnSupport        ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdCanSupport        ## CONSUMES

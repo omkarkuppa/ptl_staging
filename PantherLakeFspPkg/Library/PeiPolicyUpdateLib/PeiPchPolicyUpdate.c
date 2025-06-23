@@ -64,6 +64,9 @@
 #if FixedPcdGet8 (PcdTsnSupport) == 0x1
 #include <TsnConfig.h>
 #endif
+#if FixedPcdGet8 (PcdCanSupport) == 0x1
+#include <CanConfig.h>
+#endif
 
 /**
   Update GBE policies.
@@ -1483,6 +1486,36 @@ FspUpdatePsfPolicy (
 
 }
 
+#if FixedPcdGet8 (PcdCanSupport) == 0x1
+/**
+  Update CAN policies.
+
+  @param[in] SiPolicy  Pointer to SI_POLICY_PPI
+  @param[in] FspsUpd   Pointer to FSPS_UPD
+**/
+STATIC
+VOID
+FspUpdateCanPolicy (
+  IN SI_POLICY_PPI  *SiPolicy,
+  IN FSPS_UPD       *FspsUpd
+  )
+{
+  CAN_CONFIG    *CanConfig;
+  EFI_STATUS    Status;
+  UINT8         Index;
+
+  Status = GetConfigBlock ((VOID *) SiPolicy, &gCanConfigGuid, (VOID *) &CanConfig);
+  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
+
+  for (Index = 0; Index < PCH_MAX_CAN_PORT; Index++) {
+    CanConfig->Enable[Index]    = FspsUpd->FspsConfig.PchCanEnable[Index];
+  }
+}
+#endif
+
 /**
   This function performs PCH PEI Policy update.
 
@@ -1503,6 +1536,9 @@ FspUpdatePeiPchPolicy (
   FspUpdateGbePolicy (SiPolicy, FspsUpd);
 #if FixedPcdGet8 (PcdTsnSupport) == 0x1
   FspUpdateTsnPolicy (SiPolicy, FspsUpd);
+#endif
+#if FixedPcdGet8 (PcdCanSupport) == 0x1
+  FspUpdateCanPolicy (SiPolicy, FspsUpd);
 #endif
   FspUpdateHdAudioPolicy (SiPolicy, FspsUpd);
   FspUpdateCnviPolicy (SiPolicy, FspsUpd);

@@ -146,6 +146,7 @@
   PtlPcdSerialIoPolicyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PeiSerialIoPolicyLib/PeiSerialIoPolicyLibPtl.inf
   PtlPcdHeciDeviceConfigLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdHeciDeviceConfigLib/PtlPcdHeciDeviceConfigLib.inf
   CanSsInitLib|$(PLATFORM_SI_PACKAGE)/Subsystem/CanSs/CanSsInitLib/CanSsInitLib.inf
+  PeiCanPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Can/LibraryPrivate/PeiCanPolicyLib/PeiCanPolicyLib.inf
 
 #
 # IAX

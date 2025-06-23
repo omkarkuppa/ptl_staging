@@ -2627,8 +2627,13 @@
   # !BSF NAME:{Change Default SSID} TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
   # !BSF HELP:{Change the default SSID used in FSP to programming internal devices. This is only valid when SkipSsidProgramming is FALSE.}
   gPlatformFspPkgTokenSpaceGuid.SiCustomizedSsid    | * | 0x02 | 0x0000
-  # Added reserved space    UnusedUpdSpace22[6]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd22               | * | 0x6 | {0x00}
+
+  # !BSF NAME:{CAN Configurations} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable CAN Controllers.0: Disable, <b>1: Enable</b>}
+  gPlatformFspPkgTokenSpaceGuid.PchCanEnable                | * | 0x02 | {0x01, 0x01}
+
+  # Added reserved space    UnusedUpdSpace22[4]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd22               | * | 0x4 | {0x00}
 
   #
   # typedef struct {
