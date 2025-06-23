@@ -274,6 +274,7 @@ struct _IP_USB3_INST {
   IP_USB3_FEATURE_LIST_ENTRY    *FeatureList;                   // Feature list table pointer
   UINT32                        FeatureListEntryCount;          // Feature list table entry count
   BOOLEAN                       IsDciEnabled;                   // If TRUE USB2 DAP SPR debug mode is enabled, debug disabled if FALSE.
+  BOOLEAN                       IsDwbEnabled;                   // Enable/disable the Deferred Write Buffer feature
 
   // Per port configurations
   IP_USB3_USB2_PORT_CONFIG      Usb2PortConfig[MAX_USB2_PORTS];

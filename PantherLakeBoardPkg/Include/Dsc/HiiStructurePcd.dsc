@@ -1633,6 +1633,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchWakeOnWlan|0x0                          
 !endif
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchXhciOcLock|0x1                                             # USB Overcurrent Lock
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchXhciUaol|0x1                                               # USB Audio Offload
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchXhciDwb|0x1                                                # USB Deferred Write Buffer
 gStructPcdTokenSpaceGuid.PcdPchSetup.Pcie8xhDecodePortIndex|0x1                                    # Port8xh Decode Port#
 gStructPcdTokenSpaceGuid.PcdPchSetup.PcieComplianceTestMode|0x0                                    # Compliance Test Mode
 gStructPcdTokenSpaceGuid.PcdPchSetup.PcieDetectTimeoutMs[0]|0x0                                    # Detect Timeout

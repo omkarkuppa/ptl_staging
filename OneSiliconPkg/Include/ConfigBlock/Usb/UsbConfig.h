@@ -22,7 +22,7 @@
 #ifndef _USB_CONFIG_H_
 #define _USB_CONFIG_H_
 
-#define USB_CONFIG_REVISION 4
+#define USB_CONFIG_REVISION 5
 extern EFI_GUID gUsbConfigGuid;
 
 #define MAX_USB2_PORTS  16
@@ -93,6 +93,8 @@ typedef struct {
   <b>Revision 4</b>:
   - Add Usb31Speed to select gen1 or gen2 speed
   - Add SwDeviceModeEnable to control device mode of usb2 port
+  <b>Revision 5</b>:
+  - Add DwbEnable to control the Deferred Write Buffer feature
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER     Header;                   ///< Config Block Header
@@ -148,7 +150,13 @@ typedef struct {
     0: Disable; 1: Enable.
   **/
   UINT32                  ControllerDisable            : 1;
-  UINT32                  RsvdBits0                    : 25;     ///< Reserved bits
+    /**
+    Enable DWB
+    0: disable
+    <b>1: enable</b>
+  **/
+  UINT32                  DwbEnable                    :  1;
+  UINT32                  RsvdBits0                    : 24;     ///< Reserved bits
   /**
     High Idle Time Control override value
     This setting is used only if LtrOverrideEnable is enabled

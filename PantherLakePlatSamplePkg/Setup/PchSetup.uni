@@ -1455,6 +1455,8 @@
 #string STR_USB_UAOL_ENABLE_HELP                #language en-US "Enable/Disable USB Audio Offload functionality"
 #string STR_XHCI_HSII_ENABLE                    #language en-US "Enable HSII on xHCI"
 #string STR_XHCI_HSII_ENABLE_HELP               #language en-US "Enable/Disable HSII feature. It may lead to increased power consumption."
+#string STR_USB_DWB_ENABLE                      #language en-US "USB DWB"
+#string STR_USB_DWB_ENABLE_HELP                 #language en-US "Enable/Disable USB Deferred Write Buffer feature"
 
 //
 // BEGIN - Setup Options visible only when XHCI Mode = "Manual"

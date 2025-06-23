@@ -210,6 +210,7 @@ UsbConfLoadConfigDefault (
   UsbConfig->XhciOcLock = TRUE;
   UsbConfig->UaolEnable = TRUE;
   UsbConfig->HsiiEnable = TRUE;
+  UsbConfig->DwbEnable  = TRUE;
 
   //
   // xDCI configuration

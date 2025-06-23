@@ -414,6 +414,7 @@ FspUpdateUsbPolicy (
   UsbConfig->OverCurrentEnable = FspsUpd->FspsConfig.PchUsbOverCurrentEnable;
   UsbConfig->XhciOcLock        = FspsUpd->FspsConfig.PchXhciOcLock;
   UsbConfig->UaolEnable        = FspsUpd->FspsConfig.PchXhciUaolEnable;
+  UsbConfig->DwbEnable         = FspsUpd->FspsConfig.PchXhciDwbEnable;
   UsbConfig->Usb31Speed        = FspsUpd->FspsConfig.Usb31PortSpeed;
 
   for (Index = 0; Index < Usb2PortCount; Index++) {

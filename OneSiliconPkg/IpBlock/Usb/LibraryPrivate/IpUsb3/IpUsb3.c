@@ -148,6 +148,10 @@ IpUsb3HostControllerInit (
     IpUsb3ChangeUsb2DbcPortsToFunctional (pInst);
   }
 
+  if (pInst->Integration != IpUsb3IntegrationUsb4ss) {
+    IpUsb3SetControl (pInst, 0, IpUsb3FeatIdDwbEnable, pInst->IsDwbEnabled);
+  }
+
   IpUsb3SetControl (pInst, 0, IpUsb3FeatIdAccessControlLock, 0);
   return IpCsiStsSuccess;
 }

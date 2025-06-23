@@ -2427,8 +2427,13 @@
   # !BSF NAME:{Enable xHCI LTR override} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables override of recommended LTR values for xHCI}
   gPlatformFspPkgTokenSpaceGuid.PchUsbLtrOverrideEnable         | * | 0x01 | 0x00
+
+  # !BSF NAME:{USB DWB enable} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable USB DWB. 0: disabled, 1: enabled (default)}
+  gPlatformFspPkgTokenSpaceGuid.PchXhciDwbEnable | * | 0x01 | 0x01
+
   # Added reserved space    UnusedUpdSpace21[3]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd21                   | * | 0x3 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd21                   | * | 0x2 | {0x00}
 
   # !BSF NAME:{xHCI High Idle Time LTR override} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Value used for overriding LTR recommendation for xHCI High Idle Time LTR setting}

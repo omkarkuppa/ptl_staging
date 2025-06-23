@@ -971,6 +971,7 @@ UpdateUsbConfig (
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.UsbPdoProgramming, UsbConfig->PdoProgramming, PchSetup->PchUsbPdoProgramming);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchUsbOverCurrentEnable, UsbConfig->OverCurrentEnable, PchSetup->PchUsbOverCurrentEnable);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciUaolEnable, UsbConfig->UaolEnable, !!PchSetup->PchXhciUaol);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciDwbEnable, UsbConfig->DwbEnable, !!PchSetup->PchXhciDwb);
 
   for (PortIndex = 0; PortIndex < Usb2PortCount; PortIndex++) {
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb20Enable[PortIndex], UsbConfig->PortUsb20[PortIndex].Enable, !!PchSetup->PchUsbHsPort[PortIndex]);
