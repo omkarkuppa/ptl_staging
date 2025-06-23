@@ -250,10 +250,10 @@ PcieSipIsLaneReversalEnabled (
     //
     // From SIP17, LR bit is moved from PCIEDBG to STRPFUSECFG
     //
-    Data32 = RpDev->PciCfgAccess->Read32 (RpDev->PciCfgAccess, R_PCIE_CFG_STRPFUSECFG);
+    Data32 = RpDev->PciSbiMsgCfgAccess->Read32 (RpDev->PciSbiMsgCfgAccess, R_PCIE_CFG_STRPFUSECFG);
     return !! (Data32 & B_PCIE_CFG_STRPFUSECFG_LR);
   } else {
-    Data32 = RpDev->PciCfgAccess->Read32 (RpDev->PciCfgAccess, R_PCIE_CFG_PCIEDBG);
+    Data32 = RpDev->PciSbiMsgCfgAccess->Read32 (RpDev->PciSbiMsgCfgAccess, R_PCIE_CFG_PCIEDBG);
     return !! (Data32 & B_PCIE_CFG_PCIEDBG_DTCA);
   }
 }
