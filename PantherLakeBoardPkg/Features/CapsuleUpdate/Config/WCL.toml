@@ -42,7 +42,7 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
   LayoutPlatform = ''
 
 [BiosGuard]
-  PlatformId = 'WILDCATLAKE'
+  PlatformId = 'PANTHERLAKE'
   [BiosGuard.Certificate]
     SignType  = 'OpenSSL'
     Algorithm = 'RSA3072_SHA384_1_5'
