@@ -352,13 +352,13 @@ LpssSpiWriteRead (
       WriteBuffer++;
       MicroSecondDelay (LpssSpiSingleOperationDelay);
       RxDataIn = FALSE;
-      TransactionLength--;
     }
-    if (LpssSpiRxFifoNotEmpty (SpiBaseAddress)) {
+    if ((RxDataIn == FALSE) && LpssSpiRxFifoNotEmpty (SpiBaseAddress)) {
       SpiData = MmioRead32 (SpiBaseAddress + R_LPSS_SPI_MEM_SSDR);
       *ReadBuffer = (UINT8) SpiData;
       RxDataIn = TRUE;
       ReadBuffer++;
+      TransactionLength--;
     }
     Timeout--;
   }
