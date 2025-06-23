@@ -1460,7 +1460,7 @@ FspUpdateFivrPolicy (
 
 
 /**
-  Update Psf PreMem policies.
+  Update Psf policies.
 
   @param[in] SiPolicy       Pointer to SI_POLICY_PPI
   @param[in] FspsUpm        Pointer to FSPS_UPD

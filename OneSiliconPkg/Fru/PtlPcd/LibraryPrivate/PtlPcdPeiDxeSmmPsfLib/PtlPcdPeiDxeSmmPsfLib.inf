@@ -58,3 +58,4 @@ LIBRARY_CLASS                  = PsfSocLib
 
 [Guids]
 gPsfConfigGuid    ##CONSUMES
+gUsbConfigGuid    ##CONSUMES

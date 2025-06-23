@@ -28,6 +28,7 @@
 #include <Library/P2SbSidebandAccessLib.h>
 #include <Ppi/SiPolicy.h>
 #include <PsfConfig.h>
+#include <UsbConfig.h>
 #include <PcdSbPortIds.h>
 #include <Library/Ptl/PtlPcdP2SbSocLib.h>
 
@@ -2593,6 +2594,7 @@ PtlPcdPPsfProgramDWB (
 {
   EFI_STATUS                    Status;
   PSF_CONFIG                    *PsfConfig;
+  USB_CONFIG                    *UsbConfig;
   PSF_DEV                       PsfDev;
   PSF_PORT                      PsfPort;
   P2SB_SIDEBAND_REGISTER_ACCESS RegAccess;
@@ -2600,6 +2602,9 @@ PtlPcdPPsfProgramDWB (
   PSF_REG_BASE                  PsfRegBase;
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gPsfConfigGuid, (VOID *) &PsfConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gUsbConfigGuid, (VOID *) &UsbConfig);
   ASSERT_EFI_ERROR (Status);
 
   PsfRegBase.PsfNumber = 6;
@@ -2617,7 +2622,7 @@ PtlPcdPPsfProgramDWB (
     PsfConfig->DwbConfigDwbFlushThreshold,
     PsfConfig->DwbConfigNonxHCIEn,
     PsfConfig->DwbConfigOBFFEn,
-    PsfConfig->DwbConfigDWBEn
+    !!UsbConfig->DwbEnable
     );
 }
 
