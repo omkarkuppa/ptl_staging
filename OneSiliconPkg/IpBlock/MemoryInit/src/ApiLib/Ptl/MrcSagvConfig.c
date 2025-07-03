@@ -40,6 +40,7 @@ MrcFrequency Lp5SupportedFrequencies[] = {
   f9600,
   f8533,
   f8400,
+  f8000,
   f7467,
   f6800,
   f6400,
