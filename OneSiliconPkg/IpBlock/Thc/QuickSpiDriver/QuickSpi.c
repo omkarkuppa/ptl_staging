@@ -825,7 +825,8 @@ QuickSpiDriverBindingStop (
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   ControllerHandle,
                   &gThcProtocolGuid,
-                  &QuickSpiDev->ThcProtocol
+                  &QuickSpiDev->ThcProtocol,
+                  NULL
                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "QuickSpiDriverBindingStop Failed to Uninstall ThcProtocol, Status: %r\n", Status));
