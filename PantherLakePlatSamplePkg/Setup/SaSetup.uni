@@ -1904,6 +1904,7 @@
 #string STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN  #language en-US "Handshake_En"
 #string STR_MIPICAM_GPIO_GROUP_B_F_S_V          #language en-US "B_F_S_V"
 #string STR_MIPICAM_GPIO_GROUP_C_D_E_H          #language en-US "C_D_E_H"
+#string STR_MIPICAM_GPIO_GROUP_A                #language en-US "A"
 #string STR_MIPICAM_GPIO_FUNCTION_CUSTOM        #language en-US "User Custom"
 #string STR_MIPICAM_GPIO_FUNCTION_CUSTOM_HELP   #language en-US "value can be 0x15-0xFF"
 

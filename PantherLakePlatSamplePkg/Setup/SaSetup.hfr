@@ -9830,6 +9830,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioComNumber[0],
@@ -9906,6 +9907,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioComNumber[1],
@@ -9983,6 +9985,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioComNumber[2],
@@ -10060,6 +10063,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioComNumber[3],
@@ -10137,6 +10141,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioComNumber[4],
@@ -10214,6 +10219,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioComNumber[5],
@@ -10447,6 +10453,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
         endoneof;
 
         oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioComNumber[0],
@@ -10523,6 +10530,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioComNumber[1],
@@ -10600,6 +10608,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioComNumber[2],
@@ -10677,6 +10686,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioComNumber[3],
@@ -10754,6 +10764,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioComNumber[4],
@@ -10831,6 +10842,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioComNumber[5],
@@ -11064,6 +11076,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioComNumber[0],
@@ -11140,6 +11153,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioComNumber[1],
@@ -11217,6 +11231,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioComNumber[2],
@@ -11294,6 +11309,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioComNumber[3],
@@ -11371,6 +11387,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioComNumber[4],
@@ -11448,6 +11465,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioComNumber[5],
@@ -11681,6 +11699,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioComNumber[0],
@@ -11757,6 +11776,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioComNumber[1],
@@ -11834,6 +11854,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioComNumber[2],
@@ -11911,6 +11932,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioComNumber[3],
@@ -11988,6 +12010,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioComNumber[4],
@@ -12065,6 +12088,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioComNumber[5],
@@ -12299,6 +12323,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic4_GpioComNumber[0],
@@ -12374,6 +12399,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic4_GpioComNumber[1],
@@ -12451,6 +12477,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic4_GpioComNumber[2],
@@ -12528,6 +12555,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic4_GpioComNumber[3],
@@ -12605,6 +12633,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic4_GpioComNumber[4],
@@ -12682,6 +12711,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic4_GpioComNumber[5],
@@ -12915,6 +12945,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic5_GpioComNumber[0],
@@ -12991,6 +13022,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic5_GpioComNumber[1],
@@ -13068,6 +13100,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic5_GpioComNumber[2],
@@ -13145,6 +13178,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic5_GpioComNumber[3],
@@ -13222,6 +13256,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic5_GpioComNumber[4],
@@ -13299,6 +13334,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic5_GpioComNumber[5],
@@ -13444,6 +13480,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_Flash0_GpioComNumber,
@@ -13562,6 +13599,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_Flash1_GpioComNumber,
@@ -13681,6 +13719,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_Flash2_GpioComNumber,
@@ -13800,6 +13839,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_Flash3_GpioComNumber,
@@ -13919,6 +13959,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_Flash4_GpioComNumber,
@@ -14038,6 +14079,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_NUMBER),
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_B_F_S_V), value = 0x00, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_C_D_E_H), value = 0x01, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_A),       value = 0x02, flags = RESET_REQUIRED;
           endoneof;
 
           oneof varid   = MIPICAM_CONFIG.MipiCam_Flash5_GpioComNumber,
