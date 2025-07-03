@@ -29,7 +29,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/FspLoadComponentsLib.h>
 
-FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
+volatile FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   FSP_VERIFY_API_WRAPPER_STRUCTURE_ID,
   NULL,  // To be patched post FSP build
   NULL,  // To be patched post FSP build

@@ -37,7 +37,7 @@
 // which has signature FSP_VERIFY_API_WRAPPER_STRUCTURE_ID by post FSP build patch.
 // These APIs should be implemented as BASE type and shared between SEC and PEI use.
 //
-FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
+volatile FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   FSP_VERIFY_API_WRAPPER_STRUCTURE_ID,
   VerifyAndExtendFspm,
   VerifyAndLogEventFsps,
