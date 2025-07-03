@@ -290,8 +290,7 @@ class BtGAcmFwHdrParser (object):
 
         Raises:
             ValueError:
-                (1) Failed to find the correspond GUID.
-                (2) Find more than one GUID matched within buffer.
+                Failed to find the correspond GUID.
 
         Returns:
             int:
@@ -302,8 +301,6 @@ class BtGAcmFwHdrParser (object):
 
         if len (Loc) == 0:
             raise ValueError ('Failed to find the ACM information table.')
-        elif len (Loc) > 1:
-            raise ValueError (f'Find more than one GUID within buffer. {Loc}')
         else:
             DEBUG (DEBUG_INFO, f'Find the ACM information table offset {Loc}')
 
@@ -350,8 +347,7 @@ class BtGAcmFwHdrParser (object):
 
         Raises:
             ValueError:
-                (1) Failed to find the correspond signature.
-                (2) Find more than one signature within buffer.
+                Failed to find the correspond signature.
 
         Returns:
             int:
@@ -363,8 +359,6 @@ class BtGAcmFwHdrParser (object):
             raise ValueError (
                 'Failed to find the BtGAcm version information table.'
                 )
-        elif len (Loc) > 1:
-            raise ValueError ('Find more than two signature within buffer.')
         else:
             DEBUG (
               DEBUG_INFO,
