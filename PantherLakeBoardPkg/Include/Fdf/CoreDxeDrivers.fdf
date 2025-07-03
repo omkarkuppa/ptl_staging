@@ -126,7 +126,3 @@ INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 !if gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable == TRUE
 INF ShellPkg/DynamicCommand/DpDynamicCommand/DpDynamicCommand.inf
 !endif
-
-!if gBoardModuleTokenSpaceGuid.PcdUefiShellEnable == TRUE
-INF ShellPkg/Application/Shell/Shell.inf
-!endif

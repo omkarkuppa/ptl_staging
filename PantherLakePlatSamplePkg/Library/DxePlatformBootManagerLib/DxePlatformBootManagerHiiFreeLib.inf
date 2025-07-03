@@ -140,6 +140,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialBaudRate                  ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdVirtualKeyboardEnable            ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdTerminalOverDebugEnable          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalBase                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalSize                 ## CONSUMES
 
 [Sources]
   AmtSupport.c
@@ -175,6 +177,7 @@
   gConsoleOutConnectedProtocolGuid              ## PRODUCES
   gOneClickRecoveryProtocolGuid                 ## CONSUMES
   gEfiPxeBaseCodeCallbackProtocolGuid           ## CONSUMES
+  gFvAppDispatchFlagProtocolGuid                ## CONSUMES
 
 [Guids]
   gEfiGlobalVariableGuid                        ## PRODUCES

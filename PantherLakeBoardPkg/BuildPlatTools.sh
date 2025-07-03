@@ -37,7 +37,7 @@ fi
 #
 # Add additional tools in PATH.
 #
-export PATH=$WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/SignFv:$PATH
+export PATH=$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/SignFv:$PATH
 export PATH=$EDK_TOOLS_PATH/Source/C/bin:$PATH
 export PATH=$WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen:$PATH
 export PATH=$WORKSPACE_BINARIES/Tools/KeyEnroll:$PATH

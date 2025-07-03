@@ -54,6 +54,7 @@
   PantherLakeBinPkg/PantherLakeBinPkg.dec
   CapsuleFeaturePkg/CapsuleFeaturePkg.dec
   FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
 
 [Sources]
   PeiReportFvLib.c
@@ -67,6 +68,7 @@
   gFvAdvancedFvGuid
   gIntelMicrocodeVersionFfsBinGuid
   gSetupVariableGuid                                     ## CONSUMES ## Variable
+  gCnvFeatureSetupGuid                                   ## CONSUMES ## Variable
 
 [Ppis]
   gEfiPeiVirtualBlockIoPpiGuid
@@ -74,6 +76,7 @@
   gExtendedBiosDecodeReadyPpiGuid                 ## CONSUMES
   gEfiPeiReadOnlyVariable2PpiGuid
   gEfiBeforePostMemFvReportPpiGuid                ## PRODUCES
+  gPeiFvCnvDispatchFlagPpiGuid                    ## PRODUCES
 
 [FixedPcd]
   gPlatformModuleTokenSpaceGuid.PcdObbVerificationEnforcementEnable    ## CONSUMES
@@ -106,6 +109,8 @@
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                 ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesBase    ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalBase            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalSize            ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadBase         ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize         ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase        ## CONSUMES

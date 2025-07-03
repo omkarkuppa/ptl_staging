@@ -26,8 +26,8 @@ if [ "$1" = " " ]; then
   exit
 fi
 
-if [ -f $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/SignFv/privkey.pem ]; then
-  export PRIVATE_KEY_PATH=$WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/SignFv/privkey.pem
+if [ -f $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/SignFv/privkey.pem ]; then
+  export PRIVATE_KEY_PATH=$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/SignFv/privkey.pem
 else
   export PRIVATE_KEY_PATH=%WORKSPACE_CORE%/BaseTools/Source/Python/Rsa2048Sha256Sign/TestSigningPrivateKey.pem
 fi

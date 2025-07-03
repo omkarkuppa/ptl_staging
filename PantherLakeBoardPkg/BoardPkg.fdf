@@ -249,6 +249,10 @@ gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedOffset|gMinPlatformPkgTokenSpace
 gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize
 FV = FvAdvanced
 
+gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalOffset|gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalSize
+gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalBase|gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalSize
+FV = FvOptional
+
 !if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == FALSE
 gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize
 gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize
@@ -689,6 +693,11 @@ FILE FREEFORM = PCD(gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid
 
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
   !include CapsuleFeaturePkg/Include/PreMemory.fdf
+!endif
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable == TRUE
+# ROYAL_PARK_PORTING - Porting Required
+  INF RuleOverride = LzmaCompress MdeModulePkg/Universal/SectionExtractionPei/SectionExtractionPei.inf
 !endif
 
 !if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
@@ -2017,28 +2026,6 @@ FILE FV_IMAGE = gFvAdvancedFileGuid {
 !endif
 }
 
-#
-# CNV FV
-#
-!if gPlatformModuleTokenSpaceGuid.PcdNetworkEnable == TRUE
-FILE FV_IMAGE = 4E35FD93-9C72-4c15-8C4B-E77F1DB2D793 {
-
-  SECTION PEI_DEPEX_EXP = {gPeiFvCnvDispatchFlagPpiGuid}
-  !if gPlatformModuleTokenSpaceGuid.PcdDxeCompressEnable == TRUE
-        SECTION GUIDED $(FVCOMPRESSIONGUID) PROCESSING_REQUIRED = TRUE {
-          SECTION FV_IMAGE = FvCnvUnCompact
-        }
-  !else
-    # NoCompress
-      SECTION COMPRESS PI_NONE {
-        SECTION FV_IMAGE = FvCnvUnCompact
-      }
-  !endif
-
-  SECTION UI = "FvCnvUnCompact"
-}
-!endif  #gPlatformModuleTokenSpaceGuid.PcdNetworkEnable == TRUE
-
 [FV.FvWifiDxeUnCompact]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvForceRebase      = FALSE
@@ -2182,6 +2169,144 @@ FvNameGuid         = 8B98AB22-E354-42f0-88B9-049810F0FDAA
 !endif  #PcdPeiDisplayEnable
 
 !endif # PcdSocCoreBootEnable
+
+[FV.FvAppUncompact]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvForceRebase      = FALSE
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = CE2FCBB0-8662-4E26-A9EA-B7EA5418212E
+#
+# UEFI Shell
+#
+# Note : gUefiShellFileGuid (7C04A583-9E3E-4f1c-AD65-E05268D0B4D1) is FILE GUID for ShellPkg/Application/Shell/Shell.inf
+#
+!if gBoardModuleTokenSpaceGuid.PcdUefiShellEnable == TRUE
+    FILE APPLICATION = gUefiShellFileGuid {
+      SECTION PE32 = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/X64/ShellPkg/Application/Shell/Shell/OUTPUT/Shell.efi
+      SECTION UI = "UefiShell"
+    }
+!endif #PcdUefiShellEnable == TRUE
+
+#
+# Optional FV is optionally installed and dispatched on board specific features.
+#
+[FV.FvOptional]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 9574B1CE-EE93-451E-B500-3E5F564244DE
+
+FILE FV_IMAGE = 507B3A80-B8D6-4F25-9D86-9E065484AA32 {
+  #
+  # Keep the section depex right before the section of RSA2048SHA256SIGN GUID so the depex will apply to that section.
+  # Do not place at the bottom or inside of the section.
+  # Note :
+  # FvAppUncompact is installed in DXE but should not in PEI, so put PEI_DEPEX_EXP with FALSE in order to avoid this child FV
+  # getting installed unexpectedly in PEI on the parent FV installation in PEI.
+  # Both PEI_DEPEX_EXP with FALSE and DXE_DEPEX_EXP with the desired Protocol have to be appended to the section.
+  SECTION PEI_DEPEX_EXP = {FALSE}
+  SECTION DXE_DEPEX_EXP = {gFvAppDispatchFlagProtocolGuid}
+!if gPlatformModuleTokenSpaceGuid.PcdDxeCompressEnable == TRUE
+  !if gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable == TRUE
+    SECTION GUIDED gEfiCertTypeRsa2048Sha256Guid PROCESSING_REQUIRED = TRUE AUTH_STATUS_VALID = TRUE {
+      SECTION GUIDED $(FVCOMPRESSIONGUID) PROCESSING_REQUIRED = TRUE {
+        SECTION FV_IMAGE = FvAppUncompact
+      }
+    }
+  !else
+    SECTION GUIDED $(FVCOMPRESSIONGUID) PROCESSING_REQUIRED = TRUE {
+      SECTION FV_IMAGE = FvAppUncompact
+    }
+  !endif
+!else
+  # NoCompress
+  !if gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable == TRUE
+    SECTION GUIDED gEfiCertTypeRsa2048Sha256Guid PROCESSING_REQUIRED = TRUE AUTH_STATUS_VALID = TRUE {
+      SECTION COMPRESS PI_NONE {
+        SECTION FV_IMAGE = FvAppUncompact
+      }
+    }
+  !else
+    SECTION COMPRESS PI_NONE {
+      SECTION FV_IMAGE = FvAppUncompact
+    }
+  !endif
+!endif
+  SECTION UI = "FvApp"
+}
+
+#
+# CNV FV
+#
+!if gPlatformModuleTokenSpaceGuid.PcdNetworkEnable == TRUE
+FILE FV_IMAGE = 4E35FD93-9C72-4c15-8C4B-E77F1DB2D793 {
+  #
+  # Keep the section depex right before the section of RSA2048SHA256SIGN GUID so the depex will apply to that section.
+  # Do not place at the bottom or inside of the section.
+  # Note :
+  # FvCnvUnCompact is installed in PEI but should not in DXE, so put DXE_DEPEX_EXP with FALSE in order to avoid this child FV
+  # getting installed unexpectedly in DXE on the parent FV processing in DXE.
+  # Both PEI_DEPEX_EXP with the desired Ppi and DXE_DEPEX_EXP with FALSE have to be appended to the section.
+  SECTION PEI_DEPEX_EXP = {gPeiFvCnvDispatchFlagPpiGuid}
+  SECTION DXE_DEPEX_EXP = {FALSE}
+!if gPlatformModuleTokenSpaceGuid.PcdDxeCompressEnable == TRUE
+  !if gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable == TRUE
+    SECTION GUIDED gEfiCertTypeRsa2048Sha256Guid PROCESSING_REQUIRED = TRUE AUTH_STATUS_VALID = TRUE {
+      SECTION GUIDED $(FVCOMPRESSIONGUID) PROCESSING_REQUIRED = TRUE {
+        SECTION FV_IMAGE = FvCnvUnCompact
+      }
+    }
+  !else
+      SECTION GUIDED $(FVCOMPRESSIONGUID) PROCESSING_REQUIRED = TRUE {
+        SECTION FV_IMAGE = FvCnvUnCompact
+      }
+  !endif
+!else
+  # NoCompress
+  !if gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable == TRUE
+    SECTION GUIDED gEfiCertTypeRsa2048Sha256Guid PROCESSING_REQUIRED = TRUE AUTH_STATUS_VALID = TRUE {
+      SECTION COMPRESS PI_NONE {
+        SECTION FV_IMAGE = FvCnvUnCompact
+      }
+    }
+  !else
+    SECTION COMPRESS PI_NONE {
+      SECTION FV_IMAGE = FvCnvUnCompact
+    }
+  !endif
+!endif
+  SECTION UI = "FvCnvUnCompact"
+}
+!endif  #gPlatformModuleTokenSpaceGuid.PcdNetworkEnable == TRUE
 
 
 !if gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport == TRUE

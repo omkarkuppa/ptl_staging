@@ -42,8 +42,93 @@ BOOLEAN    mAnyKeypressed = FALSE;
 BOOLEAN    mHotKeypressed = FALSE;
 EFI_EVENT  HotKeyEvent    = NULL;
 UINTN      mBootMenuOptionNumber;
-BOOLEAN    mDecompressFvUefiBoot = FALSE;
+UINTN      mEfiShellOptionNumber;
+BOOLEAN    mDecompressFvOptional = FALSE;
 
+
+/**
+   This function enables FvApp which contains EFI Shell.
+
+   @retval   EFI_SUCCESS Successfully enable FvApp
+**/
+EFI_STATUS
+EnableFvApp (
+  VOID
+  )
+{
+  EFI_HANDLE     Handle;
+  EFI_STATUS     Status;
+  VOID           *FvAppDispatchFlagProtocol;
+
+  FvAppDispatchFlagProtocol = NULL;
+  Status = gBS->LocateProtocol (
+                  &gFvAppDispatchFlagProtocolGuid,
+                  NULL,
+                  (VOID **) &FvAppDispatchFlagProtocol
+                  );
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "FvApp has been enabled\n"));
+    return EFI_SUCCESS;
+  }
+
+  Handle = NULL;
+  Status = gBS->InstallProtocolInterface (
+                &Handle,
+                &gFvAppDispatchFlagProtocolGuid,
+                EFI_NATIVE_INTERFACE,
+                NULL
+                );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "FvApp fails to be enabled, Status = %r\n", Status));
+    ASSERT_EFI_ERROR (Status);
+    return Status;
+  }
+
+  DEBUG ((DEBUG_INFO, "FvApp is successfully enabled\n"));
+  return Status;
+}
+
+/**
+   This function process FvApp which contains EFI Shell.
+
+   @retval   EFI_SUCCESS          Successfully FvApp has been processed.
+   @retval   EFI_UNSUPPORTED      FvApp has not been enabled so fails to be processed.
+**/
+EFI_STATUS
+ProcessFvApp (
+  VOID
+  )
+{
+  EFI_HANDLE     Handle;
+  EFI_STATUS     Status;
+  UINT8          Index;
+
+  if (EnableFvApp () != EFI_SUCCESS) {
+    DEBUG ((DEBUG_ERROR, "ProcessFvApp : FvApp is not enabled\n"));
+    return EFI_UNSUPPORTED;
+  }
+
+  Handle = NULL;
+  gDS->ProcessFirmwareVolume (
+              (VOID *) (UINTN) PcdGet32 (PcdFlashFvOptionalBase),
+              PcdGet32 (PcdFlashFvOptionalSize),
+              &Handle
+              );
+  DEBUG ((DEBUG_INFO, "ProcessFvApp : Processing ...\n"));
+  for (Index = 0; Index < 10; Index++) {
+    Status = gDS->Dispatch ();
+    if (Status == EFI_SUCCESS) {
+      mDecompressFvOptional = TRUE;
+      break;
+    }
+    DEBUG ((DEBUG_INFO, " processing ... %r\n", Status));
+    MicroSecondDelay (50000);
+  }
+
+  DEBUG ((DEBUG_INFO, "ProcessFvApp : Status %r\n", Status));
+
+  return EFI_SUCCESS;
+}
 
 EFI_DEVICE_PATH_PROTOCOL *
 BdsCreateShellDevicePath (
@@ -78,7 +163,17 @@ Returns:
   DevicePath  = NULL;
   Status      = EFI_SUCCESS;
 
-  DEBUG ((DEBUG_INFO, "BdsCreateShellDevicePath\n"));
+  DEBUG((DEBUG_INFO, " %a \n", __FUNCTION__));
+
+  if (!mDecompressFvOptional) {
+      Status = ProcessFvApp ();
+      if (EFI_ERROR (Status)) {
+          DEBUG ((DEBUG_ERROR, "%a : FvApp process failure\n", __FUNCTION__));
+          ASSERT_EFI_ERROR (Status);
+          return NULL;
+      }
+  }
+
   gBS->LocateHandleBuffer (
         ByProtocol,
         &gEfiFirmwareVolume2ProtocolGuid,
@@ -533,32 +628,50 @@ RegisterDefaultBootOption (
   UINT16                             *ShellDataPtr;
   UINT16                             ShellData[MAX_SHELL_INPUT_SIZE];
   UINT32                             ShellDataSize;
+  EFI_STATUS                         Status;
+  BOOLEAN                            UefiShellEnabled;
 
   //
   // Check BootState variable, NULL means it's the first boot after reflashing
   // Shell
-  if (!IsBootStatePresent()) {
-    ShellDataSize = 0;
-    ShellDataPtr = ShellData;
-    SetMemN( ShellDataPtr, MAX_SHELL_INPUT_SIZE, 0);
-    StrCpyS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE / 2, L"");
+  UefiShellEnabled = PcdGetBool(PcdUefiShellEnable);
+  if (UefiShellEnabled) {
+    if (!IsBootStatePresent () || !IsShellInBootList ()) {
+      ShellDataSize = 0;
+      ShellDataPtr = ShellData;
+      SetMemN( ShellDataPtr, MAX_SHELL_INPUT_SIZE, 0);
+      StrCpyS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE / 2, L"");
 
-    if (PcdGetBool (PcdReducedShellEntryTime)) {
-      StrCatS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE/2, L" -delay 1");
-    }
+      if (PcdGetBool (PcdReducedShellEntryTime)) {
+        StrCatS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE/2, L" -delay 1");
+      }
 
-    if (!PcdGetBool (PcdShellEntryMapPrint)) {
-      StrCatS( ShellDataPtr, MAX_SHELL_INPUT_SIZE/2, L" -nomap");
-    }
-    ShellDataSize = (UINT32) StrSize (ShellDataPtr);
+      if (!PcdGetBool (PcdShellEntryMapPrint)) {
+        StrCatS( ShellDataPtr, MAX_SHELL_INPUT_SIZE/2, L" -nomap");
+      }
+      ShellDataSize = (UINT32) StrSize (ShellDataPtr);
 
-    if (PcdGetBool(PcdUefiShellEnable)) {
-      RegisterFvBootOption (&gUefiShellFileGuid, INTERNAL_UEFI_SHELL_NAME, (UINTN) -1, LOAD_OPTION_ACTIVE, (UINT8 *)ShellDataPtr, ShellDataSize);
+      // FvApp contains EFI Shell. Enabling FvApp automatically lets FvApp be processed if FvOptional has been installed
+      // and the FVB protocol has been installed.
+      // Try registering the boot option first. If fails due to FvApp not being processed, process.
+      EnableFvApp ();
+      mEfiShellOptionNumber = RegisterFvBootOption (&gUefiShellFileGuid, INTERNAL_UEFI_SHELL_NAME, (UINTN)-1, LOAD_OPTION_ACTIVE, (UINT8*)ShellDataPtr, ShellDataSize);
+      if (mEfiShellOptionNumber == LoadOptionNumberUnassigned) {
+        Status = ProcessFvApp ();
+        if (!EFI_ERROR(Status)) {
+          mEfiShellOptionNumber = RegisterFvBootOption (&gUefiShellFileGuid, INTERNAL_UEFI_SHELL_NAME, (UINTN)-1, LOAD_OPTION_ACTIVE, (UINT8*)ShellDataPtr, ShellDataSize);
+          if (mEfiShellOptionNumber == LoadOptionNumberUnassigned) {
+            DEBUG ((DEBUG_ERROR, " %a : mEfiShellOptionNumber (%d) should not be same to LoadOptionNumberUnassigned(%d).\n", __FUNCTION__, mEfiShellOptionNumber, LoadOptionNumberUnassigned));
+            } else {
+                  DEBUG ((DEBUG_INFO, " %a : EFI Shell is registered.\n", __FUNCTION__));
+            }
+        } else {
+              DEBUG ((DEBUG_ERROR, " %a : FvOptional process failure.\n", __FUNCTION__));
+        }
+      } else {
+            DEBUG ((DEBUG_INFO, " %a : EFI Shell is registered.\n", __FUNCTION__));
+      }
     }
-    //
-    // FV UefiBoot has been decompessed by Dxe driver.
-    //
-    mDecompressFvUefiBoot = TRUE;
   }
 
   //
@@ -567,7 +680,7 @@ RegisterDefaultBootOption (
   mBootMenuOptionNumber = RegisterFvBootOption (&gBootMenuFileGuid, L"Boot Device List",   (UINTN) -1, LOAD_OPTION_CATEGORY_APP | LOAD_OPTION_ACTIVE | LOAD_OPTION_HIDDEN, NULL, 0);
 
   if (mBootMenuOptionNumber == LoadOptionNumberUnassigned) {
-    DEBUG ((DEBUG_INFO, "BootMenuOptionNumber (%d) should not be same to LoadOptionNumberUnassigned(%d).\n", mBootMenuOptionNumber, LoadOptionNumberUnassigned));
+    DEBUG ((DEBUG_ERROR, "BootMenuOptionNumber (%d) should not be same to LoadOptionNumberUnassigned(%d).\n", mBootMenuOptionNumber, LoadOptionNumberUnassigned));
   }
 
   //
@@ -613,12 +726,12 @@ DetectKeypressCallback (
   IN EFI_KEY_DATA     *KeyData
 )
 {
-  mHotKeypressed = TRUE;
-
-  if (HotKeyEvent != NULL) {
+  if (!mHotKeypressed && HotKeyEvent != NULL) {
     gBS->SignalEvent(HotKeyEvent);
+    mHotKeypressed = TRUE;
+  } else {
+    DEBUG ((DEBUG_INFO, "No hotkey events to be handled until the current hotkey process completes.\n"));
   }
-
   return EFI_SUCCESS;
 }
 
@@ -629,36 +742,46 @@ ProcessFirmwareVolumeCallback (
   IN VOID         *Context
 )
 {
-//  EFI_HANDLE                    FwVolHandle;  @todo Align PlatformBootOption (DxePlatformBootManagerLib) with the Minimum Platform FV map
+  EFI_STATUS               Status;
+  EFI_TPL                  CurTpl;
 #if FixedPcdGetBool(PcdCapsuleEnable) == 1
   EFI_HOB_GUID_TYPE        *GuidHob;
 
   GuidHob = NULL;
-#endif
-  DEBUG ((DEBUG_INFO, "Callback invoke, mDecompressFvUefiBoot %d\n", mDecompressFvUefiBoot));
-  if (mDecompressFvUefiBoot) {
-    return;
-  }
-
-  if (!mHotKeypressed) {
-    return;
-  }
-#if FixedPcdGetBool(PcdCapsuleEnable) == 1
-  GuidHob = GetFirstGuidHob (&gSysFwUpdateProgressGuid);
+  GuidHob = GetFirstGuidHob(&gSysFwUpdateProgressGuid);
   if ((GuidHob != NULL) && \
-      (((SYSTEM_FIRMWARE_UPDATE_PROGRESS *) GET_GUID_HOB_DATA (GuidHob))->Component == UpdatingBios)) {
-    return;
+      (((SYSTEM_FIRMWARE_UPDATE_PROGRESS*)GET_GUID_HOB_DATA(GuidHob))->Component == UpdatingBios)) {
+      mHotKeypressed = FALSE;
+      return;
   }
 #endif
-// @todo Align PlatformBootOption (DxePlatformBootManagerLib) with the Minimum Platform FV map
-//  gDS->ProcessFirmwareVolume (
-//          (VOID *) (UINTN)PcdGet32(PcdFlashFvUefiBootBase),
-//          PcdGet32(PcdFlashFvUefiBootSize),
-//          &FwVolHandle
-//          );
-//  gDS->Dispatch ();
-  DEBUG ((DEBUG_INFO, "ProcessFirmwareVolumeCallback, Decompress FvUefiBoot before entering into setup menu\n"));
-  mDecompressFvUefiBoot = TRUE;
+  if (!mHotKeypressed) {
+      return;
+  }
+  DEBUG ((DEBUG_INFO, " %a : Hotkey callback invoked\n", __FUNCTION__));
+
+  if (!mDecompressFvOptional) {
+      DEBUG((DEBUG_INFO, " %a : Enable and process FvApp\n", __FUNCTION__));
+      Status = EnableFvApp();
+      if (EFI_ERROR(Status)) {
+          DEBUG((DEBUG_ERROR, " %a : FvApp enable failure\n", __FUNCTION__));
+          ASSERT_EFI_ERROR(Status);
+          mHotKeypressed = FALSE;
+          return;
+      }
+
+      CurTpl = EfiGetCurrentTpl();
+      gBS->RestoreTPL(TPL_APPLICATION);
+      Status = ProcessFvApp();
+      if (EFI_ERROR(Status)) {
+          DEBUG((DEBUG_ERROR, " %a : FvApp process failure\n", __FUNCTION__));
+          ASSERT_EFI_ERROR(Status);
+          mHotKeypressed = FALSE;
+          gBS->RaiseTPL(CurTpl);
+          return;
+      }
+      gBS->RaiseTPL(CurTpl);
+  }
   mHotKeypressed = FALSE;
 
   return;
@@ -786,8 +909,6 @@ RegisterStaticHotkey (
   // Register ProcessFirmwareVolumeCallback function of F2 & F7
   //
   //
-
-  if (!mDecompressFvUefiBoot) {
     DEBUG ((DEBUG_INFO, "Register F2 and F7\n"));
     Status = gBS->LocateHandleBuffer (
                     ByProtocol,
@@ -804,14 +925,14 @@ RegisterStaticHotkey (
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
       Status = gBS->HandleProtocol (Handles[HandleIndex], &gEfiSimpleTextInputExProtocolGuid, (VOID **) &TxtInEx);
       ASSERT_EFI_ERROR (Status);
-      Status = TxtInEx->RegisterKeyNotify (
+      TxtInEx->RegisterKeyNotify (
                     TxtInEx,
                     &F2,
                     DetectKeypressCallback,
                     &NotifyHandle
                     );
 
-      Status = TxtInEx->RegisterKeyNotify (
+      TxtInEx->RegisterKeyNotify (
                     TxtInEx,
                     &F7,
                     DetectKeypressCallback,
@@ -819,24 +940,20 @@ RegisterStaticHotkey (
                     );
     }
     FreePool (Handles);
-    Status = gBS->CreateEvent (
+    gBS->CreateEvent (
                 EVT_NOTIFY_SIGNAL,
                 TPL_CALLBACK,
                 ProcessFirmwareVolumeCallback,
                 NULL,
                 &HotKeyEvent
                 );
-    if (EFI_ERROR (Status)) {
-      return;
-    }
 
-    Status = EfiCreateEventReadyToBootEx (
+    EfiCreateEventReadyToBootEx (
                TPL_CALLBACK,
                StopProcessFirmwareVolume,
                NULL,
                &Event
                );
-  }
 }
 
 /**

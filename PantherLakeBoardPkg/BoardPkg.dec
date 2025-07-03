@@ -145,6 +145,8 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   gConsoleOutConnectedProtocolGuid      =  {0x44b5984b, 0xc182, 0x4049, {0xb4, 0xdf, 0x9c, 0x01, 0xc8, 0x80, 0x8b, 0xe7}}
 
+  gFvAppDispatchFlagProtocolGuid  =  {0x47458821, 0x44a3, 0x43f6, {0x90, 0xda, 0xdf, 0xdf, 0xce, 0x62, 0xf4, 0xfc}}
+
 [Ppis]
   gRstRaidControllerPpiGuid               =  {0x62f52aed, 0xf299, 0x4167, { 0x8e, 0x94, 0xea, 0x61, 0x9f, 0x5, 0x12, 0xad}}
   gPeiFvCnvDispatchFlagPpiGuid            =  {0x2ea45093, 0xa4e6, 0x42ac, {0x86, 0xcf, 0x5e, 0xc6, 0xbf, 0xfb, 0x88, 0x85}}
@@ -225,6 +227,9 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedBase|0x00000000|UINT32|0x20000063
   gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedOffset|0x00000000|UINT32|0x20000064
   gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedSize|0x00000000|UINT32|0x20000065
+  gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalBase|0x00000000|UINT32|0x2000006A
+  gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalSize|0x00000000|UINT32|0x2000006B
+  gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalOffset|0x00000000|UINT32|0x2000006C
   gBoardModuleTokenSpaceGuid.PcdFlashAllExtendAreaSize|0x00000000|UINT32|0x20000100
   gBoardModuleTokenSpaceGuid.PcdFlashExtendAreaBaseAddress|0x00000000|UINT32|0x20000101
 

@@ -1006,6 +1006,10 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
     <LibraryClasses>
       PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   }
+  MdeModulePkg/Universal/SectionExtractionPei/SectionExtractionPei.inf {
+    <LibraryClasses>
+      NULL|SecurityPkg/Library/PeiRsa2048Sha256GuidedSectionExtractLib/PeiRsa2048Sha256GuidedSectionExtractLib.inf
+  }
   MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf {
     <LibraryClasses>
 !if $(TARGET) == DEBUG

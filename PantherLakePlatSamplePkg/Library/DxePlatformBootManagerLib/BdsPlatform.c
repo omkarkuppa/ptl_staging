@@ -2530,6 +2530,36 @@ NotifyChangeModeForInternalShell (
 }
 
 /**
+  This event enables the protocol for Optional FV where EFI Shell contains.
+  This has to be called before OnReadyToBootCallBack so Optional FV is processed
+  in case of EFI Shell boot.
+
+  @param  Event   Pointer to this event
+  @param  Context Event handler private data
+
+  @retval None.
+**/
+VOID
+EFIAPI
+EnableOptionalFvOnReadyToBoot (
+  IN  EFI_EVENT                 Event,
+  IN  VOID* Context
+)
+{
+  EFI_STATUS               Status;
+
+  if (BootCurrentIsInternalShell ()) {
+    DEBUG ((DEBUG_INFO, " %a : Enabling FvApp\n",__FUNCTION__));
+    Status = EnableFvApp ();
+    if (EFI_ERROR(Status)) {
+      DEBUG ((DEBUG_ERROR, " %a : FvApp enable failure. No Shell will be found\n", __FUNCTION__));
+      ASSERT_EFI_ERROR(Status);
+    }
+  }
+  return;
+}
+
+/**
   ReadyToBoot callback to set video and text mode for internal shell boot.
   That will not connect USB controller while CSM and FastBoot are disabled, we need to connect them
   before booting to Shell for showing USB devices in Shell.
@@ -2552,12 +2582,12 @@ OnReadyToBootCallBack (
   VOID                         *MsgRegistration;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
   EFI_STATUS                   Status;
+  EFI_TPL                      CurTpl;
   //
   // Initialize GraphicsOutput as NULL.
   //
   GraphicsOutput = NULL;
 
-//  EFI_HANDLE  FwVolHandle;  @todo Align BdsPlatform (DxePlatformBootManagerLib) with the Minimum Platform FV map
 #if FixedPcdGetBool(PcdCapsuleEnable) == 1
   EFI_HOB_GUID_TYPE        *GuidHob;
 
@@ -2568,22 +2598,22 @@ OnReadyToBootCallBack (
     //
     //  We set this flag in order to skip ProcessFirmwareVolume
     //
-    mDecompressFvUefiBoot = TRUE;
+    mDecompressFvOptional = TRUE;
   }
 #endif
   if (BootCurrentIsInternalShell ()) {
-    if (!mDecompressFvUefiBoot) {
-//  @todo Align BdsPlatform (DxePlatformBootManagerLib) with the Minimum Platform FV map
-//        gDS->ProcessFirmwareVolume (
-//          (VOID *) (UINTN)PcdGet32(PcdFlashFvUefiBootBase),
-//          PcdGet32(PcdFlashFvUefiBootSize),
-//          &FwVolHandle
-//          );
+    DEBUG ((DEBUG_INFO, "Current boot is shell or Mebx\n"));
 
-//        gDS->Dispatch ();
-      mDecompressFvUefiBoot = TRUE;
-//        DEBUG ((DEBUG_INFO, "Current boot is shell, decompress FvUefiBoot\n"));
+    CurTpl = EfiGetCurrentTpl ();
+    gBS->RestoreTPL (TPL_APPLICATION);
+    if (!mDecompressFvOptional) {
+        Status = ProcessFvApp();
+        if (EFI_ERROR(Status)) {
+            DEBUG((DEBUG_ERROR, "OnReadyToBootCallBack : FvApp process failure\n"));
+            ASSERT_EFI_ERROR(Status);
+        }
     }
+    gBS->RaiseTPL(CurTpl);
 
     Status = gBS->HandleProtocol (
                     gST->ConsoleOutHandle,
@@ -3210,8 +3240,21 @@ PlatformBootManagerBeforeConsole (
     );
 
   //
+  // Enable Optional FV if needed, so the Optional FV gets processed in OnReadyToBootCallback.
+  //
+  Event = NULL;
+  Status = EfiCreateEventReadyToBootEx (
+      TPL_CALLBACK,
+      EnableOptionalFvOnReadyToBoot,
+      NULL,
+      &Event
+  );
+  ASSERT_EFI_ERROR (Status);
+
+  //
   // Create event to set proper video resolution and text mode for internal shell.
   //
+  Event = NULL;
   Status = EfiCreateEventReadyToBootEx (
              TPL_CALLBACK,
              OnReadyToBootCallBack,
@@ -3995,7 +4038,7 @@ PlatformBootManagerAfterConsole (
   //
   // Check BootState variable, NULL means it's the first boot after reflashing
   //
-  BootState = IsBootStatePresent();
+  BootState = IsBootStatePresent ();
   if (!BootState) {
     IsFirstBoot = TRUE;
   }
@@ -4040,6 +4083,7 @@ PlatformBootManagerAfterConsole (
   // If EFI Shell is NOT in Boot List, then Delete BootState variable,
   // this would enforce next boot to FullConfiguration which bring EFI shell back to Boot Order.
   if (UefiShellEnabled && IsShellInBootList() == FALSE) {
+    DEBUG ((DEBUG_INFO, "EFI Shell is NOT in Boot List \n"));
     UnsetBootState();
   }
 

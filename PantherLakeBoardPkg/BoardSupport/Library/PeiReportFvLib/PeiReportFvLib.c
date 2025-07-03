@@ -42,6 +42,7 @@
 #include <Library/PciSegmentLib.h>
 #include <Library/MeInfoLib.h>
 #include <Library/ResiliencySupportLib.h>
+#include <CnvVfrSetupMenuHii.h>
 
 #ifndef MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES
   #define MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES 8
@@ -524,6 +525,109 @@ CreateAndInstallStoredHashFvPpi (
   return Status;
 }
 
+/**
+  FvCnvUncompact section dependency PPI
+**/
+static EFI_PEI_PPI_DESCRIPTOR  mFvCnvDispatchFlagPpi = {
+  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gPeiFvCnvDispatchFlagPpiGuid,
+  NULL
+};
+
+/**
+  This function call checks if Network is enabled by Setup variables.
+
+  @retval  TRUE     Network is enabled.
+  @retval  FALSE    Network is not enabled.
+**/
+BOOLEAN
+IsNetworkEnabled (
+  VOID
+)
+{
+  EFI_STATUS                        Status;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI* VariablePpi;
+  UINTN                             VariableSize;
+  SETUP_DATA                        SystemConfiguration;
+  CNV_VFR_CONFIG_SETUP              CnvSetup;
+
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID**)&VariablePpi
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "IsNetworkEnabled : Read Only Variable PPI is not found.\n"));
+    ASSERT_EFI_ERROR (Status);
+    return FALSE;
+  }
+
+  VariableSize = sizeof (SETUP_DATA);
+  ZeroMem (&SystemConfiguration, VariableSize);
+  Status = VariablePpi->GetVariable (
+             VariablePpi,
+             L"Setup",
+             &gSetupVariableGuid,
+             NULL,
+             &VariableSize,
+             &SystemConfiguration
+             );
+  ASSERT_EFI_ERROR (Status);
+
+  VariableSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  ZeroMem (&CnvSetup, VariableSize);
+  Status = VariablePpi->GetVariable (
+             VariablePpi,
+             L"CnvSetup",
+             &gCnvFeatureSetupGuid,
+             NULL,
+             &VariableSize,
+             &CnvSetup
+             );
+  if (!EFI_ERROR (Status)) {
+    if ((SystemConfiguration.EfiNetworkSupport != 0) || (CnvSetup.PrebootBleEnable == 1)) {
+      DEBUG ((DEBUG_INFO, "IsNetworkEnabled : Network wants to be initialized. \n"));
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+
+/**
+  This function call installs section dependency PPIs for the child FVs in Optional FV.
+
+  @param[out] *Installed    Return TRUE if section dependencies in Optional FV are installed.
+                            Return FALSE when none of section dependencies in Optional FV are installed.
+
+  @retval  EFI_SUCCESS      Section dependency installation completes successfully.
+  @retval  Others           Section dependency installation fails to complete.
+**/
+EFI_STATUS
+InstallOptionalFvDependency (
+  OUT BOOLEAN* Installed
+)
+{
+  EFI_STATUS   Status;
+
+  Status = EFI_SUCCESS;
+  *Installed = FALSE;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 0 // #if Dispatch Mode
+  if (IsNetworkEnabled ()) {
+#endif
+    DEBUG ((DEBUG_INFO, "InstallOptionalFvDependency : Installing FvCnvUncompact dependency.\n"));
+    Status = PeiServicesInstallPpi (&mFvCnvDispatchFlagPpi);
+    *Installed = TRUE;
+    ASSERT_EFI_ERROR (Status);
+#if FixedPcdGet8(PcdFspModeSelection) == 0 // #if Dispatch Mode
+  }
+#endif
+  return Status;
+}
+
 VOID
 ReportPostMemFv (
   VOID
@@ -531,6 +635,9 @@ ReportPostMemFv (
 {
   EFI_STATUS                             Status;
   EFI_BOOT_MODE                          BootMode;
+  BOOLEAN                                IsOptFvDependencyInstalled;
+
+  IsOptFvDependencyInstalled = FALSE;
 
   //
   // Install the PPI to trigger the notify.
@@ -565,6 +672,22 @@ ReportPostMemFv (
     Status = CreateAndInstallStoredHashFvPpi (BootMode);
     ASSERT_EFI_ERROR (Status);
 
+    if (!IsCapsuleUpdateRecoveryBoot ()) {
+        if (BootMode != BOOT_ON_S3_RESUME) {
+            Status = InstallOptionalFvDependency (&IsOptFvDependencyInstalled);
+            if (!EFI_ERROR (Status) && IsOptFvDependencyInstalled) {
+                DEBUG ((DEBUG_INFO, "Install FlashFvOptional - 0x%x, 0x%x\n", PcdGet32(PcdFlashFvOptionalBase), PcdGet32(PcdFlashFvOptionalSize)));
+                PeiServicesInstallFvInfo2Ppi (
+                  &(((EFI_FIRMWARE_VOLUME_HEADER*) (UINTN) PcdGet32 (PcdFlashFvOptionalBase))->FileSystemGuid),
+                  (VOID*) (UINTN) PcdGet32 (PcdFlashFvOptionalBase),
+                  PcdGet32 (PcdFlashFvOptionalSize),
+                  NULL,
+                  NULL,
+                  0
+                  );
+            }
+        }
+    }
   }
 }
 

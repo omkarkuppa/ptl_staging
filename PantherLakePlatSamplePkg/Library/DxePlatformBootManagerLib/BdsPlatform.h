@@ -86,7 +86,7 @@ extern EFI_GUID                  gSetupEnterGuid;
 extern EFI_BOOT_MODE             gBootMode;
 extern SA_SETUP                  mSaSetup;
 extern SETUP_DATA                mSystemConfiguration;
-extern BOOLEAN                   mDecompressFvUefiBoot;
+extern BOOLEAN                   mDecompressFvOptional;
 extern EFI_DEVICE_PATH_PROTOCOL  *gPlatformConnectSequence[];
 
 #define gPciRootBridge \
@@ -351,4 +351,24 @@ UpdateOnboardXhciDevicePath (
   VOID
   );
 
+/**
+  This function enables FvApp which contains EFI Shell.
+
+  @retval   EFI_SUCCESS Successfully enable FvApp
+**/
+EFI_STATUS
+EnableFvApp (
+    VOID
+);
+
+/**
+  This function process FvApp which contains EFI Shell.
+
+  @retval   EFI_SUCCESS          Successfully FvApp has been processed.
+  @retval   EFI_UNSUPPORTED      FvApp has not been enabled so fails to be processed.
+**/
+EFI_STATUS
+ProcessFvApp (
+    VOID
+);
 #endif
