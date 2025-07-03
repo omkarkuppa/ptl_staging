@@ -561,6 +561,7 @@ PeimMemoryInit (
   const UINT8                  *Str;
 #endif
   UINT8                        InitStat;
+  UINT16                       PostCode;
   UINT8                        ForceFullTraining;
   UINT8                        TotalDprSizeMB;
   UINT16                       HobTotalSize;
@@ -1201,11 +1202,12 @@ DEBUG_CODE_END();
         (MrcCall->MrcIoWrite16)(0x80, Debug->PostCode[MRC_POST_CODE]);
 
         if ((MrcStatus == mrcDimmNotExist) || (MrcStatus == mrcUnsupportedTechnology)) {
-          (MrcCall->MrcIoWrite16)(0x80, MRC_NO_MEMORY_DETECTED);
+          PostCode = MRC_NO_MEMORY_DETECTED;
           InitStat = BIOS_MSG_DID_NO_MEMORY;
         } else {
-          // Replace the upper byte (0x81) with MRC_FAILURE_INDICATION
-          (MrcCall->MrcIoWrite8) (0x81, MRC_FAILURE_INDICATION);
+          // Replace the upper POST code byte with MRC_FAILURE_INDICATION
+          // Lower POST code byte indicates the failing MRC task
+          PostCode = (MRC_FAILURE_INDICATION << 8) | (Debug->PostCode[MRC_POST_CODE] & 0xFF);
           InitStat = BIOS_MSG_DID_INIT_ERROR;
         }
         //
@@ -1217,6 +1219,8 @@ DEBUG_CODE_END();
           (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20, // Low DWORD
           Outputs->MemoryMapData.MeStolenBase >> 12 // High DWORD
           );
+        // Write the final MRC POST code after DID message
+        MrcCall->MrcDebugHook (MrcData, PostCode);
         ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
     }
@@ -1301,7 +1305,6 @@ DEBUG_CODE_END();
           (*PeiServices)->ResetSystem2 (EfiResetWarm, EFI_SUCCESS, 0, NULL);
         }
       }
-      MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
       PERF_INMODULE_END ("MrcBasicMemoryTest");
       //
       // Send DRAM Init Done to ME FW, indicating 'MRC failure'
@@ -1313,6 +1316,8 @@ DEBUG_CODE_END();
         (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20, // Low DWORD
         Outputs->MemoryMapData.MeStolenBase >> 12 // High DWORD
         );
+      // Update the Port80 POST code after the DID message
+      MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
       ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
       return EFI_DEVICE_ERROR;
     }
@@ -1325,7 +1330,6 @@ DEBUG_CODE_END();
     if (MrcBootMode != bmS3) {
 #endif // MDEPKG_NDEBUG
       if (mrcFail == BasicMemoryTestS3 (MrcData)) {
-        MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
         PERF_INMODULE_END ("MrcBasicMemoryTest");
         //
         // Send DRAM Init Done to ME FW, indicating 'MRC failure'
@@ -1337,6 +1341,8 @@ DEBUG_CODE_END();
           (Outputs->MemoryMapData.MeStolenBase & 0xFFF) << 20, // Low DWORD
           Outputs->MemoryMapData.MeStolenBase >> 12 // High DWORD
           );
+        // Update the Port80 POST code after the DID message
+        MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
         ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
       }
