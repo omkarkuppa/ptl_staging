@@ -76,6 +76,7 @@ gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMin
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMax
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemSize
+gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                      ## CONSUMES
 
 
 [Sources]

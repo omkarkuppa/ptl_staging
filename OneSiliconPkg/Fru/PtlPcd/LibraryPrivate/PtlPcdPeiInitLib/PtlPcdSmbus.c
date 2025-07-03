@@ -301,7 +301,11 @@ InitSmbusHandle (
   }
   SocConfig->PowerManagementSupport = TRUE;
   SocConfig->TcoSmiTimeoutSupport = TRUE;
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  SocConfig->HostNotifyWakeSupport = TRUE;
+#else
   SocConfig->HostNotifyWakeSupport = FALSE;
+#endif
   SocConfig->HostTiming = 0x0A0A0000;
   SocConfig->InstallPpi = TRUE;
   SocConfig->TcoBase = PcdGet16 (PcdTcoBaseAddress);

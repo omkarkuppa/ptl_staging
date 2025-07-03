@@ -54,7 +54,9 @@ SmbusSxCallback (
 {
   UINT64                      SmbusRegBase;
   UINT16                      SmbusIoBase;
-
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  UINT8                       SstsReg;
+#endif
   SmbusRegBase = SmbusPciCfgBase ();
 
   if (PciSegmentRead32 (SmbusRegBase) == 0xFFFFFFFF) {
@@ -67,6 +69,14 @@ SmbusSxCallback (
   }
 
   PciSegmentOr8 (SmbusRegBase + PCI_COMMAND_OFFSET, EFI_PCI_COMMAND_IO_SPACE);
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  // Clear Host Notify Status
+  SstsReg = IoRead8 (SmbusIoBase + R_SMBUS_IO_SSTS);
+  if (SstsReg & B_SMBUS_IO_SSTS_HNS) {
+    SstsReg = IoOr8 (SmbusIoBase + R_SMBUS_IO_SSTS, B_SMBUS_IO_SSTS_HNS);
+  }
+#endif
   //
   // Clear SMBUS status and SMB_WAK_STS of GPE0
   //
