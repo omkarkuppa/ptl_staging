@@ -81,18 +81,6 @@
    { PTL_PCD_GROUP_GPPASPI0 }
   )}
 
-  # GPIO Table WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOnEarlyPreMem| * |{CODE(
-  {
-    { 0x0 }
-  })}
-
-  # GPIO Table WwanOff
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem| * |{CODE(
-  {
-    { 0x0 }
-  })}
-
   # GPIO Table M80 WwanOn
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
   {
@@ -274,8 +262,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber|*|0x0
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(

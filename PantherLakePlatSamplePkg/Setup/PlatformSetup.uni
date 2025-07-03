@@ -352,9 +352,6 @@
 #string STR_PROC_VR_DEVICE_PROMPT                     #language en-US "VR Device"
 #string STR_PROC_VR_DEVICE_HELP                       #language en-US "Enable/Disable VR Thermal Device"
 
-#string STR_WWAN_SENSOR_DEVICE_PROMPT                 #language en-US "WWAN Sensor Device"
-#string STR_WWAN_SENSOR_DEVICE_HELP                   #language en-US "Enable/Disable WWAN Board Temperature Sensor"
-
 #string STR_CPU_VR_SENSOR_DEVICE_PROMPT               #language en-US "CPU VR Sensor Device"
 #string STR_CPU_VR_SENSOR_DEVICE_HELP                 #language en-US "Enable/Disable CPU VR Board Temperature Sensor"
 
@@ -421,7 +418,6 @@
 #string STR_VR_HOTSPOT_DEVICE_HELP                    #language en-US "Enable/Disable VR Hotspot Q50 sensor"
 #string STR_SKIN_HOTSPOT_DEVICE_HELP                  #language en-US "Enable/Disable Skin Hotspot U50 sensor"
 #string STR_SKIN_IR_SENSOR_DEVICE_HELP                #language en-US "Enable/Disable C-Skin Chassis U50 IR sensor"
-#string STR_WWAN_HOTSPOT_SENSOR_DEVICE_HELP           #language en-US "Enable/Disable WWAN hotspot Q6 sensor"
 #string STR_AMBIENT_SENSOR_DEVICE_HELP                #language en-US "Enable/Disable Ambient Hotspot U31"
 
 //
@@ -687,11 +683,6 @@
 #string STR_RTD3_PSTATE_CAPPING_HELP                   #language en-US "Set _PPC and send ACPI notification"
 #string STR_RTD3_CAMERA                                #language en-US "RTD3 Camera Support"
 #string STR_RTD3_CAMERA_HELP                           #language en-US "This option enables runtime power management support for camera"
-#string STR_RTD3_WWAN                                  #language en-US "WWAN"
-#string STR_RTD3_WWAN_HELP                             #language en-US "Enable/Disable RTD3 support for WWAN"
-#string STR_WWAN_PCIE_D3_L2                            #language en-US "D3/L2"
-#string STR_WWAN_PCIE_D0_L12                           #language en-US "D0/L1.2"
-#string STR_WWAN_PCIE_D3_L12                           #language en-US "D3/L1.2"
 #string STR_RTD3_BT                                    #language en-US "Bluetooth"
 #string STR_RTD3_BT_HELP                               #language en-US "Enable/Disable RTD3 support for BT"
 #string STR_RTD3_SATA_DEVICE_OFF                       #language en-US "SATA Device Power Off Support"
@@ -721,8 +712,6 @@
 #string STR_D3_HOT                                     #language en-US "D3Hot"
 #string STR_SDCARD_READER_SELECT                       #language en-US "WSB SIP SDCard Reader"
 #string STR_SDCARD_READER_SELECT_HELP                  #language en-US "Enables or Disables SD card reader support on WSB SIP FAB1 board. This option is only for SIP FAB1 board. For Standard WSB board, select Disabled."
-#string STR_RESET_WWAN_WHEN_REBOOT_PROMPT              #language en-US "Reset WWAN when reboot"
-#string STR_RESET_WWAN_WHEN_REBOOT_HELP                #language en-US "According to platform configuration, enable/disable reset WWAN when platform reboot. It controls GPIO84 to low and then high to reset WWLAN device."
 #string STR_WSB_SIP_WHCK_SINGLE_DISPLAY_OBJECT         #language en-US "WHCK Single Computer Display Object"
 #string STR_WSB_SIP_WHCK_SINGLE_DISPLAY_OBJECT_HELP    #language en-US "WHCK test : Single Computer Display Object"
 #string STR_IVCAM_DFU_SUPPORT_PROMPT                  #language en-US "DFU support"
@@ -788,14 +777,6 @@
 
 #string STR_RTD3_I2C_TOUCH_PANEL                #language en-US "I2C Touch Panel"
 #string STR_RTD3_I2C_TOUCH_PANEL_HELP           #language en-US "Enables/Disables RTD3 support for I2C touch panel. Don't enable this for iTouch system."
-
-#string STR_SUPER_SPEED_WWAN                    #language en-US "Super Speed WWAN"
-
-#string STR_I2C_SAR_RESET_DELAY                 #language en-US "Delay to wait for WWAN device to be ready before SAR reset."
-#string STR_I2C_SAR_RESET_DELAY_HELP            #language en-US "Value between 0-255 seconds. Default is 8. Will result in Responsiveness impact. "
-
-#string STR_WWAN_ENABLE                         #language en-US "Enable WWAN"
-#string STR_WWAN_ENABLE_HELP                    #language en-US "Enables/Disables M.2 WWAN module. When disabled, BIOS will turn off the power to WWAN module. This will also disable GNSS"
 
 #string STR_MODE_0                              #language en-US "Mode 0"
 #string STR_MODE_1                              #language en-US "Mode 1"

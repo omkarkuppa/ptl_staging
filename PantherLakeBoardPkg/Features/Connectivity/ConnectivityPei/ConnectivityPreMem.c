@@ -108,28 +108,14 @@ CnvInitPreMem (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Fail to get System Configuration and set the configuration to production mode!\n"));
     PcdSet8S (PcdPcieWwanEnable, 0);
-    PcdSetBoolS (PcdWwanResetWorkaround, FALSE);
   } else {
     PcdSet8S (PcdPcieWwanEnable, SystemConfiguration.WwanEnable);
-    PcdSetBoolS (PcdWwanResetWorkaround, SystemConfiguration.WwanResetWorkaround);
     PcdSet16S (PcdBoardWwanTOn2ResDelayMs, SystemConfiguration.WwanTOn2ResDelayMs);
     PcdSet16S (PcdBoardWwanTOnRes2PerDelayMs, SystemConfiguration.WwanTOnRes2PerDelayMs);
-    PcdSet16S (PcdBoardWwanTOnPer2PdsDelayMs, SystemConfiguration.WwanTOnPer2PdsDelayMs);
-    PcdSet16S (PcdBoardWwanTPer2ResDelayMs, SystemConfiguration.WwanTPer2ResDelayMs);
-    PcdSet16S (PcdBoardWwanTRes2OffDelayMs, SystemConfiguration.WwanTRes2OffDelayMs);
-    PcdSet16S (PcdBoardWwanTOffDisDelayMs, SystemConfiguration.WwanTOffDisDelayMs);
-    PcdSet16S (PcdBoardWwanTResTogDelayMs, SystemConfiguration.WwanTResTogDelayMs);
-    PcdSet16S (PcdBoardWwanTRes2PdsDelayMs, SystemConfiguration.WwanTRes2PdsDelayMs);
 
     DEBUG((DEBUG_INFO, "WwanEnable: %d\n", PcdGet8 (PcdPcieWwanEnable)));
     DEBUG((DEBUG_INFO, "WwanTOn2ResDelayMs: %d\n", PcdGet16 (PcdBoardWwanTOn2ResDelayMs)));
     DEBUG((DEBUG_INFO, "WwanTOnRes2PerDelayMs: %d\n", PcdGet16 (PcdBoardWwanTOnRes2PerDelayMs)));
-    DEBUG((DEBUG_INFO, "WwanTOnPer2PdsDelayMs: %d\n", PcdGet16 (PcdBoardWwanTOnPer2PdsDelayMs)));
-    DEBUG((DEBUG_INFO, "WwanTPer2ResDelayMs: %d\n", PcdGet16 (PcdBoardWwanTRes2OffDelayMs)));
-    DEBUG((DEBUG_INFO, "WwanTRes2OffDelayMs: %d\n", PcdGet16 (PcdBoardWwanTRes2OffDelayMs)));
-    DEBUG((DEBUG_INFO, "WwanTOffDisDelayMs: %d\n", PcdGet16 (PcdBoardWwanTOffDisDelayMs)));
-    DEBUG((DEBUG_INFO, "WwanTResTogDelayMs: %d\n", PcdGet16 (PcdBoardWwanTResTogDelayMs)));
-    DEBUG((DEBUG_INFO, "WwanTRes2PdsDelayMs: %d\n", PcdGet16 (PcdBoardWwanTRes2PdsDelayMs)));
   }
 
   VariableSize = sizeof (CNV_VFR_CONFIG_SETUP);
@@ -183,24 +169,7 @@ GpioInitEarlyWwanPreMem (
     // BIOS needs to reset modem if modem RESET# is not asserted via PLTRST# in the previous sleep state
     //
     GpioV2GetTx (WwanBbrstGpio, &BprstState);
-    if ((PcdGet8 (PcdPcieWwanEnable) == 0) ||
-        ((PcdGetBool (PcdWwanResetWorkaround) == TRUE) &&
-        (BprstState == GpioV2StateHigh) &&
-        (PcdGet8 (PcdPcieWwanEnable) == 1))) {  // 4G - Intel Modem 7360/7560
-      //
-      // Assert FULL_CARD_POWER_OFF#, RESET# and PERST# GPIOs
-      //
-      if (PcdGet64 (PcdBoardGpioTableWwanOffEarlyPreMem) != 0 && PcdGet16 (PcdBoardGpioTableWwanOffEarlyPreMemSize) != 0) {
-        ConfigureGpio ((VOID *) (UINTN) PcdGet64 (PcdBoardGpioTableWwanOffEarlyPreMem), (UINTN) PcdGet16 (PcdBoardGpioTableWwanOffEarlyPreMemSize));
-      }
-      MicroSecondDelay (1 * 1000); // Delay by 1ms
-    }
-
-    if (PcdGet8 (PcdPcieWwanEnable) == 1) { // 4G - Intel Modem 7360/7560
-      if (PcdGet64 (PcdBoardGpioTableWwanOnEarlyPreMem) != 0 && PcdGet16 (PcdBoardGpioTableWwanOnEarlyPreMemSize) != 0) {
-        ConfigureGpio ((VOID *) (UINTN) PcdGet64 (PcdBoardGpioTableWwanOnEarlyPreMem), (UINTN) PcdGet16 (PcdBoardGpioTableWwanOnEarlyPreMemSize));
-      }
-    } else if (PcdGet8 (PcdPcieWwanEnable) == 2) { // 5G - Mediatek Modem M80
+    if (PcdGet8 (PcdPcieWwanEnable) == 2) { // 5G - Mediatek Modem M80
       if (PcdGet64 (PcdBoardGpioTableM80WwanOnEarlyPreMem) != 0 && PcdGet16 (PcdBoardGpioTableM80WwanOnEarlyPreMemSize) != 0) {
         DEBUG((DEBUG_INFO, "5G M80 Modem: Power On Sequnce Start\n"));
         //

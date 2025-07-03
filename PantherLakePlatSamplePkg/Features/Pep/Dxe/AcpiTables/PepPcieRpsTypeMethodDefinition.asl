@@ -60,11 +60,6 @@
                     Return (3) \
                   } \
                 } \
-                If (CondRefOf (WWST)) { \
-                  If (WWST ()) { \
-                    Return (6) \
-                  } \
-                } \
                 Return (0) \
               } \
               Return (99) \
@@ -93,7 +88,6 @@ External (PNVM, MethodObj)
 External (ISGX, MethodObj)
 
 External (WIST, MethodObj)
-External (WWST, MethodObj)
 #endif
 
 PCIE_RP_OVERRIDE_REQUIRED_EXTERNAL (RP01)
@@ -136,9 +130,6 @@ PCIE_RP_OVERRIDE_REQUIRED_EXTERNAL (RP28)
 //          2 - LAN
 //          3 - WLAN
 //          4 - GFX
-//          5 - DTBT
-//          6 - WWAN
-//          99 - Invalid
 //
 PEP_PCIE_RP_DEVICE_TYPE (RP01)
 PEP_PCIE_RP_DEVICE_TYPE (RP02)

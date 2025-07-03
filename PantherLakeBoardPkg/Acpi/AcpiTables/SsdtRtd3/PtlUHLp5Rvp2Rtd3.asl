@@ -37,39 +37,13 @@ DefinitionBlock (
 
   Include ("PcieRvpRtd3Common.asl")
 
-  #define WWAN_PCIE_ROOT_PORT \_SB.PC00.RP02
-  External (WWAN_PCIE_ROOT_PORT.PXSX, DeviceObj)
-  External (WWAN_PCIE_ROOT_PORT.PXSX.WWST, MethodObj)
-  External (WWAN_PCIE_ROOT_PORT.LASX)
   External (\_SB.PC00.RP02.PXSX.PNVM, MethodObj)
   External (\_SB.PC00.RP02.PXSX.PAHC, MethodObj)
+  Name (\_SB.PC00.RP02.WAKG, 0)
   //
   // PCIe Root Port Start
   //
-  //
-  // M.2 Wwan RP02
-  // WRTO, 8,      // [WwanRtd3Option                   ] WWAN RTD3 options
-  // WFCP, 32,     // [WwanFullCardPowerOffGpio         ] WWAN Full card power off gpio pin
-  // PFCP, 8,      // [WwanFullCardPowerOffGpioPolarity ] WWAN Full card power off gpio pin polarity
-  // WBRS, 32,     // [WwanBbrstGpio                    ] WWAN BBRST Gpio pin
-  // PBRS, 8,      // [WwanBbrstGpioPolarity            ] WWAN BBRST Gpio pin polarity
-  // PRST, 32,     // [WwanPerstGpio                    ] WWAN PERST Gpio pin
-  // WPRP, 8,      // [WwanPerstGpioPolarity            ] WWAN PERST Gpio polarity
-  // WCLK, 8,      // [WwanSourceClock                  ] WWAN Source Clock
-  // WWRP, 8,      // [WwanRootPortNumber               ] WWAN Root Port Nmuber
 
-  //
-  // PCIE RTD3 RP 02 - PCIe M.2 CONNECTOR WWAN
-  //
-  //
-  If (LEqual (WWRP,0x2)) {
-    If (LNotEqual (WRTO, 0)) {
-      PCIE_RP_SCOPE_BEGIN(WWAN_PCIE_ROOT_PORT)
-      WWAN_RP_SCOPE_BODY(WFCP,PFCP,PRST,WPRP,RW02,5,WBRS,PBRS)
-      Include ("Rtd3PcieWwan.asl")
-      PCIE_RP_SCOPE_END
-    }
-  }
   //
   // PCIe Slot  ( RP03 or RP04)
   // P1PG, 32, // [PcieSlot1PowerEnableGpio ] Pcie Slot 1 Power Enable Gpio pin
@@ -183,8 +157,6 @@ DefinitionBlock (
     //
     Method (AL6F) {
       ADBG ("AL6F Start!")
-      // WWAN wake
-      PCIE_RP_L6F_WAKE(WWAN_PCIE_ROOT_PORT)
       // PCIe Slot 1 (x1) Wake
       PCIE_RP_L6F_WAKE(\_SB.PC00.RP03)
       // PCIe x4 Barlow Ridge

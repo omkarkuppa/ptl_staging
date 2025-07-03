@@ -268,7 +268,7 @@
   Offset(532),    PSCP, 8,  // Offset(532),   P-state Capping
   Offset(533),    I20D, 16, // Offset(533),   Delay in _PS0 after powering up I2C0 Controller
   Offset(535),    I21D, 16, // Offset(535),   Delay in _PS0 after powering up I2C1 Controller
-  Offset(537),    RCG0, 16, // Offset(537),   RTD3 Config Setting0(BIT0:ZPODD, BIT1:Reserved, BIT2:PCIe NVMe, Bit4:SKL SDS SIP I2C Touch, BIT6:Card Reader, BIT7:WWAN)
+  Offset(537),    RCG0, 16, // Offset(537),   RTD3 Config Setting0(BIT0:ZPODD, BIT1:Reserved, BIT2:PCIe NVMe, Bit4:SKL SDS SIP I2C Touch, BIT6:Card Reader)
   Offset(539),    RCG1, 16, // Offset(539),   RTD3 Config Setting1(BIT0:Sata Port0, BIT1:Sata Port1, BIT2:Sata Port2, BIT3:Sata Port3)
   Offset(541),    ECDB, 8,  // Offset(541),   EC Debug Light (CAPS LOCK) for when in Low Power S0 Idle State
   Offset(542),    P2ME, 8,  // Offset(542),   Ps2 Mouse Enable
@@ -386,7 +386,6 @@
   Offset(755),    SHSB, 8,  // Offset(755),   Sensor Standby mode
   Offset(756),    PLCS, 8,  // Offset(756),   set PL1 limit when entering CS
   Offset(757),    PLVL, 16, // Offset(757),   PL1 limit value
-  Offset(759),    WWSD, 8,  // Offset(759),   EnableWwanTempSensorDevice
   Offset(760),    CVSD, 8,  // Offset(760),   EnableCpuVrTempSensorDevice
   Offset(761),    SSDD, 8,  // Offset(761),   EnableSsdTempSensorDevice
   Offset(762),    INLD, 8,  // Offset(762),   EnableInletFanTempSensorDevice
@@ -1157,7 +1156,6 @@
   Offset(1848),   BTLE, 8,  // Offset(1848),  BluetoothSarLe
   Offset(1853),             // Offset(1849) : Offset(1852), Reserved bytes
   // Reserved for Bluetooth Sar future use
-  Offset(1853),   COEM, 8,  // Offset(1853),  CoExistenceManager
   Offset(1854),   RTVM, 8,  // Offset(1854),  RunTime VM Control
   //
   //Feature Specific Data Bits

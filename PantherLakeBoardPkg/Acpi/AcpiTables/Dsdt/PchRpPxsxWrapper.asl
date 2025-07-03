@@ -29,10 +29,29 @@ Scope (\_SB.PC00.RP01.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Include ("Wwan.asl")
+
+  //
+  // Detect OEM SVID
+  // This is workaroud for OEM only and it's disabled by default.
+  //
+  Method (DOSV) {
+    Store (0, Local0)
+    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
+      Increment (Local0)
+      Sleep (1)
+    }
+    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
   }
+
+  Method (_RST, 0, Serialized) {
+    ADBG ("_RST WWAN")
+
+    If (LEqual (WWEN, 2)) {
+      // 2. Check for FLDR Mutex acquired
+      DOSV ();                                              // Workaround for OEM only
+    }
+  }
+
   //
   // _DSM : Device Specific Method
   //
@@ -41,10 +60,48 @@ Scope (\_SB.PC00.RP01.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  If (LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0))))
   {
     Method (_DSM, 4, Serialized) {
-      Include ("WwanDsm.asl")
+      //
+      // DLRM support
+      //
+      If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
+      {
+        If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
+        {
+          Switch (ToInteger (Arg2))            // Switch to Function Index.
+          {
+            //
+            // Function 0, Query of supported functions.
+            //
+            Case (0)
+            {
+              Return (Buffer () {0x03})
+            }
+
+            //
+            // Function 1, DLRM Support for Storage to reduce active power usage in D3.
+            //
+            Case (1)
+            {
+              // Only return support if platform enabled DLRM via setup.
+              If (PNVM ()) {
+                If (LNotEqual (\DLRM, 0)) {
+                  ADBG ("Enable DLRM for Storage")
+                  Return (1)
+                } Else {
+                  ADBG ("Disable DLRM for Storage")
+                  Return (0)
+                }
+              }
+            }
+          }
+        } Else {
+          ADBG ("Revision 0: No function supported")
+        }
+        Return (Buffer() {0x00})
+      }
       // If the code falls through to this point, just return a buffer of 0.
       Return (Buffer () {0x00})
     }  // End _DSM Method
@@ -59,27 +116,26 @@ Scope (\_SB.PC00.RP02.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Include ("Wwan.asl")
-  }
 
   //
-  // _DSM : Device Specific Method
+  // Detect OEM SVID
+  // This is workaroud for OEM only and it's disabled by default.
   //
-  // Arg0: UUID Unique function identifier
-  // Arg1: Integer Revision Level
-  // Arg2: Integer Function Index
-  // Arg3: Package Parameters
-  //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Method (_DSM, 4, Serialized)
-    {
-      // Compare passed in UUID to supported UUID.
-      Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
+  Method (DOSV) {
+    Store (0, Local0)
+    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
+      Increment (Local0)
+      Sleep (1)
+    }
+    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
+  }
+
+  Method (_RST, 0, Serialized) {
+    ADBG ("_RST WWAN")
+
+    If (LEqual (WWEN, 2)) {
+      // 2. Check for FLDR Mutex acquired
+      DOSV ();                                              // Workaround for OEM only
     }
   }
 }
@@ -92,26 +148,26 @@ Scope (\_SB.PC00.RP03.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Include ("Wwan.asl")
-  }
 
   //
-  // _DSM : Device Specific Method
+  // Detect OEM SVID
+  // This is workaroud for OEM only and it's disabled by default.
   //
-  // Arg0: UUID Unique function identifier
-  // Arg1: Integer Revision Level
-  // Arg2: Integer Function Index
-  // Arg3: Package Parameters
-  //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Method (_DSM, 4, Serialized)
-    {
-      Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
+  Method (DOSV) {
+    Store (0, Local0)
+    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
+      Increment (Local0)
+      Sleep (1)
+    }
+    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
+  }
+
+  Method (_RST, 0, Serialized) {
+    ADBG ("_RST WWAN")
+
+    If (LEqual (WWEN, 2)) {
+      // 2. Check for FLDR Mutex acquired
+      DOSV ();                                              // Workaround for OEM only
     }
   }
 }
@@ -124,25 +180,26 @@ Scope (\_SB.PC00.RP04.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Include ("Wwan.asl")
-  }
 
   //
-  // _DSM : Device Specific Method
+  // Detect OEM SVID
+  // This is workaroud for OEM only and it's disabled by default.
   //
-  // Arg0: UUID Unique function identifier
-  // Arg1: Integer Revision Level
-  // Arg2: Integer Function Index
-  // Arg3: Package Parameters
-  //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
-    Method (_DSM, 4, Serialized)
-    {
-      Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
+  Method (DOSV) {
+    Store (0, Local0)
+    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
+      Increment (Local0)
+      Sleep (1)
+    }
+    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
+  }
+
+  Method (_RST, 0, Serialized) {
+    ADBG ("_RST WWAN")
+
+    If (LEqual (WWEN, 2)) {
+      // 2. Check for FLDR Mutex acquired
+      DOSV ();                                              // Workaround for OEM only
     }
   }
 }
@@ -155,64 +212,27 @@ Scope (\_SB.PC00.RP05.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Include ("Wwan.asl")
+
+  //
+  // Detect OEM SVID
+  // This is workaroud for OEM only and it's disabled by default.
+  //
+  Method (DOSV) {
+    Store (0, Local0)
+    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
+      Increment (Local0)
+      Sleep (1)
+    }
+    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
   }
 
-  //
-  // _DSM : Device Specific Method
-  //
-  // Arg0: UUID Unique function identifier
-  // Arg1: Integer Revision Level
-  // Arg2: Integer Function Index
-  // Arg3: Package Parameters
-  //
-  If (LOr (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)), LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))))
-  {
-    Method (_DSM, 4, Serialized)
-    {
-      //
-      // DLRM support
-      //
-      If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
-      {
-        If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
-        {
-          Switch (ToInteger (Arg2))            // Switch to Function Index.
-          {
-            //
-            // Function 0, Query of supported functions.
-            //
-            Case (0)
-            {
-              Return (Buffer () {0x03})
-            }
+  Method (_RST, 0, Serialized) {
+    ADBG ("_RST WWAN")
 
-            //
-            // Function 1, DLRM Support for Storage to reduce active power usage in D3.
-            //
-            Case (1)
-            {
-              // Only return support if platform enabled DLRM via setup.
-              If (LAnd (PNVM (), LAnd (LNotEqual (\DLRM, 0), LEqual (S1G4, 1)))) {
-                ADBG ("Enable DLRM for Storage")
-                Return (1)
-              } Else {
-                ADBG ("Disable DLRM for Storage")
-                Return (0)
-              }
-            }
-          }
-        } Else {
-          ADBG ("DLRM Revision 0: No function supported")
-        }
-        Return (Buffer() {0x00})
-      }
-
-      Include ("WwanDsm.asl")
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
+    If (LEqual (WWEN, 2)) {
+      // 2. Check for FLDR Mutex acquired
+      DOSV ();                                              // Workaround for OEM only
+    }
   }
 }
 
@@ -224,28 +244,28 @@ Scope (\_SB.PC00.RP06.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Include ("Wwan.asl")
-  }
 
   //
-  // _DSM : Device Specific Method
+  // Detect OEM SVID
+  // This is workaroud for OEM only and it's disabled by default.
   //
-  // Arg0: UUID Unique function identifier
-  // Arg1: Integer Revision Level
-  // Arg2: Integer Function Index
-  // Arg3: Package Parameters
-  //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Method (_DSM, 4, Serialized)
-    {
-      Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
+  Method (DOSV) {
+    Store (0, Local0)
+    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
+      Increment (Local0)
+      Sleep (1)
     }
-  }  // End _DSM Method
+    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
+  }
+
+  Method (_RST, 0, Serialized) {
+    ADBG ("_RST WWAN")
+
+    If (LEqual (WWEN, 2)) {
+      // 2. Check for FLDR Mutex acquired
+      DOSV ();                                              // Workaround for OEM only
+    }
+  }
 }
 
 Scope (\_SB.PC00.RP09.PXSX)
@@ -256,65 +276,26 @@ Scope (\_SB.PC00.RP09.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-  {
-    Include ("Wwan.asl")
+
+  //
+  // Detect OEM SVID
+  // This is workaroud for OEM only and it's disabled by default.
+  //
+  Method (DOSV) {
+    Store (0, Local0)
+    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
+      Increment (Local0)
+      Sleep (1)
+    }
+    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
   }
 
-  //
-  // _DSM : Device Specific Method
-  //
-  // Arg0: UUID Unique function identifier
-  // Arg1: Integer Revision Level
-  // Arg2: Integer Function Index
-  // Arg3: Package Parameters
-  //
-  //
-  If (LOr (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)), LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))))
-  {
-    Method (_DSM, 4, Serialized)
-    {
-      //
-      // DLRM support
-      //
-      If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
-      {
-        If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
-        {
-          Switch (ToInteger (Arg2))            // Switch to Function Index.
-          {
-            //
-            // Function 0, Query of supported functions.
-            //
-            Case (0)
-            {
-              Return (Buffer () {0x03})
-            }
+  Method (_RST, 0, Serialized) {
+    ADBG ("_RST WWAN")
 
-            //
-            // Function 1, DLRM Support for Storage to reduce active power usage in D3.
-            //
-            Case (1)
-            {
-              // Only return support if platform enabled DLRM via setup.
-              If (LAnd (PNVM (), LAnd (LNotEqual (\DLRM, 0), LEqual (S2G4, 1)))) {
-                ADBG ("Enable DLRM for Storage")
-                Return (1)
-              } Else {
-                ADBG ("Disable DLRM for Storage")
-                Return (0)
-              }
-            }
-          }
-        } Else {
-          ADBG ("DLRM Revision 0: No function supported")
-        }
-        Return (Buffer () {0x00})
-      }
-
-      Include ("WwanDsm.asl")
-
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
+    If (LEqual (WWEN, 2)) {
+      // 2. Check for FLDR Mutex acquired
+      DOSV ();                                              // Workaround for OEM only
+    }
   }
 }

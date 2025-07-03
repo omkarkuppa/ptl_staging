@@ -46,25 +46,14 @@
   PantherLakePlatSamplePkg/PlatformPkg.dec
 
 [Pcd]
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMem
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMemSize
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMem
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMemSize
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMem     ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMemSize ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs                ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnPer2PdsDelayMs             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2OffDelayMs               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOffDisDelayMs                ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTResTogDelayMs                ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2PdsDelayMs               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTPer2ResDelayMs               ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable
-  gBoardModuleTokenSpaceGuid.PcdWwanResetWorkaround
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch                          ## CONSUMES
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUnloadRequirement
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP                 ## CONSUMES

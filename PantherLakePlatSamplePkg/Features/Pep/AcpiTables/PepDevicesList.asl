@@ -33,17 +33,11 @@
         External (ROOT_COMPLEX.Device, DeviceObj) \
         External (ROOT_COMPLEX.Device._ADR) \
         External (ROOT_COMPLEX.Device.PXSX.PRES, MethodObj) \
-        External (ROOT_COMPLEX.Device.PXSX.WWST, MethodObj) \
         External (ROOT_COMPLEX.Device.PXSX.GRPT, MethodObj)
 
 //
 // Init the PEP constraint for the PCIe RootPort.
-// 1. Check if the RP is defined or not.
-// 2. Check if the endpoint device is present or not.
-// 3. Check if the endpoint device is WWAN device or not
-//    a. If it is WWAN, set PEP value base on the WWAN RTD3 setup option
-// 4. Check if the PEP override method is defined or not. If defined,
-//  call the override method to decide the PEP value.
+// Check if the RP is defined or not.
 //
 #define PEP_DEVICE_RP(Device) \
         PEPV = 0x00 \
@@ -53,17 +47,6 @@
           PEPV = 0x05 \
           If (ROOT_COMPLEX.Device.PXSX.PRES ()) { \
             PEPV = 0x01 \
-            If (CondRefOf (ROOT_COMPLEX.Device.PXSX.WWST)) { \
-              If (ROOT_COMPLEX.Device.PXSX.WWST ()) { \
-                PEPV = 0x00 \
-                If (LEqual (WRTO, 1)) { \
-                  ADBG (Concatenate (#Device, " endpoint WWAN D0F1!")) \
-                  PDIN ("USB\\VID_8087&PID_0AC9&MI*", "", 1) \
-                } ElseIf (LEqual (WRTO, 3)) { \
-                  PEPV = 0x03 \
-                } \
-              } \
-            } \
           } \
           If (CondRefOf (\_SB.PEPD.RPCO)) { \
             PEPV = \_SB.PEPD.RPCO (PEPV, ROOT_COMPLEX.Device.PXSX.GRPT ()) \
@@ -221,13 +204,7 @@ SATA_PORT_DEVICE_REQUIRED_EXTERNAL (SAT0.PRT7)
 #define _PCIE_RP_DEVICE_PEP_OVERRIDE_METHOD_
 External (\_SB.PEPD.RPCO, MethodObj)
 #endif
-//
-// WRTO is the DSDT NVS for WWAN device type.
-//
-#ifndef _PCIE_WWAN_RTD3_NVS_EXTERNAL_
-#define _PCIE_WWAN_RTD3_NVS_EXTERNAL_
-External (WRTO, FieldUnitObj)
-#endif
+
 RP_DEVICE_REQUIRED_EXTERNAL (RP01)
 RP_DEVICE_REQUIRED_EXTERNAL (RP02)
 RP_DEVICE_REQUIRED_EXTERNAL (RP03)
@@ -262,10 +239,6 @@ RP_DEVICE_REQUIRED_EXTERNAL (RP28)
 // Using PXSX.PRES to check the endpoint.
 // Other PCIe Device would have _ADR.
 //
-// PR01 ~ PRxx device would be initialized by a common method.
-// CDC_MBIM device would be covered if the RPxx.PXSX is WWAN device.
-//
-
 //
 // Normal PCIe devices List. Need to transfer the DeviceName and
 // default d-state value.

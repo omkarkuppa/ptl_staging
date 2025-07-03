@@ -99,8 +99,6 @@ Name (OU4V, 0xFF)
 Mutex (MUTX, 0)
 // OS Up mutex
 Mutex (OSUM, 0)
-// WWAN Mutex
-Mutex (WWMT, 0)
 // _WAK Finished Event
 Event (WFEV)
 

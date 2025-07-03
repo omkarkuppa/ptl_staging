@@ -40,7 +40,6 @@ typedef enum {
   SystemOptionString,
   PortConnectors,
   OemType133,
-  OemType133Wwan,
   OemType136,
   PortableBattery,
   CoolingDevice,
@@ -294,40 +293,7 @@ typedef struct {
   UINT8                                 FccLock;
 } SMBIOS_TABLE_TYPE133;
 
-typedef struct{
-  UINT32         DeviceModel:8;
-  UINT32         SizeModel:8;
-  UINT32         PinModel:8;
-  UINT32         Reserved:8;
-} WWAN_MODEL_ID;
-
-typedef struct{
-  UINT32         Basic:1;
-  UINT32         Sku1:1;
-  UINT32         Sku2:1;
-  UINT32         Sku3:1;
-  UINT32         Reserved:28;
-} WWAN_SKU_ID;
-
 #define NUM_OF_DEV_MODE 3
-
-#pragma pack(1)
-//
-// OEM Type 133 for WWAN
-//
-typedef struct {
-  SMBIOS_STRUCTURE              Hdr;
-  EFI_GUID                      TypeGuid;
-  UINT8                         Revision;
-  UINT16                        OemId;              // Same as Vendor ID
-  WWAN_MODEL_ID                 WwanModelId;
-  UINT32                        ProductId;
-  WWAN_SKU_ID                   WwanSkuId;
-  UINT32                        ModelInfo;
-  UINT8                         NumberOfDeviceMode;
-  UINT32                        Reserved;
-} SMBIOS_TABLE_TYPE133_WWAN;
-#pragma pack()
 
 //
 // OEM Type 136

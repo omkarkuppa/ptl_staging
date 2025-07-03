@@ -94,7 +94,6 @@ External (\_SB.HIDD.HRDY, IntObj)
 External (\_SB.HIDD.HPEM, MethodObj)
 External (\_SB.PC00.GFX0.IUEH, MethodObj)
 
-External (\_SB.WCCD, DeviceObj)
 External (\DEVM, IntObj)
 
 External (\_TZ.TZ00, DeviceObj)
@@ -1538,11 +1537,6 @@ Method (_Q90) // Device mode change event from EC.
     // Get device mode
     Store (2, DEVM) // Device Mode 2
     ADBG (Concatenate("Device Mode Changed ", ToDecimalString(DEVM)))
-
-    If (CondRefOf (\_SB.WCCD)) {
-      ADBG ("Notify WCCD")
-      Notify (\_SB.WCCD, 0x80)
-    }
   }
 }
 

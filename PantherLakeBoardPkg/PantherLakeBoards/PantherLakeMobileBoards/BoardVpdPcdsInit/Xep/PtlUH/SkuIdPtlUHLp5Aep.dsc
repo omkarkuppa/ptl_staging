@@ -84,27 +84,6 @@
    { PTL_PCD_GROUP_GPPASPI0 }
   )}
 
-  # GPIO Table WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOnEarlyPreMem| * |{CODE(
-  {
-    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateHigh,     GpioV2IntDis,                 GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_FCP_OFF_N
-    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateHigh,     GpioV2IntDis,                 GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_RST_N
-    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateHigh,     GpioV2IntDis,                 GpioV2ResetHost,      GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_PERST_N
-    { GPIOV2_PTL_PCD_XXGPP_E_8,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirDefault, GpioV2StateDefault,  GpioV2IntDis,                 GpioV2ResetDefault,   GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }},  // GPP_E8_WWAN_WAKE_N
-    { GPIOV2_PTL_PCD_XXGPP_A_10, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateHigh,     GpioV2IntDis,                 GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_DISABLE_N
-    { GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,   GpioV2StateDefault,  GpioV2IntLevel|GpioV2IntSci,  GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }},  // WWAN_PEWAKE_N
-    { 0x0 }
-  })}
-
-  # GPIO Table WwanOff
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem| * |{CODE(
-  {
-    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_FCP_OFF_N
-    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_RST_N
-    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_PERST_N
-    { 0x0 }
-  })}
-
   # GPIO Table M80 WwanOn
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
   {
@@ -293,8 +272,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|$(PIN_GPIO_ACTIVE_HIGH)
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock|*|5
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber|*|2
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
@@ -461,9 +438,6 @@
    { 0x0 } // CODEC_INT // Present on rework3
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecI2cBusNumber|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio|*|{CODE(
-   { 0x0 }
-  )}
   # Root Port PEWAKE
    gBoardModuleTokenSpaceGuid.VpdPcdRootPortPewakeConfig|*|{CODE(
   {

@@ -22,46 +22,12 @@
 form formid = AUTO_ID(WWAN_OPTIONS_FORM_ID),
 title       = STRING_TOKEN(STR_WWAN_CONFIGURATION);
 
-  grayoutif ideqval SETUP_DATA.WwanEnable == 0;
-    oneof varid   = SETUP_DATA.CoExistenceManager,
-      prompt      = STRING_TOKEN(STR_COEX_MANAGER_PROMPT),
-      help        = STRING_TOKEN(STR_COEX_MANAGER_HELP),
-      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
-    endoneof;
-  endif; //grayoutif ideqval SETUP_DATA.WwanEnable == 0;
-
   oneof varid   = SETUP_DATA.WwanEnable,
     prompt      = STRING_TOKEN(STR_M2_WWAN_DEVICE_PROMPT),
     help        = STRING_TOKEN(STR_M2_WWAN_DEVICE_HELP),
     option text = STRING_TOKEN(STR_DISABLED),               value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-    option text = STRING_TOKEN(STR_M2_WWAN_DEVICE_4G),      value = 1, flags = RESET_REQUIRED;
     option text = STRING_TOKEN(STR_M2_WWAN_DEVICE_5G_M80),  value = 2, flags = RESET_REQUIRED;
   endoneof;
-
-  suppressif ideqval SETUP_DATA.WwanEnable == 0; // Suppress this setup option if Wwan Device is Disabled
-    oneof varid   = SETUP_DATA.WwanFwFlashDevice,
-      prompt      = STRING_TOKEN(STR_WWAN_FIRMWARE_FLASH_DEVICE_PROMPT),
-      help        = STRING_TOKEN(STR_WWAN_FIRMWARE_FLASH_DEVICE_HELP),
-      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
-    endoneof;
-    oneof varid   = SETUP_DATA.WirelessCnvConfigDevice,
-      prompt      = STRING_TOKEN(STR_WIRELESS_CNV_CFG_DEVICE_PROMPT),
-      help        = STRING_TOKEN(STR_WIRELESS_CNV_CFG_DEVICE_HELP),
-      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-    endoneof;
-  endif; // suppressif ideqval SETUP_DATA.WwanEnable == 0;
-
-    suppressif NOT ideqval SETUP_DATA.WwanEnable == 1;
-    oneof varid   = SETUP_DATA.WwanResetWorkaround,
-      prompt      = STRING_TOKEN(STR_WWAN_RESET_WORKAROUND_PROMPT),
-      help        = STRING_TOKEN(STR_WWAN_RESET_WORKAROUND_HELP),
-      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-    endoneof;
-  endif; // suppressif NOT ideqval SETUP_DATA.WwanEnable == 1;
 
   suppressif NOT ideqval SETUP_DATA.WwanEnable == 2; // Suppress this setup option if Wwan Device -> 5G - M80 is not selected
     numeric varid = SETUP_DATA.WwanOemSvid,
@@ -101,60 +67,6 @@ title       = STRING_TOKEN(STR_WWAN_CONFIGURATION);
         maximum = 0xFFFF,
         step    = 1,
         default = 80,
-      endnumeric;
-
-      numeric varid = SETUP_DATA.WwanTOnPer2PdsDelayMs,
-        prompt   = STRING_TOKEN(STR_5G_WWAN_TON_PER_2_PDS_PROMPT),
-        help     = STRING_TOKEN(STR_5G_WWAN_TON_PER_2_PDS_HELP),
-        minimum = 0,
-        maximum = 0xFFFF,
-        step    = 1,
-        default = 0,
-      endnumeric;
-
-      numeric varid = SETUP_DATA.WwanTPer2ResDelayMs,
-        prompt   = STRING_TOKEN(STR_5G_WWAN_PER_2_RES_PROMPT),
-        help     = STRING_TOKEN(STR_5G_WWAN_PER_2_RES_HELP),
-        minimum = 0,
-        maximum = 0xFFFF,
-        step    = 1,
-        default = 20,
-      endnumeric;
-
-      numeric varid = SETUP_DATA.WwanTRes2OffDelayMs,
-        prompt   = STRING_TOKEN(STR_5G_WWAN_RES_2_OFF_PROMPT),
-        help     = STRING_TOKEN(STR_5G_WWAN_RES_2_OFF_HELP),
-        minimum = 0,
-        maximum = 0xFFFF,
-        step    = 1,
-        default = 10,
-      endnumeric;
-
-      numeric varid = SETUP_DATA.WwanTOffDisDelayMs,
-        prompt   = STRING_TOKEN(STR_5G_WWAN_TOFF_DIS_PROMPT),
-        help     = STRING_TOKEN(STR_5G_WWAN_TOFF_DIS_HELP),
-        minimum = 0,
-        maximum = 0xFFFF,
-        step    = 1,
-        default = 500,
-      endnumeric;
-
-      numeric varid = SETUP_DATA.WwanTResTogDelayMs,
-        prompt   = STRING_TOKEN(STR_5G_WWAN_RES_TOG_PROMPT),
-        help     = STRING_TOKEN(STR_5G_WWAN_RES_TOG_HELP),
-        minimum = 0,
-        maximum = 0xFFFF,
-        step    = 1,
-        default = 10,
-      endnumeric;
-
-      numeric varid = SETUP_DATA.WwanTRes2PdsDelayMs,
-        prompt   = STRING_TOKEN(STR_5G_WWAN_RES_2_PDS_PROMPT),
-        help     = STRING_TOKEN(STR_5G_WWAN_RES_2_PDS_HELP),
-        minimum = 0,
-        maximum = 0xFFFF,
-        step    = 1,
-        default = 10,
       endnumeric;
   endif; //suppressif NOT ideqvallist SETUP_DATA.WwanEnable == 2;
 

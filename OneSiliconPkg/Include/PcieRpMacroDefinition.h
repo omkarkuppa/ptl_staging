@@ -61,11 +61,6 @@
 #define PCIE_EP_TYPE_DTBT                 0x02
 #endif
 
-// Defining MACRO Value for WWAN EP Type.
-#ifndef PCIE_EP_TYPE_WWAN
-#define PCIE_EP_TYPE_WWAN                 0x04
-#endif
-
 // Defining MACRO Value for Invalid EP Type.
 #ifndef PCIE_EP_TYPE_INVALID
 #define PCIE_EP_TYPE_INVALID              0xFF

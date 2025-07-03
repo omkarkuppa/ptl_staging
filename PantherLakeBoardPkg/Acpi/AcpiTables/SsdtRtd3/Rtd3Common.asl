@@ -147,7 +147,7 @@ External (\_SB.PC02.GLAN, DeviceObj)
 
 External (PEP0)
 External (XHPR)
-External (RCG0, IntObj)     // RTD3 Config Setting0(BIT0:Reserved, BIT1:Reserved, Bit3: BT, BIT6:Card Reader, BIT7:WWAN, BIT8:WSB SIP FAB1 Card reader)
+External (RCG0, IntObj)     // RTD3 Config Setting0(BIT0:Reserved, BIT1:Reserved, Bit3: BT, BIT6:Card Reader, BIT8:WSB SIP FAB1 Card reader)
 External (RCG1, IntObj)     // RTD3 Config Setting1(BIT0:Sata Port0, BIT1:Sata Port1, BIT2:Sata Port2, BIT3:Sata Port3)
 External (\GPRW, MethodObj)
 External (P8XH, MethodObj)

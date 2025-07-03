@@ -2210,70 +2210,6 @@ UpdateOemType133 (
 }
 
 /**
-Update Oem type 133 Info in Smbios Platform Info Table for WWAN.
-This function provides Sample code to update Smbios Platform Info.
-Platform Owner can customize it according to the Platform.
-
-@retval     EFI_SUCCESS   successful
-
-**/
-EFI_STATUS
-UpdateOemType133Wwan(
-  VOID
-  )
-{
-  UINT8                      Instance;
-  UINT8                      MaxInstances;
-  SMBIOS_TABLE_TYPE133_WWAN  *DefOemType133;
-  SMBIOS_TABLE_TYPE133_WWAN  *UpdOemType133;
-
-  //
-  // Get Default Oem Type 133 data
-  //
-  DefOemType133 = mDefaultSmbiosPlatformInfo[OemType133Wwan].Info;
-  if (DefOemType133 == NULL) {
-    DEBUG ((DEBUG_INFO, "UpdateOemType133Wwan: Default Oem Type 133 Info is not available!!\n"));
-    return EFI_SUCCESS;
-  }
-
-  MaxInstances  = sizeof (*DefOemType133) / sizeof (SMBIOS_TABLE_TYPE133_WWAN);
-  //
-  // Allocates the memory for Maximum Instance required
-  //
-  if (MaxInstances > 1) { // allocate memory in case of multiple instances
-    UpdOemType133 = AllocateZeroPool(sizeof (SMBIOS_TABLE_TYPE133_WWAN) * MaxInstances);
-    if (UpdOemType133 == NULL) {
-      DEBUG ((DEBUG_ERROR, "UpdateOemType133Wwan: Can't allocate enough resource for UpdOemType133 variable!!\n"));
-      return EFI_OUT_OF_RESOURCES;
-    }
-  } else { // otherwise use default to update
-    UpdOemType133 = DefOemType133;
-  }
-  //
-  // Copy the default data with instance to be updated
-  //
-  for (Instance = 0; Instance < MaxInstances; Instance++) {
-    CopyMem ((UpdOemType133 + Instance), DefOemType133, sizeof (SMBIOS_TABLE_TYPE133_WWAN));
-    //
-    // TODO: Update the Platform Info here.
-    //
-  }
-  //
-  // Update the Updated Platform info into Smbios Platform Table
-  //
-  mDefaultSmbiosPlatformInfo[OemType133Wwan].Info               = UpdOemType133;
-  mDefaultSmbiosPlatformInfo[OemType133Wwan].NoOfInstances      = Instance;
-
-  if (MaxInstances > 1) {
-    mDefaultSmbiosPlatformInfo[OemType133Wwan].IsPoolAllocated  = TRUE;
-  } else {
-    mDefaultSmbiosPlatformInfo[OemType133Wwan].IsPoolAllocated  = FALSE;
-  }
-  DEBUG ((DEBUG_INFO, "UpdateOemType133Wwan: Oem Type 133 Info is updated\n"));
-  return EFI_SUCCESS;
-}
-
-/**
 Update Oem type 136 Info in Smbios Platform Info Table.
 This function provides Sample code to update Smbios Platform Info.
 Platform Owner can customize it according to the Platform.
@@ -2499,8 +2435,6 @@ UpdateSmbiosPlatformInfo (
     UpdateOnboardDeviceExtInfo ();            // Update OnBoard Extended Info
 
     UpdateOemType133 ();                      // OEM Type 133
-
-    UpdateOemType133Wwan();                   // OEM Type 133: WWAN
 
     UpdateOemType136 ();                      // OEM Type 136
 

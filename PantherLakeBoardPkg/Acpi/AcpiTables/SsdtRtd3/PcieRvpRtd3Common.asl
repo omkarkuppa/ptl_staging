@@ -24,7 +24,6 @@
 // | RP Number | config | End Point                                 | ClkSrc# | Lane Reversal |
 // ____________________________________________________________________________________________
 // |   RP01    |   x1   | GBE LAN                                   |   3     |  No           |
-// |   RP02    |   x1   | M.2 WWAN                                  |   5     |  No           |
 // |   RP03    |   x1   | x1 PCIe Slot                              |   2     |  No           |
 // |   RP04    |   x1   | M.2 WLAN                                  |   4     |  No           |
 // |   RP05    |   x4   | Gen4 M.2 SSD                              |   6     |  No           |
@@ -37,7 +36,6 @@
 // | RP Number | config | End Point                                 | ClkSrc# | Lane Reversal |
 // ____________________________________________________________________________________________
 // |   RP01    |   x1   | GBE LAN                                   |   3     |  Yes          |
-// |   RP02    |   x1   | M.2 WWAN                                  |   5     |  Yes          |
 // |   RP03    |   x1   | x2 PCIe Slot                              |   2     |  Yes          |
 // |   RP05    |   x4   | Gen4 M.2 SSD                              |   6     |  No           |
 // |   RP09    |   x4   | Gen5 M.2 SSD                              |   1     |  No           |
@@ -51,7 +49,6 @@
 // | RP Number | config | End Point                                 | ClkSrc# | Lane Reversal |
 // ____________________________________________________________________________________________
 // |   RP01    |   x1   | GBE LAN                                   |   3     |  Yes          |
-// |   RP02    |   x1   | M.2 WWAN                                  |   5     |  Yes          |
 // |   RP03    |   x1   | x2 PCIe Slot                              |   2     |  Yes          |
 // |   RP05    |   x4   | Gen4 M.2 SSD                              |   6     |  No           |
 // |   RP09    |   x4   | Gen5 M.2 SSD                              |   1     |  No           |
@@ -60,21 +57,7 @@
 //
 External (RW04)
 Include ("Rtd3Common.asl")
-
-//
-// WWAN Pins External Reference
-//
-External (WRTO)
-External (WBRS)
-External (PBRS)
 External (PRST)
-External (WPRP)
-External (WFCP)
-External (PFCP)
-External (RW02)
-External (WCLK)
-External (WWRP)
-
 
 //
 // PCIe Slot 1 (x1 RP03)
@@ -148,12 +131,6 @@ External (P3RN)
   Name (SCLK,0) \
   Store (Slotclock,SCLK) \
   Name (WAKP, 0) \
-
-#define WWAN_RP_SCOPE_BODY(SlotPowerPin,SlotPowerPolarity,SlotResetPin,SlotResetPolarity,SlotWakePin,Slotclock,SlotBResetPin,SlotBResetPolarity) \
-  PCIE_RP_SCOPE_BODY(SlotPowerPin,SlotPowerPolarity,SlotResetPin,SlotResetPolarity,SlotWakePin,Slotclock) \
-  Name (BRST, Package () {0, 0}) \
-  Store (SlotBResetPin, Index (BRST, 0)) \
-  Store (SlotBResetPolarity, Index (BRST, 1))
 
 #define PCIE_RP_SCOPE_END } \
   }

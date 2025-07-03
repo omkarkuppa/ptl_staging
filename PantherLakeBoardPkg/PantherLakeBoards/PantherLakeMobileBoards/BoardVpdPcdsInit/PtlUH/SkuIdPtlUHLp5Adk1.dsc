@@ -81,24 +81,6 @@
    { PTL_PCD_GROUP_GPPASPI0 }
   )}
 
-  # GPIO Table WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOnEarlyPreMem| * |{CODE(
-  {
-    //
-    // WWAN does not support on ADK platform
-    //
-    { 0x0 }
-  })}
-
-  # GPIO Table WwanOff
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem| * |{CODE(
-  {
-    //
-    // WWAN does not support on ADK platform
-    //
-    { 0x0 }
-  })}
-
   # GPIO Table M80 WwanOn
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
   {
@@ -301,8 +283,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|$(PIN_GPIO_ACTIVE_HIGH)
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock|*|0    # WWAN does not support on ADK platform
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber|*|0 # WWAN does not support on ADK platform
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
@@ -516,12 +496,6 @@
    { 0x0 } // CODEC_INT // Present on rework3
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecI2cBusNumber|*|0x3
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio|*|{CODE(
-    //
-    // WWAN does not support on ADK platform
-    //
-    { 0x0 }
-  )}
   # Root Port PEWAKE
    gBoardModuleTokenSpaceGuid.VpdPcdRootPortPewakeConfig|*|{CODE(
   {

@@ -580,12 +580,6 @@ DefinitionBlock (
   }
   Include ("Pld.asl")
   Include ("UsbUpcPldLib.asl")
-
-  //
-  // WWAN
-  //
-  Include ("CoExistenceDevice.asl")
-  Include ("WirelessConfigDevice.asl")
   Include ("PchRpPxsxWrapper.asl")
 
   //
@@ -707,13 +701,6 @@ DefinitionBlock (
         }
       }
     }
-  }
-
-  //
-  // Add WWAN Firmware Flash Device Support
-  //
-  If (LEqual (WFFD, 1)) {
-    Include ("WwanFlash.asl")
   }
 
   //

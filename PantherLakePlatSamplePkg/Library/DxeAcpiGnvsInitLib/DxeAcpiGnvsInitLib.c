@@ -110,13 +110,6 @@ AcpiGnvsInit (
   PlatformNvsAreaProtocol->Area->CriticalThermalTripPoint    = 119;
 
   //
-  // WWAN
-  //
-  PlatformNvsAreaProtocol->Area->CoExistenceManager           = 0x0;
-  PlatformNvsAreaProtocol->Area->WwanFwFlashDevice            = 0x0;
-  PlatformNvsAreaProtocol->Area->WccdEnable                   = 0x1;
-
-  //
   // Miscellaneous
   //
   PlatformNvsAreaProtocol->Area->ConfigTdpBios = 0;

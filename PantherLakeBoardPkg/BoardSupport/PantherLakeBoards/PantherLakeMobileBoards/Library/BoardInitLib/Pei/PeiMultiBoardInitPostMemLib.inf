@@ -138,12 +138,6 @@
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                            ## PRODUCES
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                    ## PRODUCES
   gBoardModuleTokenSpaceGuid.PcdWwanWakeGpio                             ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanSourceClock                          ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanRootPortNumber                       ## PRODUCES
-
-  # WWAN
-  gBoardModuleTokenSpaceGuid.PcdWwanSourceClock
-  gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio
 
   # I2C Touch Panel 0 & 1 RTD3
   gBoardModuleTokenSpaceGuid.PcdSpdAddressOverride
@@ -282,7 +276,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdPmPowerButtonGpioPin
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableLch
   gBoardModuleTokenSpaceGuid.VpdPcdTpm2IntGpio
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio              ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio                         ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio                         ## CONSUMES
@@ -290,8 +283,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity      ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity                 ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity                 ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock                       ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber                    ## CONSUMES
 
   # Nvme Recovery config
   gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryPrimarySlotPortNumber  ## CONSUMES

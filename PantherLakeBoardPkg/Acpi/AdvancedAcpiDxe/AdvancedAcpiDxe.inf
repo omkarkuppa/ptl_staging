@@ -144,7 +144,6 @@
   gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterAccessSize        ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterAddress           ## CONSUMES
 
-  gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpio                             ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpioPolarity                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTouchpanelIrqGpio                           ## CONSUMES
@@ -172,17 +171,9 @@
   gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity               ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                       ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanSourceClock                     ## CONWUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanRootPortNumber                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable                      ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs             ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs          ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnPer2PdsDelayMs          ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2OffDelayMs            ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOffDisDelayMs             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTResTogDelayMs             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2PdsDelayMs            ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTPer2ResDelayMs            ## CONSUMES
 
   # PCIE Slot1 GPIO configuration  PCDs
   gBoardModuleTokenSpaceGuid.PcdPcieSlot1RootPort                ## CONSUMES

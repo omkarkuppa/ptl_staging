@@ -3862,7 +3862,6 @@ gStructPcdTokenSpaceGuid.PcdSetup.CPUEnergyReadEnable|0x1                       
 gStructPcdTokenSpaceGuid.PcdSetup.CPUTempReadEnable|0x1                                            # CPU Temp Read
 gStructPcdTokenSpaceGuid.PcdSetup.CSDebugLightEC|0x0                                               # EC CS Debug Light
 gStructPcdTokenSpaceGuid.PcdSetup.CSNotifyEC|0x1                                                   # EC Notification
-gStructPcdTokenSpaceGuid.PcdSetup.CoExistenceManager|0x0                                           # CoExistence Manager
 gStructPcdTokenSpaceGuid.PcdSetup.IuerButtonEnable|0x0                                             # IUER Button Enable
 gStructPcdTokenSpaceGuid.PcdSetup.IuerConvertibleEnable|0x0                                        # IUER Slate Enable
 gStructPcdTokenSpaceGuid.PcdSetup.SlateIndicatorSx|0x0                                             # Slate Mode on Sx resume (Excluding S5)
@@ -3904,7 +3903,6 @@ gStructPcdTokenSpaceGuid.PcdSetup.Gpe1BlockEnable|0x1                           
 gStructPcdTokenSpaceGuid.PcdSetup.GuidForward|0x0                                                  # Guid Forward
 gStructPcdTokenSpaceGuid.PcdSetup.HebcValue|0x233f3                                                # HEBC value
 gStructPcdTokenSpaceGuid.PcdSetup.HidEventFilterDriverEnable|0x1                                   # HID Event Filter Driver
-gStructPcdTokenSpaceGuid.PcdSetup.I2cSarResetDelay|0x8                                             # Delay to wait for WWAN device to be ready before SAR reset.
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtConnectTopologyTimeoutInMs|0x1388                            # Connect Topology Timeout value for ITBT
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtForcePowerOnTimeoutInMs|0x1f4                                # Force Poweron Timeout value for ITBT
 gStructPcdTokenSpaceGuid.PcdSetup.ITbtPcieExtraBusRsvd[0]|0x2a                                     # Extra Bus Reserved
@@ -4149,7 +4147,6 @@ gStructPcdTokenSpaceGuid.PcdSetup.Rtd3SensorHub|0x44                            
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3Support|0x1                                                  # ACPI D3Cold Support
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3TouchPadDelay|0x44                                           # TouchPad
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3TouchPanelDelay|0x44                                         # TouchPanel
-gStructPcdTokenSpaceGuid.PcdSetup.Rtd3WWAN|0x3                                                     # WWAN
 gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x0                                             # Scan Matrix Keyboard Support
 gStructPcdTokenSpaceGuid.PcdSetup.SensorHubType|0x1                                                # Sensor Hub Type
 gStructPcdTokenSpaceGuid.PcdSetup.SensorStandby|0x0                                                # Sensor Standby
@@ -4202,20 +4199,11 @@ gStructPcdTokenSpaceGuid.PcdSetup.VirtualKeyboard|0x0                           
 gStructPcdTokenSpaceGuid.PcdSetup.WakeOnRTCS5|0x0                                                  # Wake System from S5 via RTC
 gStructPcdTokenSpaceGuid.PcdSetup.SafeLoadingBiosEnable|0x0                                        # Safe Loading Bios Enable
 gStructPcdTokenSpaceGuid.PcdSetup.TsegReallocateEnableCount|0x0                                    # Tseg Reallocate Enable Count
-gStructPcdTokenSpaceGuid.PcdSetup.WirelessCnvConfigDevice|0x1                                      # Wireless CNV Config Device
 gStructPcdTokenSpaceGuid.PcdSetup.WwanEnable|0x0                                                   # WWAN Device
-gStructPcdTokenSpaceGuid.PcdSetup.WwanFwFlashDevice|0x0                                            # Firmware Flash Device
 gStructPcdTokenSpaceGuid.PcdSetup.WwanOemSvid|0x1cf8                                               # WA - WWAN OEM SVID
-gStructPcdTokenSpaceGuid.PcdSetup.WwanResetWorkaround|0x1                                          # WWAN Reset Workaround
 gStructPcdTokenSpaceGuid.PcdSetup.WwanSvidTimeout|0x0                                              # WA - WWAN SVID Detect Timeout
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTOffDisDelayMs|0x1f4                                         # TOffDis
 gStructPcdTokenSpaceGuid.PcdSetup.WwanTOn2ResDelayMs|0x14                                          # TOn2Res
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTOnPer2PdsDelayMs|0x0                                        # TOnPer2Pds
 gStructPcdTokenSpaceGuid.PcdSetup.WwanTOnRes2PerDelayMs|0x50                                       # TOnRes2Per
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTPer2ResDelayMs|0x14                                         # TPer2Res
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTRes2OffDelayMs|0xa                                          # TRes2Off
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTRes2PdsDelayMs|0xa                                          # TRes2Pds
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTResTogDelayMs|0xa                                           # TResTog
 !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
     gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x2                                    # Platform Debug Option
 !else

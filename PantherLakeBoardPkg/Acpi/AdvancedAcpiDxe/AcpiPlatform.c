@@ -3217,7 +3217,6 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->PeciAccessMethod     = mSystemConfiguration.PeciAccessMethod;
 
   mPlatformNvsAreaProtocol.Area->SystemTimeAndAlarmSource = mSystemConfiguration.SystemTimeAndAlarmSource;
-  mPlatformNvsAreaProtocol.Area->CoExistenceManager = mSystemConfiguration.CoExistenceManager;
   mPlatformNvsAreaProtocol.Area->XdciFnEnable       = mPchSetup.PchXdciSupport;
   //
   // Initilize platform ID in Global NVS Area
@@ -3241,8 +3240,9 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->VRRampUpDelay              = mSystemConfiguration.VRRampUpDelay;
   mPlatformNvsAreaProtocol.Area->PstateCapping              = mSystemConfiguration.PstateCapping;
   mPlatformNvsAreaProtocol.Area->SensorStandby              = mSystemConfiguration.SensorStandby;
-  mPlatformNvsAreaProtocol.Area->Rtd3Config0                = ((mSystemConfiguration.WwanEnable && (mSystemConfiguration.Rtd3WWAN != 0) ? 1:0) << 7)
-                                                              | (mSystemConfiguration.Rtd3I2CTouchPanel << 4); // Applicable for SKL SDS RTD3 SIP only
+
+  mPlatformNvsAreaProtocol.Area->Rtd3Config0                = (mSystemConfiguration.Rtd3I2CTouchPanel << 4);
+
   mPlatformNvsAreaProtocol.Area->StorageRtd3Support           = mSystemConfiguration.StorageRtd3Support;
   mPlatformNvsAreaProtocol.Area->StorageDynamicLinkManagement = mSystemConfiguration.StorageDynamicLinkManagement;
 
@@ -3352,26 +3352,11 @@ InstallAcpiPlatform (
   //
   // WWAN GPIO pin configuration
   //
-  mPlatformNvsAreaProtocol.Area->WwanRtd3Option = mSystemConfiguration.Rtd3WWAN;
   mPlatformNvsAreaProtocol.Area->WwanPerstGpio  = PcdGet32 (PcdWwanPerstGpio);
-  mPlatformNvsAreaProtocol.Area->WwanPerstGpioPolarity = PcdGetBool (PcdWwanPerstGpioPolarity);
   mPlatformNvsAreaProtocol.Area->WwanBbrstGpio = PcdGet32 (PcdWwanBbrstGpio);
-  mPlatformNvsAreaProtocol.Area->WwanBbrstGpioPolarity = PcdGetBool (PcdWwanBbrstGpioPolarity);
-  mPlatformNvsAreaProtocol.Area->WwanFullCardPowerOffGpio = PcdGet32 (PcdWwanFullCardPowerOffGpio);
-  mPlatformNvsAreaProtocol.Area->WwanFullCardPowerOffGpioPolarity = PcdGetBool (PcdWwanFullCardPowerOffGpioPolarity);
-  mPlatformNvsAreaProtocol.Area->WwanSourceClock = PcdGet8 (PcdWwanSourceClock);
-  mPlatformNvsAreaProtocol.Area->WwanRootPortNumber = PcdGet8 (PcdWwanRootPortNumber);
-  mPlatformNvsAreaProtocol.Area->WwanFwFlashDevice  = mSystemConfiguration.WwanFwFlashDevice;
-  mPlatformNvsAreaProtocol.Area->WccdEnable         = mSystemConfiguration.WirelessCnvConfigDevice;
   mPlatformNvsAreaProtocol.Area->WwanEnable = PcdGet8 (PcdPcieWwanEnable);
   mPlatformNvsAreaProtocol.Area->WwanTOn2ResDelayMs = PcdGet16 (PcdBoardWwanTOn2ResDelayMs);
   mPlatformNvsAreaProtocol.Area->WwanTOnRes2PerDelayMs = PcdGet16 (PcdBoardWwanTOnRes2PerDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanTOnPer2PdsDelayMs = PcdGet16 (PcdBoardWwanTOnPer2PdsDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanTRes2OffDelayMs = PcdGet16 (PcdBoardWwanTRes2OffDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanTOffDisDelayMs = PcdGet16 (PcdBoardWwanTOffDisDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanTResTogDelayMs = PcdGet16 (PcdBoardWwanTResTogDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanTRes2PdsDelayMs = PcdGet16 (PcdBoardWwanTRes2PdsDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanTPer2ResDelayMs = PcdGet16 (PcdBoardWwanTPer2ResDelayMs);
   mPlatformNvsAreaProtocol.Area->WwanOemSvid         = mSystemConfiguration.WwanOemSvid;
   mPlatformNvsAreaProtocol.Area->WwanSvidTimeout     = mSystemConfiguration.WwanSvidTimeout;
 
@@ -3618,8 +3603,6 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->I3c2ExtTermLcntTiming    = mSystemConfiguration.I3c2ExtTermLcntTiming;    // I3C2 SCL Termination Bit Low Count
   mPlatformNvsAreaProtocol.Area->I3c2SdaSwitchDelayTiming = mSystemConfiguration.I3c2SdaSwitchDelayTiming; // I3C2 SDA Hold and Mode Switch Delay Timing
   mPlatformNvsAreaProtocol.Area->I3c2BusDelayTiming       = mSystemConfiguration.I3c2BusDelayTiming;       // I3C2 Speed Mode Selection
-
-  mPlatformNvsAreaProtocol.Area->WwanModemBaseBandResetGpio  = PcdGet32 (PcdWwanModemBaseBandResetGpio);
 
   mPlatformNvsAreaProtocol.Area->Revision       = PLATFORM_NVS_AREA_REVISION_1; // for TPM related fields
   if (mSystemConfiguration.FastBoot == 0) {

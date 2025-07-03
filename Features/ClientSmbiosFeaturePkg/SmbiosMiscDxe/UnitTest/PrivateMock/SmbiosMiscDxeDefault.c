@@ -423,27 +423,6 @@ SMBIOS_TABLE_TYPE133 mDefaultOemType133 = {
 };
 
 //
-// The contain of this Product ID info is just for Intel RVP. The table values can be modified
-// accordingly to OEM/Customer product.
-//
-SMBIOS_TABLE_TYPE133_WWAN mDefaultOemType133Wwan = {
-  {                                     // Hdr
-    SMBIOS_TYPE_OEM_133,                ///< Hdr.Type
-    sizeof(SMBIOS_TABLE_TYPE133_WWAN),  ///< Hdr.Length
-    0                                   ///< Hdr.Handle
-  },
-  { 0x7895b4f9, 0x924d, 0x410a, { 0x96, 0x39, 0x12, 0x38, 0x62, 0xb2, 0x8a, 0x63 } }, ///< TypeGuid
-  0,                                    ///< Revision
-  0x8086,                               ///< OemId - same as Vendor ID
-  { 0x08, 0x16, 0x12, 0x20 },           ///< WwanModelId
-  0x80861226,                           ///< ProductId
-  { 1, 0, 0, 0, 0 },                    ///< WwanSkuId
-  0x18577261,                           ///< ModelInfo
-  NUM_OF_DEV_MODE,                      ///< NumberOfDeviceMode
-  0                                     ///< Reserved
-};
-
-//
 // Default OEM Type 136
 //
 SMBIOS_TABLE_TYPE136 mDefaultOemType136 = {
@@ -518,8 +497,6 @@ SMBIOS_PLATFORM_INFO mDefaultSmbiosPlatformInfo[] = {
   { (VOID*)(&mDefaultPortConnectorsInfo),          (VOID*)(&mDefaultPortConnectorsStrings),        SIZEOF_SMBIOS_STRINGS (8),  FALSE, 1 }, // SMBIOS Type 8  - PortConnectors
 
   { (VOID*)(&mDefaultOemType133),                  (VOID*)(&mDefaultOemType133Strings),            SIZEOF_SMBIOS_STRINGS (133),FALSE, 0 }, // SMBIOS Type 133 - OemType133
-
-  { (VOID*)(&mDefaultOemType133Wwan),              NULL,                                           0,                          FALSE, 1 }, // SMBIOS Type 133 - OemType133
 
   { (VOID*)(&mDefaultOemType136),                  NULL,                                           0,                          FALSE, 1 }, // SMBIOS Type 136 - OemType136
 

@@ -212,30 +212,9 @@ PtlGpioTablePreMemInit (
   PcdSetBoolS (PcdWwanPerstGpioPolarity, PcdGetBool (VpdPcdWwanPerstGpioPolarity));
   PcdSetBoolS (PcdWwanFullCardPowerOffGpioPolarity, PcdGetBool (VpdPcdWwanFullCardPowerOffGpioPolarity));
   PcdSetBoolS (PcdWwanBbrstGpioPolarity, PcdGetBool (VpdPcdWwanBbrstGpioPolarity));
-  PcdSet8S (PcdWwanSourceClock, PcdGet8 (VpdPcdWwanSourceClock));
-  PcdSet8S (PcdWwanRootPortNumber, PcdGet8 (VpdPcdWwanRootPortNumber));
   // When WWAN is enabled in setup power enable pin use WWAN FCP pin
   GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
   PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-
-  GpioVpd = PcdGetPtr (VpdPcdWwanModemBaseBandResetGpio);
-  PcdSet32S(PcdWwanModemBaseBandResetGpio, GpioVpd->GpioPad); // WWAN/Modem Base Band Reset pin
-  //
-  // GPIO Table Init, Update WwanOn PreMem GPIO table to PcdBoardGpioTableWwanOnEarlyPreMem
-  //
-  GpioTable = PcdGetPtr (VpdPcdBoardGpioTableWwanOnEarlyPreMem);
-  PcdSet64S (PcdBoardGpioTableWwanOnEarlyPreMem, (UINTN)GpioTable);
-  GetGpioTableSize (GpioTable, &GpioCount);
-  PcdSet16S (PcdBoardGpioTableWwanOnEarlyPreMemSize, GpioCount);
-  //
-  // GPIO Table Init, Update WwanOff PreMem GPIO table to PcdBoardGpioTableWwanOffEarlyPreMem
-  //
-  GpioTable = (GPIOV2_INIT_CONFIG*)NULL;
-  GpioTable = PcdGetPtr (VpdPcdBoardGpioTableWwanOffEarlyPreMem);
-  PcdSet64S (PcdBoardGpioTableWwanOffEarlyPreMem, (UINTN)GpioTable);
-  GpioCount = 0;
-  GetGpioTableSize (GpioTable, &GpioCount);
-  PcdSet16S (PcdBoardGpioTableWwanOffEarlyPreMemSize, GpioCount);
 
   //
   // GPIO Table Init, Update M80Wwan PreMem GPIO table to PcdBoardGpioTableM80WwanOnEarlyPreMem

@@ -83,18 +83,6 @@
    { PTL_PCD_GROUP_GPPASPI0 }
   )}
 
-  # GPIO Table WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOnEarlyPreMem| * |{CODE(
-  {
-    { 0x0 }
-  })}
-
-  # GPIO Table WwanOff
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem| * |{CODE(
-  {
-    { 0x0 }
-  })}
-
   # GPIO Table M80 WwanOn
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
   {
@@ -277,8 +265,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|0
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|0
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock|*|0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber|*|0
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
@@ -427,9 +413,7 @@
    { 0x0 } // CODEC_INT // Present on rework3
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecI2cBusNumber|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio|*|{CODE(
-   { 0x0 }
-  )}
+
   # Root Port PEWAKE
    gBoardModuleTokenSpaceGuid.VpdPcdRootPortPewakeConfig|*|{CODE(
   {

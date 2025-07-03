@@ -163,9 +163,10 @@
   <b>Revision 5</b>:  - Add OSSE Pep constraint
   <b>Revision 6</b>:  - Added StorageDynamicLinkManagement
   <b>Revision 7</b>:  - Added TccMode
+  <b>Revision 8</b>:  - Deprecated wwan related variable
 **/
 
-#define SETUP_DATA_REVISION 7
+#define SETUP_DATA_REVISION 8
 
 typedef struct {
   UINT8   Revision;
@@ -450,7 +451,7 @@ typedef struct {
   UINT16  Rtd3SensorHub;
   UINT16  VRRampUpDelay;
   UINT8   PstateCapping;
-  UINT8   Rtd3WWAN;
+  UINT8   Rtd3WWAN; //Deprecated
   UINT8   Rtd3SataPort0;
   UINT8   Rtd3SataPort1;
   UINT8   Rtd3SataPort2;
@@ -463,7 +464,7 @@ typedef struct {
   UINT8   Rtd3Pcie;
   UINT8   Rtd3I2CTouchPanel;
 
-  UINT8   CoExistenceManager;
+  UINT8   CoExistenceManager; //Deprecated
   UINT8   UsbFnEnable;
 
   UINT8   FanControl;
@@ -534,7 +535,7 @@ typedef struct {
   UINT8   HebcValueSupport;
   UINT32  HebcValue;
 
-  UINT8   I2cSarResetDelay;
+  UINT8   I2cSarResetDelay; //Deprecated
 
   UINT8   WwanEnable;
 
@@ -594,7 +595,7 @@ typedef struct {
   UINT8   AuxOriOverride;
 
   UINT8   PowermeterDeviceEnable; // powermeter enabling
-  UINT8   WwanResetWorkaround;
+  UINT8   WwanResetWorkaround; //Deprecated
   UINT8   TelemetryDeviceEnable;
 
   UINT8   SdevXhciNumberOfDevices;
@@ -654,13 +655,13 @@ typedef struct {
 
   UINT16  WwanTOn2ResDelayMs;
   UINT16  WwanTOnRes2PerDelayMs;
-  UINT16  WwanTOnPer2PdsDelayMs;
-  UINT16  WwanTRes2OffDelayMs;
-  UINT16  WwanTOffDisDelayMs;
-  UINT16  WwanTResTogDelayMs;
-  UINT16  WwanTRes2PdsDelayMs;
-  UINT16  WwanTPer2ResDelayMs;
-  UINT8   WwanFwFlashDevice;
+  UINT16  WwanTOnPer2PdsDelayMs; //Deprecated
+  UINT16  WwanTRes2OffDelayMs;   //Deprecated
+  UINT16  WwanTOffDisDelayMs;    //Deprecated
+  UINT16  WwanTResTogDelayMs;    //Deprecated
+  UINT16  WwanTRes2PdsDelayMs;   //Deprecated
+  UINT16  WwanTPer2ResDelayMs;   //Deprecated
+  UINT8   WwanFwFlashDevice;     //Deprecated
   UINT8   MPdtSupport;
 
   //
@@ -676,7 +677,7 @@ typedef struct {
   UINT16  WwanSvidTimeout;
   UINT8   DeepestUSBSleepWakeCapability;
 
-  UINT8   WirelessCnvConfigDevice;
+  UINT8   WirelessCnvConfigDevice; //Deprecated
 
   UINT8   Gpe1BlockEnable;
 
@@ -1262,7 +1263,7 @@ typedef struct {
   <b>Revision 7</b>:  - Add RDTCIDLE.
   <b>Revision 8</b>:  - Add PprRetryLimit variable.
   <b>Revision 9</b>:  - Add Use1p5ReadPostamble variable.
-  <b>Revision 10</b>: - Add IbeccEccInjControl, IbeccEccInjAddrBase, IbeccEccInjCount  
+  <b>Revision 10</b>: - Add IbeccEccInjControl, IbeccEccInjAddrBase, IbeccEccInjCount
   <b>Revision 11</b>: - Add MsHashOverride, MsHashInterleaveBit, MsHashMask
   <b>Revision 12</b>: - Add Fusa Cfi Parity variables and FusaConfigEnable
 **/

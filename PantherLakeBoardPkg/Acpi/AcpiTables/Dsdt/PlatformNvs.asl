@@ -178,7 +178,7 @@
   PSCP, 8,  // Offset(512),   P-state Capping
   I20D, 16, // Offset(513),   Delay in _PS0 after powering up I2C0 Controller
   I21D, 16, // Offset(515),   Delay in _PS0 after powering up I2C1 Controller
-  RCG0, 16, // Offset(517),   RTD3 Config Setting0(BIT0:ZPODD, BIT1:Reserved, BIT2:PCIe NVMe, BIT3:BT, BIT4:SKL SDS SIP I2C Touch, BIT6:Card Reader, BIT7:WWAN)
+  RCG0, 16, // Offset(517),   RTD3 Config Setting0(BIT0:ZPODD, BIT1:Reserved, BIT2:PCIe NVMe, BIT3:BT, BIT4:SKL SDS SIP I2C Touch, BIT6:Card Reader)
   P2ME, 8,  // Offset(519),   Ps2 Mouse Enable
   SCMK, 8,  // Offset(520),   Scan Matrix Keyboard Support Enable
   SSH0, 16, // Offset(521),   SSCN-HIGH for I2C0
@@ -299,20 +299,19 @@
   SHSB, 8,  // Offset(755),   Sensor Standby mode
   PLCS, 8,  // Offset(756),   set PL1 limit when entering CS
   PLVL, 16, // Offset(757),   PL1 limit value
-  WWSD, 8,  // Offset(759),   EnableWwanTempSensorDevice
-  CVSD, 8,  // Offset(760),   EnableCpuVrTempSensorDevice
-  SSDD, 8,  // Offset(761),   EnableSsdTempSensorDevice
-  INLD, 8,  // Offset(762),   EnableInletFanTempSensorDevice
-  IFAT, 8,  // Offset(763),   ActiveThermalTripPointInletFan
-  IFPT, 8,  // Offset(764),   PassiveThermalTripPointInletFan
-  IFCT, 8,  // Offset(765),   CriticalThermalTripPointInletFan
-  IFHT, 8,  // Offset(766),   HotThermalTripPointInletFan
-  USBH, 8,  // Offset(767),   Sensor Hub Type - (0)None, (1)USB, (2)I2C Intel, (3)I2C STM
-  BCV4, 8,  // Offset(768),   Broadcom's Bluetooth adapter's revision
-  WTV0, 8,  // Offset(769),   I2C0/WITT devices version
-  WTV1, 8,  // Offset(770),   I2C1/WITT devices version
-  APFU, 8,  // Offset(771),   Atmel panel FW update Enable/Disable
-  // Offset(772) : Offset(777), Reserved bytes
+  CVSD, 8,  // Offset(759),   EnableCpuVrTempSensorDevice
+  SSDD, 8,  // Offset(760),   EnableSsdTempSensorDevice
+  INLD, 8,  // Offset(761),   EnableInletFanTempSensorDevice
+  IFAT, 8,  // Offset(762),   ActiveThermalTripPointInletFan
+  IFPT, 8,  // Offset(763),   PassiveThermalTripPointInletFan
+  IFCT, 8,  // Offset(764),   CriticalThermalTripPointInletFan
+  IFHT, 8,  // Offset(765),   HotThermalTripPointInletFan
+  USBH, 8,  // Offset(766),   Sensor Hub Type - (0)None, (1)USB, (2)I2C Intel, (3)I2C STM
+  BCV4, 8,  // Offset(767),   Broadcom's Bluetooth adapter's revision
+  WTV0, 8,  // Offset(768),   I2C0/WITT devices version
+  WTV1, 8,  // Offset(769),   I2C1/WITT devices version
+  APFU, 8,  // Offset(770),   Atmel panel FW update Enable/Disable
+  // Offset(771) : Offset(777), Reserved bytes
   Offset(778),
   PEPC, 64, // Offset(778),   PEP Constraints
   // Bit[1:0] - Storage (0:None, 1:Storage Controller, 2:Raid)
@@ -424,15 +423,14 @@
   USTP, 8,  // Offset(1083),  use SerialIo timing parameters
   // Offset(1084) : Offset(1124), Reserved bytes
   Offset(1125),
-  WBBR, 32, // Offset(1125),  Gpio for modem reset
-  GPDI, 32, // Offset(1129),  Gpio for touchPaD Interrupt
-  GPLI, 32, // Offset(1133),  Gpio for touchPaneL Interrupt
-  ECR1, 8,  // Offset(1137),
-  I2SC, 8,  // Offset(1138),  HD Audio I2S Codec Selection
-  I2SI, 32, // Offset(1139),  HD Audio I2S Codec Interrupt Pin
-  I2SB, 8,  // Offset(1143),  HD Audio I2S Codec Connection to I2C bus controller instance (I2C[0-5])
-  WIFC, 8,  // Offset(1144),  WirelessCharging
-  // Offset(1145) : Offset(2155), Reserved bytes
+  GPDI, 32, // Offset(1125),  Gpio for touchPaD Interrupt
+  GPLI, 32, // Offset(1129),  Gpio for touchPaneL Interrupt
+  ECR1, 8,  // Offset(1133),
+  I2SC, 8,  // Offset(1134),  HD Audio I2S Codec Selection
+  I2SI, 32, // Offset(1135),  HD Audio I2S Codec Interrupt Pin
+  I2SB, 8,  // Offset(1139),  HD Audio I2S Codec Connection to I2C bus controller instance (I2C[0-5])
+  WIFC, 8,  // Offset(1140),  WirelessCharging
+  // Offset(1141) : Offset(2155), Reserved bytes
   Offset(2156),
   ADPM, 32, // Offset(2156),  HD-Audio DSP Post-Processing Module Mask
   AG1L, 64, // Offset(2160),  HDA PP module custom GUID 1 - first 64bit  [0-63]
@@ -447,15 +445,14 @@
   DHSP, 16, // Offset(2211),  D-State for xHCI HS port(BIT0:USB HS Port0 ~ BIT15:USB HS Port15)
   DSSP, 16, // Offset(2213),  D-State for xHCI SS port(BIT0:USB SS Port0 ~ BIT15:USB SS Port15)
   DSTP, 8,  // Offset(2215),  D-State for SATA port(BIT0:SATA Port0 ~ BIT7:SATA Port7)
-  COEM, 8,  // Offset(2216),  CoExistenceManager
-  RTVM, 8,  // Offset(2217),  RunTime VM Control
+  RTVM, 8,  // Offset(2216),  RunTime VM Control
   //
   //Feature Specific Data Bits
   //
-  USTC, 8,  // Offset(2218),  USB Type C Supported
-  HEB1, 32, // Offset(2219),  HebcValue
-  TSDB, 8,  // Offset(2223),  TS-on-DIMM temperature
-  // Offset(2224) : Offset(2338), Reserved bytes
+  USTC, 8,  // Offset(2217),  USB Type C Supported
+  HEB1, 32, // Offset(2218),  HebcValue
+  TSDB, 8,  // Offset(2222),  TS-on-DIMM temperature
+  // Offset(2223) : Offset(2338), Reserved bytes
   Offset(2339),
   LCHS, 8,  // Offset(2339),  To enable/disable Lch
   LCHT, 8,  // Offset(2340),  To enable/disable Lch TestDevice
@@ -483,237 +480,222 @@
   DBGF, 8,  // Offset(2379),  Debug Mode Global Flag from LPC EC
   DBUP, 8,  // Offset(2380),  Debug Mode USB Port Number from LPC EC
   STAS, 8,  // Offset(2381),  Select source for System time and alarm
-  WRTO, 8,  // Offset(2382),  WWAN RTD3 options
-  PRST, 32, // Offset(2383),  WWAN PERST Gpio pin
-  WPRP, 8,  // Offset(2387),  WWAN PERST Gpio polarity
-  P1RN, 8,  // Offset(2388),  Pcie Slot 1 Root Port Number
-  P1PG, 32, // Offset(2389),  Pcie Slot 1 Power Enable Gpio pin
-  P1EP, 8,  // Offset(2393),  Pcie Slot 1 Power Enable Gpio pin polarity
-  P1RG, 32, // Offset(2394),  Pcie Slot 1 Rest Gpio pin
-  P1RP, 8,  // Offset(2398),  Pcie Slot 1 Rest Gpio pin polarity
-  P2RN, 8,  // Offset(2399),  Pcie Slot 2 Root Port Number
-  P2PG, 32, // Offset(2400),  Pcie Slot 2 Power Enable Gpio pin
-  P2EP, 8,  // Offset(2404),  Pcie Slot 2 Power Enable Gpio pin polarity
-  P2RG, 32, // Offset(2405),  Pcie Slot 2 Rest Gpio pin
-  P2RP, 8,  // Offset(2409),  Pcie Slot 2 Rest Gpio pin polarity
-  P3RN, 8,  // Offset(2410),  Pcie Slot 3 Root Port Number
-  P3PG, 32, // Offset(2411),  Pcie Slot 3 Power Enable Gpio pin
-  P3EP, 8,  // Offset(2415),  Pcie Slot 3 Power Enable Gpio pin polarity
-  P3RG, 32, // Offset(2416),  Pcie Slot 3 Rest Gpio pin
-  P3RP, 8,  // Offset(2420),  Pcie Slot 3 Rest Gpio pin polarity
-  P4RN, 8,  // Offset(2421),  Pcie Slot 4 Root Port Number
-  P4PG, 32, // Offset(2422),  Pcie Slot 4 Power Enable Gpio pin
-  P4EP, 8,  // Offset(2426),  Pcie Slot 4 Power Enable Gpio pin polarity
-  P4RG, 32, // Offset(2427),  Pcie Slot 4 Rest Gpio pin
-  P4RP, 8,  // Offset(2431),  Pcie Slot 4 Rest Gpio pin polarity
-  P5RN, 8,  // Offset(2432),  Pcie Slot 5 Root Port Number
-  P5PG, 32, // Offset(2433),  Pcie Slot 5 Power Enable Gpio pin
-  P5EP, 8,  // Offset(2437),  Pcie Slot 5 Power Enable Gpio pin polarity
-  P5RG, 32, // Offset(2438),  Pcie Slot 5 Rest Gpio pin
-  P5RP, 8,  // Offset(2442),  Pcie Slot 5 Rest Gpio pin polarity
-  P6RN, 8,  // Offset(2443),  Pcie Slot 6 Root Port Number
-  P6PG, 32, // Offset(2444),  Pcie Slot 6 Power Enable Gpio pin
-  P6EP, 8,  // Offset(2448),  Pcie Slot 6 Power Enable Gpio pin polarity
-  P6RG, 32, // Offset(2449),  Pcie Slot 6 Rest Gpio pin
-  P6RP, 8,  // Offset(2453),  Pcie Slot 6 Rest Gpio pin polarity
-  P7RN, 8,  // Offset(2454),  Pcie Slot 7 Root Port Number
-  P7PG, 32, // Offset(2455),  Pcie Slot 7 Power Enable Gpio pin
-  P7EP, 8,  // Offset(2459),  Pcie Slot 7 Power Enable Gpio pin polarity
-  P7RG, 32, // Offset(2460),  Pcie Slot 7 Rest Gpio pin
-  P7RP, 8,  // Offset(2464),  Pcie Slot 7 Rest Gpio pin polarity
-  WFCP, 32, // Offset(2465),  WWAN Full card power off gpio pin
-  PFCP, 8,  // Offset(2469),  WWAN Full card power off gpio pin polarity
-  WBRS, 32, // Offset(2470),  WWAN BBRST Gpio pin
-  PBRS, 8,  // Offset(2474),  WWAN BBRST Gpio pin polarity
-  PPDI, 8,  // Offset(2475),  TouchPaD Interrupt Gpio pin polarity
-  SSDP, 32, // Offset(2476),  Pch M.2 SSD Power Enable Gpio pin
-  SDPP, 8,  // Offset(2480),  Pch M.2 SSD Power Enable Gpio pin polarity
-  SSDR, 32, // Offset(2481),  Pch M.2 SSD Reset Gpio pin
-  SDRP, 8,  // Offset(2485),  Pch M.2 SSD Reset Gpio pin polarity
-  SD2P, 32, // Offset(2486),  PCIe x4 M.2 SSD Power Enable Gpio pin
-  SDP1, 8,  // Offset(2490),  PCIe x4 M.2 SSD Power Enable Gpio pin polarity
-  SD2R, 32, // Offset(2491),  PCIe x4 M.2 SSD Reset Gpio pin
-  SDR1, 8,  // Offset(2495),  PCIe x4 M.2 SSD Reset Gpio pin polarity
-  SXI1, 8,  // Offset(2496),  SDEV xHCI Interface Number for device 1
-  SXI2, 8,  // Offset(2497),  SDEV xHCI Interface Number for device 2
-  SXP1, 8,  // Offset(2498),  SDEV xHCI Root Port Number for device 1
-  SXP2, 8,  // Offset(2499),  SDEV xHCI Root Port Number for device 2
-  TSD0, 8,  // Offset(2500),  TSN PCS device Enable
-  WCLK, 8,  // Offset(2501),  WWAN Source Clock
-  WWRP, 8,  // Offset(2502),  WWAN Root Port Nmuber
-  DGVR, 32, // Offset(2503),  DG1 VRAM Self Refresh Gpio pin
-  LPMR, 32, // Offset(2507),  Low Power Mode required register Address
-  P1PE, 32, // Offset(2511),  PEG slot 1 Power Enable Gpio pin
-  P1PP, 8,  // Offset(2515),  PEG slot 1 Power Enable Gpio pin polarity
-  P1RE, 32, // Offset(2516),  PEG slot 1 Reset Gpio pin
-  PRP1, 8,  // Offset(2520),  PEG slot 1 Root Port
-  P2PE, 32, // Offset(2521),  PEG slot 2 Power Enable Gpio pin
-  P2PP, 8,  // Offset(2525),  PEG slot 2 Power Enable Gpio pin polarity
-  P2RE, 32, // Offset(2526),  PEG slot 2 Reset Gpio pin
-  PRP2, 8,  // Offset(2530),  PEG slot 2 Root Port
-  SD3P, 32, // Offset(2531),  Pch M.2 SSD2 Power Enable Gpio pin
-  SDP3, 8,  // Offset(2535),  Pch M.2 SSD2 Power Enable Gpio pin polarity
-  SD3R, 32, // Offset(2536),  Pch M.2 SSD2 Reset Gpio pin
-  SDR3, 8,  // Offset(2540),  Pch M.2 SSD2 Reset Gpio pin polarity
-  SD4P, 32, // Offset(2541),  Pch M.2 SSD3 Power Enable Gpio pin
-  SDP4, 8,  // Offset(2545),  Pch M.2 SSD3 Power Enable Gpio pin polarity
-  SD4R, 32, // Offset(2546),  Pch M.2 SSD3 Reset Gpio pin
-  SDR4, 8,  // Offset(2550),  Pch M.2 SSD3 Reset Gpio pin polarity
-  GP1E, 8,  // Offset(2551),  Enable GPE1
-  PXDC, 8,  // Offset(2552),  PMAX Device
-  PXAC, 8,  // Offset(2553),  PMAX Audio Codec
-  PXWC, 8,  // Offset(2554),  PMAX WF Camera
-  PXUC, 8,  // Offset(2555),  PMAX UF Camera
-  PXFD, 8,  // Offset(2556),  PMAX Flash Device
-  PDOD, 16, // Offset(2557),  PCIE Device ON/OFF Delay
+  PRST, 32, // Offset(2382),  WWAN PERST Gpio pin
+  P1RN, 8,  // Offset(2386),  Pcie Slot 1 Root Port Number
+  P1PG, 32, // Offset(2387),  Pcie Slot 1 Power Enable Gpio pin
+  P1EP, 8,  // Offset(2391),  Pcie Slot 1 Power Enable Gpio pin polarity
+  P1RG, 32, // Offset(2392),  Pcie Slot 1 Rest Gpio pin
+  P1RP, 8,  // Offset(2396),  Pcie Slot 1 Rest Gpio pin polarity
+  P2RN, 8,  // Offset(2397),  Pcie Slot 2 Root Port Number
+  P2PG, 32, // Offset(2398),  Pcie Slot 2 Power Enable Gpio pin
+  P2EP, 8,  // Offset(2402),  Pcie Slot 2 Power Enable Gpio pin polarity
+  P2RG, 32, // Offset(2403),  Pcie Slot 2 Rest Gpio pin
+  P2RP, 8,  // Offset(2407),  Pcie Slot 2 Rest Gpio pin polarity
+  P3RN, 8,  // Offset(2408),  Pcie Slot 3 Root Port Number
+  P3PG, 32, // Offset(2409),  Pcie Slot 3 Power Enable Gpio pin
+  P3EP, 8,  // Offset(2413),  Pcie Slot 3 Power Enable Gpio pin polarity
+  P3RG, 32, // Offset(2414),  Pcie Slot 3 Rest Gpio pin
+  P3RP, 8,  // Offset(2418),  Pcie Slot 3 Rest Gpio pin polarity
+  P4RN, 8,  // Offset(2419),  Pcie Slot 4 Root Port Number
+  P4PG, 32, // Offset(2420),  Pcie Slot 4 Power Enable Gpio pin
+  P4EP, 8,  // Offset(2424),  Pcie Slot 4 Power Enable Gpio pin polarity
+  P4RG, 32, // Offset(2425),  Pcie Slot 4 Rest Gpio pin
+  P4RP, 8,  // Offset(2429),  Pcie Slot 4 Rest Gpio pin polarity
+  P5RN, 8,  // Offset(2430),  Pcie Slot 5 Root Port Number
+  P5PG, 32, // Offset(2431),  Pcie Slot 5 Power Enable Gpio pin
+  P5EP, 8,  // Offset(2435),  Pcie Slot 5 Power Enable Gpio pin polarity
+  P5RG, 32, // Offset(2436),  Pcie Slot 5 Rest Gpio pin
+  P5RP, 8,  // Offset(2440),  Pcie Slot 5 Rest Gpio pin polarity
+  P6RN, 8,  // Offset(2441),  Pcie Slot 6 Root Port Number
+  P6PG, 32, // Offset(2442),  Pcie Slot 6 Power Enable Gpio pin
+  P6EP, 8,  // Offset(2446),  Pcie Slot 6 Power Enable Gpio pin polarity
+  P6RG, 32, // Offset(2447),  Pcie Slot 6 Rest Gpio pin
+  P6RP, 8,  // Offset(2451),  Pcie Slot 6 Rest Gpio pin polarity
+  P7RN, 8,  // Offset(2452),  Pcie Slot 7 Root Port Number
+  P7PG, 32, // Offset(2453),  Pcie Slot 7 Power Enable Gpio pin
+  P7EP, 8,  // Offset(2457),  Pcie Slot 7 Power Enable Gpio pin polarity
+  P7RG, 32, // Offset(2458),  Pcie Slot 7 Rest Gpio pin
+  P7RP, 8,  // Offset(2462),  Pcie Slot 7 Rest Gpio pin polarity
+  WBRS, 32, // Offset(2463),  WWAN BBRST Gpio pin
+  PPDI, 8,  // Offset(2467),  TouchPaD Interrupt Gpio pin polarity
+  SSDP, 32, // Offset(2468),  Pch M.2 SSD Power Enable Gpio pin
+  SDPP, 8,  // Offset(2472),  Pch M.2 SSD Power Enable Gpio pin polarity
+  SSDR, 32, // Offset(2473),  Pch M.2 SSD Reset Gpio pin
+  SDRP, 8,  // Offset(2477),  Pch M.2 SSD Reset Gpio pin polarity
+  SD2P, 32, // Offset(2478),  PCIe x4 M.2 SSD Power Enable Gpio pin
+  SDP1, 8,  // Offset(2482),  PCIe x4 M.2 SSD Power Enable Gpio pin polarity
+  SD2R, 32, // Offset(2483),  PCIe x4 M.2 SSD Reset Gpio pin
+  SDR1, 8,  // Offset(2487),  PCIe x4 M.2 SSD Reset Gpio pin polarity
+  SXI1, 8,  // Offset(2488),  SDEV xHCI Interface Number for device 1
+  SXI2, 8,  // Offset(2489),  SDEV xHCI Interface Number for device 2
+  SXP1, 8,  // Offset(2490),  SDEV xHCI Root Port Number for device 1
+  SXP2, 8,  // Offset(2491),  SDEV xHCI Root Port Number for device 2
+  TSD0, 8,  // Offset(2492),  TSN PCS device Enable
+  DGVR, 32, // Offset(2493),  DG1 VRAM Self Refresh Gpio pin
+  LPMR, 32, // Offset(2497),  Low Power Mode required register Address
+  P1PE, 32, // Offset(2501),  PEG slot 1 Power Enable Gpio pin
+  P1PP, 8,  // Offset(2505),  PEG slot 1 Power Enable Gpio pin polarity
+  P1RE, 32, // Offset(2506),  PEG slot 1 Reset Gpio pin
+  PRP1, 8,  // Offset(2510),  PEG slot 1 Root Port
+  P2PE, 32, // Offset(2511),  PEG slot 2 Power Enable Gpio pin
+  P2PP, 8,  // Offset(2515),  PEG slot 2 Power Enable Gpio pin polarity
+  P2RE, 32, // Offset(2516),  PEG slot 2 Reset Gpio pin
+  PRP2, 8,  // Offset(2520),  PEG slot 2 Root Port
+  SD3P, 32, // Offset(2521),  Pch M.2 SSD2 Power Enable Gpio pin
+  SDP3, 8,  // Offset(2525),  Pch M.2 SSD2 Power Enable Gpio pin polarity
+  SD3R, 32, // Offset(2526),  Pch M.2 SSD2 Reset Gpio pin
+  SDR3, 8,  // Offset(2530),  Pch M.2 SSD2 Reset Gpio pin polarity
+  SD4P, 32, // Offset(2531),  Pch M.2 SSD3 Power Enable Gpio pin
+  SDP4, 8,  // Offset(2535),  Pch M.2 SSD3 Power Enable Gpio pin polarity
+  SD4R, 32, // Offset(2536),  Pch M.2 SSD3 Reset Gpio pin
+  SDR4, 8,  // Offset(2540),  Pch M.2 SSD3 Reset Gpio pin polarity
+  GP1E, 8,  // Offset(2541),  Enable GPE1
+  PXDC, 8,  // Offset(2542),  PMAX Device
+  PXAC, 8,  // Offset(2543),  PMAX Audio Codec
+  PXWC, 8,  // Offset(2544),  PMAX WF Camera
+  PXUC, 8,  // Offset(2545),  PMAX UF Camera
+  PXFD, 8,  // Offset(2546),  PMAX Flash Device
+  PDOD, 16, // Offset(2547),  PCIE Device ON/OFF Delay
   //
   // XTU SMI base address
   //
-  XSMI, 32, // Offset(2559),  XTU SMI memory in ACPI NVS
-  WWEN, 8,  // Offset(2563),  WWAN Enable
-  WFFD, 8,  // Offset(2564),  Enable WWAN Firmware Flash Device
-  TN2B, 16, // Offset(2565),  FCPO# to BBRST# delay time during WWAN ON
-  TB2R, 16, // Offset(2567),  BBRST# to PERST# delay time during WWAN ON
-  TR2P, 16, // Offset(2569),  The delay between de-assertion of PERST# to change of PDS state from 0 to 1 during WWAN ON
-  TR2B, 16, // Offset(2571),  PERST# to BBRST# delay time during WWAN OFF
-  TB2F, 16, // Offset(2573),  BBRST# to FCPO# delay time during WWAN OFF
-  TFDI, 16, // Offset(2575),  Rigorous shutdown time
-  TBTG, 16, // Offset(2577),  The delay between assertion and de-assertion BBRST# during FLDR
-  TBTP, 16, // Offset(2579),  The delay between de-assertion of BBRST# and change of PDS state from 0 to 1 after FLDR
-  WSID, 16, // Offset(2581),  WWAN OEM SVID
-  WSTO, 16, // Offset(2583),  WWAN SVID Timeout
-  EPTU, 8,  // Offset(2585),  Enable PCIE tunnelling support over USB4 links.
-  U4CM, 8,  // Offset(2586),  USB4 CM mode information in Pre-Boot
-  CMSK, 8,  // Offset(2587),  Indicate enabled dTBT and iTBT for CM
-  U4SE, 8,  // Offset(2588),  USB4 CM mode switch is enabled/disabled
-  HGDT, 8,  // Offset(2589),  Primary Display (0=AUTO, 3=iGfx, 4=HG)
-  WCEN, 8,  // Offset(2590),  WCCD Enable
-  STD3, 8,  // Offset(2591),  Storage Runtime D3 Support
+  XSMI, 32, // Offset(2549),  XTU SMI memory in ACPI NVS
+  WWEN, 8,  // Offset(2553),  WWAN Enable
+  TN2B, 16, // Offset(2554),  FCPO# to BBRST# delay time during WWAN ON
+  TB2R, 16, // Offset(2556),  BBRST# to PERST# delay time during WWAN ON
+  WSID, 16, // Offset(2558),  WWAN OEM SVID
+  WSTO, 16, // Offset(2560),  WWAN SVID Timeout
+  EPTU, 8,  // Offset(2562),  Enable PCIE tunnelling support over USB4 links.
+  U4CM, 8,  // Offset(2563),  USB4 CM mode information in Pre-Boot
+  CMSK, 8,  // Offset(2564),  Indicate enabled dTBT and iTBT for CM
+  U4SE, 8,  // Offset(2565),  USB4 CM mode switch is enabled/disabled
+  HGDT, 8,  // Offset(2566),  Primary Display (0=AUTO, 3=iGfx, 4=HG)
+  STD3, 8,  // Offset(2567),  Storage Runtime D3 Support
   //
   // Data Role Swap
   //
-  UDRS, 8,  // Offset(2592),  Usbc Data Role Swap
-  DUWS, 8,  // Offset(2593),  Deepest USB Sleep Wake Capability
-  DGBA, 64, // Offset(2594),  DG PCIe base address
-  RW01, 32, // Offset(2602),  PEWAKE Pin for Root Port 01
-  RW02, 32, // Offset(2606),  PEWAKE Pin for Root Port 02
-  RW03, 32, // Offset(2610),  PEWAKE Pin for Root Port 03
-  RW04, 32, // Offset(2614),  PEWAKE Pin for Root Port 04
-  RW05, 32, // Offset(2618),  PEWAKE Pin for Root Port 05
-  RW06, 32, // Offset(2622),  PEWAKE Pin for Root Port 06
-  RW07, 32, // Offset(2626),  PEWAKE Pin for Root Port 07
-  RW08, 32, // Offset(2630),  PEWAKE Pin for Root Port 08
-  RW09, 32, // Offset(2634),  PEWAKE Pin for Root Port 09
-  RW10, 32, // Offset(2638),  PEWAKE Pin for Root Port 10
-  RW11, 32, // Offset(2642),  PEWAKE Pin for Root Port 11
-  RW12, 32, // Offset(2646),  PEWAKE Pin for Root Port 12
+  UDRS, 8,  // Offset(2568),  Usbc Data Role Swap
+  DUWS, 8,  // Offset(2569),  Deepest USB Sleep Wake Capability
+  DGBA, 64, // Offset(2570),  DG PCIe base address
+  RW01, 32, // Offset(2578),  PEWAKE Pin for Root Port 01
+  RW02, 32, // Offset(2582),  PEWAKE Pin for Root Port 02
+  RW03, 32, // Offset(2586),  PEWAKE Pin for Root Port 03
+  RW04, 32, // Offset(2590),  PEWAKE Pin for Root Port 04
+  RW05, 32, // Offset(2594),  PEWAKE Pin for Root Port 05
+  RW06, 32, // Offset(2598),  PEWAKE Pin for Root Port 06
+  RW07, 32, // Offset(2602),  PEWAKE Pin for Root Port 07
+  RW08, 32, // Offset(2606),  PEWAKE Pin for Root Port 08
+  RW09, 32, // Offset(2610),  PEWAKE Pin for Root Port 09
+  RW10, 32, // Offset(2614),  PEWAKE Pin for Root Port 10
+  RW11, 32, // Offset(2618),  PEWAKE Pin for Root Port 11
+  RW12, 32, // Offset(2622),  PEWAKE Pin for Root Port 12
   // ACPI debug NVS region
-  IADG, 8,  // Offset(2650),  Enable flag for ACPI debug
-  SRLD, 8,  // Offset(2651),  Serial Port ACPI debug
-  SBSB, 8,  // Offset(2652),  SoC Bus Base
-  SBSL, 8,  // Offset(2653),  SoC Bus Limit
-  SIOB, 16, // Offset(2654),  SoC IO Base
-  SIOL, 16, // Offset(2656),  SoC IO Limit
-  SMEB, 32, // Offset(2658),  SoC Mem32 Base
-  SMEL, 32, // Offset(2662),  SoC Mem32 Limit
-  SPMB, 64, // Offset(2666),  SoC Mem64 Base
-  SPML, 64, // Offset(2674),  SoC Mem64 Limit
-  PBSB, 8,  // Offset(2682),  PCH Bus Base
-  PBSL, 8,  // Offset(2683),  PCH Bus Limit
-  PIOB, 16, // Offset(2684),  PCH IO Base
-  PIOL, 16, // Offset(2686),  PCH IO Limit
-  PMEB, 32, // Offset(2688),  PCH Mem32 Base
-  PMEL, 32, // Offset(2692),  PCH Mem32 Limit
-  PPMB, 64, // Offset(2696),  PCH Mem64 Base
-  PPML, 64, // Offset(2704),  PCH Mem64 Limit
-  VTCM, 8,  // Offset(2712),
-  DGOP, 32, // Offset(2713),  DG OpRegion base address
-  DBRL, 8,  // Offset(2717),  DG eDP Brightness Level Percentage
+  IADG, 8,  // Offset(2626),  Enable flag for ACPI debug
+  SRLD, 8,  // Offset(2627),  Serial Port ACPI debug
+  SBSB, 8,  // Offset(2628),  SoC Bus Base
+  SBSL, 8,  // Offset(2629),  SoC Bus Limit
+  SIOB, 16, // Offset(2630),  SoC IO Base
+  SIOL, 16, // Offset(2632),  SoC IO Limit
+  SMEB, 32, // Offset(2634),  SoC Mem32 Base
+  SMEL, 32, // Offset(2638),  SoC Mem32 Limit
+  SPMB, 64, // Offset(2642),  SoC Mem64 Base
+  SPML, 64, // Offset(2650),  SoC Mem64 Limit
+  PBSB, 8,  // Offset(2658),  PCH Bus Base
+  PBSL, 8,  // Offset(2659),  PCH Bus Limit
+  PIOB, 16, // Offset(2660),  PCH IO Base
+  PIOL, 16, // Offset(2662),  PCH IO Limit
+  PMEB, 32, // Offset(2664),  PCH Mem32 Base
+  PMEL, 32, // Offset(2668),  PCH Mem32 Limit
+  PPMB, 64, // Offset(2672),  PCH Mem64 Base
+  PPML, 64, // Offset(2680),  PCH Mem64 Limit
+  VTCM, 8,  // Offset(2688),
+  DGOP, 32, // Offset(2689),  DG OpRegion base address
+  DBRL, 8,  // Offset(2693),  DG eDP Brightness Level Percentage
   //
   // I3C-0
   //
-  QTH0, 32, // Offset(2718),  I3C0 Queue Threshold Control
-  BTH0, 32, // Offset(2722),  I3C0 Data Buffer Threshold Control
-  ODT0, 32, // Offset(2726),  I3C0 SCL I3C Open Drain Timing
-  PPT0, 32, // Offset(2730),  I3C0 SCL I3C Push Pull Timing
-  FMT0, 32, // Offset(2734),  I3C0 SCL I2C Fast Mode Timing
-  FPT0, 32, // Offset(2738),  I3C0 SCL I2C Fast Mode Plus Timing
-  SST0, 32, // Offset(2742),  I3C0 SCL I2C Standard Speed Timing
-  ELC0, 32, // Offset(2746),  I3C0 SCL Extended Low Count Timing
-  ETL0, 32, // Offset(2750),  I3C0 SCL Termination Bit Low Count
-  SWD0, 32, // Offset(2754),  I3C0 SDA Hold and Mode Switch Delay Timing
-  BDL0, 32, // Offset(2758),  I3C0 Speed Mode Selection
+  QTH0, 32, // Offset(2694),  I3C0 Queue Threshold Control
+  BTH0, 32, // Offset(2698),  I3C0 Data Buffer Threshold Control
+  ODT0, 32, // Offset(2702),  I3C0 SCL I3C Open Drain Timing
+  PPT0, 32, // Offset(2706),  I3C0 SCL I3C Push Pull Timing
+  FMT0, 32, // Offset(2710),  I3C0 SCL I2C Fast Mode Timing
+  FPT0, 32, // Offset(2714),  I3C0 SCL I2C Fast Mode Plus Timing
+  SST0, 32, // Offset(2718),  I3C0 SCL I2C Standard Speed Timing
+  ELC0, 32, // Offset(2722),  I3C0 SCL Extended Low Count Timing
+  ETL0, 32, // Offset(2726),  I3C0 SCL Termination Bit Low Count
+  SWD0, 32, // Offset(2730),  I3C0 SDA Hold and Mode Switch Delay Timing
+  BDL0, 32, // Offset(2734),  I3C0 Speed Mode Selection
   //
   // I3C-2
   //
-  QTH2, 32, // Offset(2762),  I3C2 Queue Threshold Control
-  BTH2, 32, // Offset(2766),  I3C2 Data Buffer Threshold Control
-  ODT2, 32, // Offset(2770),  I3C2 SCL I3C Open Drain Timing
-  PPT2, 32, // Offset(2774),  I3C2 SCL I3C Push Pull Timing
-  FMT2, 32, // Offset(2778),  I3C2 SCL I2C Fast Mode Timing
-  FPT2, 32, // Offset(2782),  I3C2 SCL I2C Fast Mode Plus Timing
-  SST2, 32, // Offset(2786),  I3C2 SCL I2C Standard Speed Timing
-  ELC2, 32, // Offset(2790),  I3C2 SCL Extended Low Count Timing
-  ETL2, 32, // Offset(2794),  I3C2 SCL Termination Bit Low Count
-  SWD2, 32, // Offset(2798),  I3C2 SDA Hold and Mode Switch Delay Timing
-  BDL2, 32, // Offset(2802),  I3C2 Speed Mode Selection
+  QTH2, 32, // Offset(2738),  I3C2 Queue Threshold Control
+  BTH2, 32, // Offset(2742),  I3C2 Data Buffer Threshold Control
+  ODT2, 32, // Offset(2746),  I3C2 SCL I3C Open Drain Timing
+  PPT2, 32, // Offset(2750),  I3C2 SCL I3C Push Pull Timing
+  FMT2, 32, // Offset(2754),  I3C2 SCL I2C Fast Mode Timing
+  FPT2, 32, // Offset(2758),  I3C2 SCL I2C Fast Mode Plus Timing
+  SST2, 32, // Offset(2762),  I3C2 SCL I2C Standard Speed Timing
+  ELC2, 32, // Offset(2766),  I3C2 SCL Extended Low Count Timing
+  ETL2, 32, // Offset(2770),  I3C2 SCL Termination Bit Low Count
+  SWD2, 32, // Offset(2774),  I3C2 SDA Hold and Mode Switch Delay Timing
+  BDL2, 32, // Offset(2778),  I3C2 Speed Mode Selection
   //
   // TCSS USB3 Port
   //
-  E1GP, 8,  // Offset(2806),  TCSS USB3 Port1 Group Position for _PLD
-  E2GP, 8,  // Offset(2807),  TCSS USB3 Port2 Group Position for _PLD
-  E3GP, 8,  // Offset(2808),  TCSS USB3 Port3 Group Position for _PLD
-  E4GP, 8,  // Offset(2809),  TCSS USB3 Port4 Group Position for _PLD
-  E1VS, 8,  // Offset(2810),  TCSS USB3 Port1 Visibility for _PLD
-  E2VS, 8,  // Offset(2811),  TCSS USB3 Port2 Visibility for _PLD
-  E3VS, 8,  // Offset(2812),  TCSS USB3 Port3 Visibility for _PLD
-  E4VS, 8,  // Offset(2813),  TCSS USB3 Port4 Visibility for _PLD
-  E1CN, 8,  // Offset(2814),  TCSS USB3 Port1 Connectable for _UPC
-  E2CN, 8,  // Offset(2815),  TCSS USB3 Port2 Connectable for _UPC
-  E3CN, 8,  // Offset(2816),  TCSS USB3 Port3 Connectable for _UPC
-  E4CN, 8,  // Offset(2817),  TCSS USB3 Port4 Connectable for _UPC
-  E1TP, 8,  // Offset(2818),  TCSS USB3 Port1 Type for _UPC
-  E2TP, 8,  // Offset(2819),  TCSS USB3 Port2 Type for _UPC
-  E3TP, 8,  // Offset(2820),  TCSS USB3 Port3 Type for _UPC
-  E4TP, 8,  // Offset(2821),  TCSS USB3 Port4 Type for _UPC
-  E1CP, 8,  // Offset(2822),  TCSS USB3 Port1 Capability for _UPC
-  E2CP, 8,  // Offset(2823),  TCSS USB3 Port2 Capability for _UPC
-  E3CP, 8,  // Offset(2824),  TCSS USB3 Port3 Capability for _UPC
-  E4CP, 8,  // Offset(2825),  TCSS USB3 Port4 Capability for _UPC
+  E1GP, 8,  // Offset(2782),  TCSS USB3 Port1 Group Position for _PLD
+  E2GP, 8,  // Offset(2783),  TCSS USB3 Port2 Group Position for _PLD
+  E3GP, 8,  // Offset(2784),  TCSS USB3 Port3 Group Position for _PLD
+  E4GP, 8,  // Offset(2785),  TCSS USB3 Port4 Group Position for _PLD
+  E1VS, 8,  // Offset(2786),  TCSS USB3 Port1 Visibility for _PLD
+  E2VS, 8,  // Offset(2787),  TCSS USB3 Port2 Visibility for _PLD
+  E3VS, 8,  // Offset(2788),  TCSS USB3 Port3 Visibility for _PLD
+  E4VS, 8,  // Offset(2789),  TCSS USB3 Port4 Visibility for _PLD
+  E1CN, 8,  // Offset(2790),  TCSS USB3 Port1 Connectable for _UPC
+  E2CN, 8,  // Offset(2791),  TCSS USB3 Port2 Connectable for _UPC
+  E3CN, 8,  // Offset(2792),  TCSS USB3 Port3 Connectable for _UPC
+  E4CN, 8,  // Offset(2793),  TCSS USB3 Port4 Connectable for _UPC
+  E1TP, 8,  // Offset(2794),  TCSS USB3 Port1 Type for _UPC
+  E2TP, 8,  // Offset(2795),  TCSS USB3 Port2 Type for _UPC
+  E3TP, 8,  // Offset(2796),  TCSS USB3 Port3 Type for _UPC
+  E4TP, 8,  // Offset(2797),  TCSS USB3 Port4 Type for _UPC
+  E1CP, 8,  // Offset(2798),  TCSS USB3 Port1 Capability for _UPC
+  E2CP, 8,  // Offset(2799),  TCSS USB3 Port2 Capability for _UPC
+  E3CP, 8,  // Offset(2800),  TCSS USB3 Port3 Capability for _UPC
+  E4CP, 8,  // Offset(2801),  TCSS USB3 Port4 Capability for _UPC
   //
   // DTBT1 USB3 Port
   //
-  H1GP, 8,  // Offset(2826),  DTBT1 USB3 Port1 Group Position for _PLD
-  H2GP, 8,  // Offset(2827),  DTBT1 USB3 Port2 Group Position for _PLD
-  H1VS, 8,  // Offset(2828),  DTBT1 USB3 Port1 Visibility for _PLD
-  H2VS, 8,  // Offset(2829),  DTBT1 USB3 Port2 Visibility for _PLD
-  H1CN, 8,  // Offset(2830),  DTBT1 USB3 Port1 Connectable for _UPC
-  H2CN, 8,  // Offset(2831),  DTBT1 USB3 Port2 Connectable for _UPC
-  H1TP, 8,  // Offset(2832),  DTBT1 USB3 Port1 Type for _UPC
-  H2TP, 8,  // Offset(2833),  DTBT1 USB3 Port2 Type for _UPC
-  H1CP, 8,  // Offset(2834),  DTBT1 USB3 Port1 Capability for _UPC
-  H2CP, 8,  // Offset(2835),  DTBT1 USB3 Port2 Capability for _UPC
+  H1GP, 8,  // Offset(2802),  DTBT1 USB3 Port1 Group Position for _PLD
+  H2GP, 8,  // Offset(2803),  DTBT1 USB3 Port2 Group Position for _PLD
+  H1VS, 8,  // Offset(2804),  DTBT1 USB3 Port1 Visibility for _PLD
+  H2VS, 8,  // Offset(2805),  DTBT1 USB3 Port2 Visibility for _PLD
+  H1CN, 8,  // Offset(2806),  DTBT1 USB3 Port1 Connectable for _UPC
+  H2CN, 8,  // Offset(2807),  DTBT1 USB3 Port2 Connectable for _UPC
+  H1TP, 8,  // Offset(2808),  DTBT1 USB3 Port1 Type for _UPC
+  H2TP, 8,  // Offset(2809),  DTBT1 USB3 Port2 Type for _UPC
+  H1CP, 8,  // Offset(2810),  DTBT1 USB3 Port1 Capability for _UPC
+  H2CP, 8,  // Offset(2811),  DTBT1 USB3 Port2 Capability for _UPC
   //
   // DTBT2 USB3 Port
   //
-  J1GP, 8,  // Offset(2836),  DTBT2 USB3 Port1 Group Position for _PLD
-  J2GP, 8,  // Offset(2837),  DTBT2 USB3 Port2 Group Position for _PLD
-  J1VS, 8,  // Offset(2838),  DTBT2 USB3 Port1 Visibility for _PLD
-  J2VS, 8,  // Offset(2839),  DTBT2 USB3 Port2 Visibility for _PLD
-  J1CN, 8,  // Offset(2840),  DTBT2 USB3 Port1 Connectable for _UPC
-  J2CN, 8,  // Offset(2841),  DTBT2 USB3 Port2 Connectable for _UPC
-  J1TP, 8,  // Offset(2842),  DTBT2 USB3 Port1 Type for _UPC
-  J2TP, 8,  // Offset(2843),  DTBT2 USB3 Port2 Type for _UPC
-  J1CP, 8,  // Offset(2844),  DTBT2 USB3 Port1 Capability for _UPC
-  J2CP, 8,  // Offset(2845),  DTBT2 USB3 Port2 Capability for _UPC
-  TBD3, 8,  // Offset(2846),  DTBT RTD3 enable status (should set to 1 when enable TBT RTD3)
-  IPFE, 32, // Offset(2847),  Ipf Enable
-  MSUB, 8,  // Offset(2851),  PCI BUS resource occupied boundary
-  DLRM, 8,  // Offset(2852),  Storage Dynamic Link (PCIe) Rate management (DLRM) Support
-  S1G4, 8,  // Offset(2853),  Pcie slot 1 M.2 SSD Gen4_5 DLRM support
-  S2G4, 8,  // Offset(2854),  Pcie slot 2 M.2 SSD Gen4_5 DLRM support
-  AG4L, 64, // Offset(2855),  HDA PP module custom GUID 4 - first 64bit  [0-63]
-  AG4H, 64, // Offset(2863),  HDA PP module custom GUID 4 - second 64bit [64-127]
-  AG5L, 64, // Offset(2871),  HDA PP module custom GUID 5 - first 64bit  [0-63]
-  AG5H, 64, // Offset(2879),  HDA PP module custom GUID 5 - second 64bit [64-127]
+  J1GP, 8,  // Offset(2812),  DTBT2 USB3 Port1 Group Position for _PLD
+  J2GP, 8,  // Offset(2813),  DTBT2 USB3 Port2 Group Position for _PLD
+  J1VS, 8,  // Offset(2814),  DTBT2 USB3 Port1 Visibility for _PLD
+  J2VS, 8,  // Offset(2815),  DTBT2 USB3 Port2 Visibility for _PLD
+  J1CN, 8,  // Offset(2816),  DTBT2 USB3 Port1 Connectable for _UPC
+  J2CN, 8,  // Offset(2817),  DTBT2 USB3 Port2 Connectable for _UPC
+  J1TP, 8,  // Offset(2818),  DTBT2 USB3 Port1 Type for _UPC
+  J2TP, 8,  // Offset(2819),  DTBT2 USB3 Port2 Type for _UPC
+  J1CP, 8,  // Offset(2820),  DTBT2 USB3 Port1 Capability for _UPC
+  J2CP, 8,  // Offset(2821),  DTBT2 USB3 Port2 Capability for _UPC
+  TBD3, 8,  // Offset(2822),  DTBT RTD3 enable status (should set to 1 when enable TBT RTD3)
+  IPFE, 32, // Offset(2823),  Ipf Enable
+  MSUB, 8,  // Offset(2827),  PCI BUS resource occupied boundary
+  DLRM, 8,  // Offset(2828),  Storage Dynamic Link (PCIe) Rate management (DLRM) Support
+  S1G4, 8,  // Offset(2829),  Pcie slot 1 M.2 SSD Gen4_5 DLRM support
+  S2G4, 8,  // Offset(2830),  Pcie slot 2 M.2 SSD Gen4_5 DLRM support
+  AG4L, 64, // Offset(2831),  HDA PP module custom GUID 4 - first 64bit  [0-63]
+  AG4H, 64, // Offset(2839),  HDA PP module custom GUID 4 - second 64bit [64-127]
+  AG5L, 64, // Offset(2847),  HDA PP module custom GUID 5 - first 64bit  [0-63]
+  AG5H, 64, // Offset(2855),  HDA PP module custom GUID 5 - second 64bit [64-127]
   }

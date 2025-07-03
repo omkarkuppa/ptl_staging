@@ -599,7 +599,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdSpdAddressOverride|FALSE|BOOLEAN|0x00100203
   gBoardModuleTokenSpaceGuid.PcdSmbiosFabBoardName|0|UINT64|0x0000A102
   gBoardModuleTokenSpaceGuid.PcdTsOnDimmTemperature|FALSE|BOOLEAN|0x00100123
-  gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio|0x0|UINT32|0x0010020B
   gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpio|0x0|UINT32|0x0010122D
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio|0x0|UINT32|0x0010122E
   gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio|0x0|UINT32|0x0010122F
@@ -656,9 +655,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpioPolarity|0x0|BOOLEAN|0x00100238
   gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity|0x0|BOOLEAN|0x00100239
   gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable|0x0|UINT8|0x00100240
-  gBoardModuleTokenSpaceGuid.PcdWwanResetWorkaround|FALSE|BOOLEAN|0x00100241
-  gBoardModuleTokenSpaceGuid.PcdWwanSourceClock|0x0|UINT8|0x00100243
-  gBoardModuleTokenSpaceGuid.PcdWwanRootPortNumber|0x0|UINT8|0x00100244
 
   # PLN support
   gBoardModuleTokenSpaceGuid.PcdPlnDelayEnableGpio|0x0|UINT32|0x00000280
@@ -749,22 +745,11 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # ACPI data
   gBoardModuleTokenSpaceGuid.PcdBoardAcpiData               |{0}|VOID*|0x50000019
 
-  # Board Wwan Gpio
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMem         |0x0|UINT64|0x00000115
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMemSize     |0x0|UINT16|0x00000116
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMem        |0x0|UINT64|0x00000117
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMemSize    |0x0|UINT16|0x00000118
   # @todo  Board related info,  will be ported once board details are available
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMem      |0x0|UINT64|0x00000139
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMemSize  |0x0|UINT16|0x00000140
   gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs                 |20|UINT16|0x00000141
   gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs              |80|UINT16|0x00000142
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnPer2PdsDelayMs              |0|UINT16|0x00000143
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2OffDelayMs                |10|UINT16|0x00000144
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOffDisDelayMs                 |500|UINT16|0x00000145
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTResTogDelayMs                 |10|UINT16|0x00000146
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2PdsDelayMs                |170|UINT16|0x00000147
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTPer2ResDelayMs                |10|UINT16|0x00000148
 
   #
   # EC FailSafe Cpu Temp and Fan Speed Setting
@@ -930,20 +915,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     PlatformBoardConfig.h
   }
 
-  # GPIO Table WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOnEarlyPreMem      |{0}|GPIOV2_INIT_CONFIG[]|0x00001128 {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-  }
-
-  # GPIO Table WwanOff
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem     |{0}|GPIOV2_INIT_CONFIG[]|0x00001129 {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-  }
-
   # GPIO Table M80 WwanOn
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem   |{0}|GPIOV2_INIT_CONFIG[]|0x0000112A {
   <HeaderFiles>
@@ -1062,8 +1033,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity   |FALSE|BOOLEAN|0x00001185
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity              |FALSE|BOOLEAN|0x00001186
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity              |FALSE|BOOLEAN|0x00001187
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock                    |0x0|UINT8|0x00001188
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber                 |0x0|UINT8|0x00001189
 
   # VPD PCD Ratio
   gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio                 |0x0|UINT8|0x00001190
@@ -1483,14 +1452,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # Audio I2S Codec conntected to I2C0
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecI2cBusNumber            |0x0|UINT8|0x0000126A
-
-  # WWAN/Modem Base Band Reset pin
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio         |{0}|VPD_GPIO_PAD|0x00001270 {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-    PlatformBoardConfig.h
-  }
 
   # Wi-Fi RF-KILL pin
   gBoardModuleTokenSpaceGuid.VpdPcdWiFiRfKillGpio                     |{0}|VPD_GPIO_PAD|0x00001271 {

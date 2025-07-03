@@ -261,12 +261,6 @@ extern SMBIOS_TABLE_TYPE133_STRINGS  mDefaultOemType133Strings;
 extern SMBIOS_TABLE_TYPE133 mDefaultOemType133;
 
 //
-// The contain of this Product ID info is just for Intel RVP. The table values can be modified
-// accordingly to OEM/Customer product.
-//
-extern SMBIOS_TABLE_TYPE133_WWAN mDefaultOemType133Wwan;
-
-//
 // Default OEM Type 136
 //
 extern SMBIOS_TABLE_TYPE136 mDefaultOemType136;

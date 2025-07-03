@@ -47,9 +47,6 @@ Scope (\_SB.PEPD)
   //         2->LAN
   //         3->WLAN
   //         4->GFX
-  //         5->DTBT
-  //         6->WWAN
-  //         99->Invalid (EP absent)
   // Returns: PEP constrant per EP type
   //         0 ->no constraint; 1->D0 F1; 3->D3
   //
@@ -113,11 +110,6 @@ Scope (\_SB.PEPD)
       } Else {
         Return (0)
       }
-    }
-
-    If (LEqual (Arg1, 6)) {
-      ADBG ("WWAN PEP OVR")
-      Return (Arg0)
     }
 
     If (LEqual (Arg1, 0)) {
