@@ -99,3 +99,4 @@
   gMemorySubSystemConfigGuid
   gCnviPreMemConfigGuid            ## CONSUMES
   gFspVPreMemConfigGuid            ## CONSUMES
+  gRmtVariableGuid                 ## CONSUMES

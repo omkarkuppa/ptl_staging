@@ -19,6 +19,7 @@
 @par Specification Reference:
 **/
 
+#include <MemInfoHob.h>
 #include <SetupPrivate.h>
 #include "OemSetup.h"
 #include "SaSetup.h"
@@ -223,6 +224,60 @@ UpdateIpuSetupConfig (
 }
 #endif
 
+/**
+  This API creates Rmt Uefi Variable and Initialize.
+  If the RMT UEFI variable is modified under OS, the respective setup knobs will be modified.
+  @retval EFI_SUCCESS             Rmt variable initializied successfully.
+  @retval EFI_INVALID_PARAMETER   Invalid Input. Expected inputs Enable = 1, Disable = 0
+
+**/
+
+EFI_STATUS
+EFIAPI
+RmtVarInit(
+  VOID
+  )
+{
+  EFI_STATUS          Status;
+  UINTN               VariableSize;
+  UINT32              VariableAttr;
+  RMT_VAR             *mRmtdata;
+
+  DEBUG ((DEBUG_INFO, "RmtVarInit Entry\n"));
+
+  //Try to access the variable. If not found it may be first boot.
+  VariableSize = sizeof (RMT_VAR);
+  mRmtdata = AllocatePool(VariableSize);
+  VariableAttr = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
+
+  Status = gRT->GetVariable (
+                  L"Rmt",
+                  &gRmtVariableGuid,
+                  &VariableAttr,
+                  &VariableSize,
+                  mRmtdata
+                  );
+  if (Status == EFI_NOT_FOUND) {
+    DEBUG ((DEBUG_INFO, "Create RMT OS UEFI Variable\n"));
+  } else {
+    DEBUG ((DEBUG_INFO, "Clear RMT OS Variable\n"));
+  }
+  ZeroMem (mRmtdata, sizeof (RMT_VAR));
+  Status = gRT->SetVariable (
+                    L"Rmt",
+                    &gRmtVariableGuid,
+                    VariableAttr,
+                    VariableSize,
+                    mRmtdata
+                    );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "RMT: Failed to create/clear Rmt variable  = %r \n", Status));
+    return Status;
+  }
+  DEBUG ((DEBUG_INFO, "RmtVarInit Exit\n"));
+  return EFI_SUCCESS;
+}
+
 VOID
 InitSaStrings (
   EFI_HII_HANDLE HiiHandle,
@@ -283,6 +338,9 @@ InitSaStrings (
   }
 
   DEBUG ((DEBUG_INFO, "<InitSaStrings>"));
+  // Initalize RMT UEFI variable.
+  Status = RmtVarInit();
+  DEBUG((DEBUG_INFO, "RMT: RmtVarInit Status = %r\n", Status));
 
   Status = gBS->LocateProtocol (&gIGpuPolicyProtocolGuid, NULL, (VOID **) &IGpuPolicy);
   ASSERT_EFI_ERROR (Status);

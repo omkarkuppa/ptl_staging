@@ -312,6 +312,7 @@
   gBiosPayloadVarGuid                           ## CONSUMES
   gTpmErrorHobGuid                              ## CONSUMES
   gVtioSetupGuid                                ## CONSUMES
+  gRmtVariableGuid                              ## CONSUMES
 
 [Protocols]
   gEfiHiiConfigAccessProtocolGuid               ## PRODUCES

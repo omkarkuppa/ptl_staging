@@ -416,3 +416,4 @@
   gTishDataHobGuid                              ## CONSUMES
   gCnviPreMemConfigGuid                         ## CONSUMES
   gUefiIntelCnvWlanVariablesGuid                ## CONSUMES
+  gRmtVariableGuid                              ## CONSUMES

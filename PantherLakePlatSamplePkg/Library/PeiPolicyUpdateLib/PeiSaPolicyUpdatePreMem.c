@@ -53,6 +53,7 @@
 #include <IGpuConfig.h>
 #include <Library/PcdLib.h>
 #include <Library/EcMiscLib.h>
+#include <MemInfoHob.h>
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #endif
@@ -166,6 +167,7 @@ UpdatePeiSaPolicyPreMem (
   EFI_STATUS                                      Status;
   EFI_STATUS                                      Status2;
   EFI_STATUS                                      Status3;
+  EFI_STATUS                                      Status4;
   EFI_PEI_READ_ONLY_VARIABLE2_PPI                 *VariableServices;
   SI_SETUP                                        SiSetup;
   SETUP_DATA                                      SetupData;
@@ -193,6 +195,7 @@ UpdatePeiSaPolicyPreMem (
   BOOLEAN                                         ExternalSpdPresent;
   UINT16                                          *RcompTarget;
   MRC_PPR_TEST_TYPE                               PprTestType;
+  RMT_VAR                                         mRmtdata;
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   UINT8                                           *TcssPortCap;
@@ -1351,6 +1354,32 @@ UpdatePeiSaPolicyPreMem (
     // To avoid the page allocation failure.
     //
     CapsuleSupportMemSize = SIZE_64MB;
+  }
+
+  //Read RMT OS variable
+  DataSize = sizeof (RMT_VAR);
+  Status4 = VariableServices->GetVariable (
+                               VariableServices,
+                               EFI_RMT_OS_VARIABLE_NAME,
+                               &gRmtVariableGuid,
+                               NULL,
+                               &DataSize,
+                               &mRmtdata
+                               );
+  if (!EFI_ERROR (Status4)) {
+    if(mRmtdata.EnDsRmt == RMT_ENABLE) {
+      #if FixedPcdGet8(PcdFspModeSelection) == 1
+        ((FSPM_UPD *) FspmUpd)->FspmConfig.RMT           = mRmtdata.EnDsRmt;
+        ((FSPM_UPD *) FspmUpd)->FspmConfig.MrcFastBoot   = 0;
+        ((FSPM_UPD *) FspmUpd)->FspmConfig.MrcBdatEnable = mRmtdata.EnDsRmt;
+      #else
+        MemConfig->ExternalInputs.TrainingEnables.RMT = mRmtdata.EnDsRmt;
+        MemConfig->ExternalInputs.MrcFastBoot         = 0;
+        MemConfigNoCrc->MrcBdatEnable                 = mRmtdata.EnDsRmt;
+      #endif
+     }
+  } else {
+    DEBUG ((DEBUG_ERROR, "RMT OS variable not found  = %r \n", Status4));
   }
 
   DataSize = sizeof (MemoryData);
