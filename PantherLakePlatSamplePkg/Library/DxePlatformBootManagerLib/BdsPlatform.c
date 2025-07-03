@@ -716,7 +716,29 @@ PlatformMatchDevicePaths (
 }
 
 /**
-  Update the ConIn variable if Ps2 keyboard is connected.
+  Connect PS2 keyboard.
+
+  @param  KeyboardDevice       A pointer to a PS/2 keyboard device path
+
+**/
+VOID
+ConnectPs2Keyboard (
+  IN EFI_DEVICE_PATH_PROTOCOL *KeyboardDevice
+  )
+{
+  EFI_STATUS    Status;
+  EFI_HANDLE    DeviceHandle;
+
+  Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &KeyboardDevice, &DeviceHandle);
+  DEBUG ((DEBUG_INFO, "[ConnectPs2Keyboard]: LocateDevicePath Status = %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = gBS->ConnectController (DeviceHandle, NULL, KeyboardDevice, TRUE);
+  }
+  DEBUG ((DEBUG_INFO, "[ConnectPs2Keyboard]: Connect PS2 keyboard - %r\n", Status));
+}
+
+/**
+  Update the ConIn variable and connect Ps2 keyboard controller if Ps2 keyboard is connected.
 **/
 VOID
 EnumPs2Keyboard (
@@ -775,6 +797,7 @@ EnumPs2Keyboard (
         //
         DEBUG ((DEBUG_INFO, "[EnumPs2Keyboard] PS2 keyboard path exists\n"));
         Ps2Keyboard = TRUE;
+        ConnectPs2Keyboard (DevicePathInstance);
         break;
       }
       Next = NextDevicePathNode (Next);
@@ -810,6 +833,7 @@ EnumPs2Keyboard (
              NewDevPathSize,
              NewDevicePath
              );
+      ConnectPs2Keyboard ((EFI_DEVICE_PATH_PROTOCOL *) &gKeyboardDevicePath);
     }
   }
 
