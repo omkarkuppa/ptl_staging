@@ -5060,6 +5060,59 @@ GetNextPad (
   return EFI_NOT_FOUND;
 }
 
+
+/**
+  This procedure clears the GPI_IE registers for all GpioPads
+
+  @param[in] GpioServices         Gpio Services
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid group or pad number
+**/
+EFI_STATUS
+EFIAPI
+DisableAllGpiIe (
+  IN  GPIOV2_SERVICES *GpioServices
+  )
+{
+  GPIOV2_INTERFACE   *GpioInterface;
+  UINT32             CommunityIndex;
+  UINT32             GroupIndex;
+  UINT32             RegisterOffset;
+  GPIOV2_PAD         Pad;
+
+  if (GpioServices == NULL) {
+    ASSERT (FALSE);
+    return EFI_INVALID_PARAMETER;
+  }
+  GpioInterface = GPIOV2_INTERFACE_FROM_PUBLIC (GpioServices);
+
+  DEBUG ((DEBUG_INFO, "[GPIOV2][DisableAllGpiIe][%a]: START\n", GpioInterface->Public.Hid));
+
+  for (CommunityIndex = 0; CommunityIndex < GpioInterface->Private.CommunitiesNum; CommunityIndex++) {
+    for (GroupIndex = 0; GroupIndex < GpioInterface->Private.Communities[CommunityIndex].GroupsNum; GroupIndex++) {
+      Pad = GpioInterface->Private.Communities[CommunityIndex].Groups[GroupIndex].Pads[0];
+      GpioInterface->Public.GetRegisterOffset (
+        &(GpioInterface->Public),
+        GpioV2GpiIeReg,
+        Pad,
+        &RegisterOffset
+        );
+
+      GpioInterface->Private.CommunityAccess[CommunityIndex].Access.Write32 (
+        &(GpioInterface->Private.CommunityAccess[CommunityIndex].Access),
+        RegisterOffset,
+        0
+        );
+      }
+  }
+
+  DEBUG ((DEBUG_INFO, "[GPIOV2][DisableAllGpiIe]: END\n"));
+
+  return EFI_SUCCESS;
+}
+
+
 /**
   This procedure assigns base functions to GpioServices
 
@@ -5151,6 +5204,6 @@ GpioV2ServicesInit (
   GpioServices->RestrictWriteAccess      = RestrictWriteAccess;
   GpioServices->GetGlobalGroupIndex      = GetGlobalGroupIndex;
   GpioServices->GetNextPad               = GetNextPad;
-
+  GpioServices->DisableAllGpiIe          = DisableAllGpiIe;
   return EFI_SUCCESS;
 }

@@ -28,6 +28,29 @@
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Protocol/SmmExitBootServices.h>
+
+static GPIOV2_INTERFACE *mGpioInterface = NULL;
+
+/**
+  This function is invoked at ExitBootServices()
+
+  @param[in] Protocol        Protocol unique ID.
+  @param[in] Interface       Interface instance.
+  @param[in] Handle          The handle on which the interface is installed..
+
+  @retval    Status.
+**/
+EFI_STATUS
+EFIAPI
+DisableGpiIeExitBootServicesCallback (
+  IN      CONST EFI_GUID *Protocol,
+  IN      VOID           *Interface,
+  IN      EFI_HANDLE        Handle
+  )
+{
+  return mGpioInterface->Public.DisableAllGpiIe (&(mGpioInterface->Public));
+}
 
 /**
   The GPIOV2 SMM driver entry point - Intalls GPIOV2 SMM Protocol.
@@ -48,23 +71,23 @@ GpioV2ProtocolSmmInitEntryPoint (
 {
   EFI_STATUS                    Status;
   EFI_HANDLE                    Handle;
-  GPIOV2_INTERFACE              *GpioInterface;
   GPIOV2_PWM                    *Pwm;
+  VOID                          *Registration;
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][SMM]: InstallGpioV2SmmProtocol Start\n"));
 
   //
-  // Allocate Memory for GpioInterface in SMRAM
+  // Allocate Memory for mGpioInterface in SMRAM
   //
   Status = gSmst->SmmAllocatePool (EfiRuntimeServicesData,
                                    sizeof (GPIOV2_INTERFACE),
-                                   (VOID **) &GpioInterface);
+                                   (VOID **) &mGpioInterface);
   if (EFI_ERROR (Status)) {
     ASSERT (FALSE);
     return EFI_OUT_OF_RESOURCES;
   }
 
-  ZeroMem (GpioInterface, sizeof (GPIOV2_INTERFACE));
+  ZeroMem (mGpioInterface, sizeof (GPIOV2_INTERFACE));
 
   //
   // Allocate Memory for GPIO PWM in SMRAM
@@ -78,14 +101,14 @@ GpioV2ProtocolSmmInitEntryPoint (
   } else {
     ZeroMem (Pwm, sizeof (GPIOV2_PWM));
   }
-  GpioInterface->Pwm = Pwm;
+  mGpioInterface->Pwm = Pwm;
 
   //
   // Construct Gpio Protocol for SMM
   //
-  Status = InternalGpioInterfaceConstructor (GpioInterface);
+  Status = InternalGpioInterfaceConstructor (mGpioInterface);
   if (EFI_ERROR (Status)) {
-    gSmst->SmmFreePool ((VOID*) GpioInterface);
+    gSmst->SmmFreePool ((VOID*) mGpioInterface);
     if (Pwm != NULL) {
       gSmst->SmmFreePool ((VOID*) Pwm);
     }
@@ -100,11 +123,11 @@ GpioV2ProtocolSmmInitEntryPoint (
                   &Handle,
                   &gGpioV2SmmProtocolGuid,
                   EFI_NATIVE_INTERFACE,
-                  &(GpioInterface->Public)
+                  &(mGpioInterface->Public)
                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "[GPIOV2][SMM]: Install GpioV2 protocol failed (%r)!\n", Status));
-    gSmst->SmmFreePool ((VOID*) GpioInterface);
+    gSmst->SmmFreePool ((VOID*) mGpioInterface);
     if (Pwm != NULL) {
       gSmst->SmmFreePool ((VOID*) Pwm);
     }
@@ -128,6 +151,14 @@ GpioV2ProtocolSmmInitEntryPoint (
     }
   }
 
+  //
+  // Register callback to clear GPIO interrupt beafore OS handoff
+  //
+  gSmst->SmmRegisterProtocolNotify (
+    &gEdkiiSmmExitBootServicesProtocolGuid,
+    DisableGpiIeExitBootServicesCallback,
+    &Registration
+  );
   DEBUG ((DEBUG_INFO, "[GPIOV2][SMM]: InstallGpioV2SmmProtocol End\n"));
   return Status;
 }

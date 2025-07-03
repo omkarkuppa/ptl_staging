@@ -1255,12 +1255,29 @@ EFI_STATUS
   OUT GPIOV2_PAD                   *NextPad
 );
 
-#define GPIOV2_CONTROLLER_REVISION  1
+/**
+  This procedure clears the GPI_IE registers for all GpioPads.
+
+  @param[in] GpioServices         Gpio Services
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid group or pad number
+**/
+typedef
+EFI_STATUS
+(EFIAPI *GPIO_DISABLE_ALL_GPI_IE) (
+  IN  GPIOV2_SERVICES *This
+  );
+
+
+#define GPIOV2_CONTROLLER_REVISION  2
 /**
   <b>Revision 0:</b>
   - Inital version.
   <b>Revision 1:</b>
   - Added functions: GetLock, GetLockTx, GetRxEvCfg.
+  <b>Revision 2:</b>
+  - Added functions: DisableAllGpiIe.
 **/
 
 struct _GPIOV2_PROTOCOL {
@@ -1346,6 +1363,7 @@ struct _GPIOV2_PROTOCOL {
   GPIO_RESTRICT_WRITE_ACCESS          RestrictWriteAccess;
   GPIO_GET_GLOBAL_GROUP_INDEX         GetGlobalGroupIndex;
   GPIO_GET_NEXT_PAD                   GetNextPad;
+  GPIO_DISABLE_ALL_GPI_IE             DisableAllGpiIe;
 };
 
 #endif // _GPIOV2_PROTOCOL_H_

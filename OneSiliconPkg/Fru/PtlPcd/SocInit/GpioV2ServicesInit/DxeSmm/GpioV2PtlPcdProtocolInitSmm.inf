@@ -51,9 +51,11 @@
 [Protocols]
   gGpioV2SmmProtocolGuid
   gGpioV2SmmPwmProtocolGuid
+  gEdkiiSmmExitBootServicesProtocolGuid
 
 [Packages]
   MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
 
 [Depex]
