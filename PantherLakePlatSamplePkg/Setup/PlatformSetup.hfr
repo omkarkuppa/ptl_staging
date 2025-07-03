@@ -670,6 +670,16 @@
       option text = STRING_TOKEN(STR_SET_PECI_ESPI_MODE),  value = 1, flags = DEFAULT | RESET_REQUIRED;
   endoneof;
 
+  suppressif NOT ideqval BOARD_INFO_SETUP.BoardId == BoardIdPtlUHLp5Aep;
+    string varid  = SETUP_DATA.PlatformSN,
+      prompt   = STRING_TOKEN(STR_PLATFORM_SERIAL_NUMBERS),
+      help     = STRING_TOKEN(STR_PLATFORM_SERIAL_NUMBERS_HELP),
+      flags       = 0 | RESET_REQUIRED | INTERACTIVE,
+      minsize    = 1,
+      maxsize    = 16,
+    endstring;
+  endif;
+
  // Power Loss Notification
  oneof varid = NVME_SETUP.PlnEnable,
        prompt   = STRING_TOKEN(STR_PLN_ENABLE),

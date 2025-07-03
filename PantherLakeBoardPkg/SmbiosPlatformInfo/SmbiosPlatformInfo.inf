@@ -92,6 +92,8 @@
   gClientSmbiosFeaturePkgTokenSpaceGuid.PcdSmbiosPlatformInfoSize  ## PRODUCES
   gClientSmbiosFeaturePkgTokenSpaceGuid.PcdPasswordStatusAdminName ## PRODUCES
   gClientSmbiosFeaturePkgTokenSpaceGuid.PcdPasswordStatusUserName  ## PRODUCES
+  gSiPkgTokenSpaceGuid.PcdWclSupport
+  gBoardModuleTokenSpaceGuid.VpdPcdAepConfig                       ## CONSUMES
 
 [Sources]
   SmbiosPlatformInfo.c
@@ -111,6 +113,7 @@
   gSystemAccessGuid                                                ## CONSUMES
   gMeBiosPayloadHobGuid                                            ## CONSUMES
   gUefiWwanFccLockStringGuid                                       ## CONSUMES
+  gSetupVariableGuid                                               ## CONSUMES
 
 [Depex]
   gEfiSmbiosProtocolGuid                  AND

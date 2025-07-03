@@ -149,6 +149,8 @@
 #define MAX_PCIE_CONTROLLERS                10
 #endif
 
+#define SERIAL_NUMBER_SIZE                  17
+
 #pragma pack(1)
 /**
  Making any setup structure change after code frozen
@@ -164,10 +166,11 @@
   <b>Revision 6</b>:  - Added StorageDynamicLinkManagement
   <b>Revision 7</b>:  - Added TccMode
   <b>Revision 8</b>:  - Deprecated wwan related variable
-  <b>Revision 9</b>: - Add IoI2c and IoSpi WittDevice 
+  <b>Revision 9</b>:  - Add IoI2c and IoSpi WittDevice
+  <b>Revision 10</b>  - Added platform serial number variable
 **/
 
-#define SETUP_DATA_REVISION 9
+#define SETUP_DATA_REVISION 10
 
 typedef struct {
   UINT8   Revision;
@@ -817,6 +820,7 @@ typedef struct {
   UINT8   PchIoI3cWittDevice[PCH_MAX_SERIALIO_I3C_CONTROLLERS];
   UINT8   PchIoSpiWittDeviceEnable;
   UINT8   PchIoSpiWittDevice[PCH_MAX_SERIALIO_SPI_CONTROLLERS];
+  UINT16  PlatformSN[SERIAL_NUMBER_SIZE];
 } SETUP_DATA;
 
 /**

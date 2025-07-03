@@ -4158,6 +4158,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.Rtd3Support|0x1                               
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3TouchPadDelay|0x44                                           # TouchPad
 gStructPcdTokenSpaceGuid.PcdSetup.Rtd3TouchPanelDelay|0x44                                         # TouchPanel
 gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x0                                             # Scan Matrix Keyboard Support
+gStructPcdTokenSpaceGuid.PcdSetup.PlatformSN|L"PKP144300002"                                       # Platform Serial Number
 gStructPcdTokenSpaceGuid.PcdSetup.SensorHubType|0x1                                                # Sensor Hub Type
 gStructPcdTokenSpaceGuid.PcdSetup.SensorStandby|0x0                                                # Sensor Standby
 gStructPcdTokenSpaceGuid.PcdSetup.SerialPortAcpiDebug|0x0                                          # Print to Serial Port

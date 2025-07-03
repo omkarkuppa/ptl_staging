@@ -813,6 +813,9 @@
 #string STR_SCAN_MATRIX_PROFILE                 #language en-US "Scan Matrix Keyboard Support"
 #string STR_SCAN_MATRIX_PROFILE_HELP            #language en-US "Enables/Disables the option when Scan Matrix Keyboard is connected/not connected"
 
+#string STR_PLATFORM_SERIAL_NUMBERS             #language en-US "Platform Serial Number"
+#string STR_PLATFORM_SERIAL_NUMBERS_HELP        #language en-US "Enter Unique Serial Number. BIOS doesn't keep track of it. Please check with Board Team to know the assigned Serial Number for this setup"
+
 //
 // EC PECI Mode
 //

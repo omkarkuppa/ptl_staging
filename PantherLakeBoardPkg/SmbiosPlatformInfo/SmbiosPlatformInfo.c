@@ -32,6 +32,7 @@
 #include <Library/SmbiosProcessorLib.h>
 #include <Library/IGpuInfoLib.h>
 #include <Library/PerformanceLib.h>
+#include <Protocol/PlatformNvsArea.h>
 
 CHAR16   BoardVersionString[SMBIOS_STRING_MAX_LENGTH];
 CHAR16   BiosReleaseDate[SMBIOS_STRING_MAX_LENGTH];
@@ -2561,6 +2562,8 @@ I2cPssProtocolInstallCallBack (
   UINT8                                 i;
   UINT8                                 Instance;
   UINT8                                 MaxInstances;
+  SETUP_DATA                            SystemConfig;
+  UINTN                                 VarDataSize;
 
   DEBUG ((DEBUG_INFO, "%a() Entry\n", __FUNCTION__));
 
@@ -2587,7 +2590,26 @@ I2cPssProtocolInstallCallBack (
     PERF_INMODULE_BEGIN ("I2cPssGetSerialNum");
     Status = I2cPssProtocol->I2cPssGetSerialNumber (I2cPssProtocol, PssSerialNum);
     PERF_INMODULE_END ("I2cPssGetSerialNum");
-    if (!EFI_ERROR (Status)) {
+
+    if (PcdGetBool (VpdPcdAepConfig) == TRUE) {
+      VarDataSize = sizeof (SETUP_DATA);
+      ZeroMem (&SystemConfig, VarDataSize);
+      Status = gRT->GetVariable (
+                      L"Setup",
+                      &gSetupVariableGuid,
+                      NULL,
+                      &VarDataSize,
+                      &SystemConfig
+                      );
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "I2cPssProtocolInstall GetVariable SystemConfig - %r\n", Status));
+      }
+      for (i = 0; i < PSS_SN_LENGTH + 1; i++) {
+        PssSerialNum[i] = (UINT8)SystemConfig.PlatformSN[i];
+      }
+    }
+
+    if (!EFI_ERROR (Status) || (PcdGetBool (VpdPcdAepConfig) == TRUE)) {
       //
       // Update Type 1 SystemManufacturerInfo
       //
