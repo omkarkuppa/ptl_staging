@@ -207,6 +207,81 @@ GetConvertedTime (
 }
 
 /**
+  Programs XAPIC registers.
+
+  @param[in] Bsp             - Is this BSP?
+**/
+VOID
+ProgramXApic (
+  BOOLEAN Bsp
+  )
+{
+  UINT64               ApicBaseReg;
+  EFI_PHYSICAL_ADDRESS ApicBase;
+  volatile UINT32      *EntryAddress;
+  UINT32               EntryValue;
+
+  ApicBaseReg = AsmReadMsr64 (MSR_IA32_APIC_BASE);
+
+  ApicBase    = ApicBaseReg & 0x3ffffffff000ULL;
+
+  ///
+  /// Program the spurious vector entry
+  ///
+  EntryAddress  = (UINT32 *) (UINTN) (ApicBase + XAPIC_SPURIOUS_VECTOR_OFFSET);
+  EntryValue    = *EntryAddress;
+  EntryValue &= 0xFFFFFD0F;
+  EntryValue |= 0x10F;
+  *EntryAddress = EntryValue;
+
+  ///
+  /// Program the LINT1 vector entry as extINT
+  ///
+  EntryAddress  = (UINT32 *) (UINTN) (ApicBase + XAPIC_LVT_LINT0_OFFSET);
+  EntryValue    = *EntryAddress;
+
+  if (Bsp) {
+    EntryValue &= 0xFFFE00FF;
+    EntryValue |= 0x700;
+  } else {
+    EntryValue |= 0x10000;
+  }
+
+  *EntryAddress = EntryValue;
+
+  ///
+  /// Program the LINT1 vector entry as NMI
+  ///
+  EntryAddress  = (UINT32 *) (UINTN) (ApicBase + XAPIC_LVT_LINT1_OFFSET);
+  EntryValue    = *EntryAddress;
+  EntryValue &= 0xFFFE00FF;
+  if (Bsp) {
+    EntryValue |= 0x400;
+  } else {
+    EntryValue |= 0x10400;
+  }
+
+  *EntryAddress = EntryValue;
+}
+
+/**
+  Check to see if the executing thread is BSP
+
+  @retval TRUE   Executing thread is BSP
+  @retval FALSE  Executing thread is AP
+**/
+BOOLEAN
+IsBsp (
+  VOID
+  )
+{
+  MSR_IA32_APIC_BASE_REGISTER Msr;
+
+  Msr.Uint64  = AsmReadMsr64 (MSR_IA32_APIC_BASE);
+  return (BOOLEAN) (Msr.Bits.BSP == 1);
+}
+
+/**
   Check on the processor if PRMRR is supported.
 
   @param[in]  IsBspInt  Check to see if the executing thread is BSP.

@@ -58,6 +58,9 @@ FspUpdateFusaPolicy (
     if (EFI_ERROR (Status)) {
       return;
     }
+    FusaConfig->Module0Lockstep         = FspsUpd->FspsConfig.Module0Lockstep;
+    FusaConfig->Module1Lockstep         = FspsUpd->FspsConfig.Module1Lockstep;
+    FusaConfig->LpcLockstep             = FspsUpd->FspsConfig.LpcLockstep;
   }
 #endif
 }

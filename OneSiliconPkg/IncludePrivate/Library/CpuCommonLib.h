@@ -268,4 +268,25 @@ GetProcessorInfoAndCoreType (
   IN      UINTN                      NumberOfProcessors
   );
 
+/**
+  Programs XAPIC registers.
+
+  @param[in] Bsp             - Is this BSP?
+**/
+VOID
+ProgramXApic (
+  BOOLEAN Bsp
+  );
+
+/**
+  Check to see if the executing thread is BSP
+
+  @retval TRUE   Executing thread is BSP
+  @retval FALSE  Executing thread is AP
+**/
+BOOLEAN
+IsBsp (
+  VOID
+  );
+
 #endif

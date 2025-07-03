@@ -47,6 +47,8 @@
   PeiDxeSmmReserveMmio64SizeLib
   ResiliencySupportLib
   CnviLib
+  CpuPerThreadInitPreMpLib
+  FusaInfoLib
 
 [Packages]
   MinPlatformPkg/MinPlatformPkg.dec
@@ -69,6 +71,9 @@
 
 [FixedPcd]
   gBoardModuleTokenSpaceGuid.PcdSetupEnable
+
+  # FUSA
+  gSiPkgTokenSpaceGuid.PcdFusaSupport                                    ## CONSUMES
 
 [Pcd]
   # Board GPIO Table
@@ -302,6 +307,7 @@
   gSetupVariableGuid                                                     ## CONSUMES
   gMeSetupVariableGuid                                                   ## CONSUMES
   gPchSetupVariableGuid                                                  ## CONSUMES
+  gSaSetupVariableGuid                                                   ## CONSUMES
   gMeBiosPayloadHobGuid
 
 [Ppis]

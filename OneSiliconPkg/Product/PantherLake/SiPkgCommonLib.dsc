@@ -58,6 +58,7 @@ SecCpuLib|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/SecCpuLib/SecCpuLib.inf
  CpuPlatformLib|$(PLATFORM_SI_PACKAGE)/Library/PeiDxeSmmCpuPlatformLib/PeiDxeSmmCpuPlatformLib.inf
  PeiVrLib|$(PLATFORM_SI_PACKAGE)/IpBlock/VoltageRegulator/LibraryPrivate/PeiVrLib/PeiVrLib.inf
  CpuUnitTestFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/CpuUnitTestFruLib/CpuUnitTestFruLib.inf
+ CpuPerThreadInitPreMpLib|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/Library/CpuPerThreadInitPreMpLib/CpuPerThreadInitPreMpLib.inf
 
 #
 # TXT/BTG

@@ -59,11 +59,16 @@
 #include <Library/CnviLib.h>
 
 #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
-  #include <Register/Ptl/GpioV2PcdPins/GpioV2PtlPcdPins.h>
+#include <Register/Ptl/GpioV2PcdPins/GpioV2PtlPcdPins.h>
+#if FixedPcdGetBool(PcdFusaSupport) == 1
+#include <Library/CpuPerThreadInitPreMpLib.h>
+#include <Library/FusaInfoLib.h>
+#endif
 #endif
 
 GLOBAL_REMOVE_IF_UNREFERENCED SETUP_DATA                              mSetupData;
 GLOBAL_REMOVE_IF_UNREFERENCED PCH_SETUP                               mPchSetup;
+GLOBAL_REMOVE_IF_UNREFERENCED SA_SETUP                                mSaSetup;
 /**
   Configure PciHostBridge related PCDs
 
@@ -587,6 +592,34 @@ PtlBoardInitBeforeSiliconInit (
   ///
   LateSiliconInit ();
 
+#if FixedPcdGetBool(PcdEmbeddedEnable) == 1
+#if FixedPcdGetBool(PcdFusaSupport) == 1
+  UINT16 Module0Lockstep;
+  UINT16 Module1Lockstep;
+  UINT16 LpcLockstep;
+
+  VarSize = sizeof (SA_SETUP);
+  Status = VariableServices->GetVariable (
+                               VariableServices,
+                               L"SaSetup",
+                               &gSaSetupVariableGuid,
+                               NULL,
+                               &VarSize,
+                               &mSaSetup
+                               );
+  ASSERT_EFI_ERROR (Status);
+
+  if (mSaSetup.FusaConfigEnable == 1) {
+    if (IsInFusaDiagnosticMode() == FALSE) {
+      Module0Lockstep = (UINT16)  mSaSetup.Module0Lockstep;
+      Module1Lockstep = ((UINT16) mSaSetup.Module1Lockstep) << 4;
+      LpcLockstep     = ((UINT16) mSaSetup.LpcLockstep) << 8;
+      DEBUG ((DEBUG_INFO, "Start Lockstep Config. \n"));
+      CpuPerThreadInitPreMp (LpcLockstep | Module1Lockstep | Module0Lockstep);
+    }
+  }
+#endif
+#endif
 
   return EFI_SUCCESS;
 }

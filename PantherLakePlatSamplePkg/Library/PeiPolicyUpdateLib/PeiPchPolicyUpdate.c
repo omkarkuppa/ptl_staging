@@ -486,7 +486,7 @@ UpdateLpssSpiConfig (
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiMisoPinMux[Index], LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Miso, 0x0);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiMosiPinMux[Index], LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Mosi, 0x0);
   }
-  
+
   if (PtlIsPcdH () || PtlIsPcdP ()) {
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiCsPinMux[0], LpssSpiConfig->SpiDeviceConfig[0].PinMux.Cs[0], GPIOV2_PTL_PCD_MUXING__XXGPP_E_17__GSPI0_CS0_B);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiClkPinMux[0], LpssSpiConfig->SpiDeviceConfig[0].PinMux.Clk, GPIOV2_PTL_PCD_MUXING__XXGPP_E_11__GSPI0_CLK);
@@ -2745,6 +2745,9 @@ UpdateFusaConfig (
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.FusaStartupPatternAddr,          FusaConfig->FusaStartupPatternAddr,          (UINT32) PcdGet32 (PcdFlashFvFusaStartupBase));
 #endif
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.FusaConfigEnable,         FusaConfig->FusaConfigEnable,         SaSetup->FusaConfigEnable);
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Module0Lockstep,  FusaConfig->Module0Lockstep,  SaSetup->Module0Lockstep);
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Module1Lockstep,  FusaConfig->Module1Lockstep,  SaSetup->Module1Lockstep);
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.LpcLockstep,      FusaConfig->LpcLockstep,      SaSetup->LpcLockstep);
 }
 #endif
 #endif

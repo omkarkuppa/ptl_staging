@@ -1266,9 +1266,10 @@ typedef struct {
   <b>Revision 10</b>: - Add IbeccEccInjControl, IbeccEccInjAddrBase, IbeccEccInjCount
   <b>Revision 11</b>: - Add MsHashOverride, MsHashInterleaveBit, MsHashMask
   <b>Revision 12</b>: - Add Fusa Cfi Parity variables and FusaConfigEnable
+  <b>Revision 13</b>: - Add Lockstep variables
 **/
 
-#define SA_SETUP_REVISION   12
+#define SA_SETUP_REVISION   13
 
 typedef struct {
   UINT8   Revision;
@@ -1788,7 +1789,11 @@ typedef struct {
 
   UINT8   FusaConfigEnable;
 
-  UINT8   Rsvd[11];
+  UINT8   Module0Lockstep;
+  UINT8   Module1Lockstep;
+  UINT8   LpcLockstep;
+
+  UINT8   Rsvd[8];
 } SA_SETUP;
 
 /**

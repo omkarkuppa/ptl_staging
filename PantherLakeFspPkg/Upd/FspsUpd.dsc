@@ -505,6 +505,10 @@
   # !BSF TYPE:{Combo} OPTION:{0: Disable lockstep, 1: Enable lockstep for Core 0 with Core 1 and Core 2 with Core 3, 2: Enable lockstep for Core 0 with Core 1, 3: Enable lockstep for Core 2 with Core 3}
   # !BSF HELP:{Enable/Disable Lockstep for Atom module 1, which has 4 cores; 0: Disable lockstep; 1: Enable lockstep for Core 0 with Core 1, Core 2 with Core 3; 2: Enable lockstep for Core 0 with Core 1; 3: Enable lockstep for Core 2 with Core 3}
   gPlatformFspPkgTokenSpaceGuid.Module1Lockstep             | * | 0x01 | 0x00
+  # !BSF NAME:{Fusa LPC Lockstep Configuration}
+  # !BSF TYPE:{Combo} OPTION:{0: Disable lockstep, 1: Enable lockstep for Core 0 with Core 1 and Core 2 with Core 3, 2: Enable lockstep for Core 0 with Core 1, 3: Enable lockstep for Core 2 with Core 3}
+  # !BSF HELP:{Enable/Disable Lockstep for Atom module 1, which has 4 cores; 0: Disable lockstep; 1: Enable lockstep for Core 0 with Core 1, Core 2 with Core 3; 2: Enable lockstep for Core 0 with Core 1; 3: Enable lockstep for Core 2 with Core 3}
+  gPlatformFspPkgTokenSpaceGuid.LpcLockstep                 | * | 0x01 | 0x00
   # !BSF NAME:{Opio Recentering Ctrl} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Opio Recentering Disabling for Pcie Latency Improvement, 0: Disable, 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.OpioRecenter                | * | 0x01 | 0x01

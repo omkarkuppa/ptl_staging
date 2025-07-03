@@ -22,6 +22,17 @@
 
 #string STR_FUSA_FORM_TITLE                      #language en-US "Functional Safety Configuration"
 #string STR_FUSA_FORM_HELP                       #language en-US "Functional Safety Configuration options"
+#string STR_MOD0_LOCKSTEP_OPTION                 #language en-US "Lock Step Module 0"
+#string STR_MOD1_LOCKSTEP_OPTION                 #language en-US "Lock Step Module 1"
+#string STR_LPC_LOCKSTEP_OPTION                  #language en-US "Lock Step LPC"
+
+#string STR_LOCKSTEP_PROMPT                      #language en-US "Core Lockstep Configuration"
+#string STR_LOCKSTEP_PROMPT_HELP                 #language en-US "Enable/Disable Lockstep for Efficient-core module, which has 4 cores each"
+
+#string STR_LOCKSTEP_DISABLE                     #language en-US "Disable lockstep"
+#string STR_LOCKSTEP_C0C1_C2C3                   #language en-US "Enable lockstep for Core 0 with Core 1, Core 2 with Core 3"
+#string STR_LOCKSTEP_C0C1                        #language en-US "Enable lockstep for Core 0 with Core 1"
+#string STR_LOCKSTEP_C2C3                        #language en-US "Enable lockstep for Core 2 with Core 3"
 
 #string STR_FUSA_EN                              #language en-US "Fusa Enable"
 #string STR_FUSA_HELP                            #language en-US "Enable/Disable all Functional Safety (FUSA) feature"
