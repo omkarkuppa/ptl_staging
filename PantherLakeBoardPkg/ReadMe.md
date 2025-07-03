@@ -29,3 +29,7 @@ This package provides the minimal feature of the PantherLake BIOS.
             prep r s && bld /s
 4. BIOS is generated in 'Build\PantherLakeBoardPkg\DEBUG_VS2019x86\FV\CLIENTBIOS.fd'
 5. Create the IFWI using the BIOS ROM from Step 4 and the latest IFWI from the VP Simics PPR
+
+## Capsule Building
+
+- Refer the [document](./Features/CapsuleUpdate/Docs/CapsuleBuild.md) located in ```Features/CapsuleUpdate/Docs/CapsuleBuild.md```
