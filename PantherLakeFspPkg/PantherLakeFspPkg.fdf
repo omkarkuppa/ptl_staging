@@ -239,7 +239,14 @@ INF RuleOverride = FSPHEADER   $(FSP_PACKAGE)/FspHeader/FspHeader.inf
 #
 INF RuleOverride = RELOC   IntelFsp2Pkg/FspSecCore/Fsp24SecCoreM.inf
 
-
+#
+# Project specific configuration data files
+#
+!if gPantherLakeFspPkgTokenSpaceGuid.PcdCfgRebuild == FALSE
+FILE RAW = $(FSP_M_UPD_FFS_GUID) {
+    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/$(FSP_M_UPD_TOOL_GUID).bin
+}
+!endif
 
 INF MdeModulePkg/Core/Pei/PeiMain.inf
 
@@ -306,14 +313,6 @@ FILE RAW = D9093578-08EB-44DF-B9D8-D0C1D3D55D96 {
     SECTION RAW = $(FSP_PACKAGE)/FspDescription/FspDescription.txt
 }
 
-#
-# Project specific configuration data files
-#
-!if gPantherLakeFspPkgTokenSpaceGuid.PcdCfgRebuild == FALSE
-FILE RAW = $(FSP_M_UPD_FFS_GUID) {
-    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/$(FSP_M_UPD_TOOL_GUID).bin
-}
-!endif
 
 [FV.FSP-S]
 BlockSize          = 0x00001000
