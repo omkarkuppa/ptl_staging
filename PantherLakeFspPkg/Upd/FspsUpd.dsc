@@ -2299,7 +2299,8 @@
   ## THERMAL_CONFIG End
 
   ## TSN_CONFIG Start
-
+  # !BSF NAME:{Enable PCH TSN} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/disable TSN on the PCH.}
   gPlatformFspPkgTokenSpaceGuid.PchTsnEnable                | * | 0x04 | {0x01, 0x01, 0x01, 0x01}
 
   # Added reserved space    UnusedUpdSpace20
