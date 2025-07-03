@@ -3359,6 +3359,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.BdatEnable|0x0                              
 gStructPcdTokenSpaceGuid.PcdSaSetup.BdatTestType|0x0                                               # BDAT Memory Test Type
 gStructPcdTokenSpaceGuid.PcdSaSetup.ConfigureGT|0x1                                                # Configure GT for use
 gStructPcdTokenSpaceGuid.PcdSaSetup.ConfigureMedia|0x1                                             # Configure Media for use
+gStructPcdTokenSpaceGuid.PcdSaSetup.PavpEnable|0x1                                                 # PAVP Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.CridEnable|0x0                                                 # CRID Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.TcssD3ColdEnable|0x1                                           # TCSS D3 Cold Enable/Disable
 gStructPcdTokenSpaceGuid.PcdSaSetup.DdrOddRatioMode|0x0                                            # QCLK Odd Ratio
