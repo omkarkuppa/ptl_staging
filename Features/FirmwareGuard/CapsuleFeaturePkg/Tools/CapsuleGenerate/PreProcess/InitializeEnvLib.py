@@ -56,6 +56,30 @@ class InitializeEnv (object):
         pass
 
     @staticmethod
+    def RemoveIntermediateDirFile () -> None:
+        """ Remove the intermediate directories and files.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        Path       : str       = None
+        DirNameList: List[str] = None
+
+        DirNameList = [
+            TEMPORARY_DIR_PATH,
+            ]
+
+        for Path in DirNameList:
+            DEBUG (DEBUG_TRACE, f'Remove the directory: {Path}')
+            RemoveDir (Path)
+
+    @staticmethod
     def TouchNeededDir () -> None:
         """ Initial the necessary directory if not exists.
 

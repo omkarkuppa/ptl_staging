@@ -73,7 +73,7 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
     # Pre-defined value
     #
     BGSL_TEMPLATE_KEY  : str = 'BgslTemplateFile'
-    SLOT_SIZE_DATA_KEY : str = 'Slotsize'
+    SLOT_SIZE_DATA_KEY : str = 'SlotSize'
     BTG_ACM_FDF_FV_NAME: str = 'CapsulePayloadBtGAcm'
 
     BTG_ACM_FLASH_MAP_DATA    : dict = \

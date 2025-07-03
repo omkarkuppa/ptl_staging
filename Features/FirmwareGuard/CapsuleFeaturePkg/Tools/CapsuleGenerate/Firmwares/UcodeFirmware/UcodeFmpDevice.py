@@ -82,7 +82,7 @@ class Ucode (FmpDeviceNull):
 #
 if (BUILD_OP_VER == UCODE_BUILD_OP_VER_1):
     BGSL_TEMPLATE_KEY : str = 'BgslTemplateFile'
-    SLOT_SIZE_DATA_KEY: str = 'Slotsize'
+    SLOT_SIZE_DATA_KEY: str = 'SlotSize'
     UCODE_FV_KEY      : str = 'Fv'
 
     UCODE_FLASH_MAP_DATA    : dict = \

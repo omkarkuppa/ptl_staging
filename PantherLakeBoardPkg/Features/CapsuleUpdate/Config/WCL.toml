@@ -131,7 +131,7 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
     [Firmware.Btgacm.Offset.Resiliency.Default]
       Fv = { Offset = '0x00C01000', Size = '0x00048000' }
 
-    [Firmware.Btgacm.Slotsize]
+    [Firmware.Btgacm.SlotSize]
       Default = '0x48000'
 
   [Firmware.Fsp]
@@ -143,7 +143,6 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
       FspM  = { Offset = '0x00AA0000', Size = '0x001A0000' }
       FspT  = { Offset = '0x00DD2000', Size = '0x00010000' }
       FspO  = { Offset = '0x00DE2000', Size = '0x0001D000' }
-      FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00DD0000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Normal.Release.Default]
@@ -151,7 +150,6 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
       FspM  = { Offset = '0x00BF0000', Size = '0x00110000' }
       FspT  = { Offset = '0x00DE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00DEE000', Size = '0x00011000' }
-      FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00DE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Debug.Default]
@@ -159,7 +157,6 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
       FspM  = { Offset = '0x00DB0000', Size = '0x00110000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
-      FspRV = { Offset = '0x00FFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Release.Default]
@@ -167,7 +164,6 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
       FspM  = { Offset = '0x00DF0000', Size = '0x00110000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
-      FspRV = { Offset = '0x00FFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.CompressInfo]
@@ -189,7 +185,7 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
     [Firmware.Ucode.Offset.Resiliency.Release.Default]
       Fv = { Offset = '0x00CA0000', Size = '0x00080000' }
 
-    [Firmware.Ucode.Slotsize]
+    [Firmware.Ucode.SlotSize]
       Default = '0x37000'
 
   [Firmware.Foxville]

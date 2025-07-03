@@ -74,7 +74,7 @@ VENDOR_NAME             : str  = PLATFORM_COMMON_CFG[VENDOR_KEY]
 ########################################################################
 EDKII_TOOL_PATH      : str = JoinPath (
     WORKSPACE_PATH,
-    gPathInfo[EDKII_BASETOOL_KEY]
+    gPathInfo[EDKII_BASE_TOOLS_KEY]
     )
 EDKII_WORKSPACE_PATH : str       = TEMPORARY_DIR_PATH
 EDKII_CAP_PKG_NAME   : str       = 'CapsulePkg'

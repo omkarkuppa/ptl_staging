@@ -33,6 +33,12 @@ ENV_CHECKER_PATH  = os.path.dirname (PATH_CHECKER_PATH)
 TOOLKIT_PATH      = os.path.dirname (ENV_CHECKER_PATH)
 
 class ToolkitPathChecker (object):
+    INVALID_CHAR_LIST = [
+        ' ',
+        '[',
+        ']',
+        ]
+
     def __init__ (self):
         """ Class support to check the toolkit path is valid.
 
@@ -77,12 +83,13 @@ class ToolkitPathChecker (object):
                 True  - The toolkit located path is valid.
                 False - The toolkit located path is not valid.
         """
-        IsValid = None
+        IsValid = True
+        Char    = None
 
-        if ' ' in TOOLKIT_PATH:
-            print ("[ERROR] !!! Toolkit path with space is not supported !!!")
-            IsValid = False
-        else:
-            IsValid = True
+        for Char in ToolkitPathChecker.INVALID_CHAR_LIST:
+            if Char in TOOLKIT_PATH:
+                print ("[ERROR] !!! Toolkit path with invalid character: %s !!!" % (Char))
+                IsValid = False
+                break
 
         return IsValid

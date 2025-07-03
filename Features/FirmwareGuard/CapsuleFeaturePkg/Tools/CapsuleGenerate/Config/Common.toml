@@ -42,11 +42,11 @@ Title = "Configuration file - TOML for Client CapsuleGenerate"
   MeProdCertSubject    = ''
 
 [Path]
-  ToolDir          = 'Tools'
-  TemplateDir      = 'Template'
-  EdkIIBaseToolDir = 'Tools/BaseTools'
-  OpenSSLDir       = 'Tools/OpenSSL'
-  EdssSignFileDir  = 'Tools/SignFile'
+  ToolDir           = 'Tools'
+  TemplateDir       = 'Template'
+  EdkIIBaseToolsDir = 'Tools/BaseTools'
+  OpenSSLDir        = 'Tools/OpenSSL'
+  EdssSignFileDir   = 'Tools/SignFile'
 
   [Path.PyScript]
     CleanUpScript         = 'Scripts/CleanUp.py'
@@ -511,7 +511,7 @@ Note:
 To build the Monolithic Capsule File.
 Support two methods
   (1) Use -fit and -ifwi to decompose the each firmware component.
-      Could use each firmware flag to override the decsompose component.
+      Could use each firmware flag to override the decomposed component.
         -bios: BIOS image file. (If decompose from IFWI, then optional)
         -me  : ME image file.   (Optional)
         -ec  : EC image file.   (Optional)
@@ -711,7 +711,7 @@ To build the BtGAcm Capsule File.
   [Firmware.Btgacm.Offset.Default]
     Fv = 'NA'
 
-  [Firmware.Btgacm.Slotsize]
+  [Firmware.Btgacm.SlotSize]
     # The default slot size value should be depended by platforms.
     # (e.g. '0x40000')
     Default = 'NA'
@@ -732,8 +732,7 @@ To build the BtGAcm Capsule File.
   #
   # Template file should be relative path to Template folder.
   #
-  BgslTemplateFileAlign    = 'BiosUpdateScript.bgsl.template'
-  BgslTemplateFileNonAlign = 'BiosUpdateScriptNonAlign.bgsl.template'
+  BgslTemplateFileAlign = 'BiosUpdateScript.bgsl.template'
 
   [Firmware.Fsp.Command]
     Title          = 'Build FSP capsule update file'
@@ -791,7 +790,6 @@ To build the FSP Capsule File.
     FspM  = 'NA'
     FspT  = 'NA'
     FspO  = 'NA'
-    FspRV = 'NA'
     FBM   = 'NA'
 
   [Firmware.Fsp.CompressInfo]
@@ -799,7 +797,6 @@ To build the FSP Capsule File.
     FspM   = 'NA'
     FspT   = 'NA'
     FspO   = 'NA'
-    FspRV  = 'NA'
 
   [Firmware.Fsp.Guid]
     Default = '5E8F2C7B-6D4F-4A9E-BF6D-8A7E9B0F3C2A'
@@ -823,9 +820,9 @@ To build the FSP Capsule File.
     Title          = 'Build uCode capsule update file'
     Description    = '''
 To build the Ucode Capsule File.
-  (1) Use -sku to assign whick platform need to be built.
+  (1) Use -sku to assign which platform need to be built.
       (This flag is align with slot size)
-  (2) Use -ucode multple to assign all needed uCode.
+  (2) Use -ucode multiple times to assign all needed uCode.
       e.g. -ucode <uCode1> -ucode <uCode2> ...
     '''
     SubDescription = '''
@@ -895,7 +892,7 @@ Note:
   [Firmware.Ucode.Offset.Default]
     Fv = 'NA'
 
-  [Firmware.Ucode.Slotsize]
+  [Firmware.Ucode.SlotSize]
     # The default slot size value should be depended by platforms.
     # (e.g. '0x3F000')
     Default = 'NA'

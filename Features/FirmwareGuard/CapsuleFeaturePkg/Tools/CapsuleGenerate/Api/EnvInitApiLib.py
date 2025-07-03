@@ -26,10 +26,11 @@ def ApiInitialBuildEnv () -> None:
     """ API to initial the workspace environment.
 
     Note:
-        (1) Touch the workspace needed directory.
-        (2) Port the EDK-II Conf directory.
-        (3) Create the EDK-II DSC file.
-        (4) Create the dummy firmware files.
+        (1) Remove the intermediate directories and files.
+        (2) Touch the workspace needed directory.
+        (3) Port the EDK-II Conf directory.
+        (4) Create the EDK-II DSC file.
+        (5) Create the dummy firmware files.
 
     Args:
         None.
@@ -40,6 +41,7 @@ def ApiInitialBuildEnv () -> None:
     Returns:
         None.
     """
+    InitializeEnv.RemoveIntermediateDirFile ()
     InitializeEnv.TouchNeededDir ()
     InitializeEnv.Edk2WorkspaceInit ()
     InitializeEnv.CreateEdk2DscFile ()

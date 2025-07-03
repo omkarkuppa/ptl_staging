@@ -1064,7 +1064,7 @@ if __name__ == '__main__':
         Parser.add_argument (
                  '-biossvn',
                  '-BIOSSVN',
-                 '--biosvn',
+                 '--biossvn',
                  dest     = 'BiosSvn',
                  help     = 'The BIOS SVN value should be UINT32.',
                  required = True,

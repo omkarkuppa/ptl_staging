@@ -2,7 +2,7 @@
 #  Capsule version object for Foxville firmware.
 #
 #  [Rule]
-#  For the Foxviile version (MM.mm) is 2.25.
+#  For the Foxville version (MM.mm) is 2.25.
 #  MM - Major, mm - Minor.
 #
 #  Version Represent    : 2025

@@ -69,23 +69,18 @@ class Fsp (FmpDeviceNull):
 # Override with different build operation.
 #
 if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
-    COMPRESSINFO_KEY           : str = 'CompressInfo'
-    BGSL_TEMPLATE_ALIGN_KEY    : str = 'BgslTemplateFileAlign'
-    BGSL_TEMPLATE_NON_ALIGN_KEY: str = 'BgslTemplateFileNonAlign'
-    FSP_FDF_FV_NAME            : str = 'CapsulePayloadFsp'
-    COMPRESS_INFO              : dict = FSP_FIRMWARE_CONFIG[COMPRESSINFO_KEY]
-    FSP_FLASH_MAP_DATA         : dict = FSP_FIRMWARE_CONFIG[FLASH_MAP_OFFSET_SECTION]
+    COMPRESS_INFO_KEY      : str = 'CompressInfo'
+    BGSL_TEMPLATE_ALIGN_KEY: str = 'BgslTemplateFileAlign'
+    FSP_FDF_FV_NAME        : str = 'CapsulePayloadFsp'
+    COMPRESS_INFO          : dict = FSP_FIRMWARE_CONFIG[COMPRESS_INFO_KEY]
+    FSP_FLASH_MAP_DATA     : dict = FSP_FIRMWARE_CONFIG[FLASH_MAP_OFFSET_SECTION]
 
     FSP_BGSL_TEMPLATE_ALIGN_PATH   : str  = \
         JoinPath (
           TEMPLATE_DIR_PATH,
           FSP_FIRMWARE_CONFIG[BGSL_TEMPLATE_ALIGN_KEY],
           )
-    FSP_BGSL_TEMPLATE_NON_ALIGN_PATH: str  = \
-        JoinPath (
-          TEMPLATE_DIR_PATH,
-          FSP_FIRMWARE_CONFIG[BGSL_TEMPLATE_NON_ALIGN_KEY],
-          )
+
     #
     # FMP Device specific build command
     #
@@ -335,13 +330,10 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
             if self.__IsBgupBuild:
                 FspBgupGenerator = \
                     _FspBgupGenerator (
-                      FlashMapDict              = self.__FlashMapInfo,
-                      FspImgInfoDict            = FspImgInfoDict,
-                      BgslTemplateaAlignPath    = \
-                        FSP_BGSL_TEMPLATE_ALIGN_PATH,
-                      BgslTemplateaNonAlignPath = \
-                        FSP_BGSL_TEMPLATE_NON_ALIGN_PATH,
-                      BiosSvn                   = self.__BiosSvn,
+                      FlashMapDict          = self.__FlashMapInfo,
+                      FspImgInfoDict        = FspImgInfoDict,
+                      BgslTemplateAlignPath = FSP_BGSL_TEMPLATE_ALIGN_PATH,
+                      BiosSvn               = self.__BiosSvn,
                       )
                 FspBgupGenerator.Save (FSP_BGUP_FILE_PATH)
 

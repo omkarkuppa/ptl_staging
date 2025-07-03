@@ -20,9 +20,9 @@
 #
 ##
 
-PACKAGE_VERSION           = '1.0.3'
-PACKAGE_VERSION_YEAR      = '2024'
-PACKAGE_VERSION_WORK_WEEK = 'WW26.5'
+PACKAGE_VERSION           = '1.0.4'
+PACKAGE_VERSION_YEAR      = '2025'
+PACKAGE_VERSION_WORK_WEEK = 'WW18.3'
 
 def GetPackageVersion () -> str:
     """ Get the package version information.

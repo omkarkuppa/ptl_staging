@@ -35,7 +35,6 @@ from CapsuleGenerate.Firmwares.FspFirmware._SplitFspBin import *
 from CapsuleGenerate.Firmwares.CommonLib import *
 
 FSP_REVISION: int = 3
-FSP_RV      : str = 'FspRV'
 
 #
 # Region flash order of different FSP image type.
@@ -45,7 +44,6 @@ FSP_UPDATE_FLASH_ORDER: List[str] = [
     FSP_M,
     FSP_T,
     FSP_O,
-    FSP_RV,
     FBM,
     ]
 
@@ -57,7 +55,6 @@ BGUP_REGION_ORDER: List[str] = [
     FSP_M,
     FSP_T,
     FSP_O,
-    FSP_RV,
     FBM,
     ]
 
@@ -74,7 +71,7 @@ FSP_REGION_DIR_PATH: str = \
 FSP_COMPRESS_PKG_NAME  : str = 'FspCompressPkg'
 FSP_COMPRESS_PKG_GUID  : str = '9C0F7E5A-4B6D-4C0E-8F1D-3B9E7A6F4E2B'
 
-FSPCOMPRESS_FV_DIR_PATH: str = \
+FSP_COMPRESS_FV_DIR_PATH: str = \
     JoinPath (
         EDKII_WORKSPACE_PATH,
         EDKII_BLD_DIR_NAME,
@@ -83,10 +80,10 @@ FSPCOMPRESS_FV_DIR_PATH: str = \
         EDKII_BLD_FV_DIR_NAME,
         )
 
-COMPRESSION_GUID_KEY    : str = 'CompressionGuid'
-COMPRESS_REGIONSIZE_KEY : str = 'RegionSize'
-COMPRESS_FVNAMEGUID_KEY : str = 'FvNameGuid'
-COMPRESS_FVIMAGEGUID_KEY: str = 'FvImageGuid'
+COMPRESSION_GUID_KEY      : str = 'CompressionGuid'
+COMPRESS_REGION_SIZE_KEY  : str = 'RegionSize'
+COMPRESS_FV_NAME_GUID_KEY : str = 'FvNameGuid'
+COMPRESS_FV_IMAGE_GUID_KEY: str = 'FvImageGuid'
 
 FSP_COMPRESS_FDF_TEMPLATE_FILE_NAME: str = 'PayloadCompressPkg.fdf.template'
 FSP_COMPRESS_FDF_FILE_NAME         : str = 'FspCompressPkg.fdf'
@@ -128,7 +125,7 @@ class _FspCompress (object):
             None.
         """
 
-        TouchDir (FSPCOMPRESS_FV_DIR_PATH)
+        TouchDir (FSP_COMPRESS_FV_DIR_PATH)
 
     def CompressImage (
             self,
@@ -190,7 +187,7 @@ class _FspCompress (object):
                                FvName,
                                Extension = EXTENSION_FV_FILE
                                )
-        CompressedFvPath = JoinPath (FSPCOMPRESS_FV_DIR_PATH, CompressedFvName)
+        CompressedFvPath = JoinPath (FSP_COMPRESS_FV_DIR_PATH, CompressedFvName)
 
         CopyFile (CompressedFvPath, FspFilePath)
 
@@ -442,8 +439,8 @@ class _FspImgSplitter (object):
         Fsp        : FirmwareVolume = None
         FspName    : str            = None
         ext        : str            = None
-        FspfileName: str            = None
-        FspfilePath: str            = None
+        FspFileName: str            = None
+        FspFilePath: str            = None
         RegionSize : int            = None
 
         Fd.ParseFd  ()
@@ -455,19 +452,19 @@ class _FspImgSplitter (object):
 
             FspName, ext = os.path.splitext(os.path.basename(FSP_IMG_FILE_NAME))
             FspName      = FspName + Fsp.Type
-            FspfileName  = CombineFileName (FspName, Extension = ext)
-            FspfilePath  = JoinPath (FSP_REGION_DIR_PATH, FspfileName)
+            FspFileName  = CombineFileName (FspName, Extension = ext)
+            FspFilePath  = JoinPath (FSP_REGION_DIR_PATH, FspFileName)
 
             FspBuffer.clear ()
 
-            for fvidx in Fsp.FvIdxList:
-                fv = Fd.FvList[fvidx]
-                FspBuffer += fv.FvData
-            ByteBuffer (Buffer = FspBuffer).Save (FspfilePath)
+            for FvIdx in Fsp.FvIdxList:
+                Fv = Fd.FvList[FvIdx]
+                FspBuffer += Fv.FvData
+            ByteBuffer (Buffer = FspBuffer).Save (FspFilePath)
 
             DEBUG (
                 DEBUG_INFO,
-                f'Create FSP component file {FspfilePath}'
+                f'Create FSP component file {FspFilePath}'
             )
 
             _, _, RegionSize = GetFvRegionInfo (self.__FlashMapDict, FspName)
@@ -480,10 +477,10 @@ class _FspImgSplitter (object):
                     RegionSize      = RegionSize,
                     BlockSize       = self.__BlockSize,
                     FvNameGuid      = \
-                        self.__CompressInfo[FspName][COMPRESS_FVNAMEGUID_KEY],
+                        self.__CompressInfo[FspName][COMPRESS_FV_NAME_GUID_KEY],
                     FvImageGuid     = \
-                        self.__CompressInfo[FspName][COMPRESS_FVIMAGEGUID_KEY],
-                    FspFilePath     = FspfilePath
+                        self.__CompressInfo[FspName][COMPRESS_FV_IMAGE_GUID_KEY],
+                    FspFilePath     = FspFilePath
                     )
 
     def __SplitFspO (self) -> None:
@@ -504,18 +501,7 @@ class _FspImgSplitter (object):
                                 )
         FspOFilePath : str = JoinPath (FSP_REGION_DIR_PATH, FspOFileName)
 
-        FspRvFileName: str = CombineFileName (
-                                FSP_RV,
-                                Extension = EXTENSION_BIN_FILE
-                                )
-        FspRvFilePath: str = JoinPath (FSP_REGION_DIR_PATH, FspRvFileName)
-
         FspOBuffer   : ByteBuffer = ByteBuffer (FspOFilePath)
-        FspRvBuffer  : ByteBuffer = \
-            ByteBuffer (
-                Buffer = FspOBuffer.Buffer[-16:]
-                )
-        FspRvBuffer.Save (FspRvFilePath)
 
         NewFspOBuffer : ByteBuffer = \
             ByteBuffer (
@@ -638,11 +624,10 @@ class _FspImgSplitter (object):
 class _FspBgupGenerator (object):
     def __init__ (
         self,
-        FlashMapDict             : dict,
-        FspImgInfoDict           : Dict[str, ImageRegion],
-        BgslTemplateaAlignPath   : Union[str, os.PathLike],
-        BgslTemplateaNonAlignPath: Union[str, os.PathLike],
-        BiosSvn                  : str,
+        FlashMapDict            : dict,
+        FspImgInfoDict          : Dict[str, ImageRegion],
+        BgslTemplateAlignPath   : Union[str, os.PathLike],
+        BiosSvn                 : str,
         ) -> None:
         """ Class support to generate the signed BGUP for update region.
 
@@ -653,10 +638,6 @@ class _FspBgupGenerator (object):
                 FSP image information dictionary.
             BgslTemplateAlignPath (Union[str, os.PathLike]):
                 The path of BGSL template file for 4KB align update.
-                (It is region information responsibility to provide the
-                necessary information)
-            BgslTemplateNonAlignPath (Union[str, os.PathLike]):
-                The path of BGSL template file for Non-4KB align update.
                 (It is region information responsibility to provide the
                 necessary information)
             BiosSvn (str):
@@ -672,10 +653,8 @@ class _FspBgupGenerator (object):
         self.__FspImgInfoDict: Dict[str, ImageRegion] = FspImgInfoDict
         self.__BiosSvn       : str                    = BiosSvn
 
-        self.__BgslTemplateAlignPath    : Union[str, os.PathLike] \
-              = BgslTemplateaAlignPath
-        self.__BgslTemplateNonAlignPath : Union[str, os.PathLike] \
-              = BgslTemplateaNonAlignPath
+        self.__BgslTemplateAlignPath: Union[str, os.PathLike] = \
+            BgslTemplateAlignPath
 
         self.__PreCheck ()
 
@@ -738,7 +717,6 @@ class _FspBgupGenerator (object):
         """
         CheckPathList: List[str] = [
             self.__BgslTemplateAlignPath,
-            self.__BgslTemplateNonAlignPath,
             ]
 
         if not isinstance (self.__FlashMapDict, dict):
@@ -774,23 +752,37 @@ class _FspBgupGenerator (object):
             File:
                 File object for BGSL script content.
         """
+        Offset  : int  = None
+        Length  : int  = None
+        Config  : dict = None
+        BgslFile: File = None
 
-        Config: dict = {
+        Offset = HexToDec (self.__FlashMapDict[Region][FM_OFFSET_KEY])
+        Length = ImgInfo.Size
+
+        #
+        # Check the offset and length matched the 4K aligned.
+        #
+        if ((Offset % ALIGNMENT_4K) != 0):
+            raise ValueError (
+                    f'Offset [0x{Offset:08X}] is not 4KB aligned for {Region}',
+                    )
+        elif ((Length % ALIGNMENT_4K) != 0):
+            raise ValueError (
+                    f'Length [0x{Length:08X}] is not 4KB aligned for {Region}',
+                    )
+
+        #
+        # Fill the BGSL template file and return the file object.
+        #
+        Config = {
             FSP_BGSL_OFFSET_KEY:
-                FormatHex (
-                  self.__FlashMapDict[Region][FM_OFFSET_KEY],
-                  IsPadding = True,
-                  ),
+                FormatHex (Input = Offset, IsPadding = True),
             FSP_BGSL_SIZE_KEY  :
-                FormatHex (
-                  DecToHex (ImgInfo.Size),
-                  IsPadding = True,
-                  ),
+                FormatHex (Input = Length, IsPadding = True),
             }
-        if ImgInfo.Size & (ALIGNMENT_4K - 1):
-            BgslFile: File = File (FilePath = self.__BgslTemplateNonAlignPath)
-        else:
-            BgslFile: File = File (FilePath = self.__BgslTemplateAlignPath)
+
+        BgslFile = File (FilePath = self.__BgslTemplateAlignPath)
         BgslFile.Fill (**Config)
 
         return BgslFile

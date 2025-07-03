@@ -51,7 +51,7 @@ ME_PROD_CERT_SUBJECT_KEY    : str = 'MeProdCertSubject'
 PATH_SECTION          : str = 'Path'
 TOOL_DIR_KEY          : str = 'ToolDir'
 TEMPLATE_DIR_KEY      : str = 'TemplateDir'
-EDKII_BASETOOL_KEY    : str = 'EdkIIBaseToolDir'
+EDKII_BASE_TOOLS_KEY  : str = 'EdkIIBaseToolsDir'
 OPENSSL_DIR_KEY       : str = 'OpenSSLDir'
 EDSS_SIGN_TOOL_DIR_KEY: str = 'EdssSignFileDir'
 #

@@ -114,7 +114,7 @@
    | Command                 | Description                                                        | Mandatory |
    | ----------------------- | ------------------------------------------------------------------ | --------- |
    | `-t`/`-T`/`--sign-tool` | Path to the OpenSSL program built with Windows executable program. | V         |
-   | `-c`/`-C`/`--confg`     | Path to the tool customized configuration file for signing keys.   | V         |
+   | `-c`/`-C`/`--config`    | Path to the tool customized configuration file for signing keys.   | V         |
 
 5. Get the output signing key files under `Output` directory.
    > Note: Keep the generated 3-layer signing key files as needed.
