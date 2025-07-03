@@ -55,6 +55,7 @@
 #include <GpioV2Signals.h>
 #include <Defines/PchReservedResources.h>
 #include <PcdSbPortIds.h>
+#include <Library/GpioHelpersLib.h>
 
 /**
   Clear u2ub_survivability_reg1[0]
@@ -237,6 +238,46 @@ PtlPcdCnviWifiCore (
   DEBUG ((DEBUG_INFO, "Cnvi Wifi on PSF\n"));
 }
 
+VOID
+ConfigureGpioForBtCore (
+  IN CNVI_HANDLE                 *CnviHandle,
+  IN CNVI_STATE                  State
+)
+{
+  CNVI_CONFIG                    *CnviConfig;
+  EFI_STATUS                     Status;
+  GPIOV2_SERVICES                *GpioServices;
+
+  DEBUG ((DEBUG_INFO, "%a () - Start\n", __FUNCTION__));
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
+
+  CnviConfig = CnviHandle->Config;
+    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "GpioServices don't get successfully\n"));
+    return;
+  }
+
+  if (State == FunctionEnable) {
+    if (CnviConfig->BtInterface == CnviBtIfUsb) {
+      DEBUG ((DEBUG_INFO, "Enable BT core\n"));
+      PtlPcdGpioSetCnviBtEnState (GpioServices, 1);
+    }
+  } else {
+    DEBUG ((DEBUG_INFO, "Disable BT core\n"));
+    //
+    // Clear BT_EN and BT_IF_SELECT to disable UTIM2UTIM bridge if CNVi is disabled.
+    //
+    PtlPcdGpioSetCnviBtEnState (GpioServices, 0);
+    PtlPcdGpioEnableCnviBtInterface (GpioServices, GpioV2CnviBtIfPci);
+  }
+  DEBUG ((DEBUG_INFO, "%a () - End.\n", __FUNCTION__));
+}
+
 /**
   This function sets CNVi WiFi/Bluetooth Core Enable/Disable State
 
@@ -250,22 +291,16 @@ PtlPcdCnviBtCore (
   )
 {
   CNVI_CONFIG                    *CnviConfig;
-  EFI_STATUS                     Status;
-  GPIOV2_SERVICES                *GpioServices;
+
+  CnviConfig = CnviHandle->Config;
 
   DEBUG ((DEBUG_INFO, "%a () - Start\n", __FUNCTION__));
 
-  CnviConfig = CnviHandle->Config;
-    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "GpioServices don't get successfully\n"));
-    return;
-  }
+  ConfigureGpioForBtCore (CnviHandle, State);
 
   if (State == FunctionEnable) {
     if (CnviConfig->BtInterface == CnviBtIfUsb) {
       DEBUG ((DEBUG_INFO, "Enable BT core\n"));
-      PtlPcdGpioSetCnviBtEnState (GpioServices, 1);
       PtlPcdClearXhciSurvReg1 ();
     } else {
       //
@@ -276,11 +311,6 @@ PtlPcdCnviBtCore (
     }
   } else {
     DEBUG ((DEBUG_INFO, "Disable BT core\n"));
-    //
-    // Clear BT_EN and BT_IF_SELECT to disable UTIM2UTIM bridge if CNVi is disabled.
-    //
-    PtlPcdGpioSetCnviBtEnState (GpioServices, 0);
-    PtlPcdGpioEnableCnviBtInterface (GpioServices, GpioV2CnviBtIfPci);
     PtlPcdPsfDisableCnviBt ();
   }
   DEBUG ((DEBUG_INFO, "%a () - End.\n", __FUNCTION__));
