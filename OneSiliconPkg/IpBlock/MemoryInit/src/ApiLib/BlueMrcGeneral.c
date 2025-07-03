@@ -1781,7 +1781,9 @@ MrcPrintInputParameters (
     ExtInputs->CccPinsInterleaved
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tPhClkCheck: %u\n"
     "\tTscTimeBase: %llu\n",
+    Inputs->PhClkCheck,
     Inputs->TscTimeBase
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,

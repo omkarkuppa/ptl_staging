@@ -222,7 +222,6 @@ MrcRefreshConfiguration (
   )
 {
   INT64       GetSetEn;
-//  INT64       SrIdleCount;
   INT64       tSR;
   UINT32      Controller;
   UINT32      Channel;
@@ -230,7 +229,6 @@ MrcRefreshConfiguration (
   INT64       GetSetVal;
 
   IsLpddr = MrcData->Outputs.IsLpddr;
-//  SrIdleCount = SELF_REFRESH_IDLE_COUNT;
   GetSetEn = 1;
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -254,7 +252,6 @@ MrcRefreshConfiguration (
 
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccEnRefTypeDisplay,     WriteToCache | PrintValue, &GetSetEn);
     }
-//    MrcGetSetMc (MrcData, Controller, GsmMctSrIdleTimer, WriteToCache | PrintValue, &SrIdleCount);
 
     GetSetVal = 0;
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOverride, WriteToCache, &GetSetVal);

@@ -143,6 +143,7 @@ MrcSchedulerParametersConfig (
   BOOLEAN         IsLpddr;
   BOOLEAN         IsDdr5;
   BOOLEAN         IsCkdSupported;
+  BOOLEAN         IsFirstSagv;
   const MRC_EXT_INPUTS_TYPE               *ExtInputs;
   MC0_CH0_CR_SC_WPQ_THRESHOLD_STRUCT      ScWpqThreshold;
   MC0_CH0_CR_WMM_READ_CONFIG_STRUCT       WmmReadConfig;
@@ -161,6 +162,7 @@ MrcSchedulerParametersConfig (
   GetSetDis     = 0;
   GetSetEn      = 1;
   IsCkdSupported = Outputs->IsCkdSupported;
+  IsFirstSagv   = (Outputs->SaGvFirst == Outputs->SaGvPoint);
 
   GetSetVal = MC0_CH0_CR_SCHED_CBIT_dis_2c_byp_DEF;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDis2cByp, WriteToCache | PrintValue, &GetSetVal);
@@ -271,7 +273,7 @@ MrcSchedulerParametersConfig (
       GetSetVal = 0;
       // Make sure ddr5_1dpc feature is turned off - it might be on from the previous SAGV point
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccOneDpc, WriteToCache | PrintValue, &GetSetVal);
-      GetSetVal = (IsCkdSupported) ? 1 : 0;
+      GetSetVal = (IsCkdSupported && !IsFirstSagv) ? 1 : 0;
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccDdr5CkdEnable, WriteToCache | PrintValue, &GetSetVal);
 
       // Configure WCK parameters

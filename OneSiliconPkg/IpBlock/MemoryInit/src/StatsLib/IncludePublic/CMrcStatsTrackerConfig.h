@@ -65,7 +65,6 @@
         KEY(MRC_CACHED_READ_CR)         \
         KEY(MRC_CACHED_WRITE_CR)
 
-
 #define STATS_TIMER                \
         /* Timer Keys Begin */          \
         KEY(MRC_FORCE_RCOMP_TIME)       \

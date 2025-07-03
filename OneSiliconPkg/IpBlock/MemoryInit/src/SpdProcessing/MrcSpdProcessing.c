@@ -196,6 +196,7 @@ const TRangeTable FreqTable[] = { //Gear 1   Gear 2       Gear 4
   { MRC_DDR_7200_TCK_MIN, f7200 }, //  216     108          54
   { MRC_DDR_7333_TCK_MIN, f7333 }, //  220     110          55
   { MRC_DDR_7467_TCK_MIN, f7467 }, //  224     112          56
+  { MRC_DDR_7500_TCK_MIN, f7500 }, //  226     113
   { MRC_DDR_7600_TCK_MIN, f7600 }, //  228     114          57
   { MRC_DDR_7733_TCK_MIN, f7733 }, //  232     116          58
   { MRC_DDR_7867_TCK_MIN, f7867 }, //  236     118          59

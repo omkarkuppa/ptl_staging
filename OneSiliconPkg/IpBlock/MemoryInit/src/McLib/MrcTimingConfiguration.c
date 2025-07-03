@@ -365,9 +365,6 @@ MrcTimingConfiguration (
   }
   // Setup turnaround timings
   MrcTurnAroundTimingsPreTraining (MrcData);
-
-  // Check RawCard Types and adjust Read ODT if needed
-  //RdOdtStretch (MrcData);
 }
 
 #if 0
@@ -495,7 +492,6 @@ MrcTatStretch (
 #endif
 
   GetSetVal = Offset;
-  //@todo: Optimize using arrays and only one GetSet Call.
   if (OdtType == rdodtd) {
     // Program Different Rank RD 2 RD value
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdr, GsmMode, &GetSetVal);

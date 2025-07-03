@@ -686,6 +686,7 @@ typedef enum {
   OemDunitTatOptimization,  ///< before Dunit TAT optimization
   OemVccLvrInit,            ///< before Vcc Lvr init configuration
   OemReadDqDqsIdle,         ///< before RDTC with Idle stress
+  OemPhClkCheck,            ///< before Phase Clk check
   ///
   ///*********************************************************************************
   ///
@@ -2380,7 +2381,8 @@ typedef struct {
   UINT8 PprRetryLimit;
   McRegOffsets OffsetKnobs;       ///< Options for MC Register Offset settings
   BOOLEAN InitPerDeviceNnFlex;
-  UINT8 Reserved3[3];             ///< Reserved to ensure config block size is a multiple of DWORDs
+  BOOLEAN PhClkCheck;             ///< Phase Clock Check
+  UINT8 Reserved3[2];             ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {
