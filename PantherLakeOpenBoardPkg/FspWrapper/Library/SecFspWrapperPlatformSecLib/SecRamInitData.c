@@ -159,9 +159,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST FSPT_UPD FsptUpdDataPtr = {
     FixedPcdGet32 (PcdSerialIoI2cSclPin),                                                      // PcdSerialIoI2cSclPin
     FixedPcdGet8 (PcdSerialIoI2cPadsTerm),                                                     // PcdSerialIoI2cPadsTerm
     FixedPcdGet8 (PcdSerialIoI2cNumber),                                                       // PcdSerialIoI2cNumber
-    {
-      0x00
-    }
+    0x00
   },
   {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00
