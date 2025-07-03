@@ -168,63 +168,6 @@ PtlGpioTablePreMemInit (
 {
   GPIOV2_INIT_CONFIG  *GpioTable = (GPIOV2_INIT_CONFIG*)NULL;
   UINT16            GpioCount = 0;
-  VPD_GPIO_PAD      *GpioVpd;
-
-  GpioVpd = NULL;
-
-  SETUP_DATA                       Setup;
-  EFI_PEI_READ_ONLY_VARIABLE2_PPI* VariableServices;
-  EFI_STATUS                       Status;
-  UINTN                            VariableSize;
-
-  Status = PeiServicesLocatePpi (
-             &gEfiPeiReadOnlyVariable2PpiGuid,  // GUID
-             0,                                 // INSTANCE
-             NULL,                              // EFI_PEI_PPI_DESCRIPTOR
-             (VOID **) &VariableServices        // PPI
-             );
-  ASSERT_EFI_ERROR (Status);
-
-  VariableSize = sizeof (SETUP_DATA);
-  Status = VariableServices->GetVariable (
-                               VariableServices,
-                               L"Setup",
-                               &gSetupVariableGuid,
-                               NULL,
-                               &VariableSize,
-                               &Setup
-                               );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to get setup variable \n"));
-  }
-
-  //
-  // Configure WWAN Full Card Power Off and reset pins
-  //
-  GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
-  PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-  GpioVpd = PcdGetPtr (VpdPcdWwanBbrstGpio);
-  PcdSet32S (PcdWwanBbrstGpio, GpioVpd->GpioPad);
-  GpioVpd = PcdGetPtr (VpdPcdWwanPerstGpio);
-  PcdSet32S (PcdWwanPerstGpio, GpioVpd->GpioPad);
-  GpioVpd = PcdGetPtr (VpdPcdWwanWakeGpio);
-  PcdSet32S (PcdWwanWakeGpio, GpioVpd->GpioPad);
-  PcdSetBoolS (PcdWwanPerstGpioPolarity, PcdGetBool (VpdPcdWwanPerstGpioPolarity));
-  PcdSetBoolS (PcdWwanFullCardPowerOffGpioPolarity, PcdGetBool (VpdPcdWwanFullCardPowerOffGpioPolarity));
-  PcdSetBoolS (PcdWwanBbrstGpioPolarity, PcdGetBool (VpdPcdWwanBbrstGpioPolarity));
-  // When WWAN is enabled in setup power enable pin use WWAN FCP pin
-  GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
-  PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-
-  //
-  // GPIO Table Init, Update M80Wwan PreMem GPIO table to PcdBoardGpioTableM80WwanOnEarlyPreMem
-  //
-  GpioTable = (GPIOV2_INIT_CONFIG*)NULL;
-  GpioTable = PcdGetPtr (VpdPcdBoardGpioTableM80WwanOnEarlyPreMem);
-  PcdSet64S (PcdBoardGpioTableM80WwanOnEarlyPreMem, (UINTN)GpioTable);
-  GpioCount = 0;
-  GetGpioTableSize (GpioTable, &GpioCount);
-  PcdSet16S (PcdBoardGpioTableM80WwanOnEarlyPreMemSize, GpioCount);
 
   //
   // GPIO Table Init, Update enable BT Audio offload PreMem GPIO table to PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem

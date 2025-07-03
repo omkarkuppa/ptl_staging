@@ -3349,16 +3349,6 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->PseudoG3State = mSystemConfiguration.PseudoG3State;
   mPlatformNvsAreaProtocol.Area->PuisEnable = mSystemConfiguration.PuisEnable;
 
-  //
-  // WWAN GPIO pin configuration
-  //
-  mPlatformNvsAreaProtocol.Area->WwanPerstGpio  = PcdGet32 (PcdWwanPerstGpio);
-  mPlatformNvsAreaProtocol.Area->WwanBbrstGpio = PcdGet32 (PcdWwanBbrstGpio);
-  mPlatformNvsAreaProtocol.Area->WwanEnable = PcdGet8 (PcdPcieWwanEnable);
-  mPlatformNvsAreaProtocol.Area->WwanTOn2ResDelayMs = PcdGet16 (PcdBoardWwanTOn2ResDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanTOnRes2PerDelayMs = PcdGet16 (PcdBoardWwanTOnRes2PerDelayMs);
-  mPlatformNvsAreaProtocol.Area->WwanOemSvid         = mSystemConfiguration.WwanOemSvid;
-  mPlatformNvsAreaProtocol.Area->WwanSvidTimeout     = mSystemConfiguration.WwanSvidTimeout;
 
   mPlatformNvsAreaProtocol.Area->Rtd3Pcie = mSystemConfiguration.Rtd3Pcie;
 

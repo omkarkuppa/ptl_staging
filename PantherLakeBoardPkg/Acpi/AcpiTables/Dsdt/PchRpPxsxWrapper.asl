@@ -30,27 +30,6 @@ Scope (\_SB.PC00.RP01.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
-  //
-  // Detect OEM SVID
-  // This is workaroud for OEM only and it's disabled by default.
-  //
-  Method (DOSV) {
-    Store (0, Local0)
-    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
-      Increment (Local0)
-      Sleep (1)
-    }
-    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
-  }
-
-  Method (_RST, 0, Serialized) {
-    ADBG ("_RST WWAN")
-
-    If (LEqual (WWEN, 2)) {
-      // 2. Check for FLDR Mutex acquired
-      DOSV ();                                              // Workaround for OEM only
-    }
-  }
 
   //
   // _DSM : Device Specific Method
@@ -117,27 +96,6 @@ Scope (\_SB.PC00.RP02.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
-  //
-  // Detect OEM SVID
-  // This is workaroud for OEM only and it's disabled by default.
-  //
-  Method (DOSV) {
-    Store (0, Local0)
-    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
-      Increment (Local0)
-      Sleep (1)
-    }
-    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
-  }
-
-  Method (_RST, 0, Serialized) {
-    ADBG ("_RST WWAN")
-
-    If (LEqual (WWEN, 2)) {
-      // 2. Check for FLDR Mutex acquired
-      DOSV ();                                              // Workaround for OEM only
-    }
-  }
 }
 
 Scope (\_SB.PC00.RP03.PXSX)
@@ -149,27 +107,6 @@ Scope (\_SB.PC00.RP03.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
-  //
-  // Detect OEM SVID
-  // This is workaroud for OEM only and it's disabled by default.
-  //
-  Method (DOSV) {
-    Store (0, Local0)
-    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
-      Increment (Local0)
-      Sleep (1)
-    }
-    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
-  }
-
-  Method (_RST, 0, Serialized) {
-    ADBG ("_RST WWAN")
-
-    If (LEqual (WWEN, 2)) {
-      // 2. Check for FLDR Mutex acquired
-      DOSV ();                                              // Workaround for OEM only
-    }
-  }
 }
 
 Scope (\_SB.PC00.RP04.PXSX)
@@ -181,27 +118,6 @@ Scope (\_SB.PC00.RP04.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
-  //
-  // Detect OEM SVID
-  // This is workaroud for OEM only and it's disabled by default.
-  //
-  Method (DOSV) {
-    Store (0, Local0)
-    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
-      Increment (Local0)
-      Sleep (1)
-    }
-    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
-  }
-
-  Method (_RST, 0, Serialized) {
-    ADBG ("_RST WWAN")
-
-    If (LEqual (WWEN, 2)) {
-      // 2. Check for FLDR Mutex acquired
-      DOSV ();                                              // Workaround for OEM only
-    }
-  }
 }
 
 Scope (\_SB.PC00.RP05.PXSX)
@@ -213,27 +129,6 @@ Scope (\_SB.PC00.RP05.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
-  //
-  // Detect OEM SVID
-  // This is workaroud for OEM only and it's disabled by default.
-  //
-  Method (DOSV) {
-    Store (0, Local0)
-    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
-      Increment (Local0)
-      Sleep (1)
-    }
-    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
-  }
-
-  Method (_RST, 0, Serialized) {
-    ADBG ("_RST WWAN")
-
-    If (LEqual (WWEN, 2)) {
-      // 2. Check for FLDR Mutex acquired
-      DOSV ();                                              // Workaround for OEM only
-    }
-  }
 }
 
 Scope (\_SB.PC00.RP06.PXSX)
@@ -245,27 +140,6 @@ Scope (\_SB.PC00.RP06.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
-  //
-  // Detect OEM SVID
-  // This is workaroud for OEM only and it's disabled by default.
-  //
-  Method (DOSV) {
-    Store (0, Local0)
-    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
-      Increment (Local0)
-      Sleep (1)
-    }
-    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
-  }
-
-  Method (_RST, 0, Serialized) {
-    ADBG ("_RST WWAN")
-
-    If (LEqual (WWEN, 2)) {
-      // 2. Check for FLDR Mutex acquired
-      DOSV ();                                              // Workaround for OEM only
-    }
-  }
 }
 
 Scope (\_SB.PC00.RP09.PXSX)
@@ -277,25 +151,4 @@ Scope (\_SB.PC00.RP09.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
-  //
-  // Detect OEM SVID
-  // This is workaroud for OEM only and it's disabled by default.
-  //
-  Method (DOSV) {
-    Store (0, Local0)
-    While (LAnd (LNotEqual (PCIE_ROOT_PORT.PXSX.SVID, WSID), LLess (Local0, WSTO))) {
-      Increment (Local0)
-      Sleep (1)
-    }
-    ADBG (Concatenate ("DET Time ", ToDecimalString (Local0)))
-  }
-
-  Method (_RST, 0, Serialized) {
-    ADBG ("_RST WWAN")
-
-    If (LEqual (WWEN, 2)) {
-      // 2. Check for FLDR Mutex acquired
-      DOSV ();                                              // Workaround for OEM only
-    }
-  }
 }

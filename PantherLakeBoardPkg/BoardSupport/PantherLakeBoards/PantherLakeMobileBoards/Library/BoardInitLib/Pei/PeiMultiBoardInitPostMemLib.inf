@@ -130,14 +130,6 @@
   gBoardModuleTokenSpaceGuid.PcdPchSsd1RstGpioNo
   gBoardModuleTokenSpaceGuid.PcdPchSsd1RstGpioPolarity
 
-  # WWAN Full Card Power Off and reset pins
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpio                 ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpioPolarity         ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                            ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity                    ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                            ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                    ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdWwanWakeGpio                             ## PRODUCES
 
   # I2C Touch Panel 0 & 1 RTD3
   gBoardModuleTokenSpaceGuid.PcdSpdAddressOverride
@@ -276,13 +268,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdPmPowerButtonGpioPin
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableLch
   gBoardModuleTokenSpaceGuid.VpdPcdTpm2IntGpio
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio              ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio                         ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio                         ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanWakeGpio                          ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity      ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity                 ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity                 ## CONSUMES
 
   # Nvme Recovery config
   gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryPrimarySlotPortNumber  ## CONSUMES

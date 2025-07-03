@@ -81,17 +81,6 @@
    { PTL_PCD_GROUP_GPPASPI0 }
   )}
 
-  # GPIO Table M80 WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
-  {
-    { GPIOV2_PTL_PCD_XXGPP_H_16, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }}, // WWAN_PWREN
-    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }}, // M.2_WWAN_FCP_OFF_N
-    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }}, // M.2_WWAN_RST_N
-    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }}, // M.2_WWAN_PERST_GPIO_N
-    { GPIOV2_PTL_PCD_XXGPP_E_2,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault, GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }}, // WWAN_WAKE_GPIO_N
-    { GPIOV2_PTL_PCD_XXGPP_A_10, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }}, // M.2_WWAN_DISABLE_N
-    { 0x0 }
-  })}
 
 
   # MRC UserBd
@@ -242,21 +231,6 @@
    { BoardGpioTypeNotSupported }
   )}
 
-  # WWAN Gpios
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_A_9 } // M.2_WWAN_FCP_OFF_N
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_B_20} // M.2_WWAN_RST_N
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_D_3 } // M.2_WWAN_PERST_GPIO_N
-  )}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdTouchpanel0IrqGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_E_18 } // THC0_SPI1_INT_N_TCH_PNL1
-  )}
-
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpanel1IrqGpio|*|{CODE(
    { GPIOV2_PTL_PCD_XXGPP_F_18 } // THC1_SPI2_INT_N_TCH_PNL2
   )}
@@ -266,9 +240,6 @@
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpadIrqGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
 
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|$(PIN_GPIO_ACTIVE_HIGH)
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
@@ -531,7 +502,6 @@
     {0x0}
   )}
 
-  # PCIE CLOCK USGAGE for PTL H
   gBoardModuleTokenSpaceGuid.VpdPcdPcieClkUsageMap|*|{CODE(
   {{
     PCIE_PCH + 10,  // X8 CEM Slot
@@ -539,7 +509,7 @@
     PCIE_PCH,       // x2 Pcie Slot (LR)
     LAN_CLOCK,      // GBE LAN
     NOT_USED,
-    PCIE_PCH + 2,   // M.2 WWAN
+    NOT_USED,
     PCIE_PCH + 4,   // Gen4 M.2 SSD
     NOT_USED,
     NOT_USED
@@ -554,12 +524,13 @@
     PCIE_PCH,       // x2 Pcie Slot (LR)
     LAN_CLOCK,      // GBE LAN
     NOT_USED,
-    PCIE_PCH + 2,   // M.2 WWAN
+    NOT_USED,
     PCIE_PCH + 4,   // Gen4 M.2 SSD
     NOT_USED,
     NOT_USED
   }}
   )}
+
 
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTable|*|{CODE(
@@ -970,7 +941,7 @@
     PCIE_PCH,       // x2 Pcie Slot (LR)
     LAN_CLOCK,      // GBE LAN
     NOT_USED,
-    PCIE_PCH + 2,   // M.2 WWAN
+    NOT_USED,
     PCIE_PCH + 4,   // Gen4 M.2 SSD
     PCIE_PCH + 11,  // x4 CEM Slot
     NOT_USED
@@ -985,12 +956,13 @@
     PCIE_PCH,       // x2 Pcie Slot (LR)
     LAN_CLOCK,      // GBE LAN
     NOT_USED,
-    PCIE_PCH + 2,   // M.2 WWAN
+    NOT_USED,
     PCIE_PCH + 4,   // Gen4 M.2 SSD
     NOT_USED,
     NOT_USED
   }}
   )}
+
 
 #####################################################################
 # PTL UH LP5x T4 MEMSD

@@ -81,11 +81,6 @@
    { PTL_PCD_GROUP_GPPASPI0 }
   )}
 
-  # GPIO Table M80 WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
-  {
-    { 0x0 }
-  })}
 
   # MRC UserBd
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x05
@@ -235,17 +230,6 @@
    { BoardGpioTypeNotSupported }
   )}
 
-  # WWAN Gpios
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio|*|{CODE(
-   { 0x0 }  // M.2_WWAN_FCP_OFF_N
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio|*|{CODE(
-   { 0x0}  // M.2_WWAN_RST_N
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio|*|{CODE(
-   { 0x0 }  // M.2_WWAN_PERST_GPIO_N
-  )}
-
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpanel0IrqGpio|*|{CODE(
    { GPIOV2_PTL_PCD_XXGPP_E_18 }  // THC0_SPI1_INT_N
   )}
@@ -259,9 +243,6 @@
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpadIrqGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
 
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|0x0
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(

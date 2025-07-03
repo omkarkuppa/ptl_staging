@@ -164,16 +164,6 @@
 
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                                   ## CONSUMES
 
-  # WWAN GPIO configuration PCDs
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpio            ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpioPolarity    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                       ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                       ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable                      ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs          ## CONSUMES
 
   # PCIE Slot1 GPIO configuration  PCDs
   gBoardModuleTokenSpaceGuid.PcdPcieSlot1RootPort                ## CONSUMES

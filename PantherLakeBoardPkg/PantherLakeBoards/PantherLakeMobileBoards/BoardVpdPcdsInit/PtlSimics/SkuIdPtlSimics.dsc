@@ -72,11 +72,6 @@
    { 0x0 }
   )}
 
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
-  {
-    { 0x0 }
-  })}
-
   # MRC BoardStackUp
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardStackUp|*|0x0
 
@@ -195,21 +190,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdRecoveryModeGpio|*|{CODE(
    { BoardGpioTypeNotSupported }
   )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio|*|{CODE(
-   { 0x0 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio|*|{CODE(
-   { 0x0 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio|*|{CODE(
-   { 0x0 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanWakeGpio|*|{CODE(
-   { 0x0 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdOddPowerInitEnable|*|FALSE
@@ -362,7 +342,7 @@
     PCIE_PCH + 2,   // x1 Pcie Slot
     LAN_CLOCK,      // GBE LAN
     PCIE_PCH + 3,   // M.2 WLAN
-    PCIE_PCH + 1,   // M.2 WWAN
+    NOT_USED,
     PCIE_PCH + 4,   // Gen4 M.2 SSD
     NOT_USED,
     NOT_USED
@@ -377,12 +357,13 @@
     PCIE_PCH + 2,   // x1 Pcie Slot
     LAN_CLOCK,      // GBE LAN
     PCIE_PCH + 3,   // M.2 WLAN
-    PCIE_PCH + 1,   // M.2 WWAN
+    NOT_USED,
     PCIE_PCH + 4,   // Gen4 M.2 SSD
     NOT_USED,
     NOT_USED
   }}
   )}
+
 
   # Root Port PEWAKE
   gBoardModuleTokenSpaceGuid.VpdPcdRootPortPewakeConfig|*|{CODE(

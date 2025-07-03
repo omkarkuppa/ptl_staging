@@ -194,8 +194,6 @@
 
   gBoardModuleTokenSpaceGuid.PcdDisableVpdGpioTable
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTablePreMem                   ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMem     ## PRODUCES
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMemSize ## PRODUCES
 
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEarlyPreMem
 
@@ -211,14 +209,6 @@
   # Coin-less mode Detect
   gBoardModuleTokenSpaceGuid.PcdCoinlessModeDetectGpio        ## PRODUCES
 
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                       ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpio                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable                              ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpioPolarity            ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity                       ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanWakeGpio                                ## CONSUMES
 
   # BT Audio Offload
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem       ## PRODUCES
@@ -233,7 +223,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw0                         ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw1                         ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw2                         ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem        ## CONSUMES
+
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd                              ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit                            ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize                            ## CONSUMES
@@ -262,13 +252,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdVdd2lPowerRailPresent                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode                               ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId                       ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio                  ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio                             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio                             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanWakeGpio                              ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity                     ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity          ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEnableDiscreteAudioOffloadPreMem   ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableDisableDiscreteAudioOffloadPreMem  ## CONSUMES
 

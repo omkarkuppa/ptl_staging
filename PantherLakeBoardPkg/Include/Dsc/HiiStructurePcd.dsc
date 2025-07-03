@@ -4199,11 +4199,6 @@ gStructPcdTokenSpaceGuid.PcdSetup.VirtualKeyboard|0x0                           
 gStructPcdTokenSpaceGuid.PcdSetup.WakeOnRTCS5|0x0                                                  # Wake System from S5 via RTC
 gStructPcdTokenSpaceGuid.PcdSetup.SafeLoadingBiosEnable|0x0                                        # Safe Loading Bios Enable
 gStructPcdTokenSpaceGuid.PcdSetup.TsegReallocateEnableCount|0x0                                    # Tseg Reallocate Enable Count
-gStructPcdTokenSpaceGuid.PcdSetup.WwanEnable|0x0                                                   # WWAN Device
-gStructPcdTokenSpaceGuid.PcdSetup.WwanOemSvid|0x1cf8                                               # WA - WWAN OEM SVID
-gStructPcdTokenSpaceGuid.PcdSetup.WwanSvidTimeout|0x0                                              # WA - WWAN SVID Detect Timeout
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTOn2ResDelayMs|0x14                                          # TOn2Res
-gStructPcdTokenSpaceGuid.PcdSetup.WwanTOnRes2PerDelayMs|0x50                                       # TOnRes2Per
 !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
     gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x2                                    # Platform Debug Option
 !else

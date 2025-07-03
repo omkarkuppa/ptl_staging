@@ -579,8 +579,6 @@
 #define TCC_MODE_CONFIG_FORM_ID                   5434
 #define KEY_TCC_MODE                              5456
 #define TCC_MODE_PCH_PCIE_OPTIONS_FORM_ID         5458
-// WWAN Options Menu
-#define WWAN_OPTIONS_FORM_ID                      5435
 
 #define IMAGING_FLASH0_FORM_ID                    5450
 #define IMAGING_FLASH1_FORM_ID                    5451

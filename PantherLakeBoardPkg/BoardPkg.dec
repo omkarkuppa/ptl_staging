@@ -599,10 +599,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdSpdAddressOverride|FALSE|BOOLEAN|0x00100203
   gBoardModuleTokenSpaceGuid.PcdSmbiosFabBoardName|0|UINT64|0x0000A102
   gBoardModuleTokenSpaceGuid.PcdTsOnDimmTemperature|FALSE|BOOLEAN|0x00100123
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpio|0x0|UINT32|0x0010122D
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio|0x0|UINT32|0x0010122E
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio|0x0|UINT32|0x0010122F
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity|0|BOOLEAN|0x00101230
   gBoardModuleTokenSpaceGuid.PcdDimmPopulationError|FALSE|BOOLEAN|0x00100221
 
   # TPM PCD
@@ -650,11 +646,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdAcpiHidDriverButtonSupport           |FALSE|BOOLEAN|0x00100122
   gBoardModuleTokenSpaceGuid.PcdIsMtlPS                              |FALSE|BOOLEAN|0x0010012B
 
-  # Wwan PCDs
-  gBoardModuleTokenSpaceGuid.PcdWwanWakeGpio|0x0|UINT32|0x00100237
-  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpioPolarity|0x0|BOOLEAN|0x00100238
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity|0x0|BOOLEAN|0x00100239
-  gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable|0x0|UINT8|0x00100240
 
   # PLN support
   gBoardModuleTokenSpaceGuid.PcdPlnDelayEnableGpio|0x0|UINT32|0x00000280
@@ -745,11 +736,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # ACPI data
   gBoardModuleTokenSpaceGuid.PcdBoardAcpiData               |{0}|VOID*|0x50000019
 
-  # @todo  Board related info,  will be ported once board details are available
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMem      |0x0|UINT64|0x00000139
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMemSize  |0x0|UINT16|0x00000140
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs                 |20|UINT16|0x00000141
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs              |80|UINT16|0x00000142
 
   #
   # EC FailSafe Cpu Temp and Fan Speed Setting
@@ -915,13 +901,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     PlatformBoardConfig.h
   }
 
-  # GPIO Table M80 WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem   |{0}|GPIOV2_INIT_CONFIG[]|0x0000112A {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-  }
-
   # MRC BoardStackUp
   # MRC_EXT_INPUTS_INIT_VAL_BOARDSTACKUP,     ///< Offset 189 BIT0 - Board Stack Up: 0 - Typical, 1 - Frequency Limited  (T3 board with frequency limitation - Value 1, T4 board is frequency not limited - Value  0)
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardStackUp      |0x0|UINT8|0x0000113C
@@ -1004,35 +983,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     PlatformBoardConfig.h
   }
 
-  # WWAN Gpios
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio   |{0}|VPD_GPIO_PAD|0x00001181 {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-    PlatformBoardConfig.h
-  }
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio              |{0}|VPD_GPIO_PAD|0x00001182 {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-    PlatformBoardConfig.h
-  }
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio              |{0}|VPD_GPIO_PAD|0x00001183 {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-    PlatformBoardConfig.h
-  }
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanWakeGpio               |{0}|VPD_GPIO_PAD|0x00001184 {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-    PlatformBoardConfig.h
-  }
 
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity   |FALSE|BOOLEAN|0x00001185
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity              |FALSE|BOOLEAN|0x00001186
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity              |FALSE|BOOLEAN|0x00001187
 
   # VPD PCD Ratio
   gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio                 |0x0|UINT8|0x00001190

@@ -105,18 +105,6 @@ CnvInitPreMem (
                                &SystemConfiguration
                                );
 
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Fail to get System Configuration and set the configuration to production mode!\n"));
-    PcdSet8S (PcdPcieWwanEnable, 0);
-  } else {
-    PcdSet8S (PcdPcieWwanEnable, SystemConfiguration.WwanEnable);
-    PcdSet16S (PcdBoardWwanTOn2ResDelayMs, SystemConfiguration.WwanTOn2ResDelayMs);
-    PcdSet16S (PcdBoardWwanTOnRes2PerDelayMs, SystemConfiguration.WwanTOnRes2PerDelayMs);
-
-    DEBUG((DEBUG_INFO, "WwanEnable: %d\n", PcdGet8 (PcdPcieWwanEnable)));
-    DEBUG((DEBUG_INFO, "WwanTOn2ResDelayMs: %d\n", PcdGet16 (PcdBoardWwanTOn2ResDelayMs)));
-    DEBUG((DEBUG_INFO, "WwanTOnRes2PerDelayMs: %d\n", PcdGet16 (PcdBoardWwanTOnRes2PerDelayMs)));
-  }
 
   VariableSize = sizeof (CNV_VFR_CONFIG_SETUP);
   ZeroMem (&CnvSetup, VariableSize);
@@ -146,60 +134,6 @@ CnvInitPreMem (
   return Status;
 }
 
-/**
-  Basic GPIO configuration before memory is ready
-
-**/
-VOID
-GpioInitEarlyWwanPreMem (
-  VOID
-  )
-{
-  UINT32                          WwanBbrstGpio;
-  UINT32                          WwanPerstGpio;
-  GPIOV2_PAD_STATE                PerstState;
-  GPIOV2_PAD_STATE                BprstState;
-
-  DEBUG ((DEBUG_ERROR, "GpioInitEarlyWwanPreMem entry\n"));
-  WwanBbrstGpio = PcdGet32 (PcdWwanBbrstGpio);
-  WwanPerstGpio = PcdGet32 (PcdWwanPerstGpio);
-
-  if (WwanBbrstGpio) {
-    //
-    // BIOS needs to reset modem if modem RESET# is not asserted via PLTRST# in the previous sleep state
-    //
-    GpioV2GetTx (WwanBbrstGpio, &BprstState);
-    if (PcdGet8 (PcdPcieWwanEnable) == 2) { // 5G - Mediatek Modem M80
-      if (PcdGet64 (PcdBoardGpioTableM80WwanOnEarlyPreMem) != 0 && PcdGet16 (PcdBoardGpioTableM80WwanOnEarlyPreMemSize) != 0) {
-        DEBUG((DEBUG_INFO, "5G M80 Modem: Power On Sequnce Start\n"));
-        //
-        // 1. Turn on EN_V3.3A_WWAN_LS, Turn off WWAN_RST_N & WWAN_PERST
-        //
-        ConfigureGpio ((VOID *) (UINTN) PcdGet64(PcdBoardGpioTableM80WwanOnEarlyPreMem), (UINTN) PcdGet16 (PcdBoardGpioTableM80WwanOnEarlyPreMemSize));
-        MicroSecondDelay ((UINTN) PcdGet16 (PcdBoardWwanTOn2ResDelayMs) * 1000);
-        //
-        // 2. De-asserting WWAN_RST_N
-        //
-        if (WwanBbrstGpio) {
-          GpioV2SetTx (WwanBbrstGpio, GpioV2StateHigh);
-          MicroSecondDelay ((UINTN) PcdGet16 (PcdBoardWwanTOnRes2PerDelayMs) * 1000);
-        }
-        //
-        // 3. De-asserting WWAN_PERST
-        //
-        if (WwanPerstGpio) {
-          if (PcdGetBool (PcdWwanPerstGpioPolarity)) {
-            PerstState = GpioV2StateLow;
-          } else {
-            PerstState = GpioV2StateHigh;
-          }
-          GpioV2SetTx (WwanPerstGpio, PerstState);
-        }
-        DEBUG((DEBUG_INFO, "5G M80 Modem: Power On Sequnce End\n"));
-      }
-    }
-  }
-}
 
 /**
   CNV Init before memory PEI module entry point
@@ -220,8 +154,6 @@ ConnectivityPreMemEntryPoint(
   EFI_STATUS     Status;
 
   Status = CnvInitPreMem ();
-
-  GpioInitEarlyWwanPreMem ();
 
   return Status;
 }

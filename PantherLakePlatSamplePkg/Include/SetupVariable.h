@@ -451,7 +451,7 @@ typedef struct {
   UINT16  Rtd3SensorHub;
   UINT16  VRRampUpDelay;
   UINT8   PstateCapping;
-  UINT8   Rtd3WWAN; //Deprecated
+  UINT8   Rtd3WWAN; // Deprecated
   UINT8   Rtd3SataPort0;
   UINT8   Rtd3SataPort1;
   UINT8   Rtd3SataPort2;
@@ -464,7 +464,7 @@ typedef struct {
   UINT8   Rtd3Pcie;
   UINT8   Rtd3I2CTouchPanel;
 
-  UINT8   CoExistenceManager; //Deprecated
+  UINT8   CoExistenceManager; // Deprecated
   UINT8   UsbFnEnable;
 
   UINT8   FanControl;
@@ -535,9 +535,9 @@ typedef struct {
   UINT8   HebcValueSupport;
   UINT32  HebcValue;
 
-  UINT8   I2cSarResetDelay; //Deprecated
+  UINT8   I2cSarResetDelay; // Deprecated
 
-  UINT8   WwanEnable;
+  UINT8   WwanEnable;       // Deprecated
 
   UINT8   UsbcBiosTcssHandshake;
   // EC - BIOS handshake timeouts
@@ -595,7 +595,7 @@ typedef struct {
   UINT8   AuxOriOverride;
 
   UINT8   PowermeterDeviceEnable; // powermeter enabling
-  UINT8   WwanResetWorkaround; //Deprecated
+  UINT8   WwanResetWorkaround;    // Deprecated
   UINT8   TelemetryDeviceEnable;
 
   UINT8   SdevXhciNumberOfDevices;
@@ -653,15 +653,15 @@ typedef struct {
   UINT8   PepPcieGfx;
   UINT8   PepPcieOther;
 
-  UINT16  WwanTOn2ResDelayMs;
-  UINT16  WwanTOnRes2PerDelayMs;
-  UINT16  WwanTOnPer2PdsDelayMs; //Deprecated
-  UINT16  WwanTRes2OffDelayMs;   //Deprecated
-  UINT16  WwanTOffDisDelayMs;    //Deprecated
-  UINT16  WwanTResTogDelayMs;    //Deprecated
-  UINT16  WwanTRes2PdsDelayMs;   //Deprecated
-  UINT16  WwanTPer2ResDelayMs;   //Deprecated
-  UINT8   WwanFwFlashDevice;     //Deprecated
+  UINT16  WwanTOn2ResDelayMs;           // Deprecated
+  UINT16  WwanTOnRes2PerDelayMs;        // Deprecated
+  UINT16  WwanTOnPer2PdsDelayMs;        // Deprecated
+  UINT16  WwanTRes2OffDelayMs;          // Deprecated
+  UINT16  WwanTOffDisDelayMs;           // Deprecated
+  UINT16  WwanTResTogDelayMs;           // Deprecated
+  UINT16  WwanTRes2PdsDelayMs;          // Deprecated
+  UINT16  WwanTPer2ResDelayMs;          // Deprecated
+  UINT8   WwanFwFlashDevice;            // Deprecated
   UINT8   MPdtSupport;
 
   //
@@ -673,11 +673,11 @@ typedef struct {
   UINT8   UsbcDataRoleSwapPlatformDisable; // Platform Setup option to disable USBC DataRole Swap
   UINT8   UsbcCapsuleDebugLevel;
 
-  UINT16  WwanOemSvid;
-  UINT16  WwanSvidTimeout;
+  UINT16  WwanOemSvid;     // Deprecated
+  UINT16  WwanSvidTimeout; // Deprecated
   UINT8   DeepestUSBSleepWakeCapability;
 
-  UINT8   WirelessCnvConfigDevice; //Deprecated
+  UINT8   WirelessCnvConfigDevice;         // Deprecated
 
   UINT8   Gpe1BlockEnable;
 

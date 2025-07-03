@@ -46,14 +46,6 @@
   PantherLakePlatSamplePkg/PlatformPkg.dec
 
 [Pcd]
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMem     ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMemSize ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs                ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                          ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                          ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                  ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch                          ## CONSUMES
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUnloadRequirement
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP                 ## CONSUMES

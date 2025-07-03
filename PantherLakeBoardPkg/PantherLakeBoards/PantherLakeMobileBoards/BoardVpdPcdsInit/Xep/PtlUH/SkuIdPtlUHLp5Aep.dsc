@@ -84,17 +84,6 @@
    { PTL_PCD_GROUP_GPPASPI0 }
   )}
 
-  # GPIO Table M80 WwanOn
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
-  {
-    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateHigh,     GpioV2IntDis,                 GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_FCP_OFF_N
-    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateLow,      GpioV2IntDis,                 GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_RST_N
-    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateLow,      GpioV2IntDis,                 GpioV2ResetHost,      GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_PERST_N
-    { GPIOV2_PTL_PCD_XXGPP_E_8,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirDefault, GpioV2StateDefault,  GpioV2IntDis,                 GpioV2ResetDefault,   GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }},  // GPP_E8_WWAN_WAKE_N
-    { GPIOV2_PTL_PCD_XXGPP_A_10, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,     GpioV2StateHigh,     GpioV2IntDis,                 GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_DISABLE_N
-    { GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,   GpioV2StateDefault,  GpioV2IntLevel|GpioV2IntSci,  GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }},  // WWAN_PEWAKE_N
-    { 0x0 }
-  })}
 
   # MRC UserBd
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x01
@@ -245,17 +234,6 @@
    { BoardGpioTypeNotSupported }
   )}
 
-  # WWAN Gpios
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_A_9 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_B_20}
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_D_3 }
-  )}
-
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpanel0IrqGpio|*|{CODE(
    { GPIOV2_PTL_PCD_XXGPP_E_18 }
   )}
@@ -269,9 +247,6 @@
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpadIrqGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
 
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|$(PIN_GPIO_ACTIVE_HIGH)
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|$(PIN_GPIO_ACTIVE_LOW)
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
@@ -492,19 +467,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x2
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
 
-  # PTL-UH AEP power meter table
-  gBoardModuleTokenSpaceGuid.VpdPcdPowerMeter|*|{CODE(
-  { 5,    // DeviceSize
-    '3',  // I2C_Scope
-    {
-     //BaseAddress, {RailName, ResistorValue}
-     {    0x10,     {{"SNS_V1P8A",          5}, {" ",                     0}, {"VBATA_VCCGT_SENSE",    2}, {"SNS_VBATA",          2}}},
-     {    0x11,     {{"SNS_V3P3A_WLAN",     5}, {"VBATA_VCCCORE_SENSE",   2}, {"VBATA_VDD2H_SENSE",    5}, {"V3P3A_MEM_SNS",      5}}},
-     {    0x12,     {{"V3P3A_KBC_EC",      50}, {"SNS_V3P3A_EDP",         2}, {"SNS_V3P3X_SSD",        5}, {"SNS_V5P0A",          2}}},
-     {    0x13,     {{"VBATA_VCCSA_SENSE",  2}, {"VBATA_VCCIO_SENSE",     5}, {"VBATA_LP_ECORE_SENSE", 2}, {"VBATA_VNNAON_SENSE", 2}}},
-     {    0x14,     {{"SNS_V_BATT_OUT_FET", 5}, {"SNS_V_CHGR_EMI_VIN",   10}, {"SNS_VBAT_IN_ELPMIC",  50}, {"SNS_V3P3A",          2}}},
-    }
-  })}
 
   # PCIE CLOCK USGAGE for PTL H
   gBoardModuleTokenSpaceGuid.VpdPcdPcieClkUsageMap|*|{CODE(
@@ -514,7 +476,7 @@
     PCIE_PCH + 2,   // uSD Connector
     NOT_USED,
     NOT_USED,
-    PCIE_PCH + 1,   // WWAN (M.2)
+    NOT_USED,
     NOT_USED,
     NOT_USED,
     NOT_USED
@@ -529,12 +491,13 @@
     PCIE_PCH + 2,   // uSD Connector
     NOT_USED,
     NOT_USED,
-    PCIE_PCH + 1,   // WWAN (M.2)
+    NOT_USED,
     NOT_USED,
     NOT_USED,
     NOT_USED
   }}
   )}
+
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTable|*|{CODE(
   {

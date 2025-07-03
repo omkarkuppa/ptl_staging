@@ -80,11 +80,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw1|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw2|*|0x0
 
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem| * |{CODE(
-  {
-    { 0x0 }
-  })}
-
 
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit|*|0x0
@@ -157,22 +152,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdRecoveryModeGpio|*|{CODE(
    { 0x0 }
   )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio|*|{CODE(
-   { 0x0 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio|*|{CODE(
-   { 0x0 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio|*|{CODE(
-   { 0x0 }
-  )}
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanWakeGpio|*|{CODE(
-   { 0x0 }
-  )}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdOddPowerInitEnable|*|FALSE

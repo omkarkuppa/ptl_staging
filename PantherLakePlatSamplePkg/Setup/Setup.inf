@@ -111,9 +111,6 @@
 #Connectivity
   ConnectivitySetup.c
 
-#Wwan
-  WwanSetup.uni
-  WwanSetup.hfr
 
 #Security
   SecuritySetup.c
