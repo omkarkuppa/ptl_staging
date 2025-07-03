@@ -1009,6 +1009,8 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
   MdeModulePkg/Universal/SectionExtractionPei/SectionExtractionPei.inf {
     <LibraryClasses>
       NULL|SecurityPkg/Library/PeiRsa2048Sha256GuidedSectionExtractLib/PeiRsa2048Sha256GuidedSectionExtractLib.inf
+      MbedTlsLib|CryptoPkg/Library/MbedTlsLib/MbedTlsLib.inf
+      BaseCryptLib|CryptoPkg/Library/BaseCryptLibMbedTls/PeiCryptLib.inf
   }
   MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf {
     <LibraryClasses>
