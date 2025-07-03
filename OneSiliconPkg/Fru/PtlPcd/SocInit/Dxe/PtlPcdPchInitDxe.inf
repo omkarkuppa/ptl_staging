@@ -84,12 +84,17 @@ MdePkg/MdePkg.dec
 OneSiliconPkg/SiPkg.dec
 UefiCpuPkg/UefiCpuPkg.dec
 IntelSiliconPkg/IntelSiliconPkg.dec
+ThcFeaturePkg/ThcFeaturePkg.dec
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdEmbeddedEnable             ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMin
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMax
+gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress      ## CONSUMES
+gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress      ## CONSUMES
+gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceDescriptorAddress ## CONSUMES
+gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceDescriptorAddress ## CONSUMES
 
 [FixedPcd]
 
@@ -102,7 +107,7 @@ PchSerialIoDxe.c
 PchHdaAcpi.c
 PchCnviAcpi.c
 PchAcpi.c
-
+PchUpdateThc.c
 
 [Protocols]
 gPchNvsAreaProtocolGuid ## PRODUCES

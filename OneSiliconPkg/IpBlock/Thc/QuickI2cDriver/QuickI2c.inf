@@ -78,6 +78,8 @@
   gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport ## CONSUMES
   gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress ## CONSUMES
   gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceDescriptorAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceDescriptorAddress ## CONSUMES
   gThcFeaturePkgTokenSpaceGuid.VpdThcSlaveAddressTable   ## CONSUMES
 [Depex]
   TRUE

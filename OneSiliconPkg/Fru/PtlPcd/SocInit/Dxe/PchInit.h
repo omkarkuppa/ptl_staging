@@ -141,13 +141,14 @@ PchUpdateNvsArea (
 
 /**
   Initialize PCH Nvs Area opeartion region.
+  @param[in] Address     PchNvsArea Address
 
   @retval EFI_SUCCESS    initialized successfully
   @retval EFI_NOT_FOUND  Nvs Area operation region is not found
 **/
 EFI_STATUS
 PatchPchNvsAreaAddress (
-  VOID
+  IN UINT32      Address
   );
 
 /**
@@ -158,6 +159,15 @@ PatchPchNvsAreaAddress (
 **/
 VOID
 ConfigureUsbOnEndOfDxe (
+  VOID
+  );
+
+/**
+  Update ASL definitions for Touch Host Controller devices.
+
+**/
+EFI_STATUS
+OnReadyToBootUpdateThcAcpiData (
   VOID
   );
 

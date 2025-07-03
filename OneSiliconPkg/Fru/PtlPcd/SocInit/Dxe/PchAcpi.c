@@ -360,7 +360,7 @@ PchAcpiOnEndOfDxe (
   //
   // Patch PchNvsArea Address
   //
-  PatchPchNvsAreaAddress ();
+  PatchPchNvsAreaAddress ((UINT32) (UINTN) mPchNvsAreaProtocol.Area);
 
   DEBUG ((DEBUG_INFO, "PchAcpiOnEndOfDxe() End\n"));
 
@@ -784,20 +784,19 @@ PchUpdateNvsArea (
 
 /**
   Initialize PCH Nvs Area opeartion region.
+  @param[in] Address     PchNvsArea Address
 
   @retval EFI_SUCCESS    initialized successfully
   @retval EFI_NOT_FOUND  Nvs Area operation region is not found
 **/
 EFI_STATUS
 PatchPchNvsAreaAddress (
-  VOID
+  IN UINT32            Address
   )
 {
-  EFI_STATUS                            Status;
-  UINT32                                Address;
-  UINT16                                Length;
+  EFI_STATUS           Status;
+  UINT16               Length;
 
-  Address = (UINT32) (UINTN) mPchNvsAreaProtocol.Area;
   Length  = (UINT16) sizeof (PCH_NVS_AREA);
   DEBUG ((DEBUG_INFO, "PatchPchNvsAreaAddress: PCH NVS Address %x Length %x\n", Address, Length));
   Status  = UpdateNameAslCode (SIGNATURE_32 ('P','N','V','B'), &Address, sizeof (Address));

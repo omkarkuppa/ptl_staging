@@ -25,9 +25,14 @@
 #define MAX_THC_PORT                        2
 
 typedef struct {
-  UINT8      Count;
-  UINT8      ThcSlaveAddress [MAX_THC_PORT][MAX_THC_PER_PORT_TABLE_INDEX];
-  UINT8      Reserved[4];
+  UINT16      ThcDeviceAddress;
+  UINT32      ThcDeviceDescriptorAddress;
+} THC_SLAVE_AND_DESCRIPTOR_ADDRESS_TABLE;
+
+typedef struct {
+  UINT8                                       Count;
+  THC_SLAVE_AND_DESCRIPTOR_ADDRESS_TABLE      ThcSlaveAddress [MAX_THC_PORT][MAX_THC_PER_PORT_TABLE_INDEX];
+  UINT8                                       Reserved[4];
 } VPD_THC_SLAVE_ADDRESS_TABLE;
 
 #endif //_THC_BOARD_DATA_H_

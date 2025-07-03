@@ -697,7 +697,10 @@ QuickI2cDriverBindingStart (
     goto THC_ERROR_EXIT;
   }
 
-  Status = QuickI2cReadDeviceDescriptor (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId]);
+  Status = QuickI2cReadDeviceDescriptor (QuickI2cDev,
+                                         mHidOverI2c[QuickI2cDev->InstanceId].DeviceAddress,
+                                         mHidOverI2c[QuickI2cDev->InstanceId].DeviceDescriptorAddress
+                                       );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Read Device Descriptor for address 0x%x with status: %r\n", mHidOverI2c[QuickI2cDev->InstanceId].DeviceAddress, Status));
     // Check for multiple vendor feature support to try VPD entries
@@ -707,6 +710,9 @@ QuickI2cDriverBindingStart (
         DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Validate and Program Device Address Status: %r\n", Status));
         goto THC_ERROR_EXIT;
       }
+    } else {
+      DEBUG ((DEBUG_INFO, "ERROR - PcdThcMultipleVenFeatureSupport FALSE to Read Device Descriptor Status: %r\n", Status));
+      goto THC_ERROR_EXIT;
     }
   }
 

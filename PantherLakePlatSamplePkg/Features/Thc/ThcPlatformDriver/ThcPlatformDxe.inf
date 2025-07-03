@@ -61,6 +61,8 @@
 [Pcd]
   gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress ## CONSUMES
   gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceDescriptorAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceDescriptorAddress ## CONSUMES
   gThcFeaturePkgTokenSpaceGuid.PcdThcQuickI2cDevId       ## CONSUMES
 
 [Depex]

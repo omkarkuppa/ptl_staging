@@ -67,7 +67,8 @@ QuickI2cLibGpioGetOutOfReset (
   Reads Touch Panels Device registers (TouchCapabilities, TouchId etc.)
 
   @param[in]  QuickI2cDev      Context of QuickI2c device
-  @param[in]  HidOverI2c       Hid Over I2c Context
+  @param[in]  DeviceAddress    Address of the target device
+  @param[in]  DeviceDescriptorAddressValue  Address value of the device descriptor
 
   @retval EFI_SUCCESS     QuickI2c initialized successfully
   @retval other           Error during initialization
@@ -75,7 +76,8 @@ QuickI2cLibGpioGetOutOfReset (
 EFI_STATUS
 QuickI2cReadDeviceDescriptor (
   IN QUICK_I2C_DEV                *QuickI2cDev,
-  IN THC_HID_OVER_I2C             *HidOverI2c
+  IN UINT32                       DeviceAddress,
+  IN UINT32                       DeviceDescriptorAddressValue
   );
 
 /**

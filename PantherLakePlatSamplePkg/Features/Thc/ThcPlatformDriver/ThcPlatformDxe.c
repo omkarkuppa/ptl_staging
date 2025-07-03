@@ -157,10 +157,12 @@ QuickI2cEnumerateEndOfPciEnumerationEvent (
     return;
   }
 
-  DEBUG ((DEBUG_INFO, "%a() ThcAssignment[0]=0x%X, ThcAssignment[1]=0x%X\n", __FUNCTION__, PchSetup.ThcAssignment[0], PchSetup.ThcAssignment[1]));
-  DEBUG ((DEBUG_INFO, "%a() ThcMode[0]=0x%X, ThcMode[1]=0x%X\n", __FUNCTION__, PchSetup.ThcMode[0], PchSetup.ThcMode[1]));
+  DEBUG ((DEBUG_INFO, "%a() ThcAssignment[0]=0x%X, ThcAssignment[1]=0x%X, ThcMode[0]=0x%X, ThcMode[1]=0x%X\n",
+          __FUNCTION__, PchSetup.ThcAssignment[0], PchSetup.ThcAssignment[1], PchSetup.ThcMode[0], PchSetup.ThcMode[1]));
 
-  if ((PchSetup.ThcAssignment[0] == 0) || ((PchSetup.ThcAssignment[0] != 0 && PchSetup.ThcMode[0] != HidOverI2c) && (PchSetup.ThcAssignment[1] != 0 && PchSetup.ThcMode[1] != HidOverI2c))) {
+  if ((PchSetup.ThcAssignment[0] == 0) ||
+     ((PchSetup.ThcAssignment[0] != 0 && PchSetup.ThcMode[0] != HidOverI2c) || // THC Port 0 Enabled not for HidOverI2c mode
+      (PchSetup.ThcAssignment[1] != 0 && PchSetup.ThcMode[1] != HidOverI2c))) { // THC Port 1 Enabled not for HidOverI2c mode
     DEBUG ((DEBUG_INFO, "%a() THC Assignment is 0 for both controllers or THC Mode is not HidOverI2c for both controllers, Skipping !!!\n", __FUNCTION__));
     return;
   }
@@ -206,23 +208,26 @@ QuickI2cEnumerateEndOfPciEnumerationEvent (
       DEBUG ((DEBUG_ERROR, "Failed to read PCI configuration space: %r\n", Status));
       continue;
     }
-    VendorId = (UINT16)(VendDevId & 0xFFFF);
-    DeviceId = (UINT16)(VendDevId >> 16);
+    VendorId = (UINT16) (VendDevId & 0xFFFF);
+    DeviceId = (UINT16) (VendDevId >> 16);
     if (QuickI2cIsDeviceIdSupported (VendorId, DeviceId, &DeviceIndex)) {
-      DEBUG ((DEBUG_INFO, "Found DeviceId: 0x%X DeviceIndex %d\n", DeviceId, DeviceIndex));
-      DEBUG ((DEBUG_INFO, "Connect QuickI2c driver ...\n"));
+      DEBUG ((DEBUG_INFO, "Connecting QuickI2c driver for DeviceId: 0x%X, DeviceIndex: %d\n", DeviceId, DeviceIndex));
       Status = gBS->ConnectController (Handle, NULL, NULL, TRUE);
-      if (!EFI_ERROR(Status)) {
-        if (PcdGet8 (PcdThc0DeviceSlaveAddress) != 0 || PcdGet8 (PcdThc1DeviceSlaveAddress) != 0) {
+      if (!EFI_ERROR (Status)) {
+        if (PcdGet16 (PcdThc0DeviceSlaveAddress) != 0 || PcdGet16 (PcdThc1DeviceSlaveAddress) != 0) {
           //
           // Update PchSetup variable with new THC HID I2C device addresses
           //
           if (DeviceIndex == 0) {
-            PchSetup.ThcHidI2cDeviceAddress[0] = PcdGet8 (PcdThc0DeviceSlaveAddress);
-            DEBUG ((DEBUG_INFO, "PchSetup.ThcHidI2cDeviceAddress[0]=0x%X PcdThc0DeviceSlaveAddress=0x%X\n", PchSetup.ThcHidI2cDeviceAddress[0], PcdGet8 (PcdThc0DeviceSlaveAddress)));
+            PchSetup.ThcHidI2cDeviceAddress[0] = PcdGet16 (PcdThc0DeviceSlaveAddress);
+            PchSetup.ThcHidI2cDeviceDescriptorAddress[0] = PcdGet32 (PcdThc0DeviceDescriptorAddress);
+            DEBUG ((DEBUG_INFO, "ThcHidI2cDeviceAddress[0]=0x%X, ThcHidI2cDeviceDescriptorAddress[0]=0x%X\n",
+              PchSetup.ThcHidI2cDeviceAddress[0], PchSetup.ThcHidI2cDeviceDescriptorAddress[0]));
           } else if (DeviceIndex == 1) {
-            PchSetup.ThcHidI2cDeviceAddress[1] = PcdGet8 (PcdThc1DeviceSlaveAddress);
-            DEBUG ((DEBUG_INFO, "PchSetup.ThcHidI2cDeviceAddress[1]=0x%X, PcdThc1DeviceSlaveAddress=0x%X \n",PchSetup.ThcHidI2cDeviceAddress[1], PcdGet8 (PcdThc1DeviceSlaveAddress)));
+            PchSetup.ThcHidI2cDeviceAddress[1] = PcdGet16 (PcdThc1DeviceSlaveAddress);
+            PchSetup.ThcHidI2cDeviceDescriptorAddress[1] = PcdGet32 (PcdThc1DeviceDescriptorAddress);
+            DEBUG ((DEBUG_INFO, "ThcHidI2cDeviceAddress[1]=0x%X, ThcHidI2cDeviceDescriptorAddress[1]=0x%X\n",
+              PchSetup.ThcHidI2cDeviceAddress[1], PchSetup.ThcHidI2cDeviceDescriptorAddress[1]));
           }
 
           Status = gRT->SetVariable (

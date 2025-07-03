@@ -582,24 +582,35 @@ QuickI2cValidateAndProgramDeviceAddress (
   )
 {
   EFI_STATUS                      Status;
-  UINT32                          Index;
+  UINT8                           Index;
+  UINT16                          DeviceAddress;
+  UINT32                          DeviceDescriptorAddress;
   THC_I2C_IC_TAR                  IcTar;
   VPD_THC_SLAVE_ADDRESS_TABLE     *ThcAddressTable;
 
   Status          = EFI_NOT_FOUND;
   ThcAddressTable = NULL;
+  DeviceAddress   = 0;
+  DeviceDescriptorAddress = 0;
   ZeroMem (&IcTar, sizeof (THC_I2C_IC_TAR));
 
   THC_LOCAL_DEBUG (L"%a: Entry () for InstanceId: %d\n", __FUNCTION__, QuickI2cDev->InstanceId)
   ThcAddressTable = (VPD_THC_SLAVE_ADDRESS_TABLE *) PcdGetPtr (VpdThcSlaveAddressTable);
+  if (ThcAddressTable == NULL) {
+    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize: VPD_THC_SLAVE_ADDRESS_TABLE is NULL\n"));
+    return EFI_NOT_FOUND;
+  }
 
   for (Index = 0; Index < ThcAddressTable->Count; Index++) {
-    if (ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index] == 0) {
-      THC_LOCAL_DEBUG(L"Skipping ThcAddressTable->Address[%d]: 0x%X\n", Index, ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index])
+    if (ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index].ThcDeviceAddress == 0) {
+      THC_LOCAL_DEBUG(L"Skipping ThcAddressTable->Address[%d]: 0x%X\n", Index, ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index].ThcDeviceAddress)
       continue;
     }
 
-    DEBUG ((DEBUG_INFO, "Trying ThcAddressTable->Address[%d]: 0x%X\n", Index, ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index]));
+    DeviceAddress = ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index].ThcDeviceAddress;
+    DeviceDescriptorAddress = ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index].ThcDeviceDescriptorAddress;
+    DEBUG ((DEBUG_INFO, "For Instance [%d] Index [%d] DeviceAddress: 0x%X ThcDeviceDescriptorAddress: 0x%X\n", QuickI2cDev->InstanceId, Index, DeviceAddress, DeviceDescriptorAddress));
+
     //
     // Set address of target slave by writing it to TAR
     //
@@ -608,25 +619,27 @@ QuickI2cValidateAndProgramDeviceAddress (
       DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_TAR error, Status %r\n", Status));
       return Status;
     }
-    IcTar.Fields.IcTar = ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index];
+    IcTar.Fields.IcTar = DeviceAddress;
     Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_TAR, IcTar.Data32);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_TAR error, Status %r\n", Status));
       return Status;
     }
 
-    Status = QuickI2cReadDeviceDescriptor (QuickI2cDev, HidOverI2c);
+    Status = QuickI2cReadDeviceDescriptor (QuickI2cDev, DeviceAddress, DeviceDescriptorAddress);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "%a:VPD %d Entry Instance %d QuickI2c failed to Read Device Descriptor Status: %r\n", __FUNCTION__, Index, QuickI2cDev->InstanceId, Status));
+      DEBUG ((DEBUG_WARN, "%a: Instance %d Index %d QuickI2c failed to Read Device Descriptor Status: %r\n", __FUNCTION__, QuickI2cDev->InstanceId, Index, Status));
       continue;
     }
 
     if (QuickI2cDev->InstanceId == 0) {
       // For Index 0
-      PcdSet8S (PcdThc0DeviceSlaveAddress, ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index]);
+      PcdSet16S (PcdThc0DeviceSlaveAddress, DeviceAddress);
+      PcdSet32S (PcdThc0DeviceDescriptorAddress, DeviceDescriptorAddress);
     } else {
       // For Index 1
-      PcdSet8S (PcdThc1DeviceSlaveAddress, ThcAddressTable->ThcSlaveAddress[QuickI2cDev->InstanceId][Index]);
+      PcdSet16S (PcdThc1DeviceSlaveAddress, DeviceAddress);
+      PcdSet32S (PcdThc1DeviceDescriptorAddress, DeviceDescriptorAddress);
     }
     break;
   }
@@ -637,7 +650,8 @@ QuickI2cValidateAndProgramDeviceAddress (
   Reads Touch Panels Device registers (TouchCapabilities, TouchId etc.)
 
   @param[in]  QuickI2cDev      Context of QuickI2c device
-  @param[in]  HidOverI2c       Hid Over I2c Context
+  @param[in]  DeviceAddress    Address of the target device
+  @param[in]  DeviceDescriptorAddressValue  Address value of the device descriptor
 
   @retval EFI_SUCCESS     QuickI2c initialized successfully
   @retval other           Error during initialization
@@ -645,17 +659,16 @@ QuickI2cValidateAndProgramDeviceAddress (
 EFI_STATUS
 QuickI2cReadDeviceDescriptor (
   IN QUICK_I2C_DEV                *QuickI2cDev,
-  IN THC_HID_OVER_I2C             *HidOverI2c
+  IN UINT32                       DeviceAddress,
+  IN UINT32                       DeviceDescriptorAddressValue
   )
 {
   EFI_STATUS                      Status;
   UINT16                          WriteSize;
   UINT16                          ReadSize;
   UINT32                          WriteData;
-  UINT32                          DeviceDescriptorAddressValue;
 
   WriteSize                     = QUICK_I2C_DEFAULT_DEVICE_DESCRIPTOR_ADDRESS_LENGTH;
-  DeviceDescriptorAddressValue  = HidOverI2c->DeviceDescriptorAddress;
   ReadSize                      = QUICK_I2C_DEFAULT_DEVICE_DESCRIPTOR_LENGTH;
   WriteData                     = QuickI2cOutputReportDeviceDescriptor;
 
@@ -667,7 +680,7 @@ QuickI2cReadDeviceDescriptor (
   }
 
   THC_LOCAL_DEBUG (L"QuickI2cReadDeviceDescriptor DeviceAddress - 0x%x DeviceDescriptorAddressValue - 0x%x\n",
-    HidOverI2c->DeviceAddress, DeviceDescriptorAddressValue)
+    DeviceAddress, DeviceDescriptorAddressValue)
 
   QuickI2cLibPrepareRwPioOperation (
     QuickI2cWriteReadCommand,

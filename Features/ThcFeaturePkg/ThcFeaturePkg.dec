@@ -48,8 +48,10 @@
   #
   # THC I2C Device descriptor address
   #
-  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress      |0x00|UINT8|0x00001122
-  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress      |0x00|UINT8|0x00001130
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress           |0x00|UINT16|0x00001122
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress           |0x00|UINT16|0x00001138
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceDescriptorAddress      |0x00|UINT32|0x00001154
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceDescriptorAddress      |0x00|UINT32|0x00001286
 
 [PcdsDynamicEx]
   #

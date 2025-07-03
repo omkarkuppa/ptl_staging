@@ -264,7 +264,8 @@
             Return (Buffer () {0x1})
           }
           case (1) {
-            ADBG ("THC THC_HIDI2C_DEVICE_DESCRIPTOR_ADDRESS")
+            ADBG (Concatenate ("THC THC_HIDI2C_DEVICE_DESCRIPTOR_ADDRESS: ", ToHexString (THC_HIDI2C_DEVICE_DESCRIPTOR_ADDRESS)))
+            ADBG (Concatenate ("THC THC_HIDI2C_DEVICE_ADDRESS: ", ToHexString (THC_HIDI2C_DEVICE_ADDRESS)))
             Return (ToInteger (THC_HIDI2C_DEVICE_DESCRIPTOR_ADDRESS))
           }
           default {

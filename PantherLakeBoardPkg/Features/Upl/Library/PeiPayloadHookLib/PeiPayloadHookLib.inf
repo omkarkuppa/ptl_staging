@@ -260,6 +260,8 @@
   gThcFeaturePkgTokenSpaceGuid.VpdThcSlaveAddressTable
   gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress
   gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceDescriptorAddress
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceDescriptorAddress
   gThcFeaturePkgTokenSpaceGuid.PcdThcQuickI2cDevId
 
   # PlatSamplePkg

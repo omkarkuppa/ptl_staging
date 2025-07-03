@@ -378,7 +378,7 @@ PchOnReadyToBoot (
   IN VOID         *Context
   )
 {
-
+  EFI_STATUS                    Status;
   UINT32                        PortIndex;
   UINT64                        RpBase;
   UINT8                         TempRootPortBusNumMin;
@@ -435,8 +435,14 @@ PchOnReadyToBoot (
   }
 
   //
-  // Perform OnReadyToBoot THC configuration
+  // Perform OnReadyToBoot THC ACPI configuration
   //
+  Status = OnReadyToBootUpdateThcAcpiData ();
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "%a : Patch PchNvsArea Address Error Status %r\n", __FUNCTION__, Status));
+    // continue
+  }
+
   HobPtr.Guid   = GetFirstGuidHob (&gPchThcConfigHobGuid);
   if (HobPtr.Guid == NULL) {
     ASSERT (FALSE);
