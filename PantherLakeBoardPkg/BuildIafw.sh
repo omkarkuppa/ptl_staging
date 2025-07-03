@@ -65,6 +65,7 @@ export SYMBOL_PREFIX=
 export PCH_TYPE=P
 export UNIVERSAL_PAYLOAD=FALSE
 export UPL_SPEC_REVISION=0.9
+export IBBSIGN=FALSE
 export ROM_FILENAME_SPECIAL_BUILD_TYPE=
 
 #
@@ -107,6 +108,7 @@ function PrintUsage {
   echo "  fsp64    To build using 64-bit PEI for FSP."
   echo "  cln      Build clean."
   echo "  notimestamp To eliminate the effect of timestamp."
+  echo "  ibbsign To Re-Sign the BIOS Binaries"
   echo "  chksize threshold To enable FV_SPARE_SPACE_THRESHOLD check."
   echo "           BaseTools will check every FV with the threshold."
   echo "           Build tool will report error message to say there is no enough spare space if check fail."
@@ -296,6 +298,8 @@ for ((i=1 ; i <= numargs ; i++)); do
     exit 1
   elif [ "$1" = "notimestamp" ]; then
     export NOTIMESTAMP=1
+  elif [ "$1" = "ibbsign" ]; then
+    export IBBSIGN=TRUE
   fi
   shift
 done
@@ -424,7 +428,7 @@ then
   exit 1
 fi
 if [ "$FSPM_COMPRESSED" = "TRUE" ]; then
-  @echo "FSP-M is compressed, Rebase FSP-M"
+  echo "FSP-M is compressed, Rebase FSP-M"
   python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/RebaseFspmBinBaseAddress.py $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp_Rebased.fd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardPkgPcdUpdate.dsc $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
 fi
 if [ $? -ne 0 ]

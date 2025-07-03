@@ -24,7 +24,6 @@ function EndPreBuild {
 
 cd $WORKSPACE
 
-
 #
 # Set build capsule flag with default of OFF
 #
