@@ -93,12 +93,16 @@ Conventions:
 #define R_TC_PCIE_RP_CFG_CMD                  0x00000004U      ///< Device Command
 #define B_TC_PCIE_RP_CFG_CMD_SEE              BIT8             ///< SERR# Enable
 
+#define R_TC_PCIE_RP_CFG_PSTS                 0x00000006U      ///< Primary Status
+#define B_TC_PCIE_RP_CFG_PSTS_SSE             BIT14            ///< Signaled System Error
+
 #define R_TC_PCIE_RP_CFG_LCTL                 0x00000050U      ///< Link Control
 #define B_TC_PCIE_RP_CFG_LCTL_CCC             BIT6             ///< Common Clock Configuration
 
 #define R_TC_PCIE_RP_CFG_LSTS                 0x00000052U      ///< Link Status
 
 #define R_TC_PCIE_RP_CFG_SLSTS                0x0000005aU      ///< Slot Status
+#define B_TC_PCIE_RP_CFG_SLSTS_PDS            BIT6             ///< Presence Detect State
 
 #define R_TC_PCIE_RP_CFG_RSTS                 0x00000060U      ///< Root Status
 
@@ -179,6 +183,15 @@ Conventions:
 #define R_TC_PCIE_RP_CFG_AECH                 0x00000100U      ///< Advanced Error Extended
 #define N_TC_PCIE_RP_CFG_AECH_CV              16
 #define N_TC_PCIE_RP_CFG_AECH_NCO             20
+
+#define R_TC_PCIE_RP_CFG_UES                  0x00000104U      ///< Uncorrectable Error Status
+#define B_TC_PCIE_RP_CFG_UES_MT               BIT18            ///< Malformed TLP Status
+
+#define R_TC_PCIE_RP_CFG_RES                  0x00000130U      ///< Root Error Status
+#define B_TC_PCIE_RP_CFG_RES_ENR              BIT2             ///< ERR_FATAL/NONFATAL Received
+#define B_TC_PCIE_RP_CFG_RES_MENR             BIT3             ///< Multiple ERR_FATAL/NONFATAL Received
+#define B_TC_PCIE_RP_CFG_RES_FUF              BIT4             ///< First Uncorrectable Fatal
+#define B_TC_PCIE_RP_CFG_RES_FEMR             BIT6             ///< Fatal Error Messages Received
 
 #define R_TC_PCIE_RP_CFG_PTMECH               0x00000150U      ///< PTM Extended Capability Header
 #define N_TC_PCIE_RP_CFG_PTMECH_CV            16
@@ -313,7 +326,7 @@ Conventions:
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_G3STFER     BIT13            ///< Gen3 Short TLP Framing Error Reporting
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_PMREQCWC    ( BIT18 | BIT17 | BIT16 ) ///< PM_REQ Clock Wake Control
 #define N_TC_PCIE_RP_CFG_ADVMCTRL_PMREQCWC    16
-#define B_TC_PCIE_RP_CFG_ADVMCTRL_EIOSMASKRX  BIT19            ///< EIOS Mask Receiver Datapath    
+#define B_TC_PCIE_RP_CFG_ADVMCTRL_EIOSMASKRX  BIT19            ///< EIOS Mask Receiver Datapath
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_EIOSDISDS   BIT20            ///< EIOS Disable DeSkew
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_INRXL0CTRL  BIT22            ///< InRxL0 Control
 

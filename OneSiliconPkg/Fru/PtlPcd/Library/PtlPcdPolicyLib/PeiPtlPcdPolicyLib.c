@@ -259,6 +259,7 @@ LoadPcieCommonConfigDefault (
   PchPcieConfig->PcieCommonConfig.PhyAutoPowerGating = TRUE;
 
   PchPcieConfig->PchPciePort8xhDecodePortIndex = 1;
+  PchPcieConfig->GlobalPcieAer = 1;
 }
 
 /**

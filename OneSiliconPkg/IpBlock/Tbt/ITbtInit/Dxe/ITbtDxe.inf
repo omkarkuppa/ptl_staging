@@ -48,6 +48,7 @@
   DxeTbtDisBmeLib
   ItbtPcieRpLib
   MeUtilsLib
+  TcssInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec

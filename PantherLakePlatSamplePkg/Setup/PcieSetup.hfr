@@ -58,6 +58,13 @@ form formid = AUTO_ID(PCIE_FORM_ID),
     option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
   endoneof;
 
+  oneof varid   = PCH_SETUP.GlobalPcieAer,
+    prompt      = STRING_TOKEN(STR_PCIE_AER_OSC_SETTING_PROMPT),
+    help        = STRING_TOKEN(STR_PCIE_AER_OSC_SETTING_HELP),
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+  endoneof;
+
 //
 // All strings used for PCIE are given as C preprocessor macros that concatenate string name and rootport number
 // Tool that gathers string usage info from hfr files doesn't run preprocessor and can't find the new representation of strings

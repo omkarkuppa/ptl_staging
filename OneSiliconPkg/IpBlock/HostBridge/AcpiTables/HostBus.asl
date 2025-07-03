@@ -692,6 +692,15 @@ Method (_OSC,4,Serialized)
       //
       Or (CDW1,0x10,CDW1)
     }
+
+    If (CondRefOf (GAER)) {
+      If (LEqual (GAER, 0)) {
+        // Disable Global PCIe Advanced Error Reporting
+        ADBG ("Disable PCIe AER in _OSC")
+        And (CTRL, 0xFFFFFFF7, CTRL)
+      }
+    }
+
     //
     // Update DWORD3 in the buffer
     //

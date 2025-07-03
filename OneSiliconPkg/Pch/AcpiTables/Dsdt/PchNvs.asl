@@ -508,4 +508,5 @@
   DTRE, 8,  // Offset(1316),  PMC DTR SCI enable
   SWCS, 8,  // Offset(1317),  SoundWire Clock Source Select
   SSFP, 8,  // Offset(1318),  SoundWire Supported Frequency Pool
+  GAER, 8,  // Offset(1319),  Global PCIe Advanced Error Reporting
   }

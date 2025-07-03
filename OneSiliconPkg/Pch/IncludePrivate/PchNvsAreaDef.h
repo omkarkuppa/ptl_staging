@@ -443,6 +443,7 @@ typedef struct {
   UINT8    DtrSciEnable;                            ///< Offset 1316    PMC DTR SCI enable
   UINT8    SWCS;                                    ///< Offset 1317    SoundWire Clock Source Select
   UINT8    SSFP;                                    ///< Offset 1318    SoundWire Supported Frequency Pool
+  UINT8    GlobalPcieAer;                           ///< Offset 1319    Global PCIe Advanced Error Reporting
 } PCH_NVS_AREA;
 
 #pragma pack(pop)

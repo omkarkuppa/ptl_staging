@@ -1378,6 +1378,7 @@ UpdatePcieRpConfig (
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PcieComplianceTestMode,                        PchPcieConfig->PcieCommonConfig.ComplianceTestMode, PchSetup->PcieComplianceTestMode);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PcieEnablePort8xhDecode,                                   PchPcieConfig->PcieCommonConfig.EnablePort8xhDecode, PchSetup->PcieRootPort8xhDecode);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPciePort8xhDecodePortIndex,                             PchPcieConfig->PchPciePort8xhDecodePortIndex, PchSetup->Pcie8xhDecodePortIndex);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.GlobalPcieAer,                                             PchPcieConfig->GlobalPcieAer, PchSetup->GlobalPcieAer);
   for (Index = 0; Index < MaxPciePorts; Index++) {
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PcieRpPhysicalSlotNumber[Index],                            PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PhysicalSlotNumber, (UINT16) Index);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PcieRpClkReqDetect[Index],                                  PchPcieConfig->RootPort[Index].PcieRpCommonConfig.ClkReqDetect,       TRUE);

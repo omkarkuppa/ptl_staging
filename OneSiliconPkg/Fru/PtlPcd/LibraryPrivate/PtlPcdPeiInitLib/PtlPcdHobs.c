@@ -371,6 +371,7 @@ BuildPchConfigHobs (
     sizeof (PcieRpConfigHob->PcieClock)
     );
   PcieRpConfigHob->ClkreqIpcCmdSupport = IsClkreqIpcCmdSupported ();
+  PcieRpConfigHob->GlobalPcieAer = PchPcieConfig->GlobalPcieAer;
 
   // HDA
   HdaConfigHob = BuildGuidHob (&gPchHdaConfigHobGuid, sizeof (HDAUDIO_CONFIG_HOB));

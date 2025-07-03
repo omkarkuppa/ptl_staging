@@ -791,6 +791,9 @@
 #define B_PCIE_CFG_CMD_SEE                    BIT8             ///< SERR Enable
 #define N_PCIE_CFG_CMD_SEE                    8
 
+#define R_PCIE_CFG_PSTS                       0x00000006U      ///< Primary Status
+#define B_PCIE_CFG_PSTS_SSE                   BIT14            ///< Signaled System Error
+
 #define R_PCIE_CFG_BAR0                       0x00000010U      ///< Base Address Register 0
 #define B_PCIE_CFG_BAR0_MMT                   ( BIT2 | BIT1 )  ///< Memory Mapping Type
 #define N_PCIE_CFG_BAR0_MMT                   1
@@ -893,6 +896,7 @@
 #define R_PCIE_CFG_SLCTL                      0x00000058U      ///< Slot Control
 
 #define R_PCIE_CFG_SLSTS                      0x0000005aU      ///< Slot Status
+#define B_PCIE_CFG_SLSTS_PDS                  BIT6             ///< Presence Detect State
 
 #define R_PCIE_CFG_RCTL                       0x0000005cU      ///< Root Control
 #define B_PCIE_CFG_RCTL_CRSSVE                BIT4             ///< CRS Software Visibility Enable
@@ -1191,6 +1195,9 @@
 #define B_PCIE_CFG_AECH_NCO                   0xfff00000U      ///< Next Capability Offset
 #define N_PCIE_CFG_AECH_NCO                   20
 
+#define R_PCIE_CFG_UES                        0x00000104U      ///< Uncorrectable Error Status
+#define B_PCIE_CFG_UES_MT                     BIT18            ///< Malformed TLP Status
+
 #define R_PCIE_CFG_UEM                        0x00000108U      ///< Uncorrectable Error Mask
 #define B_PCIE_CFG_UEM_PT                     BIT12            ///< Poisoned TLP Mask
 #define N_PCIE_CFG_UEM_PT                     12
@@ -1200,6 +1207,12 @@
 #define N_PCIE_CFG_UEM_URE                    20
 #define B_PCIE_CFG_UEM_PTLPEBM                BIT26            ///< Poisoned TLP Egress Blocked Mask
 #define N_PCIE_CFG_UEM_PTLPEBM                26
+
+#define R_PCIE_CFG_RES                        0x00000130U      ///< Root Error Status
+#define B_PCIE_CFG_RES_ENR                    BIT2             ///< ERR_FATAL/NONFATAL Received
+#define B_PCIE_CFG_RES_MENR                   BIT3             ///< Multiple ERR_FATAL/NONFATAL Received
+#define B_PCIE_CFG_RES_FUF                    BIT4             ///< First Uncorrectable Fatal
+#define B_PCIE_CFG_RES_FEMR                   BIT6             ///< Fatal Error Messages Received
 
 #define R_PCIE_CFG_PTMECH                     0x00000150U      ///< PTM Extended Capability Header
 #define B_PCIE_CFG_PTMECH_CID                 0x0000ffffU      ///< Capability ID

@@ -25,6 +25,7 @@
 #include <Library/BaseLib.h>
 #include <Library/TimerLib.h>
 #include <Library/PciSegmentLib.h>
+#include <Library/DxeTbtDisBmeLib.h>
 #include <IndustryStandard/Pci22.h>
 #include <TbtMailBoxCmdDefinition.h>
 
@@ -32,6 +33,9 @@
 #define DEFAULT_PCI_BUS_NUMBER_ITBT_DMA0       0
 #define DEFAULT_PCI_DEVICE_NUMBER_ITBT_DMA0    0x0D
 #define DEFAULT_PCI_FUNCTION_NUMBER_ITBT_DMA0  0x02
+#define STANDALONE_PCIE_RP                     0
+#define TCSS_PCIE_RP                           1
+#define PCIE_RP_TYPE_ENUM                      2
 
 typedef struct _DEV_ID {
   UINT8 Segment;
@@ -39,6 +43,23 @@ typedef struct _DEV_ID {
   UINT8 Dev;
   UINT8 Fun;
 } DEV_ID;
+
+typedef struct _REG16_INFO {
+  UINT16  RegOffset;
+  UINT16  RegMask;
+} REG16_INFO;
+
+typedef struct _REG32_INFO {
+  UINT16  RegOffset;
+  UINT32  RegMask;
+} REG32_INFO;
+
+typedef struct _REG_CHECK_LIST {
+  REG16_INFO  Slsts;
+  REG16_INFO  Psts;
+  REG32_INFO  Ues;
+  REG32_INFO  Res;
+} PCIE_STS_REG_CHECK_LIST;
 
 #ifdef __GNUC__
 #pragma GCC diagnostic warning "-Wunused-variable"
@@ -230,4 +251,29 @@ ITbtUnsetHrForcePower (
   IN UINT8    Func
 );
 
+/**
+  This function clears some of PCIe errors in PCIe root ports when detected.
+
+  @param[in] PcieRpSbdf  PCIe RP's segment:bus:device:function coordinates
+
+  @retval EFI_SUCCESS            - The function completes successfully
+  @retval EFI_INVALID_PARAMETER  - Invalid parameter.
+  **/
+EFI_STATUS
+EFIAPI
+ClearPcieRpErrors (
+  IN SBDF     PcieRpSbdf
+);
+
+/**
+  This function chekcs whether global PCIe AER is enabled.
+
+  @retval TRUE            - Global PCIe AER is enabled.
+  @retval FALSE           - Global PCIe AER is disabled.
+**/
+BOOLEAN
+EFIAPI
+IsGlobalPcieAerEnabled (
+  VOID
+);
 #endif

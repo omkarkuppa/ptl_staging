@@ -2397,6 +2397,9 @@
 #string STR_PCIE_RESIZABLE_BAR_SUPPORT_PROMPT      #language en-US "PCIE Resizable BAR Support"
 #string STR_PCIE_RESIZABLE_BAR_SUPPORT_HELP        #language en-US "Enable/Disable PCIE Resizable BAR Support"
 
+#string STR_PCIE_AER_OSC_SETTING_PROMPT            #language en-US "PCIe AER _OSC Setting"
+#string STR_PCIE_AER_OSC_SETTING_HELP              #language en-US "Enable/Disable Platform-wide PCIe Advanced Error Reporting via ACPI _OSC method"
+
 //---------------------------------------------------------------------------
 // Flash Protection configuration strings
 //---------------------------------------------------------------------------

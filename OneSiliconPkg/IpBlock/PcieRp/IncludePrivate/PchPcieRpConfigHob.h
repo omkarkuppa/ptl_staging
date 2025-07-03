@@ -31,7 +31,8 @@
 **/
 typedef struct {
 UINT32                       ClkreqIpcCmdSupport      : 1;
-UINT32                       Rsvd                     : 31;
+UINT32                       GlobalPcieAer            : 1;
+UINT32                       Rsvd                     : 30;
 PCH_PCIE_ROOT_PORT_CONFIG    RootPort[PCH_MAX_PCIE_ROOT_PORTS];
 PCH_PCIE_CLOCK               PcieClock[PCH_MAX_PCIE_CLOCKS];
 } PCIE_RP_CONFIG_HOB;

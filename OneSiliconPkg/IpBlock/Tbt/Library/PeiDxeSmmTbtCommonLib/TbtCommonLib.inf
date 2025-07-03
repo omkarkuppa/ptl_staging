@@ -38,6 +38,8 @@
   PciSegmentLib
   TimerLib
   BaseLib
+  HobLib
+  TcssInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -52,3 +54,5 @@
 [Sources]
   TbtCommonLib.c
 
+[Guids]
+  gPchPcieRpConfigHobGuid                             ## CONSUMES

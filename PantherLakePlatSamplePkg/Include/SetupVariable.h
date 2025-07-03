@@ -1806,9 +1806,10 @@ typedef struct {
                         PchHdAudioPostProcessingModCustomGuid5
   <b>Revision 3</b>:  - Add Usb31PortSpeed.
   <b>Revision 4</b>:  - Add PchXhciDwb.
+  <b>Revision 5</b>:  - Add GlobalPcieAer.
 **/
 
-#define PCH_SETUP_REVISION  4
+#define PCH_SETUP_REVISION  5
 
 typedef struct {
   UINT8   Revision;
@@ -2492,8 +2493,9 @@ typedef struct {
 
   // Usb Config
   UINT8   PchXhciDwb;
+  UINT8   GlobalPcieAer;
 
-  UINT8   Reserved1[21];
+  UINT8   Reserved1[20];
   CHAR16  PchHdAudioPostProcessingModCustomGuid4[GUID_CHARS_NUMBER];
   CHAR16  PchHdAudioPostProcessingModCustomGuid5[GUID_CHARS_NUMBER];
 } PCH_SETUP;

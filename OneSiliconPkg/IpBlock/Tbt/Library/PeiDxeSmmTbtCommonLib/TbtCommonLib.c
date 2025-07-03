@@ -29,6 +29,34 @@
 #include <Library/PciSegmentLib.h>
 #include <Library/TimerLib.h>
 #include <Library/BaseLib.h>
+#include <Library/TcssInfoLib.h>
+#include <PiDxe.h>
+#include <Library/HobLib.h>
+#include <Register/PcieSipRegs.h>
+#include <Register/TcPcieRpRegs.h>
+#include <PchPcieRpConfigHob.h>
+
+GLOBAL_REMOVE_IF_UNREFERENCED const PCIE_STS_REG_CHECK_LIST mPcieRpRegCheckList[PCIE_RP_TYPE_ENUM] =
+{
+  //
+  // Standalone PCIe RP CFG registers
+  //
+  {
+    {R_PCIE_CFG_SLSTS, B_PCIE_CFG_SLSTS_PDS                                                               },
+    {R_PCIE_CFG_PSTS,  B_PCIE_CFG_PSTS_SSE                                                                },
+    {R_PCIE_CFG_UES,   B_PCIE_CFG_UES_MT                                                                  },
+    {R_PCIE_CFG_RES,   B_PCIE_CFG_RES_ENR | B_PCIE_CFG_RES_MENR | B_PCIE_CFG_RES_FUF | B_PCIE_CFG_RES_FEMR}
+  },
+  //
+  // iTBT PCIe RP CFG registers
+  //
+  {
+    {R_TC_PCIE_RP_CFG_SLSTS, B_TC_PCIE_RP_CFG_SLSTS_PDS                                                                                 },
+    {R_TC_PCIE_RP_CFG_PSTS,  B_TC_PCIE_RP_CFG_PSTS_SSE                                                                                  },
+    {R_TC_PCIE_RP_CFG_UES,   B_TC_PCIE_RP_CFG_UES_MT                                                                                    },
+    {R_TC_PCIE_RP_CFG_RES,   B_TC_PCIE_RP_CFG_RES_ENR | B_TC_PCIE_RP_CFG_RES_MENR | B_TC_PCIE_RP_CFG_RES_FUF | B_TC_PCIE_RP_CFG_RES_FEMR}
+  }
+};
 
 /**
   Internal function to Wait for Tbt2PcieDone Bit.to Set or clear
@@ -456,4 +484,111 @@ ITbtUnsetHrForcePower (
 #else
   return EFI_UNSUPPORTED;
 #endif
+}
+
+/**
+  This function clears some of PCIe errors in PCIe root ports when detected.
+
+  @param[in] PcieRpSbdf  PCIe RP's segment:bus:device:function coordinates
+
+  @retval EFI_SUCCESS            - The function completes successfully
+  @retval EFI_INVALID_PARAMETER  - Invalid parameter.
+  **/
+EFI_STATUS
+EFIAPI
+ClearPcieRpErrors (
+  IN SBDF     PcieRpSbdf
+  )
+{
+  UINT64  RpBase;
+  UINT16  VendorId;
+  UINT16  SlotStatus;
+  UINT16  Data16;
+  UINT32  Data32;
+  UINT8   PcieRpType;
+
+  PcieRpType = (PcieRpSbdf.Dev == GetITbtPcieDevNumber ()) ? TCSS_PCIE_RP : STANDALONE_PCIE_RP;
+
+  RpBase     = PCI_SEGMENT_LIB_ADDRESS (PcieRpSbdf.Seg, PcieRpSbdf.Bus, PcieRpSbdf.Dev, PcieRpSbdf.Func, 0);
+  VendorId   = PciSegmentRead16 (RpBase);
+  SlotStatus = PciSegmentRead16 (RpBase + mPcieRpRegCheckList[PcieRpType].Slsts.RegOffset);
+  if (VendorId != 0xFFFF && (SlotStatus & mPcieRpRegCheckList[PcieRpType].Slsts.RegMask) != 0) {
+    Data16 = PciSegmentRead16 (RpBase + mPcieRpRegCheckList[PcieRpType].Psts.RegOffset);
+    Data16 &= mPcieRpRegCheckList[PcieRpType].Psts.RegMask;
+    if (Data16 != 0) {
+      DEBUG ((
+        DEBUG_ERROR,
+        "Signaled System Error detected at [%02x|%02x|%02x|%02x]\n",
+        PcieRpSbdf.Seg,
+        PcieRpSbdf.Bus,
+        PcieRpSbdf.Dev,
+        PcieRpSbdf.Func
+        ));
+      PciSegmentWrite16 (RpBase + mPcieRpRegCheckList[PcieRpType].Psts.RegOffset, Data16); // Clear the error
+    }
+
+    Data32 = PciSegmentRead32 (RpBase + mPcieRpRegCheckList[PcieRpType].Ues.RegOffset);
+    Data32 &= mPcieRpRegCheckList[PcieRpType].Ues.RegMask;
+    if (Data32 != 0) {
+      DEBUG ((
+        DEBUG_ERROR,
+        "Malformed TLP detected at [%02x|%02x|%02x|%02x]\n",
+        PcieRpSbdf.Seg,
+        PcieRpSbdf.Bus,
+        PcieRpSbdf.Dev,
+        PcieRpSbdf.Func
+        ));
+      PciSegmentWrite32 (RpBase + mPcieRpRegCheckList[PcieRpType].Ues.RegOffset, Data32); // Clear the error
+    }
+
+    Data32 = PciSegmentRead32 (RpBase + mPcieRpRegCheckList[PcieRpType].Res.RegOffset);
+    Data32 &= mPcieRpRegCheckList[PcieRpType].Res.RegMask;
+    if (Data32 != 0) {
+      DEBUG ((
+        DEBUG_ERROR,
+        "Root Errors (0x%x) detected at [%02x|%02x|%02x|%02x]\n",
+        Data32,
+        PcieRpSbdf.Seg,
+        PcieRpSbdf.Bus,
+        PcieRpSbdf.Dev,
+        PcieRpSbdf.Func
+        ));
+      PciSegmentWrite32 (RpBase + mPcieRpRegCheckList[PcieRpType].Res.RegOffset, Data32); // Clear the errors
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
+/**
+  This function chekcs whether global PCIe AER is enabled.
+
+  @retval TRUE            - Global PCIe AER is enabled.
+  @retval FALSE           - Global PCIe AER is disabled.
+**/
+BOOLEAN
+EFIAPI
+IsGlobalPcieAerEnabled (
+  VOID
+  )
+{
+  VOID                *HobPtr;
+  PCIE_RP_CONFIG_HOB  *PchPcieRpConfigHob;
+
+  //
+  // Get PCIE RP HOB
+  //
+  HobPtr = GetFirstGuidHob (&gPchPcieRpConfigHobGuid);
+  if (HobPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "Failed to get PchPcieRpConfigHob!\n"));
+    return TRUE;
+  }
+
+  PchPcieRpConfigHob = (PCIE_RP_CONFIG_HOB *) GET_GUID_HOB_DATA (HobPtr);
+
+  if (PchPcieRpConfigHob->GlobalPcieAer == 1) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }

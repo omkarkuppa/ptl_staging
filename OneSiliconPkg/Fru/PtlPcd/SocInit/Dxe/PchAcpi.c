@@ -492,6 +492,7 @@ PcieRpUpdateNvsArea (
     mPchNvsAreaProtocol.Area->ClockToRootPortMap[Index] = mPchPcieRpConfigHob->PcieClock[Index].Usage;
   }
   mPchNvsAreaProtocol.Area->ClkreqIpcCmdSupported = (UINT8)mPchPcieRpConfigHob->ClkreqIpcCmdSupport;
+  mPchNvsAreaProtocol.Area->GlobalPcieAer = (UINT8)mPchPcieRpConfigHob->GlobalPcieAer;
 }
 
 /**

@@ -55,8 +55,10 @@ Move OverrideEqualizationDefaults policy from CPU_PCIE_CONFIG to PCIE_ROOT_PORT_
 Added EqPhBypass polices to PCIE_ROOT_PORT_COMMON_CONFIG
 <b>Revision 8</b>:
 Deprecated EqPhBypass policies from PCIE_ROOT_PORT_COMMON_CONFIG
+<b>Revision 9</b>:
+Added GlobalPcieAer policy to PCH_PCIE_CONFIG
 */
-#define PCH_PCIE_CONFIG_REVISION  8
+#define PCH_PCIE_CONFIG_REVISION  9
 
 /*
  Making any setup structure change after code frozen
@@ -243,6 +245,8 @@ typedef struct {
   - Initial version.
   <b>Revision 2</b>:
   - Moved EnablePort8xhDecode policy to PCIE_COMMON_CONFIG
+  <b>Revision 3</b>:
+  - Added GlobalPcieAer
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;                   ///< Config Block Header
@@ -258,7 +262,8 @@ typedef struct {
   ///
   UINT8                             PchPciePort8xhDecodePortIndex;
   UINT8                             DmiPowerReduction;
-  UINT8                             RsvdBytes0[2];
+  UINT8                             GlobalPcieAer;
+  UINT8                             RsvdBytes0;
 
   ///
   /// This member describes whether the PCI Express Clock Gating for each root port

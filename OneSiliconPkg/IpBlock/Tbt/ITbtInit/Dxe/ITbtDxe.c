@@ -40,6 +40,7 @@
 #include <Library/DxeTbtDisBmeLib.h>
 #include <Library/ItbtPcieRpLib.h>
 #include <Library/MeUtilsLib.h>
+#include <Library/TcssInfoLib.h>
 #include <Protocol/TbtDisBmeProtocol.h>
 #include <Protocol/PlatformTseExcludeProtocol.h>
 #include <MeState.h>
@@ -48,16 +49,17 @@
 #include <TcssDataHob.h>
 #include <TcssInfo.h>
 #include <Register/HostDmaRegs.h>
+#include <Register/ItbtPcieRegs.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED ITBT_NVS_AREA_PROTOCOL                    mITbtNvsAreaProtocol;
 
 /**
-  DisableiTbtBmeCallBackFunction
+  DisableITbtBmeCallBackFunction
 
-  Disable BME on iTBT tree at ExitBootServices to hand off security of TBT hierarchies to the OS.
+  Disable BME on iTBT tree
 
-  @param[in] Event     - A pointer to the Event that triggered the callback.
-  @param[in] Context   - A pointer to private data registered with the callback function.
+  @param[in] Event     - @todo Unused and needs to be removed from next platform
+  @param[in] Context   - @todo Unused and needs to be removed from next platform
 **/
 VOID
 EFIAPI
@@ -74,7 +76,7 @@ DisableITbtBmeCallBackFunction (
   UINTN                     RpSegment;
   UINTN                     RpBus;
 
-  DEBUG((DEBUG_INFO, "[TBT] DisableITbtBmeCallBackFunction START\n"));
+  DEBUG((DEBUG_INFO, "[TBT] Disable iTBT BME Start\n"));
 
   Status      = EFI_SUCCESS;
   Index       = 0;
@@ -98,12 +100,11 @@ DisableITbtBmeCallBackFunction (
       RecursiveTbtHierarchyConfiguration (Sbdf);
   }
 
-  gBS->CloseEvent (Event);
-  DEBUG((DEBUG_INFO, "[TBT] DisableITbtBmeCallBackFunction END\n"));
+  DEBUG((DEBUG_INFO, "[TBT] Disable iTBT BME End\n"));
 }
 
 EFI_DISABLE_TBT_BME_PROTOCOL mDisableITbtBmeProtocol = {
-    DisableITbtBmeCallBackFunction,
+  DisableITbtBmeCallBackFunction,
 };
 
 /**
@@ -372,6 +373,51 @@ ITbtEndOfDxeCallback (
 }
 
 /**
+  This function clears some of PCIe errors in TCSS PCIe root ports when detected.
+**/
+VOID
+ClearTcPcieRpErrors (
+  VOID
+  )
+{
+  SBDF   PcieRpSbdf;
+  UINT8  RpIndex;
+
+  DEBUG((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  ZeroMem (&PcieRpSbdf, sizeof (SBDF));
+  for (RpIndex = 0; RpIndex < MAX_ITBT_PCIE_PORT; RpIndex++) {
+    PcieRpSbdf.Seg  = SA_SEG_NUM;
+    PcieRpSbdf.Bus  = ITBT_PCIE_BUS_NUM;
+    PcieRpSbdf.Dev  = (UINT32) GetITbtPcieDevNumber ();
+    PcieRpSbdf.Func = RpIndex;
+    ClearPcieRpErrors (PcieRpSbdf);
+  }
+}
+
+/**
+  ITbtExitBootServiceCallback
+
+  This is a callback function triggered by gEfiEventExitBootServicesGuid for iTBT.
+**/
+VOID
+EFIAPI
+ITbtExitBootServiceCallback (
+  IN EFI_EVENT    Event,
+  IN VOID         *Context
+  )
+{
+  //
+  // Disable BME on iTBT tree at ExitBootServices to hand off security of TBT hierarchies to OS.
+  //
+  DisableITbtBmeCallBackFunction (Event, Context);
+  if (IsGlobalPcieAerEnabled () == TRUE) {
+    ClearTcPcieRpErrors ();
+  }
+
+  gBS->CloseEvent (Event);
+}
+
+/**
   Initialize Thunderbolt(TM) SSDT ACPI tables
 
   @retval EFI_SUCCESS    ACPI tables are initialized successfully
@@ -471,20 +517,20 @@ ITbtDxeEntryPoint (
   }
 
   //
-  // Register a Exit Boot Service for disable iTBT BME
+  // Register a Exit Boot Service callback function for iTBT
   //
-  DEBUG ((DEBUG_INFO, "Register a Exit Boot Service for disable iTBT BME\n"));
+  DEBUG ((DEBUG_INFO, "Register a Exit Boot Service callback function for iTBT\n"));
 
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_CALLBACK,
-                  DisableITbtBmeCallBackFunction,
+                  ITbtExitBootServiceCallback,
                   NULL,
                   &gEfiEventExitBootServicesGuid,
                   &ExitBootServiceEvent
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to Register a Exit Boot Service for disable TBT BME, Status: %d\n", Status));
+    DEBUG ((DEBUG_ERROR, "Failed to Register a Exit Boot Service callback function for iTBT, Status: %d\n", Status));
     gBS->CloseEvent (ExitBootServiceEvent);
     goto Exit;
   }

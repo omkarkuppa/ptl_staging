@@ -226,10 +226,10 @@ InitializeDTbtSsdtAcpiTables (
 /**
   DisableDTbtBmeCallBackFunction
 
-  Disable BME on DTbt tree at ExitBootServices to hand off security of TBT hierarchies to the OS.
+  Disable BME on dTBT tree.
 
-  @param[in] Event     - A pointer to the Event that triggered the callback.
-  @param[in] Context   - A pointer to private data registered with the callback function.
+  @param[in] Event     - @todo Unused and needs to be removed from next platform
+  @param[in] Context   - @todo Unused and needs to be removed from next platform
 **/
 VOID
 EFIAPI
@@ -239,12 +239,12 @@ DisableDTbtBmeCallBackFunction (
   )
 {
   UINT8                     Index;
-  SBDF                      Sbdf = {0,0,0,0,0};
+  SBDF                      Sbdf = {0, 0, 0, 0, 0};
   DTBT_INFO_HOB             *DTbtInfoHob = NULL;
 
-  DEBUG((DEBUG_INFO, "[TBT] DisableDTbtBmeCallBackFunction START\n"));
+  DEBUG((DEBUG_INFO, "[TBT] Disable dTBT BME Start\n"));
 
-  Index       = 0;
+  Index = 0;
 
   //
   // Get DTbt INFO HOB
@@ -263,8 +263,7 @@ DisableDTbtBmeCallBackFunction (
         Sbdf.Bus  = (UINT32) DTbtInfoHob->DTbtControllerConfig[Index].PcieRpBus;
         Sbdf.Dev  = (UINT32) DTbtInfoHob->DTbtControllerConfig[Index].PcieRpDev;
         Sbdf.Func = (UINT32) DTbtInfoHob->DTbtControllerConfig[Index].PcieRpFunc;
-      }
-      else {
+      } else {
         continue;
       }
       RecursiveTbtHierarchyConfiguration (Sbdf);
@@ -274,12 +273,86 @@ DisableDTbtBmeCallBackFunction (
   }
 
 Exit:
+  DEBUG((DEBUG_INFO, "[TBT] Disable dTBT BME End\n"));
+}
+
+/**
+  This function clears some of PCIe errors in dTBT PCIe root ports when detected.
+**/
+VOID
+ClearDtbtPcieRpErrors (
+  VOID
+  )
+{
+  UINT8  Index;
+  SBDF   Sbdf;
+  DTBT_INFO_HOB  *DTbtInfoHob;
+
+  DTbtInfoHob = NULL;
+
+  DEBUG((DEBUG_INFO, "[TBT] Clear dTBT PCIe Errors Start\n"));
+
+  ZeroMem (&Sbdf, sizeof (SBDF));
+
+  //
+  // Get dTBT INFO HOB
+  //
+  DTbtInfoHob = (DTBT_INFO_HOB *) GetFirstGuidHob (&gDTbtInfoHobGuid);
+  if (DTbtInfoHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "Failed to get gDTbtInfoHob!\n"));
+    goto Exit;
+  }
+
+
+  for (Index = 0; Index < PcdGet8 (PcdBoardDTbtControllerNumber); Index++) {
+    DEBUG ((DEBUG_INFO, "DTbtInfoHob->DTbtControllerConfig[%d].PcieRpNumber: %d\n", Index, DTbtInfoHob->DTbtControllerConfig[Index].PcieRpNumber));
+
+    if (DTbtInfoHob->DTbtControllerConfig[Index].DTbtControllerEn == 1) {
+      if (IS_DTBT_RP_NUM_VALID (DTbtInfoHob->DTbtControllerConfig, Index)) {
+        Sbdf.Bus  = (UINT32) DTbtInfoHob->DTbtControllerConfig[Index].PcieRpBus;
+        Sbdf.Dev  = (UINT32) DTbtInfoHob->DTbtControllerConfig[Index].PcieRpDev;
+        Sbdf.Func = (UINT32) DTbtInfoHob->DTbtControllerConfig[Index].PcieRpFunc;
+        ClearPcieRpErrors (Sbdf);
+      } else {
+        continue;
+      }
+    }
+  }
+
+Exit:
+  DEBUG((DEBUG_INFO, "[TBT] Clear dTBT PCIe Errors End\n"));
+}
+
+/**
+  DTbtExitBootServiceCallback
+
+  This is a callback function triggered by gEfiEventExitBootServicesGuid for dTBT.
+
+  @param[in] Event     - A pointer to the Event that triggered the callback.
+  @param[in] Context   - A pointer to private data registered with the callback function.
+
+  **/
+VOID
+EFIAPI
+DTbtExitBootServiceCallback (
+  IN EFI_EVENT    Event,
+  IN VOID         *Context
+  )
+{
+  //
+  // Disable BME on dTBT tree at ExitBootServices to hand off security of TBT hierarchies to OS.
+  //
+  DisableDTbtBmeCallBackFunction (Event, Context);
+
+  if (IsGlobalPcieAerEnabled () == TRUE) {
+    ClearDtbtPcieRpErrors ();
+  }
+
   gBS->CloseEvent (Event);
-  DEBUG((DEBUG_INFO, "[TBT] DisableDTbtBmeCallBackFunction END\n"));
 }
 
 EFI_DISABLE_TBT_BME_PROTOCOL mDisableDTbtBmeProtocol = {
-    DisableDTbtBmeCallBackFunction,
+  DisableDTbtBmeCallBackFunction,
 };
 
 /**
@@ -811,17 +884,17 @@ DTbtDxeEntryPoint (
     //
     // Register a Exit Boot Service for disable DTbt BME
     //
-    DEBUG ((DEBUG_INFO, "Register a Exit Boot Service for disable DTbt BME\n"));
+    DEBUG ((DEBUG_INFO, "Register a Exit Boot Service callback function for dTBT\n"));
     Status = gBS->CreateEventEx (
                     EVT_NOTIFY_SIGNAL,
                     TPL_CALLBACK,
-                    DisableDTbtBmeCallBackFunction,
+                    DTbtExitBootServiceCallback,
                     NULL,
                     &gEfiEventExitBootServicesGuid,
                     &ExitBootServiceEvent
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to Register a Exit Boot Service for disable DTbt BME, Status: %d\n", Status));
+      DEBUG ((DEBUG_ERROR, "Failed to Register a Exit Boot Service callback function for dTBT, Status: %d\n", Status));
       gBS->CloseEvent (ExitBootServiceEvent);
       goto Exit;
     }
