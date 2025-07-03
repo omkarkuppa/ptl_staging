@@ -35,6 +35,7 @@
 #include <PcdSbPortIds.h>
 #include <UsbHandle.h>
 #include <ITbtInfoHob.h>
+#include <Library/PcdInfoLib.h>
 
 #ifdef IPSIM_ENABLE
 #include <stdio.h>
@@ -370,7 +371,11 @@ Usb3InstOnCreate (
   Usb3Inst->MmioBaseAddress = PCH_TEMP_BASE_ADDRESS;
 
   Usb3Inst->Usb2PortCount = 0;
-  Usb3Inst->Usb3LanesCount = 4;
+  if (IsWclPcd ()) {
+    Usb3Inst->Usb3LanesCount = 2;
+  } else {
+    Usb3Inst->Usb3LanesCount = 4;
+  }
 
   Usb3Inst->LtrEnable = FALSE;
   Usb3Inst->NdeSbEnable = FALSE;
