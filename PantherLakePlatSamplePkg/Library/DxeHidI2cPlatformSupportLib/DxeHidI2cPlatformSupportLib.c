@@ -73,12 +73,12 @@ HidI2cCheckInterrupt (
   static GPIOV2_PAD  sInterruptPad = 0;
 
   if (sInterruptPad == 0) {
-    sInterruptPad = (GPIOV2_PAD) PcdGet32 (PcdTouchpanel1IrqGpio);
+    sInterruptPad = (GPIOV2_PAD) PcdGet32 (PcdTouchpanelIrqGpio);
   }
 
   // Handle case when Pcd is not set
   if (sInterruptPad == 0) {
-    sInterruptPad = (GPIOV2_PAD) PcdGet32 (PcdTouchpanelIrqGpio);
+    sInterruptPad = (GPIOV2_PAD) PcdGet32 (PcdTouchpanel1IrqGpio);
     if (sInterruptPad == 0) {
       return FALSE;
     }
