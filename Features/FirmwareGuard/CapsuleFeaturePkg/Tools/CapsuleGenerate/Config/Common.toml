@@ -359,6 +359,56 @@ Note:
     Default = '3DD84775-EC79-4ECB-8404-74DE030C3F77'
 
 #
+# GbE NVM Firmware sub-section
+#
+[[Firmware.Gbe]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'gbecap'
+  CapFilePrefix  = 'FmpGbE'
+  CapFilePostfix = ''
+
+  [Firmware.Gbe.Command]
+    Title          = 'Build GbE NVM capsule update file'
+    Description    = '''
+To build the GbE NVM Capsule File.
+Support two methods
+  (1) Use -fit and -ifwi to decompose the GbE NVM image.
+  (2) Use -gbe to assign the GbE NVM image.
+    '''
+    SubDescription = '''
+Note:
+  (1) -gbe have the high priority to override the GbE NVM image that decompose from IFWI.
+    '''
+
+  [Firmware.Gbe.Command.-fit]
+    Compulsory  = false
+    Description = 'Path of the FIT tool. (Should use with "-ifwi")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Gbe.Command.-ifwi]
+    Compulsory  = false
+    Description = 'Path of IFWI image. (Should use with "-fit")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Gbe.Command.-gbe]
+    Compulsory  = false
+    Description = 'Path of GbE NVM image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Gbe.Command.-gbelsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on GbE NVM image.'
+    Syntax      = 'DOT_FORMAT'
+    Default     = '0.0'
+
+  [Firmware.Gbe.Guid]
+    Default = 'A2B95239-0B58-44A6-A144-02004E959F8B'
+
+#
 # IshPdt Firmware sub-section
 #
 [[Firmware.IshPdt]]

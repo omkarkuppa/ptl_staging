@@ -1,9 +1,9 @@
 ## @file
-#  Python module package initial files for Intel.
+#  Python module package initial files for GbE NVM Firmware sub-package.
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2023 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -20,13 +20,14 @@
 #
 ##
 
-from CapsuleCommon.Intel.Bios import *
-from CapsuleCommon.Intel.BiosGuard import *
-from CapsuleCommon.Intel.BtGAcm import *
-from CapsuleCommon.Intel.Ec import *
-from CapsuleCommon.Intel.Foxville import *
-from CapsuleCommon.Intel.Fsp import *
-from CapsuleCommon.Intel.GbE import *
-from CapsuleCommon.Intel.Ucode import *
+from typing import List
 
-from CapsuleCommon.Intel.ConstantLib import *
+from CapsuleGenerate.Firmwares.GbEFirmware.GbECapsuleVersion import *
+from CapsuleGenerate.Firmwares.GbEFirmware.GbEFmpDevice import *
+
+# Expose variables / methods / objects.
+__all__: List[str] = [
+    'GBE_DEVICE_NAME',
+    'GBE_DEVICE_NAME_UPPER',
+    'GbEFmpDevice',
+    ]

@@ -1,16 +1,16 @@
 ## @file
-#  Capsule version object for Foxville firmware.
+#  Capsule version object for GbE NVM firmware.
 #
 #  [Rule]
-#  For the Foxville version (M.mmm) is 2.025.
-#  M - Major, mmm - Minor.
+#  For the GbE NVM version (MM.mm) is 1.32.
+#  MM - Major, mm - Minor.
 #
-#  Version Represent    : 2025
-#  Dot Version Represent: 0.2.02.5
+#  Version Represent    : 0132
+#  Dot Version Represent: 0.0.1.32
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2024 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -33,25 +33,25 @@ from CapsuleCommon import *
 
 from CapsuleGenerate.Model.CapsuleVersion import *
 
-FOXVILLE_VERSION_REGEX: str = '^([0-9]+)[.]([0-9]+)+$'
+GBE_VERSION_REGEX: str = '^([0-9]+)[.]([0-9]+)+$'
 
-class FoxvilleCapsuleVersion (CapsuleVersion):
+class GbECapsuleVersion (CapsuleVersion):
     def __init__ (
         self,
-        Header   : FoxvilleFwHdr = None,
-        DotVerStr: str           = None,
+        Header      : GbeNvmHdr = None,
+        HexDotVerStr: str       = None,
         ) -> None:
         """ Class to provide the capsule needed version information.
 
         Note:
-            Caller should be input Header or DotVerStr.
+            Caller should be input Header or HexDotVerStr.
 
         Args:
-            Header (FoxvilleFwHdr, optional):
-                Foxville header object. Should be FoxvilleFwHdr instance.
+            Header (GbeNvmHdr, optional):
+                GbeNvmHdr header object. Should be GbeNvmHdr instance.
                 Defaults to None.
-            DotVerStr (str, optional):
-                Caller input the dot version string format. (Like M.mmm)
+            HexDotVerStr (str, optional):
+                Caller input the dot version string format. (Like MM.mm)
                 Defaults to None.
 
         Raises:
@@ -60,12 +60,12 @@ class FoxvilleCapsuleVersion (CapsuleVersion):
         Returns:
             None.
         """
-        self.__Header   : FoxvilleFwHdr = Header
-        self.__DotVerStr: str           = DotVerStr
-        self.__InputMode: int           = self.__GetInputMode ()
+        self.__Header      : GbeNvmHdr = Header
+        self.__HexDotVerStr: str       = HexDotVerStr
+        self.__InputMode   : int       = self.__GetInputMode ()
 
-        self.__UpperByte: int = int ()
-        self.__LowerByte: int = int ()
+        self.__MajorVersion: int = int ()
+        self.__MinorVersion: int = int ()
 
         self.__PreCheck ()
 
@@ -92,67 +92,61 @@ class FoxvilleCapsuleVersion (CapsuleVersion):
 
         FwHeaderInputCondition: bool = \
             (self.__Header is not None) and \
-            (isinstance (self.__Header, FoxvilleFwHdr))
-        DotVerInputCondition  : bool = \
-            (self.__DotVerStr is not None) and \
-            (isinstance (self.__DotVerStr, str))
+            (isinstance (self.__Header, GbeNvmHdr))
+        HexVerInputCondition  : bool = \
+            (self.__HexDotVerStr is not None) and \
+            (isinstance (self.__HexDotVerStr, str))
 
-        if FwHeaderInputCondition and DotVerInputCondition:
+        if FwHeaderInputCondition and HexVerInputCondition:
             DEBUG (
               DEBUG_WARN,
-              'Foxville Header and HEX version assigned in same time. ',
+              'GbE NVM Header and HEX version assigned in same time. ',
               'Valid value would choose by the order.'
               )
 
         if FwHeaderInputCondition:
             DEBUG (DEBUG_TRACE, "Input the version information via Header.")
             InputMode = FW_HEADER_INPUT_TYPE
-        elif DotVerInputCondition:
+        elif HexVerInputCondition:
             DEBUG (DEBUG_TRACE, "Input the version information via Value.")
             InputMode = DOT_VERSION_HEX_INPUT_TYPE
         else:
-            ErrorException (f'Need input valid Foxville FW version information.')
+            ErrorException (f'Need input valid GbE NVM version information.')
 
         return InputMode
 
-    def __InitFoxvilleVerInfo (self) -> None:
-        """ Initial the Foxville version information.
+    def __InitGbeVerInfo (self) -> None:
+        """ Initial the GbE version information.
 
         Args:
             None.
 
         Raises:
             ValueError:
-                Invalid Foxville version format.
+                Invalid GbE version format.
 
         Returns:
             None.
         """
-        Regex    : Pattern = re.compile (FOXVILLE_VERSION_REGEX)
-        VerStr   : str     = None
-        UpperByte: int     = None
-        LowerByte: int     = None
+        Regex   : Pattern = re.compile (GBE_VERSION_REGEX)
+        MajorVer: int     = None
+        MinorVer: int     = None
 
         if self.__InputMode == FW_HEADER_INPUT_TYPE:
-            VerStr = self.__Header.DevStarterVer
+            MajorVer = HexToDec (self.__Header.MajorVersion)
+            MinorVer = HexToDec (self.__Header.MinorVersion)
         elif self.__InputMode == DOT_VERSION_HEX_INPUT_TYPE:
-            if not (Regex.match (self.__DotVerStr)):
+            if not (Regex.match (self.__HexDotVerStr)):
                 raise ValueError (
-                        f'Invalid Foxville version [{self.__DotVerStr}]. '
-                        'The format should be M.mmm in digit.'
+                        f'Invalid GbE version [{self.__HexDotVerStr}]. '
+                        'The format should be MM.mm in digit.'
                         )
 
-            VerStrList = self.__DotVerStr.split ('.')
-            VerStr     = ''.join ([
-                              ZeroPadding (VerStrList[0], Size = 1),
-                              ZeroPadding (VerStrList[1], Size = 3),
-                              ])
+            MajorVer = HexToDec (self.__HexDotVerStr.split ('.')[0])
+            MinorVer = HexToDec (self.__HexDotVerStr.split ('.')[1])
 
-        UpperByte = (HexToDec (VerStr) & 0xFF00) >> 8
-        LowerByte = (HexToDec (VerStr) & 0x00FF)
-
-        self.__UpperByte = UpperByte
-        self.__LowerByte = LowerByte
+        self.__MajorVersion = MajorVer
+        self.__MinorVersion = MinorVer
 
     def __PreCheck (self) -> None:
         """ Check the input argument is valid.
@@ -169,7 +163,7 @@ class FoxvilleCapsuleVersion (CapsuleVersion):
         #
         # Initial the BIOS version
         #
-        self.__InitFoxvilleVerInfo ()
+        self.__InitGbeVerInfo ()
 
     def GetDecVersion (self) -> str:
         """ Return the firmware version format in DEC style. (32-bit)
@@ -200,16 +194,12 @@ class FoxvilleCapsuleVersion (CapsuleVersion):
                 String to represent the HEX version.
         """
         return ''.join ([
-                    FormatHex (self.__UpperByte, IsPadding = True, PaddingSize = 2, IsPrefix = False),
-                    FormatHex (self.__LowerByte, IsPadding = True, PaddingSize = 2, IsPrefix = False),
+                    FormatHex (self.__MajorVersion, IsPadding = True, PaddingSize = 2, IsPrefix = False),
+                    FormatHex (self.__MinorVersion, IsPadding = True, PaddingSize = 2, IsPrefix = False),
                     ])
 
     def GetDecDotVersion (self) -> str:
         """ Return the firmware version format in DEC dot style.
-
-        Note:
-            The version of Foxville image is BCD format.
-            Hence, the output of DEC dot version should covert into HEX.
 
         Args:
             None.
@@ -221,20 +211,7 @@ class FoxvilleCapsuleVersion (CapsuleVersion):
             str:
                 String to represent the DEC dot format version.
         """
-        Segment2: int = None
-        Segment3: int = None
-        Segment4: int = None
-
-        Segment2 = (self.__UpperByte & 0xF0) >> 4
-        Segment3 = ((self.__UpperByte & 0x0F) << 4) | ((self.__LowerByte & 0xF0) >> 4)
-        Segment4 = (self.__LowerByte & 0x0F)
-
-        return '.'.join ([
-                     '0',
-                     ZeroPadding (DecToHex (Segment2), 1),
-                     ZeroPadding (DecToHex (Segment3), 2),
-                     ZeroPadding (DecToHex (Segment4), 1),
-                     ])
+        return self.GetHexDotVersion ()
 
     def GetHexDotVersion (self) -> str:
         """ Return the firmware version format in HEX dot style.
@@ -249,24 +226,16 @@ class FoxvilleCapsuleVersion (CapsuleVersion):
             str:
                 String to represent the HEX dot format version.
         """
-        Segment2: int = None
-        Segment3: int = None
-        Segment4: int = None
-
-        Segment2 = (self.__UpperByte & 0xF0) >> 4
-        Segment3 = ((self.__UpperByte & 0x0F) << 4) | ((self.__LowerByte & 0xF0) >> 4)
-        Segment4 = (self.__LowerByte & 0x0F)
-
         return '.'.join ([
                      '0',
-                     ZeroPadding (DecToHex (DecToHex (Segment2)), 1),
-                     ZeroPadding (DecToHex (DecToHex (Segment3)), 2),
-                     ZeroPadding (DecToHex (DecToHex (Segment4)), 1),
+                     '0',
+                     FormatHex (self.__MajorVersion, IsPadding = True, PaddingSize = 2, IsPrefix = False),
+                     FormatHex (self.__MinorVersion, IsPadding = True, PaddingSize = 2, IsPrefix = False),
                      ])
 
 #
 # Expose variables / methods / objects.
 #
 __all__: List[str] = [
-    'FoxvilleCapsuleVersion',
+    'GbECapsuleVersion',
     ]

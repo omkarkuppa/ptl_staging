@@ -1,9 +1,9 @@
 ## @file
-#  FMP device instance for Foxville firmware.
+#  FMP device instance for GbE NVM firmware.
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2024 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -29,51 +29,49 @@ from CapsuleGenerate.Const.ConfigFile import *
 from CapsuleGenerate.Model.FmpDevice import *
 
 from CapsuleGenerate.Firmwares.CommonLib import *
-from CapsuleGenerate.Firmwares.FoxvilleFirmware.FoxvilleCapsuleVersion import *
+from CapsuleGenerate.Firmwares.GbEFirmware.GbECapsuleVersion import *
 
 #
 # Pre-defined variable of the FMP instance.
 #
-FOXVILLE_DEVICE_NAME      : str  = 'Foxville'
-FOXVILLE_DEVICE_NAME_UPPER: str  = FOXVILLE_DEVICE_NAME.upper ()
-FOXVILLE_FIRMWARE_CONFIG  : dict = gFmpFirmwareInfo[FOXVILLE_DEVICE_NAME]
+GBE_DEVICE_NAME      : str  = 'Gbe'
+GBE_DEVICE_NAME_UPPER: str  = GBE_DEVICE_NAME.upper ()
+GBE_FIRMWARE_CONFIG  : dict = gFmpFirmwareInfo[GBE_DEVICE_NAME]
 
 #
 # Build operation version control.
 #
 BUILD_OP_VER: Union[None, int] = None
 
-FOXVILLE_BUILD_OP_VER_1: int = 1
+GBE_BUILD_OP_VER_1: int = 1
 
 #
 # Generic-defined.
 #
-if FOXVILLE_FIRMWARE_CONFIG is not None:
-    CAP_FILE_PREFIX : str  = FOXVILLE_FIRMWARE_CONFIG[CAP_FILE_PREFIX_KEY]
-    CAP_FILE_POSTFIX: str  = FOXVILLE_FIRMWARE_CONFIG[CAP_FILE_POSTFIX_KEY]
-    GUID_DATA       : dict = FOXVILLE_FIRMWARE_CONFIG[FMP_GUID_SECTION_KEY]
-    BUILD_OP_VER    : int  = FOXVILLE_FIRMWARE_CONFIG[FW_VERSION_KEY]
+if GBE_FIRMWARE_CONFIG is not None:
+    CAP_FILE_PREFIX : str  = GBE_FIRMWARE_CONFIG[CAP_FILE_PREFIX_KEY]
+    CAP_FILE_POSTFIX: str  = GBE_FIRMWARE_CONFIG[CAP_FILE_POSTFIX_KEY]
+    GUID_DATA       : dict = GBE_FIRMWARE_CONFIG[FMP_GUID_SECTION_KEY]
+    BUILD_OP_VER    : int  = GBE_FIRMWARE_CONFIG[FW_VERSION_KEY]
 
 #
 # Default FMP instance should define as the Null one.
 #
-class Foxville (FmpDeviceNull):
+class GbE (FmpDeviceNull):
     def __init__ (self, *Args, **KwArgs):
-        DEBUG (DEBUG_WARN, f'Foxville FMP instance is not implemented.')
-
+        DEBUG (DEBUG_WARN, f'GbE FMP instance is not implemented.')
 #
 # Override with different build operation.
 #
-if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
+if (BUILD_OP_VER == GBE_BUILD_OP_VER_1):
     #
     # FMP Device specific build command
     #
-    KEYWORD_CMD_FOXVILLE_IMG: str = '-foxville'
-    KEYWORD_CMD_FOXVILLE_LSV: str = '-foxvillelsv'
+    KEYWORD_CMD_GBE_LSV : str = '-gbelsv'
 
-    class Foxville (object):
+    class GbE (object):
         def __init__ (self, Params: Dict[str, Any]) -> None:
-            """ Class for the FMP device instance. (Foxville)
+            """ Class for the FMP device instance. (GbE NVM)
 
             Args:
                 Params (Dict[str, Any]):
@@ -90,21 +88,27 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
             #
             # Initial the parameter
             #
-            self.__FoxvillePath: str = AbsPath (Params[KEYWORD_CMD_FOXVILLE_IMG])
-            self.__FoxvilleLsv : str = self.__Params[KEYWORD_CMD_FOXVILLE_LSV]
+            self.__GbePath: str = AbsPath (Params[KEYWORD_CMD_GBE_IMG])
+            self.__GbeLsv : str = self.__Params[KEYWORD_CMD_GBE_LSV]
             self.__PreCheck ()
 
-            self.__Buffer   : ByteBuffer          = self.__GetImageBuffer ()
-            self.__HdrParser: FoxvilleFwHdrParser = FoxvilleFwHdrParser (self.__Buffer)
-            self.__BufferHdr: FoxvilleFwHdr       = self.__HdrParser.Header
+            self.__Buffer   : ByteBuffer        = self.__GetImageBuffer ()
 
-            #
-            # Get the version information for Foxville.
-            #
-            self.__FoxvilleCapVer: FoxvilleCapsuleVersion = \
-                FoxvilleCapsuleVersion (Header = self.__BufferHdr)
-            self.__FoxvilleCapLsv: FoxvilleCapsuleVersion = \
-                FoxvilleCapsuleVersion (DotVerStr = self.__FoxvilleLsv)
+            self.__Buffer   : ByteBuffer    = self.__GetImageBuffer ()
+            self.__BufferHdr: GbeNvmHdrParser = \
+                GbeNvmHdrParser (
+                  Buffer = self.__Buffer,
+                  ).Header
+
+            self.__GbeCapVer: GbECapsuleVersion = \
+                GbECapsuleVersion (
+                  Header = self.__BufferHdr,
+                  )
+
+            self.__GbeCapLsv: GbECapsuleVersion = \
+                GbECapsuleVersion (
+                  HexDotVerStr = self.__GbeLsv,
+                  )
 
             self.__Payload: ByteBuffer = self.__GetCapsulePayload ()
 
@@ -119,21 +123,29 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
 
             Raises:
                 ValueError:
-                    (1) Foxville firmware not assigned.
-                    (2) Caller input the Foxville firmware as ignore.
+                    (1) GbE NVM image not assigned.
+                    (2) Caller input the GbE NVM image as ignore.
 
             Returns:
                 None.
             """
             CheckPathList: List[str] = [
-                self.__FoxvillePath,
+                self.__GbePath,
                 ]
 
-            if self.__FoxvillePath:
-                DEBUG (DEBUG_TRACE, f'Assigned the Foxville FW image.')
-                if IsFwImageIgnored (self.__FoxvillePath):
+            if not ((IsIfwiDecomposed (self.__Params)) or (self.__GbePath)):
+                raise ValueError (
+                        'Please at least input '
+                        '(1) -ifwi & -fit or '
+                        '(2) -gbe '
+                        'to assign the GbE NVM image.'
+                        )
+
+            if self.__GbePath:
+                DEBUG (DEBUG_TRACE, f'Assigned the GbE NVM image.')
+                if IsFwImageIgnored (self.__GbePath):
                     raise ValueError (
-                            f'Foxville FW can not ignore when building Foxville capsule.'
+                            f'GbE NVM image can not ignore when building GbE NVM capsule.'
                             )
 
                 CheckFileListExist (CheckPathList)
@@ -153,14 +165,14 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
             """
             Buffer: Union[None, ByteBuffer] = None
 
-            if self.__FoxvillePath:
+            if self.__GbePath:
                 DEBUG (
                   DEBUG_TRACE,
-                  f'User assign the Foxville path: {self.__FoxvillePath}'
+                  f'User assign the GbE NVM image path: {self.__GbePath}'
                   )
-                CopyFile (self.__FoxvillePath, FOXVILLE_IMG_FILE_PATH)
+                CopyFile (self.__GbePath, GBE_IMG_FILE_PATH)
 
-            Buffer = ByteBuffer (FOXVILLE_IMG_FILE_PATH)
+            Buffer = ByteBuffer (GBE_IMG_FILE_PATH)
 
             return Buffer
 
@@ -220,7 +232,7 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
                     str:
                         The FMP firmware device name.
             """
-            return FMP_SUCCESS, FOXVILLE_DEVICE_NAME
+            return FMP_SUCCESS, GBE_DEVICE_NAME
 
         def GetCapsuleFileName (self) -> Tuple[int, str]:
             """ Return the capsule filename. (Without extension)
@@ -241,7 +253,7 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
             CapFileNameList: List[str] = [
                 PLATFORM_PREFIX_NAME,
                 CAP_FILE_PREFIX,
-                self.__FoxvilleCapVer.GetHexVersion (),
+                self.__GbeCapVer.GetDecDotVersion (),
                 CAP_FILE_POSTFIX,
                 ]
 
@@ -283,7 +295,7 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
                     int:
                         The UINT32 value to represent the firmware version.
             """
-            return FMP_SUCCESS, ToInt (self.__FoxvilleCapVer.GetDecVersion ())
+            return FMP_SUCCESS, ToInt (self.__GbeCapVer.GetDecVersion ())
 
         def GetFwImageLsv (self) -> Tuple[int, int]:
             """ Return the firmware image LSV value within capsule.
@@ -301,7 +313,7 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
                     int:
                         The UINT32 value to represent the firmware LSV.
             """
-            return FMP_SUCCESS, ToInt (self.__FoxvilleCapLsv.GetDecVersion ())
+            return FMP_SUCCESS, ToInt (self.__GbeCapLsv.GetDecVersion ())
 
         def GetFwImageGuid (self) -> Tuple[int, uuid.UUID]:
             """ Return the GUID(ImageTypeId) number of firmware image.
@@ -385,7 +397,7 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
                     str:
                         The firmware image version in dot format.
             """
-            return FMP_SUCCESS, self.__FoxvilleCapVer.GetDecDotVersion ()
+            return FMP_SUCCESS, self.__GbeCapVer.GetDecDotVersion ()
 
         def GetCapsuleDescription (self) -> Tuple[int, str]:
             """ Return the description of firmware image.
@@ -418,6 +430,6 @@ if (BUILD_OP_VER == FOXVILLE_BUILD_OP_VER_1):
             return FMP_SUCCESS, ' '.join ([
                                       Vendor,
                                       PLATFORM_FULL_NAME,
-                                      FOXVILLE_DEVICE_NAME_UPPER,
+                                      GBE_DEVICE_NAME_UPPER,
                                       VerStr,
                                       ])

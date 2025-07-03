@@ -484,6 +484,10 @@ FW_COMPONENT_DICT: dict = {
         BLD_OP_FLOW_KEY: StandaloneCapBuild,
         FW_FMP_OBJ_KEY : Ec,
         },
+    GBE_DEVICE_NAME: {
+        BLD_OP_FLOW_KEY: StandaloneCapBuild,
+        FW_FMP_OBJ_KEY : GbE,
+        },
     ISH_PDT_DEVICE_NAME: {
         BLD_OP_FLOW_KEY: StandaloneCapBuild,
         FW_FMP_OBJ_KEY : IshPdt,
@@ -544,6 +548,10 @@ BLD_ALL_CAP_FMP_DEVICE_NAME_DICT: dict = {
     EC_DEVICE_NAME        : {
         KEY_IS_IMAGE_CHECK: True,
         KEY_IMAGE_PATH    : gKeywordArgv.get (KEYWORD_CMD_EC_IMG, None),
+        },
+    GBE_DEVICE_NAME       : {
+        KEY_IS_IMAGE_CHECK: True,
+        KEY_IMAGE_PATH    : gKeywordArgv.get (KEYWORD_CMD_GBE_IMG, None),
         },
     ME_DEVICE_NAME        : {
         KEY_IS_IMAGE_CHECK: True,

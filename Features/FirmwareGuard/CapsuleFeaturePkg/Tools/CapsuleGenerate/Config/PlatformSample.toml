@@ -59,6 +59,10 @@ Title = "Configuration file - TOML for PlatformSample Platform"
     Version   = 1
     IsEnabled = true
 
+  [Firmware.Gbe]
+    Version   = 1
+    IsEnabled = true
+
   [Firmware.IshPdt]
     Version   = 1
     IsEnabled = true

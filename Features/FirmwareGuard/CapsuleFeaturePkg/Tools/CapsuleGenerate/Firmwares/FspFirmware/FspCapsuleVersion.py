@@ -4,11 +4,11 @@
 #  [Rule]
 #  FSP Version
 #  ---------------------
-#  For the FSP version (MM.mm.RRRR.BBBB) is 02.11.0024.4721 (HEX)
+#  For FSP version (MM.mm.RRRR.BBBB) is 02.11.0024.4721 (HEX) in BCD.
 #  MM - Major, mm - Minor, RRRR - Revision, BBBB - Build
 #
 #  Version Conversion   : 00244721 (HEX) -> 2377505 (DEC) [RRRRBBBB]
-#  Dot Version Represent: 02.11.0024.4721 (HEX) -> 02.17.36.18209 (DEC)
+#  Dot Version Represent: 02.11.0024.4721 (DEC) -> 02.11.18.1271 (HEX)
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -35,7 +35,7 @@ from CapsuleCommon import *
 
 from CapsuleGenerate.Model.CapsuleVersion import *
 
-FSP_VERSION_REGEX: str = r'^([A-Fa-f0-9]){1,2}[.]([A-Fa-f0-9]){1,2}[.]([A-Fa-f0-9]){1,4}[.]([A-Fa-f0-9]){1,4}$'
+FSP_VERSION_REGEX: str = r'^([0-9]){1,2}[.]([0-9]){1,2}[.]([0-9]){1,4}[.]([0-9]){1,4}$'
 
 class FspCapsuleVersion (CapsuleVersion):
     def __init__ (
@@ -239,6 +239,10 @@ class FspCapsuleVersion (CapsuleVersion):
     def GetDecDotVersion (self) -> str:
         """ Return the firmware version format in DEC dot style.
 
+        Note:
+            The version of FSP image is BCD format.
+            Hence, the output of DEC dot version should covert into HEX.
+
         Args:
             None.
 
@@ -255,10 +259,10 @@ class FspCapsuleVersion (CapsuleVersion):
         RevStr      : str = None
         BuildStr    : str = None
 
-        MajorStr = ZeroPadding (String = str (self.__MajorVer), Size = 2)
-        MinorStr = ZeroPadding (String = str (self.__MinorVer), Size = 2)
-        RevStr   = ZeroPadding (String = str (self.__RevVer),   Size = 4)
-        BuildStr = ZeroPadding (String = str (self.__BuildVer), Size = 4)
+        MajorStr = ZeroPadding (String = DecToHex (self.__MajorVer), Size = 2)
+        MinorStr = ZeroPadding (String = DecToHex (self.__MinorVer), Size = 2)
+        RevStr   = ZeroPadding (String = DecToHex (self.__RevVer),   Size = 4)
+        BuildStr = ZeroPadding (String = DecToHex (self.__BuildVer), Size = 4)
 
         DecDotVerStr = '.'.join ([
                                 MajorStr,
@@ -288,10 +292,10 @@ class FspCapsuleVersion (CapsuleVersion):
         RevStr      : str = None
         BuildStr    : str = None
 
-        MajorStr = ZeroPadding (String = DecToHex (self.__MajorVer), Size = 2)
-        MinorStr = ZeroPadding (String = DecToHex (self.__MinorVer), Size = 2)
-        RevStr   = ZeroPadding (String = DecToHex (self.__RevVer),   Size = 4)
-        BuildStr = ZeroPadding (String = DecToHex (self.__BuildVer), Size = 4)
+        MajorStr = ZeroPadding (String = DecToHex (DecToHex (self.__MajorVer)), Size = 2)
+        MinorStr = ZeroPadding (String = DecToHex (DecToHex (self.__MinorVer)), Size = 2)
+        RevStr   = ZeroPadding (String = DecToHex (DecToHex (self.__RevVer)),   Size = 4)
+        BuildStr = ZeroPadding (String = DecToHex (DecToHex (self.__BuildVer)), Size = 4)
 
         HexDotVerStr = '.'.join ([
                                 MajorStr,

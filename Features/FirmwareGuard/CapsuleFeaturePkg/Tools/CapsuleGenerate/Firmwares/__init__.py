@@ -22,6 +22,7 @@
 
 from CapsuleGenerate.Firmwares.BiosFirmware import *
 from CapsuleGenerate.Firmwares.EcFirmware import *
+from CapsuleGenerate.Firmwares.GbEFirmware import *
 from CapsuleGenerate.Firmwares.IshPdtFirmware import *
 from CapsuleGenerate.Firmwares.MeFirmware import *
 

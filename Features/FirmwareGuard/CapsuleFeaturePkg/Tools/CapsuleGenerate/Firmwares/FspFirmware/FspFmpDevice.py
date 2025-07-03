@@ -149,8 +149,8 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
             #
             self.__FspCapVer   : FspCapsuleVersion = \
                 FspCapsuleVersion (
-                    VersionInfo = self.__BufferVer,
-                    )
+                  VersionInfo = self.__BufferVer,
+                  )
 
             self.__FspCapLsv   : FspCapsuleVersion =\
                 FspCapsuleVersion (
@@ -446,7 +446,7 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
                 CAP_FILE_PREFIX,
                 self.__BiosType,
                 self.__BuildType,
-                self.__FspCapVer.GetHexDotVersion (),
+                self.__FspCapVer.GetDecDotVersion (),
                 CAP_FILE_POSTFIX,
                 ]
 
@@ -616,7 +616,9 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
             if Status != FMP_SUCCESS:
                 ErrorException (f'Failed to get the vendor name.')
 
-            VerStr = self.__FspCapVer.GetHexDotVersion ()
+            Status, VerStr = self.GetCapsuleString ()
+            if Status != FMP_SUCCESS:
+                ErrorException (f'Failed to get the capsule string.')
 
             return FMP_SUCCESS, ' '.join ([
                                       Vendor,

@@ -44,6 +44,8 @@ from CapsuleGenerate.Firmwares.BiosFirmware.ExtBiosFmpDevice \
     import EXT_BIOS_DEVICE_NAME, ExtendedBios
 from CapsuleGenerate.Firmwares.EcFirmware.EcFmpDevice \
     import EC_DEVICE_NAME, Ec
+from CapsuleGenerate.Firmwares.GbEFirmware.GbEFmpDevice \
+    import GBE_DEVICE_NAME, GbE
 from CapsuleGenerate.Firmwares.IshPdtFirmware.IshPdtFmpDevice \
     import ISH_PDT_DEVICE_NAME, IshPdt
 from CapsuleGenerate.Firmwares.MeFirmware.MeFmpDevice \
@@ -97,6 +99,11 @@ __all__: List[str] = [
     #
     'EC_DEVICE_NAME',
     'Ec',
+    #
+    # GbE NVM FW
+    #
+    'GBE_DEVICE_NAME',
+    'GbE',
     #
     # ISH PDT FW
     #
