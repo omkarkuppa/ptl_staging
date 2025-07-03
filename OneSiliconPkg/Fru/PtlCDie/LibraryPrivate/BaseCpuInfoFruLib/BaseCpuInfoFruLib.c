@@ -46,6 +46,7 @@
 STATIC CONST CHAR8 mCpuFamilyString[] = "PantherLake";
 STATIC CONST CHAR8 mCpuFamilyStringWcl[] = "WildcatLake";
 STATIC CHAR8 mPtlSocketTypeString[] = "BGA2540";
+STATIC CHAR8 mWclSocketTypeString[] = "BGA1516";
 
 #define NOCARE 0xFF
 
@@ -1065,7 +1066,7 @@ GetSocketTypeFru (
       return mPtlSocketTypeString;
     // Reserve for WCL
     case CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE:
-      return NULL;
+      return mWclSocketTypeString;
     default:
       return NULL;
   }
