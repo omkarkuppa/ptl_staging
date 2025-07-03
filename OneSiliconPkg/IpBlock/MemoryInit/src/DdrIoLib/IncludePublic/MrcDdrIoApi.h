@@ -400,6 +400,25 @@ typedef struct {
   INT64  GetSetDccSamples;
 } MRC_DATA_PI_LIN_SAVE;
 
+// AUTO-GENERATED DDR5 TABLE DECLARATIONS START
+// AUTO-GENERATED CODE
+typedef struct {
+  INT8 cpu_ron;
+  INT8 dq_tco;
+  INT8 dq_odt;
+  INT8 rxtap0;
+  INT8 rxtap1;
+  INT8 ctle_r;
+  INT8 ctle_c;
+  INT8 ctle_rcmn;
+  INT8 ctle_dccmn;
+  INT8 ctle_eq;
+  INT8 ctle_tailctl;
+} NnFlexPhyDdr5Params;
+
+extern const NnFlexPhyDdr5Params NnFlexPhyInitialSettingsDdr5[];
+// AUTO-GENERATED DDR5 TABLE DECLARATIONS END
+
 /// Functions
 
 MrcStatus
@@ -3129,7 +3148,25 @@ MrcGetTxDqNmosOnlyValue (
   @retval mrcDeviceBusy Timed out waiting for the IO to clear the bit
 **/
 MrcStatus
-IoReset(
+IoReset (
   IN MrcParameters *const MrcData
+  );
+
+/**
+  This function overriding Ddrio Phy initial settings based on NN Flex settings.
+
+  @param[in]  MrcData                - Pointer to MRC global data.
+  @param[in]  NnFlexPhyDdr5Params    - Phy initial settings for Dimm card.
+  @param[in]  Controller             - Controller in use
+  @param[in]  Channel                - Channel in use
+
+  @return VOID
+**/
+VOID
+NnFlexPerDeviceDdr5PhyUpdate (
+  IN  MrcParameters* const MrcData,
+  IN  NnFlexPhyDdr5Params Ddr5PhyParamsConfig,
+  IN  UINT8           Controller,
+  IN  UINT8           Channel
   );
 #endif //MRC_DDR_IO_API_H_

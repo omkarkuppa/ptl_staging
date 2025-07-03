@@ -126,11 +126,10 @@
 #define RX_DFE_BIT_NUM (8)
 #define TX_XTALK_CAPVAL_NUM (16)
 
-#define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY (16) // More than this, and the XTensa will run out of memory during a per-bit sweep if the array is per-rank
-#define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY (MAX_RANK_IN_CHANNEL * MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY) // More than this, and the XTensa will run out of memory during a per-bit sweep
-#define MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_RANK_ARRAY (MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY * MAX_BITS) // More than this, and the XTensa will run out of memory during a per-byte sweep if the array is per-rank
-#define MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_CHANNEL_ARRAY (MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY * MAX_BITS) // More than this, and the XTensa will run out of memory during a per-byte sweep
-#define MAX_PRINT_MARGIN_PARAMS (4) // Max prams SI training print function can handle
+// Max limits for the SI training print function
+#define MAX_SI_TRAINING_SWEEP_RANGE_PER_BIT  (16)  // Max number of points that the algo sweeps in 1D
+#define MAX_SI_TRAINING_SWEEP_RANGE_PER_BYTE (64)  // Max number of points that the algo sweeps in 1D
+#define MAX_PRINT_MARGIN_PARAMS              (4)   // Max params SI training print function can handle
 
 // Slew rate constants
 #define SLEW_RATE_ENABLED (0)
@@ -376,9 +375,9 @@ typedef struct {
 #define TX_EQ_NUM     (32)
 #define DFE_NUM_DDR5  (DDR5_DIMM_DFE_TAP1_RANGE + 11)
 #define DFE_NUM_LP5   (LPDDR5_DIMM_DFE_TAP_RANGE + 1)
-#define TX_DQS_DCC_MAX        (15) // post silicon optimization experiment result
-#define TX_DQS_DCC_MIN        (-5) // post silicon optimization experiment result
-#define TX_DQS_DCC_RANGE      (TX_DQS_DCC_MAX - TX_DQS_DCC_MIN + 1) //edges included // 21
+#define TX_DQS_DCC_MAX        (7)  // post silicon optimization experiment result
+#define TX_DQS_DCC_MIN        (-7) // post silicon optimization experiment result
+#define TX_DQS_DCC_RANGE      (TX_DQS_DCC_MAX - TX_DQS_DCC_MIN + 1) //edges included // 15
 
 typedef struct {
   UINT16  OptLastParams[2];
@@ -388,9 +387,13 @@ typedef struct {
 #ifdef MRC_DEBUG_PRINT
 /**
   Generic function for Printing SI Training Results.
-  Assumes TotalScore/BestVal arrays are of the form [MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][Specific max range constant].
+  Assumes the input arrays are of the form:
+   TotalScore PerBit:  [MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][MAX_SI_TRAINING_SWEEP_RANGE_PER_BIT].
+   TotalScore PerByte: [MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_SI_TRAINING_SWEEP_RANGE_PER_BYTE].
+   BestVal:            [MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS] - only Bit0 index is used for per-byte data
+
   @param[in]     MrcData                     - Include all MRC global data.
-  @param[in]     ArrayMode                   - PerChannelPerByte, PerChannelPerBit, PerChannel, PerRankPerByte, PerRankPerBit, PerRank, PerSystem.
+  @param[in]     ArrayMode                   - PerChannelPerByte, PerChannelPerBit.
   @param[in]     PrintData                   - Data to print with.
                   PrintMode                  - PerChannelPerByte, PerChannelPerBit, PerChannel, PerRankPerByte, PerRankPerBit, PerRank, PerSystem.
                   Rank                       - Rank to be printed.
@@ -401,26 +404,22 @@ typedef struct {
                   StopSweepValue             - Sweep param value stop point.
                   StartSweepValue            - Sweep param value start point.
                   SweepStep                  - Sweep param step.
-  @param[in]     TotalScorePerRankPerBit     - Total score array, per rank per bit.
-  @param[in]     TotalScorePerChannelPerBit  - Total score array, per bit.
-  @param[in]     TotalScorePerRankPerByte    - Total score array, per rank per byte.
-  @param[in]     TotalScorePerChannelPerByte - Total score array, per byte.
+  @param[in]     TotalScorePerBit            - Total score array, per channel per bit. Used when ArrayMode is PerChannelPerBit
+  @param[in]     TotalScorePerByte           - Total score array, per channel per byte. Used when ArrayMode is PerChannelPerByte
   @param[in]     BestVal                     - Best value array.
   @param[in]     PrintData2D                 - Additional data for 2D prints.
                   SweepParamHeader2D         - Header for the 2D sweep param.
                   SweepParamHeader2DLength   - Length of the 2D sweep param header.
-                  CurrentVal2D;              - 2D Sweep param current value.
+                  CurrentVal2D               - 2D Sweep param current value.
   @retval MrcStatus - If succeeded, return mrcSuccess.
 **/
-BOOLEAN
+MrcStatus
 PrintSiTrainingResults (
   IN MrcParameters*  const MrcData,
-  IN AlgoMode              ArrayMode,
+  IN AlgoMode        const ArrayMode,
   IN PrintSiAlgoData const PrintData,
-  IN TrainingData    const TotalScorePerRankPerBit[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY], OPTIONAL
-  IN TrainingData    const TotalScorePerChannelPerBit[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY], OPTIONAL
-  IN TrainingData    const TotalScorePerRankPerByte[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_RANK_ARRAY], OPTIONAL
-  IN TrainingData    const TotalScorePerChannelPerByte[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_CHANNEL_ARRAY], OPTIONAL
+  IN TrainingData    const TotalScorePerBit[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][MAX_SI_TRAINING_SWEEP_RANGE_PER_BIT], OPTIONAL
+  IN TrainingData    const TotalScorePerByte[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_SI_TRAINING_SWEEP_RANGE_PER_BYTE], OPTIONAL
   IN INT16           const BestVal[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS],
   IN const PrintSiAlgoData2D* const PrintData2D OPTIONAL
   );

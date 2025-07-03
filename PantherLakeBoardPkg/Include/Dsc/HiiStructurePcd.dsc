@@ -3571,7 +3571,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RCVENC1D|0x0                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.RMC|0x0                                                        #           BIT30 - Retrain Margin Check
 gStructPcdTokenSpaceGuid.PcdSaSetup.PRETRAIN|0x1                                                   #           BIT31 - PreTraining
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPICODELUT|0x0                                               # Offset 52 BIT0 - DCC PI Code LUT Calibration
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPICODELUT|0x1                                               # Offset 52 BIT0 - DCC PI Code LUT Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMODTT|0x1                                                   #           BIT1 - Dimm ODT Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMRONT|0x0                                                   #           BIT2 - DIMM RON Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.TXTCO|0x1                                                      #           BIT3 - TxDqTCO Comp Training*
@@ -3605,7 +3605,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
 gStructPcdTokenSpaceGuid.PcdSaSetup.TXDQSDCC |0x1                                                  #           BIT2 - RxVref Per-Bit Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - TXDQS DCC Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.LVRAUTOTRIM|0x0                                                #           BIT5 - LVR Auto Trim
+gStructPcdTokenSpaceGuid.PcdSaSetup.LVRAUTOTRIM|0x1                                                #           BIT5 - LVR Auto Trim
 gStructPcdTokenSpaceGuid.PcdSaSetup.OPTIMIZECOMP|0x0                                               #           BIT7 - Comp optimization
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTRETRAIN|0x1                                                 #           BIT8 - Write Dq/Dqs Retraining
 gStructPcdTokenSpaceGuid.PcdSaSetup.TLINECLKCAL|0x1                                                #           BIT13 - Tline Clk Calibration

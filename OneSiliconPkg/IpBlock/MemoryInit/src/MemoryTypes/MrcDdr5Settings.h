@@ -24,8 +24,11 @@
 
 #include "CMrcApi.h"  // Indirectly provides "IN" and "OUT"
 
-// AUTO-GENERATED CARD ENUM AND TABLE DECLARATIONS START
+// AUTO-GENERATED DDR5 TABLE DECLARATIONS START
 // AUTO-GENERATED CODE
+#define DDR5_WRONG_OPT_VAL (-1000)
+#define DDR5_NUM_OF_OPTS (7)
+
 typedef enum {
     Card_207G = 0,
     Card_240C = 1,
@@ -64,31 +67,16 @@ typedef struct {
   INT8 ddr5_rtt_park_rx;
   INT8 ddr5_ron_up;
   INT8 ddr5_ron_dn;
-} Ddr5InitailSettings;
-
-typedef struct {
-  INT8 cpu_ron;
-  INT8 dq_tco;
-  INT8 dq_odt;
-  INT8 rxtap0;
-  INT8 rxtap1;
-  INT8 ctle_r;
-  INT8 ctle_c;
-  INT8 ctle_rcmn;
-  INT8 ctle_dccmn;
-  INT8 ctle_eq;
-  INT8 ctle_tailctl;
-} Ddr5PhyInitailSettings;
+} NnFlexDdr5Params;
 
 extern const char* CardPartNumber[];
-extern const Ddr5InitailSettings Ddr5InitailSettingsParams[];
-extern const Ddr5PhyInitailSettings Ddr5PhyParams[];
-
+extern const char* Ddr5OptParamNames[];
+extern const NnFlexDdr5Params NnFlexInitialSettingsDdr5[];
 /**
   This function returns index NN Flex csv according to to Dimm/Rank/Freq.
   @param[in] Frequency   - Frequency config.
   @param[in] NumOfRanks  - Rank config - 1/2.
-  @param[in  Card        - Dimm module card id.
+  @param[in] Card        - Dimm module card id.
   @returns corresponding card row index in NN Flex csv to struct table. default if not exists.
 **/
 Ddr5ParamIndex
@@ -97,8 +85,7 @@ GetDdr5ParamIndex (
   IN UINT32 NumOfRanks,
   IN CardEnum Card
   );
-
-// AUTO-GENERATED CARD ENUM AND TABLE DECLARATIONS END
+// AUTO-GENERATED DDR5 TABLE DECLARATIONS END
 
 /**
   This function returns index in ODT table according to to DIMM/rank population.
@@ -185,5 +172,4 @@ CardEnum
 GetCardEnumFromPartNumber (
   IN const char* ModulePartNumber
   );
-
 #endif // MRC_DDR5_SETTINGS_H_

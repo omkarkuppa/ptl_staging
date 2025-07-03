@@ -74,11 +74,23 @@ const char* CardPartNumber[Card_Max] = {
   "HMCGY8AKBVB318N",        // Card_256B
 };
 
+#ifdef MRC_DEBUG_PRINT
+const char* Ddr5OptParamNames[DDR5_NUM_OF_OPTS] = {
+  "DDR5_DFE_TAP1",
+  "DDR5_DFE_TAP2",
+  "DDR5_RTT_WR",
+  "DDR5_RTT_NOM_WR",
+  "DDR5_RTT_PARK_RX",
+  "DDR5_RON_UP",
+  "DDR5_RON_DN",
+};
+#endif
+
 /**
   This function returns index NN Flex csv according to to Dimm/Rank/Freq.
   @param[in] Frequency   - Frequency config.
   @param[in] NumOfRanks  - Rank config - 1/2.
-  @param[in  Card        - Dimm module card id.
+  @param[in] Card        - Dimm module card id.
   @returns corresponding card row index in NN Flex csv to struct table. default if not exists.
 **/
 Ddr5ParamIndex
@@ -131,7 +143,7 @@ GetDdr5ParamIndex (
 // Ddr5 Parameters Table
 
 // ddr5_dfe_tap1/ ddr5_dfe_tap2/ ddr5_rtt_wr/ ddr5_rtt_nom_wr/ ddr5_rtt_park_rx/ ddr5_ron_up/ ddr5_ron_dn/
-const Ddr5InitailSettings Ddr5InitailSettingsParams[] = {
+const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
   { -23, -5, 120, 60, 60, 40, 48 },
   { -23, -5, 120, 60, 60, 40, 48 },
   { -12, -2, 80, 60, 80, 40, 40 },
@@ -146,26 +158,6 @@ const Ddr5InitailSettings Ddr5InitailSettingsParams[] = {
   { -40, 1, 120, 48, 34, 48, 40 },
   { -25, -5, 120, 80, 80, 40, 40 },
   { -25, -5, 120, 80, 48, 34, 34 },
-};
-
-// Phy Parameters Table
-
-// cpu_ron/ dq_tco/ dq_odt/ rxtap0/ rxtap1/ ctle_r/ ctle_c/ ctle_rcmn/ ctle_dccmn/ ctle_eq/ ctle_tailctl/
-const Ddr5PhyInitailSettings Ddr5PhyParams[] = {
-  { 26, 9, 35, 0, 0, 1, 0, 1, 1, 6, 1 },
-  { 26, 9, 35, 0, 0, 1, 0, 1, 1, 6, 1 },
-  { 27, -28, 40, 0, 0, 2, 3, 3, 1, 6, 2 },
-  { 27, -28, 40, 0, 0, 2, 3, 3, 1, 6, 2 },
-  { 26, 5, 33, 8, 0, 3, 3, 2, 2, 7, 3 },
-  { 26, 5, 33, 10, -1, 3, 3, 2, 2, 7, 3 },
-  { 26, 5, 33, 10, -1, 3, 3, 2, 2, 7, 3 },
-  { 26, 7, 35, 1, 0, 1, 0, 1, 1, 6, 1 },
-  { 25, -5, 33, 8, 0, 3, 3, 2, 2, 7, 3 },
-  { 25, -3, 35, 6, 1, 1, 0, 3, 1, 7, 1 },
-  { 25, -11, 32, 4, -1, 2, 2, 0, 2, 1, 3 },
-  { 25, 0, 38, 2, -1, 3, 2, 1, 0, 7, 3 },
-  { 26, -12, 40, 4, 1, 2, 3, 3, 1, 6, 2 },
-  { 26, -12, 38, 2, 1, 3, 3, 3, 0, 3, 3 },
 };
 // AUTO-GENERATED DDR5 TABLES END
 

@@ -72,6 +72,33 @@ const TCkdValue Ddr5CKDTable[MAX_DIMMS_IN_SYSTEM][MAX_CKD_PIN] = {
   {{Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}},
 };
 
+#ifdef MRC_DEBUG_PRINT
+typedef struct {
+  UINT32 StartOffset;
+  UINT32 EndOffset;
+  const char *Name;
+} PARTITION_CRS;
+
+static const PARTITION_CRS NonDdrphyx64CRs[] = {
+  {.StartOffset = 0x1C000, .EndOffset = 0x1D3FF, "MC1 (CPGC, legacy CADB)"},
+  {.StartOffset = 0x1D400, .EndOffset = 0x1D7FF, "IBECC1"},
+  {.StartOffset = 0x1D800, .EndOffset = 0x1FFFF, "MC1"},
+  {.StartOffset = 0x00C00, .EndOffset = 0x017FF, "DDR DATA[4-7]CH[0-1]"},
+  {.StartOffset = 0x02180, .EndOffset = 0x0237F, "DDR PG[6-9]"},
+  {.StartOffset = 0x02380, .EndOffset = 0x023FF, "DDR PGTERM1"},
+  {.StartOffset = 0x02C00, .EndOffset = 0x02FFF, "DDR DATA_SHARED[4-7]"},
+  {.StartOffset = 0x03300, .EndOffset = 0x033FF, "DDR CCC SHARED[2-3]"},
+  {.StartOffset = 0x03A00, .EndOffset = 0x03DFF, "DDR CCC[4-7]"},
+  {.StartOffset = 0x0B780, .EndOffset = 0x0BF04, "MPTU1/DUNIT1"},
+  {.StartOffset = 0x04320, .EndOffset = 0x044E4, "DDR DATA SBMEM[4-7]"},
+  {.StartOffset = 0x046A0, .EndOffset = 0x0475C, "DDR CCC SBMEM[2-3]"},
+  {.StartOffset = 0x04800, .EndOffset = 0x04818, "DDR VCCCLK SBMEM1"},
+  {.StartOffset = 0x03E9C, .EndOffset = 0x03EA8, "DDR MCMISC WRITECFGCH[4-7]"},
+  {.StartOffset = 0x03EBC, .EndOffset = 0x03EC8, "DDR MCMISC READCFGCH[4-7]"},
+  {.StartOffset = 0x03ED4, .EndOffset = 0x03ED8, "DDR MCMISC RXDQFIFORDENCH[45|67]"},
+  {.StartOffset = 0x03F94, .EndOffset = 0x03FA0, "DDR MCMISC UCSS SCRATCH[4-7]"},
+};
+#endif // MRC_DEBUG_PRINT
 /**
   Return the rank mask if the rank exists in the Controller/Channel.
 
@@ -1125,6 +1152,9 @@ MrcWriteCR64 (
   IN const UINT64         Value
   )
 {
+#ifdef MRC_DEBUG_PRINT
+  Ddrphyx64CrChecker (MrcData, Offset);
+#endif
   const MRC_FUNCTION *MrcCall;
   const MrcInput     *Inputs;
   MrcOutput          *Outputs;
@@ -1168,6 +1198,10 @@ MrcWriteCR (
   IN const UINT32  Value
   )
 {
+#ifdef MRC_DEBUG_PRINT
+  Ddrphyx64CrChecker (MrcData, Offset);
+#endif
+
 #ifdef CR_SPEED_FLAG
   MrcStatsIncrementData (MrcData, MRC_WRITE_CR);
   MrcStatsStartTimer (MrcData, WRITE_CR_TIME);
@@ -1275,6 +1309,10 @@ MrcReadCR64 (
   MrcCall = Inputs->Call.Func;
   Outputs->MchBarReadCount++;
 
+#ifdef MRC_DEBUG_PRINT
+  Ddrphyx64CrChecker (MrcData, Offset);
+#endif
+
   MrcStatsIncrementData (MrcData, MRC_READ_CR);
   MrcStatsStartTimer (MrcData, READ_CR_TIME);
 
@@ -1306,6 +1344,9 @@ MrcReadCR (
   )
 {
   UINT32 Value;
+#ifdef MRC_DEBUG_PRINT
+  Ddrphyx64CrChecker (MrcData, Offset);
+#endif
 
 #ifdef CR_SPEED_FLAG
   MrcStatsIncrementData (MrcData, MRC_READ_CR);
@@ -4236,3 +4277,39 @@ MrcIsGeardownSupported (
           (MrcData->Outputs.MaxDimmFreq >= f7200) &&
           (MrcGetNMode (MrcData) == CA_2_NMODE));
 }
+
+#ifdef MRC_DEBUG_PRINT
+/**
+  Prints a debug message when a CR does not exist in x64 MemSS.
+
+  @param[in] MrcData - pointer to MRC global data.
+  @param[in] Offset - offset to check.
+
+  @returns None.
+**/
+VOID
+Ddrphyx64CrChecker (
+  IN MrcParameters *const MrcData,
+  IN UINT32 Offset
+  ) {
+    UINT32 Index;
+
+    if (MrcData->Inputs.IsDdrphyx64 == FALSE) {
+      return;
+    }
+
+    for (Index = 0; Index < ARRAY_COUNT(NonDdrphyx64CRs); Index++) {
+      if (NonDdrphyx64CRs[Index].StartOffset <= Offset &&
+          Offset <= NonDdrphyx64CRs[Index].EndOffset) {
+
+          MRC_DEBUG_MSG (&MrcData->Outputs.Debug,
+                         MSG_LEVEL_ERROR,
+                         "[DDRPHYx64] Offset 0x%X that resides in %s is not supported.\n",
+                         Offset,
+                         NonDdrphyx64CRs[Index].Name);
+        return;
+      }
+    }
+  }
+
+#endif // MRC_DEBUG_PRINT

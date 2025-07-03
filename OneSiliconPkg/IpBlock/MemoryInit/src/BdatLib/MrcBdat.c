@@ -375,7 +375,7 @@ FillRmtBdatStructure (
                     return;
                   }
 
-                  // Per rank RankResultType1  - RecEn, Wrlvl
+                  // Per rank RankResultType3  - RecEn, Wrlvl
                   RecvEnMargin = &ChannelOut->ReceiveEnable[RankInChannel];
                   WrLvlMargin  = &ChannelOut->WriteLevel[RankInChannel];
                   RmtRow[ResultElementCount].Header.Controller = Controller;

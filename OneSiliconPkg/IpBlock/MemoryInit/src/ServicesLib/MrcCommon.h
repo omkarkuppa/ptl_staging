@@ -4453,4 +4453,20 @@ MrcIsGeardownSupported (
   IN MrcParameters *const MrcData
   );
 
+#ifdef MRC_DEBUG_PRINT
+/**
+  Prints a debug message when a CR does not exist in x64 MemSS.
+
+  @param[in] MrcData - pointer to MRC global data.
+  @param[in] Offset - offset to check.
+
+  @returns None.
+**/
+VOID
+Ddrphyx64CrChecker (
+  IN MrcParameters *const MrcData,
+  IN UINT32 Offset
+  );
+#endif // MRC_DEBUG_PRINT
+
 #endif //_MrcCommon_h_

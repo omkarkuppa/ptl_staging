@@ -305,10 +305,12 @@ MrcStringFormatter (
   UINT32      Flags;
   UINT32      CharCount;
   UINT32      RetrunedStringSize;
+  UINT32      Index;
   char        LocalBuffer[21]; // Enough to hold all digits of UINT64 plus the null-terminator
 
   CharCount          = 0;
   RetrunedStringSize = 0;
+  Index              = 0;
   *IsPrintCountValid = TRUE;
 
   if (Format != NULL) {
@@ -388,7 +390,7 @@ MrcStringFormatter (
             }
 
             RetrunedStringSize = MrcUintnToStr (MrcCall, ArgValue, ArgSize, LocalBuffer, Width, Flags, 10);
-            for (UINT8 Index = 0; ((Index < RetrunedStringSize) && (CharCount < BufferSize)) ; Index++) {
+            for (Index = 0; ((Index < RetrunedStringSize) && (CharCount < BufferSize)) ; Index++) {
               MRC_PUTCC(Buffer, LocalBuffer[Index], CharCount);
             }
             break;
@@ -405,7 +407,7 @@ MrcStringFormatter (
             }
 
             RetrunedStringSize = MrcUintnToStr (MrcCall, ArgValue, ArgSize, LocalBuffer, Width, Flags, 16);
-            for (UINT8 Index = 0; ((Index < RetrunedStringSize) && (CharCount < BufferSize)) ; Index++) {
+            for (Index = 0; ((Index < RetrunedStringSize) && (CharCount < BufferSize)) ; Index++) {
               MRC_PUTCC(Buffer, LocalBuffer[Index], CharCount);
             }
             break;

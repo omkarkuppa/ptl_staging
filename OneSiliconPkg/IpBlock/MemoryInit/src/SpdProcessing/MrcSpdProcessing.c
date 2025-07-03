@@ -7994,6 +7994,11 @@ PrintSystemToMptuChannelMap (
   MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "DIMM swizzle map:\n");
   MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "|%3s %3s |%5s %8s|\n", "MC", "CH", "MPTU", "MPTU_CH");
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    // Skip printing for controllers that do not exist in hardware. Only print entries for existing controllers,
+    // even if some are unpopulated, because there might be a DIMM that is swizzled
+    if (!MrcGetHwControllerExists (MrcData, Controller)) {
+      continue;
+    }
     for (Channel = 0; Channel < (Outputs->DdrType == MRC_DDR_TYPE_DDR5 ? MAX_DDR5_CHANNEL: MAX_CHANNEL); Channel++) {
       MRC_DEBUG_MSG (
         &Outputs->Debug,

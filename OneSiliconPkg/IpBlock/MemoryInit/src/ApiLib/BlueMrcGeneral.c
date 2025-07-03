@@ -1877,13 +1877,15 @@ MrcPrintInputParameters (
     "\tIsIOTestAddressRandom: %u\n"
     "\tIsCaDeselectStress: %u\n"
     "\tRxDqVrefPerBit: %u\n"
-    "\tFourToggleReadPreamble: %u\n",
+    "\tFourToggleReadPreamble: %u\n"
+    "\tInitPerDeviceNnFlex: %u\n",
     Inputs->UcPayloadAddress,
     Inputs->IsKeepUcssPostMrc,
     Inputs->IsIOTestAddressRandom,
     Inputs->IsCaDeselectStress,
     Inputs->RxDqVrefPerBit,
-    Inputs->FourToggleReadPreamble
+    Inputs->FourToggleReadPreamble,
+    Inputs->InitPerDeviceNnFlex
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,

@@ -32,7 +32,7 @@ const UINT16 RcompTargetLpddr5Type3[MAX_RCOMP_TARGETS]    = { 39, 25, 30, 30, 30
 const UINT16 RcompTargetLpddr5Type4_1R[MAX_RCOMP_TARGETS] = { 39, 25, 30, 30, 25 };
 const UINT16 RcompTargetLpddr5Type4_2R[MAX_RCOMP_TARGETS] = { 39, 25, 30, 30, 30 };
 
-const UINT16 RcompTargetPDdr5[MAX_RCOMP_TARGETS]          = { 60, 27, 25, 25, 25 };
+const UINT16 RcompTargetPDdr5[MAX_RCOMP_TARGETS]          = { 35, 27, 25, 25, 25 };
 
 /**
   This function determines default RcompTargets based on CPU type and DDR Type

@@ -807,7 +807,7 @@
   # !BSF NAME:{LVR Auto Trim}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable LVR Auto Trim}
-  gPlatformFspPkgTokenSpaceGuid.LVRAUTOTRIM                 | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.LVRAUTOTRIM                 | * | 0x01 | 0x01
 
   # !BSF NAME:{Compensation Optimization}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1140,7 +1140,7 @@
   # !BSF NAME:{DCC PI Code LUT Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable DCC PI Code LUT Calibration}
-  gPlatformFspPkgTokenSpaceGuid.DCCPICODELUT                | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.DCCPICODELUT                | * | 0x01 | 0x01
 
   # !BSF NAME:{Read Voltage Centering 1D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

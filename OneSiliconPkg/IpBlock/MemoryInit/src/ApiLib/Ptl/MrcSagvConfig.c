@@ -192,7 +192,11 @@ MrcCalcSagvTypeConfig (
     if (IsLpddr5) {
       Freq = f6400;
     } else if (IsDdr5) {
-      Freq = f5600;
+      if (FreqMax == f7200) {
+        Freq = f6400;
+      } else {
+        Freq = f5600;
+      }
     } else {
       // Recalculate Freq - 1 bin
       Freq = Freq - 1;

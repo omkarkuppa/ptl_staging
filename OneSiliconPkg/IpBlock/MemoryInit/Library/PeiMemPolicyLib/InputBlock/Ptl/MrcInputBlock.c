@@ -118,7 +118,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_PRETRAIN               (1)  // BIT31
 
 // TrainingEnables2
-#define MRC_EXT_INPUTS_INIT_VAL_DCCPICODELUT           (0)  // BIT0
+#define MRC_EXT_INPUTS_INIT_VAL_DCCPICODELUT           (1)  // BIT0
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMODTT               (1)  // BIT1
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMRONT               (0)  // BIT2
 #define MRC_EXT_INPUTS_INIT_VAL_TXTCO                  (1)  // BIT3
@@ -157,7 +157,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_TXDQSDCC               (1)  // BIT2
 #define MRC_EXT_INPUTS_INIT_VAL_RXVREFPERBIT           (0)  // BIT3
 #define MRC_EXT_INPUTS_INIT_VAL_PPR                    (0)  // BIT4
-#define MRC_EXT_INPUTS_INIT_VAL_LVRAUTOTRIM            (0)  // BIT5
+#define MRC_EXT_INPUTS_INIT_VAL_LVRAUTOTRIM            (1)  // BIT5
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit6          (0)  // BIT6
 #define MRC_EXT_INPUTS_INIT_VAL_OPTIMIZECOMP           (0)  // BIT7
 #define MRC_EXT_INPUTS_INIT_VAL_WRTRETRAIN             (1)  // BIT8

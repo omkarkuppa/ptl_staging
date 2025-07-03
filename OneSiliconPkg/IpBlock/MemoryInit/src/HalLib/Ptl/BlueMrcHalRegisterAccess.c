@@ -1185,14 +1185,14 @@ MrcGetSet (
     for (SocketLoop = SocketRange.Start; SocketLoop <= SocketRange.End; SocketLoop++) {
       for (ControllerLoop = ControllerRange.Start; ControllerLoop <= ControllerRange.End; ControllerLoop++) {
         if (ValidMc) {
-          if (!MrcControllerExist (MrcData, ControllerLoop) && SkipEmptyFubs) {
+          if (!MrcControllerExist (MrcData, ControllerLoop) && (SkipEmptyFubs || !MrcGetHwControllerExists (MrcData, ControllerLoop))) {
             MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gControllerStr, ControllerLoop);
             continue;
           }
         }
         for (ChannelLoop = ChannelRange.Start; ChannelLoop <= ChannelRange.End; ChannelLoop++) {
           if (ValidMc && ValidCh) {
-            if (!MrcChannelExist (MrcData, ControllerLoop, ChannelLoop) && SkipEmptyFubs) {
+            if (!MrcChannelExist (MrcData, ControllerLoop, ChannelLoop) && (SkipEmptyFubs || !MrcGetHwChannelExists (MrcData, ControllerLoop, ChannelLoop))) {
               MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gChannelStr, ChannelLoop);
               continue;
             } else if (IsSkipGroup && (IS_MC_SUB_CH (IsLpddr, ChannelLoop))) {
