@@ -632,6 +632,22 @@ BootMaintRouteConfig (
     Var_UpdateBootNext (Private);
   }
 
+  // Added for updating the BootTimeout setup
+
+  if (CompareMem (&NewBmmData->BootTimeOut, &OldBmmData->BootTimeOut, sizeof (NewBmmData->BootTimeOut)) != 0) {
+    Status = gRT->SetVariable (
+                    L"Timeout",
+                    &gEfiGlobalVariableGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                    sizeof (UINT16),
+                    &(NewBmmData->BootTimeOut)
+                    );
+    if (EFI_ERROR (Status)) {
+      DEBUG((DEBUG_INFO,"Error in setting Timeout variable:%r\n",Status));
+      Private->BmmOldFakeNVData.BootTimeOut = NewBmmData->BootTimeOut;
+    }
+  }
+
   //
   // Check data which located in Boot Options Menu and save the settings if need
   //
@@ -806,6 +822,9 @@ BootMaintRouteConfig (
                     ComAttributes->TotalSize,
                     ComAttributes
                     );
+  }
+  if (EFI_ERROR (Status)) {
+    DEBUG((DEBUG_INFO,"Status = %r\n",Status));
   }
   if (ComAttributes != NULL) {
     FreePool (ComAttributes);
