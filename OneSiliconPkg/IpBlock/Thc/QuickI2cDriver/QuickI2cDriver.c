@@ -79,7 +79,7 @@ QuickI2cPrintDeviceDescriptor (
   Initialize QuickI2c according to procedure described in EDS
 
   @param[in]  QuickI2cDev      Context of QuickI2c device
-  @param[in]  HidOverI2c       Hid Over I2C policy data
+  @param[in]  ThcPort          Thc Port
   @param[in]  Reset            Reset data
 
   @retval EFI_SUCCESS     QuickI2c initialized successfully
@@ -88,40 +88,41 @@ QuickI2cPrintDeviceDescriptor (
 EFI_STATUS
 QuickI2cInitialize (
   IN QUICK_I2C_DEV        *QuickI2cDev,
-  IN THC_HID_OVER_I2C     *HidOverI2c,
+  IN THC_PORT             *ThcPort,
   IN THC_RESET            *Reset
   )
 {
-  EFI_STATUS              Status;
-  UINT32                  QuickI2cSpeedBasedConfigVar;
-  THC_I2C_IC_CON          IcCon;
-  THC_I2C_IC_ENABLE       IcEnable;
-  THC_I2C_IC_TAR          IcTar;
-  THC_I2C_IC_SDA_HOLD     IcSdaHold;
-  THC_I2C_IC_SS_SCL_HCNT  IcSsSclHcnt;
-  THC_I2C_IC_SS_SCL_LCNT  IcSsSclLcnt;
-  THC_I2C_IC_FS_SCL_HCNT  IcFsSclHcnt;
-  THC_I2C_IC_FS_SCL_LCNT  IcFsSclLcnt;
-  THC_I2C_IC_HS_SCL_HCNT  IcHsSclHcnt;
-  THC_I2C_IC_HS_SCL_LCNT  IcHsSclLcnt;
-  THC_I2C_IC_INTR_MASK    IcIntrMask;
-  THC_I2C_IC_RX_TL        IcRxTl;
-  THC_I2C_IC_TX_TL        IcTxTl;
-  THC_I2C_IC_DMA_CR       IcDmaCr;
-  THC_I2C_IC_DMA_TDLR     IcDmaTdlr;
-  THC_I2C_IC_DMA_RDLR     IcDmaRdlr;
+  EFI_STATUS                  Status;
+  UINT32                      QuickI2cSpeedBasedConfigVar;
+  THC_I2C_IC_CON              IcCon;
+  THC_I2C_IC_ENABLE           IcEnable;
+  THC_I2C_IC_TAR              IcTar;
+  THC_I2C_IC_SDA_HOLD         IcSdaHold;
+  THC_I2C_IC_SS_SCL_HCNT      IcSsSclHcnt;
+  THC_I2C_IC_SS_SCL_LCNT      IcSsSclLcnt;
+  THC_I2C_IC_FS_SCL_HCNT      IcFsSclHcnt;
+  THC_I2C_IC_FS_SCL_LCNT      IcFsSclLcnt;
+  THC_I2C_IC_HS_SCL_HCNT      IcHsSclHcnt;
+  THC_I2C_IC_HS_SCL_LCNT      IcHsSclLcnt;
+  THC_I2C_IC_INTR_MASK        IcIntrMask;
+  THC_I2C_IC_RX_TL            IcRxTl;
+  THC_I2C_IC_TX_TL            IcTxTl;
+  THC_I2C_IC_DMA_CR           IcDmaCr;
+  THC_I2C_IC_DMA_TDLR         IcDmaTdlr;
+  THC_I2C_IC_DMA_RDLR         IcDmaRdlr;
+  THC_M_PRT_SPI_ICRRD_OPCODE  IcRrdOpcode;
 
   THC_LOCAL_DEBUG (L"QuickI2cInitialize Start ()\n")
 
   //
   // Any speed configuration's LCNT and HCNT should have valid values otherwise set default values
   //
-  if (((HidOverI2c->StandardModeSerialClockLineHighPeriod      == 0) || (HidOverI2c->StandardModeSerialClockLineLowPeriod      == 0)) &&
-      ((HidOverI2c->FastModeSerialClockLineHighPeriod          == 0) || (HidOverI2c->FastModeSerialClockLineLowPeriod          == 0)) &&
-      ((HidOverI2c->FastModePlusSerialClockLineHighPeriod      == 0) || (HidOverI2c->FastModePlusSerialClockLineLowPeriod      == 0)) &&
-      ((HidOverI2c->HighSpeedModePlusSerialClockLineHighPeriod == 0) || (HidOverI2c->HighSpeedModePlusSerialClockLineLowPeriod == 0))) {
+  if (((ThcPort->HidOverI2c.StandardModeSerialClockLineHighPeriod      == 0) || (ThcPort->HidOverI2c.StandardModeSerialClockLineLowPeriod      == 0)) &&
+      ((ThcPort->HidOverI2c.FastModeSerialClockLineHighPeriod          == 0) || (ThcPort->HidOverI2c.FastModeSerialClockLineLowPeriod          == 0)) &&
+      ((ThcPort->HidOverI2c.FastModePlusSerialClockLineHighPeriod      == 0) || (ThcPort->HidOverI2c.FastModePlusSerialClockLineLowPeriod      == 0)) &&
+      ((ThcPort->HidOverI2c.HighSpeedModePlusSerialClockLineHighPeriod == 0) || (ThcPort->HidOverI2c.HighSpeedModePlusSerialClockLineLowPeriod == 0))) {
     DEBUG ((DEBUG_WARN, "QuickI2cInitialize configuring default policy\n"));
-    QuickI2cLibConfigureDefaultPolicy (HidOverI2c);
+    QuickI2cLibConfigureDefaultPolicy (&ThcPort->HidOverI2c);
   }
 
   //
@@ -157,23 +158,23 @@ QuickI2cInitialize (
   //
   // Decide I2C bus speed
   //
-  if ((HidOverI2c->ConnectionSpeed > (UINT32) 0) && (HidOverI2c->ConnectionSpeed <= (UINT32) QUICK_I2C_STANDARD_MODE_MAX_SPEED)) {
-    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in standard range, Setting I2cSpeedStandard \n", HidOverI2c->ConnectionSpeed);
+  if ((ThcPort->HidOverI2c.ConnectionSpeed > (UINT32) 0) && (ThcPort->HidOverI2c.ConnectionSpeed <= (UINT32) QUICK_I2C_STANDARD_MODE_MAX_SPEED)) {
+    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in standard range, Setting I2cSpeedStandard \n", ThcPort->HidOverI2c.ConnectionSpeed);
     // Bit 1-2 --> SPEED
     IcCon.Fields.Speed = I2C_SPEED_STANDARD;
     QuickI2cSpeedBasedConfigVar = I2cSpeedStandard;
-  } else if ((HidOverI2c->ConnectionSpeed > (UINT32) QUICK_I2C_STANDARD_MODE_MAX_SPEED) && (HidOverI2c->ConnectionSpeed <= (UINT32) QUICK_I2C_FAST_MODE_MAX_SPEED)) {
-    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in fast range, Setting I2cSpeedFast \n", HidOverI2c->ConnectionSpeed);
+  } else if ((ThcPort->HidOverI2c.ConnectionSpeed > (UINT32) QUICK_I2C_STANDARD_MODE_MAX_SPEED) && (ThcPort->HidOverI2c.ConnectionSpeed <= (UINT32) QUICK_I2C_FAST_MODE_MAX_SPEED)) {
+    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in fast range, Setting I2cSpeedFast \n", ThcPort->HidOverI2c.ConnectionSpeed);
     // Bit 1-2 --> SPEED
     IcCon.Fields.Speed = I2C_SPEED_FAST_FAST_PLUS;
     QuickI2cSpeedBasedConfigVar = I2cSpeedFast;
-  } else if ((HidOverI2c->ConnectionSpeed > (UINT32) QUICK_I2C_FAST_MODE_MAX_SPEED) && (HidOverI2c->ConnectionSpeed <= (UINT32) QUICK_I2C_FASTPLUS_MODE_MAX_SPEED)) {
-    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in fast plus range, Setting I2cSpeedFastPlus \n", HidOverI2c->ConnectionSpeed);
+  } else if ((ThcPort->HidOverI2c.ConnectionSpeed > (UINT32) QUICK_I2C_FAST_MODE_MAX_SPEED) && (ThcPort->HidOverI2c.ConnectionSpeed <= (UINT32) QUICK_I2C_FASTPLUS_MODE_MAX_SPEED)) {
+    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in fast plus range, Setting I2cSpeedFastPlus \n", ThcPort->HidOverI2c.ConnectionSpeed);
     // Bit 1-2 --> SPEED
     IcCon.Fields.Speed = I2C_SPEED_FAST_FAST_PLUS;
     QuickI2cSpeedBasedConfigVar = I2cSpeedFastPlus;
-  } else if ((HidOverI2c->ConnectionSpeed > (UINT32) QUICK_I2C_FASTPLUS_MODE_MAX_SPEED) && (HidOverI2c->ConnectionSpeed <= (UINT32) QUICK_I2C_HIGH_SPEED_MODE_MAX_SPEED)) {
-    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in high speed range, Setting I2cSpeedHigh \n", HidOverI2c->ConnectionSpeed);
+  } else if ((ThcPort->HidOverI2c.ConnectionSpeed > (UINT32) QUICK_I2C_FASTPLUS_MODE_MAX_SPEED) && (ThcPort->HidOverI2c.ConnectionSpeed <= (UINT32) QUICK_I2C_HIGH_SPEED_MODE_MAX_SPEED)) {
+    THC_LOCAL_DEBUG(L"QuickI2cInitialize ConnectionSpeed to set is : 0x%X, Its in high speed range, Setting I2cSpeedHigh \n", ThcPort->HidOverI2c.ConnectionSpeed);
     // Bit 1-2 --> SPEED
     IcCon.Fields.Speed = I2C_SPEED_HIGH;
     QuickI2cSpeedBasedConfigVar = I2cSpeedHigh;
@@ -217,7 +218,7 @@ QuickI2cInitialize (
     DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_TAR error, Status %r\n", Status));
     return Status;
   }
-  IcTar.Fields.IcTar = HidOverI2c->DeviceAddress;
+  IcTar.Fields.IcTar = ThcPort->HidOverI2c.DeviceAddress;
   Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_TAR, IcTar.Data32);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_TAR error, Status %r\n", Status));
@@ -237,7 +238,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_SS_SCL_HCNT error, Status %r\n", Status));
         return Status;
       }
-      IcSsSclHcnt.Fields.IcSsSclHcnt = HidOverI2c->StandardModeSerialClockLineHighPeriod;
+      IcSsSclHcnt.Fields.IcSsSclHcnt = ThcPort->HidOverI2c.StandardModeSerialClockLineHighPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_SS_SCL_HCNT, IcSsSclHcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SS_SCL_HCNT error, Status %r\n", Status));
@@ -252,7 +253,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_SS_SCL_LCNT error, Status %r\n", Status));
         return Status;
       }
-      IcSsSclLcnt.Fields.IcSsSclLcnt = HidOverI2c->StandardModeSerialClockLineLowPeriod;
+      IcSsSclLcnt.Fields.IcSsSclLcnt = ThcPort->HidOverI2c.StandardModeSerialClockLineLowPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_SS_SCL_LCNT, IcSsSclLcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SS_SCL_LCNT error, Status %r\n", Status));
@@ -268,12 +269,12 @@ QuickI2cInitialize (
         return Status;
       }
       // To make sure it is programmed with default settings only if not programmed by user
-      IcSdaHold.Fields.IcSdaTxHold = (HidOverI2c->StandardModeSerialDataLineTransmitHoldPeriod == 0)
+      IcSdaHold.Fields.IcSdaTxHold = (ThcPort->HidOverI2c.StandardModeSerialDataLineTransmitHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_TX_100_1000_KHZ
-                                     : HidOverI2c->StandardModeSerialDataLineTransmitHoldPeriod;
-      IcSdaHold.Fields.IcSdaRxHold = (HidOverI2c->StandardModeSerialDataLineReceiveHoldPeriod == 0)
+                                     : ThcPort->HidOverI2c.StandardModeSerialDataLineTransmitHoldPeriod;
+      IcSdaHold.Fields.IcSdaRxHold = (ThcPort->HidOverI2c.StandardModeSerialDataLineReceiveHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_RX_100_1000_KHZ
-                                     : HidOverI2c->StandardModeSerialDataLineReceiveHoldPeriod;
+                                     : ThcPort->HidOverI2c.StandardModeSerialDataLineReceiveHoldPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_SDA_HOLD, IcSdaHold.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
@@ -291,7 +292,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
         return Status;
       }
-      IcFsSclHcnt.Fields.IcFsSclHcnt = HidOverI2c->FastModeSerialClockLineHighPeriod;
+      IcFsSclHcnt.Fields.IcFsSclHcnt = ThcPort->HidOverI2c.FastModeSerialClockLineHighPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_FS_SCL_HCNT, IcFsSclHcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
@@ -306,7 +307,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
         return Status;
       }
-      IcFsSclLcnt.Fields.IcFsSclLcnt = HidOverI2c->FastModeSerialClockLineLowPeriod;
+      IcFsSclLcnt.Fields.IcFsSclLcnt = ThcPort->HidOverI2c.FastModeSerialClockLineLowPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_FS_SCL_LCNT, IcFsSclLcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
@@ -322,12 +323,12 @@ QuickI2cInitialize (
         return Status;
       }
       // To make sure it is programmed with default settings only if not programmed by user
-      IcSdaHold.Fields.IcSdaTxHold = (HidOverI2c->FastModeSerialDataLineTransmitHoldPeriod == 0)
+      IcSdaHold.Fields.IcSdaTxHold = (ThcPort->HidOverI2c.FastModeSerialDataLineTransmitHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_TX_1000_3400_KHZ
-                                     : HidOverI2c->FastModeSerialDataLineTransmitHoldPeriod;
-      IcSdaHold.Fields.IcSdaRxHold = (HidOverI2c->FastModeSerialDataLineReceiveHoldPeriod == 0)
+                                     : ThcPort->HidOverI2c.FastModeSerialDataLineTransmitHoldPeriod;
+      IcSdaHold.Fields.IcSdaRxHold = (ThcPort->HidOverI2c.FastModeSerialDataLineReceiveHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_RX_1000_3400_KHZ
-                                     : HidOverI2c->FastModeSerialDataLineReceiveHoldPeriod;
+                                     : ThcPort->HidOverI2c.FastModeSerialDataLineReceiveHoldPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_SDA_HOLD, IcSdaHold.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
@@ -344,7 +345,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
         return Status;
       }
-      IcFsSclHcnt.Fields.IcFsSclHcnt = HidOverI2c->FastModePlusSerialClockLineHighPeriod;
+      IcFsSclHcnt.Fields.IcFsSclHcnt = ThcPort->HidOverI2c.FastModePlusSerialClockLineHighPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_FS_SCL_HCNT, IcFsSclHcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
@@ -359,7 +360,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
         return Status;
       }
-      IcFsSclLcnt.Fields.IcFsSclLcnt = HidOverI2c->FastModePlusSerialClockLineLowPeriod;
+      IcFsSclLcnt.Fields.IcFsSclLcnt = ThcPort->HidOverI2c.FastModePlusSerialClockLineLowPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_FS_SCL_LCNT, IcFsSclLcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
@@ -375,12 +376,12 @@ QuickI2cInitialize (
         return Status;
       }
       // To make sure it is programmed with default settings only if not programmed by user
-      IcSdaHold.Fields.IcSdaTxHold = (HidOverI2c->FastModePlusSerialDataLineTransmitHoldPeriod == 0)
+      IcSdaHold.Fields.IcSdaTxHold = (ThcPort->HidOverI2c.FastModePlusSerialDataLineTransmitHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_TX_1000_3400_KHZ
-                                     : HidOverI2c->FastModePlusSerialDataLineTransmitHoldPeriod;
-      IcSdaHold.Fields.IcSdaRxHold = (HidOverI2c->FastModePlusSerialDataLineReceiveHoldPeriod == 0)
+                                     : ThcPort->HidOverI2c.FastModePlusSerialDataLineTransmitHoldPeriod;
+      IcSdaHold.Fields.IcSdaRxHold = (ThcPort->HidOverI2c.FastModePlusSerialDataLineReceiveHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_RX_1000_3400_KHZ
-                                     : HidOverI2c->FastModePlusSerialDataLineReceiveHoldPeriod;
+                                     : ThcPort->HidOverI2c.FastModePlusSerialDataLineReceiveHoldPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_SDA_HOLD, IcSdaHold.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
@@ -397,7 +398,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_HS_SCL_HCNT error, Status %r\n", Status));
         return Status;
       }
-      IcHsSclHcnt.Fields.IcHsSclHcnt = HidOverI2c->HighSpeedModePlusSerialClockLineHighPeriod;
+      IcHsSclHcnt.Fields.IcHsSclHcnt = ThcPort->HidOverI2c.HighSpeedModePlusSerialClockLineHighPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_HS_SCL_HCNT, IcHsSclHcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_HS_SCL_HCNT error, Status %r\n", Status));
@@ -412,7 +413,7 @@ QuickI2cInitialize (
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibReadSubIpRegister THC_I2C_REG_IC_HS_SCL_LCNT error, Status %r\n", Status));
         return Status;
       }
-      IcHsSclLcnt.Fields.IcHsSclLcnt = HidOverI2c->HighSpeedModePlusSerialClockLineLowPeriod;
+      IcHsSclLcnt.Fields.IcHsSclLcnt = ThcPort->HidOverI2c.HighSpeedModePlusSerialClockLineLowPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_HS_SCL_LCNT, IcHsSclLcnt.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_HS_SCL_LCNT error, Status %r\n", Status));
@@ -428,12 +429,12 @@ QuickI2cInitialize (
         return Status;
       }
       // To make sure it is programmed with default settings only if not programmed by user
-      IcSdaHold.Fields.IcSdaTxHold = (HidOverI2c->HighSpeedModePlusSerialDataLineTransmitHoldPeriod == 0)
+      IcSdaHold.Fields.IcSdaTxHold = (ThcPort->HidOverI2c.HighSpeedModePlusSerialDataLineTransmitHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_TX_3400_INF_KHZ
-                                     : HidOverI2c->HighSpeedModePlusSerialDataLineTransmitHoldPeriod;
-      IcSdaHold.Fields.IcSdaRxHold = (HidOverI2c->HighSpeedModePlusSerialDataLineReceiveHoldPeriod == 0)
+                                     : ThcPort->HidOverI2c.HighSpeedModePlusSerialDataLineTransmitHoldPeriod;
+      IcSdaHold.Fields.IcSdaRxHold = (ThcPort->HidOverI2c.HighSpeedModePlusSerialDataLineReceiveHoldPeriod == 0)
                                      ? QUICK_I2C_MEM_SDA_RX_3400_INF_KHZ
-                                     : HidOverI2c->HighSpeedModePlusSerialDataLineReceiveHoldPeriod;
+                                     : ThcPort->HidOverI2c.HighSpeedModePlusSerialDataLineReceiveHoldPeriod;
       Status = QuickI2cLibWriteSubIpRegister (QuickI2cDev->PciBar0, THC_I2C_REG_IC_SDA_HOLD, IcSdaHold.Data32);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
@@ -562,6 +563,31 @@ QuickI2cInitialize (
       return Status;
     }
   }
+
+ //
+ // Step 15 - if THC_M_PRT_SPI_ICRRD_OPCODE[31]=1, the when a length is received from the 
+ // panel which is larger than the value programmed in the I2C_Max_Frame_size(in 
+ // THC_M_PRT_SPI_ICRRD_OPCODE[15:0]), then THC will use the I2C_Max_Frame_size for the read
+ //
+  IcRrdOpcode.Data32 = MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_SPI_ICRRD_OPCODE);
+  DEBUG ((DEBUG_INFO, "QuickI2cInitialize: IcRrdOpcode.Data32: 0x%X\n", IcRrdOpcode.Data32));
+
+  if (ThcPort->FrameSizeAndIntDelay.MaxFrameSize == 1) {
+    // Bit 31: I2cMaxFrameSizeEnable
+    IcRrdOpcode.Fields.I2cMaxFrameSizeEnable = ThcPort->FrameSizeAndIntDelay.MaxFrameSize;
+    // Bits 15:0 I2cMaxFrameSize
+    IcRrdOpcode.Fields.I2cMaxFrameSize       = ThcPort->FrameSizeAndIntDelay.MaxFrameSizeValue;
+
+  }
+  if (ThcPort->FrameSizeAndIntDelay.IntDelay == 1) {
+    // Bit 30: I2cIntDelayEnable
+    IcRrdOpcode.Fields.I2cIntDelayEnable = ThcPort->FrameSizeAndIntDelay.IntDelay;
+    // Bits 29:16 I2cIntDelay
+    IcRrdOpcode.Fields.I2cIntDelay       = ThcPort->FrameSizeAndIntDelay.IntDelayValue;
+
+  }
+
+  MmioWrite32(QuickI2cDev->PciBar0 + R_THC_MEM_PRT_SPI_ICRRD_OPCODE, IcRrdOpcode.Data32);
 
   return EFI_SUCCESS;
 }

@@ -1814,9 +1814,13 @@ typedef struct {
   <b>Revision 3</b>:  - Add Usb31PortSpeed.
   <b>Revision 4</b>:  - Add PchXhciDwb.
   <b>Revision 5</b>:  - Add GlobalPcieAer.
+  <b>Revision 6</b>:  - Add ThcHidI2cMaxFrameSize,
+                        ThcHidI2cMaxFrameSizeValue,
+                        ThcHidI2cIntDelay,
+                        ThcHidI2cIntDelayValue.
 **/
 
-#define PCH_SETUP_REVISION  5
+#define PCH_SETUP_REVISION  6
 
 typedef struct {
   UINT8   Revision;
@@ -2481,6 +2485,7 @@ typedef struct {
   UINT32  ThcHidI2cHighSpeedModePlusSerialDataLineReceiveHoldPeriod[PCH_MAX_THC_CONTROLLERS];
   UINT32  ThcHidI2cMaximumLengthOfSuppressedSpikesInHighSpeedMode[PCH_MAX_THC_CONTROLLERS];
 
+
   // Hammock Harbor
   UINT8   EnableTimedGpio0;
   UINT8   EnableTimedGpio1;
@@ -2505,6 +2510,10 @@ typedef struct {
   UINT8   Reserved1[20];
   CHAR16  PchHdAudioPostProcessingModCustomGuid4[GUID_CHARS_NUMBER];
   CHAR16  PchHdAudioPostProcessingModCustomGuid5[GUID_CHARS_NUMBER];
+  UINT8   ThcHidI2cMaxFrameSize[PCH_MAX_THC_CONTROLLERS];
+  UINT16  ThcHidI2cMaxFrameSizeValue[PCH_MAX_THC_CONTROLLERS];
+  UINT8   ThcHidI2cIntDelay[PCH_MAX_THC_CONTROLLERS];
+  UINT16  ThcHidI2cIntDelayValue[PCH_MAX_THC_CONTROLLERS];
 } PCH_SETUP;
 
 

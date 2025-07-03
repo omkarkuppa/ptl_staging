@@ -1128,6 +1128,10 @@ FspUpdateThcPolicy (
     ThcConfig->ThcPort[ThcIndex].HidOverI2c.HighSpeedModePlusSerialDataLineTransmitHoldPeriod = FspsUpd->FspsConfig.ThcHidI2cHighSpeedModePlusSerialDataLineTransmitHoldPeriod[ThcIndex];
     ThcConfig->ThcPort[ThcIndex].HidOverI2c.HighSpeedModePlusSerialDataLineReceiveHoldPeriod  = FspsUpd->FspsConfig.ThcHidI2cHighSpeedModePlusSerialDataLineReceiveHoldPeriod[ThcIndex];
     ThcConfig->ThcPort[ThcIndex].HidOverI2c.MaximumLengthOfSuppressedSpikesInHighSpeedMode    = FspsUpd->FspsConfig.ThcHidI2cMaximumLengthOfSuppressedSpikesInHighSpeedMode[ThcIndex];
+    ThcConfig->ThcPort[ThcIndex].FrameSizeAndIntDelay.MaxFrameSize                                      = FspsUpd->FspsConfig.ThcHidI2cMaxFrameSize[ThcIndex];
+    ThcConfig->ThcPort[ThcIndex].FrameSizeAndIntDelay.MaxFrameSizeValue                                 = FspsUpd->FspsConfig.ThcHidI2cMaxFrameSizeValue[ThcIndex];
+    ThcConfig->ThcPort[ThcIndex].FrameSizeAndIntDelay.IntDelay                                          = FspsUpd->FspsConfig.ThcHidI2cIntDelay[ThcIndex];
+    ThcConfig->ThcPort[ThcIndex].FrameSizeAndIntDelay.IntDelayValue                                     = FspsUpd->FspsConfig.ThcHidI2cIntDelayValue[ThcIndex];
   }
 }
 

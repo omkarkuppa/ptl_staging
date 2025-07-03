@@ -25,7 +25,7 @@
   Initialize QuickI2c according to procedure described in EDS
 
   @param[in]  QuickI2cDev      Context of QuickI2c device
-  @param[in]  HidOverI2c       Hid Over I2C policy data
+  @param[in]  ThcPort          Thc Port
   @param[in]  Reset            Reset data
 
   @retval EFI_SUCCESS     QuickI2c initialized successfully
@@ -34,7 +34,7 @@
 EFI_STATUS
 QuickI2cInitialize (
   IN QUICK_I2C_DEV                *QuickI2cDev,
-  IN THC_HID_OVER_I2C             *HidOverI2c,
+  IN THC_PORT                     *ThcPort,
   IN THC_RESET                    *Reset
   );
 

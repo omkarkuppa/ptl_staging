@@ -25,7 +25,7 @@
 #include <ConfigBlock.h>
 #include <ConfigBlock/SiConfig.h>
 
-#define THC_CONFIG_REVISION 7
+#define THC_CONFIG_REVISION 8
 
 extern EFI_GUID gThcConfigGuid;
 extern EFI_GUID gThcSsidHobGuid;
@@ -116,6 +116,13 @@ typedef struct {
   UINT32 MaximumLengthOfSuppressedSpikesInHighSpeedMode;     ///<  Maximum Length Of Suppressed Spikes In High Speed Mode
 } THC_HID_OVER_I2C;
 
+typedef struct {
+  UINT32  MaxFrameSizeValue     : 16;                        ///< I2C Frame Size Value
+  UINT32  IntDelayValue         : 14;                        ///< I2C Interrupt delay value
+  UINT32  IntDelay              : 1;                         ///< Enable I2C Interrupt Delay
+  UINT32  MaxFrameSize          : 1;                         ///< Enable I2C Frame Size
+} FRAME_SIZE_AND_INT_DELAY;
+
 /**
   Structure to hold Sub System ID for port
 **/
@@ -164,8 +171,8 @@ typedef struct {
   THC_RESET             Reset;                          ///< Reset Line settings
   THC_HID_OVER_I2C      HidOverI2c;                     ///< Hid Over I2c mode settings
   UINT32                Clock;                          ///< For available options see THC_PORT_CLOCK
-  THC_PORT_SUBSYTEM_ID  ThcSubSystemId;              ///< Customized Subsystem ID
-  UINT32                Reserved;
+  THC_PORT_SUBSYTEM_ID  ThcSubSystemId;                 ///< Customized Subsystem ID
+  FRAME_SIZE_AND_INT_DELAY  FrameSizeAndIntDelay;       ///< Frame Size And Int Delay structure
 } THC_PORT;
 
 /**
@@ -212,6 +219,8 @@ typedef struct {
   - Added THC_WOT_PIN_CONFIG to enable configuration of ACPI resource of Wake Pin
   <b>Revision 7:</b>
   - Added THC_PORT_SUBSYTEM_ID to program customized SubSytem ID
+    <b>Revision 8:</b>
+  - expand THC_PORT structure with addition of FRAME_SIZE_AND_INT_DELAY with 4 more variables for Max Frame Size and Interrupt delay support
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER  Header;           ///< Config Block Header

@@ -2265,9 +2265,25 @@
   # !BSF HELP:{Choose USB 3.1 Port Speed Selection. Each bit represents a port. 1: Gen1, 0: Gen2}
   gPlatformFspPkgTokenSpaceGuid.Usb31PortSpeed              | * | 0x04 | 0x00000000
 
+  # !BSF NAME:{Touch Host Controller Hid Over I2c Maximum Frame Size Enable } TYPE:{EditNum, HEX, (0,0xFFFF)}
+  # !HDR STRUCT:{UINT8}
+  gPlatformFspPkgTokenSpaceGuid.ThcHidI2cMaxFrameSize       | * | 0x02 | {0x0, 0x0}
+
+  # !BSF NAME:{Touch Host Controller Hid Over I2c Maximum Frame Size Value} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !HDR STRUCT:{UINT16}
+  gPlatformFspPkgTokenSpaceGuid.ThcHidI2cMaxFrameSizeValue  | * | 0x04 | {0x0, 0x0}
+
+  # !BSF NAME:{Touch Host Controller Hid Over I2c Interrupt Delay Enable} TYPE:{EditNum, HEX, (0,0xFFFF)}
+  # !HDR STRUCT:{UINT8}
+  gPlatformFspPkgTokenSpaceGuid.ThcHidI2cIntDelay           | * | 0x02 | {0x0, 0x0}
+
+  # !BSF NAME:{Touch Host Controller Hid Over I2c Interrupt Delay Value} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !HDR STRUCT:{UINT16}
+  gPlatformFspPkgTokenSpaceGuid.ThcHidI2cIntDelayValue      | * | 0x04 | {0x0, 0x0}
+
   # !BSF NAME:{PchPostMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for PCH Post-Mem}
-  gPlatformFspPkgTokenSpaceGuid.PchPostMemRsvd              | * | 0x15 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.PchPostMemRsvd              | * | 0x09 | {0x00}
 
   ## THERMAL_CONFIG Start
 

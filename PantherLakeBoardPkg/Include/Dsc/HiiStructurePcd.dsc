@@ -3306,6 +3306,14 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialDataLineReceiveH
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialDataLineReceiveHoldPeriod[1]|0x0   # SM SDA HOLD RX Period
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialDataLineTransmitHoldPeriod[0]|0x0  # SM SDA HOLD TX Period
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialDataLineTransmitHoldPeriod[1]|0x0  # SM SDA HOLD TX Period
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cMaxFrameSize[0]|0x0                                  # Max Frame size Enable
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cMaxFrameSize[1]|0x0                                  # Max Frame size Enable
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cMaxFrameSizeValue[0]|0x0                             # Max Frame size
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cMaxFrameSizeValue[1]|0x0                             # Max Frame size
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cIntDelay[0]|0x0                                      # Interrrupt delay Enable
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cIntDelay[1]|0x0                                      # Interrrupt delay Enable
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cIntDelayValue[0]|0x0                                 # Interrupt delay value
+gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cIntDelayValue[1]|0x0                                 # Interrupt delay value
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidSpiConnectionSpeed[0]|0x1036640                         # Requested Connection Speed
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidSpiConnectionSpeed[1]|0x1036640                         # Requested Connection Speed
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidSpiFlags[0]|0x0                                         # Flags

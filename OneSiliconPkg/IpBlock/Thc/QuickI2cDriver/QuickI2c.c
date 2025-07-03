@@ -46,6 +46,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED  THC_RESET mThcReset[2];
 
 GLOBAL_REMOVE_IF_UNREFERENCED  THC_HID_OVER_I2C  mHidOverI2c[2];
 
+GLOBAL_REMOVE_IF_UNREFERENCED  THC_PORT  mThcPort[2];
+
 typedef struct {
   UINT16 DeviceId1;
   UINT16 DeviceId2;
@@ -350,6 +352,9 @@ QuickI2cEntryPoint (
 
   CopyMem (&mHidOverI2c[0], &ThcConfigHob->ThcPort[0].HidOverI2c, sizeof (THC_HID_OVER_I2C));
   CopyMem (&mHidOverI2c[1], &ThcConfigHob->ThcPort[1].HidOverI2c, sizeof (THC_HID_OVER_I2C));
+
+  CopyMem (&mThcPort[0], &ThcConfigHob->ThcPort[0], sizeof (THC_PORT));
+  CopyMem (&mThcPort[1], &ThcConfigHob->ThcPort[1], sizeof (THC_PORT));
 
   CopyMem (&mThcReset[0], &ThcConfigHob->ThcPort[0].Reset, sizeof (THC_RESET));
   CopyMem (&mThcReset[1], &ThcConfigHob->ThcPort[1].Reset, sizeof (THC_RESET));
@@ -691,7 +696,7 @@ QuickI2cDriverBindingStart (
     return Status;
   }
 
-  Status = QuickI2cInitialize (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId], &mThcReset[QuickI2cDev->InstanceId]);
+  Status = QuickI2cInitialize (QuickI2cDev, &mThcPort[QuickI2cDev->InstanceId], &mThcReset[QuickI2cDev->InstanceId]);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Initialize Device Status: %r\n", Status));
     goto THC_ERROR_EXIT;

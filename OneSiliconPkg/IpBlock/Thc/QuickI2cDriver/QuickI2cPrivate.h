@@ -444,10 +444,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32  SpiQpiIcrrdOpCode : 8; // RW QPI Read OpCode for interrupt cause register or PIO read
-    UINT32  SpiQioIcrrdOpCode : 8; // RW Quad IO Read OpCode for interrupt cause register or PIO read
-    UINT32  SpiDioIcrrdOpCode : 8; // RW Dual IO Read OpCode for interrupt cause register or PIO read
-    UINT32  SpiSioIcrrdOpCode : 8; // RW Single IO Read OpCode for interrupt cause register or PIO read
+    UINT32  I2cMaxFrameSize          : 16;        // [15:0] RW Low byte of I2C Frame Size for interrupt cause register or PIO read
+    UINT32  I2cIntDelay              : 14;        // [29:16]RW High byte of I2C Frame Size for interrupt cause register or PIO read
+    UINT32  I2cIntDelayEnable        : 1;         // [30] RW Enable I2C Interrupt Delay
+    UINT32  I2cMaxFrameSizeEnable    : 1;         // [31] RW Enable I2C Frame Size
   } Fields;
   UINT32  Data32;
 } THC_M_PRT_SPI_ICRRD_OPCODE;

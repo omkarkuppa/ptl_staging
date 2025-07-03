@@ -517,6 +517,14 @@
 #string STR_THC_CUSTOMIZED_SSID_HELP            #language en-US "Provide THC customized SubSystem Device Identifier"
 #string STR_THC_CUSTOMIZED_SVID_TITLE           #language en-US "Customized SSVID"
 #string STR_THC_CUSTOMIZED_SVID_HELP            #language en-US "Provide THC customized SubSystem Vendor Identifier"
+#string STR_THC_MAX_FRAME_SIZE_TITLE            #language en-US "I2C Max Frame size"
+#string STR_THC_MAX_FRAME_SIZE_HELP             #language en-US "Enable/Disable I2C Max Frame size"
+#string STR_THC_MAX_FRAME_SIZE_VALUE_TITLE      #language en-US "I2C Max frame size value"
+#string STR_THC_MAX_FRAME_SIZE_VALUE_HELP       #language en-US "Provide I2C Max frame size value"
+#string STR_THC_INT_DELAY_TITLE                 #language en-US "I2C Interrupt delay"
+#string STR_THC_INT_DELAY_HELP                  #language en-US "Enable/Disable I2C Interrupt delay"
+#string STR_THC_INT_DELAY_VALUE_TITLE           #language en-US "I2C Interrupt delay value"
+#string STR_THC_INT_DELAY_VALUE_HELP            #language en-US "Provide I2C Interrupt delay value"
 
 //
 // Security Configuration

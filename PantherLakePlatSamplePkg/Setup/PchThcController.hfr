@@ -436,6 +436,42 @@
         step     = 1,
         default  = 0,
       endnumeric;
+      oneof varid  = PCH_SETUP.ThcHidI2cMaxFrameSize[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_MAX_FRAME_SIZE_TITLE),
+        help     = STRING_TOKEN(STR_THC_MAX_FRAME_SIZE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0x0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 0x1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval PCH_SETUP.ThcHidI2cMaxFrameSize[THC_INDEX] == 0x0;
+        numeric varid  = PCH_SETUP.ThcHidI2cMaxFrameSizeValue[THC_INDEX],
+          prompt   = STRING_TOKEN(STR_THC_MAX_FRAME_SIZE_VALUE_TITLE),
+          help     = STRING_TOKEN(STR_THC_MAX_FRAME_SIZE_VALUE_HELP),
+          flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+          minimum  = 0,
+          maximum  = 0xFFFF,
+          step     = 1,
+          default  = 0,
+        endnumeric;
+      endif;
+      oneof varid  = PCH_SETUP.ThcHidI2cIntDelay[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_INT_DELAY_TITLE),
+      help     = STRING_TOKEN(STR_THC_INT_DELAY_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0x0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 0x1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval PCH_SETUP.ThcHidI2cIntDelay[THC_INDEX] == 0x0;
+        numeric varid  = PCH_SETUP.ThcHidI2cIntDelayValue[THC_INDEX],
+          prompt   = STRING_TOKEN(STR_THC_INT_DELAY_VALUE_TITLE),
+          help     = STRING_TOKEN(STR_THC_INT_DELAY_VALUE_HELP),
+          flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+          minimum  = 0,
+          maximum  = 0x3FFF,
+          step     = 1,
+          default  = 0,
+        endnumeric;
+      endif;
     endif;
   endif;
 #endif
