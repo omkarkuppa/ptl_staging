@@ -66,5 +66,6 @@
   gEcFeaturePkgTokenSpaceGuid.PcdEcPdCmdWaitStallInUs       |0x2710|UINT16|0x00101038  # 10ms
 
 [PcdsDynamic, PcdsDynamicEx]
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent|TRUE|BOOLEAN|0x0010101A
   gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode|0x00|UINT8|0x00101035
   gEcFeaturePkgTokenSpaceGuid.PcdBatterySupport|0x0|UINT8|0x00101036
