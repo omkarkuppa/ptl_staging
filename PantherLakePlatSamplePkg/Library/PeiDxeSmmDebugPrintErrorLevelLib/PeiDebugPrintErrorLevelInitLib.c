@@ -29,7 +29,7 @@
 VOID
 CacheDebugPrintErrorLevel (
   IN UINT32 DebugPrintErrorLevel
-)
+  )
 {
   return;
 }

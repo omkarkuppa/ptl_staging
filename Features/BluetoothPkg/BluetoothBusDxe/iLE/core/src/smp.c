@@ -183,6 +183,7 @@ smp_key_dist_done_evt (
   #if (SIGNED_WRITE)
 static void
 smp_sign_gen_evt (
+  UINT8  *data
   );
 
 static void

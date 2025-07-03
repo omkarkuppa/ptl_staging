@@ -32,7 +32,7 @@ extern     UINT32  mDebugPrintErrorLevel;
 VOID
 CacheDebugPrintErrorLevel (
   IN UINT32 DebugPrintErrorLevel
-)
+  )
 {
   mDebugPrintErrorLevelInited = TRUE;
   mDebugPrintErrorLevel = DebugPrintErrorLevel;

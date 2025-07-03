@@ -30,7 +30,17 @@
 GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN     mDebugPrintErrorLevelInited = FALSE;
 GLOBAL_REMOVE_IF_UNREFERENCED UINT32      mDebugPrintErrorLevel = 0xffffffff;
 
-VOID CacheDebugPrintErrorLevel ();
+/**
+  In DXE phase, sets mDebugPrintErrorLevel and mDebugPrintErrorLevelInited.
+  In PEI phase, does nothing (since global variables are read-only in PreMem)
+
+  @param   DebugPrintErrorLevel    Global debug print error level.
+
+**/
+VOID
+CacheDebugPrintErrorLevel (
+  IN UINT32 DebugPrintErrorLevel
+  );
 
 /**
   Returns the debug print error level mask for the current module.
