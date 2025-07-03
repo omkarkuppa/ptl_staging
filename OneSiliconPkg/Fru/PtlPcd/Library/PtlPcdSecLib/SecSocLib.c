@@ -210,7 +210,7 @@ LpssUartDebugConfiguration (
     SecLpssUartConfiguration (LpssUartNumber, &UartDeviceConfig);
     LpssUartWrite (
         GetLpssUartFixedMmioAddress (LpssUartNumber),
-        (UINT8 *)CarInitBuffer, 
+        (UINT8 *)CarInitBuffer,
         AsciiStrLen (CarInitBuffer));
   }
   Lpss2ndUartConfigurationWrapper (&Uart2ndDeviceConfig, &AdditionalUartEnabled, &Lpss2ndUartNumber, &Lpss2ndUartPciMmioBase);
@@ -286,6 +286,13 @@ EarlyCycleDecoding (
   // Program and Enable TCO Base
   //
   PchTcoBaseSet (PcdGet16 (PcdTcoBaseAddress));
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  //
+  // Halt the TCO timer as early as possible
+  //
+  IoWrite16 (PcdGet16 (PcdTcoBaseAddress) + R_TCO_IO_TCTL1, B_TCO_IO_TCTL1_TCO_TMR_HALT);
+#endif
 
   SmbusBase = SmbusPciCfgBase ();
   //

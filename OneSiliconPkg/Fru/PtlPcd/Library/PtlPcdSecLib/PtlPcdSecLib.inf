@@ -56,6 +56,7 @@
   gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress
   gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress
   gSiPkgTokenSpaceGuid.PcdTcoBaseAddress
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
 
 [Sources]
   SecSocLib.c
