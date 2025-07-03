@@ -573,16 +573,11 @@ GetCoreType (
   )
 {
   UINT32   Eax;
-
-  if (IsHeteroCoreSupported ()) {
-    //
-    // Check which is the running core by reading CPUID.(EAX=1AH, ECX=00H):EAX
-    //
-    AsmCpuid (CPUID_HYBRID_INFORMATION, &Eax, NULL, NULL, NULL);
-    *CoreType = (UINT8)((Eax & 0xFF000000) >> 24);
-  } else {
-    *CoreType = CPUID_CORE_TYPE_INTEL_CORE;
-  }
+  //
+  // Check which is the running core by reading CPUID.(EAX=1AH, ECX=00H):EAX
+  //
+  AsmCpuid (CPUID_HYBRID_INFORMATION, &Eax, NULL, NULL, NULL);
+  *CoreType = (UINT8)((Eax & 0xFF000000) >> 24);
 }
 
 /**
