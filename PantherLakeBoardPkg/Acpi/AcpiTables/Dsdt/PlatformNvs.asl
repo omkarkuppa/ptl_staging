@@ -403,7 +403,24 @@
   GDBT, 16, // Offset(1045),  GPIO test devices' debounce value,
   UTKX, 8,  // Offset(1047),  UTK test devices' connection point
   SPTD, 8,  // Offset(1048),  SerialIo additional test devices
-  // Offset(1049) : Offset(1065), Reserved bytes
+  //
+  // Test Devices for Serial IOs
+  //
+  SIOI, 8,  // Offset(1049),  WITT SIO I2C test device enable/disable
+  SIOC, 8,  // Offset(1050),  WITT SIO I3C test device enable/disable
+  SIOS, 8,  // Offset(1051),  WITT SIO SPI test device enable/disable
+  SII0, 8,  // Offset(1052),  SIO I2C0 test devices' connection point
+  SII1, 8,  // Offset(1053),  SIO I2C1 test devices' connection point
+  SII2, 8,  // Offset(1054),  SIO I2C2 test devices' connection point
+  SII3, 8,  // Offset(1055),  SIO I2C3 test devices' connection point
+  SII4, 8,  // Offset(1056),  SIO I2C4 test devices' connection point
+  SII5, 8,  // Offset(1057),  SIO I2C5 test devices' connection point
+  SIC0, 8,  // Offset(1058),  SIO I3C0 test devices' connection point
+  SIC1, 8,  // Offset(1059),  SIO I3C1 test devices' connection point
+  SIS0, 8,  // Offset(1060),  SIO SPI0 test devices' connection point
+  SIS1, 8,  // Offset(1061),  SIO SPI1 test devices' connection point
+  SIS2, 8,  // Offset(1062),  SIO SPI2 test devices' connection point
+  // Offset(1063) : Offset(1065), Reserved bytes
   Offset(1066),
   ATLB, 32, // Offset(1066),  Buffer for runtime ACPI Table loading
   SDM0, 8,  // Offset(1070),  interrupt mode for controller0 devices

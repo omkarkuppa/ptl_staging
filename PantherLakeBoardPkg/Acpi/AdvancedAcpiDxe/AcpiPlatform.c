@@ -3449,7 +3449,26 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->SDS9           = (!IsCnviWifiEnabled () || (CnvSetup.CnviMode == CnviModeDisabled)) ? CnvSetup.DiscreteBtModule : 0;
 
   mPlatformNvsAreaProtocol.Area->WTVX           = mSystemConfiguration.PchI2cWittVersion;
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  mPlatformNvsAreaProtocol.Area->SIOI           = mSystemConfiguration.PchIoI2cWittDeviceEnable;
+  mPlatformNvsAreaProtocol.Area->SII0           = mSystemConfiguration.PchIoI2cWittDevice[0];
+  mPlatformNvsAreaProtocol.Area->SII1           = mSystemConfiguration.PchIoI2cWittDevice[1];
+  mPlatformNvsAreaProtocol.Area->SII2           = mSystemConfiguration.PchIoI2cWittDevice[2];
+  mPlatformNvsAreaProtocol.Area->SII3           = mSystemConfiguration.PchIoI2cWittDevice[3];
+  mPlatformNvsAreaProtocol.Area->SII4           = mSystemConfiguration.PchIoI2cWittDevice[4];
+  mPlatformNvsAreaProtocol.Area->SII5           = mSystemConfiguration.PchIoI2cWittDevice[5];
+
+  mPlatformNvsAreaProtocol.Area->SIOC           = mSystemConfiguration.PchIoI3cWittDeviceEnable;
+  mPlatformNvsAreaProtocol.Area->SIC0           = mSystemConfiguration.PchIoI3cWittDevice[0];
+  mPlatformNvsAreaProtocol.Area->SIC1           = mSystemConfiguration.PchIoI3cWittDevice[1];
+
+  mPlatformNvsAreaProtocol.Area->SIOS           = mSystemConfiguration.PchIoSpiWittDeviceEnable;
+  mPlatformNvsAreaProtocol.Area->SIS0           = mSystemConfiguration.PchIoSpiWittDevice[0];
+  mPlatformNvsAreaProtocol.Area->SIS1           = mSystemConfiguration.PchIoSpiWittDevice[1];
+  mPlatformNvsAreaProtocol.Area->SIS2           = mSystemConfiguration.PchIoSpiWittDevice[2];
+#else
   mPlatformNvsAreaProtocol.Area->WITX           = mSystemConfiguration.PchI2cWittDevice;
+#endif
   mPlatformNvsAreaProtocol.Area->UTKX           = mSystemConfiguration.PchUartUtkDevice;
   mPlatformNvsAreaProtocol.Area->GDBT           = mPchSetup.PchGpioDebounce;
   mPlatformNvsAreaProtocol.Area->GPTD           = mPchSetup.PchGpioTestDevices;

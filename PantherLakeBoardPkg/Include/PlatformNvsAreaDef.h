@@ -391,7 +391,24 @@ typedef struct {
   UINT16   GDBT;                                    ///< Offset 1045    GPIO test devices' debounce value,
   UINT8    UTKX;                                    ///< Offset 1047    UTK test devices' connection point
   UINT8    SPTD;                                    ///< Offset 1048    SerialIo additional test devices
-  UINT8    Reserved12[17];                          ///< Offset 1049:1065
+  //
+  // Test Devices for Serial IOs
+  //
+  UINT8    SIOI;                                    ///< Offset 1049    WITT SIO I2C test device enable/disable
+  UINT8    SIOC;                                    ///< Offset 1050    WITT SIO I3C test device enable/disable
+  UINT8    SIOS;                                    ///< Offset 1051    WITT SIO SPI test device enable/disable
+  UINT8    SII0;                                    ///< Offset 1052    SIO I2C0 test devices' connection point
+  UINT8    SII1;                                    ///< Offset 1053    SIO I2C1 test devices' connection point
+  UINT8    SII2;                                    ///< Offset 1054    SIO I2C2 test devices' connection point
+  UINT8    SII3;                                    ///< Offset 1055    SIO I2C3 test devices' connection point
+  UINT8    SII4;                                    ///< Offset 1056    SIO I2C4 test devices' connection point
+  UINT8    SII5;                                    ///< Offset 1057    SIO I2C5 test devices' connection point
+  UINT8    SIC0;                                    ///< Offset 1058    SIO I3C0 test devices' connection point
+  UINT8    SIC1;                                    ///< Offset 1059    SIO I3C1 test devices' connection point
+  UINT8    SIS0;                                    ///< Offset 1060    SIO SPI0 test devices' connection point
+  UINT8    SIS1;                                    ///< Offset 1061    SIO SPI1 test devices' connection point
+  UINT8    SIS2;                                    ///< Offset 1062    SIO SPI2 test devices' connection point
+  UINT8    Reserved12[3];                           ///< Offset 1063:1065
   UINT32   TableLoadBuffer;                         ///< Offset 1066    Buffer for runtime ACPI Table loading
   UINT8    SDM0;                                    ///< Offset 1070    interrupt mode for controller0 devices
   UINT8    SDM1;                                    ///< Offset 1071    interrupt mode for controller1 devices

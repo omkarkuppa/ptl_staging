@@ -164,9 +164,10 @@
   <b>Revision 6</b>:  - Added StorageDynamicLinkManagement
   <b>Revision 7</b>:  - Added TccMode
   <b>Revision 8</b>:  - Deprecated wwan related variable
+  <b>Revision 9</b>: - Add IoI2c and IoSpi WittDevice 
 **/
 
-#define SETUP_DATA_REVISION 8
+#define SETUP_DATA_REVISION 9
 
 typedef struct {
   UINT8   Revision;
@@ -276,7 +277,7 @@ typedef struct {
   UINT8   PchUart1SensorDevice;
   UINT8   PchUart2SensorDevice;
   UINT8   PchI2cWittDevice;
-  UINT8   PchI2cWittVersion;
+  UINT8   PchI2cWittVersion;  
   UINT8   PchUartUtkDevice;
 
   UINT8   PchSerialIoUseTimingParameters;
@@ -810,6 +811,12 @@ typedef struct {
   UINT16  StaticContentSizeAt4Gb;
 
   UINT8   TccMode;
+  UINT8   PchIoI2cWittDeviceEnable;
+  UINT8   PchIoI2cWittDevice[PCH_MAX_SERIALIO_I2C_CONTROLLERS];
+  UINT8   PchIoI3cWittDeviceEnable;
+  UINT8   PchIoI3cWittDevice[PCH_MAX_SERIALIO_I3C_CONTROLLERS];
+  UINT8   PchIoSpiWittDeviceEnable;
+  UINT8   PchIoSpiWittDevice[PCH_MAX_SERIALIO_SPI_CONTROLLERS];
 } SETUP_DATA;
 
 /**
