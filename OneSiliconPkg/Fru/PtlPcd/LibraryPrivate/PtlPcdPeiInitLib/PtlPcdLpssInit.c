@@ -55,6 +55,7 @@
 #include <GpioV2Signals.h>
 #include "PtlPcdInitPei.h"
 #include <PcdSbPortIds.h>
+#include <Library/GpioHelpersLib.h>
 
 /**
   Configures GPIO for each LPSS SPI Controller
@@ -72,7 +73,12 @@ PtlPcdLpssSpiGpioConfigure (
   GPIOV2_SERVICES    *GpioServices;
   EFI_STATUS         Status;
 
-    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
+
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "HDA: Failed to Configure HDA Pins\n"));
@@ -119,6 +125,11 @@ PtlPcdLpssUartGpioConfigure (
 {
   GPIOV2_SERVICES    *GpioServices;
   EFI_STATUS         Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {

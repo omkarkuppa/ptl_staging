@@ -1985,6 +1985,9 @@ PtlPcdTcssLsxPinEnable (
   GPIOV2_SERVICES      *GpioServices;
   EFI_STATUS           Status;
 
+  if (GpioOverrideLevel1Enabled ()) {
+    return;
+  }
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to Configure Display GPIO's\n"));
@@ -2012,6 +2015,10 @@ PtlPcdTcssLsxOePinEnable (
 {
   GPIOV2_SERVICES  *GpioServices;
   EFI_STATUS       Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    return;
+  }
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
@@ -2127,6 +2134,10 @@ ConfigureDisplayGpio (
 {
   GPIOV2_SERVICES    *GpioServices;
   EFI_STATUS         Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    return EFI_SUCCESS;
+  }
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {

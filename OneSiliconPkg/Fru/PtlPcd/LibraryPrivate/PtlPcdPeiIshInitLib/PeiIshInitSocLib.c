@@ -44,6 +44,7 @@
 #include <Library/P2SbSidebandAccessLib.h>
 #include <Library/PcieConfigAccessLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/GpioHelpersLib.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <Defines/PcdPchBdfAssignment.h>
 #include <GpioV2Signals.h>
@@ -314,6 +315,11 @@ IshSocSetGpio (
 {
   GPIOV2_SERVICES  *GpioServices;
   EFI_STATUS       Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);

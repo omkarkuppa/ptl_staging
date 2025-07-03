@@ -45,6 +45,7 @@
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <PcdSbPortIds.h>
 #include <Library/Ptl/PcdInfoLib/PtlPcdInfoLib.h>
+#include <Library/GpioHelpersLib.h>
 
 
 #define R_PTL_SOC_PMC_PWRM_DISABLE_DTS_IN_S0IX                      0x1580
@@ -105,6 +106,11 @@ PtlPcdPmcConfigurePowerButtonDebounce (
   EFI_STATUS      Status;
   GPIOV2_SERVICES *GpioServices;
 
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
+
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
@@ -130,6 +136,12 @@ PtlPcdPmcConfigureCpuC10Gate (
 {
   EFI_STATUS      Status;
   GPIOV2_SERVICES *GpioServices;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
+
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
@@ -155,6 +167,11 @@ PtlPcdPmcConfigureVrAlert (
 {
   EFI_STATUS      Status;
   GPIOV2_SERVICES *GpioServices;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
@@ -316,11 +333,10 @@ PtlPcdPmcInit (
 
   PtlPcdPmSyncInitMessages(&PmcHandle);
 
-  if (PmcSocConfig.TimedGpioSupported) {
+  if (PmcSocConfig.TimedGpioSupported && (!GpioOverrideLevel1Enabled ())) {
       Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices(%a, %d) failed (Status: %d)\n", __FUNCTION__, GPIO_HID_PTL_PCD_P, 0, Status));
-      ASSERT (FALSE);
       return;
     }
 

@@ -32,6 +32,7 @@
 #include <GpioV2Services.h>
 #include <Register/GpioAcpiDefines.h>
 #include <PcdSbPortIds.h>
+#include <Library/GpioHelpersLib.h>
 
 // Number of SMBUS controllers
 #define MAX_SMBUS_CONTROLLER       1
@@ -125,6 +126,11 @@ EnableSmbusGpio (
   EFI_STATUS       Status;
   GPIOV2_SERVICES  *GpioServices;
 
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return EFI_SUCCESS;
+  }
+
   if (SmbusHandle == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: NULL pointer detected!\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
@@ -156,6 +162,11 @@ EnableSmbusAlert (
 {
   EFI_STATUS       Status;
   GPIOV2_SERVICES  *GpioServices;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return EFI_SUCCESS;
+  }
 
   if (SmbusHandle == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: NULL pointer detected!\n", __FUNCTION__));

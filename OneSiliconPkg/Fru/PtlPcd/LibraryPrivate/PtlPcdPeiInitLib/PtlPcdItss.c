@@ -43,6 +43,7 @@
 #include <Library/PchPciBdfLib.h>
 #include <Library/P2SbSocLib.h>
 #include <PcdSbPortIds.h>
+#include <Library/GpioHelpersLib.h>
 
 extern PCH_DEV_INT_INFO       mSocPDeviceInterruptInfo[];
 extern UINT32                 mSocPDeviceInterruptInfoSize;
@@ -125,6 +126,11 @@ ItssCheckGpioConflicts (
   BOOLEAN           GpiIe;
   UINT32            GpioIrqNumber;
   EFI_STATUS        Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    return FALSE;
+  }
+
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));

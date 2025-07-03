@@ -26,6 +26,7 @@
 #include <Library/GpioV2AccessLib.h>
 #include <Library/PcdGpioNativeLib.h>
 #include <Register/GpioAcpiDefines.h>
+#include <Library/GpioHelpersLib.h>
 
 /**
   Enable Thermal PCH HOT
@@ -37,6 +38,12 @@ EnablePchHot (
 {
   EFI_STATUS      Status;
   GPIOV2_SERVICES *GpioServices;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
+
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));

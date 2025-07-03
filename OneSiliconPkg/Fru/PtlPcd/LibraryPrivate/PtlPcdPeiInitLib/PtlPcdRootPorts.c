@@ -46,6 +46,7 @@
 #include <Register/GpioAcpiDefines.h>
 #include <Library/PeiVtdInitFruLib.h>
 #include <Library/PerformanceLib.h>
+#include <Library/GpioHelpersLib.h>
 
 #include "PtlPcdInitPei.h"
 #include <Library/PciExpressHelpersLib.h>
@@ -320,6 +321,11 @@ PtlPcdPcieEnableGpioLinkDown (
 {
   EFI_STATUS Status;
   GPIOV2_SERVICES *GpioServices;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {

@@ -224,7 +224,6 @@ PtlPcdInit (
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_POSTMEM_INIT_GPIO);
   PtlPcdMinimalGpioConfigurePm ();
   PtlPcdMinimalGpioSetIrq (ItssGetGpioDevIntConfig (SiPolicy));
-
   //
   // Configure PSF PM settings
   //

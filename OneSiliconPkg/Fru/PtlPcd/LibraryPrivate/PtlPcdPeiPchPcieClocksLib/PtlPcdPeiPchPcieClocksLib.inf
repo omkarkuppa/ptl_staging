@@ -44,6 +44,7 @@
   PeiPchPcieClocksLibCommon
   PtlPcdGpioNativeLib
   GpioV2AccessLib
+  GpioHelpersLib
 
 [Packages]
   MdePkg/MdePkg.dec

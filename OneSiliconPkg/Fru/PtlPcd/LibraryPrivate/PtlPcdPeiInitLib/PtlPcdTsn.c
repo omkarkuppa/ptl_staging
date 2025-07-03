@@ -33,6 +33,7 @@
 #include <Register/GpioAcpiDefines.h>
 #include <Library/ConfigBlockLib.h>
 #include <Library/PcdLib.h>
+#include <Library/GpioHelpersLib.h>
 
 /**
   Load default zero and NULL values for the TSN handle.

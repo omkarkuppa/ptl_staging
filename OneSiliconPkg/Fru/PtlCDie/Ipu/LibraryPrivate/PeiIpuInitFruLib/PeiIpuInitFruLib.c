@@ -26,6 +26,7 @@
 #include <Register/GpioAcpiDefines.h>
 #include <GpioV2Services.h>
 #include <Library/PcdLib.h>
+#include <Library/GpioHelpersLib.h>
 
 /**
   Configure IMGUCLK
@@ -40,6 +41,11 @@ ConfigureImguClkOutGpio (
   UINT8            Index;
   GPIOV2_SERVICES  *GpioServices;
   EFI_STATUS       Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
 
   Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
 
