@@ -543,7 +543,7 @@ if [ "$1" = "GCC" ]; then
 if [ $GCC_BIN ]; then
   GCC_VERSION=$($GCC_BIN/gcc -dumpversion|sed 's/^\([0-9]\+\.[0-9]\).*/\1/')
 else
-  GCC_VERSION=$(gcc -dumpversion|sed 's/^\([0-9]\+\.[0-9]\).*/\1/')
+  GCC_VERSION=$(gcc --version | grep ^gcc | sed -e "s/.*) //" | sed 's/\([0-9]\+.[0-9]\).*/\1/')
 fi
 echo "FSP GCC version: $GCC_VERSION!"
 if [ "$GCC_VERSION" = "5.4" ]; then
