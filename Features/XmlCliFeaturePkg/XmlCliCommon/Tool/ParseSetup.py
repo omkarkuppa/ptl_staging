@@ -925,8 +925,7 @@ def parse_setup_files(vfr_output_file_path, header_file_path, knobs_bin_file, sk
 
     final_expression_name[expression_level] = "TRUE"
     for vfr_output_file in glob.iglob(vfr_output_file_path + "/*.i"):
-        # print(f)
-        match = re.search(r".*\\(\S*).i", vfr_output_file)
+        match = re.search(r".*[\\\/](\S*).i", vfr_output_file)
         if match:
             print("Parsing Hii elements from %s.i" % match.group(1))
         current_line = ""
@@ -1374,6 +1373,10 @@ def post_build_handler(args):
     bios_knobs_data = os.path.join(args.xmlcli_build_dir, "BiosKnobsData.bin")
     bios_knobs_data_ffs = os.path.join(args.xmlcli_build_dir, "BiosKnobsData.ffs")
     client_bios_fd = os.path.join(args.build_dir, "FV", "ClientBios.fd")
+    # The exact filename is needed on case-sensitive systems (Ex: Linux)
+    for file in os.listdir(os.path.join(args.build_dir, "FV")):
+        if file.lower() == "clientbios.fd":
+            client_bios_fd = os.path.join(args.build_dir, "FV", file)
     client_bios_fd_bak = os.path.join(args.build_dir, "FV", "ClientBios.fd.bak")
     xmlcli_client_bios_fd = os.path.join(args.build_dir, "FV", "ClientBios_XmlCli.fd")
     if os.path.exists(client_bios_fd) and not os.path.exists(client_bios_fd_bak):
