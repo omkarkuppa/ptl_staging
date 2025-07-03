@@ -2972,7 +2972,7 @@
 
   # !BSF NAME:{CNVi BT Interface} TYPE:{Combo} OPTION:{1:USB, 2:PCI}
   # !BSF HELP:{This option configures BT device interface to either USB/PCI}
-  gPlatformFspPkgTokenSpaceGuid.CnviBtInterface             | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.CnviBtInterface             | * | 0x01 | 0x02
 
   # !BSF NAME:{CNVi BT Audio Offload} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable BT Audio Offload, Default is ENABLE. 0: DISABLE, 1: ENABLE}

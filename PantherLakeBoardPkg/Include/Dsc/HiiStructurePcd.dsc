@@ -69,7 +69,7 @@ gStructPcdTokenSpaceGuid.PcdAmtPetInitConfig.FwProgress|0x1                     
   gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviMode|0x1                                                  # CNVi Mode
   gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviWifiCore|0x1                                              # Wi-Fi Core
   gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtCore|0x1                                                # BT Core
-  gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtInterface|0x1                                           # BT Interface
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtInterface|0x2                                           # BT Interface
 !if gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport == 0x1
   gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtAudioOffloadInterface|0x0                               # BT Audio Offload Interface
 !endif

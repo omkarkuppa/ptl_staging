@@ -1763,35 +1763,6 @@ CrfSupportUsbInterfaceOnly (
   VOID
   )
 {
-  UINT16  SubSystemId;
-  UINTN   Index;
-  UINT16  UsbOnlySubSysIdList[MAX_CNVI_WIFI_SUBSYSTEM_ID_LIST];
-  UINT8   UsbOnlySubSysIdListSize;
-
-  DEBUG ((DEBUG_INFO, "%a ()\n", __FUNCTION__));
-
-  //
-  // Check if CRF does support BT USB interface only and then apply policy accordingly.
-  // Set BtInterface to only USB (1) if CRF does support USB only
-  //
-  UsbOnlySubSysIdListSize = PcdGet8 (PcdCnviWiFiSubSystemIdBtUsbOnlyListSize);
-  if (UsbOnlySubSysIdListSize > MAX_CNVI_WIFI_SUBSYSTEM_ID_LIST) {
-    //
-    // Truncating entries beyond Max Table size
-    //
-    UsbOnlySubSysIdListSize = MAX_CNVI_WIFI_SUBSYSTEM_ID_LIST;
-  }
-  CopyMem (&UsbOnlySubSysIdList, PcdGetPtr (PcdCnviWiFiSubSystemIdBtUsbOnlyList), (UsbOnlySubSysIdListSize * sizeof (UINT16)));
-
-  SubSystemId = PciSegmentRead16 (CnviWifiPciCfgBase () + PCI_SUBSYSTEM_ID_OFFSET);
-  DEBUG ((DEBUG_INFO, "CNVi - CRF Wifi SubSystemId = %x\n", SubSystemId));
-  for (Index = 0; Index < UsbOnlySubSysIdListSize; Index++) {
-    if (SubSystemId == UsbOnlySubSysIdList [Index]) {
-      PcdSetBoolS (PcdCnviCrfBtUsbOnly, TRUE);
-      return TRUE;
-    }
-  }
-
   return FALSE;
 }
 #endif

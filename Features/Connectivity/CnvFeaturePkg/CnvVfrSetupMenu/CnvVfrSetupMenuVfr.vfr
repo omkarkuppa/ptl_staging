@@ -86,17 +86,6 @@ formset
           option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         endoneof;
-
-        grayoutif  ideqval CNV_VFR_CONFIG_SETUP.CnviBtCore == 0;
-          oneof varid   = CNV_VFR_CONFIG_SETUP.CnviBtInterface,
-            questionid  = KEY_CNV_BT_INTERFACE,
-            prompt      = STRING_TOKEN(STR_CNVI_BT_INTERFACE),
-            help        = STRING_TOKEN(STR_CNVI_BT_INTERFACE_HELP),
-            option text = STRING_TOKEN(STR_CNVI_BT_USB), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
-            option text = STRING_TOKEN(STR_CNVI_BT_PCI), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
-          endoneof;
-
-        endif;
       endif;
     endif;
 #endif
