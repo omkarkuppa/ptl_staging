@@ -65,3 +65,5 @@ LIBRARY_CLASS = GetNhltConfigurationLib
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVDEnabled        ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVSEnabled        ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sEverest8316I2s1          ## CONSUMES
+  gNhltFeaturePkgTokenSpaceGuid.NhltI2sLontiumI2s0              ## CONSUMES
+  gNhltFeaturePkgTokenSpaceGuid.NhltI2sLontiumI2s2              ## CONSUMES

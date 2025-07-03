@@ -252,6 +252,10 @@
 #string STR_PCH_HDA_I2S_CODEC_ALC5682I_VD_HELP      #language en-US "Enables/Disables Endpoint for Realtek ALC5682I-VD in NHLT ACPI table\n"
 #string STR_PCH_HDA_I2S_CODEC_ALC5682I_VS_PROMPT    #language en-US " Realtek ALC5682I-VS NHLT"
 #string STR_PCH_HDA_I2S_CODEC_ALC5682I_VS_HELP      #language en-US "Enables/Disables Endpoint for Realtek ALC5682I-VS in NHLT ACPI table\n"
+#string STR_PCH_HDA_I2S0_CODEC_LONTIUM          #language en-US " LONTIUMI2S0 NHLT"
+#string STR_PCH_HDA_I2S0_CODEC_LONTIUM_HELP     #language en-US "Enables/Disables I2S0 Endpoint for LONTIUM in NHLT ACPI table\n"
+#string STR_PCH_HDA_I2S2_CODEC_LONTIUM          #language en-US " LONTIUMI2S2 NHLT"
+#string STR_PCH_HDA_I2S2_CODEC_LONTIUM_HELP     #language en-US "Enables/Disables I2S2 Endpoint for LONTIUM in NHLT ACPI table\n"
 
 #string STR_PCH_HDA_FEATURE_TITLE               #language en-US "Audio DSP Feature Support:"
 #string STR_PCH_HDA_FEATURE_HELP                #language en-US "Enables/Disables DSP Feature.\nBitmask structure:\n[BIT0] - WoV\n[BIT1] - BT Sideband\n[BIT2] - Codec based VAD\n[BIT5] - BT Intel HFP\n[BIT6] - BT Intel A2DP\n[BIT9] - BT Intel LE\n[BIT10] - ACX/SDCA\n[BIT11] - ACX/SDCA speaker aggregation"

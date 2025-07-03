@@ -497,6 +497,20 @@
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
+
+      oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sLontiumI2s0,
+        prompt      = STRING_TOKEN(STR_PCH_HDA_I2S0_CODEC_LONTIUM),
+        help        = STRING_TOKEN(STR_PCH_HDA_I2S0_CODEC_LONTIUM_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sLontiumI2s2,
+        prompt      = STRING_TOKEN(STR_PCH_HDA_I2S2_CODEC_LONTIUM),
+        help        = STRING_TOKEN(STR_PCH_HDA_I2S2_CODEC_LONTIUM_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
 #endif
 
       oneof varid  = PCH_SETUP.PchHdAudioI2sCodecSelect,
