@@ -150,17 +150,6 @@ typedef enum {
   RAWLANEN1_DIG_PCS_XF_RX_PCS_OUT   = 0x310F
 } MPHY_ATTRIBUTES;
 
-typedef enum {
-  TXC10DIRECTCONF3                 = 0x8003,
-  TXC10DIRECTCONF5                 = 0x8005
-} TX_PHY_ATTRIBUTES;
-
-typedef struct {
-  UINT16       AttributeId;
-  UINT16       GenSelIndex;
-  UINT32       AttributeValue;
-} TX_EQUALIZATION_DATA;
-
 typedef union {
   struct {
     UINT16 RxAck              : 1; // Value from Raw PCS for rx_ack
