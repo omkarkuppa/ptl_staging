@@ -115,6 +115,7 @@ GpioV2ServicesCommonLib|$(PLATFORM_SI_PACKAGE)/IpBlock/GpioV2/Library/GpioV2Serv
 PtlPcdGpioTopologyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdGpioTopology.inf
 PtlPcdGpioNativeLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioNativeLib/PtlPcdGpioNativeLib.inf
 PtlPcdSecGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdSecGpioTopology.inf
+PtlPcdMinimalGpioNativeLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdMinimalGpioNativeLib/PtlPcdMinimalGpioNativeLib.inf
 #
 # ME
 #

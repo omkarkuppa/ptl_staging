@@ -52,6 +52,7 @@
 #include <Ppi/FspmArchConfigPpi.h>
 #include <PcdSbPortIds.h>
 #include <Library/PerformanceLib.h>
+#include <Library/Ptl/PcdMinimalGpioNativeLib/PtlPcdMinimalGpioNativeLib.h>
 
 #define PCD_PCIE_NO_SUCH_CLOCK  0xFF
 #define PCD_MAX_PCIE_CLOCK_7    7
@@ -127,8 +128,6 @@ PtlPcdInit (
 {
   P2SB_CONTROLLER                 P2SbController;
   P2SB_SIDEBAND_REGISTER_ACCESS   LpcPcrAccess;
-  GPIOV2_SERVICES                 *GpioServices;
-  EFI_STATUS                      Status;
   P2SB_PORT_16_ID                 P2SBPid;
 
   P2SBPid.Pid16bit = PTL_SID_F2_PID_LPC;
@@ -223,14 +222,8 @@ PtlPcdInit (
   // Configure GPIO PM and interrupt settings
   //
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_POSTMEM_INIT_GPIO);
-    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
-    ASSERT (FALSE);
-  } else {
-    PtlPcdGpioConfigurePm (GpioServices);
-    PtlPcdGpioSetIrq (GpioServices, ItssGetGpioDevIntConfig(SiPolicy));
-  }
+  PtlPcdMinimalGpioConfigurePm ();
+  PtlPcdMinimalGpioSetIrq (ItssGetGpioDevIntConfig (SiPolicy));
 
   //
   // Configure PSF PM settings

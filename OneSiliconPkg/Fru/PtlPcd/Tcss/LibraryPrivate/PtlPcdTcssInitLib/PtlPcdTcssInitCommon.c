@@ -27,6 +27,7 @@
 #include <Library/PreSiliconEnvDetectLib.h>
 #include <Library/RngLib.h>
 #include <Library/PeiServicesLib.h>
+#include <Library/Ptl/PcdMinimalGpioNativeLib/PtlPcdMinimalGpioNativeLib.h>
 
 #include <Register/PchRegs.h>
 #include <Defines/PcdPchBdfAssignment.h>
@@ -235,7 +236,7 @@ IomInstOnCreate (
   IomInst->RegCntxtIomSb = (IP_WR_REG_CNTXT)IpSimGetRegMap (MSGCR_IOM, 0, 0);
 #endif
 
-  IomInst->Callback.GetAuxOriGpioSettings      = PtlGpioIomAuxOriSetting;
+  IomInst->Callback.GetAuxOriGpioSettings      = PtlMinimalGpioIomAuxOriSetting;
   IomInst->Callback.SetTcssDevenRegisterMchbar = HostBridgeSetTcssDeven;
   IomInst->Callback.PmcTcssBiosInitDone        = PmcTcssInitDone;
 

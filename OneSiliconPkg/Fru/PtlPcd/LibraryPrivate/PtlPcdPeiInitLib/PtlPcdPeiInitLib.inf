@@ -118,7 +118,6 @@ PeiCnviInitLib
 CnviLib
 MmioAccessLib
 IpUsb3Lib
-PtlPcdGpioNativeLib
 DomainPcieInitLib
 SerialIoPrivateLib
 LpssI2cSocInitLib
@@ -133,6 +132,7 @@ PeiVtdInitFruLib
 CanSsInitLib
 PeiTsnInitLib
 PeiSpiDmaLib
+PtlPcdMinimalGpioNativeLib
 
 [Packages]
 MdePkg/MdePkg.dec

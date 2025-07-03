@@ -51,6 +51,7 @@ IpUsb3Lib
 PtlPcdTcssPmcLib
 RngLib
 PeiServicesLib
+PtlPcdMinimalGpioNativeLib
 
 [Packages]
 MdePkg/MdePkg.dec

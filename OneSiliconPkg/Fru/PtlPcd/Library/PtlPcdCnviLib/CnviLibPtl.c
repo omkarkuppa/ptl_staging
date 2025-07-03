@@ -36,6 +36,7 @@
 #include <Library/GpioV2AccessLib.h>
 #include <Library/PcdGpioNativeLib.h>
 #include <Register/GpioAcpiDefines.h>
+#include <Library/Ptl/PcdMinimalGpioNativeLib/PtlPcdMinimalGpioNativeLib.h>
 
 /**
   This function checks if CNVi CRF module is present
@@ -48,16 +49,7 @@ CnviCrfModuleIsPresent (
   VOID
   )
 {
-  GPIOV2_SERVICES *GpioServices;
-  EFI_STATUS      Status;
-
-    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-
-  if (EFI_ERROR (Status)) {
-    return FALSE;
-  }
-
-  return PtlPcdGpioGetCnviCrfStrapPinStatus (GpioServices);
+  return PtlPcdMinimalGpioGetCnviCrfStrapPinStatus ();
 }
 
 /**

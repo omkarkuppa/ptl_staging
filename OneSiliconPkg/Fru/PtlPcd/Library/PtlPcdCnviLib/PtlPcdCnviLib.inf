@@ -34,7 +34,7 @@ LIBRARY_CLASS = CnviLib
 [LibraryClasses]
 PciSegmentLib
 PchPciBdfLib
-PtlPcdGpioNativeLib
+PtlPcdMinimalGpioNativeLib
 
 [Packages]
 MdePkg/MdePkg.dec

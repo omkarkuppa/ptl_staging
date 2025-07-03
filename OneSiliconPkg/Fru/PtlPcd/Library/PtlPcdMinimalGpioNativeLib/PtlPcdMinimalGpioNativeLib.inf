@@ -1,0 +1,46 @@
+## @file
+# Mini GPIO Native Library for necessary GPIO operations.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2025 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION = 0x00010017
+  BASE_NAME = PtlPcdMinimalGpioNativeLib
+  FILE_GUID = 717C8303-1F63-4BAA-A74D-DAF5558F3642
+  VERSION_STRING = 1.0
+  MODULE_TYPE = BASE
+  LIBRARY_CLASS = PtlPcdMinimalGpioNativeLib
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  SocInfoLib
+  P2SbSocLib
+  P2SbSidebandAccessLib
+  PtlPcdGpioTopologyLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  PtlPcdMinimalGpioNativeLib.c
+
+[Pcd]

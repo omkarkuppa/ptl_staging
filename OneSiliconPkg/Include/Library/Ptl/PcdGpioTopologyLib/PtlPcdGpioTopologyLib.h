@@ -46,6 +46,18 @@ PtlPcdGpioGetCommunities (
   );
 
 /**
+  Retrieve pointer to community for PTL SOC.
+
+  @param[in] CommunityIndex       Community Index
+
+  @retval                         Pointer to community on requested Index
+**/
+GPIOV2_COMMUNITY*
+PtlPcdGpioGetCommunity (
+  IN UINT32 CommunityIndex
+  );
+
+/**
   This procedure retrieves number of native signals for PTL SOC
 
   @retval  Number of native signals on PTL SOC
