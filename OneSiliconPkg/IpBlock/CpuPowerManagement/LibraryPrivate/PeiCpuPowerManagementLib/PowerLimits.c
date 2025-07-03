@@ -919,6 +919,7 @@ InitNonConfigurableTdpSettings (
   )
 {
   MSR_PACKAGE_POWER_SKU_REGISTER  PackagePowerSkuMsr;
+  MSR_CONFIG_TDP_CONTROL_REGISTER ConfigTdpControlMsr;
   CPU_PM_DATA                     *CpuPmData;
   EFI_STATUS                      Status;
 
@@ -996,6 +997,15 @@ InitNonConfigurableTdpSettings (
   }
 
   *Tar = (UINT8) PmGetTurboBusRatio();
+
+  ///
+  /// Program the Config TDP MSR and override cTDP level to nominal as the non-cTDP when configured
+  ///
+  ConfigTdpControlMsr.Uint64 = AsmReadMsr64 (MSR_CONFIG_TDP_CONTROL);
+  if (CpuPowerDeliveryConfig->ApplyConfigTdp == 0) {
+    ConfigTdpControlMsr.Bits.TdpLevel = 0; // Set cTDP level on MSR to 0 for non-cTDP
+  }
+  AsmWriteMsr64 (MSR_CONFIG_TDP_CONTROL, ConfigTdpControlMsr.Uint64);
 }
 
 /**
@@ -1379,6 +1389,7 @@ ConfigureCtdpLevelAndTar (
   } else {
     DEBUG ((DEBUG_INFO, "PPM:: Could not write MSR_CONFIG_TDP_CONTROL\n"));
   }
+
   ///
   /// Program the max non-turbo ratio corresponding to default selected level
   /// in TURBO_ACTIVATION_RATIO MSR.
