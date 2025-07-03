@@ -219,7 +219,7 @@
   0x08050021|SkuIdWclLp5PpvRvp2|SkuIdWclLp5Rvp2
   0x08040021|SkuIdWclLp5PnpRvp2|SkuIdWclLp5Rvp2
   0x08030021|SkuIdWclLp5MeccRvp2|SkuIdWclLp5Rvp2
-  0x08070021|SkuIdWclLp5McioRvp2|SkuIdWclLp5Rvp2
+  0x08070021|SkuIdWclLp5HsioMcioRvp2|SkuIdWclLp5Rvp2
   0x0000000B|SkuIdPtlUHLp5DerCore
 
   0x0800001C|SkuIdWclLp5Bep
