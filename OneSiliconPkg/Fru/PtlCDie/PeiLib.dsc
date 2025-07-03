@@ -177,3 +177,14 @@ PeiTdxLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tdx/LibraryPrivate/PeiTdxLib/PeiTdxLib.
   PeiOcLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Overclocking/LibraryPrivate/PeiOcLibNull/PeiOcLibNull.inf
   PeiOcInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Overclocking/LibraryPrivate/PeiOcInitLibNull/PeiOcInitLibNull.inf
 !endif
+
+#
+# TCC
+#
+!if gSiPkgTokenSpaceGuid.PcdTccSupport == TRUE
+  PeiTccInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tcc/LibraryPrivate/PeiTccInitLib/PeiTccInitLib.inf
+  PeiTccPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tcc/LibraryPrivate/PeiTccPolicyLib/PeiTccPolicyLib.inf
+!else
+  PeiTccInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tcc/LibraryPrivate/PeiTccInitLibNull/PeiTccInitLibNull.inf
+  PeiTccPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tcc/LibraryPrivate/PeiTccPolicyLibNull/PeiTccPolicyLibNull.inf
+!endif

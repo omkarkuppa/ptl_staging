@@ -292,6 +292,8 @@
   # Ufs device detect status
   gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected        ## CONSUMES
 
+  gSiPkgTokenSpaceGuid.PcdTccSupport                     ## CONSUMES
+
 [Sources]
   PeiPchPolicyUpdatePreMem.c
   PeiPchPolicyUpdate.c

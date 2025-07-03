@@ -79,6 +79,9 @@
 #include <Library/PeiLpssSpiPolicyLib.h>
 #include <Library/PeiLpssUartPolicyLib.h>
 #include <Library/PeiCanPolicyLib.h>
+#if FixedPcdGet8(PcdTccSupport) == 0x1
+#include <Library/PeiTccPolicyLib.h>
+#endif
 
 #define TEMP_MEM_BASE_ADDRESS 0xFE600000
 #define TEMP_IO_BASE_ADDRESS  0xD000

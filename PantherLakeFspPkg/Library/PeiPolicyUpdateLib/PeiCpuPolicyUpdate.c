@@ -102,7 +102,9 @@ FspUpdatePeiCpuPolicy (
   CpuInitConfig->TxtEnable = FspsUpd->FspsConfig.TxtEnable;
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if FixedPcdGet8(PcdTccSupport) == 0x1
   CpuInitConfig->AcSplitLock = FspsUpd->FspsConfig.AcSplitLock;
+#endif
 #endif
 
   ///

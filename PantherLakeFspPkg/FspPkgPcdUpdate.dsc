@@ -68,6 +68,15 @@
 !endif
 
 #
+# TCC Ip Blocks Enabled
+#
+!if ((gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1))
+  gSiPkgTokenSpaceGuid.PcdTccSupport|TRUE
+!else
+  gSiPkgTokenSpaceGuid.PcdTccSupport|FALSE
+!endif
+
+#
 # 14 MB BIOS Flash Base Address and Size
 #
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress|0xFF200000

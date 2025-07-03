@@ -87,6 +87,9 @@
 #include <Library/FusaInfoLib.h>
 #include <Library/PeiFusaE2eCtcLib.h>
 #endif
+#if FixedPcdGet8(PcdTccSupport) == 1
+#include <Library/PeiTccInitLib.h>
+#endif
 #endif
 #include <Library/PeiImrInitLib.h>
 #include <Library/VmdInfoLib.h>
@@ -900,6 +903,12 @@ SiInitPostMemOnPolicy (
   CpuInit (SiPolicy);
   PERF_END_EX (&gPerfCpuPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4081);
 
+#if FixedPcdGet8(PcdTccSupport) == 0x1
+  //
+  // TCC configuration
+  //
+  TccInit ((CONST EFI_PEI_SERVICES **) PeiServices, SiPolicy);
+#endif
   //
   // BIOS Guard Initialization
   //

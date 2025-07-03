@@ -1,5 +1,5 @@
 /** @file
-   Header file for PEI TccPolicyUpdate.
+  This file contains definitions of TCC Data Hob.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -19,13 +19,20 @@
 @par Specification Reference:
 **/
 
-#ifndef _PEI_TCC_POLICY_UPDATE_H_
-#define _PEI_TCC_POLICY_UPDATE_H_
+#ifndef _TCC_DATA_HOB_H_
+#define _TCC_DATA_HOB_H_
 
-#include <Library/BaseMemoryLib.h>
-#include <Library/PeiPlatformLib.h>
-#include <Library/DebugLib.h>
-#include <Library/ConfigBlockLib.h>
+#include <Base.h>
 
+extern EFI_GUID gTccHobGuid;
 
+#pragma pack (push,1)
+
+///
+/// TCC Data Hob
+///
+typedef struct {
+  EFI_HOB_GUID_TYPE EfiHobGuidType; ///< EFI Hob Guid Type.
+} TCC_INFO_HOB;                     ///< TCC Info HOB
+#pragma pack (pop)
 #endif

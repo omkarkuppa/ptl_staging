@@ -108,4 +108,5 @@
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, PCH_HDAUDIO_DSP_FEATURES_FORM_ACTION_KEY, HdaDspCallBack),                                \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, PCH_HDAUDIO_DBT_OFFLOAD_ACTION_KEY, HdaDspCallBack),                                      \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, PCH_HDAUDIO_BT_SIDEBAND_ACTION_KEY, HdaDspCallBack),                                      \
+  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_TCC_MODE,TccModeCallBackFunction),                                                    \
   EVAL(OC_SETUP_ITEM_CALLBACK_LIST)

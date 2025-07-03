@@ -94,6 +94,7 @@
   VmdInfoLib
   CpuLib
   DomainPcieInitLib
+  PeiTccInitLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -134,7 +135,8 @@
   gSiPkgTokenSpaceGuid.PcdFusaSupport                ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTsnSupport                 ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdCanSupport                 ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable             ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable             ## COMSUMES
+  gSiPkgTokenSpaceGuid.PcdTccSupport                 ## COMSUMES
 
 [Guids]
   gSiConfigHobGuid            ## CONSUMES

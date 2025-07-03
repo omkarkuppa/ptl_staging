@@ -100,6 +100,7 @@ MemorySubSystemPolicyLib
 FspVPolicyLib
 PeiOcPolicyLib
 PeiCanPolicyLib
+PeiTccPolicyLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -131,3 +132,7 @@ gSiPkgTokenSpaceGuid.PcdFspVEnable        ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdOverclockEnable   ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdTsnSupport        ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdCanSupport        ## CONSUMES
+
+[FixedPcd]
+gSiPkgTokenSpaceGuid.PcdEmbeddedEnable    ## COMSUMES
+gSiPkgTokenSpaceGuid.PcdTccSupport        ## COMSUMES

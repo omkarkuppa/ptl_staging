@@ -87,6 +87,7 @@
   PeiFusaE2eCtcLib
   HobLib
   PeiMemTelAmtPprLib
+  PeiTccInitLib
 
 [Guids]
   ##
@@ -127,6 +128,8 @@
   gSiPkgTokenSpaceGuid.PcdOverclockEnable                  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiExtendedBiosRegionBaseAddress  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiExtendedBiosRegionSize         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTccSupport                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdFusaSupport                      ## CONSUMES
 
 [Depex]

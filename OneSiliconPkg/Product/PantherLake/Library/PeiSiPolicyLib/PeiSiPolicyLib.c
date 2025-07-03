@@ -176,7 +176,9 @@ SiCreateConfigBlocks (
   TotalBlockSize += LpssSpiGetConfigBlockTotalSize ();
   TotalBlockSize += LpssUartGetConfigBlockTotalSize ();
   TotalBlockSize += FspVPostMemGetConfigBlockTotalSize ();
-
+#if FixedPcdGet8(PcdTccSupport) == 0x1
+  TotalBlockSize += TccGetConfigBlockTotalSize ();
+#endif
   DEBUG ((DEBUG_INFO, "TotalBlockSize = 0x%x\n", TotalBlockSize));
 
   RequiredSize = sizeof (CONFIG_BLOCK_TABLE_HEADER) + TotalBlockSize;
@@ -281,6 +283,10 @@ SiCreateConfigBlocks (
   ASSERT_EFI_ERROR (Status);
   Status = LpssI2cAddConfigBlock (SiPolicy);
   ASSERT_EFI_ERROR (Status);
+#if FixedPcdGet8(PcdTccSupport) == 0x1
+  Status = TccAddConfigBlock((VOID *)SiPolicy);
+  ASSERT_EFI_ERROR (Status);
+#endif
 
   if (SiPolicy->TableHeader.AvailableSize != 0) {
     DEBUG ((DEBUG_ERROR, "The size of allocated pool should be equal to config block size. Remain AvailableSize = 0x%x\n", SiPolicy->TableHeader.AvailableSize));

@@ -1371,6 +1371,11 @@ INF RuleOverride = ACPITABLE $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Include/AcpiTable
 INF RuleOverride = ACPITABLE $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Include/AcpiTables/Soc/PtlPcdCommonSsdt.inf
 !endif
 
+!if gSiPkgTokenSpaceGuid.PcdTccSupport == TRUE
+$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Tcc/Dxe/TccDxe.inf
+INF $(PLATFORM_FEATURES_PATH)/Tcc/TccPolicyUpdateDxe/TccPolicyUpdateDxe.inf
+!endif
+
 [FV.FvOsBoot]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvAlignment        = 16

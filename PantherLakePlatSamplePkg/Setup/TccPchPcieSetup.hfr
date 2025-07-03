@@ -1,0 +1,55 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2025 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+suppressif NOT ideqval SETUP_VOLATILE_DATA.PciePortCfg[PORT_INDEX] == PCH_RP_AVAILABLE;
+  SEPARATOR
+
+  text
+  help   = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_PROMPT,PORT_INDEX)),
+  text   = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_PROMPT,PORT_INDEX)),
+  flags  = 0,
+  key    = 0;
+
+  goto
+    formid      = CONCATENATE3(PCH_PCIERP,PORT_INDEX,_OPTIONS_FORM_ID),
+    question    = CONCATENATE3(PCH_ASPM_PCIERP,PORT_INDEX,_QUESTION_ID),
+    prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_ASPM_PROMPT,PORT_INDEX)),
+    help        = STRING_TOKEN(STR_PCIE_ASPM_HELP);
+
+  goto
+    formid      = CONCATENATE3(PCH_PCIERP,PORT_INDEX,_OPTIONS_FORM_ID),
+    question    = CONCATENATE3(PCH_L1SUB_PCIERP,PORT_INDEX,_QUESTION_ID),
+    prompt      = STRING_TOKEN(CONCATENATE2(STR_PCIE_L1SUB_PROMPT,PORT_INDEX)),
+    help        = STRING_TOKEN(STR_PCIE_L1SUB_HELP);
+
+  goto
+    formid      = CONCATENATE3(PCH_PCIERP,PORT_INDEX,_OPTIONS_FORM_ID),
+    question    = CONCATENATE3(PCH_PTM_PCIERP,PORT_INDEX,_QUESTION_ID),
+    prompt      = STRING_TOKEN(CONCATENATE2(STR_PCIE_PTM_PROMPT,PORT_INDEX)),
+    help        = STRING_TOKEN(STR_PCIE_PTM_HELP);
+
+suppressif ideqval PCH_SETUP.PcieRootPortMultiVcSupported[PORT_INDEX] == 0;
+  goto
+    formid      = CONCATENATE3(PCH_PCIERP,PORT_INDEX,_OPTIONS_FORM_ID),
+    question    = CONCATENATE3(MULTIVC_PCIERP,PORT_INDEX,_QUESTION_ID),
+    prompt      = STRING_TOKEN(CONCATENATE2(STR_PCIE_MULTIVC_PROMPT,PORT_INDEX)),
+    help        = STRING_TOKEN(STR_PCIE_MULTIVC_HELP);
+  endif;
+endif;

@@ -27,8 +27,8 @@
 #include <Library/DebugLib.h>
 #include <Library/PcdLib.h>
 
-#include <Register/Cpuid.h>
-#include <Register/Msr.h>
+#include <Register/Intel/Cpuid.h>
+#include <Register/Intel/Msr.h>
 #include <Library/CpuPlatformLib.h>
 #include <Library/CpuMailboxLib.h>
 

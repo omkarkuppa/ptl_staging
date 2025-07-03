@@ -76,6 +76,10 @@
 #include <Library/PchInitLib.h>
 #include <Library/FspPerformanceLib.h>
 #include <Library/PeiMemTelAmtPprLib.h>
+#if FixedPcdGet8(PcdTccSupport) == 0x1
+#include <Library/PeiTccInitLib.h>
+#include <TccConfig.h>
+#endif
 
 /**
   PPV dummy reset handler.

@@ -44,5 +44,77 @@
       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
     endoneof;
 
+    SEPARATOR
+
+      text
+        help   = STRING_TOKEN(STR_TCC_AFFECTED_SETTINGS),
+        text   = STRING_TOKEN(STR_TCC_AFFECTED_SETTINGS),
+        flags  = 0,
+        key    = 0;
+
+    goto
+      formid      = CPU_POWER_CONFIG_FORM_ID,
+      question    = CX_ENABLE_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_CX_PROMPT),
+      help        = STRING_TOKEN(STR_CX_PROMPT_HELP);
+
+    suppressif ideqval SETUP_CPU_FEATURES.HwpAvailable == 0;
+      goto
+        formid      = CPU_POWER_CONFIG_FORM_ID,
+        question    = HWP_ENABLE_QUESTION_ID,
+        prompt      = STRING_TOKEN(STR_CPU_ISST_PROMPT),
+        help        = STRING_TOKEN(STR_CPU_ISST_HELP);
+    endif;
+
+    suppressif ideqval SETUP_CPU_FEATURES.EISTAvailable == 0;
+      goto
+        formid      = CPU_POWER_CONFIG_FORM_ID,
+        question    = ENABLE_GV_QUESTION_ID,
+        prompt      = STRING_TOKEN(STR_CPU_IST_PROMPT),
+        help        = STRING_TOKEN(STR_CPU_IST_HELP);
+    endif;
+
+    goto
+      formid      = RTD3_FORM_ID,
+      question    = RTD3_SUPPORT_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_RTD3),
+      help        = STRING_TOKEN(STR_RTD3_HELP);
+
+    goto
+      formid      = ACPI_FORM_ID,
+      question    = KEY_LOW_POWER_S0_IDLE,
+      prompt      = STRING_TOKEN(STR_LOW_POWER_S0_IDLE),
+      help        = STRING_TOKEN(STR_LOW_POWER_S0_IDLE_HELP);
+
+    goto
+      formid      = MEMORY_FORM_ID,
+      question    = SA_GV_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_SAGV_PROMPT),
+      help        = STRING_TOKEN(STR_SAGV_HELP);
+
+    goto
+      formid      = MEMORY_FORM_ID,
+      question    = PAGE_IDLE_TIMEOUT_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_PAGE_IDLE_TIMEOUT_PROMPT),
+      help        = STRING_TOKEN(STR_PAGE_IDLE_TIMEOUT_HELP);
+
+    goto
+      formid      = MEMORY_FORM_ID,
+      question    = POWER_DOWN_MODE_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_POWER_DOWN_MODE_PROMPT),
+      help        = STRING_TOKEN(STR_POWER_DOWN_MODE_HELP);
+
+    goto
+      formid      = IGPU_GT_FORM_ID,
+      question    = VIDEO_RS2_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_VIDEO_RS2_PROMPT),
+      help        = STRING_TOKEN(STR_VIDEO_RS2_HELP);
+
+    goto
+      formid      = SB_FORM_ID,
+      question    = PCH_LEGACY_IO_LOW_LATENCY_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_PCH_LEGACY_IO_LOW_LATENCY),
+      help        = STRING_TOKEN(STR_PCH_LEGACY_IO_LOW_LATENCY_HELP);
+
   endform;
 

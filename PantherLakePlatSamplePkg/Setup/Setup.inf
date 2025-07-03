@@ -143,6 +143,7 @@
 #Tcc
   TccSetup.hfr
   TccSetup.uni
+  TccSetup.c
 
 #Fusa
   FusaSetup.hfr
@@ -259,6 +260,7 @@
   FixedPointLib
   PmcSocLib
   FitAccessLib
+  TccPolicyLib
 
 [Guids]
   gEfiGlobalVariableGuid                        ## CONSUMES
@@ -336,6 +338,7 @@
   gCnvFormPlatformProtocolGuid                  ## PRODUCES
   gUsbCRetimerProtocolGuid                      ## CONSUMES
   gMemoryAddressEncodeDecodeProtocolGuid        ## CONSUMES
+  gTccSetupProtocolGuid                         ## PRODUCES
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                      ## CONSUMES

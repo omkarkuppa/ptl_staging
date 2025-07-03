@@ -597,6 +597,11 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   PeiTsnFvLib|$(PLATFORM_FEATURES_PATH)/Tsn/PeiTsnFvLib/PeiTsnFvLibNull.inf
 !endif
 
+#
+# TCC
+#
+  TccPolicyLib|$(PLATFORM_FEATURES_PATH)/Tcc/TccPolicyLib/TccPolicyLib.inf
+
   CcExitLib|UefiCpuPkg/Library/CcExitLibNull/CcExitLibNull.inf
 
 #
@@ -1461,6 +1466,14 @@ $(PLATFORM_BOARD_PACKAGE)/Features/I2c/SensorI2c/SensorI2c.inf
   }
 !endif
 
+!if gSiPkgTokenSpaceGuid.PcdTccSupport == TRUE
+#
+# TCC
+#
+
+  $(PLATFORM_SI_PACKAGE)/IpBlock/Tcc/Dxe/TccDxe.inf
+  $(PLATFORM_FEATURES_PATH)/Tcc/TccPolicyUpdateDxe/TccPolicyUpdateDxe.inf
+!endif
 !if gBoardModuleTokenSpaceGuid.PcdAdvancedFeatureEnable == TRUE
 !if gSiPkgTokenSpaceGuid.PcdAcpiEnable == TRUE
     $(PLATFORM_BOARD_PACKAGE)/BoardInitAdvanced/BoardInitAdvancedSmm/BoardInitAdvancedSmm.inf {

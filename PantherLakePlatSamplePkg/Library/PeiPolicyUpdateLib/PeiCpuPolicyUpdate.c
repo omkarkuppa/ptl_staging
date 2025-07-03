@@ -539,10 +539,12 @@ UpdatePeiCpuPolicy (
 #endif
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if FixedPcdGet8(PcdTccSupport) == 0x1
     //
     // AC Split Lock
     //
     COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.AcSplitLock, CpuInitConfig->AcSplitLock, CpuSetup.AcSplitLock);
+#endif
 #endif
 
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.X2ApicEnable, CpuInitConfig->X2ApicEnable, CpuSetup.X2ApicEnable);

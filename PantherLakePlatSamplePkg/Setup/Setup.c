@@ -74,6 +74,7 @@
 #include <Library/PlatformUsbConfigLib.h>
 #include <Library/PreSiliconEnvDetectLib.h>
 #include <Ucsi.h>
+#include <TccSetup.h>
 
 extern UINT8 SetupStrings[];
 extern UINT8 MainBin[];

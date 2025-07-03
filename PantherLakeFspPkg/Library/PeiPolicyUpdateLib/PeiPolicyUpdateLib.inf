@@ -52,6 +52,7 @@
   gUefiCpuPkgTokenSpaceGuid.PcdCpuMicrocodePatchAddress     ## PRODUCES
   gUefiCpuPkgTokenSpaceGuid.PcdCpuMicrocodePatchRegionSize  ## PRODUCES
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTccSupport                        ## CONSUMES
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdTcssSupport                       ## CONSUMES
