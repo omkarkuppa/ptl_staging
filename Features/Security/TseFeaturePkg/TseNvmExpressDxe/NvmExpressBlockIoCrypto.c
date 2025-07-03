@@ -1022,6 +1022,7 @@ NvmeBlockIoCryptoWriteBlocksEx (
 
   if (Device == NULL) {
     DEBUG ((DEBUG_ERROR, "[BlockIoCrypto] NVMe Private Data Device is NULL\n"));
+    gBS->RestoreTPL (OldTpl);
     return EFI_NOT_READY;
   }
 

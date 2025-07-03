@@ -390,6 +390,9 @@ SetNocImrExclusion (
   }
 
   TdxDataHobPtr = (TDX_DATA_HOB *)GetFirstGuidHob (&gTdxDataHobGuid);
+  if (TdxDataHobPtr == NULL) {
+    return;
+  }
 
   Status = GetConfigBlock ((VOID *)SiPreMemPolicyPpi, &gTelemetryPeiPreMemConfigGuid, (VOID *)&TelemetryPreMemConfig);
   if (Status != EFI_SUCCESS) {

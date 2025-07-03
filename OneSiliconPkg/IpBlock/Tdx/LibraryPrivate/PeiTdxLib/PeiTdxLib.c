@@ -606,11 +606,12 @@ TdxInit (
   }
 
   // Free the allocated memory for the ACTM module
-  Status = PeiServicesFreePages (TempRamPtr, EFI_SIZE_TO_PAGES (TdxActmModuleSize));
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "[TDX] PeiServicesFreePages failed (%r)\n", Status));
+  if (TempRamPtr != 0){
+    Status = PeiServicesFreePages (TempRamPtr, EFI_SIZE_TO_PAGES (TdxActmModuleSize));
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_INFO, "[TDX] PeiServicesFreePages failed (%r)\n", Status));
+    }
   }
-
   return;
 }
 

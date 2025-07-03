@@ -418,10 +418,12 @@ FspExtendFspot (
   EFI_STATUS          Status;
 
   ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
-  Status = Tpm2PcrExtend (0, &TpmDigestValues);
-  DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-OT digests have been extended!)\n", Status, TpmDigestValues.count));
-
+  Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
+  DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = Tpm2PcrExtend (0, &TpmDigestValues);
+    DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-OT digests have been extended!)\n", Status, TpmDigestValues.count));
+  }
   return Status;
 }
 
@@ -446,9 +448,12 @@ FspExtendFspVersion (
   EFI_STATUS          Status;
 
   ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSP_VERSION, TpmActivePcrBanks);
-  Status = Tpm2PcrExtend (0, &TpmDigestValues);
-  DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP Version digests have been extended!)\n", Status, TpmDigestValues.count));
+  Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSP_VERSION, TpmActivePcrBanks);
+  DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = Tpm2PcrExtend (0, &TpmDigestValues);
+    DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP Version digests have been extended!)\n", Status, TpmDigestValues.count));
+  }
   return Status;
 }
 
@@ -717,10 +722,12 @@ FspExtendFspm (
   EFI_STATUS          Status;
 
   ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
-  Status = Tpm2PcrExtend (0, &TpmDigestValues);
-  DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-M digests have been extended!)\n", Status, TpmDigestValues.count));
-
+  Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
+  DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = Tpm2PcrExtend (0, &TpmDigestValues);
+    DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-M digests have been extended!)\n", Status, TpmDigestValues.count));
+  }
   return Status;
 }
 
@@ -745,10 +752,12 @@ FspExtendFsps (
   EFI_STATUS          Status;
 
   ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
-  Status = Tpm2PcrExtend (0, &TpmDigestValues);
-  DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-S digests have been extended!)\n", Status, TpmDigestValues.count));
-
+  Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
+  DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = Tpm2PcrExtend (0, &TpmDigestValues);
+    DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-S digests have been extended!)\n", Status, TpmDigestValues.count));
+  }
   return Status;
 }
 
@@ -834,15 +843,18 @@ SaveFspotEventData (
   EFI_STATUS                     Status;
 
   ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
-  Status = SaveHashEvent (&TpmDigestValues,
-                         TpmActivePcrBanks,
-                         (UINT8 *) L"FSPOT",
-                         sizeof (L"FSPOT"),
-                         EV_POST_CODE
-                         );
-  if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-OT\n"));
+  Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
+  DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = SaveHashEvent (&TpmDigestValues,
+                           TpmActivePcrBanks,
+                           (UINT8 *) L"FSPOT",
+                           sizeof (L"FSPOT"),
+                           EV_POST_CODE
+                           );
+    if (Status == EFI_SUCCESS) {
+      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-OT\n"));
+    }
   }
 }
 
@@ -1118,15 +1130,18 @@ VerifiedComponentSaveHashEvent (
   if (FspMeasurementData->Bits.FspVersionStatus == EFI_SUCCESS) {
     GetFspVersionString (Bspm, ScrtmUtf16String);
     ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSP_VERSION, TpmActivePcrBanks);
-    Status = SaveHashEvent (&TpmDigestValues,
-                           TpmActivePcrBanks,
-                           (UINT8 *) ScrtmUtf16String,
-                           sizeof (UINT16) * SCRTM_VERSION_UTF16_LENGTH,
-                           EV_S_CRTM_VERSION
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP Version\n"));
+    Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSP_VERSION, TpmActivePcrBanks);
+    DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
+    if (!EFI_ERROR (Status)) {
+      Status = SaveHashEvent (&TpmDigestValues,
+                             TpmActivePcrBanks,
+                             (UINT8 *) ScrtmUtf16String,
+                             sizeof (UINT16) * SCRTM_VERSION_UTF16_LENGTH,
+                             EV_S_CRTM_VERSION
+                             );
+      if (Status == EFI_SUCCESS) {
+        DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP Version\n"));
+      }
     }
   }
 
@@ -1137,15 +1152,18 @@ VerifiedComponentSaveHashEvent (
 
   if (FspMeasurementData->Bits.FspmStatus == EFI_SUCCESS) {
     ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
-    Status = SaveHashEvent (&TpmDigestValues,
-                           TpmActivePcrBanks,
-                           (UINT8 *) L"FSPM",
-                           sizeof (L"FSPM"),
-                           EV_POST_CODE
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-M\n"));
+    Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
+    DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
+    if (!EFI_ERROR (Status)) {
+      Status = SaveHashEvent (&TpmDigestValues,
+                             TpmActivePcrBanks,
+                             (UINT8 *) L"FSPM",
+                             sizeof (L"FSPM"),
+                             EV_POST_CODE
+                             );
+      if (Status == EFI_SUCCESS) {
+        DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-M\n"));
+      }
     }
   }
 
@@ -1170,28 +1188,30 @@ VerifiedComponentSaveHashEvent (
   }
 
   ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
+  Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
+  DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
   //
   // Measure and create event log for FSP-S.
   // FSP-S verification will happen later. We have deadloops to halt the boot
   // if verification fails.
   //
-  Status = FspExtendFsps (Fbm, TpmActivePcrBanks);
-  if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "FSP-S extended to PCR Bank %d\n", TpmActivePcrBanks));
-    Status = SaveHashEvent (&TpmDigestValues,
-                           TpmActivePcrBanks,
-                           (UINT8 *) L"FSPS",
-                           sizeof (L"FSPS"),
-                           EV_POST_CODE
-                           );
+  if (!EFI_ERROR (Status)) {
+    Status = FspExtendFsps (Fbm, TpmActivePcrBanks);
     if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-S\n"));
+      DEBUG ((DEBUG_INFO, "FSP-S extended to PCR Bank %d\n", TpmActivePcrBanks));
+      Status = SaveHashEvent (&TpmDigestValues,
+                             TpmActivePcrBanks,
+                             (UINT8 *) L"FSPS",
+                             sizeof (L"FSPS"),
+                             EV_POST_CODE
+                             );
+      if (Status == EFI_SUCCESS) {
+        DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-S\n"));
+      }
+    } else {
+      DEBUG ((DEBUG_ERROR, "Failed to extend FSP-S! Status: %r\n", Status));
     }
-  } else {
-    DEBUG ((DEBUG_ERROR, "Failed to extend FSP-S! Status: %r\n", Status));
   }
-
   return Status;
 }
 
