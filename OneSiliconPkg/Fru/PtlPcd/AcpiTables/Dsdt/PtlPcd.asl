@@ -433,5 +433,5 @@ Include ("PchHeci.asl")
 //
 // Timed GPIO
 //
-Include ("TimedGpio.asl")
+Include ("Pch/AcpiTables/Dsdt/TimedGpio.asl")
 #endif
