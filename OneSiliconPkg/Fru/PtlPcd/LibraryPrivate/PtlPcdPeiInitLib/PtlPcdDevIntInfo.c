@@ -35,10 +35,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST PCH_DEV_INT_INFO mSocPDeviceInterruptInfo[] 
   { 6, 5, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 6, 6, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 6, 7, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 0, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 1, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 2, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 3, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
+  { 7, 0, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTA , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 21
+  { 7, 1, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTB , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 22
+  { 7, 2, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTC , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 23
+  { 7, 3, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTD , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 24
   { 7, 4, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 7, 5, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 7, 6, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
@@ -83,10 +83,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST PCH_DEV_INT_INFO mSocPDeviceInterruptInfo[] 
   {12, 5, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   {12, 6, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   {12, 7, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  {13, 0, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
+  {13, 0, VALID_DEV_YES, PCIE_RP_NO , INTERRUPT_YES, USES_PIRQ_YES, INTP_NO_REQ  , IRQ_UNIQUE_NO  }, // TCSS xHCI Controller
   {13, 1, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  {13, 2, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  {13, 3, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
+  {13, 2, VALID_DEV_YES, PCIE_RP_NO , INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTA , IRQ_UNIQUE_NO  }, // TypeC Subsystem TBT DMA0
+  {13, 3, VALID_DEV_YES, PCIE_RP_NO , INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTA , IRQ_UNIQUE_NO  }, // TypeC Subsystem TBT DMA1
   {13, 4, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   {13, 5, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   {13, 6, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
@@ -252,10 +252,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST PCH_DEV_INT_INFO mSocHDeviceInterruptInfo[] 
   { 6, 5, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 6, 6, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 6, 7, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 0, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 1, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 2, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
-  { 7, 3, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
+  { 7, 0, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTA , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 21
+  { 7, 1, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTB , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 22
+  { 7, 2, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTC , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 23
+  { 7, 3, VALID_DEV_YES, PCIE_RP_YES, INTERRUPT_YES, USES_PIRQ_YES, INTP_IS_INTD , IRQ_UNIQUE_NO  }, // TCSS PCI Express Port 24
   { 7, 4, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 7, 5, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device
   { 7, 6, VALID_DEV_NO , 0          , 0            , 0            , 0            , 0              }, // Not a valid PCH device

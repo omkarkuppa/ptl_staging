@@ -112,15 +112,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED PCH_DEVICE_INTERRUPT_CONFIG mPcdDevIntConfig [] = 
   // {17, 2, PchNoInt, 0},  // TraceHub Phantom (ACPI) Function
   { 16, 0, PchIntA, 23}, // THC #0
   { 16, 1, PchIntB, 22}, // THC #1
-  //{ 13, 0, PchNoInt, 0}, // TCSS xHCI Controller
-  //{ 13, 1, PchNoInt, 0}, // TCSS XDCI
-  //{ 13, 2, PchNoInt, 0}, // TCSS TBT DMA0
-  //{ 13, 3, PchNoInt, 0}, // TCSS TBT DMA1
+  { 13, 0, PchIntA, 16}, // TCSS xHCI Controller
+  // { 13, 1, PchNoInt, 0}, // TCSS XDCI
+  { 13, 2, PchIntA, 16}, // TCSS TBT DMA0
+  { 13, 3, PchIntA, 16}, // TCSS TBT DMA1
   // {13, 7, PchNoInt, 0},  // TCSS XHCI VTIO Phantom (ACPI) Function
-  // {  7, 0, PchNoInt, 0}, // TCSS PCI Express Port 21
-  // {  7, 1, PchNoInt, 0}, // TCSS PCI Express Port 22
-  // {  7, 2, PchNoInt, 0}, // TCSS PCI Express Port 23
-  // {  7, 3, PchNoInt, 0}, // TCSS PCI Express Port 24
+  {  7, 0, PchIntA, 16}, // TCSS PCIe Port 21
+  {  7, 1, PchIntB, 17}, // TCSS PCIe Port 22
+  {  7, 2, PchIntC, 18}, // TCSS PCIe Port 23
+  {  7, 3, PchIntD, 19}, // TCSS PCIe Port 24
   {  6, 0, PchIntA, 16}, // PCI Express Root Port #9
   {  6, 1, PchIntB, 17}, // PCI Express Root Port #10
 };

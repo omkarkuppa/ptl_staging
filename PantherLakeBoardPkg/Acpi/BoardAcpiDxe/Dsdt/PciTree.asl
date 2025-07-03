@@ -69,6 +69,13 @@ Scope (\_SB) {
     // D16
     Package () {0x0010FFFF, 0, 0, 23},
     Package () {0x0010FFFF, 1, 0, 22},
+    // D13
+    Package () {0x000DFFFF, 0, 0, 16},
+    // D7
+    Package () {0x0007FFFF, 0, 0, 16},
+    Package () {0x0007FFFF, 1, 0, 17},
+    Package () {0x0007FFFF, 2, 0, 18},
+    Package () {0x0007FFFF, 3, 0, 19},
     // D6
     Package () {0x0006FFFF, 0, 0, 16},
     Package () {0x0006FFFF, 1, 0, 17},
@@ -119,6 +126,13 @@ Scope (\_SB) {
     // D16
     Package () {0x0010FFFF, 0, 0, 23},
     Package () {0x0010FFFF, 1, 0, 22},
+    // D13
+    Package () {0x000DFFFF, 0, 0, 16},
+    // D7
+    Package () {0x0007FFFF, 0, 0, 16},
+    Package () {0x0007FFFF, 1, 0, 17},
+    Package () {0x0007FFFF, 2, 0, 18},
+    Package () {0x0007FFFF, 3, 0, 19},
     // D6
     Package () {0x0006FFFF, 0, 0, 16},
     Package () {0x0006FFFF, 1, 0, 17},
