@@ -195,7 +195,7 @@ Field (PWMR, DWordAcc, NoLock, Preserve) {
   Offset (R_PMC_PWRM_LTR_IGN),
       , 2,
   ISAT, 1,          // Ignore Sata LTR values
-      , 18,
+      , 15,
   LTRU,  1,         // Bit 18, IGN_UFSX2
   Offset (R_PMC_PWRM_CPPMVRIC),
       , 22,

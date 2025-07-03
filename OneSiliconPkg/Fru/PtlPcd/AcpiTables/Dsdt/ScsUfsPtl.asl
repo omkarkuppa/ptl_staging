@@ -30,6 +30,16 @@ Scope(\_SB.PC00) {
     Device(PUF0) {
       Name(_ADR, PCI_UFS0_ADR)
       Name (_DDN, "Intel(R) UFS Controller")
+
+      Method(_PS0, 0, Serialized) {
+        ADBG(" _PS0 UFS0 D0")
+        ULTR (0)
+      }
+
+      Method(_PS3, 0, Serialized) {
+        ADBG(" _PS3 UFS0 D3")
+        ULTR (1)
+      }
     }
   } //UF0E
 }

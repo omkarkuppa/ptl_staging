@@ -44,6 +44,32 @@ ScsUfsInitMmioRegisters (
 }
 
 /**
+  Configure Ufs MMIO Register AUTO_LTR_VALUE (Offset 0x808)
+
+  @param[in] PciBaseAddress  PCI config base address of the controller
+  @param[in] MmioBase        MMIO base address
+**/
+STATIC
+VOID
+ScsUfsSetMmioAutoLtrRegister (
+  IN UINT64  PciBaseAddress,
+  IN UINTN   MmioBase
+  )
+{
+  ScsControllerEnableMmio (PciBaseAddress, MmioBase);
+  //
+  // Configure UFS AUTO_LTR_VALUE (Offset 0x808) register with the below values -
+  //  auto_ltr_val.reserved0=0x0
+  //  auto_ltr_val.snoop_requirment=0x1
+  //  auto_ltr_val.reserved_low_2=0x0
+  //  auto_ltr_val.snoop_latency_scale=0x2
+  //  auto_ltr_val.snoop_value=0x28A (650usec)
+  //
+  MmioWrite32 (MmioBase + R_SCS_MEM_UFS_AUTO_LTR_VALUE, 0x8A8A);
+  ScsControllerDisableMmio (PciBaseAddress);
+}
+
+/**
   Enables UFS controller.
 
   @param[in] ScsUfsHandle  Handle.
@@ -68,6 +94,7 @@ ScsUfsEnable (
   if (ScsUfsHandle->Config->InlineEncryption) {
     Iosf2OcpEnableUfsInlineEncryption (ScsUfsHandle->Controller.Iosf2OcpPort);
   }
+  ScsUfsSetMmioAutoLtrRegister (ScsUfsHandle->Controller.PciCfgBase, (UINTN) ScsUfsHandle->Controller.MmioBase);
   Iosf2OcpConfigureInterrupts (
     ScsUfsHandle->Controller.Iosf2OcpPort,
     ScsUfsHandle->SocConfig.IntPin,

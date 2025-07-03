@@ -53,6 +53,7 @@
 //
 // UFS Mmio Registers
 //
+#define R_SCS_MEM_UFS_AUTO_LTR_VALUE                     0x808                      ///< Auto_Ltr_Value
 #define R_UFS_MEM_REF_CLK                                0x85C                      ///< Ref Clock Register
 #define V_UFS_MEM_REF_CLK                                0x3
 
