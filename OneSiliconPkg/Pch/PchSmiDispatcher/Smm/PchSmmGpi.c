@@ -86,8 +86,8 @@ PchGpiSmiRegister (
   EFI_STATUS                  Status;
   DATABASE_RECORD             Record;
   UINT8                       GpiSmiBitOffset;
-  UINT32                      GpiHostSwOwnRegAddress;
-  UINT32                      GpiSmiStsRegAddress;
+  UINT64                      GpiHostSwOwnRegAddress;
+  UINT64                      GpiSmiStsRegAddress;
   UINT32                      Data32Or;
   UINT32                      Data32And;
   GPIOV2_SERVICES             **GpioServices;
@@ -209,8 +209,8 @@ PchGpiSmiUnRegister (
   DATABASE_RECORD *RecordInDb;
   LIST_ENTRY      *LinkInDb;
   UINT8           GpiSmiBitOffset;
-  UINT32          GpiHostSwOwnRegAddress;
-  UINT32          GpiSmiStsRegAddress;
+  UINT64          GpiHostSwOwnRegAddress;
+  UINT64          GpiSmiStsRegAddress;
   UINT32          Data32Or;
   UINT32          Data32And;
   BOOLEAN         DisableGpiSmiSource;

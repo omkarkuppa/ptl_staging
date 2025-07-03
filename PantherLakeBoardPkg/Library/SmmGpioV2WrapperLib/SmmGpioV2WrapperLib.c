@@ -1422,8 +1422,8 @@ GpioV2GetPadAndSmiRegs (
   IN  UINT32             Index,
   OUT GPIOV2_PAD         *GpioPad,
   OUT UINT8              *GpiSmiBitOffset,
-  OUT UINT32             *GpiHostSwOwnRegAddress,
-  OUT UINT32             *GpiSmiStsRegAddress
+  OUT UINT64             *GpiHostSwOwnRegAddress,
+  OUT UINT64             *GpiSmiStsRegAddress
   )
 {
   EFI_STATUS              Status;

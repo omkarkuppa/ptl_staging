@@ -4037,8 +4037,8 @@ GetPadAndSmiRegs (
   IN  UINT32             Index,
   OUT GPIOV2_PAD         *GpioPad,
   OUT UINT8              *GpiSmiBitOffset,
-  OUT UINT32             *GpiHostSwOwnRegAddress,
-  OUT UINT32             *GpiSmiStsRegAddress
+  OUT UINT64             *GpiHostSwOwnRegAddress,
+  OUT UINT64             *GpiSmiStsRegAddress
   )
 {
   GPIOV2_INTERFACE       *GpioInterface;
@@ -4070,11 +4070,6 @@ GetPadAndSmiRegs (
   CommunityIndex = GPIOV2_PAD_GET_COMMUNITY_INDEX (*GpioPad);
   *GpiSmiBitOffset = GPIOV2_PAD_GET_PAD_INDEX (*GpioPad);
 
-  // Current SMI code does not support registration with 64bit addresses
-  if ((GpioInterface->Private.CommunityRegisterBase[CommunityIndex] >> 32) != 0) {
-    return EFI_UNSUPPORTED;
-  }
-
   Status = GetRegisterOffset (
              GpioServices,
              GpioV2PadHostSwOwnReg,
@@ -4085,7 +4080,7 @@ GetPadAndSmiRegs (
     ASSERT (FALSE);
     return Status;
   }
-  *GpiHostSwOwnRegAddress = (UINT32) GpioInterface->Private.CommunityRegisterBase[CommunityIndex] + GpiHostSwOwnRegOffset;
+  *GpiHostSwOwnRegAddress = GpioInterface->Private.CommunityRegisterBase[CommunityIndex] + GpiHostSwOwnRegOffset;
 
   Status = GetRegisterOffset (
              GpioServices,
@@ -4097,7 +4092,7 @@ GetPadAndSmiRegs (
     ASSERT (FALSE);
     return Status;
   }
-  *GpiSmiStsRegAddress = (UINT32) GpioInterface->Private.CommunityRegisterBase[CommunityIndex] + GpiSmiStsRegOffset;
+  *GpiSmiStsRegAddress = GpioInterface->Private.CommunityRegisterBase[CommunityIndex] + GpiSmiStsRegOffset;
 
   return EFI_SUCCESS;
 }
