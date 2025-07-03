@@ -106,7 +106,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mPtlPlx[] = {
   // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow  IsysL1Tau  IsysLimitL1  IsysLimitL2  VsysMax  PsysPmax
   // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1            Sec        1/8A         1/8A       mV      1/8W
   {  2500,  5500,  5500,     5500,     5500,     16300,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W40
-  {  2500,  4200,  4200,     4200,     4200,     10500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W20
+  {  2500,  4500,  4500,     4500,     4500,     10500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W20
   {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W48
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W44
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W28
@@ -620,7 +620,7 @@ GetCpuSkuIdentifier (
           break;
         case PTL_H_12XE_SA_DEVICE_ID_4C_4A:
         case PTL_H_12XE_NEX_SA_DEVICE_ID_4C_4A:
-          if (PackageTdp == CPU_TDP_28_WATTS) {
+          if (PackageTdp == CPU_TDP_45_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 4+4 28W\n"));
             CpuIdentifier = EnumPtlH12Xe25Watt44CpuId;
           } else if (PackageTdp == CPU_TDP_25_WATTS) {
@@ -693,7 +693,10 @@ GetCpuSkuIdentifier (
           break;
         case PTL_H_4XE_SA_DEVICE_ID_4C:
           if (PackageTdp == CPU_TDP_15_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 4+0 15W\n"));
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4+0 15W\n"));
+            CpuIdentifier = EnumPtlU15Watt40CpuId;
+          } else if (PackageTdp == CPU_TDP_25_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4+0 25W\n"));
             CpuIdentifier = EnumPtlU15Watt40CpuId;
           }
           break;
