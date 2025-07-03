@@ -333,7 +333,6 @@ CreateStoredHashFvPpiInfo (
   StoredHashFvPpi->FvInfo[FvNumber].Length  = FixedPcdGet32 (PcdFlashFvUplSize);
   StoredHashFvPpi->FvInfo[FvNumber].Flag    = FvFlag |
                                               HASHED_FV_FLAG_REPORT_FV_INFO_PPI |
-                                              HASHED_FV_FLAG_SKIP_BOOT_MODE(BOOT_ON_S3_RESUME) |
                                               CapsuleRecoveryFlag;
   FvNumber++;
   // FvOsBoot
