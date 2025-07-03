@@ -9820,7 +9820,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 23,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -9897,7 +9897,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10053,7 +10053,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10131,7 +10131,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10209,7 +10209,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10443,7 +10443,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 23,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -10520,7 +10520,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10598,7 +10598,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10676,7 +10676,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10754,7 +10754,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -10832,7 +10832,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11066,7 +11066,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 23,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -11143,7 +11143,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11221,7 +11221,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11299,7 +11299,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11377,7 +11377,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11455,7 +11455,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11689,7 +11689,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 23,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -11766,7 +11766,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11844,7 +11844,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -11922,7 +11922,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12000,7 +12000,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12078,7 +12078,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12313,7 +12313,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 23,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -12389,7 +12389,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12467,7 +12467,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12545,7 +12545,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12623,7 +12623,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12701,7 +12701,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -12935,7 +12935,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 23,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -13012,7 +13012,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -13090,7 +13090,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -13168,7 +13168,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -13246,7 +13246,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -13324,7 +13324,7 @@ endform;
             help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
             flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
             minimum     = 0,
-            maximum     = 23,
+            maximum     = 25,
             step        = 1,
           endnumeric;
 
@@ -13589,7 +13589,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 88,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -13709,7 +13709,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 88,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -13818,7 +13818,7 @@ endform;
       oneof varid   = MIPICAM_CONFIG.MipiCam_Flash3_GpioSupport,
         prompt      = STRING_TOKEN(STR_MIPICAM_FLASH_TRIGGER_GPIO_SUPPORT),
         help        = STRING_TOKEN(STR_MIPICAM_FLASH_TRIGGER_GPIO_SUPPORT),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED ;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
       endoneof;
 
@@ -13829,7 +13829,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 88,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -13949,7 +13949,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 88,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
@@ -14058,7 +14058,7 @@ endform;
       oneof varid   = MIPICAM_CONFIG.MipiCam_Flash5_GpioSupport,
         prompt      = STRING_TOKEN(STR_MIPICAM_FLASH_TRIGGER_GPIO_SUPPORT),
         help        = STRING_TOKEN(STR_MIPICAM_FLASH_TRIGGER_GPIO_SUPPORT),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED ;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
       endoneof;
 
@@ -14069,7 +14069,7 @@ endform;
           help        = STRING_TOKEN(STR_MIPICAM_GPIO_GROUP_PAD_NUMBER),
           flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
           minimum     = 0,
-          maximum     = 88,
+          maximum     = 25,
           step        = 1,
         endnumeric;
 
