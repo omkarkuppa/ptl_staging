@@ -67,6 +67,9 @@
 #if FixedPcdGet8 (PcdCanSupport) == 0x1
 #include <CanConfig.h>
 #endif
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#include <Library/FusaInfoLib.h>
+#endif
 
 /**
   Update GBE policies.
@@ -1391,13 +1394,13 @@ FspUpdateFusaPolicy (
   FUSA_CONFIG       *FusaConfig;
   EFI_STATUS        Status;
 
-  Status = GetConfigBlock ((VOID *) SiPolicy, &gFusaConfigGuid, (VOID *) &FusaConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return;
+  if (IsFusaSupported()) {
+    Status = GetConfigBlock ((VOID *) SiPolicy, &gFusaConfigGuid, (VOID *) &FusaConfig);
+    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return;
+    }
   }
-
-  FusaConfig->PsfFusaConfigEnable = FspsUpd->FspsConfig.PsfFusaConfigEnable;
 #endif
 }
 

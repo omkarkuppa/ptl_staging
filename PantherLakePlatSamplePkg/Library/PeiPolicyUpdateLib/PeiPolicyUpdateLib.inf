@@ -69,6 +69,7 @@
   PeiDTbtPolicyLib
   PeiLib
   TmeInfoLib
+  FusaInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -131,6 +132,7 @@
   # USB4
   gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber                  ## CONSUMES
   gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdFusaSupport                                         ## CONSUMES
 
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable
@@ -283,6 +285,9 @@
   gSiPkgTokenSpaceGuid.PcdTdxActmMac3                    ## CONSUMES
 
   gBoardModuleTokenSpaceGuid.VpdPcdAepConfig     ## CONSUMES
+
+  # FUSA
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupBase         ## CONSUMES
 
   # Ufs device detect status
   gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected        ## CONSUMES

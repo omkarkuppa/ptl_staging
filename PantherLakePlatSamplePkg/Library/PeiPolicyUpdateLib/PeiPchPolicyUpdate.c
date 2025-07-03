@@ -94,7 +94,11 @@
 #include <CnvVfrSetupMenuHii.h>
 #if FixedPcdGetBool(PcdCapsuleEnable) == 1
 #include <Guid/SysFwUpdateProgress.h>
-
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if FixedPcdGetBool (PcdFusaSupport) == 1
+#include <Library/FusaInfoLib.h>
+#endif
+#endif
 /**
   Return if input ImageGuid belongs to a FMP device which would perform BIOS update
 
@@ -2703,7 +2707,8 @@ UpdatePchGeneralConfig (
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchLegacyIoLowLatency, PchGeneralConfig->LegacyIoLowLatency, PchSetup->PchLegacyIoLowLatency);
 }
 
-#if FixedPcdGetBool (PcdEmbeddedEnable)
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if FixedPcdGetBool (PcdFusaSupport) == 1
 /**
   Update Fusa config
 
@@ -2720,7 +2725,7 @@ UpdateFusaConfig (
   )
 {
 #if FixedPcdGet8(PcdFspModeSelection) == 0
-  FUSA_CONFIG                *FusaConfig;
+  FUSA_CONFIG                *FusaConfig = NULL;
   EFI_STATUS                 Status;
 #endif
 
@@ -2729,8 +2734,6 @@ UpdateFusaConfig (
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
 #else
-  FusaConfig = NULL;
-
   Status = GetConfigBlock ((VOID *) SiPolicy, &gFusaConfigGuid, (VOID *) &FusaConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -2738,11 +2741,12 @@ UpdateFusaConfig (
   }
 #endif //FSPMode Check
 
-  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.DisplayFusaConfigEnable, FusaConfig->DisplayFusaConfigEnable, SaSetup->DisplayFusaConfigEnable);
-  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicFusaConfigEnable, FusaConfig->GraphicFusaConfigEnable, SaSetup->GraphicFusaConfigEnable);
-  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.OpioFusaConfigEnable, FusaConfig->OpioFusaConfigEnable,    SaSetup->OpioFusaConfigEnable   );
-  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PsfFusaConfigEnable, FusaConfig->PsfFusaConfigEnable,     PchSetup->PsfFusaConfigEnable   );
+#if FixedPcdGetBool(PcdExtendedBiosRegionSupport) == 1
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.FusaStartupPatternAddr,          FusaConfig->FusaStartupPatternAddr,          (UINT32) PcdGet32 (PcdFlashFvFusaStartupBase));
+#endif
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.FusaConfigEnable,         FusaConfig->FusaConfigEnable,         SaSetup->FusaConfigEnable);
 }
+#endif
 #endif
 
 /**
@@ -2916,8 +2920,12 @@ DEBUG_CODE_END();
   UpdateHsioConfig (SiPolicy, NULL);
 #endif
   UpdateRtcConfig (SiPolicy, &PchSetup);
-#if FixedPcdGetBool (PcdEmbeddedEnable)
-  //UpdateFusaConfig (SiPolicy, &PPeiSaPolicyUpdate.cchSetup, &SaSetup);
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if FixedPcdGetBool (PcdFusaSupport) == 1
+  if (IsFusaSupported()) {
+    UpdateFusaConfig (SiPolicy, &PchSetup, &SaSetup);
+  }
+#endif
 #endif
 
   return EFI_SUCCESS;

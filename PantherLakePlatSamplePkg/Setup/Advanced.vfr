@@ -285,9 +285,9 @@ efivarstore SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE,
       prompt = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_TITLE),
       help = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_HELP);
 
-    //goto FUSA_FORM_ID,
-    //  prompt = STRING_TOKEN(STR_FUSA_FORM_TITLE),
-    //  help = STRING_TOKEN(STR_FUSA_FORM_HELP);
+    goto FUSA_FORM_ID,
+      prompt = STRING_TOKEN(STR_FUSA_FORM_TITLE),
+      help = STRING_TOKEN(STR_FUSA_FORM_HELP);
 #endif
 
 #if FixedPcdGetBool (PcdOverclockEnable) == 0x1

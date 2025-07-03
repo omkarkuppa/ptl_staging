@@ -98,6 +98,7 @@ class Basemap ():
         "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset",
         "gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressOffset",
         "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbROffset",
+        "gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupOffset"
         ]
 
         # This list stores flashmap offset PCD names for NVS region and Payloads management region.

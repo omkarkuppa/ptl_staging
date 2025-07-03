@@ -63,7 +63,9 @@
 #
 # Fusa Ip Blocks Enabled
 #
-  gSiPkgTokenSpaceGuid.PcdFusaSupport|FALSE
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+  gSiPkgTokenSpaceGuid.PcdFusaSupport|TRUE
+!endif
 
 #
 # 14 MB BIOS Flash Base Address and Size

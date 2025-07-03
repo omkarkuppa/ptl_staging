@@ -1,9 +1,9 @@
 ## @file
-# Component description file for the FUSA policy library
+# Component description file for the Fusa E2E CTC library
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2019 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -20,20 +20,32 @@
 #
 ##
 
+
 [Defines]
 INF_VERSION = 0x00010017
-BASE_NAME = PeiFusaPolicyLib
-FILE_GUID = AA9E3E20-7A74-4C8F-B71C-A41AE7B04FA2
+BASE_NAME = PeiFusaRuntimeLib
+FILE_GUID = 29E9B4F5-2D19-44E9-8A8F-408795D9BA29
 VERSION_STRING = 1.0
-MODULE_TYPE = PEIM
-LIBRARY_CLASS = PeiFusaPolicyLib
+MODULE_TYPE = BASE
+LIBRARY_CLASS = PeiFusaRuntimeLib
 
 [LibraryClasses]
 DebugLib
+PchInfoLib
+SiPolicyLib
+PeiServicesLib
 
 [Packages]
 MdePkg/MdePkg.dec
 OneSiliconPkg/SiPkg.dec
+UefiCpuPkg/UefiCpuPkg.dec
+IntelFsp2Pkg/IntelFsp2Pkg.dec
 
 [Sources]
-PeiFusaPolicyLibNull.c
+PeiFusaRuntimeLib.c
+
+[Ppis]
+
+[Guids]
+
+[Pcd]

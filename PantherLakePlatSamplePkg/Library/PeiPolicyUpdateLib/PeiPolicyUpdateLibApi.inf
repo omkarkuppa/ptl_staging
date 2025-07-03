@@ -66,6 +66,7 @@
   PeiLib
   NemMapLib
   TmeInfoLib
+  FusaInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -129,6 +130,7 @@
   # USB4
   gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                                 ## CONSUMES
   gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber                  ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdFusaSupport                                         ## CONSUMES
 
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable

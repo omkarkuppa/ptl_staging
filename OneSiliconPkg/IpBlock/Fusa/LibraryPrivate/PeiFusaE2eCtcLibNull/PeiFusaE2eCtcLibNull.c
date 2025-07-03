@@ -1,5 +1,5 @@
 /** @file
-  This file Implement the public interface for  Fusa
+  This file Implement the public interface for Fusa
    E2E CTC implementation
 
   @copyright

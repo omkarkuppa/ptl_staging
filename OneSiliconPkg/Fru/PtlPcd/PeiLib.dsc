@@ -129,6 +129,7 @@
   PeiFusaPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaPolicyLib/PeiFusaPolicyLib.inf
   PeiFusaE2eCtcLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaE2eCtcLib/PeiFusaE2eCtcLib.inf
   FusaInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/Library/PeiDxeSmmFusaInfoLib/FusaInfoLib.inf
+  PeiFusaRuntimeLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaRuntimeLib/PeiFusaRuntimeLib.inf
 !else
   PeiFusaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaLibNull/PeiFusaLibNull.inf
   PeiFusaPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaPolicyLibNull/PeiFusaPolicyLibNull.inf

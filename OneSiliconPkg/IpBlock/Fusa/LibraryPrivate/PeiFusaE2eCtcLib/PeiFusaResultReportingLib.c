@@ -214,14 +214,15 @@ DumpResults(
   IN FUSA_TEST_RESULT *pFusaTestResult
   )
 {
-  DEBUG ((DEBUG_INFO, "Test number = %d \n", pFusaTestResult->TestNumber));
-  DEBUG ((DEBUG_INFO, "Test result = "));
+  DEBUG ((DEBUG_INFO,   "Test Number         = %d \n", pFusaTestResult->TestNumber));
+  DEBUG ((DEBUG_INFO,   "Total Checks        = %d \n", pFusaTestResult->TotalChecks));
+  DEBUG ((DEBUG_INFO,   "Test Result         = "));
   TestResultString(pFusaTestResult->TestResult);
-  DEBUG ((DEBUG_INFO, "Total checks = %d \n", pFusaTestResult->TotalChecks));
   for (UINT32 i = 0; i < pFusaTestResult->TotalChecks; i++) {
-    DEBUG ((DEBUG_INFO, "  Check#%d result = ", i));
+    DEBUG ((DEBUG_INFO, "  CheckResults %d    = ", i));
     TestResultString(pFusaTestResult->CheckResults[i]);
   }
+  DEBUG ((DEBUG_INFO,   "Crc32               = %lx \n", pFusaTestResult->Crc32));
 }
 
 /**

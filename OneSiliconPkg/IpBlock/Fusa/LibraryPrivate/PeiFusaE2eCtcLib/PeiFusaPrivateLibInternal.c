@@ -24,13 +24,9 @@
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PciSegmentLib.h>
-//#include <Register/SaRegsHostBridge.h>
 #include <Defines/HostBridgeDefines.h>
-//#include <Register/IgdRegs.h>
 #include <Defines/IgdDefines.h>
 #include <Register/Intel/ArchitecturalMsr.h>
-//#include <Library/GraphicsInfoLib.h>
-
 #include "PeiFusaPrivateLibInternal.h"
 #include <Register/Ptl/Msr/MsrRegs.h>
 
@@ -158,14 +154,14 @@ McaBankInfoDump(
   )
 {
   DEBUG_CODE_BEGIN();
-    UINT64 Value64 = AsmReadMsr64 (MSR_IA32_MC0_CTL + McaBankNum * 4);
-    DEBUG ((DEBUG_INFO, "MCA Control for bank %d is is 0x%lx\n", McaBankNum, Value64));
-    Value64 = AsmReadMsr64 (MSR_IA32_MC0_STATUS + McaBankNum * 4);
-    DEBUG ((DEBUG_INFO, "MCA status for bank %d is is 0x%lx\n", McaBankNum, Value64));
-    Value64 = AsmReadMsr64 (MSR_IA32_MC0_ADDR + McaBankNum * 4);
-    DEBUG ((DEBUG_INFO, "MCA address for bank %d is is 0x%lx\n", McaBankNum, Value64));
-    Value64 = AsmReadMsr64 (MSR_IA32_MC0_MISC + McaBankNum * 4);
-    DEBUG ((DEBUG_INFO, "MCA misc for bank %d is is 0x%lx\n", McaBankNum, Value64));
+  UINT64 Value64 = AsmReadMsr64 (MSR_IA32_MC0_CTL + McaBankNum * 4);
+  DEBUG ((DEBUG_INFO, "MCA Control for bank %d is is 0x%lx\n", McaBankNum, Value64));
+  Value64 = AsmReadMsr64 (MSR_IA32_MC0_STATUS + McaBankNum * 4);
+  DEBUG ((DEBUG_INFO, "MCA status for bank %d is is 0x%lx\n", McaBankNum, Value64));
+  Value64 = AsmReadMsr64 (MSR_IA32_MC0_ADDR + McaBankNum * 4);
+  DEBUG ((DEBUG_INFO, "MCA address for bank %d is is 0x%lx\n", McaBankNum, Value64));
+  Value64 = AsmReadMsr64 (MSR_IA32_MC0_MISC + McaBankNum * 4);
+  DEBUG ((DEBUG_INFO, "MCA misc for bank %d is is 0x%lx\n", McaBankNum, Value64));
   DEBUG_CODE_END();
 }
 

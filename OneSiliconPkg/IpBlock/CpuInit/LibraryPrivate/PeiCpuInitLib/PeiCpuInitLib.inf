@@ -62,6 +62,7 @@ TdxInfoLib
 CpuInfoFruLib
 TmeLib
 TmeInfoLib
+FusaInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -79,6 +80,7 @@ gUefiCpuPkgTokenSpaceGuid.PcdCpuProcTraceBspOnly       ## CONSUMES
 gUefiCpuPkgTokenSpaceGuid.PcdCpuProcTracePerformanceCollecting      ## CONSUMES
 
 [FixedPcd]
+gSiPkgTokenSpaceGuid.PcdFusaSupport                    ## CONSUMES
 
 [Sources]
 CpuInitPreMem.c

@@ -1,5 +1,4 @@
 /** @file
-  This file provides Fusa GRT Mem Bist Test implementation
 
   @copyright
   INTEL CONFIDENTIAL
@@ -41,7 +40,7 @@
 #define B_MSR_STARTUP_MEM_BIST_STATUS_SELF_TEST_STATUS_MASK BIT1
 #define B_MSR_STARTUP_MEM_BIST_STATUS_TEST_RESULT_MASK BIT0
 
-#define MSR_FUSA_CAPABILITIES_A             0x000002D9
+#define MSR_INTEGRITY_CAPABILITIES             0x000002D9
 #define B_MSR_FUSA_CAP_STARTUP_ARRAY_DIAGNOGSIS_MASK    BIT1
 
 
@@ -61,7 +60,7 @@ typedef struct
        information
 **/
 VOID
-FspDxCheckGrtArrayBistReadInternal (
+FspDxCheckArrayBistReadInternal (
   IN CORE_IDI_TEST_PARAM *pCoreIdiTestParam
   )
 {
@@ -74,20 +73,17 @@ FspDxCheckGrtArrayBistReadInternal (
   pFusaTestResult = pCoreIdiTestParam->pFusaTestResult;
   pFusaCRCTestResult = pCoreIdiTestParam->pFusaCRCTestResult;
   //CoreNumber = pCoreIdiTestParam->CoreNumber;
-  //SMID_1016
   FusaConfigMsr = AsmReadMsr64 (MSR_STARTUP_MEM_BIST_STATUS);
   if ((FusaConfigMsr & B_MSR_STARTUP_MEM_BIST_STATUS_TEST_RESULT_MASK) == 0x0) { 
     LibStatus = UpdateResults(FUSA_TEST_PASS, 1U, pFusaCRCTestResult);
   } else {
     LibStatus = UpdateResults(FUSA_TEST_FAIL, 1U, pFusaCRCTestResult);
   }
-  //SMID_1013
   if (FusaConfigMsr & B_MSR_STARTUP_MEM_BIST_STATUS_SELF_TEST_STATUS_MASK) { 
     LibStatus = UpdateResults(FUSA_TEST_PASS, 0U, pFusaCRCTestResult);
   } else {
     LibStatus = UpdateResults(FUSA_TEST_FAIL, 0U, pFusaCRCTestResult);
   }
-  //SMID_1013
   if (FusaConfigMsr & B_MSR_STARTUP_MEM_BIST_STATUS_TEST_IN_PROGRESS_MASK) { 
     LibStatus = UpdateResults(FUSA_TEST_PASS, 0U, pFusaTestResult);
   } else {
@@ -111,7 +107,7 @@ FspDxCheckGrtArrayBistReadInternal (
 **/
 VOID
 EFIAPI
-FspDxCheckGrtArrayBistSetInternal (
+FspDxCheckArrayBistSetInternal (
   IN CORE_IDI_TEST_PARAM *pCoreIdiTestParam
   )
 {
@@ -120,7 +116,7 @@ FspDxCheckGrtArrayBistSetInternal (
   
 
   AsmCpuid (CPUID_HYBRID_INFORMATION, &Eax.Uint32, NULL, NULL, NULL);  
-  fusa_capability = AsmReadMsr64 (MSR_FUSA_CAPABILITIES_A);
+  fusa_capability = AsmReadMsr64 (MSR_INTEGRITY_CAPABILITIES);
 
   if( ((UINT8)Eax.Bits.CoreType == CPUID_CORE_TYPE_INTEL_ATOM) 
       && (fusa_capability & B_MSR_FUSA_CAP_STARTUP_ARRAY_DIAGNOGSIS_MASK))
@@ -132,7 +128,7 @@ FspDxCheckGrtArrayBistSetInternal (
 }
 
 /**
-  Perform GRT Atom PBist.
+  Perform Atom PBist.
   The test targets all active unique core. For core not
   detected, their test result is updated to
   FUSA_TEST_DEVICE_NOTAVAILABLE
@@ -148,7 +144,7 @@ FspDxCheckGrtArrayBistSetInternal (
 
 **/
 VOID
-FspDxCheckGrtArrayAndCRCBist (
+FspDxCheckArrayAndCRCBist (
   OUT FUSA_TEST_RESULT *pFusaTestResult,
   OUT FUSA_TEST_RESULT *pFusaCRCTestResult
   )
@@ -157,30 +153,30 @@ FspDxCheckGrtArrayAndCRCBist (
   CORE_IDI_TEST_PARAM CoreIdiTestParam;
   FUSA_INFO *Local_Fusa_info;
   UINT32 CoreCount;
+  FUSA_LIB_STATUS LibStatus;
 
-  DEBUG ((DEBUG_INFO, "FspDxCheckGrtArrayBist\n"));
+  DEBUG ((DEBUG_INFO, "%a\n", __FUNCTION__));
 
   Local_Fusa_info = FusaInfoListGet();
 
   //intialize the test result buffer as some test may not run because of the device not being available
   CoreCount = 0;
-  for (CoreIndex = 0; CoreIndex < Local_Fusa_info->TotalProcessor ; CoreIndex++)
+  for (CoreIndex = 0; CoreIndex < MAX_PTL_ATOM_CORE_COUNT ; CoreIndex++)
   {
     if( Local_Fusa_info->Processor[CoreIndex].CoreType == CPUID_CORE_TYPE_INTEL_ATOM )
     {
-      FUSA_LIB_STATUS LibStatus;
-
-      DEBUG ((DEBUG_INFO, "Initializa Test Report on CoreNumber[%d] Id = 0x%x\n", CoreIndex,
+      DEBUG ((DEBUG_INFO, "Initialize Test Report on CoreNumber[%d] Id = 0x%x\n", CoreIndex,
             Local_Fusa_info->Processor[CoreIndex].ProcessorInfo.ProcessorId ));
 
-      DEBUG ((DEBUG_INFO, "FspDxCheckGrtArrayBist on Local_Fusa_info->Processor[%x].CoreType = 0x%x, Fusa_Capabilities =0x%x\n",
+      DEBUG ((DEBUG_INFO, "%a on Local_Fusa_info->Processor[%x].CoreType = 0x%x, Fusa_Capabilities =0x%x\n",
+          __FUNCTION__,
           CoreIndex,
           Local_Fusa_info->Processor[CoreIndex].CoreType,
           Local_Fusa_info->Processor[CoreIndex].Fusa_Capabilities));
 
       LibStatus = FusaTestAndReporting (
                     NULL,
-                    FusaTestNumGrtArray0Bist + CoreCount,
+                    FusaTestNumArray0Bist + CoreCount,
                     1U,
                     &(pFusaTestResult[CoreCount])
                     );
@@ -195,12 +191,26 @@ FspDxCheckGrtArrayAndCRCBist (
                     );
 
       ASSERT(LibStatus == FusaNoError);
-      CoreCount++;
+    } else {
+      LibStatus = FusaTestAndReporting (
+        NULL,
+        FusaTestNumArray0Bist + CoreCount,
+        1U,
+        &(pFusaTestResult[CoreCount])
+        );
+
+      LibStatus = FusaTestAndReporting (
+        NULL,
+        FusaTestNumCRCon0PBISTROM + CoreCount,
+        2U,
+        &(pFusaCRCTestResult[CoreCount])
+        );
     }
+    CoreCount++;
   }
 
   RunAllAp (
-    (AP_PROCEDURE) FspDxCheckGrtArrayBistSetInternal,
+    (AP_PROCEDURE) FspDxCheckArrayBistSetInternal,
     NULL
     );
 
@@ -213,7 +223,7 @@ FspDxCheckGrtArrayAndCRCBist (
       CoreIdiTestParam.pFusaTestResult = &(pFusaTestResult[CoreCount]);
       CoreIdiTestParam.pFusaCRCTestResult = &(pFusaCRCTestResult[CoreCount]);
       RunAtAp (
-        (AP_PROCEDURE) FspDxCheckGrtArrayBistReadInternal,
+        (AP_PROCEDURE) FspDxCheckArrayBistReadInternal,
           CoreIndex,
           &CoreIdiTestParam
         );

@@ -24,32 +24,11 @@
       SUBTITLE(STRING_TOKEN(STR_FUSA_FORM_TITLE))
       SEPARATOR
 
-      oneof varid       = SA_SETUP.DisplayFusaConfigEnable,
-        prompt          = STRING_TOKEN(STR_FUSA_DISPLAY_EN),
-        help            = STRING_TOKEN(STR_FUSA_DISPLAY_HELP),
+      oneof varid       = SA_SETUP.FusaConfigEnable,
+        prompt          = STRING_TOKEN(STR_FUSA_EN),
+        help            = STRING_TOKEN(STR_FUSA_HELP),
         option text     = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         option text     = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
-
-      oneof varid       = SA_SETUP.GraphicFusaConfigEnable,
-        prompt          = STRING_TOKEN(STR_FUSA_GRAPHICS_EN),
-        help            = STRING_TOKEN(STR_FUSA_GRAPHICS_HELP),
-        option text     = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text     = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      endoneof;
-
-      oneof varid       = SA_SETUP.OpioFusaConfigEnable,
-        prompt          = STRING_TOKEN(STR_FUSA_OPIO_EN),
-        help            = STRING_TOKEN(STR_FUSA_OPIO_HELP),
-        option text     = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text     = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      endoneof;
-
-      oneof varid       = PCH_SETUP.PsfFusaConfigEnable,
-        prompt          = STRING_TOKEN(STR_FUSA_PSF_EN),
-        help            = STRING_TOKEN(STR_FUSA_PSF_HELP),
-        option text     = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text     = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
-      endoneof;
-
+      SEPARATOR
   endform;

@@ -69,6 +69,7 @@
   HobLib
   PtlPcdPolicyLib
   PeiVrDomainLib
+  FusaInfoLib
 
 [Guids]
   gGbeConfigGuid              ## CONSUMES

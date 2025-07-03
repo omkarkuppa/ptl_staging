@@ -134,6 +134,7 @@
   gSiPkgTokenSpaceGuid.PcdFusaSupport                ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTsnSupport                 ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdCanSupport                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable             ## CONSUMES
 
 [Guids]
   gSiConfigHobGuid            ## CONSUMES

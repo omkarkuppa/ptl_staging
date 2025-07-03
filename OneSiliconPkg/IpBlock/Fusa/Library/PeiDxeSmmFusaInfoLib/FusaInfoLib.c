@@ -30,13 +30,12 @@
 #include <Library/PmcLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/IoLib.h>
-#include <Library/FusaInfoLib.h>
 
 #define R_PMC_PWRM_FUSA_STS_CTL                     0x1F30U
 #define B_PMC_PWRM_FUSA_STS_CTL_DIAGTEST_EN         BIT2
 #define B_PMC_PWRM_FUSA_STS_CTL_DIAGTEST_PCHMODE    BIT1
 #define B_PMC_PWRM_FUSA_STS_CTL_DIAGTEST_FEATURE_EN BIT0
-#define MSR_FUSA_CAPABILITIES_A                 0x000002D9
+#define MSR_INTEGRITY_CAPABILITIES                 0x000002D9
 /**
   Check is the Core is supporting fusa.
 
@@ -80,7 +79,7 @@ IsFusaSupported (
 
   Msr.Uint64 = AsmReadMsr64 (MSR_CORE_CAPABILITIES);
   if (Msr.Bits.FusaSupported) {
-    FusaCapMsr = AsmReadMsr64 (MSR_FUSA_CAPABILITIES_A);
+    FusaCapMsr = AsmReadMsr64 (MSR_INTEGRITY_CAPABILITIES);
 
     // check if MSR is not 0
     if (FusaCapMsr) {

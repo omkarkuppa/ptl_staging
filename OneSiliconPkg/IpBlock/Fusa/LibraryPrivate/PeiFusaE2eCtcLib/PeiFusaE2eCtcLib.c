@@ -38,11 +38,17 @@
 #include "PeiFusaPrivateLibInternal.h"
 #include "PeiFusaResultReportingLib.h"
 #include "PeiFusaE2eCtcLibInternal.h"
+#include "PeiFusaCfiParity.h"
+#include "PeiFusaE2eCtcLlcDoubleParity.h"
+#include "PeiFusaCcfE2eIdiParityCtc.h"
+#include "PeiFusaCoreCtc.h"
+#include "PeiFusaIbecc.h"
 #include <Library/FusaInfoLib.h>
 #include <Register/Cpuid.h>
 #include <Register/Ptl/Msr/MsrRegs.h>
 
 UINT8 *gpTestData = NULL;
+UINT32 mCrc32cTable[256];
 
 //map unique core to processor number used by MP services, processor number 0 is being ignored as it refers to the BSP
 //use array size of 128 so that we do not need to do array index check, although we expect the initial APIC ID max at
@@ -52,12 +58,65 @@ STATIC UINT64                   mUniqueCoreList[64];
 
 STATIC FUSA_INFO  Fusa_info;
 
-#define MSR_FUSA_CAPABILITIES_A             0x000002D9
+#define MSR_INTEGRITY_CAPABILITIES             0x000002D9
 
 extern EFI_GUID                   gEdkiiPeiMpServices2PpiGuid;
 STATIC CONST EFI_PEI_SERVICES     **mPeiServices;
 STATIC EDKII_PEI_MP_SERVICES2_PPI *mMpServices2Ppi = NULL;
 
+#define CRC32C_POLY_NORMAL        0x1EDC6F41
+
+/**
+  This internal function reverses bits for 32bit data.
+
+  @param  Value The data to be reversed.
+
+  @return       Data reversed.
+
+**/
+UINT32
+ReverseBits (
+  UINT32  Value
+  )
+{
+  UINTN  Index;
+  UINT32 NewValue;
+
+  NewValue = 0;
+  for (Index = 0; Index < 32; Index++) {
+    if ((Value & (1 << Index)) != 0) {
+      NewValue = NewValue | (1 << (31 - Index));
+    }
+  }
+
+  return NewValue;
+}
+
+/**
+  Generate a CRC-32C table that can speed up CRC calculation by table look up.
+**/
+VOID
+Crc32cInit(
+  VOID
+  )
+{
+  UINT32 TableEntry;
+  UINT32 Index;
+  UINT32 CrcVal;
+
+  for (TableEntry = 0; TableEntry < 256; TableEntry++) {
+    CrcVal = ReverseBits ((UINT32) TableEntry);
+    for (Index = 0; Index < 8; Index++) {
+      if ((CrcVal & 0x80000000) != 0) {
+        CrcVal = (CrcVal << 1) ^ CRC32C_POLY_NORMAL;
+      } else {
+        CrcVal = CrcVal << 1;
+      }
+    }
+
+    mCrc32cTable[TableEntry] = ReverseBits (CrcVal);
+  }
+}
 
 /**
   Calculate CRC32 value of a buffer.
@@ -77,18 +136,20 @@ AsmCrc32Calc (
   IN UINT32 InitVal
   )
 {
-/*  _asm {
-          mov eax, InitVal
-          mov ecx, Len
-          mov edx, pBuffer
-          shr ecx, 2
-        crc_loop1:
-          Crc32 eax, dword ptr [edx]
-          add edx, 4
-          dec ecx
-          jne crc_loop1
-  }*/
-  return 0;
+  UINT32  Crc;
+  UINTN   Index;
+  UINT8   *Ptr;
+
+  if ((Len == 0) || (pBuffer == NULL)) {
+    return 0;
+  }
+
+  Crc = 0xffffffff;
+  for (Index = 0, Ptr = pBuffer; Index < Len; Index++, Ptr++) {
+    Crc = (Crc >> 8) ^ mCrc32cTable[(UINT8) Crc ^ *Ptr];
+  }
+
+  return (Crc);
 }
 
 /**
@@ -144,11 +205,6 @@ GetNumberofAtomCPU (
 }
 
 /**
-  LLC Error E2E CTC internal main routine
-
-  @param[in,out] pLlcTestParam - conttain result buffer
-       where the test result to be updated to beside core number
-       information
 **/
 VOID
 FspCPUTypeCheckInternal (
@@ -163,7 +219,24 @@ FspCPUTypeCheckInternal (
     AsmCpuid (CPUID_HYBRID_INFORMATION, &Eax.Uint32, NULL, NULL, NULL);
     pProcessor_info->CoreType = Eax.Bits.CoreType;
 
-    pProcessor_info->Fusa_Capabilities.Uint64 = AsmReadMsr64 (MSR_FUSA_CAPABILITIES_A);
+    pProcessor_info->Fusa_Capabilities.Uint64 = AsmReadMsr64 (MSR_INTEGRITY_CAPABILITIES);
+
+    GetProcessorLocationByApicId (
+      (UINT32) pProcessor_info->ProcessorInfo.ProcessorId,
+      &(pProcessor_info->ProcessorInfo.Location.Package),
+      &(pProcessor_info->ProcessorInfo.Location.Core),
+      &(pProcessor_info->ProcessorInfo.Location.Thread)
+      );
+
+    GetProcessorLocation2ByApicId (
+      (UINT32) pProcessor_info->ProcessorInfo.ProcessorId,
+      &(pProcessor_info->ProcessorInfo.ExtendedInformation.Location2.Package),
+      &(pProcessor_info->ProcessorInfo.ExtendedInformation.Location2.Die),
+      &(pProcessor_info->ProcessorInfo.ExtendedInformation.Location2.Tile),
+      &(pProcessor_info->ProcessorInfo.ExtendedInformation.Location2.Module),
+      &(pProcessor_info->ProcessorInfo.ExtendedInformation.Location2.Core),
+      &(pProcessor_info->ProcessorInfo.ExtendedInformation.Location2.Thread)
+      );
 }
 
 /**
@@ -527,6 +600,7 @@ CoreInfoPopulate (
 {
   UINT32 ProcessorNumber;
   EFI_STATUS Status;
+  CPUID_NATIVE_MODEL_ID_AND_CORE_TYPE_EAX Eax;
 
   mPeiServices = PeiServices;  //store for later RunAtAp usage
 
@@ -559,8 +633,6 @@ CoreInfoPopulate (
       DEBUG ((DEBUG_INFO, "Main core's CpuNumber =  %x\n", Fusa_info.BspCpu));
     }
 
-    /* To avoid buffer underrun */
-    if( MAX_TGL_CORE_COUNT < Fusa_info.TotalProcessor ) ASSERT(FALSE);
     for (ProcessorNumber = 0; ProcessorNumber < Fusa_info.TotalProcessor; ProcessorNumber++) {
       Status = mMpServices2Ppi->GetProcessorInfo (
                                  mMpServices2Ppi,
@@ -576,8 +648,27 @@ CoreInfoPopulate (
               &(Fusa_info.Processor[ProcessorNumber]));
 
     }
-    //Assuming BspCPU is core
-    Fusa_info.Processor[Fusa_info.BspCpu].CoreType = CPUID_CORE_TYPE_INTEL_CORE;
+    // Probe BspCPU
+    AsmCpuid (CPUID_HYBRID_INFORMATION, &Eax.Uint32, NULL, NULL, NULL);
+    Fusa_info.Processor[Fusa_info.BspCpu].CoreType = Eax.Bits.CoreType;
+    Fusa_info.Processor[Fusa_info.BspCpu].Fusa_Capabilities.Uint64 = AsmReadMsr64 (MSR_INTEGRITY_CAPABILITIES);
+
+    GetProcessorLocationByApicId (
+      (UINT32) Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ProcessorId,
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.Location.Package),
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.Location.Core),
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.Location.Thread)
+      );
+
+    GetProcessorLocation2ByApicId (
+      (UINT32) Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ProcessorId,
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ExtendedInformation.Location2.Package),
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ExtendedInformation.Location2.Die),
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ExtendedInformation.Location2.Tile),
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ExtendedInformation.Location2.Module),
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ExtendedInformation.Location2.Core),
+      &(Fusa_info.Processor[Fusa_info.BspCpu].ProcessorInfo.ExtendedInformation.Location2.Thread)
+      );
   }
 
   CpuNumPopulate(&Fusa_info);
@@ -629,7 +720,7 @@ FspDxDiagnosticModeGet (
   } else {
     FusaDiagTestMode = FALSE;
   }
-  //FusaDiagTestMode = TRUE; // test
+
   DEBUG ((DEBUG_INFO, "Fusa Diagnostic Mode detected is %d\n", FusaDiagTestMode));
 
   return FusaDiagTestMode;
@@ -710,7 +801,6 @@ FspDxCheck (
   FUSA_INFO_HOB                      *FusaInfo;
   FUSA_TEST_RESULT                   *TestResult;
   EFI_STATUS                         Status;
-//  MSR_MISC_FEATURE_CONTROL_REGISTER  MsrMiscFeatureControl;
 
   if (!IsFusaSupported()) {
     return;
@@ -718,18 +808,8 @@ FspDxCheck (
 
   GuidHob = NULL;
   FusaInfo = NULL;
-#if 0 //todo: since it is WA, still required?
-  //
-  // Disable Prefetcher upon CTC Main Function Entry
-  // WA for GLC FuSa error injection bug
-  //
-  MsrMiscFeatureControl.Uint64 = AsmReadMsr64 (MSR_MISC_FEATURE_CONTROL);
-  MsrMiscFeatureControl.Bits.MlcStreamerPrefetchDisable = 1;
-  MsrMiscFeatureControl.Bits.MlcSpatialPrefetchDisable  = 1;
-  MsrMiscFeatureControl.Bits.DcuStreamerPrefetchDisable = 1;
-  MsrMiscFeatureControl.Bits.DcuIpPrefetchDisable       = 1;
-  AsmWriteMsr64 (MSR_MISC_FEATURE_CONTROL, MsrMiscFeatureControl.Uint64);
-#endif
+
+  Crc32cInit();
   GuidHob = GetFirstGuidHob (&gSiFusaInfoGuid);
   if (GuidHob != NULL) {
     FusaInfo = (FUSA_INFO_HOB *) GET_GUID_HOB_DATA (GuidHob);
@@ -747,12 +827,43 @@ FspDxCheck (
       Status = EFI_OUT_OF_RESOURCES;
     } else {
       Status = CoreInfoPopulate (PeiServices); //init
+      Status = EFI_SUCCESS;
     }
 
     if (EFI_SUCCESS == Status) {
-      FspDxCheckMemoryMbist(&(TestResult[FusaTestNumMc0Mbist])); //SMID_018_01
-      FspDxCheckGrtArrayAndCRCBist ((&(TestResult[FusaTestNumGrtArray0Bist])), (&(TestResult[FusaTestNumCRCon0PBISTROM]))); //SMID_1016 //SMID_1013
-      FspDxCheckGrtScanBist (FusaStartupFileAddr, (&(TestResult[FusaTestNumGrtScan0Bist]))); //SMID_1014 //requires startup pattern file
+      FspDxCheckIbeccEccInj(&(TestResult[FusaTestNumIbecc0EccCorrError]));
+      FspDxCheckIbeccParity(&(TestResult[FusaTestNumIbecc0Cmi]));
+      FspDxCheckScanBist (FusaStartupFileAddr, (&(TestResult[FusaTestNumScan0Bist])));
+      FspDxCheckArrayAndCRCBist ((&(TestResult[FusaTestNumArray0Bist])), (&(TestResult[FusaTestNumCRCon0PBISTROM])));
+      FspDxCheckCboSliceEgressLlcDoubleParityCtC(&(TestResult[FusaTestNumCboSlice0EgressLlcDoubleParityCtC]));
+      FspDxCheckCcfE2eIdiParityCtc(&(TestResult[FusaTestNumCCFE2EIDIParityCtC0]));
+      FspDxCheckMemSubsystem (&(TestResult[FusaTestNumMc0Cmi]) );
+      FspDxCheckMemoryMbist(&(TestResult[FusaTestNumMc0Mbist]));
+      FspDxCheckHbo0E2eCfiParityCtc(&(TestResult[FusaTestNumHbo0E2eCfiParityCtc]));
+      FspDxCheckHbo1E2eCfiParityCtc(&(TestResult[FusaTestNumHbo1E2eCfiParityCtc]));
+      FspDxCheckSNCUE2eCfiParityCtc(&(TestResult[FusaTestNumSNCUE2eCfiParityCtc]));
+      FspDxCheckSVTUE2eCfiParityCtc(&(TestResult[FusaTestNumSVTUE2eCfiParityCtc]));
+      FspDxCheckPunitE2eCfiParityCtc(&(TestResult[FusaTestNumPunitE2eCfiParityCtc]));
+      FspDxCheckIdiBE2eIdiParityCtc(&(TestResult[FusaTestNumIDIBE2EIDIParityCtC]));
+      FspDxCheckIPU_PB_PIDE2eCfiParityCtc(&(TestResult[FusaTestNumIPU_PB_PIDE2eCfiParityCtc]));
+      FspDxCheckVPU_PB_PIDE2eCfiParityCtc(&(TestResult[FusaTestNumVPU_PB_PIDE2eCfiParityCtc]));
+      FspDxCheckMEDIA_PBE2eCfiParityCtc(&(TestResult[FusaTestNumMEDIA_PBE2eCfiParityCtc]));
+      FspDxCheckGT_PBE2eCfiParityCtc(&(TestResult[FusaTestNumGT_PBE2eCfiParityCtc]));
+      FspDxCheckIAX_PBE2eCfiParityCtc(&(TestResult[FusaTestNumIAX_PBE2eCfiParityCtc]));
+      FspDxCheckDNI2CFIE2eCfiParityCtc(&(TestResult[FusaTestNumDNI2CFIE2eCfiParityCtc]));
+      FspDxCheckCCE0E2eCfiParityCtc(&(TestResult[FusaTestNumCCE0E2eCfiParityCtc]));
+      FspDxCheckCCE1E2eCfiParityCtc(&(TestResult[FusaTestNumCCE1E2eCfiParityCtc]));
+      FspDxCheckCCF_SANTA1E2eCfiParityCtc(&(TestResult[FusaTestNumCCF_SANTA1E2EParityCtc]));
+      FspDxCheckCCF_SANTA0E2eCfiParityCtc(&(TestResult[FusaTestNumCCF_SANTA0E2EParityCtc]));
+      FspDxCheckIOCE2eCfiParityCtc(&(TestResult[FusaTestNumIOCE2eCfiParityCtc]));
+      FspDxCheckIOCCEE2eCfiParityCtc(&(TestResult[FusaTestNumIOCCEE2eCfiParityCtc]));
+      FspDxCheckIVTUE2eCfiParityCtc(&(TestResult[FusaTestNumIVTUE2eCfiParityCtc]));
+      FspDxCheckIdiBE2eCfiParityCtc(&(TestResult[FusaTestNumIDIBE2ECfiParityCtC]));
+      //FspDxCheckCoreCacheArrayStartupBist(&(TestResult[FusaTestNumCoreCacheArrayStartupBistCore0]));
+      FspDxCheckCoreRomCrcStartupBist(&(TestResult[FusaTestNumCoreRomCrcStartupBistCore0]));
+      FspDxCheckCoreIdiParityCtc(&(TestResult[FusaTestNumCoreIdiParityCtcCore0]));
+      FspDxCheckCCFE2eNCUParityCtc(&(TestResult[FusaTestNumCCFE2ECNCUParityCtC0]));
+      FspDxCheckIDIBE2eNCUParityCtc(&(TestResult[FusaTestNumIDIBE2ECNCUParityCtC0]));
     }
   } else {
     ASSERT (FALSE); //expect the existence of the HOB
@@ -760,3 +871,48 @@ FspDxCheck (
   FreePages( gpTestData, EFI_SIZE_TO_PAGES (1028 * 1024));
 }
 
+VOID
+FspDxCheckEndofPei (
+  IN  CONST EFI_PEI_SERVICES  **PeiServices
+  )
+{
+  EFI_HOB_GUID_TYPE                  *GuidHob;
+  FUSA_INFO_HOB                      *FusaInfo;
+  FUSA_TEST_RESULT                   *TestResult;
+  EFI_STATUS                         Status;
+
+  if (!IsFusaSupported()) {
+    return;
+  }
+
+  GuidHob = NULL;
+  FusaInfo = NULL;
+
+  Crc32cInit();
+  GuidHob = GetFirstGuidHob (&gSiFusaInfoGuid);
+  if (GuidHob != NULL) {
+    FusaInfo = (FUSA_INFO_HOB *) GET_GUID_HOB_DATA (GuidHob);
+  }
+
+  if (FusaInfo != NULL) {
+    TestResult = FusaInfo->FspDxCtcTestResult;
+
+    McaBankStatusDumpAll ();// dump to see if any bank status seen.
+    McaBankStatusClearAll ();
+
+    gpTestData = (UINT8 *) AllocatePages (EFI_SIZE_TO_PAGES (1028 * 1024));
+    if (gpTestData == NULL) {
+      ASSERT(FALSE);
+      Status = EFI_OUT_OF_RESOURCES;
+    } else {
+      Status = CoreInfoPopulate (PeiServices); //init
+      Status = EFI_SUCCESS;
+    }
+
+    if (EFI_SUCCESS == Status) {
+    }
+  } else {
+    ASSERT (FALSE); //expect the existence of the HOB
+  }
+  FreePages( gpTestData, EFI_SIZE_TO_PAGES (1028 * 1024));
+}

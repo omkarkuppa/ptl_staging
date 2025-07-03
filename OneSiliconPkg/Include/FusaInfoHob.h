@@ -1,5 +1,5 @@
 /** @file
-  This file contains definitions required for creation of TGL
+  This file contains definitions required for creation of
   end-to-end check-the-checker test result hob.
 
   @copyright
@@ -31,7 +31,7 @@ extern EFI_GUID gSiFusaInfoGuid;
   Use this to compare to the HOB retrieved from the FSP for the
   exact match
 **/
-#define FUSA_INFO_VERSION 0x00000103
+#define FUSA_INFO_VERSION 300
 
 /** Constants used for FUSA_TEST_RESULT->CheckResults[] and
  *  FUSA_TEST_RESULT->TestResult */
@@ -65,31 +65,27 @@ typedef struct
   Fusa Test Number assigned to each Fusa test.
   This will be used for the unique id for each test.
   FUSA_TEST_RESULT->TestNumber will have this value.
-
-  @note While the core4-7 (cbo4-7) that are strictly related to
-        the TGL-H are listed, there are not within the
-        implementation scope and validation scope yet.
 **/
 typedef enum
 {
-  FusaTestNumMc0Cmi = 0,          ///<Check MC0 CMI path, valid if there is DIMM using MC0
-  FusaTestNumMc1Cmi,              ///<Check MC1 CMI path, valid if there is DIMM using MC1
-  FusaTestNumMc0CmiCh0Data,       ///<Check MC0 CH0 CMI path, valid if there is DIMM using MC0 CH0
-  FusaTestNumMc0CmiCh1Data,       ///<Check MC0 CH1 CMI path, valid if there is DIMM using MC0 CH1
-  FusaTestNumMc0CmiCh2Data,       ///<Check MC0 CH2 CMI path, valid if there is DIMM using MC0 CH2
-  FusaTestNumMc0CmiCh3Data,       ///<Check MC0 CH3 CMI path, valid if there is DIMM using MC0 CH3
-  FusaTestNumMc1CmiCh0Data,       ///<Check MC1 CH0 CMI path, valid if there is DIMM using MC1 CH0
-  FusaTestNumMc1CmiCh1Data,       ///<Check MC1 CH1 CMI path, valid if there is DIMM using MC1 CH1
-  FusaTestNumMc1CmiCh2Data,       ///<Check MC1 CH2 CMI path, valid if there is DIMM using MC1 CH2
-  FusaTestNumMc1CmiCh3Data,       ///<Check MC1 CH3 CMI path, valid if there is DIMM using MC1 CH3
-  FusaTestNumMc0CmiCh3Address,    ///<Check MC0 CMF CMI path, valid if there is DIMM using MC0
-  FusaTestNumMc1CmiCh4Address,    ///<Check MC1 CMF CMI path, valid if there is DIMM using MC1
-  FusaTestNumIbecc0Cmi,           ///<Check Ibecc0 CMI path, valid if there is IBECC range covering MC0 DIMMs
-  FusaTestNumIbecc1Cmi,           ///<Check Ibecc1 CMI path, valid if there is IBECC range covering MC1 DIMMs
-  FusaTestNumIbecc0EccCorrError,  ///<Check Ibecc0 ECC correctable error, valid if there is IBECC range covering MC0 DIMMs
-  FusaTestNumIbecc1EccCorrError,  ///<Check Ibecc1 ECC correctable error, valid if there is IBECC range covering MC1 DIMMs
-  FusaTestNumIbecc0EccUncorrError,///<Check Ibecc0 ECC uncorrectable error, valid if there is IBECC range covering MC0 DIMMs
-  FusaTestNumIbecc1EccUncorrError,///<Check Ibecc1 ECC uncorrectable error, valid if there is IBECC range covering MC1 DIMMs
+  FusaTestNumMc0Cmi = 0,           ///<Check MC0 CMI path, valid if there is DIMM using MC0
+  FusaTestNumMc1Cmi,               ///<Check MC1 CMI path, valid if there is DIMM using MC1
+  FusaTestNumMc0CmiCh0Data,        ///<Check MC0 CH0 CMI path, valid if there is DIMM using MC0 CH0
+  FusaTestNumMc0CmiCh1Data,        ///<Check MC0 CH1 CMI path, valid if there is DIMM using MC0 CH1
+  FusaTestNumMc0CmiCh2Data,        ///<Check MC0 CH2 CMI path, valid if there is DIMM using MC0 CH2
+  FusaTestNumMc0CmiCh3Data,        ///<Check MC0 CH3 CMI path, valid if there is DIMM using MC0 CH3
+  FusaTestNumMc1CmiCh0Data,        ///<Check MC1 CH0 CMI path, valid if there is DIMM using MC1 CH0
+  FusaTestNumMc1CmiCh1Data,        ///<Check MC1 CH1 CMI path, valid if there is DIMM using MC1 CH1
+  FusaTestNumMc1CmiCh2Data,        ///<Check MC1 CH2 CMI path, valid if there is DIMM using MC1 CH2
+  FusaTestNumMc1CmiCh3Data,        ///<Check MC1 CH3 CMI path, valid if there is DIMM using MC1 CH3
+  //FusaTestNumMc0CmiCh3Address,    ///<Check MC0 CMF CMI path, valid if there is DIMM using MC0
+  //FusaTestNumMc1CmiCh4Address,    ///<Check MC1 CMF CMI path, valid if there is DIMM using MC1
+  FusaTestNumIbecc0Cmi,            ///<Check Ibecc0 CMI path, valid if there is IBECC range covering MC0 DIMMs
+  FusaTestNumIbecc1Cmi,            ///<Check Ibecc1 CMI path, valid if there is IBECC range covering MC1 DIMMs
+  FusaTestNumIbecc0EccCorrError,   ///<Check Ibecc0 ECC correctable error, valid if there is IBECC range covering MC0 DIMMs
+  FusaTestNumIbecc1EccCorrError,   ///<Check Ibecc1 ECC correctable error, valid if there is IBECC range covering MC1 DIMMs
+  FusaTestNumIbecc0EccUncorrError, ///<Check Ibecc0 ECC uncorrectable error, valid if there is IBECC range covering MC0 DIMMs
+  FusaTestNumIbecc1EccUncorrError, ///<Check Ibecc1 ECC uncorrectable error, valid if there is IBECC range covering MC1 DIMMs
 
   FusaTestNumMc0Mbist,            ///<Check MC0 MBIST
   FusaTestNumMc1Mbist,            ///<Check MC1 MBIST
@@ -102,40 +98,35 @@ typedef enum
   FusaTestNumMc1Ch2Mbist,         ///<Check MC1 CH2 MBIST
   FusaTestNumMc1Ch3Mbist,         ///<Check MC1 CH3 MBIST
 
-  /* Max 6 core CPU */
-  FusaTestNumCpu0Idi,             ///<Check core0 IDI path, valid if there is core0 in the SKU
-  FusaTestNumCpu1Idi,             ///<Check core1 IDI path, valid if there is core1 in the SKU
-  FusaTestNumCpu2Idi,             ///<Check core2 IDI path, valid if there is core2 in the SKU
-  FusaTestNumCpu3Idi,             ///<Check core3 IDI path, valid if there is core3 in the SKU
-  FusaTestNumCpu4Idi,             ///<Check core4 IDI path, valid if there is core4 in the SKU
-  FusaTestNumCpu5Idi,             ///<Check core5 IDI path, valid if there is core5 in the SKU
+  FusaTestNumIbecc0Mbist,
+  FusaTestNumIbecc1Mbist,
 
-  FusaTestNumWRC,
-  FusaTestNumNcuIdp,
+  FusaTestNumArray0Bist,             ///<Check core0 Pbist, valid if there is core0 in the SKU
+  FusaTestNumArray1Bist,             ///<Check core1 Pbist, valid if there is core1 in the SKU
+  FusaTestNumArray2Bist,             ///<Check core2 Pbist, valid if there is core2 in the SKU
+  FusaTestNumArray3Bist,             ///<Check core3 Pbist, valid if there is core3 in the SKU
+  FusaTestNumArray4Bist,             ///<Check core4 Pbist, valid if there is core4 in the SKU
+  FusaTestNumArray5Bist,             ///<Check core5 Pbist, valid if there is core5 in the SKU
+  FusaTestNumArray6Bist,             ///<Check core6 Pbist, valid if there is core6 in the SKU
+  FusaTestNumArray7Bist,             ///<Check core7 Pbist, valid if there is core7 in the SKU
+  FusaTestNumArray8Bist,             ///<Check core8 Pbist, valid if there is core8 in the SKU
+  FusaTestNumArray9Bist,             ///<Check core9 Pbist, valid if there is core9 in the SKU
+  FusaTestNumArray10Bist,            ///<Check core10 Pbist, valid if there is core10 in the SKU
+  FusaTestNumArray11Bist,            ///<Check core11 Pbist, valid if there is core11 in the SKU
 
-  FusaTestNumOpiLinkIosfData,       ///<Check OPI Link path
-  FusaTestNumDip,                   ///<Check DIP path
-  FusaTestNumIop,                   ///<Check IOP path
+  FusaTestNumScan0Bist,             ///<Check core0 Pbist, valid if there is core0 in the SKU
+  FusaTestNumScan1Bist,             ///<Check core1 Pbist, valid if there is core1 in the SKU
+  FusaTestNumScan2Bist,             ///<Check core2 Pbist, valid if there is core2 in the SKU
+  FusaTestNumScan3Bist,             ///<Check core3 Pbist, valid if there is core3 in the SKU
+  FusaTestNumScan4Bist,             ///<Check core4 Pbist, valid if there is core4 in the SKU
+  FusaTestNumScan5Bist,             ///<Check core5 Pbist, valid if there is core5 in the SKU
+  FusaTestNumScan6Bist,             ///<Check core6 Pbist, valid if there is core6 in the SKU
+  FusaTestNumScan7Bist,             ///<Check core7 Pbist, valid if there is core7 in the SKU
+  FusaTestNumScan8Bist,             ///<Check core8 Pbist, valid if there is core8 in the SKU
+  FusaTestNumScan9Bist,             ///<Check core9 Pbist, valid if there is core9 in the SKU
+  FusaTestNumScan10Bist,            ///<Check core10 Pbist, valid if there is core10 in the SKU
+  FusaTestNumScan11Bist,            ///<Check core11 Pbist, valid if there is core11 in the SKU
 
-  FusaTestNumGrtArray0Bist,             ///<Check core0 Pbist, valid if there is core0 in the SKU
-  FusaTestNumGrtArray1Bist,             ///<Check core1 Pbist, valid if there is core1 in the SKU
-  FusaTestNumGrtArray2Bist,             ///<Check core2 Pbist, valid if there is core2 in the SKU
-  FusaTestNumGrtArray3Bist,             ///<Check core3 Pbist, valid if there is core3 in the SKU
-  FusaTestNumGrtArray4Bist,             ///<Check core4 Pbist, valid if there is core4 in the SKU
-  FusaTestNumGrtArray5Bist,             ///<Check core5 Pbist, valid if there is core5 in the SKU
-  FusaTestNumGrtArray6Bist,             ///<Check core6 Pbist, valid if there is core6 in the SKU
-  FusaTestNumGrtArray7Bist,             ///<Check core7 Pbist, valid if there is core7 in the SKU
-
-  FusaTestNumGrtScan0Bist,             ///<Check core0 Pbist, valid if there is core0 in the SKU
-  FusaTestNumGrtScan1Bist,             ///<Check core1 Pbist, valid if there is core1 in the SKU
-  FusaTestNumGrtScan2Bist,             ///<Check core2 Pbist, valid if there is core2 in the SKU
-  FusaTestNumGrtScan3Bist,             ///<Check core3 Pbist, valid if there is core3 in the SKU
-  FusaTestNumGrtScan4Bist,             ///<Check core4 Pbist, valid if there is core4 in the SKU
-  FusaTestNumGrtScan5Bist,             ///<Check core5 Pbist, valid if there is core5 in the SKU
-  FusaTestNumGrtScan6Bist,             ///<Check core6 Pbist, valid if there is core6 in the SKU
-  FusaTestNumGrtScan7Bist,             ///<Check core7 Pbist, valid if there is core7 in the SKU
-
-   /* Max 8 core CPU */
   FusaTestNumCRCon0PBISTROM,
   FusaTestNumCRCon1PBISTROM,
   FusaTestNumCRCon2PBISTROM,
@@ -144,27 +135,64 @@ typedef enum
   FusaTestNumCRCon5PBISTROM,
   FusaTestNumCRCon6PBISTROM,
   FusaTestNumCRCon7PBISTROM,
+  FusaTestNumCRCon8PBISTROM,
+  FusaTestNumCRCon9PBISTROM,
+  FusaTestNumCRCon10PBISTROM,
+  FusaTestNumCRCon11PBISTROM,
 
-   /* Max 8 core CPU */
-  FusaTestNumCboSlice0EgressLlcDoubleParityCtC,    ///<Check CBO0 ingress path, valid if there is core0 in the SKU
-  FusaTestNumCboSlice1EgressLlcDoubleParityCtC,    ///<Check CBO1 ingress path, valid if there is core1 in the SKU
-  FusaTestNumCboSlice2EgressLlcDoubleParityCtC,    ///<Check CBO2 ingress path, valid if there is core2 in the SKU
-  FusaTestNumCboSlice3EgressLlcDoubleParityCtC,    ///<Check CBO3 ingress path, valid if there is core3 in the SKU
-  FusaTestNumCboSlice4EgressLlcDoubleParityCtC,    ///<Check CBO4 ingress path, valid if there is core4 in the SKU
-  FusaTestNumCboSlice5EgressLlcDoubleParityCtC,    ///<Check CBO5 ingress path, valid if there is core5 in the SKU
-  FusaTestNumCboSlice6EgressLlcDoubleParityCtC,    ///<Check CBO6 ingress path, valid if there is core6 in the SKU
-  FusaTestNumCboSlice7EgressLlcDoubleParityCtC,    ///<Check CBO7 ingress path, valid if there is core7 in the SKU
+  FusaTestNumCboSlice0EgressLlcDoubleParityCtC,
+  FusaTestNumCboSlice1EgressLlcDoubleParityCtC,
+  FusaTestNumCboSlice2EgressLlcDoubleParityCtC,
+  FusaTestNumCboSlice3EgressLlcDoubleParityCtC,
+  FusaTestNumCboSlice4EgressLlcDoubleParityCtC,
+  FusaTestNumCboSlice5EgressLlcDoubleParityCtC,
 
-  FusaTestNumCboSlice0Ingress,            ///<Check CBO0 ingress path, valid if there is core0 in the SKU
-  FusaTestNumCboSlice1Ingress,            ///<Check CBO1 ingress path, valid if there is core1 in the SKU
-  FusaTestNumCboSlice2Ingress,            ///<Check CBO2 ingress path, valid if there is core2 in the SKU
-  FusaTestNumCboSlice3Ingress,            ///<Check CBO3 ingress path, valid if there is core3 in the SKU
-  FusaTestNumCboSlice4Ingress,            ///<Check CBO4 ingress path, valid if there is core4 in the SKU
-  FusaTestNumCboSlice5Ingress,            ///<Check CBO5 ingress path, valid if there is core5 in the SKU
-  FusaTestNumCboSlice6Ingress,            ///<Check CBO6 ingress path, valid if there is core6 in the SKU
-  FusaTestNumCboSlice7Ingress,            ///<Check CBO7 ingress path, valid if there is core7 in the SKU
+  FusaTestNumHbo0E2eCfiParityCtc,
+  FusaTestNumHbo1E2eCfiParityCtc,
+  FusaTestNumSNCUE2eCfiParityCtc,
+  FusaTestNumSVTUE2eCfiParityCtc,
+  FusaTestNumPunitE2eCfiParityCtc,
+  FusaTestNumIPU_PB_PIDE2eCfiParityCtc,
+  FusaTestNumVPU_PB_PIDE2eCfiParityCtc,
+  FusaTestNumMEDIA_PBE2eCfiParityCtc,
+  FusaTestNumGT_PBE2eCfiParityCtc,
+  FusaTestNumIAX_PBE2eCfiParityCtc,
+  FusaTestNumDNI2CFIE2eCfiParityCtc,
+  FusaTestNumCCE0E2eCfiParityCtc,
+  FusaTestNumCCE1E2eCfiParityCtc,
+  FusaTestNumIDIBE2EIDIParityCtC,
+  FusaTestNumCCF_SANTA1E2EParityCtc,
+  FusaTestNumCCF_SANTA0E2EParityCtc,
+  FusaTestNumIOCE2eCfiParityCtc,
+  FusaTestNumIOCCEE2eCfiParityCtc,
+  FusaTestNumIVTUE2eCfiParityCtc,
+  FusaTestNumIDIBE2ECfiParityCtC,
+  FusaTestNumCCFE2ECNCUParityCtC0,
+  FusaTestNumIDIBE2ECNCUParityCtC0,
 
-  FusaTestNumTotal                        ///<Totak CTC groups count
+  FusaTestNumCCFE2EIDIParityCtC0,
+  FusaTestNumCCFE2EIDIParityCtC1,
+  FusaTestNumCCFE2EIDIParityCtC2,
+  FusaTestNumCCFE2EIDIParityCtC3,
+  FusaTestNumCCFE2EIDIParityCtC4,
+  FusaTestNumCCFE2EIDIParityCtC5,
+#if 0
+  FusaTestNumCoreCacheArrayStartupBistCore0,
+  FusaTestNumCoreCacheArrayStartupBistCore1,
+  FusaTestNumCoreCacheArrayStartupBistCore2,
+  FusaTestNumCoreCacheArrayStartupBistCore3,
+#endif
+  FusaTestNumCoreRomCrcStartupBistCore0,
+  FusaTestNumCoreRomCrcStartupBistCore1,
+  FusaTestNumCoreRomCrcStartupBistCore2,
+  FusaTestNumCoreRomCrcStartupBistCore3,
+
+  FusaTestNumCoreIdiParityCtcCore0,
+  FusaTestNumCoreIdiParityCtcCore1,
+  FusaTestNumCoreIdiParityCtcCore2,
+  FusaTestNumCoreIdiParityCtcCore3,
+
+  FusaTestNumTotal                        ///<Total CTC groups count
 } FUSA_TEST_NUMBER;
 
 /**

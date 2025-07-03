@@ -1264,9 +1264,10 @@ typedef struct {
   <b>Revision 9</b>:  - Add Use1p5ReadPostamble variable.
   <b>Revision 10</b>: - Add IbeccEccInjControl, IbeccEccInjAddrBase, IbeccEccInjCount  
   <b>Revision 11</b>: - Add MsHashOverride, MsHashInterleaveBit, MsHashMask
+  <b>Revision 12</b>: - Add Fusa Cfi Parity variables and FusaConfigEnable
 **/
 
-#define SA_SETUP_REVISION   11
+#define SA_SETUP_REVISION   12
 
 typedef struct {
   UINT8   Revision;
@@ -1413,9 +1414,9 @@ typedef struct {
   //
   // FUSA
   //
-  UINT8   DisplayFusaConfigEnable;
-  UINT8   GraphicFusaConfigEnable;
-  UINT8   OpioFusaConfigEnable;
+  UINT8   DisplayFusaConfigEnable;      //deprecated
+  UINT8   GraphicFusaConfigEnable;      //deprecated
+  UINT8   OpioFusaConfigEnable;         //deprecated
   UINT8   DpmemSupport;
   UINT8   NpuEnable;
   UINT8   OverrideDriverType;
@@ -1764,7 +1765,29 @@ typedef struct {
   UINT8   MsHashInterleaveBit;
   UINT16  MsHashMask;
 
-  UINT8   Rsvd[31];
+  UINT8   FusaCfiParityIDIBE2E;
+  UINT8   FusaCfiParityCCFE2E_SANTA1;
+  UINT8   FusaCfiParityCCFE2E_SANTA0;
+  UINT8   FusaCfiParityHBOE2E_HBO0;
+  UINT8   FusaCfiParityHBOE2E_HBO1;
+  UINT8   FusaCfiParityPBE2E_AXI2CFI_IPU;
+  UINT8   FusaCfiParityPBE2E_AXI2CFI_VPU;
+  UINT8   FusaCfiParityPBE2E_ICXL2CFI_MEDIA;
+  UINT8   FusaCfiParityPBE2E_ICXL2CFI_GT;
+  UINT8   FusaCfiParityPBE2E_ICXL2CFI_IAX;
+  UINT8   FusaCfiParityPBE2E_DNI2CFI;
+  UINT8   FusaCfiParitySVTUE2E;
+  UINT8   FusaCfiParitySNCUE2E;
+  UINT8   FusaCfiParityPUNITE2E;
+  UINT8   FusaCfiParityIOCE2E;
+  UINT8   FusaCfiParityIOCCEE2E;
+  UINT8   FusaCfiParityIVTUE2E;
+  UINT8   FusaCfiParityCCEE2E_CCE0;
+  UINT8   FusaCfiParityCCEE2E_CCE1;
+
+  UINT8   FusaConfigEnable;
+
+  UINT8   Rsvd[11];
 } SA_SETUP;
 
 /**
@@ -2363,7 +2386,7 @@ typedef struct {
 
   // FUSA
   //
-  UINT8   PsfFusaConfigEnable;
+  UINT8   PsfFusaConfigEnable;  //deprecated
 
   UINT16  ExternalV1p05IccMaximum;
   UINT16  ExternalVnnIccMaximum;

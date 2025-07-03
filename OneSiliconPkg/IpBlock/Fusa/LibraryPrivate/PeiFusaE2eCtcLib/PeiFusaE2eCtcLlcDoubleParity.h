@@ -1,8 +1,9 @@
-/**@file
+/** @file
+  PEI FUSA E2E CTC LLC Double Parity Header File
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2019 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -15,13 +16,23 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification
+@par Specification Reference:
 **/
 
-#include "VFR.uni"
+#ifndef _FUSA_E2E_CTC_LLC_DOUBLE_PARITY_H_
+#define _FUSA_E2E_CTC_LLC_DOUBLE_PARITY_H_
 
-#string STR_FUSA_FORM_TITLE                      #language en-US "Functional Safety Configuration"
-#string STR_FUSA_FORM_HELP                       #language en-US "Functional Safety Configuration options"
+#include "PeiFusaResultReportingLib.h"
+#include <Protocol/MpService.h>
+#include <Register/Ptl/Msr/MsrRegs.h>
+#include "PeiFusaPrivateLibInternal.h"
 
-#string STR_FUSA_EN                              #language en-US "Fusa Enable"
-#string STR_FUSA_HELP                            #language en-US "Enable/Disable all Functional Safety (FUSA) feature"
+/**
+  Perform E2E CTC LLC Double Parity.
+**/
+VOID
+FspDxCheckCboSliceEgressLlcDoubleParityCtC (
+  IN FUSA_TEST_RESULT *pFusaTestResult
+  );
+
+#endif // _FUSA_E2E_CTC_LLC_DOUBLE_PARITY_H_

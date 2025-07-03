@@ -31,6 +31,9 @@
 #include <VmdPeiConfig.h>
 #endif
 #include <TelemetryPeiConfig.h>
+#if FixedPcdGetBool(PcdEmbeddedEnable) == 1
+#include <Library/FusaInfoLib.h>
+#endif
 
 /**
   Update Fusa policies.
@@ -46,18 +49,16 @@ FspUpdateFusaPolicy (
   )
 {
 #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
-  FUSA_CONFIG       *FusaConfig;
+  FUSA_CONFIG       *FusaConfig = NULL;
   EFI_STATUS        Status;
 
-  Status = GetConfigBlock ((VOID *) SiPolicy, &gFusaConfigGuid, (VOID *) &FusaConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return;
+  if (IsFusaSupported()) {
+    Status = GetConfigBlock ((VOID *) SiPolicy, &gFusaConfigGuid, (VOID *) &FusaConfig);
+    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return;
+    }
   }
-
-  FusaConfig->DisplayFusaConfigEnable = FspsUpd->FspsConfig.DisplayFusaConfigEnable;
-  FusaConfig->GraphicFusaConfigEnable = FspsUpd->FspsConfig.GraphicFusaConfigEnable;
-  FusaConfig->OpioFusaConfigEnable    = FspsUpd->FspsConfig.OpioFusaConfigEnable;
 #endif
 }
 

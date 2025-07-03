@@ -387,6 +387,12 @@
   # Restricting the simulation support to Intel Internal only
 
 #
+# Fusa Ip Blocks Enabled
+#
+!if ((gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1))
+    gSiPkgTokenSpaceGuid.PcdFusaSupport |TRUE
+!endif
+#
 # DMAR ACPI feature settings
 #
 !if gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarFeatureEnable == TRUE

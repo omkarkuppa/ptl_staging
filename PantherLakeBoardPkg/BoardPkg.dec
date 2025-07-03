@@ -201,6 +201,9 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset|0x00000000|UINT32|0x2000004C
   gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadBase|0x00000000|UINT32|0x2000004D
   gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize|0x00000000|UINT32|0x2000004E
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupBase|0x00000000|UINT32|0x2000004F
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupSize|0x00000000|UINT32|0x20000050
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupOffset|0x00000000|UINT32|0x2000005A
 
   gBoardModuleTokenSpaceGuid.PcdIntelRaidEnable     |FALSE|BOOLEAN|0xF000003A
   gBoardModuleTokenSpaceGuid.PcdSipkgBinaryEnable   |FALSE|BOOLEAN|0xF0000A50

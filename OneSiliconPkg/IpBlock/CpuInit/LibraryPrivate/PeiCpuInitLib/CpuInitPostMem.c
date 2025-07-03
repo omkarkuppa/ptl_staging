@@ -52,7 +52,9 @@
 #include <Library/TmeLib.h>
 #include <Library/TmeInfoLib.h>
 #include <Library/PeiVtdInitFruLib.h>
-
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#include <Library/FusaInfoLib.h>
+#endif
   //
   //  MCHECK_FLOW_STATUS MMIO register
   //
@@ -84,6 +86,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_SECURITY_PREMEM_CONFIG   *mCpuSecurityPreMemCo
 //
 #define MCHECK_BIOS_PARAM_INFO_UUID    {0x13, 0x43, 0xF1, 0x5C, 0xAA, 0x00, 0x42, 0x07, 0xA2, 0x14, 0xA8, 0x4F, 0x35, 0x58, 0x22, 0xA2}
 #define MCHECK_STRUCTURE_VERSION       5
+#define FUSA_SAF                       BIT4
 #define KEYLOCKER_ENABLE               BIT3
 #define SEAM_ENABLE                    BIT1
 #define MCHECK_MAX_PACKAGES            8
@@ -1426,6 +1429,11 @@ ProgramBiosParamsForMcheck (
     BiosParamInfoPtr->Features |= SEAM_ENABLE;
     UpdateBiosParamInfo(BiosParamInfoPtr);
   }
+#if ((FixedPcdGet8(PcdEmbeddedEnable) == 0x1) && (FixedPcdGet8(PcdFusaSupport) == 0x1))
+  if (IsFusaSupported()) {
+    BiosParamInfoPtr->Features |= FUSA_SAF;
+  }
+#endif
 
   AsmWriteMsr64 (MSR_TEE_INPUT_PARAM, (UINTN) BiosParamInfoPtr);
   return;

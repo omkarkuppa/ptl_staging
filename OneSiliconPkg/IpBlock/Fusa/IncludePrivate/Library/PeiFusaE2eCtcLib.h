@@ -104,5 +104,9 @@ FspDxCheck (
   IN  UINT32 FusaStartupFileAddr
   );
 
+VOID
+FspDxCheckEndofPei (
+  IN  CONST EFI_PEI_SERVICES  **PeiServices
+  );
 
 #endif // _FUSA_E2E_CTC_LIB_H_

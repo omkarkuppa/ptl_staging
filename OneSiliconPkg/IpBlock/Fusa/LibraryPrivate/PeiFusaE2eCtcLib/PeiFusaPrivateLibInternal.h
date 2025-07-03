@@ -24,25 +24,37 @@
 
 #include "PeiFusaResultReportingLib.h"
 
+typedef enum {
+  McaClear,
+  McaParity,
+  McaCorrectable,
+  McaUncorrectable
+} MrcMcaMode;
+
+typedef enum {
+  TrafficRead,
+  TrafficWrite,
+  TrafficReadWrite,
+  TrafficWriteRead
+} MrcGenTrafficMode;
+
 ///MCA Bank numbers
-#define TGL_CBO0_INDEX 9
-#define MCA_IFU 0
-#define MCA_DCU 1
-#define MCA_DTLB 2
-#define MCA_MLC 3
-#define MCA_SEC 4
-#define MCA_MEE1 5
-#define MCA_IOP 6
-#define MCA_PCU 7
-#define MCA_PMIP 8
-#define MCA_CBO0 TGL_CBO0_INDEX
-#define MCA_CBO1 (TGL_CBO0_INDEX+1)
-#define MCA_CBO2 (TGL_CBO0_INDEX+2)
-#define MCA_CBO3 (TGL_CBO0_INDEX+3)
-#define MCA_CBO4 (TGL_CBO0_INDEX+4)
-#define MCA_CBO5 (TGL_CBO0_INDEX+5)
-#define MCA_CBO6 (TGL_CBO0_INDEX+6)
-#define MCA_CBO7 (TGL_CBO0_INDEX+7)
+#define MCA_FE      0
+#define MCA_DCU     1
+#define MCA_TLB     2
+#define MCA_MLC     3
+#define MCA_PUNIT   4
+#define MCA_SNCU    5
+#define MCA_IOP     (MCA_SNCU)
+#define MCA_ICELAND 6
+#define MCA_HBO0    8
+#define MCA_HBO1    9
+#define MCA_CBO0    10
+#define MCA_CBO1    11
+#define MCA_CBO2    12
+#define MCA_CBO3    13
+#define MCA_CBO4    14
+#define MCA_CBO5    15
 
 ///IP index for the FuSa MSR MSR_PERRINJ_AT_IP
 typedef enum {
@@ -97,6 +109,12 @@ typedef enum {
   CBO_Slice11_Egress_llc_perrinj_ctrl = 111,
 } FUSA_IP_INDEX_NUMBER;
 
+#define FUSA_MAX_CONTROLLER              2
+#define FUSA_MAX_CHANNEL                 4
+
+#define MSR_PERRINJ_AT_IP                (0x00000107)
+#define MSR_PERRINJ_CTRL                 (0x00000108)
+
 #define MSCOD_MASK 0xFFFF0000ULL
 #define MCACOD_MASK 0xFFFFULL
 #define MCASTATUS_VALID BIT63
@@ -114,7 +132,8 @@ typedef enum {
 #define R_SA_MCHBAR_FUSA_MCA_REPORTING_EN_0_0_0_MCHBAR_IMPH                      0x6F30U
 #define B_SA_MCHBAR_FUSA_MCA_REPORTING_EN_0_0_0_MCHBAR_IMPH_MCA_REPORTING_EN     BIT0
 
-#define MAX_GRT_COUNT   8
+#define MAX_BIG_CORE_COUNT   4
+
 /**
   Check if it is a supported CPU for this library
 

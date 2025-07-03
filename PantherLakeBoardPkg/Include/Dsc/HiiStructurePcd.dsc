@@ -3507,8 +3507,13 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.ExtendedBankHashing|0x1                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.RmtPerTask|0x0                                                 #           Bit 10 - Rank Margin Tool Per Task
 gStructPcdTokenSpaceGuid.PcdSaSetup.TrainTrace|0x0                                                 #           Bit 11 - Training Tracing
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisPgCloseIdleTimeout|0x0                                      #           Bit 14 - Disable Page Close Idle Timeout
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+gStructPcdTokenSpaceGuid.PcdSaSetup.Ibecc|0x1                                                      #           Bit 15 - In-Band ECC Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccParity|0x1                                                #           Bit 16 - In-Band ECC Parity Control
+!else
 gStructPcdTokenSpaceGuid.PcdSaSetup.Ibecc|0x0                                                      #           Bit 15 - In-Band ECC Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccParity|0x0                                                #           Bit 16 - In-Band ECC Parity Control
+!endif
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccOperationMode|0x2                                         #           Bit 17:18 - In-Band ECC Operation Mode
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashOverride|0x0                                             #           Bit 19 - Channel Hash override
 gStructPcdTokenSpaceGuid.PcdSaSetup.RetrainOnFastFail|0x1                                          #           Bit 21 - Restart MRC in Cold mode if SW MemTest fails during Fast flow
@@ -3609,7 +3614,11 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x1                                 
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x1                                                   #           BIT18 - Read DQ ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x1                                                   #           BIT19 - Pre-Emphasis LP5 Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSVOCC|0x1                                                  #           BIT26 - RxDqsVocCentering1D Training
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x1                                             # Offset 60 Bit 0 - Time Measure
+!else
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x0                                             # Offset 60 Bit 0 - Time Measure
+!endif
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFastBoot|0x1                                                #           Bit 1 - Fast Boot
 gStructPcdTokenSpaceGuid.PcdSaSetup.RankInterleave|0x1                                             #           Bit 3 - RI Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnhancedInterleave|0x1                                         #           Bit 4 - Enh Interleave Support

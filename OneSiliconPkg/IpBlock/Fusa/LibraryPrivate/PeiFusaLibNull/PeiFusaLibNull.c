@@ -1,5 +1,5 @@
 /** @file
-  Initilize FUSA device in PEI
+  Initialize FUSA device in PEI
 
   @copyright
   INTEL CONFIDENTIAL

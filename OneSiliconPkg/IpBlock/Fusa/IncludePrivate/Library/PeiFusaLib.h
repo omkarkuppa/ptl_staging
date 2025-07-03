@@ -23,6 +23,7 @@
 #define _PEI_FUSA_LIB_H_
 
 #include <Ppi/SiPolicy.h>
+#include "PeiFusaCommon.h"
 
 /**
   Retrieve fusa test pattern
@@ -112,5 +113,14 @@ FusaPostBiosDone (
 UINT32
 FusaStartupPatternAddr (
   IN  SI_POLICY_PPI    *SiPolicy
+  );
+
+/**
+  Get the register address of CFI
+**/
+EFI_STATUS
+CfiRegisterAddress (
+  IN UINT16                      PortId,
+  IN OUT UINT64                  *InputOutputData
   );
 #endif // _PEI_FUSA_LIB_H_

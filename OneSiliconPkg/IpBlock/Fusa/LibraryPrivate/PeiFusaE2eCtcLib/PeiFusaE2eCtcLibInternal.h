@@ -46,7 +46,7 @@ typedef struct {
 #define MSR_TRIGGER_STARTUP_SCAN_BIST       0x000002D2
 #define MSR_STARTUP_SCAN_BIST_STATUS        0x000002D3
 
-#define MSR_FUSA_CAPABILITIES_A             0x000002D9
+#define MSR_INTEGRITY_CAPABILITIES             0x000002D9
 #define B_MSR_FUSA_CAP_STARTUP_SCAN_DIAGNOGSIS_MASK     BIT0
 
 #define FUSA_STARTUP_EXT_BASE   0xF9000000
@@ -69,6 +69,7 @@ typedef struct {
 /// Structure of the parameter passed into the FspDxCheckGrScanBistSetInternal
 typedef struct {
     UINT64    buffAddr;
+    UINT8     result;
 } TEST_CONFIG_SCANBIST;
 
 typedef struct _FUSA_PATTERN_FILE_HEADER {
@@ -345,7 +346,7 @@ FspDxCheckMemSubsystem (
   );
 
 /**
-  Perform GRT Atom ArrayBist.
+  Perform Atom ArrayBist.
   The test targets all active unique core. For core not
   detected, their test result is updated to
   FUSA_TEST_DEVICE_NOTAVAILABLE
@@ -361,13 +362,13 @@ FspDxCheckMemSubsystem (
 
 **/
 VOID
-FspDxCheckGrtArrayAndCRCBist (
+FspDxCheckArrayAndCRCBist (
   OUT FUSA_TEST_RESULT *pFusaTestResult,
   OUT FUSA_TEST_RESULT *pFusaCRCTestResult
   );
 
 /**
-  Perform GRT Atom ScanBist.
+  Perform Atom ScanBist.
   The test targets all active unique core. For core not
   detected, their test result is updated to
   FUSA_TEST_DEVICE_NOTAVAILABLE
@@ -383,13 +384,12 @@ FspDxCheckGrtArrayAndCRCBist (
 
 **/
 VOID
-FspDxCheckGrtScanBist (
+FspDxCheckScanBist (
   IN  UINT32 FusaStartupFileAddr,
   OUT FUSA_TEST_RESULT *pFusaTestResult
   );
 
-#define MAX_TGL_CORE_COUNT 32
-#define RPLS_ATOMCORE_START_ID 0x30
+#define MAX_PTL_ATOM_CORE_COUNT 12
 
 /**
   To retrieve  mUniqueCoreList

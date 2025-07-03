@@ -153,7 +153,11 @@ FV = FvExtendedAdvanced
 gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryOffset|gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemorySize
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryBase = $(EXTENDED_REGION_MEMMAP_ADDRESS) + $(gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryOffset)
 FV = FvExtendedPostMemory
-
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 1
+gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupOffset|gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupSize
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupBase = $(EXTENDED_REGION_MEMMAP_ADDRESS) + $(gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupOffset)
+FV = FvExtendedFusaStartup
+!endif
 !endif
 
 gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset|gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize
@@ -2249,7 +2253,32 @@ FILE FV_IMAGE = AEE04B33-E2A9-4BD2-909F-1CD2F337EDAF {
   !endif
 !endif
 }
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 1
+[FV.FvExtendedFusaStartup]
+BlockSize     = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = DF759D98-103C-4DAD-9CD1-AE9202750F11
 
+FILE FREEFORM = 2A81105C-2AB6-4C7A-AC9C-E8AEFAB8B229 {
+  SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/FusaPattern/StartupPattern/StartupFuSaPatternFile.bin
+  SECTION UI = "IntelFvFusaStartup"
+}
+!endif
 [FV.FvExtendedAdvancedUncompact]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvForceRebase      = FALSE

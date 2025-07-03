@@ -16,6 +16,8 @@
 #  express or implied warranties, other than those that are expressly stated
 #  in the License.
 #
+# @par Specification Reference:
+#
 ##
 
 
@@ -31,7 +33,6 @@ LIBRARY_CLASS = PeiFusaE2eCtcLib
 [LibraryClasses]
 PmcLib
 DebugLib
-#GraphicsInfoLib
 PchInfoLib
 SiPolicyLib
 PeiServicesLib
@@ -47,10 +48,15 @@ IntelFsp2Pkg/IntelFsp2Pkg.dec
 PeiFusaResultReportingLib.c
 PeiFusaPrivateLibInternal.c
 PeiFusaE2eCtcLib.c
-
 PeiFusaMbistMemory.c
-PeiFusaE2eCtcGrtArrayBist.c
-PeiFusaE2eCtcGrtScanBist.c
+PeiFusaE2eCtcArrayBist.c
+PeiFusaE2eCtcScanBist.c
+PeiFusaE2eCtcMemSs.c
+PeiFusaCfiParity.c
+PeiFusaE2eCtcLlcDoubleParity.c
+PeiFusaCcfE2eIdiParityCtc.c
+PeiFusaCoreCtc.c
+PeiFusaIbecc.c
 
 [Ppis]
 gEdkiiPeiMpServices2PpiGuid      ## CONSUMES
@@ -59,9 +65,9 @@ gSiPreMemPolicyPpiGuid        ## CONSUMES
 
 [Guids]
 gSiFusaInfoGuid               ## CONSUMES ## HOB
-#gMemoryConfigGuid             ## PRODUCES
+gMemoryConfigGuid             ## PRODUCES
 gFusaStartupSectionGuid       ## CONSUMES
-#gSiMemoryInfoDataGuid         ## CONSUMES
+gSiMemoryInfoDataGuid         ## CONSUMES
 
 [Pcd]
 #gSiPkgTokenSpaceGuid.PcdEmbeddedEnable             ## CONSUMES

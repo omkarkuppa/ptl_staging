@@ -32,6 +32,7 @@ LIBRARY_CLASS = PeiFusaLib
 [LibraryClasses]
 DebugLib
 FusaInfoLib
+PeiFusaRuntimeLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -43,7 +44,7 @@ UefiCpuPkg/UefiCpuPkg.dec
 PeiFusaLib.c
 
 [Ppis]
-#gEdkiiPeiMpServices2PpiGuid       ## CONSUMES
+gEdkiiPeiMpServices2PpiGuid       ## CONSUMES
 
 [Guids]
 gFusaConfigGuid                   ## CONSUMES
