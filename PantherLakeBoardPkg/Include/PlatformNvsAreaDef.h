@@ -680,6 +680,7 @@ typedef struct {
   UINT64   HdaDspPpModCustomGuid4High;              ///< Offset 2839    HDA PP module custom GUID 4 - second 64bit [64-127]
   UINT64   HdaDspPpModCustomGuid5Low;               ///< Offset 2847    HDA PP module custom GUID 5 - first 64bit  [0-63]
   UINT64   HdaDspPpModCustomGuid5High;              ///< Offset 2855    HDA PP module custom GUID 5 - second 64bit [64-127]
+  UINT8    EVSA;                                    ///< Offset 2863    Everest8326 I2c slave address
 } PLATFORM_NVS_AREA;
 
 #pragma pack(pop)

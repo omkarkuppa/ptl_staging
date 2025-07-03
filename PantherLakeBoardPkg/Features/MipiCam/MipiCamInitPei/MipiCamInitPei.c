@@ -182,7 +182,7 @@ EverestGpioInit (
   }
 
   /// <summary>
-  ///  Progra, GPIO_VER2_LP_GPP_R2 pin input mode and disable interrupt
+  ///  Program, GPIOV2_PTL_PCD_XXGPP_F_17 pin input mode and disable interrupt
 
   GpioConfig.PadMode           = GpioV2PadModeGpio;
   GpioConfig.HostOwn           = GpioV2HostOwnGpio;
@@ -193,11 +193,11 @@ EverestGpioInit (
   GpioConfig.TerminationConfig = GpioV2TermDefault;
   GpioConfig.LockConfig        = GpioV2Unlock;
   GpioConfig.LockTx            = GpioV2Unlock;
-  Status = GpioV2SetLock (GPIO_VER2_LP_GPP_R2, GpioV2Unlock);
+  Status = GpioV2SetLock (GPIOV2_PTL_PCD_XXGPP_F_17, GpioV2Unlock);
   DEBUG ((DEBUG_INFO, "EverestGpioInit SetLock GpioPad %r\n", Status));
-  Status = GpioV2ConfigurePad (GPIO_VER2_LP_GPP_R2, &GpioConfig);
+  Status = GpioV2ConfigurePad (GPIOV2_PTL_PCD_XXGPP_F_17, &GpioConfig);
   DEBUG ((DEBUG_INFO, "EverestGpioInit ConfigurePad GpioPad %r\n", Status));
-  DumpGpioConfig (GPIO_VER2_LP_GPP_R2);
+  DumpGpioConfig (GPIOV2_PTL_PCD_XXGPP_F_17);
 
   GpioConfig.PadMode           = GpioV2PadModeGpio;
   GpioConfig.HostOwn           = GpioV2HostOwnGpio;
@@ -208,12 +208,13 @@ EverestGpioInit (
   GpioConfig.TerminationConfig = GpioV2TermDefault;
   GpioConfig.LockConfig        = GpioV2Unlock;
   GpioConfig.LockTx            = GpioV2Unlock;
-  Status = GpioV2SetLock (GPIO_VER2_LP_GPP_R6, GpioV2Unlock);
+  Status = GpioV2SetLock (GPIOV2_PTL_PCD_XXGPP_D_17, GpioV2Unlock);
   DEBUG ((DEBUG_INFO, "EverestGpioInit SetLock GpioPad %r\n", Status));
-  Status = GpioV2ConfigurePad (GPIO_VER2_LP_GPP_R6, &GpioConfig);
-  DEBUG ((DEBUG_INFO, "MTL ConfigurePad GpioPad %r\n", Status));
-  DumpGpioConfig (GPIO_VER2_LP_GPP_R6);
+  Status = GpioV2ConfigurePad (GPIOV2_PTL_PCD_XXGPP_D_17, &GpioConfig);
+  DEBUG ((DEBUG_INFO, "EverestGpioInit ConfigurePad GpioPad %r\n", Status));
+  DumpGpioConfig (GPIOV2_PTL_PCD_XXGPP_D_17);
 
+  DEBUG ((DEBUG_INFO, "%a ends.\n", __FUNCTION__));
 }
 VOID
 RealtekGpioInit (

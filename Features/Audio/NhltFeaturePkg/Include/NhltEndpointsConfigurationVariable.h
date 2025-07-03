@@ -39,8 +39,9 @@
   <b>Revision 2</b>:  - Restructure so the NHLT for BT is second byte.
   <b>Revision 3</b>:  - Add support for I2S AK4604 NHLT.
   <b>Revision 4</b>:  - Add support for I2S Alc5682I NHLT.
+  <b>Revision 5</b>:  - Add support for I2S Everest8316 NHLT.
 **/
-#define NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION  4
+#define NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION  5
 
 typedef struct {
   UINT8  Revision;
@@ -53,6 +54,7 @@ typedef struct {
   UINT8  NhltI2sAk4604Enabled;      ///< Enablement of NHLT for Ak4604. 0 : Disabled 1 :Enabled
   UINT8  NhltI2sAlc5682IVDEnabled;  ///< Nhlt config enablement for Alc5682IVD: <b>0: Disable</b>; 1: Enable
   UINT8  NhltI2sAlc5682IVSEnabled;  ///< Nhlt config enablement for Alc5682IVS: <b>0: Disable</b>; 1: Enable
+  UINT8  NhltI2sEverest8316I2s1;    ///< Nhlt config enablement for Everest8316I2S1: <b>0: Disable</b>; 1: Enable
 } NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE;
 #pragma pack ()
 

@@ -490,6 +490,13 @@
             option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
             option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
+
+      oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sEverest8316I2s1,
+        prompt      = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8316_NHLT),
+        help        = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8316_NHLT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
 #endif
 
       oneof varid  = PCH_SETUP.PchHdAudioI2sCodecSelect,
@@ -498,6 +505,9 @@
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC274), value = 1, flags = RESET_REQUIRED;
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+        option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8316), value = 3, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8326), value = 4, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8336), value = 5, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VD), value = 6, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VS), value = 7, flags = RESET_REQUIRED;
 #endif

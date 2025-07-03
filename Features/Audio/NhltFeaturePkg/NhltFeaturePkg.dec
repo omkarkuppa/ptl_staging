@@ -92,6 +92,7 @@ PACKAGE_GUID = F9410F0E-3A9E-4E21-ACBE-E069A13354B7
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAk4604Enabled|0x0|UINT8|0xB0000009
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVDEnabled|FALSE|BOOLEAN|0xB000000A
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVSEnabled|FALSE|BOOLEAN|0xB000000B
+  gNhltFeaturePkgTokenSpaceGuid.NhltI2sEverest8316I2s1|FALSE|BOOLEAN|0xB000000C
   #  FALSE = Disable NHLT
   #  TRUE  = Enable NHLT
   gNhltFeaturePkgTokenSpaceGuid.NhltDmicStereoVpEnabled|FALSE|BOOLEAN|0xB0000004

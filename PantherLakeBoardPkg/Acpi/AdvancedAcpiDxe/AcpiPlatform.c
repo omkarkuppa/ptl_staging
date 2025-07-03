@@ -3653,6 +3653,9 @@ InstallAcpiPlatform (
 
   // HDAudio Configuration
   //
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  mPlatformNvsAreaProtocol.Area->EVSA = 0x18;     //  Everest8326 I2c slave address
+#endif
   mPlatformNvsAreaProtocol.Area->I2SC = mPchSetup.PchHdAudioI2sCodecSelect;
   mPlatformNvsAreaProtocol.Area->I2SI = PcdGet32 (PcdHdaI2sCodecIrqGpio);
   mPlatformNvsAreaProtocol.Area->I2SB = PcdGet8 (PcdHdaI2sCodecI2cBusNumber);

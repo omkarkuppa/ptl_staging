@@ -56,6 +56,7 @@ NhltEndpointTableLoadPcdConfiguration (
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   NhltConfigurationVariable->NhltI2sAlc5682IVDEnabled  = PcdGetBool (NhltI2sAlc5682IVDEnabled)
   NhltConfigurationVariable->NhltI2sAlc5682IVSEnabled  = PcdGetBool (NhltI2sAlc5682IVSEnabled)
+  NhltConfigurationVariable->NhltI2sEverest8316I2s1  = PcdGetBool (NhltI2sEverest8316I2s1)
 #endif
 }
 #endif
@@ -200,6 +201,10 @@ GetNhltConfiguration (
   if (NhltConfigurationVariable.NhltI2sAlc5682IVSEnabled) {
     NhltConfiguration->NhltConfigurationEnabled[NhltI2sAlc5682ivs] = TRUE;
     DEBUG ((DEBUG_INFO, "Nhlt for I2s Alc5682IVS enabled.\n"));
+  }
+  if (NhltConfigurationVariable.NhltI2sEverest8316I2s1) {
+    NhltConfiguration->NhltConfigurationEnabled[NhltI2sEverest8316] = TRUE;
+    DEBUG ((DEBUG_INFO, "Nhlt for I2s Everest 8316 I2S1 enabled.\n"));
   }
 #endif
 

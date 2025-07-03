@@ -44,6 +44,7 @@ typedef enum {
   NhltI2sAk4604                             = 11,
   NhltI2sAlc5682ivd                         = 12,
   NhltI2sAlc5682ivs                         = 13,
+  NhltI2sEverest8316                        = 14,
   NhltConfigurationMax
 } NHLT_CONFIGURATIONS;
 
