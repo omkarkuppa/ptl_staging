@@ -388,9 +388,14 @@ IsCurrentBootOcrBootOption (
     return FALSE;
   }
 
-  CurrentDevicePath = ConvertDevicePathToText (CurrentBootOption.FilePath, TRUE, TRUE);
+  if (StrnCmp (OcrBootOption->Description, OCR_HTTPS_STRING, MAX_UEFI_BOOT_OPTION_DESC_LENGTH) == 0) {
+    CurrentDevicePath = ConvertDevicePathToText (CurrentBootOption.FilePath, TRUE, TRUE);
+  } else {
+    CurrentDevicePath = ConvertDevicePathToText (CurrentBootOption.FilePath, FALSE, TRUE);
+  }
+
   if (CurrentDevicePath != NULL) {
-    DEBUG ((DEBUG_INFO, "Current Boot description: %s\nCurrent Boot DevicePath: %s\n",CurrentBootOption.Description, CurrentBootOption.FilePath));
+    DEBUG ((DEBUG_INFO, "Current Boot description: %s\nCurrent Boot DevicePath: %s\n",CurrentBootOption.Description, CurrentDevicePath));
 
     // Compare Current Boot option and OCR Boot option
     if ((StrnCmp (OcrBootOption->Description, CurrentBootOption.Description, MAX_UEFI_BOOT_OPTION_DESC_LENGTH) == 0) &&

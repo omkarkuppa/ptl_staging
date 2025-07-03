@@ -31,6 +31,7 @@
 // One Click Recovery String
 //
 #define OCR_STRING            L"One Click Recovery"
+#define OCR_HTTPS_STRING      L"One Click Recovery HTTPS"
 #define WINRE_OPTIONAL_DATA   L"/RecoveryBCD"
 
 /**
