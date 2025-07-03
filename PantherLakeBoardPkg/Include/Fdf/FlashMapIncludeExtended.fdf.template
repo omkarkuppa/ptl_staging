@@ -19,19 +19,7 @@
 #
 # @par Specification
 ##
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
-#=================================================================================#
-# 16MB BIOS + Extended BIOS region                                                #
-#=================================================================================#
-DEFINE FLASH_BASE                                                   = 0xFD000000  #
-DEFINE FLASH_SIZE                                                   = 0x03000000  #
-DEFINE FLASH_BLOCK_SIZE                                             = 0x00010000  #
-DEFINE FLASH_NUM_BLOCKS                                             = 0x00000300  #
-DEFINE EXTENDED_REGION_MEMMAP_ADDRESS                               = 0xF8000000  #
-DEFINE EXTENDED_REGION_SIZE                                         = 0x02000000  #
-DEFINE EXTENDED_REGION_IN_USE                                       = 0x02000000  #
-#=================================================================================#
-!else
+
 #=================================================================================#
 # 16MB BIOS + Extended BIOS region                                                #
 #=================================================================================#
@@ -43,7 +31,7 @@ DEFINE EXTENDED_REGION_MEMMAP_ADDRESS                               = 0xF8000000
 DEFINE EXTENDED_REGION_SIZE                                         = 0x02000000  #
 DEFINE EXTENDED_REGION_IN_USE                                       = 0x00100000  #
 #=================================================================================#
-!endif
+
 ####
 #  Flashmap supporting Extended BIOS Region
 #
@@ -72,28 +60,7 @@ DEFINE EXTENDED_REGION_IN_USE                                       = 0x00100000
 #    postbuild script cuts off the redundant space and one single final image is made.
 #  - Keep NvStorage firmware volume inside of the main 16MB region as the region is
 #    expected to be accessible in early phase.
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
-####
-# Flashmap for Extended BIOS Region (start from FLASH_BASE, Offset start from 0x0)
-#
-# ================================================================================= #
-#  postbuild script cuts off the unused region                          0x00000000  #
-#                                                                       0x01F00000  #
-# ================================================================================= #
-SET gBoardModuleTokenSpaceGuid.PcdFlashExtendAreaBaseAddress          = 0xF8000000  #
-SET gBoardModuleTokenSpaceGuid.PcdFlashAllExtendAreaSize              = 0x02000000  #
-SET gBoardModuleTokenSpaceGuid.PcdFlashExtendRegionOffset             = 0x00000000  # equal to flash base + flash size - 16MB - extended BIOS region in use
-SET gBoardModuleTokenSpaceGuid.PcdFlashExtendRegionSizeInUse          = 0x02000000  # equal to the macro setting for extneded BIOS region in use
 
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedOffset       = 0x00000000  # Flash addr (0xF8000000)
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedSize         = 0x00080000  #
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryOffset     = 0x00080000  # Flash addr (0xF8800000)
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemorySize       = 0x00080000  #
-
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupOffset            = 0x00100000  # Flash addr (0xF9000000)
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvFusaStartupSize              = 0x01F00000  #
-
-!else
 ####
 # Flashmap for Extended BIOS Region (start from FLASH_BASE, Offset start from 0x0)
 #
@@ -110,7 +77,7 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedOffset       = 0x01F000
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedSize         = 0x00080000  #
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryOffset     = 0x01F80000  # Flash addr (0xF8800000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemorySize       = 0x00080000  #
-!endif
+
 ####
 # Flashmap for 16MB BIOS Region  (start from FLASH_BASE + EXTENDED_REGION_SIZE)
 #

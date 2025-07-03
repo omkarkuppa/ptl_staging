@@ -63,7 +63,11 @@
 @REM Note : the flashmap is being generated based on the default flashmap specificed by build option
 @REM
 @if %EXTENDEDREGION_BUILD% NEQ TRUE @goto NoExtendedBiosRegionGeneration
-@set EXTENDEDREGION_TEMPLATE_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeExtended.fdf.template
+  @if %EMBEDDED_BUILD% EQU TRUE (
+    @set EXTENDEDREGION_TEMPLATE_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeExtendedEmbedded.fdf.template
+  ) else (
+    @set EXTENDEDREGION_TEMPLATE_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeExtended.fdf.template
+  )
 @set EXTENDEDREGION_FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeExtended_autogen.fdf
 @%PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\GenFlashmap\GenFlashmap.py ^
   -b %FLASHMAP_FDF% ^
