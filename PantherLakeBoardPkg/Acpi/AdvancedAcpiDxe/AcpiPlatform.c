@@ -62,6 +62,8 @@
 #include <UsbPortMapNvs.h>
 #include <Library/UefiLib.h>
 #include <Library/PcieHelperLib.h>
+#include <Library/PciLib.h>
+#include <MemInfoHob.h>
 //
 // Global variables
 //
@@ -3046,6 +3048,7 @@ InstallAcpiPlatform (
   UINTN                         VariableSize;
   UINT32                        SetupAttr;
   UINT16                        BoardId;
+  RMT_VAR                       mRmtdata;
 
   Handle                     = NULL;
   Usb4PlatformInfo           = NULL;
@@ -3179,6 +3182,21 @@ InstallAcpiPlatform (
                 &VarDataSize,
                 &VtioSetupData
                 );
+
+  VarDataSize = sizeof (RMT_VAR);
+  mRmtdata.EnDsRmt = 0;
+  Status = gRT->GetVariable (
+                  L"Rmt",
+                  &gRmtVariableGuid,
+                  NULL,
+                  &VarDataSize,
+                  &mRmtdata
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Rmt data not found - Status = %r\n",Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "Update RMT NVS Area \n"));
+  }
 
   //
   // Allocate and initialize the NVS area for SMM and ASL communication.
@@ -3827,6 +3845,9 @@ InstallAcpiPlatform (
           mPlatformNvsAreaProtocol.Area->CmTbtMask,
           mPlatformNvsAreaProtocol.Area->Usb4CmSwitchEnable
           ));
+
+  //Update RMTE NVS Area
+  mPlatformNvsAreaProtocol.Area->RMTE = mRmtdata.EnDsRmt;
 
   if (mSystemConfiguration.AcpiDebug) {
     TableLoadBufferSize = 16 * 1024;

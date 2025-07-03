@@ -102,6 +102,8 @@ Mutex (OSUM, 0)
 // _WAK Finished Event
 Event (WFEV)
 
+External (RMTE)
+
 // Define Port 80 as an ACPI Operating Region to use for debugging.  Please
 // note that the Intel CRBs have the ability to ouput a Word to
 // Port 80h for debugging purposes, so the model implemented here may not be
@@ -1304,3 +1306,22 @@ Scope (\_SB.PC00.ISHD)
     Return (Buffer () {0})
   } // End _DSM
 }
+
+//
+// Memory Margining Driver
+//
+Scope (\_SB)
+{
+  If (RMTE)
+  {
+    Device (MPMD)
+    {
+      Name (_HID, "INTC112D")
+      Method (_INI, 0, NotSerialized)
+      {
+        ToHexString (RMTE, Local0)
+        ADBG (Concatenate("MPMD _INI: RMTE = ", Local0))
+      }
+    }
+  }
+} // End of Scope (\_SB)
