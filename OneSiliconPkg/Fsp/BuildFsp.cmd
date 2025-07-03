@@ -121,6 +121,16 @@ set DEFAULT_TARGET_FILE=CurrentTarget.txt
                                               --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0 ^
                                               --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0
     )
+    if /i "%%a"=="perf" (
+      set PERFORMANCE_BUILD=TRUE
+      set BUILD=P
+      set ROM_FILENAME_SPECIAL_BUILD_TYPE=_Performance
+      set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
+      --pcd gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable=TRUE ^
+      --pcd gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable=TRUE
+      set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD%^
+      --pcd gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable=TRUE
+    )
   )
   rem Remove shifted arguments by reconstructing BUILD_ARGS
   rem -----------------------------------------------------
