@@ -58,6 +58,10 @@
 #include <IndustryStandard/Pci22.h>
 #include <Library/CnviLib.h>
 
+#if FixedPcdGetBool(PcdEmbeddedEnable) == 1
+  #include <Register/Ptl/GpioV2PcdPins/GpioV2PtlPcdPins.h>
+#endif
+
 GLOBAL_REMOVE_IF_UNREFERENCED SETUP_DATA                              mSetupData;
 GLOBAL_REMOVE_IF_UNREFERENCED PCH_SETUP                               mPchSetup;
 /**
@@ -607,9 +611,14 @@ PtlBoardSpecificGpioInitPostMem (
 
   PcdSetBoolS (PcdTouchpadIrqGpioPolarity, PcdGetBool (VpdPcdTouchpadIrqGpioPolarity));                   // Touch Pad Interrupt pin polarity
 
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  PcdSet32S(PcdHdaI2sCodecIrqGpio, GPIOV2_PTL_PCD_XXGPP_F_17); // ECG PTL Audio I2S Codec IRQ GPIO pin (rework required)
+  PcdSet8S(PcdHdaI2sCodecI2cBusNumber, 0x3); // ECG PTL Audio I2S Codec connected to I2C3 (rework required)
+#else
   GpioVpd = PcdGetPtr (VpdPcdHdaI2sCodecIrqGpio);
   PcdSet32S(PcdHdaI2sCodecIrqGpio, GpioVpd->GpioPad);
   PcdSet8S(PcdHdaI2sCodecI2cBusNumber, PcdGet8 (VpdPcdHdaI2sCodecI2cBusNumber));// Audio I2S Codec conntected to I2C0
+#endif
 
   //
   // Update OEM table ID

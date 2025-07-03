@@ -35,11 +35,12 @@
 #include <Library/PreSiliconEnvDetectLib.h>
 #include <Guid/MipiCamConfigHob.h>
 #if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
-#include <Pins/GpioPinsVer2Lp.h>
-
-#define HDAC_I2S_EVEREST8316  3
-#define HDAC_I2S_EVEREST8326  4
-#define HDAC_I2S_EVEREST8336  5
+  #include <Pins/GpioPinsVer2Lp.h>
+  #define HDAC_I2S_EVEREST8316  3
+  #define HDAC_I2S_EVEREST8326  4
+  #define HDAC_I2S_EVEREST8336  5
+  #define HDAC_I2S_ALC5682I_VD  6
+  #define HDAC_I2S_ALC5682I_VS  7
 #endif
 
 VOID
@@ -212,6 +213,83 @@ EverestGpioInit (
   Status = GpioV2ConfigurePad (GPIO_VER2_LP_GPP_R6, &GpioConfig);
   DEBUG ((DEBUG_INFO, "MTL ConfigurePad GpioPad %r\n", Status));
   DumpGpioConfig (GPIO_VER2_LP_GPP_R6);
+
+}
+VOID
+RealtekGpioInit (
+  VOID
+  )
+{
+  GPIOV2_CONFIG                   GpioConfig;
+  EFI_STATUS                      Status;
+  UINTN                           VarSize;
+  PCH_SETUP                       PchSetup;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
+
+  DEBUG ((DEBUG_INFO, "%a starts.\n", __FUNCTION__));
+
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID **) &VariableServices
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "RealtekGpioInit: PeiServicesLocatePpi failed\n"));
+    return;
+  }
+  VarSize = sizeof (PCH_SETUP);
+  Status  = VariableServices->GetVariable (
+                                VariableServices,
+                                L"PchSetup",
+                                &gPchSetupVariableGuid,
+                                NULL,
+                                &VarSize,
+                                &PchSetup
+                                );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "RealtekGpioInit: GetVariable (PchSetup) failed\n"));
+    return;
+  }
+
+  if ((HDAC_I2S_ALC5682I_VD != PchSetup.PchHdAudioI2sCodecSelect) &&
+      (HDAC_I2S_ALC5682I_VS != PchSetup.PchHdAudioI2sCodecSelect)) {
+    DEBUG ((DEBUG_ERROR, "RealtekGpioInit: Realtek codec not selected\n"));
+    return;
+  }
+
+  /// <summary>
+  ///  Program, GPIOV2_PTL_PCD_XXGPP_F_17 pin input mode and disable interrupt
+
+  GpioConfig.PadMode           = GpioV2PadModeGpio;
+  GpioConfig.HostOwn           = GpioV2HostOwnGpio;
+  GpioConfig.Direction         = GpioV2DirIn; /* Input Pin */
+  GpioConfig.OutputState       = GpioV2StateDefault;
+  GpioConfig.InterruptConfig   = GpioV2IntDefault;
+  GpioConfig.ResetConfig       = GpioV2ResetHost;
+  GpioConfig.TerminationConfig = GpioV2TermDefault;
+  GpioConfig.LockConfig        = GpioV2Unlock;
+  GpioConfig.LockTx            = GpioV2Unlock;
+  Status = GpioV2SetLock (GPIOV2_PTL_PCD_XXGPP_F_17, GpioV2Unlock);
+  DEBUG ((DEBUG_INFO, "RealtekGpioInit SetLock GpioPad %r\n", Status));
+  Status = GpioV2ConfigurePad (GPIOV2_PTL_PCD_XXGPP_F_17, &GpioConfig);
+  DEBUG ((DEBUG_INFO, "RealtekGpioInit ConfigurePad GpioPad %r\n", Status));
+  DumpGpioConfig (GPIOV2_PTL_PCD_XXGPP_F_17);
+
+  GpioConfig.PadMode           = GpioV2PadModeGpio;
+  GpioConfig.HostOwn           = GpioV2HostOwnGpio;
+  GpioConfig.Direction         = GpioV2DirOut;
+  GpioConfig.OutputState       = GpioV2StateDefault;
+  GpioConfig.InterruptConfig   = GpioV2IntDis;
+  GpioConfig.ResetConfig       = GpioV2ResetHost;
+  GpioConfig.TerminationConfig = GpioV2TermDefault;
+  GpioConfig.LockConfig        = GpioV2Unlock;
+  GpioConfig.LockTx            = GpioV2Unlock;
+  Status = GpioV2SetLock (GPIOV2_PTL_PCD_XXGPP_D_17, GpioV2Unlock);
+  DEBUG ((DEBUG_INFO, "RealtekGpioInit SetLock GpioPad %r\n", Status));
+  Status = GpioV2ConfigurePad (GPIOV2_PTL_PCD_XXGPP_D_17, &GpioConfig);
+  DEBUG ((DEBUG_INFO, "PTL ConfigurePad GpioPad %r\n", Status));
+  DumpGpioConfig (GPIOV2_PTL_PCD_XXGPP_D_17);
 
   DEBUG ((DEBUG_INFO, "%a ends.\n", __FUNCTION__));
 }
@@ -489,6 +567,7 @@ MipiCamInitEntryPoint (
 
 #if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
   EverestGpioInit ();
+  RealtekGpioInit ();
 #endif
 
   DEBUG ((DEBUG_INFO, "MipiCamInitEntryPoint() End\n"));

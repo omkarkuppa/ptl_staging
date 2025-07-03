@@ -42,6 +42,8 @@ typedef enum {
   NhltBtFreq38_4MHzBtDrivesI2sClockHfp      = 9,
   NhltBtFreq38_4MHzDspDrivesI2sClockHfp     = 10,
   NhltI2sAk4604                             = 11,
+  NhltI2sAlc5682ivd                         = 12,
+  NhltI2sAlc5682ivs                         = 13,
   NhltConfigurationMax
 } NHLT_CONFIGURATIONS;
 

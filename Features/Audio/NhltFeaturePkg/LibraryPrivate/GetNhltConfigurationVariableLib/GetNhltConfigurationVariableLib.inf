@@ -44,6 +44,7 @@ LIBRARY_CLASS = GetNhltConfigurationLib
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   NhltFeaturePkg/NhltFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
 
 [Sources]
   GetNhltConfigurationVariableLib.c
@@ -60,3 +61,6 @@ LIBRARY_CLASS = GetNhltConfigurationLib
   gNhltFeaturePkgTokenSpaceGuid.NhltBluetoothEnabled            ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc274Enabled            ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAk4604Enabled            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                        ## CONSUMES
+  gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVDEnabled        ## CONSUMES
+  gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVSEnabled        ## CONSUMES

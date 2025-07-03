@@ -476,11 +476,31 @@
         option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ), value = 2, flags = RESET_REQUIRED;
       endoneof;
 
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+      oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sAlc5682IVDEnabled,
+            prompt      = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VD_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VD_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sAlc5682IVSEnabled,
+            prompt      = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VS_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VS_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+#endif
+
       oneof varid  = PCH_SETUP.PchHdAudioI2sCodecSelect,
         prompt   = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_SELECT_PROMPT),
         help     = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_SELECT_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC274), value = 1, flags = RESET_REQUIRED;
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+        option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VD), value = 6, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VS), value = 7, flags = RESET_REQUIRED;
+#endif
       endoneof;
 
     endif; // UAA compliance check (PchHdAudioDspUaaCompliance)

@@ -53,6 +53,10 @@ NhltEndpointTableLoadPcdConfiguration (
   NhltConfigurationVariable->NhltI2sAlc274Enabled    = PcdGet8 (NhltI2sAlc274Enabled);
   NhltConfigurationVariable->NhltBluetoothEnabled    = PcdGet8 (NhltBluetoothEnabled);
   NhltConfigurationVariable->NhltI2sAk4604Enabled    = PcdGet8 (NhltI2sAk4604Enabled);
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  NhltConfigurationVariable->NhltI2sAlc5682IVDEnabled  = PcdGetBool (NhltI2sAlc5682IVDEnabled)
+  NhltConfigurationVariable->NhltI2sAlc5682IVSEnabled  = PcdGetBool (NhltI2sAlc5682IVSEnabled)
+#endif
 }
 #endif
 
@@ -187,6 +191,17 @@ GetNhltConfiguration (
     default:
       break;
   }
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  if (NhltConfigurationVariable.NhltI2sAlc5682IVDEnabled) {
+    NhltConfiguration->NhltConfigurationEnabled[NhltI2sAlc5682ivd] = TRUE;
+    DEBUG ((DEBUG_INFO, "Nhlt for I2s Alc5682IVD enabled.\n"));
+  }
+  if (NhltConfigurationVariable.NhltI2sAlc5682IVSEnabled) {
+    NhltConfiguration->NhltConfigurationEnabled[NhltI2sAlc5682ivs] = TRUE;
+    DEBUG ((DEBUG_INFO, "Nhlt for I2s Alc5682IVS enabled.\n"));
+  }
+#endif
 
 #if FixedPcdGetBool (NhltConfigurationByPcdEnabled) == 0
   if (NhltConfigurationVariable.Revision != NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION) {

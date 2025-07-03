@@ -273,6 +273,7 @@
   gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryPrimarySlotPortNumber  ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdNvmeRecoveryPrimarySlotPortNumber     ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryEnable                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                                 ## CONSUMES
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                      ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdPciReservedIobase                     ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdPciReservedIoLimit                    ## CONSUMES
