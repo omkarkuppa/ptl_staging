@@ -35,6 +35,8 @@
 #include <Ppi/SiPolicy.h>
 #include <PchPolicyCommon.h>
 #include <Library/SiPolicyLib.h>
+#include <Library/PcdInfoLib.h>
+#include <Library/GpioV2AccessLib.h>
 
 #include <Guid/FirmwareFileSystem2.h>
 #include <Protocol/FirmwareVolumeBlock.h>
@@ -240,6 +242,7 @@ GpioV2LockCallback (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI     *VariableServices;
   UINTN                               VariableSize;
   PCH_SETUP                           PchSetup;
+  GPIOV2_SERVICES                     *GpioServices;
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][GpioV2LockCallback]: START\n"));
 
@@ -260,9 +263,11 @@ GpioV2LockCallback (
                                &VariableSize,
                                &PchSetup
                                );
-  if (PchSetup.UnlockGpioPads == 0) {
-    GpioV2LockAll ();
-  }
+
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+
+    GpioServices->UnlockAllPads = PchSetup.UnlockGpioPads;
+  GpioV2LockAll ();
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][GpioV2LockCallback]: END\n"));
 

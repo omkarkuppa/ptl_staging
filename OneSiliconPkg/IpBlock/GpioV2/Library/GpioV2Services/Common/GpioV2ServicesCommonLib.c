@@ -3320,6 +3320,7 @@ LockAll (
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][LockAll][%a]: START\n", GpioInterface->Public.Hid));
 
+  GpioInterface->Private.UnlockAll = GpioInterface->Public.UnlockAllPads;
   if (GpioInterface->Private.UnlockData == NULL) {
     return EFI_UNSUPPORTED;
   }

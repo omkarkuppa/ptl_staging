@@ -1289,6 +1289,7 @@ struct _GPIOV2_PROTOCOL {
 
   UINT8                               Hid[GPIOV2_CONTROLLER_HID_LENGTH];
   UINT32                              Uid;
+  UINT32                              UnlockAllPads;
   GPIO_GET_REGISTER_OFFSET            GetRegisterOffset;
 
   //

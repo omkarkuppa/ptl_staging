@@ -112,7 +112,7 @@
   gPlatformModuleTokenSpaceGuid.PcdReducedShellEntryTime          ## PRODUCES
   gSiPkgTokenSpaceGuid.PcdMmio64Base                              ## CONSUMES
   gTelemetryFeaturePkgTokenSpaceGuid.PcdTelemetryFeatureEnable    ## CONSUMES
-
+  gSiPkgTokenSpaceGuid.PcdWclSupport                              ## CONSUMES
 [FixedPcd]
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection             ## CONSUMES
   gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                     ## CONSUMES

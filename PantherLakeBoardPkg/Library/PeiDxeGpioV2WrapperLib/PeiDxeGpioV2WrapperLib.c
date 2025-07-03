@@ -1038,7 +1038,6 @@ GpioV2LockAll (
 {
   EFI_STATUS              Status;
   GPIOV2_SERVICES         *GpioServices;
-
   //
   // PTL P
   //
