@@ -43,6 +43,7 @@ Include/ConfigBlock/Ipu
 Include/ConfigBlock/Memory/Ver6
 Include/ConfigBlock/Telemetry
 Include/ConfigBlock/Txt
+Include/ConfigBlock/Tcc
 Include/ConfigBlock/MemorySubSystem
 Include/ConfigBlock/Vmd
 Include/ConfigBlock/VoltageRegulator
@@ -276,6 +277,7 @@ IpBlock/Tme/IncludePrivate
 IpBlock/TraceHub/IncludePrivate
 IpBlock/Tse/IncludePrivate
 IpBlock/Tsn/IncludePrivate
+IpBlock/Tcc/IncludePrivate
 IpBlock/Txt/IncludePrivate
 IpBlock/Usb4/IncludePrivate
 IpBlock/Vmd/IncludePrivate
@@ -689,7 +691,8 @@ gCanConfigGuid  =  {0x452ec466, 0x6c67, 0x4df5, {0xb0, 0x77, 0x1c, 0xe3, 0x56, 0
 ## Fusa
 ##
 gFusaConfigGuid =  {0xF9225896, 0xA9C8, 0x4543, {0xBA, 0x9E, 0x53, 0x32, 0xD7, 0xBF, 0x8C, 0x2B}}
-gSiFusaInfoGuid = {0xcc7876ba, 0xee7b, 0x4bd4, {0x99, 0x4b, 0x7e, 0xc9, 0x74, 0xc9, 0xd8, 0x43}}
+gSiFusaInfoGuid = {0x034d5336, 0x6f3c, 0x4150, {0x9a, 0x8f, 0xb3, 0xfc, 0x73, 0x4a, 0x6e, 0x68}}
+gSiFusaLockstepGuid = {0xf72c8651, 0x87f8, 0x4e81, {0x8b, 0x51, 0xcf, 0x51, 0x95, 0xff, 0x3c, 0x95}}
 gFusaStartupSectionGuid =  {0x2a81105c, 0x2ab6, 0x4c7a, {0xac, 0x9c, 0xe8, 0xae, 0xfa, 0xb8, 0xb2, 0x29}}
 
 ##
@@ -759,6 +762,11 @@ gSystemTopologyGuid           = { 0x743e5992, 0xf2a0, 0x4c9f, { 0xa5, 0xf5, 0x3b
 #  Configuration Table.
 ## Include/Guid/CsiEalContextGuid.h
 gCsiEalContextGuid            = { 0xcbfe55af, 0x2823, 0x402d, { 0x84, 0xec, 0x7c, 0xe0, 0x20, 0xac, 0x3, 0xf2 } }
+
+##
+## RMT support
+##
+gRmtVariableGuid              = { 0x3cd66ebe, 0x7223, 0x404a, {0x9f, 0x33, 0xf6, 0xef, 0xf5, 0x91, 0xbb, 0x1 }}
 
 [Protocols.common.Private]
 ##
@@ -1151,6 +1159,7 @@ PeiPsfLib|IpBlock/Psf/IncludePrivate/Library/PeiPsfLib.h
 PsfLib|IpBlock/Psf/IncludePrivate/Library/PsfLib.h
 PeiFusaE2eCtcLib|IpBlock/Fusa/IncludePrivate/Library/PeiFusaE2eCtcLib.h
 PeiFusaLib|IpBlock/Fusa/IncludePrivate/Library/PeiFusaLib.h
+PeiFusaRuntimeLib|IpBlock/Fusa/IncludePrivate/Library/PeiFusaRuntimeLib.h
 PeiFusaPolicyLib|IpBlock/Fusa/IncludePrivate/Library/PeiFusaPolicyLib.h
 PchAdrLib|IpBlock/Pmc/IncludePrivate/Library/PchAdrLib.h
 PeiPmcPolicyCommonLib|IpBlock/Pmc/IncludePrivate/Library/PeiPmcPolicyCommonLib.h
