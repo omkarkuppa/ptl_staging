@@ -266,6 +266,7 @@ UpdatePeiSaPolicyPreMem (
   VgaInitControl       = 0;
 
   MemConfigNoCrc       = NULL;
+  StreamTracerSize     = 0;
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   TcssPortCapMap       = PcdGet32 (PcdTcssPortCapMap);

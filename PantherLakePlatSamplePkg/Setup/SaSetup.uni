@@ -1810,6 +1810,17 @@
 #string STR_NPU_DEVICE_PROMPT                   #language en-US "NPU Device (B0:D11:F0)"
 #string STR_NPU_DEVICE_HELP                     #language en-US "Enable/Disable NPU Device."
 
+//
+// STREAM TRACER
+//
+#string STR_STREAM_TRACER_PROMPT                #language en-US "Stream Tracer"
+#string STR_STREAM_TRACER_HELP                  #language en-US "Disabled: Disable StreamTracer\n\nAdvanced tracing: 512MB - recommended when all groups in high verbosity are traced in 'red'\n\nAuto: 8MB - recommended when using up to 8 groups red or up to 16 groups in green in med verbosity.\n\nUser input: Allow User to select a size in the range of 64KB-512MB"
+#string STR_STREAM_TRACER_SIZE                  #language en-US "Stream Tracer Size"
+#string STR_STREAM_TRACER_SIZE_HELP             #language en-US "Select StreamTracer size in KB, Size should be in power of 2, Range is 64KB-512MB"
+#string ADVANCED_TRACING                        #language en-US "Advanced tracing"
+#string AUTO                                    #language en-US "Auto"
+#string USER_INPUT                              #language en-US "User input"
+
 //---------------------------------------------------------------------------
 // MipiCam configuration strings
 //---------------------------------------------------------------------------

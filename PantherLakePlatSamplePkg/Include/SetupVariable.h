@@ -1278,9 +1278,10 @@ typedef struct {
   <b>Revision 11</b>: - Add MsHashOverride, MsHashInterleaveBit, MsHashMask
   <b>Revision 12</b>: - Add Fusa Cfi Parity variables and FusaConfigEnable
   <b>Revision 13</b>: - Add Lockstep variables
+  <b>Revision 14</b>: - Add StreamTracer support variables
 **/
 
-#define SA_SETUP_REVISION   13
+#define SA_SETUP_REVISION   14
 
 typedef struct {
   UINT8   Revision;
@@ -1804,7 +1805,10 @@ typedef struct {
   UINT8   Module1Lockstep;
   UINT8   LpcLockstep;
 
-  UINT8   Rsvd[8];
+  UINT32  PmtStreamTracerSize;
+  UINT8   PmtStreamTracerMode;
+
+  UINT8   Rsvd[3];
 } SA_SETUP;
 
 /**

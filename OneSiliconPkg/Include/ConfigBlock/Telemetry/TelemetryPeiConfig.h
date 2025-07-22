@@ -29,6 +29,8 @@
 #define TELEMETRY_PEI_PREMEM_CONFIG_REVISION 1
 
 #define STREAMTRACER_DISABLED   0
+#define STREAMTRACER_ADVANCED_TRACING   1
+#define STREAMTRACER_AUTO   2
 #define STREAMTRACER_USER_INPUT 3
 
 extern EFI_GUID gTelemetryPeiConfigGuid;
@@ -36,9 +38,9 @@ extern EFI_GUID gTelemetryPeiPreMemConfigGuid;
 
 typedef enum {
   StreamTracerDisabled      = STREAMTRACER_DISABLED,
-  StreamTracerUserInputSize = STREAMTRACER_USER_INPUT,
-  StreamTracerAuto,
-  StreamTracerAdvancedTrace
+  StreamTracerAdvancedTrace = STREAMTRACER_ADVANCED_TRACING,
+  StreamTracerAuto          = STREAMTRACER_AUTO,
+  StreamTracerUserInputSize = STREAMTRACER_USER_INPUT
 } STREAMTRACER_MODE;
 
 /**

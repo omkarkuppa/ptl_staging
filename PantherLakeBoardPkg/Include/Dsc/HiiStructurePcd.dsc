@@ -3488,6 +3488,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.VmdPort[30]|0x0                             
 gStructPcdTokenSpaceGuid.PcdSaSetup.NpuEnable|0x1                                                  # NPU Device (B0:D11:F0)
 gStructPcdTokenSpaceGuid.PcdSaSetup.WrDqDqsReTraining|0x1                                          # Write DqDqs Re-Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.CnviDdrRfim|0x1                                                # Global DDR RFI Mitigation Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.PmtStreamTracerMode|0x0                                        # Stream Tracer
+gStructPcdTokenSpaceGuid.PcdSaSetup.PmtStreamTracerSize|0x40                                       # Stream Tracer Size
 
 ##########################
 # MRC - ExtInputs start
