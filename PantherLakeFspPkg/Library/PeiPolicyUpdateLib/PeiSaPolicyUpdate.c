@@ -200,6 +200,7 @@ FspUpdatePeiSaPolicy (
   IGpuConfig->RenderStandby = ((FSPS_UPD *) FspsUpd)->FspsConfig.RenderStandby;
   IGpuConfig->MediaStandby = ((FSPS_UPD *) FspsUpd)->FspsConfig.MediaStandby;
   IGpuConfig->PeiGtConfig.ConfigureGT = ((FSPS_UPD *) FspsUpd)->FspsConfig.ConfigureGT;
+  IGpuConfig->PeiGtConfig.Dev2IsGfxWorkstation = ((FSPS_UPD *) FspsUpd)->FspsConfig.Dev2IsGfxWorkstation;
   IGpuConfig->PeiMediaConfig.ConfigureMedia = ((FSPS_UPD *) FspsUpd)->FspsConfig.ConfigureMedia;
   IGpuConfig->PeiDisplayConfig.SkipFspGop = ((FSPS_UPD *) FspsUpd)->FspsConfig.SkipFspGop;
   IGpuConfig->PeiDisplayConfig.VbtSize = ((FSPS_UPD *) FspsUpd)->FspsConfig.VbtSize;

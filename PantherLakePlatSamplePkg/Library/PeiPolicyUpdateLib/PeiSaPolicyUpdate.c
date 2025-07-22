@@ -375,6 +375,7 @@ UpdatePeiSaPolicy (
     COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.RenderStandby, IGpuConfig->RenderStandby, SaSetup.EnableRenderStandby);
     COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.MediaStandby, IGpuConfig->MediaStandby, SaSetup.EnableMediaStandby );
     COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ConfigureGT, IGpuConfig->PeiGtConfig.ConfigureGT, SaSetup.ConfigureGT);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Dev2IsGfxWorkstation, IGpuConfig->PeiGtConfig.Dev2IsGfxWorkstation, PcdGet8 (VpdPcdDev2IsGfxWorkstation));
     COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ConfigureMedia, IGpuConfig->PeiMediaConfig.ConfigureMedia, SaSetup.ConfigureMedia);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SkipFspGop, IGpuConfig->PeiDisplayConfig.SkipFspGop, FixedPcdGetBool(PcdFspPeiGopDisable));
 

@@ -265,6 +265,7 @@ IGpuPrintPolicyPpi (
   DEBUG ((DEBUG_INFO, " BltBufferAdress : 0x%x\n", IGpuConfig->PeiDisplayConfig.BltBufferAddress));
   DEBUG ((DEBUG_INFO, " GraphicsConfigPtr : 0x%x\n", IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr));
   DEBUG ((DEBUG_INFO, " RC1pGtFreqEnable : 0x%x\n", IGpuConfig->PeiGtConfig.RC1pGtFreqEnable));
+  DEBUG ((DEBUG_INFO, " Dev2IsGfxWorkstation : 0x%x\n", IGpuConfig->PeiGtConfig.Dev2IsGfxWorkstation));
   DEBUG ((DEBUG_INFO, " RC1pMediaFreqEnable : 0x%x\n", IGpuConfig->PeiMediaConfig.RC1pMediaFreqEnable));
   DEBUG ((DEBUG_INFO, " MediaStandby : 0x%x\n", IGpuConfig->MediaStandby));
   DEBUG ((DEBUG_INFO, "IGPU_PEI_CONFIG Print END\n"));

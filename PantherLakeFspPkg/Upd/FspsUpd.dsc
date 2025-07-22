@@ -2750,8 +2750,12 @@
   # !BSF NAME:{Enable/Disable IGFX Media Standby} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable(Default): Enable IGFX Media Standby, Disable: Disable IGFX MediaStandby}
   gPlatformFspPkgTokenSpaceGuid.MediaStandby               | * | 0x01 | 0x1
-  # Added reserved space    UnusedUpdSpace25[3]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd25              | * | 0x3 | {0x00}
+
+  # !BSF NAME:{Enable/Disable Gfx Workstation} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable(Default): Is a workstation, Disable: Is not a workstation}
+  gPlatformFspPkgTokenSpaceGuid.Dev2IsGfxWorkstation        | * | 0x01 | 0x0
+  # Added reserved space    UnusedUpdSpace25[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd25              | * | 0x2 | {0x00}
 
   # !BSF NAME:{Intel Graphics VBT (Video BIOS Table) Size}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}

@@ -51,6 +51,21 @@
 #define PCODE_MAILBOX_CC_ILLEGAL_SUBCOMMAND           0x8
 #define PCODE_MAILBOX_CC_EDRAM_CURRENTLY_UNAVAILABLE  0xA
 
+#define MAILBOX_BIOS_CMD_DYNAMIC_GRAPHICS_BRANDING                         0x00000055
+#define MAILBOX_BIOS_SUBCMD_READ_DEV2_IS_IGPU_WORKSTATION                  0x00000002
+#define MAILBOX_BIOS_SUBCMD_WRITE_DEV2_IS_IGPU_WORKSTATION                 0x00000003
+
+///
+///  PCode Mailbox command structure for the IGPU Workstation indication
+///
+typedef union {
+  UINT32 Data32;
+  struct {
+    UINT32 IsIGpuWorkStation         :1;  ///< [0] IGPU Workstation indication
+    UINT32 Rsvd                      :31; ///< [31:1] Reserved
+  } Fields;
+} MAILBOX_DATA_DEV2_IS_IGPU_WORKSTATION;
+
 ///
 ///  Expanded Pcode Mailbox interface defintion, contains command id, param1, param2,
 ///  and the run/busy bit

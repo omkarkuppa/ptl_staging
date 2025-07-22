@@ -913,6 +913,9 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # MRC BoardTopology
   # MRC_EXT_INPUTS_INIT_VAL_BOARDTOPOLOGY,  ///< Offset 189 BIT1 - Board Topology: 0 - Daisy Chain, 1 - Tee
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardTopology     |0x0|UINT8|0x0000113F
+  
+  # Gfx Workstation
+  gBoardModuleTokenSpaceGuid.VpdPcdDev2IsGfxWorkstation   |0x0|UINT8|0x0000112B
 
   # MRC UserBd
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd         |0x0|UINT8|0x00001130

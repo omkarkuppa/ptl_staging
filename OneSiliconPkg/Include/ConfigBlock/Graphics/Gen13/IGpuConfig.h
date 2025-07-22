@@ -225,7 +225,8 @@ typedef struct {
 typedef struct {
   UINT8    ConfigureGT;             ///< Configure GT for use. TRUE/FALSE: 0=FALSE, <b>1=TRUE</b>
   UINT8    RC1pGtFreqEnable;        ///< This policy is used to enable/disable GT RC1p Frequency. <b>0- Disable</b>, 1- Enable
-  UINT8    Rsvd[6];
+  UINT8    Dev2IsGfxWorkstation;    ///< This policy is used to enable/disable GfxDev2 Workstation. <b>0- Disable</b>, 1- Enable
+  UINT8    Rsvd[5];
 } PEI_GT_CONFIG;
 
 /**

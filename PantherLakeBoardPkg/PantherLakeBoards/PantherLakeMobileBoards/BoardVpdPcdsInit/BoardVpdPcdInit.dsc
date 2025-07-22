@@ -393,3 +393,6 @@
     {GPIOV2_PTL_PCD_XXGPP_S_6, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone,  GpioV2StateLow, GpioV2IntDis, GpioV2ResetHost,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock  }},
     {0x0}
   })}
+
+  # Gfx Workstation
+  gBoardModuleTokenSpaceGuid.VpdPcdDev2IsGfxWorkstation|*|0x0

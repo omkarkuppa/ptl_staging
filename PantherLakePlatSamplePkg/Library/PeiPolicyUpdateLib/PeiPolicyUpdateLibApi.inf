@@ -195,6 +195,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining        ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardStackUp             ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardTopology            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdDev2IsGfxWorkstation           ## CONSUMES
 
   # Display DDI
   gBoardModuleTokenSpaceGuid.PcdSaDisplayConfigTable           ## CONSUMES

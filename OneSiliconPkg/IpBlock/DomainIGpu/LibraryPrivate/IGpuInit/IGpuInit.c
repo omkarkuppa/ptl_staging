@@ -51,6 +51,7 @@
 #include <Library/MeInitLib.h>
 #include <Library/IGpuPeiPolicyLib.h>
 #include <Ppi/IGpuPlatformPolicyPpi.h>
+#include <Library/CpuMailboxLib.h>
 
 EFI_PHYSICAL_ADDRESS
 NaturalAlignment (
@@ -65,6 +66,38 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mIGpuEndOfPeiNotifyList
     IGpuEndOfPeiCallback
   }
 };
+
+/**
+  @param[in] IGpuConfig  Pointer to the function parameters passed
+**/
+VOID
+IGpuIsWorkStation (
+  IN IGPU_PEI_CONFIG  *IGpuConfig
+  )
+{
+  PCODE_MAILBOX_INTERFACE                MailboxCommand;
+  MAILBOX_DATA_DEV2_IS_IGPU_WORKSTATION  MailboxData;
+  UINT32                                 MailboxStatus;
+  EFI_STATUS                             Status;
+
+  ///
+  /// Mailbox write command when Dev2IsGfxWorkStation is enabled.
+  ///
+  if (IGpuConfig->PeiGtConfig.Dev2IsGfxWorkstation != 0) {
+    MailboxCommand.InterfaceData         = 0;
+    MailboxCommand.Fields.Command        = MAILBOX_BIOS_CMD_DYNAMIC_GRAPHICS_BRANDING;
+    MailboxCommand.Fields.Param1         = MAILBOX_BIOS_SUBCMD_WRITE_DEV2_IS_IGPU_WORKSTATION;
+    MailboxData.Data32                   = 0;
+    MailboxData.Fields.IsIGpuWorkStation = IGpuConfig->PeiGtConfig.Dev2IsGfxWorkstation;
+    Status                               = MailboxWrite (MailboxCommand.InterfaceData, MailboxData.Data32, &MailboxStatus);
+    if ((Status != EFI_SUCCESS) || (MailboxStatus != EFI_SUCCESS)) {
+      DEBUG ((DEBUG_ERROR, "Write Is IGpu WorkStation failed. MailboxStatus = %x, Mailbox command return status: %r\n", MailboxStatus, Status));
+      return;
+    }
+
+    DEBUG ((DEBUG_INFO, "Configure Dev2IsGfxWorkStation successfull\n"));
+  }
+}
 
 /**
   Update Reg Context for IGpu
@@ -434,7 +467,10 @@ IGpuPostMemInit (
   // Update PostMem configblock values to IGPU Inst
   //
   IGpuUpdatePostMemConfig (IGpuInst, IGpuConfig);
-
+  //
+  // Update Dev2IsGfxWorkStation to pCode
+  //
+  IGpuIsWorkStation (IGpuConfig);
   //
   // Update Private Config
   // Update Memory Data
