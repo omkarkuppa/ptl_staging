@@ -615,8 +615,8 @@ fi
 # Post-build postbuildBpmGen Start
 #
 if [ "$WCL_BUILD" = "TRUE" ]; then
-  if [ -f $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGenWcl/postbuildBpmGen.sh ]; then
-  . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGenWcl/postbuildBpmGen.sh CLIENTBIOS CLIENTBIOS
+  if [ -f $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BpmGenWcl/postbuildBpmGen.sh ]; then
+  . $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BpmGenWcl/postbuildBpmGen.sh CLIENTBIOS CLIENTBIOS
   fi
 else
   if [ -f $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BpmGen/postbuildBpmGen.sh ]; then
