@@ -514,7 +514,7 @@ CheckSecurePchConfiguration (
     } else {
 
       // PCH Acs Ech Ports Test
-      if (PciConfig.Hdr.VendorId == 0x8086 && (PciConfig.Hdr.HeaderType & 0xF) == 0x1) {
+      if (PciConfig.Hdr.VendorId == V_PCH_INTEL_VENDOR_ID && (PciConfig.Hdr.HeaderType & HEADER_LAYOUT_CODE) == HEADER_TYPE_PCI_TO_PCI_BRIDGE) {
         Status = SecurePchAcsEchPortsConfiguration (PciIo, &PciConfig);
         if (EFI_ERROR (Status)) {
           Result = FALSE;
