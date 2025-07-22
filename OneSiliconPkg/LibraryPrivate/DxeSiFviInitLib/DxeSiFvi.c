@@ -191,8 +191,10 @@ UpdateMeFvi (
   UINT8                           Index;
   UINT8                           Count;
   CHAR8                           *SseVersionString;
+  UINT32                          NumOfModules;
 
-  Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &PartitionIdData);
+  NumOfModules = 0;
+  Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &NumOfModules, &PartitionIdData);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a() Get Image FW Version fail, Status = %r\n", __FUNCTION__, Status));
     return;

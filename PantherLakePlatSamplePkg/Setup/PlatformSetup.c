@@ -682,6 +682,7 @@ InitPlatformStrings (
     0xbf030b10, 0x2d9b, 0x4e71, { 0xa0, 0xc4, 0xbc, 0x99, 0x10, 0x57, 0x9d, 0x40
   }};  // This GUID is similar to definition in XmlCliFeaturePkg
   CHAR8 QdfInfo[5];
+  UINT32 NumOfModules;
 
   if (Class == MAIN_FORM_SET_CLASS) {
 
@@ -792,7 +793,8 @@ InitPlatformStrings (
       MeFwSkuValue
       );
 
-    Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &PartitionIdData);
+    NumOfModules = 0;
+    Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &NumOfModules, &PartitionIdData);
     if (!EFI_ERROR (Status)) {
       InitString (
         HiiHandle,
@@ -805,7 +807,7 @@ InitPlatformStrings (
         );
     }
 
-    Status = HeciGetImageFwVersionMsg (FTP_PARTITION_NAME_PMCP, &PartitionIdData);
+    Status = HeciGetImageFwVersionMsg (FTP_PARTITION_NAME_PMCP, &NumOfModules, &PartitionIdData);
     if (!EFI_ERROR (Status)) {
       InitString (
         HiiHandle,

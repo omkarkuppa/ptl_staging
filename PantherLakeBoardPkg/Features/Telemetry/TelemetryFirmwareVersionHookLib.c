@@ -53,7 +53,9 @@ TelemeteryFirmwawreVersionUpdate (
   EFI_STATUS                  Status;
   FLASH_PARTITION_DATA        PartitionIdData;
   ME_BIOS_PAYLOAD_HOB         *MbpHob;
+  UINT32                      NumOfModules;
 
+  NumOfModules = 0;
 
   if (CompareGuid (&ComponentId, &gMeFirmwareVersionComponentId)) {
     DEBUG ((DEBUG_INFO, "Enter Update ME FW Version.\n" ));
@@ -70,7 +72,8 @@ TelemeteryFirmwawreVersionUpdate (
     }
   } else if (CompareGuid (&ComponentId, &gMeSseVersionComponentId)) {
     DEBUG ((DEBUG_INFO, "Enter Update SSE FW Version.\n" ));
-    Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &PartitionIdData);
+    NumOfModules = 0;
+    Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &NumOfModules, &PartitionIdData);
     if (!EFI_ERROR (Status)) {
       *Version = (LShiftU64 ((UINT64) PartitionIdData.Version.Major,  VERSION_MAJOR_VERSION_SHIFT) | \
                  LShiftU64 ((UINT64) PartitionIdData.Version.Minor,  VERSION_MINOR_VERSION_SHIFT) | \

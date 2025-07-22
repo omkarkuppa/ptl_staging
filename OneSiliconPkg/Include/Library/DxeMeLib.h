@@ -1281,6 +1281,7 @@ HeciFwFeatureStateOverride (
   Send Get Image Firmware Version Request to ME
 
   @param[in]  PartitionId          Partition ID
+  @param[out] NumOfModules         Return the number of modules in the partition
   @param[out] PartitionIdData      Return the version of the Partition ID
 
   @retval EFI_UNSUPPORTED          Current ME mode doesn't support this function
@@ -1292,6 +1293,7 @@ HeciFwFeatureStateOverride (
 EFI_STATUS
 HeciGetImageFwVersionMsg (
   IN  UINT32                    PartitionId,
+  OUT UINT32                    *NumOfModules,
   OUT FLASH_PARTITION_DATA      *PartitionIdData
   );
 
