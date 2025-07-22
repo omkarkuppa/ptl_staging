@@ -50,6 +50,12 @@
 #include <Register/GpioAcpiDefines.h>
 #include <Library/GpioHelpersLib.h>
 
+//
+// USB OC Pin Type
+//
+#define PHYSICAL_OC      1
+#define VW_OC            2
+
 /**
   Configures GPIO pins for USB OverCurrent detection
 
