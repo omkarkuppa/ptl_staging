@@ -74,6 +74,7 @@ export PERFORMANCE_BUILD=FALSE
 export RPMC_BUILD=FALSE
 export SPECIAL_POOL_BUILD=FALSE
 export FSPV_BUILD=FALSE
+export EXTENDEDREGION_BUILD=FALSE
 
 #
 # If MAX_CONCURRENT_THREADS environment variable is uninitialized
@@ -112,6 +113,7 @@ function PrintUsage {
   echo "  perf     To set gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable|TRUE. See note 1"
   echo "  rpmc     To set gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable|TRUE. See note 1"
   echo "  fspv     To set gSiPkgTokenSpaceGuid.PcdFspVEnable=TRUE. See note 1"
+  echo "  extended To enable Extended BIOS Region so a single BIOS image larger than 16MB in size is built."
   echo "  fsp32    To build using 32-bit PEI for FSP."
   echo "  fsp64    To build using 64-bit PEI for FSP."
 
@@ -341,6 +343,15 @@ for ((i=1 ; i <= numargs ; i++)); do
 --pcd gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable=TRUE"
     export FSP_BUILD_OPTION_PCD="${FSP_BUILD_OPTION_PCD} \
 --pcd gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable=TRUE"
+  elif [ "$1" = "extended" ]; then
+    export EXTENDEDREGION_BUILD=TRUE
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE=_EXTEND
+    export BIOS_SIZE_OPTION=-DBIOS_SIZE_OPTION=SIZE_170
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD \
+--pcd gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport=TRUE \
+--pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosExtenedRegionEnable=TRUE"
+    export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD \
+--pcd gSiPkgTokenSpaceGuid.PcdExtendedBiosRegionSupport=TRUE"
   elif [ -n "$1" ]; then  # !!! Additional arguments must be added above this line, otherwise it breaks the parsing logic
     echo "Invalid input argument: $1"
     echo
@@ -480,6 +491,58 @@ else
     export FLASHMAP_FDF=$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapIncludeMultiIbb.fdf
   fi
 fi
+
+# Generating Flash Map FDF for Extended BIOS Region
+# Note: the flashmap is being generated based on the default flashmap specified by build option
+if [ "$EXTENDEDREGION_BUILD" == "TRUE" ]; then
+  if [ "$EMBEDDED_BUILD" == "TRUE" ]; then
+    EXTENDEDREGION_TEMPLATE_FDF="$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapIncludeExtendedEmbedded.fdf.template"
+  else
+    EXTENDEDREGION_TEMPLATE_FDF="$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapIncludeExtended.fdf.template"
+  fi
+
+  EXTENDEDREGION_FLASHMAP_FDF="$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapIncludeExtended_autogen.fdf"
+
+  "$PYTHON_COMMAND" "$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/GenFlashmap/GenFlashmap.py" \
+    -b "$FLASHMAP_FDF" \
+    -t "$EXTENDEDREGION_TEMPLATE_FDF" \
+    -o "$EXTENDEDREGION_FLASHMAP_FDF" \
+    extended
+
+  if [ $? -ne 0 ]; then
+    echo "ERROR: Failure in generating $EXTENDEDREGION_FLASHMAP_FDF"
+    exit 1
+  fi
+  export FLASHMAP_FDF="$EXTENDEDREGION_FLASHMAP_FDF"
+fi
+
+echo "***********************************"
+echo
+echo "Parsing FlashMapInclude FDFs and checking if all offset and size requirements are met"
+echo
+
+# FSP build
+BB_CHECK=TRUE
+if [ "$ATOM_BUILD" == "TRUE" ]; then
+  BB_CHECK=FALSE
+fi
+
+if [ "$TARGET" == "DEBUG" ]; then
+  BB_CHECK=FALSE
+fi
+
+# Topswap for PTL is 8MB. Setting build specific limit to 6.2MB after arch discussion
+TOPSWAP_LIMIT=0x00650000
+
+if [ "$BB_CHECK" == "TRUE" ]; then
+  "$PYTHON_COMMAND" "$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/FvAlignment/FvAlignment.py" --flashmap "$FLASHMAP_FDF" --topswap_size "$TOPSWAP_LIMIT" -cl all fv_alignment_check
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+fi
+echo
+echo "PASS all flash map quick check successfully!"
+echo "***********************************"
 
 echo "ACTIVE FLASH MAP FDF = $FLASHMAP_FDF"
 

@@ -331,6 +331,38 @@ then
   exit 1
 fi
 
+# Cutting off unused part of Extended BIOS Region out of the FD image
+if [ "$EXTENDEDREGION_BUILD" != "TRUE" ] || [ -z "$FLASHMAP_FDF" ]; then
+  echo "Skipping Extended Region Post Build Process"
+else
+  EXTENDED_REGION_SIZE=""
+  EXTENDED_REGION_IN_USE=""
+
+  # Extract values from FLASHMAP_FDF
+  EXTENDED_REGION_SIZE=$(grep -oP 'DEFINE EXTENDED_REGION_SIZE\s+=\s*\K[\dx]+' "$FLASHMAP_FDF")
+  EXTENDED_REGION_IN_USE=$(grep -oP 'DEFINE EXTENDED_REGION_IN_USE\s+=\s*\K[\dx]+' "$FLASHMAP_FDF")
+
+  echo "Extended BIOS Region size        : $EXTENDED_REGION_SIZE"
+  echo "Extended BIOS Region size in use : $EXTENDED_REGION_IN_USE"
+
+  # Calculate cutoff size
+  CUTOFF_SIZE=$((EXTENDED_REGION_SIZE - EXTENDED_REGION_IN_USE))
+  echo "Cutting off unused $CUTOFF_SIZE in size"
+
+  # Copy and split operations
+  cp -f $BUILD_FV_FOLDER/CLIENTBIOS.fd $BUILD_FV_FOLDER/ClientBios_ExtSplitPre.fd
+
+  Split -f $BUILD_FV_FOLDER/CLIENTBIOS.fd -s $CUTOFF_SIZE -t $BUILD_FV_FOLDER/ClientBios_ExtSplitPost.fd -o $BUILD_FV_FOLDER/Garbage.bin
+  
+
+  cp -f $BUILD_FV_FOLDER/ClientBios_ExtSplitPost.fd $BUILD_FV_FOLDER/CLIENTBIOS.fd
+  rm -f $BUILD_FV_FOLDER/Garbage.bin
+
+  # Cut off extended region from ClientBios.fd
+  # We will append extended region to ClientBios.fd in last step of PostBuild.sh
+  Split -f $BUILD_FV_FOLDER/CLIENTBIOS.fd -s $EXTENDED_REGION_IN_USE -o $BUILD_FV_FOLDER/ExtendedRegion.bin -t $BUILD_FV_FOLDER/CLIENTBIOS.fd
+fi
+
 #
 # [BEGIN] BIOS Capsule Update Fault Tolerance Support
 #
@@ -410,6 +442,11 @@ else
   export OBB_HASH_TMP_FOLDER=$WORKSPACE/$BUILD_DIR/FV/ObbDigestTmp
   export FLASH_OBB_OFFSET=$(awk '/SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset/ { for(i=1;i<=NF;i++) if($i ~ /^0x/) print $i }' $TEMP_FLASHMAP_FDF)
   export FLASH_OBB_SIZE=$(awk '/SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbSize/ { for(i=1;i<=NF;i++) if($i ~ /^0x/) print $i }' $TEMP_FLASHMAP_FDF)
+  if [ "$EXTENDEDREGION_BUILD" == "TRUE" ]; then
+    #hard code, need to refine.
+    NvsOffset=0x02000000
+    FLASH_OBB_OFFSET=$(($FLASH_OBB_OFFSET - $NvsOffset))
+  fi
   export FLASH_NVS_OBB_SIZE=$(printf "0x%08X" $(($FLASH_OBB_OFFSET + $FLASH_OBB_SIZE)))
 
   echo "OBB Offset   = $FLASH_OBB_OFFSET"
@@ -454,12 +491,22 @@ else
   FMMT -r $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ObbDigest $OBB_HASH_TMP_FOLDER/ObbDigest.ffs $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd
   FMMT -r $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D NonFitPayloadDigest $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.ffs $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd
 
+  if [ "$EXTENDEDREGION_BUILD" == "TRUE" ]; then
+    EXTENDED_HASH_FILE_GUID=151CB3B2-87B0-4A37-8353-ECB59945E9A0
+    cp -f $BUILD_FV_FOLDER/ExtendedRegion.bin $OBB_HASH_TMP_FOLDER/ExtendedRegion.bin
+    $OPENSSL_PATH/openssl dgst -binary -sha384 $OBB_HASH_TMP_FOLDER/ExtendedRegion.bin > $OBB_HASH_TMP_FOLDER/ExtendedDigest.bin
+    GenSec -s EFI_SECTION_USER_INTERFACE -n "ExtendedDigest" -o $OBB_HASH_TMP_FOLDER/ExtendedDigest.ui
+    GenSec -s EFI_SECTION_RAW $OBB_HASH_TMP_FOLDER/ExtendedDigest.bin -o $OBB_HASH_TMP_FOLDER/ExtendedDigest.raw
+    GenFfs -t EFI_FV_FILETYPE_FREEFORM -g $EXTENDED_HASH_FILE_GUID -o $OBB_HASH_TMP_FOLDER/ExtendedDigest.ffs -i $OBB_HASH_TMP_FOLDER/ExtendedDigest.raw -i $OBB_HASH_TMP_FOLDER/ExtendedDigest.ui
+    FMMT -r $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ExtendedDigest $OBB_HASH_TMP_FOLDER/ExtendedDigest.ffs $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd
+  else
+    cp -f $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd
+  fi
+
   #
   # Keep Obb.bin for BIOS Resiliency OBB BGUP build below.
   #
   cp -f $OBB_HASH_TMP_FOLDER/Obb.bin $WORKSPACE/$BUILD_DIR/FV/Obb.bin
-
-  cp -f $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd
   cp -f $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
 
   rm -rf $OBB_HASH_TMP_FOLDER
@@ -523,6 +570,24 @@ else
   $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
   cat capsule_update_package.BIOS_Guard update_package_bgupc.biosguard > $BGSL_TMP_FOLDER/NonFitPayloadBgsl.bin
   rm script.bin *.BIOS_Guard *.biosguard
+  if [ "$EXTENDEDREGION_BUILD" == "TRUE" ]; then
+    #
+    # Generate Extended_to_SPI BGUP.
+    #
+    $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BuildBGUP_SPI.py -d $WORKSPACE/$BUILD_DIR/FV/ExtendedRegion.bin -p script_extendedbios.bgsl -v $BIOS_GUARD_SVN -use_ftu false
+    echo "Create BGUP for ExtendBios"
+    $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
+    cat capsule_update_package.BIOS_Guard update_package_bgupc.biosguard > $BGSL_TMP_FOLDER/ExtendedBgsl.bin
+    rm script.bin *.BIOS_Guard *.biosguard
+
+    #
+    # Prepare ExtendedBgsl.ffs
+    #
+    EXTENDED_HASH_FILE_GUID=6F43F2C6-D0C7-40F2-AB33-3A907CFE7ECB
+    GenSec -s EFI_SECTION_USER_INTERFACE -n "ExtendedBgsl" -o $BGSL_TMP_FOLDER/ExtendedBgsl.ui
+    GenSec -s EFI_SECTION_RAW $BGSL_TMP_FOLDER/ExtendedBgsl.bin -o $BGSL_TMP_FOLDER/ExtendedBgsl.raw
+    GenFfs -t EFI_FV_FILETYPE_FREEFORM -g $EXTENDED_HASH_FILE_GUID -o $BGSL_TMP_FOLDER/ExtendedBgsl.ffs -i $BGSL_TMP_FOLDER/ExtendedBgsl.raw -i $BGSL_TMP_FOLDER/ExtendedBgsl.ui
+  fi
 
   #
   # Prepare IbbBgsl.ffs.
@@ -548,6 +613,11 @@ else
   #
   # Replace the dummy BGSL FFS in CLIENTBIOS.fd with the actual one.
   #
+  if [ "$EXTENDEDREGION_BUILD" == "TRUE" ]; then
+    cp -f $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/ClientBios_Extended.fd
+    FMMT -r $WORKSPACE/$BUILD_DIR/FV/ClientBios_Extended.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ExtendedBgsl $BGSL_TMP_FOLDER/ExtendedBgsl.ffs $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
+  fi
+
   FMMT -r $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D IbbBgsl $BGSL_TMP_FOLDER/IbbBgsl.ffs $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd
   FMMT -r $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D NonFitPayloadBgsl $BGSL_TMP_FOLDER/NonFitPayloadBgsl.ffs $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd
   FMMT -r $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ObbRBgsl $BGSL_TMP_FOLDER/ObbRBgsl.ffs $BGSL_TMP_FOLDER/CLIENTBIOS.fd
