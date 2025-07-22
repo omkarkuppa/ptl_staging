@@ -1831,7 +1831,7 @@ typedef struct {
                         ThcHidI2cIntDelayValue.
 **/
 
-#define PCH_SETUP_REVISION  6
+#define PCH_SETUP_REVISION  7
 
 typedef struct {
   UINT8   Revision;
@@ -2517,14 +2517,16 @@ typedef struct {
   // Usb Config
   UINT8   PchXhciDwb;
   UINT8   GlobalPcieAer;
+  UINT8   VisaDebug;
 
-  UINT8   Reserved1[20];
+  UINT8   Reserved1[19];
   CHAR16  PchHdAudioPostProcessingModCustomGuid4[GUID_CHARS_NUMBER];
   CHAR16  PchHdAudioPostProcessingModCustomGuid5[GUID_CHARS_NUMBER];
   UINT8   ThcHidI2cMaxFrameSize[PCH_MAX_THC_CONTROLLERS];
   UINT16  ThcHidI2cMaxFrameSizeValue[PCH_MAX_THC_CONTROLLERS];
   UINT8   ThcHidI2cIntDelay[PCH_MAX_THC_CONTROLLERS];
   UINT16  ThcHidI2cIntDelayValue[PCH_MAX_THC_CONTROLLERS];
+
 } PCH_SETUP;
 
 

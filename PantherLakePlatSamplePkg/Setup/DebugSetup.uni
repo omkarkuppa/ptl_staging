@@ -54,6 +54,9 @@
 #string STR_PLATFORM_DEBUG_OPTION_STRING_HELP           #language en-US "Enabled Trace active: TraceHub is enabled and trace is active, blocks s0ix.\n\nEnabled Trace ready: TraceHub is enabled and allowed S0ix.\n\nEnabled Trace power off: TraceHub is powergated, provide setting close to functional low power state\n\nManual: user needs to configure Advanced Debug Settings manually, aimed at advanced users"
 
 
+#string STR_VISA_DEBUG_ENABLE                           #language en-US  "VISA Debug"
+#string STR_VISA_DEBUG_ENABLE_HELP                      #language en-US  "Enable/Disable VISA native debug support. Note: Once enabled, the setting will be applicable until G3. Disabling it after enabling requires a G3 cycle to take effect."
+
 #string STR_PDC_TRACE_ACTIVE_STRING                     #language en-US "Enabled - Trace active"
 #string STR_PDC_TRACE_READY_STRING                      #language en-US "Enabled - Trace ready"
 #string STR_PDC_TRACE_POWER_OFF_STRING                  #language en-US "Enabled - Trace power off"

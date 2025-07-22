@@ -82,6 +82,19 @@ PtlPcdGpioSetNativePadByFunction (
   );
 
 /**
+  This function enables VISA@ pins by setting them into native mode
+
+  @param[in]  GpioServices        GPIO Services
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid parameter
+**/
+EFI_STATUS
+PtlPcdGpioEnableVisaPins (
+  IN GPIOV2_SERVICES  *GpioServices
+  );
+
+/**
   This function configures GPIO connection between CNVi and CRF
 
   @param[in]  GpioServices        GPIO Services

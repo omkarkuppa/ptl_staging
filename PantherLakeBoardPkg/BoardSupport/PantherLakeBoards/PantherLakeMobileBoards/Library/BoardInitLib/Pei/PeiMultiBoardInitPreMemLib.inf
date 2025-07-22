@@ -55,6 +55,8 @@
   PeiServicesLib
   HobLib
   TimerLib
+  GpioV2AccessLib
+  PtlPcdGpioNativeLib
 
 [Packages]
   MinPlatformPkg/MinPlatformPkg.dec

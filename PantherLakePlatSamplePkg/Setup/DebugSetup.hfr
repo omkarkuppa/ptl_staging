@@ -82,6 +82,13 @@ form formid = AUTO_ID(DEBUG_FORM_ID),
     endoneof;
   endif;
 
+  oneof varid   = PCH_SETUP.VisaDebug,
+    prompt      = STRING_TOKEN (STR_VISA_DEBUG_ENABLE),
+    help        = STRING_TOKEN (STR_VISA_DEBUG_ENABLE_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
   //
   // Crash Log Setting
   //

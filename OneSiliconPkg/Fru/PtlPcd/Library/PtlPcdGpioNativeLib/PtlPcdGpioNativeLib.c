@@ -250,6 +250,100 @@ PtlPcdGpioSetNativePadByFunction (
 }
 
 //
+// VISA@ pins
+//
+GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mVisaGpioPadFunction[] =
+{
+GPIOV2_SIGNAL_VISA2CH1_DATA(0),
+GPIOV2_SIGNAL_VISA2CH1_DATA(1),
+GPIOV2_SIGNAL_VISA2CH1_DATA(2),
+GPIOV2_SIGNAL_VISA2CH1_DATA(3),
+GPIOV2_SIGNAL_VISA2CH1_DATA(4),
+GPIOV2_SIGNAL_VISA2CH1_DATA(5),
+GPIOV2_SIGNAL_VISA2CH1_DATA(6),
+GPIOV2_SIGNAL_VISA2CH1_DATA(7),
+GPIOV2_SIGNAL_VISA2CH2_DATA(0),
+GPIOV2_SIGNAL_VISA2CH2_DATA(1),
+GPIOV2_SIGNAL_VISA2CH2_DATA(2),
+GPIOV2_SIGNAL_VISA2CH2_DATA(3),
+GPIOV2_SIGNAL_VISA2CH2_DATA(4),
+GPIOV2_SIGNAL_VISA2CH2_DATA(5),
+GPIOV2_SIGNAL_VISA2CH2_DATA(6),
+GPIOV2_SIGNAL_VISA2CH2_DATA(7),
+GPIOV2_SIGNAL_VISA2CH3_DATA(0),
+GPIOV2_SIGNAL_VISA2CH3_DATA(1),
+GPIOV2_SIGNAL_VISA2CH3_DATA(2),
+GPIOV2_SIGNAL_VISA2CH3_DATA(3),
+GPIOV2_SIGNAL_VISA2CH3_DATA(4),
+GPIOV2_SIGNAL_VISA2CH3_DATA(5),
+GPIOV2_SIGNAL_VISA2CH3_DATA(6),
+GPIOV2_SIGNAL_VISA2CH3_DATA(7),
+GPIOV2_SIGNAL_VISA2CH4_DATA(0),
+GPIOV2_SIGNAL_VISA2CH4_DATA(1),
+GPIOV2_SIGNAL_VISA2CH4_DATA(2),
+GPIOV2_SIGNAL_VISA2CH4_DATA(3),
+GPIOV2_SIGNAL_VISA2CH4_DATA(4),
+GPIOV2_SIGNAL_VISA2CH4_DATA(5),
+GPIOV2_SIGNAL_VISA2CH4_DATA(6),
+GPIOV2_SIGNAL_VISA2CH4_DATA(7),
+GPIOV2_SIGNAL_VISA2CH1_CLK,
+GPIOV2_SIGNAL_VISA2CH2_CLK,
+GPIOV2_SIGNAL_VISA2CH3_CLK,
+GPIOV2_SIGNAL_VISA2CH4_CLK
+};
+
+/**
+  This function enables VISA@ pins by setting them into native mode
+
+  @param[in]  GpioServices        GPIO Services
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid parameter
+**/
+EFI_STATUS
+PtlPcdGpioEnableVisaPins (
+  IN GPIOV2_SERVICES  *GpioServices
+  )
+{
+  EFI_STATUS       Status;
+  UINT32           Index;
+  GPIOV2_PAD       GpioPad;
+  GPIOV2_PAD_MODE  PadMode;
+
+  if (GpioServices == NULL) {
+    ASSERT (FALSE);
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (GpioOverrideLevel1Enabled ()) {
+    return EFI_SUCCESS;
+  }
+
+  for (Index = 0; Index < ARRAY_SIZE (mVisaGpioPadFunction); Index++) {
+    Status = PtlPcdGpioSetNativePadByFunction (GpioServices, mVisaGpioPadFunction[Index], 0);
+    if(Status == EFI_SUCCESS){
+    DEBUG((DEBUG_INFO, "Setting VISA pins %d (PadFunction: 0x%x).\n", Index, mVisaGpioPadFunction[Index]));
+    Status = GpioServices->GetNativePadByFunction (GpioServices, mVisaGpioPadFunction[Index], &GpioPad, &PadMode);
+  } else{
+      DEBUG((DEBUG_INFO, " Error setting VISA native function %d \n", Index));
+      ASSERT_EFI_ERROR (Status);
+      return Status;
+    }
+    if(Status == EFI_SUCCESS){
+      Status = GpioServices->SetLock (GpioServices, GpioPad, GpioV2Lock);
+      DEBUG((DEBUG_INFO, "Locking VISA pins \n"));
+      ASSERT_EFI_ERROR (Status);
+    } else {
+      DEBUG((DEBUG_INFO, " Error setting VISA Lock \n"));
+      ASSERT_EFI_ERROR (Status);
+      return Status;
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
+//
 // CNVi BRI(Bluetooth Radio Interface) and RGI(Radio Generic Interface) buses from PCH to CRF(Companion RF) module
 //
 GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mPtlPcdCnviBriRgiGpioPadFunction[] =

@@ -49,6 +49,8 @@
 #include <Library/NemMapLib.h>
 #include <Guid/MigratedFvInfo.h>
 #include <Library/HobLib.h>
+#include <Library/PcdGpioNativeLib.h>
+#include <Register/GpioAcpiDefines.h>
 
 EFI_STATUS
 EFIAPI
@@ -596,6 +598,62 @@ PtlNotifyEcToPdForPcieTunnel (
 
 
 /**
+  Conditionally enables VISA debug GPIO pins if the VisaDebug option is set in Setup.
+
+  @param[in] Hid         The GPIO HID to use for VISA debug GPIO initialization.
+**/
+VOID
+VisaDebugGpioInit (
+  CHAR8 *Hid
+  )
+{
+  EFI_STATUS                        Status;
+  GPIOV2_SERVICES                   *GpioServices;
+  PCH_SETUP                         PchSetup;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI   *VariableServices;
+  UINTN                             VarSize;
+
+  // Locate VariableServices
+  Status = PeiServicesLocatePpi(
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID**)&VariableServices
+           );
+  if (EFI_ERROR(Status)) {
+    DEBUG((DEBUG_ERROR, "VisaDebugGpioInit: Failed to locate VariableServices: %r\n", Status));
+    return;
+  }
+
+  // Get PchSetup variable
+  VarSize = sizeof(PCH_SETUP);
+  Status = VariableServices->GetVariable(
+                               VariableServices,
+                               L"PchSetup",
+                               &gPchSetupVariableGuid,
+                               NULL,
+                               &VarSize,
+                               &PchSetup
+                             );
+  if (EFI_ERROR(Status)) {
+    DEBUG((DEBUG_ERROR, "VisaDebugGpioInit: Failed to get PchSetup variable: %r\n", Status));
+    return;
+  }
+
+  if (PchSetup.VisaDebug) {
+    Status = GpioV2GetAccess(Hid, 0, &GpioServices); // GPIO_HID_PTL_PCD_P
+    if (EFI_ERROR(Status)) {
+      DEBUG((DEBUG_ERROR, "VisaDebugGpioInit: GpioV2GetAccess failed: %r\n", Status));
+      return;
+    }
+    PtlPcdGpioEnableVisaPins(GpioServices);
+    DEBUG((DEBUG_INFO, "VisaDebugGpioInit: VISA debug GPIO pins enabled.\n"));
+  } else {
+    DEBUG((DEBUG_INFO, "VisaDebugGpioInit: VISA debug not enabled.\n"));
+  }
+}
+
+/**
   A hook for board-specific initialization prior to memory initialization.
 
   @retval EFI_SUCCESS   The board initialization was successful.
@@ -606,8 +664,7 @@ PtlBoardInitBeforeMemoryInit (
   VOID
   )
 {
-  EFI_STATUS                        Status;
-
+  EFI_STATUS               Status;
   DEBUG ((DEBUG_INFO, "PtlBoardInitBeforeMemoryInit\n"));
 
   PtlInitPreMem ();
@@ -621,6 +678,7 @@ PtlBoardInitBeforeMemoryInit (
   SiliconInit ();
   PtlBoardGroupTierInit ();
   PtlGpioTablePreMemInit ();
+  VisaDebugGpioInit (GPIO_HID_PTL_PCD_P); // Initialize VISA debug GPIO pins if enabled
 
   GpioInit (PcdGetPtr(PcdBoardGpioTableEarlyPreMem));
   //
