@@ -69,6 +69,7 @@
   gBoardModuleTokenSpaceGuid.PcdPlatformType
   gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent
   gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable               ## PRODUCES
   gEfiMdeModulePkgTokenSpaceGuid.PcdFastPS2Detection             ## PRODUCES
   gPlatformModuleTokenSpaceGuid.PcdAhciMaxPorts                  ## PRODUCES

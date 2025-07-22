@@ -67,6 +67,7 @@
   gPlatformModuleTokenSpaceGuid.PcdSmcExtSmiBitPosition            ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPlatformFlavor
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent                         ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdS3Enable                                 ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                           ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdGpioTier2WakeEnable                ## CONSUMES

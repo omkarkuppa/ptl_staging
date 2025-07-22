@@ -699,6 +699,7 @@ typedef struct {
   UINT64   HdaDspPpModCustomGuid5High;              ///< Offset 2855    HDA PP module custom GUID 5 - second 64bit [64-127]
   UINT8    EVSA;                                    ///< Offset 2863    Everest8326 I2c slave address
   UINT8    RMTE;                                    ///< Offset 2864    RMT/BDAT Enable
+  UINT8    EcPresent;                               ///< Offset 2865    Embedded Controller Present Flag.
 } PLATFORM_NVS_AREA;
 
 #pragma pack(pop)

@@ -36,6 +36,7 @@ DefinitionBlock (
 
   ACPI_DEBUG_EXTERNAL_REFERENCE
   External(\PBID, IntObj)       // PlatformId
+  External(\ECON, IntObj)
 
 #if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
   // Externals for Dptf Tables handled by PlatformData

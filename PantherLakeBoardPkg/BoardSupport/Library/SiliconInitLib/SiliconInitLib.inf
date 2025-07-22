@@ -57,6 +57,7 @@
   SiliconInitPreMem.c
 
 [Pcd]
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
 
 [FixedPcd]

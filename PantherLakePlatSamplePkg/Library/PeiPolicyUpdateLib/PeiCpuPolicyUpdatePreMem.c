@@ -239,6 +239,9 @@ BiosGuardHobInit (
 
   Status = GetBgpdtEcData (&EcBgpdt);
 #if FixedPcdGetBool (PcdEcEnable) == 1
+  if (PcdGetBool (PcdEcPresent) == FALSE) {
+    Status = EFI_UNSUPPORTED;
+  }
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "EC is Present\n"));
     BiosGuardHobPtr->Bgpdt.BiosGuardAttr      |= EnumEcPresent;
@@ -1254,22 +1257,31 @@ UpdatePeiCpuPolicyPreMem (
   //
   // Check If power state is AC or DC.
   //
-  PowerSourceStatus = EcGetPowerSource (&PowerSourceType);
-  if (!EFI_ERROR (PowerSourceStatus)) {
-    //
-    // Power Source Type: BIT0    - AC
-    //                    BIT1    - USB Type-C PD
-    //                    BIT2    - USB PSS
-    //                    Others  - Other usage
-    //
-    if ((PowerSourceType & (BIT0|BIT1|BIT2)) != 0) {
-      DEBUG ((DEBUG_INFO, "AC/PD/PSS Adaptor plugin!\n"));
-      IsAcPluggedIn = TRUE;
-    } else {
-      DEBUG ((DEBUG_INFO, "Power Source is unpluged!\n"));
-      IsAcPluggedIn = FALSE;
+#if FixedPcdGetBool (PcdEcEnable) == 1
+  if (PcdGetBool (PcdEcPresent) == TRUE) {
+    PowerSourceStatus = EcGetPowerSource (&PowerSourceType);
+    if (!EFI_ERROR (PowerSourceStatus)) {
+      //
+      // Power Source Type: BIT0    - AC
+      //                    BIT1    - USB Type-C PD
+      //                    BIT2    - USB PSS
+      //                    Others  - Other usage
+      //
+      if ((PowerSourceType & (BIT0|BIT1|BIT2)) != 0) {
+        DEBUG ((DEBUG_INFO, "AC/PD/PSS Adaptor plugin!\n"));
+        IsAcPluggedIn = TRUE;
+      } else {
+        DEBUG ((DEBUG_INFO, "Power Source is unpluged!\n"));
+        IsAcPluggedIn = FALSE;
+      }
     }
+  } else {
+    // Set ECless board power source type to AC
+    IsAcPluggedIn = TRUE;
   }
+#else
+  IsAcPluggedIn = TRUE;
+#endif
 
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD*) FspmUpd)->FspmConfig.AcDcPowerState, CpuPowerDeliveryConfig->AcDcPowerState, IsAcPluggedIn);
 

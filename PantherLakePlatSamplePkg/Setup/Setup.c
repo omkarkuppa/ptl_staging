@@ -1141,7 +1141,9 @@ SetupEntry (
            );
   }
 
-  EcUpdateSetup ();
+  if (PcdGetBool (PcdEcPresent) == TRUE) {
+    EcUpdateSetup ();
+  }
 
   //
   // Check Setup Variable.

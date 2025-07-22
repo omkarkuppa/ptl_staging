@@ -717,4 +717,5 @@
   AG5H, 64, // Offset(2855),  HDA PP module custom GUID 5 - second 64bit [64-127]
   EVSA, 8,  // Offset(2863),  Everest8326 I2c slave address
   RMTE, 8,  // Offset(2864),  RMT/BDAT Enable
+  ECON, 8,  // Offset(2865),  Embedded Controller Present Flag.
   }

@@ -126,7 +126,9 @@ PlatformSpecificInitPreMem(
 
 #if FixedPcdGetBool (PcdEcEnable) == 1
   if (!EFI_ERROR(Status)) {
-    EcInit(PchSetup.PchLan, BootMode);
+    if (PcdGetBool (PcdEcPresent) == TRUE) {
+      EcInit(PchSetup.PchLan, BootMode);
+    }
   }
 #endif
 
@@ -144,16 +146,18 @@ PlatformSpecificInitPreMem(
     // Selecting charging method
     //
 #if FixedPcdGetBool (PcdEcEnable) == 1
-    if (SystemConfiguration.EcChargingMethod == 1) {
-      //
-      // Fast charging
-      //
-      DfctFastChargingMode(TRUE);
-    } else {
-      //
-      // Normal charging
-      //
-      DfctFastChargingMode(FALSE);
+    if (PcdGetBool (PcdEcPresent) == TRUE) {
+      if (SystemConfiguration.EcChargingMethod == 1) {
+        //
+        // Fast charging
+        //
+        DfctFastChargingMode(TRUE);
+      } else {
+        //
+        // Normal charging
+        //
+        DfctFastChargingMode(FALSE);
+      }
     }
 #endif
 
@@ -281,12 +285,14 @@ SetTheStateToGoAfterG3(
                                );
   if (!EFI_ERROR(Status)) {
 #if FixedPcdGetBool (PcdEcEnable) == 1
-    ///
-    /// Set AC Removal reset in EC if necessary.
-    /// ForceResetAfterAcRemovalVar =  0 : Clear AC Removal reset bit in EC
-    ///                                1 : Set AC Removal reset bit in EC
-    ///
-    EcForceResetAfterAcRemoval(ForceResetAfterAcRemovalVar);
+    if (PcdGetBool (PcdEcPresent) == TRUE) {
+      ///
+      /// Set AC Removal reset in EC if necessary.
+      /// ForceResetAfterAcRemovalVar =  0 : Clear AC Removal reset bit in EC
+      ///                                1 : Set AC Removal reset bit in EC
+      ///
+      EcForceResetAfterAcRemoval(ForceResetAfterAcRemovalVar);
+    }
 #endif
   }
 
@@ -513,12 +519,16 @@ PtlBoardMiscInitPreMem (
   //
   // Set FailSafe Critical Temp & Fan Speed setting
   //
-  Status = SetFailSafeFanCtrl(
-              PcdGet8(PcdEcFailSafeActionCpuTemp),
-              PcdGet8(PcdEcFailSafeActionFanPwm)
-  );
-  DEBUG((DEBUG_INFO, " EC FailSafe (CpuTemp,Fan) set to (%d,%d), Status = %r\n", \
+#if FixedPcdGetBool (PcdEcEnable) == 1
+  if (PcdGetBool (PcdEcPresent) == TRUE) {
+    Status = SetFailSafeFanCtrl(
+                PcdGet8(PcdEcFailSafeActionCpuTemp),
+                PcdGet8(PcdEcFailSafeActionFanPwm)
+    );
+    DEBUG((DEBUG_INFO, " EC FailSafe (CpuTemp,Fan) set to (%d,%d), Status = %r\n", \
            PcdGet8(PcdEcFailSafeActionCpuTemp), PcdGet8(PcdEcFailSafeActionFanPwm), Status));
+  }
+#endif
 
   Status = PeiServicesNotifyPpi(&mSiPreMemPolicyNotifyList);
   ASSERT_EFI_ERROR(Status);
@@ -636,7 +646,12 @@ PtlBoardInitBeforeMemoryInit (
 
 
   // Notify Ec To Pd firmware for enabling or disabling Pcie.
-  PtlNotifyEcToPdForPcieTunnel ();
+#if FixedPcdGetBool (PcdEcEnable) == 1
+  if (PcdGetBool (PcdEcPresent) == TRUE) {
+    PtlNotifyEcToPdForPcieTunnel ();
+  }
+#endif
+
   ASSERT(Status == EFI_SUCCESS);
   return EFI_SUCCESS;
 }

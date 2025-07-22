@@ -138,6 +138,7 @@
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
   gPlatformModuleTokenSpaceGuid.PcdSmcExtSmiBitPosition             ## CONSUMES
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                           ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent                          ## CONSUMES
 
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable          ## CONSUMES
 

@@ -2566,7 +2566,7 @@ typedef struct {
 
 #define BIOS_PAYLOAD_VARIABLE_NAME             L"BiosPayload"
 
-#define BOARD_INFO_SETUP_REVISION  1
+#define BOARD_INFO_SETUP_REVISION  2
 
 typedef struct {
   // @todo decouple Board related variables from SETUP_DATA
@@ -2583,6 +2583,7 @@ typedef struct {
   BOOLEAN SpdPresent;
   UINT8   PlatformGeneration;
   UINT16  DisplayId;
+  BOOLEAN EcPresent;
 } BOARD_INFO_SETUP;
 
 /**

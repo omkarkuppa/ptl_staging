@@ -163,6 +163,7 @@
   gBoardModuleTokenSpaceGuid.PcdHdaI2sCodecI2cBusNumber
 
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                                   ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent                                  ## CONSUMES
 
 
   # PCIE Slot1 GPIO configuration  PCDs

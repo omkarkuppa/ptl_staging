@@ -963,6 +963,14 @@ UpdateFadtSetting (
     // set indicates the power button is handled as a control method device.
     //
     FadtFlags |= EFI_ACPI_6_5_PWR_BUTTON;
+#if FixedPcdGetBool (PcdEcEnable) == 1
+    //
+    // For EC-less platform, power button has to be handled as fixed feature programming model
+    //
+    if (PcdGetBool (PcdEcPresent) == FALSE) {
+      FadtFlags &= ~(EFI_ACPI_6_5_PWR_BUTTON);
+    }
+#endif
   } else {
     FadtFlags &= ~(EFI_ACPI_6_5_PWR_BUTTON); // clear indicates the power button is handled as a fixed feature programming model
   }
@@ -3296,19 +3304,22 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->IdeMode = 0;
 
 #if FixedPcdGetBool (PcdEcEnable) == 1
-  //
-  // Call EC lib to get Virtual Dock status
-  //
-  PortData = 0;
-  Status = GetVirtualDockStatus (&PortData);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Status = %r\n", Status));
+  if (PcdGetBool (PcdEcPresent) == TRUE) {
+    //
+    // Call EC lib to get Virtual Dock status
+    //
+    PortData = 0;
+    Status = GetVirtualDockStatus (&PortData);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Status = %r\n", Status));
+    }
+    //
+    // the bit0 is Virtual Dock Status, 1 = attached
+    //
+    mPlatformNvsAreaProtocol.Area->VirtualDockStatus = (PortData & 1);
+  } else {
+    mPlatformNvsAreaProtocol.Area->VirtualDockStatus = 0;
   }
-
-  //
-  // the bit0 is Virtual Dock Status, 1 = attached
-  //
-  mPlatformNvsAreaProtocol.Area->VirtualDockStatus = (PortData & 1);
 #endif
 
   mPlatformNvsAreaProtocol.Area->NativePCIESupport        = mSystemConfiguration.PciExpNative;
@@ -3331,6 +3342,12 @@ InstallAcpiPlatform (
   // Enable APIC
   //
   mPlatformNvsAreaProtocol.Area->ApicEnable = PLATFORM_NVS_DEVICE_ENABLE;
+
+#if FixedPcdGetBool (PcdEcEnable) == 1
+  mPlatformNvsAreaProtocol.Area->EcPresent = PcdGetBool (PcdEcPresent);
+#else
+  mPlatformNvsAreaProtocol.Area->EcPresent = 0;
+#endif
 
   mPlatformNvsAreaProtocol.Area->EnableVoltageMargining = PcdGetBool (PcdEnableVoltageMargining);
 
@@ -3676,6 +3693,10 @@ InstallAcpiPlatform (
   //
 #if FixedPcdGetBool (PcdEcEnable) == 0
   mPlatformNvsAreaProtocol.Area->Ps2MouseEnable = 1;
+#else
+  if (PcdGetBool (PcdEcPresent) == FALSE) {
+    mPlatformNvsAreaProtocol.Area->Ps2MouseEnable = 1;
+  }
 #endif
 
   mPlatformNvsAreaProtocol.Area->UsbSensorHub    = mSystemConfiguration.UsbSensorHub;
@@ -3901,7 +3922,9 @@ InstallAcpiPlatform (
   PublishAcpiTablesFromFv(gRcAcpiTableStorageGuid);
 
 #if FixedPcdGetBool (PcdEcEnable) == 1
-  Status = EcInitialize (&CpuSetup);
+  if (PcdGetBool (PcdEcPresent) == TRUE) {
+    Status = EcInitialize (&CpuSetup);
+  }
 #endif
 
   //

@@ -46,3 +46,6 @@
   DebugLib
   EcMiscLib
 
+[Pcd]
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent

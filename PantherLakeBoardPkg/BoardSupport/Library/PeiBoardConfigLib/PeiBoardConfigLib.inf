@@ -101,6 +101,7 @@
   gBoardModuleTokenSpaceGuid.PcdPlatformGeneration        ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable          ## CONSUMES
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                 ## PRODUCES  ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent                ## PRODUCES  ## CONSUMES
   gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode               ## PRODUCES
   gBoardModuleTokenSpaceGuid.VpdPcdGpioLidStatus          ## PRODUCES
 

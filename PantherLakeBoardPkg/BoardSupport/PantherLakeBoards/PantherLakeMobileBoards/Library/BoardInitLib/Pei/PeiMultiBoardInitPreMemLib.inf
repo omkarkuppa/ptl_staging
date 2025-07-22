@@ -104,6 +104,7 @@
   gBoardModuleTokenSpaceGuid.PcdBoardType
   gBoardModuleTokenSpaceGuid.PcdBoardName
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTablePreMem
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEarlyPreMem
