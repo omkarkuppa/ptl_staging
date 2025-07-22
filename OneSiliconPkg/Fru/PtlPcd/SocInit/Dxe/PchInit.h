@@ -69,6 +69,14 @@ PchInitEntryPointCommon (
   );
 
 /**
+  Process all the lock downs
+**/
+VOID
+ProcessSmiLocks (
+  VOID
+  );
+
+/**
   Common PCH initialization on PCI enumeration complete.
 **/
 VOID

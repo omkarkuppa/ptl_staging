@@ -81,50 +81,6 @@ THC_RESET_PROTOCOL  mThcResetProtocol = {
 };
 
 /**
-  Process all the lock downs
-**/
-VOID
-ProcessSmiLocks (
-  VOID
-  )
-{
-  UINT32        Data32And;
-  UINT32        Data32Or;
-  UINT16        ABase;
-
-  ///
-  /// PCH BIOS Spec Section 3.6 Flash Security Recommendation
-  /// BIOS needs to enables SMI_LOCK (PMC PCI offset A0h[4] = 1b) which prevent writes
-  /// to the Global SMI Enable bit (GLB_SMI_EN ABASE + 30h[0]). Enabling this bit will
-  /// mitigate malicious software attempts to gain system management mode privileges.
-  ///
-  if (mPchLockDownConfigHob->GlobalSmi == TRUE) {
-    ///
-    /// Save Global SMI Enable bit setting before BIOS enables SMI_LOCK during S3 resume
-    ///
-    ABase = PmcGetAcpiBase ();
-    Data32Or = IoRead32 ((UINTN) ABase + R_ACPI_IO_SMI_EN);
-    if ((Data32Or & B_ACPI_IO_SMI_EN_GBL_SMI_EN) != 0) {
-      Data32And = 0xFFFFFFFF;
-      Data32Or |= B_ACPI_IO_SMI_EN_GBL_SMI_EN;
-      S3BootScriptSaveIoReadWrite (
-        S3BootScriptWidthUint32,
-        (UINTN) ABase + R_ACPI_IO_SMI_EN,
-        &Data32Or,  // Data to be ORed
-        &Data32And  // Data to be ANDed
-        );
-    }
-    //
-    // If ESPI_SMI is enabed, set ESPI SMI Lock
-    //
-    if (Data32Or & B_ACPI_IO_SMI_EN_ESPI_SMI_EN) {
-      PmcLockEspiSmiWithS3BootScript ();
-    }
-      PmcLockSmiWithS3BootScript (PmcGetPwrmBase());
-  }
-}
-
-/**
   Do PCIE power management while resume from S3
 **/
 VOID
