@@ -67,6 +67,7 @@ export UNIVERSAL_PAYLOAD=FALSE
 export UPL_SPEC_REVISION=0.9
 export IBBSIGN=FALSE
 export ROM_FILENAME_SPECIAL_BUILD_TYPE=
+export PERFORMANCE_BUILD=FALSE
 
 #
 # If MAX_CONCURRENT_THREADS environment variable is uninitialized
@@ -104,8 +105,10 @@ function PrintUsage {
   echo "  xcode    Build whole source with XCODE. See note 1"
   echo "  ptlp     To do build ptlp debug build"
   echo "  fspapi   To build using FSP API Mode."
+  echo "  perf      To set gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable|TRUE. See note 1"
   echo "  fsp32    To build using 32-bit PEI for FSP."
   echo "  fsp64    To build using 64-bit PEI for FSP."
+
   echo "  cln      Build clean."
   echo "  notimestamp To eliminate the effect of timestamp."
   echo "  ibbsign To Re-Sign the BIOS Binaries"
@@ -291,15 +294,24 @@ for ((i=1 ; i <= numargs ; i++)); do
     fi
   elif [ "$1" = "/s" ] || [ "$1" = "-s" ]; then
     export EXT_BUILD_FLAGS="$EXT_BUILD_FLAGS -u"
-  elif [ -n "$1" ]; then
-    echo "Invalid input argument: $1"
-    echo
-    PrintUsage
-    exit 1
   elif [ "$1" = "notimestamp" ]; then
     export NOTIMESTAMP=1
   elif [ "$1" = "ibbsign" ]; then
     export IBBSIGN=TRUE
+  elif [[ "$1" == "perf" ]]; then
+    export PERFORMANCE_BUILD=TRUE
+    export BUILD=P
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE="_Performance"
+    export BUILD_OPTION_PCD="${BUILD_OPTION_PCD} \
+--pcd gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable=TRUE \
+--pcd gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable=TRUE"
+    export FSP_BUILD_OPTION_PCD="${FSP_BUILD_OPTION_PCD} \
+--pcd gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable=TRUE"
+  elif [ -n "$1" ]; then # !!! Additional arguments must be added above this line, otherwise it breaks the parsing logic
+    echo "Invalid input argument: $1"
+    echo
+    PrintUsage
+    exit 1
   fi
   shift
 done
