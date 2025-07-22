@@ -2571,7 +2571,7 @@ typedef struct {
 
 #define BIOS_PAYLOAD_VARIABLE_NAME             L"BiosPayload"
 
-#define BOARD_INFO_SETUP_REVISION  2
+#define BOARD_INFO_SETUP_REVISION  3 //Reverting the original change 16027891755
 
 typedef struct {
   // @todo decouple Board related variables from SETUP_DATA

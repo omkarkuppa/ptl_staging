@@ -352,7 +352,6 @@
   gBoardModuleTokenSpaceGuid.PcdBoardType
   gBoardModuleTokenSpaceGuid.PcdPlatformType
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent
   gBoardModuleTokenSpaceGuid.PcdEcEspiFlashSharingMode
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdGbeFwUpdateEnable                        ## CONSUMES

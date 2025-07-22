@@ -66,7 +66,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode          ## CONSUMES
 
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent
   gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode
 
 [Sources]

@@ -579,7 +579,7 @@ EnableAcpiCallback (
   Pm1Cnt |= B_ACPI_IO_PM1_CNT_SCI_EN;
   IoWrite32 (mAcpiBaseAddr + R_ACPI_IO_PM1_CNT, Pm1Cnt);
 
-  mEcPresent      = PcdGetBool (PcdEcPresent);
+  mEcPresent      = FixedPcdGetBool (PcdEcEnable);
   if (mEcPresent == 1) {
     //
     // Check the power state from EC and update it to global NVS area

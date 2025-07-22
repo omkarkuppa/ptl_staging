@@ -662,12 +662,10 @@ S4SleepEntryCallBack (
 {
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_BOARD_BIOS_S4_ENTRY); // PostCode (BIOS_S4_ENTRY);
 
-  if (mEcPresent == 1) {
-    //
-    // Put EC in non-ACPI mode.  This ensures EC takes over FAN control from now on till actual shutdown.
-    //
-    EnableEcAcpiMode (FALSE);
-  }
+  //
+  // Put EC in non-ACPI mode.  This ensures EC takes over FAN control from now on till actual shutdown.
+  //
+  EnableEcAcpiMode (FALSE);
   //
   // Enable Wakesupport for PCIE Add-on Cards when Native support is disabled
   //
@@ -731,12 +729,10 @@ S5SleepEntryCallBack (
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_BOARD_BIOS_S5_ENTRY); // PostCode (BIOS_S5_ENTRY);
 
-  if (mEcPresent == 1) {
-    //
-    // Put EC in non-ACPI mode.  This ensures EC takes over FAN control from now on till actual shutdown.
-    //
-    EnableEcAcpiMode (FALSE);
-  }
+  //
+  // Put EC in non-ACPI mode.  This ensures EC takes over FAN control from now on till actual shutdown.
+  //
+  EnableEcAcpiMode (FALSE);
 
   //
   // Enable Wakesupport for PCIE Add-on Cards when Native support is disabled
@@ -1142,11 +1138,7 @@ InitializePlatformSmm (
   // Locate Platform Info Protocol.
   //
   mPlatformFlavor = PcdGet8 (PcdPlatformFlavor);
-#if FixedPcdGetBool (PcdEcEnable) == 1
-  mEcPresent      = PcdGetBool (PcdEcPresent);
-#else
-  mEcPresent      = 0;
-#endif
+  mEcPresent      = FixedPcdGetBool (PcdEcEnable);
   mGpioTier2WakeSupport = PcdGetBool (PcdGpioTier2WakeEnable);
 
   //

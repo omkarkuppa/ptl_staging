@@ -302,8 +302,6 @@
   gSiPkgTokenSpaceGuid.PcdSlotMapAddress                                 ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcNoOfDimmSlot                       ## CONSUMES
 
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent                               ## CONSUMES
-
 [Guids]
   gMinPlatformPkgTokenSpaceGuid                                          ## CONSUMES
   gSetupVariableGuid                                                     ## CONSUMES

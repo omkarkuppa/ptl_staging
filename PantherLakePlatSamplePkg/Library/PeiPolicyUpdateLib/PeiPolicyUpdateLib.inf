@@ -239,7 +239,6 @@
   gBoardModuleTokenSpaceGuid.PcdBoardType
   gBoardModuleTokenSpaceGuid.PcdBoardBomId
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent
 
   gIntelSiliconPkgTokenSpaceGuid.PcdIntelGraphicsVbtFileGuid   ## CONSUMES
 

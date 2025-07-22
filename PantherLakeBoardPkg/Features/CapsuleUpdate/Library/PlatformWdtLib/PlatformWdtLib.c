@@ -36,15 +36,7 @@ DisarmPlatformWdt (
   VOID
   )
 {
-#if FixedPcdGetBool (PcdEcEnable) == 1
-  if (PcdGetBool (PcdEcPresent) == TRUE) {
-    return DisArmEcWdt ();
-  } else {
-    return EFI_SUCCESS;
-  }
-#else
-  return EFI_SUCCESS;
-#endif
+  return DisArmEcWdt ();
 }
 
 /**
@@ -62,13 +54,5 @@ ArmPlatformWdt (
   IN UINT8          TimeOut
   )
 {
-#if FixedPcdGetBool (PcdEcEnable) == 1
-  if (PcdGetBool (PcdEcPresent) == TRUE) {
-    return ArmEcWdtWithTimeOut (TimeOut);
-  } else {
-    return EFI_SUCCESS;
-  }
-#else
-  return EFI_SUCCESS;
-#endif
+  return ArmEcWdtWithTimeOut (TimeOut);
 }

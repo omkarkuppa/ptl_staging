@@ -701,15 +701,13 @@ PlatformSetupEntry (
   ASSERT_EFI_ERROR (Status);
 
 #if FixedPcdGetBool (PcdEcEnable) == 1
-  if (PcdGetBool (PcdEcPresent) == TRUE) {
-    Status = gBS->InstallProtocolInterface (
-                    &Handle,
-                    &gEfiPs2PolicyProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    &mPs2PolicyData
-                    );
-    ASSERT_EFI_ERROR (Status);
-  }
+  Status = gBS->InstallProtocolInterface (
+                  &Handle,
+                  &gEfiPs2PolicyProtocolGuid,
+                  EFI_NATIVE_INTERFACE,
+                  &mPs2PolicyData
+                  );
+  ASSERT_EFI_ERROR (Status);
 #endif
 
   return EFI_SUCCESS;

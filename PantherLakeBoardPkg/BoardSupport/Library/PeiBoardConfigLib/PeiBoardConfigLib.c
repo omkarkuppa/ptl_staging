@@ -380,7 +380,6 @@ IsValidBoardInformationStored (
   // Restore the valid Board information to PCDs
   //
   DEBUG ((DEBUG_INFO, "IsValidBoardInformationStored : Restoring Board information.\n"));
-  PcdSetBoolS (PcdEcPresent, BoardInfoSetup.EcPresent);
   PcdSet8S (PcdEcEspiFlashSharingMode, BoardInfoSetup.EcEspiFlashSharingMode);
   PcdSet8S (PcdEcPeciMode, Setup.EcPeciMode);
   PcdSet8S (PcdEcMajorRevision, BoardInfoSetup.EcMajorRevision);
@@ -389,7 +388,6 @@ IsValidBoardInformationStored (
   PcdSet8S (PcdEcBuildRevision, BoardInfoSetup.EcBuildRevision);
 
   DEBUG ((DEBUG_INFO, "EcEnable: %x\n", BoardInfoSetup.EcEnable));
-  DEBUG ((DEBUG_INFO, "EcPresent: %x\n", BoardInfoSetup.EcPresent));
   DEBUG ((DEBUG_INFO, "  +==============================================+\n"));
   DEBUG ((DEBUG_INFO, "  | EC Major Revision:          %02X         |\n", BoardInfoSetup.EcMajorRevision));
   DEBUG ((DEBUG_INFO, "  | EC Minor Revision:          %02X         |\n", BoardInfoSetup.EcMinorRevision));
@@ -446,13 +444,9 @@ GetBoardConfig (
 #endif
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Wake Up EC Fail. Status = %r \n", Status));
-    PcdSetBoolS (PcdEcPresent, FALSE);
-  } else {
-    PcdSetBoolS (PcdEcPresent, TRUE);
   }
 
-  if ( (PcdGetBool (PcdEcPresent) == TRUE) &&
-       (!IsValidBoardInformationStored ()) ) {
+  if (!IsValidBoardInformationStored ()) {
 #if FixedPcdGetBool (PcdEcEnable) == 1
     //
     // Detect EC Revision
@@ -523,10 +517,7 @@ GetBoardConfig (
   InternalUpdateRvpBoardConfig (BoardId);
 
 #if FixedPcdGetBool (PcdEcEnable) == 1
-  if ((PcdGetBool (PcdEcPresent) == TRUE) &&
-      (((PcdGet8 (PcdPlatformFlavor) == FlavorMobile) ||
-        (PcdGet8 (PcdPlatformFlavor) == FlavorMobileWorkstation)))
-     ) {
+  if (((PcdGet8 (PcdPlatformFlavor) == FlavorMobile) || (PcdGet8 (PcdPlatformFlavor) == FlavorMobileWorkstation))) {
     //
     // check dock status if support
     //
@@ -549,7 +540,7 @@ GetBoardConfig (
       }
     }
   }
-#endif // endif (PcdEcEnable) == 1
+#endif
 
 
   DEBUG ((DEBUG_INFO, "Platform Information:\n"));
@@ -562,7 +553,6 @@ GetBoardConfig (
   DEBUG ((DEBUG_INFO, "BoardType: %x\n", PcdGet8 (PcdBoardType)));
   DEBUG ((DEBUG_INFO, "PlatformGeneration: %x\n", PcdGet8 (PcdPlatformGeneration)));
   DEBUG ((DEBUG_INFO, "PcdEcEnable: %d\n", FixedPcdGetBool (PcdEcEnable)));
-  DEBUG ((DEBUG_INFO, "EcPresent: %d\n", PcdGetBool (PcdEcPresent)));
   DEBUG ((DEBUG_INFO, "SpdPresent: %d\n", PcdGetBool (PcdSpdPresent)));
   DEBUG ((DEBUG_INFO, "DisplayId %x\n", PcdGet16 (PcdDisplayId)));
 
@@ -951,9 +941,7 @@ UpdateUcxxDriverTypePcd (
       SetUcsiRevisionPcd ();
       if (BootMode != BOOT_ON_S3_RESUME) {
         UsbCHostFlags = (Setup.TcssUcmDevice > 0) ? HOST_USBC_UCSI_STATUS : 0;
-        if (PcdGetBool (PcdEcPresent) == TRUE) {
-          UpdateUsbCHostFlagsToEc (&UsbCHostFlags);
-        }
+        UpdateUsbCHostFlagsToEc (&UsbCHostFlags);
       }
 
       Size = sizeof (UINT8) * 10;
@@ -1119,11 +1107,7 @@ SetUcsiRevisionPcd (
 
   switch (PcdGet8 (PcdUcmSelection)) {
     case UCM_UCSI_AUTO:
-      if (PcdGetBool (PcdEcPresent) == TRUE) {
-        Version = GetUcsiRev ();
-      } else {
-        Version = UCXX_DISABLE;
-      }
+      Version = GetUcsiRev ();
       UpdatePcdUcmSelection (Version);
       break;
     default:

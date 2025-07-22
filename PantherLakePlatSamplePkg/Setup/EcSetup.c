@@ -52,10 +52,6 @@ GetSystemMonitorValues (
   return EFI_UNSUPPORTED;
 #else
 
-  if (PcdGetBool (PcdEcPresent) == FALSE) {
-    return EFI_UNSUPPORTED;
-  }
-
   switch(KeyValue)
   {
     case THERMAL_SENSOR_1_KEY:
@@ -142,39 +138,39 @@ InitHhmMobileStrings (
   if (Class != ADVANCED_FORM_SET_CLASS) {
     return ;
   }
-  if (PcdGetBool (PcdEcPresent) == TRUE) {
-    // Get system monitor values from the EC.
-    GetSystemMonitorValues (THERMAL_SENSOR_1_KEY, &MonitorValues);
-    GetSystemMonitorValues (THERMAL_SENSOR_2_KEY, &MonitorValues);
-    GetSystemMonitorValues (THERMAL_SENSOR_3_KEY, &MonitorValues);
-    GetSystemMonitorValues (THERMAL_SENSOR_4_KEY, &MonitorValues);
-    GetSystemMonitorValues (THERMAL_SENSOR_5_KEY, &MonitorValues);
-    GetSystemMonitorValues (CPU_FAN_KEY, &MonitorValues);
-    GetSystemMonitorValues (PCH_DTS_TEMP_KEY, &MonitorValues);
 
-    Value1 = (UINT16)(MonitorValues.EC_TSR1 / 10);
-    Value2 = (UINT16)(MonitorValues.EC_TSR1 % 10);
-    InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_1_VALUE), L"%d.%01d C", Value1, Value2);
+  GetSystemMonitorValues (THERMAL_SENSOR_1_KEY, &MonitorValues);
+  GetSystemMonitorValues (THERMAL_SENSOR_2_KEY, &MonitorValues);
+  GetSystemMonitorValues (THERMAL_SENSOR_3_KEY, &MonitorValues);
+  GetSystemMonitorValues (THERMAL_SENSOR_4_KEY, &MonitorValues);
+  GetSystemMonitorValues (THERMAL_SENSOR_5_KEY, &MonitorValues);
 
-    Value1 = (UINT16)(MonitorValues.EC_TSR2 / 10);
-    Value2 = (UINT16)(MonitorValues.EC_TSR2 % 10);
-    InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_2_VALUE), L"%d.%01d C", Value1, Value2);
+  GetSystemMonitorValues (CPU_FAN_KEY, &MonitorValues);
+  GetSystemMonitorValues (PCH_DTS_TEMP_KEY, &MonitorValues);
 
-    Value1 = (UINT16)(MonitorValues.EC_TSR3 / 10);
-    Value2 = (UINT16)(MonitorValues.EC_TSR3 % 10);
-    InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_3_VALUE), L"%d.%01d C", Value1, Value2);
+  Value1 = (UINT16)(MonitorValues.EC_TSR1 / 10);
+  Value2 = (UINT16)(MonitorValues.EC_TSR1 % 10);
+  InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_1_VALUE), L"%d.%01d C", Value1, Value2);
 
-    Value1 = (UINT16)(MonitorValues.EC_TSR4 / 10);
-    Value2 = (UINT16)(MonitorValues.EC_TSR4 % 10);
-    InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_4_VALUE), L"%d.%01d C", Value1, Value2);
+  Value1 = (UINT16)(MonitorValues.EC_TSR2 / 10);
+  Value2 = (UINT16)(MonitorValues.EC_TSR2 % 10);
+  InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_2_VALUE), L"%d.%01d C", Value1, Value2);
 
-    Value1 = (UINT16)(MonitorValues.EC_TSR5 / 10);
-    Value2 = (UINT16)(MonitorValues.EC_TSR5 % 10);
-    InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_5_VALUE), L"%d.%01d C", Value1, Value2);
+  Value1 = (UINT16)(MonitorValues.EC_TSR3 / 10);
+  Value2 = (UINT16)(MonitorValues.EC_TSR3 % 10);
+  InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_3_VALUE), L"%d.%01d C", Value1, Value2);
 
-    InitString(HiiHandle, STRING_TOKEN(STR_CPU_FAN_VALUE), L"%d rpm", MonitorValues.CPUFanSpeed);
-    InitString(HiiHandle, STRING_TOKEN(STR_PCH_DTS_TEMP_VALUE), L"%d C", MonitorValues.PCHDTSTemp);
-  }
+  Value1 = (UINT16)(MonitorValues.EC_TSR4 / 10);
+  Value2 = (UINT16)(MonitorValues.EC_TSR4 % 10);
+  InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_4_VALUE), L"%d.%01d C", Value1, Value2);
+
+  Value1 = (UINT16)(MonitorValues.EC_TSR5 / 10);
+  Value2 = (UINT16)(MonitorValues.EC_TSR5 % 10);
+  InitString(HiiHandle, STRING_TOKEN(STR_THERMAL_SENSOR_5_VALUE), L"%d.%01d C", Value1, Value2);
+
+  InitString(HiiHandle, STRING_TOKEN(STR_CPU_FAN_VALUE), L"%d rpm", MonitorValues.CPUFanSpeed);
+  InitString(HiiHandle, STRING_TOKEN(STR_PCH_DTS_TEMP_VALUE), L"%d C", MonitorValues.PCHDTSTemp);
+
 }
 
 /**
@@ -264,10 +260,6 @@ VOID HhmMobileCallBack (
   };
 
   if (Key != HHM_SETUP_REFRESH_KEY) {
-    return;
-  }
-
-  if (PcdGetBool(PcdEcPresent) == FALSE) {
     return;
   }
 

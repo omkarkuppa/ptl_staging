@@ -56,7 +56,6 @@
   gBoardModuleTokenSpaceGuid.PcdRecoveryModeGpio          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardType                 ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdVpdBaseAddress64      ## CONSUMES
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent                ## CONSUMES
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                 ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdCoinlessModeDetectGpio   ## CONSUMES
 

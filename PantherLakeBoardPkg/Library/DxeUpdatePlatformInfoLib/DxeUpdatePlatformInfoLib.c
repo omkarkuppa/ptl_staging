@@ -84,7 +84,6 @@ UpdatePlatformInfo (
 
   // @todo separate board information varibales from Setup variables.
   BoardInfoSetup.EcEnable                = FixedPcdGetBool (PcdEcEnable);
-  BoardInfoSetup.EcPresent               = PcdGetBool (PcdEcPresent);
   BoardInfoSetup.EcEspiFlashSharingMode  = PcdGet8 (PcdEcEspiFlashSharingMode);
   BoardInfoSetup.EcMajorRevision         = PcdGet8 (PcdEcMajorRevision);
   BoardInfoSetup.EcMinorRevision         = PcdGet8 (PcdEcMinorRevision);

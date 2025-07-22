@@ -77,7 +77,6 @@
   gPlatformModuleTokenSpaceGuid.PcdEcExtraIoBase                ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdPlatformInitPreMem
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                       ## CONSUMES
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPresent                      ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdGuidForward
   gPlatformModuleTokenSpaceGuid.PcdShellEntryMapPrint           ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPlatformType
