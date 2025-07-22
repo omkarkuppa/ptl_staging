@@ -348,8 +348,7 @@ def clean_vfr_out_file(vfr_out_path, input_vfr_directories, build_path=None):
     if build_path:
         for root, directory, files in os.walk(build_path):
             for file in glob.glob(os.path.join(root, "*.i")):
-                with open(file, "r") as f:
-                    line = f.readline().lower().strip()
+                for line in open(file, 'r').readlines():
                     if not line:
                         continue
                     match = re.search(r"\"(.*.vfr)\"", line)
@@ -357,6 +356,9 @@ def clean_vfr_out_file(vfr_out_path, input_vfr_directories, build_path=None):
                         out_file = os.path.join(vfr_out_path, os.path.splitext(os.path.basename(file))[0] + '.iout')
                         if not os.path.isfile(out_file):
                             shutil.copy(file, out_file)
+                        break
+                    else:
+                        continue
         status += 1
     for file in glob.iglob(vfr_out_path + "/*.iout"):
         outfile = os.path.splitext(file)[0] + '.int'
