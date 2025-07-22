@@ -70,6 +70,7 @@ export UPL_SPEC_REVISION=0.9
 export IBBSIGN=FALSE
 export ROM_FILENAME_SPECIAL_BUILD_TYPE=
 export PERFORMANCE_BUILD=FALSE
+export RPMC_BUILD=FALSE
 
 #
 # If MAX_CONCURRENT_THREADS environment variable is uninitialized
@@ -105,7 +106,8 @@ function PrintUsage {
   echo "  xcode    Build whole source with XCODE. See note 1"
   echo "  ptlp     To do build ptlp debug build"
   echo "  fspapi   To build using FSP API Mode."
-  echo "  perf      To set gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable|TRUE. See note 1"
+  echo "  perf     To set gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable|TRUE. See note 1"
+  echo "  rpmc     To set gMinPlatformPkgTokenSpaceGuid.PcdProtectedVariableEnable|TRUE. See note 1"
   echo "  fsp32    To build using 32-bit PEI for FSP."
   echo "  fsp64    To build using 64-bit PEI for FSP."
 
@@ -250,6 +252,11 @@ for ((i=1 ; i <= numargs ; i++)); do
   elif [ "$1" = "ptlp" ]; then
     export PTL_BUILD=TRUE
     export PCH_TYPE=P
+  elif [ "$1" = "rpmc" ]; then
+    export RPMC_BUILD=TRUE
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable=TRUE"
+    export RPMC_BUILD=TRUE
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE=_RPMC
 
   elif [ "$1" = "xcode" ]; then
     export COMPILER=XCODE

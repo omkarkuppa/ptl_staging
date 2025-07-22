@@ -99,6 +99,7 @@ echo "  TOOL_CHAIN_TAG       = $TOOL_CHAIN_TAG"
 echo "  WORKSPACE            = $WORKSPACE"
 echo "  EXT_BUILD_FLAGS      = $EXT_BUILD_FLAGS"
 echo "  PERFORMANCE_BUILD    = $PERFORMANCE_BUILD"
+echo "  RPMC_BUILD           = $RPMC_BUILD"
 echo "  BUILD_OPTION_PCD     = $BUILD_OPTION_PCD"
 echo
 EndPreBuild
