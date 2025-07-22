@@ -161,6 +161,9 @@ if [ $? -ne 0 ]; then
 fi
 
 # Add more arguments for FitPayload build
+if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
+  export PAYLOAD_BUILD_FLAGS="$PAYLOAD_BUILD_FLAGS res"
+fi
 if [ "$WCL_BUILD" = "TRUE" ]; then
   export PAYLOAD_BUILD_FLAGS="$PAYLOAD_BUILD_FLAGS wcl"
 fi
@@ -333,26 +336,215 @@ then
 fi
 
 #
-# Creat PostIbbDigest.hash
-# The order of FVs get reported need to match the FV hash digest calculated in CreateStoredHashFvPpiInfo .
+# [BEGIN] BIOS Capsule Update Fault Tolerance Support
+#
+
+export TEMP_FLASHMAP_FDF=$WORKSPACE/FlashMapInclude_Temp.fdf
+export OPENSSL_PATH=$WORKSPACE_BINARIES/Tools/OpenSSL
+
+#
+# Create PostIbbDigest.hash
+# The order of FVs get reported need to match the FV hash digest calculated in CreateStoredHashFvPpiInfo.
 #
 export POST_IBB_HASH_TMP_FOLDER=$BUILD_DIR/FV/PostIbbDigestTmp
-export OPENSSL_PATH=$WORKSPACE_BINARIES/Tools/OpenSSL
+
 $PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/CreatePostIbbHash.py \
   -i $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
-  --fdf $WORKSPACE/FlashMapInclude_Temp.fdf \
+  --fdf $TEMP_FLASHMAP_FDF \
   --fv "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset" \
   --fv "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset" \
   --temp $POST_IBB_HASH_TMP_FOLDER \
   --openssl-tool-path $OPENSSL_PATH \
   -o $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/PostIbbDigest.hash
-rm $WORKSPACE/FlashMapInclude_Temp.fdf
-rm -rf $POST_IBB_HASH_TMP_FOLDER
 if [ $? -ne 0 ]
 then
   echo "!!! ERROR: CreatePostIbbHash.py execute failure !!!"
   exit 1
 fi
+
+rm -rf $POST_IBB_HASH_TMP_FOLDER
+
+#
+# Below scripts calculate the digest of OBB region and Non Fit Payload region to replace the dummy one in FvPreMemory.
+# The purpose of OBB/Non Fit Payload digest is to examine the integrity when loading OBB/Non Fit Payload from external storage for recovery.
+# So this section must be executed when:
+#    1. After all operations on OBB FVs are done.
+#    2. Before BootGuard BPM/KM is created.
+#
+FMMT -v $WORKSPACE/$BUILD_DIR/FV/FVPREMEMORY.Fv > $WORKSPACE/$BUILD_DIR/FV/FVPREMEMORY.Fv.Info
+
+if [ -z "$(grep -m1 "ObbDigest" $WORKSPACE/$BUILD_DIR/FV/FVPREMEMORY.Fv.Info)" ]; then
+  echo "No ObbDigest found in FvPreMemory. Skip BIOS fault tolerance support process in post build."
+elif [ -z "$(grep -m1 "NonFitPayloadDigest" $WORKSPACE/$BUILD_DIR/FV/FVPREMEMORY.Fv.Info)" ]; then
+  echo "No Non Fit Payload digest found in FvPreMemory. Skip BIOS fault tolerance support process in post build."
+else
+  echo "Start to calculate digest for BIOS fault tolerance support."
+  #
+  # Create the ObbDigest.bin and NonFitPayloadDigest.bin.
+  #
+  export OBB_HASH_FILE_GUID=169BB326-C8E4-4588-A742-6808D7499B47
+  export PAYLOAD_HASH_FILE_GUID=7B0B85CA-8A43-4520-BA8B-33370F305210
+  export OBB_HASH_TMP_FOLDER=$WORKSPACE/$BUILD_DIR/FV/ObbDigestTmp
+  export FLASH_OBB_OFFSET=$(awk '/SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset/ { for(i=1;i<=NF;i++) if($i ~ /^0x/) print $i }' $TEMP_FLASHMAP_FDF)
+  export FLASH_OBB_SIZE=$(awk '/SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbSize/ { for(i=1;i<=NF;i++) if($i ~ /^0x/) print $i }' $TEMP_FLASHMAP_FDF)
+  export FLASH_NVS_OBB_SIZE=$(printf "0x%08X" $(($FLASH_OBB_OFFSET + $FLASH_OBB_SIZE)))
+
+  echo "OBB Offset   = $FLASH_OBB_OFFSET"
+  echo "OBB Size     = $FLASH_OBB_SIZE"
+  echo "NVS+OBB Size = $FLASH_NVS_OBB_SIZE"
+
+  if [ ! -d $OBB_HASH_TMP_FOLDER ]; then
+    mkdir $OBB_HASH_TMP_FOLDER
+  fi
+
+  cp $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd
+
+  #
+  # Split CLIENTBIOS.fd to get Obb.bin
+  #
+  Split -f $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd -s $FLASH_NVS_OBB_SIZE -o $OBB_HASH_TMP_FOLDER/NvsObb.bin -t $OBB_HASH_TMP_FOLDER/IBBx.bin
+  Split -f $OBB_HASH_TMP_FOLDER/NvsObb.bin -s $FLASH_OBB_OFFSET -o $OBB_HASH_TMP_FOLDER/Nvs.bin -t $OBB_HASH_TMP_FOLDER/Obb.bin
+
+  #
+  # Calculate OBB and Non-FIT Payload SHA384 digest to replace the dummy FFS.
+  #
+  $OPENSSL_PATH/openssl dgst -binary -sha384 $OBB_HASH_TMP_FOLDER/Obb.bin > $OBB_HASH_TMP_FOLDER/ObbDigest.bin
+  $OPENSSL_PATH/openssl dgst -binary -sha384 $NON_FIT_PAYLOAD_BUILD_DIR/FV/NONFITPAYLOADS.fd > $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.bin
+
+  #
+  # Prepare ObbDigest.ffs.
+  #
+  GenSec -s EFI_SECTION_USER_INTERFACE -n "ObbDigest" -o $OBB_HASH_TMP_FOLDER/ObbDigest.ui
+  GenSec -s EFI_SECTION_RAW $OBB_HASH_TMP_FOLDER/ObbDigest.bin -o $OBB_HASH_TMP_FOLDER/ObbDigest.raw
+  GenFfs -t EFI_FV_FILETYPE_FREEFORM -g $OBB_HASH_FILE_GUID -o $OBB_HASH_TMP_FOLDER/ObbDigest.ffs -i $OBB_HASH_TMP_FOLDER/ObbDigest.raw -i $OBB_HASH_TMP_FOLDER/ObbDigest.ui
+
+  #
+  # Prepare NonFitPayloadDigest.ffs.
+  #
+  GenSec -s EFI_SECTION_USER_INTERFACE -n "NonFitPayloadDigest" -o $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.ui
+  GenSec -s EFI_SECTION_RAW $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.bin -o $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.raw
+  GenFfs -t EFI_FV_FILETYPE_FREEFORM -g $PAYLOAD_HASH_FILE_GUID -o $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.ffs -i $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.raw -i $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.ui
+
+  #
+  # Use FMMT tool to replace the dummy FFS into actual one.
+  #
+  FMMT -r $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ObbDigest $OBB_HASH_TMP_FOLDER/ObbDigest.ffs $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd
+  FMMT -r $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D NonFitPayloadDigest $OBB_HASH_TMP_FOLDER/NonFitPayloadDigest.ffs $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd
+
+  #
+  # Keep Obb.bin for BIOS Resiliency OBB BGUP build below.
+  #
+  cp -f $OBB_HASH_TMP_FOLDER/Obb.bin $WORKSPACE/$BUILD_DIR/FV/Obb.bin
+
+  cp -f $OBB_HASH_TMP_FOLDER/CLIENTBIOS_TEMP.fd $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd
+  cp -f $OBB_HASH_TMP_FOLDER/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
+
+  rm -rf $OBB_HASH_TMP_FOLDER
+
+  echo "End to calculate digest for BIOS fault tolerance support."
+fi
+
+rm $TEMP_FLASHMAP_FDF
+
+#
+# [END] BIOS Capsule Update Fault Tolerance Support
+#
+
+#
+# [START] BIOS Resiliency Support
+#
+
+if ["$RESILIENCY_BUILD" != "TRUE" ]; then
+  echo "Resiliency Build is not enabled. Skip BIOS Resiliency support process in post build."
+else
+  export IBB_BGSL_FILE_GUID=F53FC14B-025C-4477-9B48-7A1B19F80F30
+  export OBB_BGSL_FILE_GUID=318D30B7-F669-4AF2-ADE1-E3F84D097BB3
+  export PAYLOAD_BGSL_FILE_GUID=CB25FE33-8B2A-4770-85E7-1EE130E22789
+  export BGSL_TMP_FOLDER=$WORKSPACE/$BUILD_DIR/FV/BgslTmp
+  export BIOS_GUARD_UPDATE_PACKAGE_PATH=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/ToolScripts/BiosGuard/UpdatePackage
+  export BIOS_GUARD_SVN=$(awk '/^VERSION_MAJOR/ { printf $3 }' $BIOS_ID_FILE | tr -d '\r')
+
+  echo "BIOS Guard SVN                 = $BIOS_GUARD_SVN"
+  echo "BIOS Guard Update Package Path = $BIOS_GUARD_UPDATE_PACKAGE_PATH"
+
+  if [ ! -d $BGSL_TMP_FOLDER ]; then
+    mkdir $BGSL_TMP_FOLDER
+  fi
+
+  $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/GenerateBGSL.py \
+    genbgsl \
+    -t $TARGET \
+    -m $FLASHMAP_FDF \
+    -o $BIOS_GUARD_UPDATE_PACKAGE_PATH
+
+  #
+  # Generate IBB <-> IBBR sync up BGUP.
+  #
+  $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BuildBGUP_SPI.py -p script_ibb_ibbr.bgsl -v $BIOS_GUARD_SVN -use_ftu false
+  $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
+  cat capsule_update_package.BIOS_Guard update_package_bgupc.biosguard > $BGSL_TMP_FOLDER/IbbBgsl.bin
+  rm script.bin *.BIOS_Guard *.biosguard
+
+  #
+  # Generate OBB_to_SPI BGUP.
+  #
+  $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BuildBGUP_SPI.py -d $WORKSPACE/$BUILD_DIR/FV/Obb.bin -p script_obb.bgsl -v $BIOS_GUARD_SVN -use_ftu false
+  $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
+  cat capsule_update_package.BIOS_Guard update_package_bgupc.biosguard > $BGSL_TMP_FOLDER/ObbRBgsl.bin
+  rm script.bin *.BIOS_Guard *.biosguard
+
+  #
+  # Generate NONFITPAYLOAD_to_SPI BGUP.
+  #
+  $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BuildBGUP_SPI.py -d $NON_FIT_PAYLOAD_BUILD_DIR/FV/NONFITPAYLOADS.fd -p script_BuildBGUP_NonFitPayload.bgsl -v $BIOS_GUARD_SVN -use_ftu false
+  $PYTHON_COMMAND $BIOS_GUARD_UPDATE_PACKAGE_PATH/BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
+  cat capsule_update_package.BIOS_Guard update_package_bgupc.biosguard > $BGSL_TMP_FOLDER/NonFitPayloadBgsl.bin
+  rm script.bin *.BIOS_Guard *.biosguard
+
+  #
+  # Prepare IbbBgsl.ffs.
+  #
+  GenSec -s EFI_SECTION_USER_INTERFACE -n "IbbBgsl" -o $BGSL_TMP_FOLDER/IbbBgsl.ui
+  GenSec -s EFI_SECTION_RAW  $BGSL_TMP_FOLDER/IbbBgsl.bin -o $BGSL_TMP_FOLDER/IbbBgsl.raw
+  GenFfs -t EFI_FV_FILETYPE_FREEFORM -g $IBB_BGSL_FILE_GUID -o $BGSL_TMP_FOLDER/IbbBgsl.ffs -i $BGSL_TMP_FOLDER/IbbBgsl.raw -i $BGSL_TMP_FOLDER/IbbBgsl.ui
+
+  #
+  # Prepare ObbRBgsl.ffs.
+  #
+  GenSec -s EFI_SECTION_USER_INTERFACE -n "ObbRBgsl" -o $BGSL_TMP_FOLDER/ObbRBgsl.ui
+  GenSec -s EFI_SECTION_RAW  $BGSL_TMP_FOLDER/ObbRBgsl.bin -o $BGSL_TMP_FOLDER/ObbRBgsl.raw
+  GenFfs -t EFI_FV_FILETYPE_FREEFORM -g $OBB_BGSL_FILE_GUID -o $BGSL_TMP_FOLDER/ObbRBgsl.ffs -i $BGSL_TMP_FOLDER/ObbRBgsl.raw -i $BGSL_TMP_FOLDER/ObbRBgsl.ui
+
+  #
+  # Prepare NonFitPayloadBgsl.ffs.
+  #
+  GenSec -s EFI_SECTION_USER_INTERFACE -n "NonFitPayloadBgsl" -o $BGSL_TMP_FOLDER/NonFitPayloadBgsl.ui
+  GenSec -s EFI_SECTION_RAW  $BGSL_TMP_FOLDER/NonFitPayloadBgsl.bin -o $BGSL_TMP_FOLDER/NonFitPayloadBgsl.raw
+  GenFfs -t EFI_FV_FILETYPE_FREEFORM -g $PAYLOAD_BGSL_FILE_GUID -o $BGSL_TMP_FOLDER/NonFitPayloadBgsl.ffs -i $BGSL_TMP_FOLDER/NonFitPayloadBgsl.raw -i $BGSL_TMP_FOLDER/NonFitPayloadBgsl.ui
+
+  #
+  # Replace the dummy BGSL FFS in CLIENTBIOS.fd with the actual one.
+  #
+  FMMT -r $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D IbbBgsl $BGSL_TMP_FOLDER/IbbBgsl.ffs $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd
+  FMMT -r $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D NonFitPayloadBgsl $BGSL_TMP_FOLDER/NonFitPayloadBgsl.ffs $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd
+  FMMT -r $BGSL_TMP_FOLDER/CLIENTBIOS_TEMP.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ObbRBgsl $BGSL_TMP_FOLDER/ObbRBgsl.ffs $BGSL_TMP_FOLDER/CLIENTBIOS.fd
+
+  cp -f $BGSL_TMP_FOLDER/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
+
+  #
+  # Clean-up the intermediate files.
+  #
+  rm -rf $BGSL_TMP_FOLDER
+
+  rm -f $BIOS_GUARD_UPDATE_PACKAGE_PATH/script_ibb_ibbr.bgsl
+  rm -f $BIOS_GUARD_UPDATE_PACKAGE_PATH/script_obb.bgsl
+  rm -f $BIOS_GUARD_UPDATE_PACKAGE_PATH/script_BuildBGUP_NonFitPayload.bgsl
+  rm -f $BIOS_GUARD_UPDATE_PACKAGE_PATH/script_extendedbios.bgsl
+fi
+
+#
+# [END] BIOS Resiliency Support
+#
 
 # Support the Type 2 FIT entry version 0x200 format.
 export STARTUP_ACM_PARA=

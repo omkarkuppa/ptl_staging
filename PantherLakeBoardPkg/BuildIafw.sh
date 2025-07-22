@@ -48,6 +48,8 @@ export NOTIMESTAMP=
 export PTL_BUILD=TRUE
 export PrepRelease=DEBUG
 export FSPM_COMPRESSED=TRUE
+export MULTI_IBB_BUILD=FALSE
+export RESILIENCY_BUILD=FALSE
 export SILENT_MODE=FALSE
 export COMPILER=GCC
 export TARGET_PLATFORM=PantherLake
@@ -92,7 +94,7 @@ export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.P
 function PrintUsage {
   echo "Client BIOS build script"
   echo
-  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fsp64] [cln]"
+  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fsp64] [res] [cln]"
   echo
   echo "  Default build flags: build in Debug Mode; 32-bit PEI for FSP; FSP Dispatch Mode"
   echo
@@ -113,6 +115,10 @@ function PrintUsage {
   echo "  chksize threshold To enable FV_SPARE_SPACE_THRESHOLD check."
   echo "           BaseTools will check every FV with the threshold."
   echo "           Build tool will report error message to say there is no enough spare space if check fail."
+  echo "  res      Build the BIOS with Resiliency supported."
+  echo "           Set the PCDs below into enabled state"
+  echo "             - gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable=TRUE"
+  echo "             - gCapsuleFeaturePkgTokenSpaceGuid.PcdMeResiliencyEnable=TRUE"
   echo "  non_upl   To build Non-Upl"
   echo "  -f or /f Sets a build flag to the given value,"
   echo "           can be used as many times as desired.  See note 1"
@@ -237,6 +243,10 @@ for ((i=1 ; i <= numargs ; i++)); do
     export FSPM_COMPRESSED=FALSE
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE"
     export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize=0x0"
+  elif [ "$1" = "res" ]; then
+    export RESILIENCY_BUILD=TRUE
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE=_Resiliency
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable=TRUE --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdMeResiliencyEnable=TRUE"
   elif [ "$1" = "ptlp" ]; then
     export PTL_BUILD=TRUE
     export PCH_TYPE=P
@@ -405,6 +415,14 @@ fi
 
 export FSP_TARGET=$TARGET
 
+#
+# When building BIOS Resiliency image, always build Release FSP image.
+#
+if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
+  export FSP_TARGET=RELEASE
+  export FSP_BUILD_PARAMETER=-r
+fi
+
 echo "BuildIafw.sh $FSP_ARCH $FSP64_BUILD $SYMBOL_PREFIX"
 . $WORKSPACE_COMMON/$PLATFORM_SI_PACKAGE/Fsp/BuildFsp.sh $TARGET_PLATFORM $FspTargetOption $COMPILER $FSP_BUILD_PARAMETER
 if [ $? -ne 0 ]; then
@@ -412,8 +430,20 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+#
+# Configure the active Flash Map.
+#
+if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
+    export FLASHMAP_FDF=$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapIncludeRes.fdf
+else
+    export FLASHMAP_FDF=$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapInclude.fdf
 
-  export FLASHMAP_FDF=$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapInclude.fdf
+  if [ "$MULTI_IBB_BUILD" = "TRUE" ]; then
+    export FLASHMAP_FDF=$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Include/Fdf/FlashMapIncludeMultiIbb.fdf
+  fi
+fi
+
+echo "ACTIVE FLASH MAP FDF = $FLASHMAP_FDF"
 
 # Split Fsp.fd and generate FspTopAt4G.fd, then add padding data before this binary to FspTopAt4G.fd for alignment
 if [ "$FSP_RESET" = "TRUE" ]; then
