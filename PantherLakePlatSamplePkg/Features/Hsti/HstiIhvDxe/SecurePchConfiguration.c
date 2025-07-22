@@ -32,26 +32,17 @@
 
 UINT64  CodeReportedBitmap;
 
-// TODO:remove begin
-// temporary debug solution for lack of library (offsets are defined privately)
-#define R_PMC_PWRM_THERMAL_CTEN                               0x150C  ///< Catastrophic Trip Point Enable
-#define B_PMC_PWRM_THERMAL_CTEN_CTENLOCK                      BIT31   ///< Policy Lock-Down Bit
-#define B_PMC_PWRM_THERMAL_CTEN_CPDEN                         BIT0    ///< Catastrophic Power-Down Enable
-
 #define R_PMC_PWRM_THERMAL_ECRPTEN                            0x1510  ///< EC Thermal Sensor Reporting Enable
 #define B_PMC_PWRM_THERMAL_ECRPTEN_ECRPTENLOCK                BIT31   ///< Lock-Down Bit
-#define B_PMC_PWRM_THERMAL_ECRPTEN_EN_PMC_TO_EC_TEMP_RPT      BIT0    ///< Enable PMC to EC Temperature Reporting
 
 #define R_PMC_PWRM_THERMAL_TL                                 0x1520  ///< Throttle Levels
 #define B_PMC_PWRM_THERMAL_TL_TLLOCK                          BIT31   ///< TL LOCK
-#define B_PMC_PWRM_THERMAL_TL_TTEN                            BIT29   ///< TT Enable
 
 #define R_PMC_PWRM_THERMAL_TLEN                               0x1528  ///< Throttle Levels Enable
 #define B_PMC_PWRM_THERMAL_TLEN_TLENLOCK                      BIT31   ///< TLENLOCK
 
 #define R_PMC_PWRM_THERMAL_PHLC                               0x1540  ///< PCH Hot Level Control
 #define B_PMC_PWRM_THERMAL_PHLC_PHLCLOCK                      BIT31   ///< PHL Lock
-#define B_PMC_PWRM_THERMAL_PHLC_PHLE                          BIT15   ///< PHL Enable
 
 #define R_PTL_PCD_P_PMC_PWRM_TSS0                             0x1560
 #define B_PTL_PCD_P_PMC_PWRM_TSS0_TSS0LOCK                    BIT31
@@ -70,11 +61,6 @@ UINT64  CodeReportedBitmap;
 #define R_PTL_PCD_P_PMC_PWRM_TSS7                             0x157C
 #define B_PTL_PCD_P_PMC_PWRM_TSS7_TSS7LOCK                    BIT31
 
-#define R_PMC_PWRM_DTS_S0IX_CONFIG                            0x1580      ///< DTS-SIP operation in S0ix
-#define B_PMC_PWRM_DTS_S0IX_CONFIG_DISABLE_DTS_IN_S0IX        BIT0        ///< DISABLE_DTS_IN_S0IX
-#define B_PMC_PWRM_DTS_S0IX_CONFIG_ENABLE_DTS_THRESHOLD_XING_CHECK BIT1   ///< ENABLE DTS THRESHOLD XING CHECK
-#define B_PMC_PWRM_DTS_S0IX_CONFIG_S0IXLOCK                   BIT31       ///< Policy Lock-Down Bit
-
 #define R_PMC_PWRM_SOCIFTTC                                   0x15A8   ///< SoC Internal Fabric Thermal Throttling Configuration
 #define B_PMC_PWRM_SOCIFTTC_SOCIFTTML                         BIT1     ///< SoC Internal Fabric Thermal Throttling Mechanism Lock
 
@@ -85,19 +71,169 @@ UINT64  CodeReportedBitmap;
 #define B_PMC_PWRM_THERMAL_DOWN_PBC_CFGLOCK                   BIT0
 
 #define R_PMC_PWRM_THERMAL_THROTTLING                         0x1BE0   ///< PMC Thermal Throttling
-#define B_PMC_PWRM_THERMAL_THROTTLING_VRALERT_EN              BIT0     ///< VRALERT Enable
 #define B_PMC_PWRM_THERMAL_THROTTLING_PMC_THROT_LOCK          BIT15    /// PMC Throttle
 
 #define R_PTL_PCD_P_PMC_PWRM_PMCR                             0x1DB0
 #define B_PTL_PCD_P_PMC_PWRM_PMCR_PGD_LOCK                    BIT0
-//TODO: remove end
+
+
+/**
+  Locate capability register block with given Capability ID
+
+  @param[in] PciIo    PCI IO protocol instance
+  @param[in] CapId    Capability ID of the capability block
+  @param[out] Offset  Offset of the located capability block
+
+  @retval EFI_SUCCESS   Capability register block located successfully
+  @retval EFI_NOT_FOUND Capability register block not found
+**/
+EFI_STATUS
+LocateCapRegBlock (
+  IN     EFI_PCI_IO_PROTOCOL  *PciIo,
+  IN     UINT8                CapId,
+  OUT    UINT8                *Offset
+  )
+{
+  UINT8   CapabilityPtr;
+  UINT8   CapabilityID;
+  UINT16  CapabilityEntry;
+  UINT16  PciStatus;
+
+  //
+  // Check capability pointer support for the PCI Device
+  //
+  PciIo->Pci.Read (
+          PciIo,
+          EfiPciIoWidthUint16,
+          PCI_PRIMARY_STATUS_OFFSET,
+          1,
+          &PciStatus
+          );
+  if ((PciStatus & EFI_PCI_STATUS_CAPABILITY) == 0) {
+    DEBUG ((DEBUG_ERROR, "The Pci Device Doesn't Support Capability Pointer\n"));
+    return EFI_NOT_FOUND;
+  }
+
+
+  //
+  // Read base CapabilityPtr and apply mask to enforce DWORD alignment per PCI spec
+  //
+  PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, PCI_CAPBILITY_POINTER_OFFSET, 1, &CapabilityPtr);
+  CapabilityPtr &= 0xFC;
+
+  while ((CapabilityPtr != 0)) {
+    //
+    // Verify if CapabilityPtr is within valid range
+    //
+    if (CapabilityPtr < 0x40) {
+      DEBUG ((DEBUG_ERROR, "CapabilityPtr is out of bounds\n"));
+      return EFI_NOT_FOUND;
+    }
+
+    //
+    // Read next CapabilityEntry
+    //
+    PciIo->Pci.Read (
+            PciIo,
+            EfiPciIoWidthUint16,
+            CapabilityPtr,
+            1,
+            &CapabilityEntry
+            );
+    CapabilityID = (UINT8) CapabilityEntry;
+
+    //
+    // Check if current CapabilityID matches requested ID
+    //
+    if (CapabilityID == CapId) {
+      *Offset = CapabilityPtr;
+      DEBUG ((DEBUG_ERROR, "Found CapabilityEntry with ID = 0x%x on offset = 0x%x\n", CapId, *Offset));
+      return EFI_SUCCESS;
+    }
+
+    //
+    // Read CapabilityPtr and apply mask to enforce DWORD alignment per PCI spec
+    //
+    CapabilityPtr = (UINT8) ((CapabilityEntry >> 8) & 0xFC);
+  }
+
+  DEBUG ((DEBUG_ERROR, "CapabilityEntry with ID = 0x%x not found\n", CapId));
+  return EFI_NOT_FOUND;
+}
+
+
+/**
+  Locate PciExpress capability register block with given Capability ID
+
+  @param[in] PciIo    PCI IO protocol instance
+  @param[in] CapId    Capability ID of the capability block
+  @param[out] Offset  Offset of the located capability block
+
+  @retval EFI_SUCCESS   Capability register block located successfully
+  @retval EFI_NOT_FOUND Capability register block not found
+**/
+EFI_STATUS
+LocatePciExpressCapRegBlock (
+  IN     EFI_PCI_IO_PROTOCOL  *PciIo,
+  IN     UINT16               CapId,
+  OUT    UINT32               *Offset
+  )
+{
+  UINT32  CapabilityPtr;
+  UINT32  CapabilityEntry;
+  UINT16  CapabilityID;
+
+  CapabilityPtr = EFI_PCIE_CAPABILITY_BASE_OFFSET;
+
+  while ((CapabilityPtr != 0)) {
+    //
+    // Verify if CapabilityPtr is within valid range
+    //
+    if ((CapabilityPtr < EFI_PCIE_CAPABILITY_BASE_OFFSET) || (CapabilityPtr >= 0x1000)) {
+      DEBUG ((DEBUG_ERROR, "CapabilityPtr is out of bounds\n"));
+      return EFI_NOT_FOUND;
+    }
+
+    //
+    // Read next CapabilityEntry
+    //
+    PciIo->Pci.Read (
+            PciIo,
+            EfiPciIoWidthUint32,
+            CapabilityPtr,
+            1,
+            &CapabilityEntry
+            );
+    CapabilityID = (UINT16) CapabilityEntry;
+
+    //
+    //  Check if current CapabilityID matches requested ID
+    //
+    if (CapabilityID == CapId) {
+      *Offset = CapabilityPtr;
+      DEBUG ((DEBUG_ERROR, "Found CapabilityEntry with ID = 0x%x on offset = 0x%x\n", CapId, *Offset));
+      return EFI_SUCCESS;
+    }
+
+    //
+    // Read CapabilityPtr and apply mask to enforce DWORD alignment per PCI spec
+    //
+    CapabilityPtr = (CapabilityEntry >> 20) & 0xFFC;
+  }
+
+  DEBUG ((DEBUG_ERROR, "CapabilityEntry with ID = 0x%x not found\n", CapId));
+  return EFI_NOT_FOUND;
+}
 
 
 /**
   Check Secure PCH Acs Ech Configuration
-  @param[in] Result - Secure Pch Configuration Tests Result
-  @retval EFI_SUCCESS Error Not Detected.
-  @retval EFI_ERROR   Error Detected.
+
+  @param[in] PciIo      PCI IO protocol instance
+  @param[in] PciConfig  PCI Config instance
+
+  @retval EFI_SUCCESS   Error Not Detected.
+  @retval EFI_ERROR     Error Detected.
 **/
 EFI_STATUS
 SecurePchAcsEchPortsConfiguration (
@@ -106,10 +242,44 @@ SecurePchAcsEchPortsConfiguration (
   )
 {
   EFI_STATUS                Status;
+  PCI_REG_PCIE_CAPABILITY   PcieCap;
   UINT32                    AcsEchPortRegValue  = 0;
+  UINT8                     PciBlockOffset;
+  UINT32                    PcieBlockOffset;
 
+  //
   // For each port Verify ACS ECH Value is Correctly Configured
+  //
   DEBUG ((DEBUG_INFO, "      Root Port(s) ACS ECH Capability Enabled and Correct Configuration Test\n"));
+
+  Status = LocateCapRegBlock (
+            PciIo,
+            EFI_PCI_CAPABILITY_ID_PCIEXP,
+            &PciBlockOffset
+            );
+  if (EFI_ERROR (Status)){
+    return Status;
+  }
+
+  //
+  // Retrieve device port type.
+  //
+  PciIo->Pci.Read (
+          PciIo,
+          EfiPciIoWidthUint16,
+          PciBlockOffset + OFFSET_OF (PCI_CAPABILITY_PCIEXP, Capability),
+          1,
+          &PcieCap
+          );
+  if (PcieCap.Bits.DevicePortType != PCIE_DEVICE_PORT_TYPE_ROOT_PORT) {
+    DEBUG ((DEBUG_INFO, "      Device is not a Root Port. Skipping ACS ECH test\n"));
+
+    //
+    // We don't want to throw HSTI error on test skip, hence the EFI_SUCCESS status
+    //
+    return EFI_SUCCESS;
+  }
+
 
   //
   // If the PCI device ID equals to VMD_DUMMY_DEVICE_ID, that means this port is a dummy device.
@@ -118,21 +288,22 @@ SecurePchAcsEchPortsConfiguration (
   // config space. In that case, dummy device will appear, just for the enumeration purpose.
   // That's why we should skip this check.
   //
-  if (PciConfig->Hdr.VendorId == 0x8086 && PciConfig->Hdr.DeviceId == VMD_DUMMY_DEVICE_ID) {
-    DEBUG ((DEBUG_INFO, "      Root Port is a dummy device\n"));
-    return EFI_NOT_FOUND;
+  if (PciConfig->Hdr.DeviceId == VMD_DUMMY_DEVICE_ID) {
+    DEBUG ((DEBUG_INFO, "      Root Port is a dummy device. Skipping ACS ECH test\n"));
+    return EFI_SUCCESS;
   }
 
   //
   // Intel PCI root port
   //
-
   DEBUG ((DEBUG_INFO, "     Checking ACS on root port\n"));
-  Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, R_PCH_PCIE_CFG_EX_ACSECH, sizeof(AcsEchPortRegValue), &AcsEchPortRegValue);
-  if (EFI_ERROR(Status)) {
+  Status = LocatePciExpressCapRegBlock (PciIo, PCI_EXPRESS_EXTENDED_CAPABILITY_ACS_EXTENDED_ID, &PcieBlockOffset);
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "     Failed to read AcsEchPortRegValue on root port\n"));
     return Status;
   }
+
+  PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, PcieBlockOffset, 1, &AcsEchPortRegValue);
 
   DEBUG ((DEBUG_INFO, "     AcsEchPortRegValue = 0x%x\n", AcsEchPortRegValue));
   if (!((AcsEchPortRegValue & (V_PCH_PCIE_CFG_EX_ACS_CV << N_PCIE_EXCAP_CV)) &&
@@ -474,6 +645,10 @@ CheckSecurePchConfiguration (
   EFI_PCI_IO_PROTOCOL       *PciIo;
   PCI_TYPE00                PciConfig;
   EFI_DEVICE_PATH_PROTOCOL  *DevPath;
+  UINTN                     SegmentNumber;
+  UINTN                     BusNumber;
+  UINTN                     DeviceNumber;
+  UINTN                     FunctionNumber;
   INTC_ACPI_EXTENDED_DEVICE_PATH *Acpi;
 
   CodeReportedBitmap = 0;
@@ -512,9 +687,23 @@ CheckSecurePchConfiguration (
       DEBUG ((DEBUG_INFO, "      Unable to read Pci Config\n"));
       Result = FALSE;
     } else {
+      //
+      // Execute tests dependent on PciConfig
+      //
+      DEBUG ((DEBUG_INFO, "      PCI device VID = 0x%x\n", PciConfig.Hdr.VendorId));
+      DEBUG ((DEBUG_INFO, "      PCI device DID = 0x%x\n", PciConfig.Hdr.DeviceId));
+      DEBUG ((DEBUG_INFO, "      PCI device Header Type = 0x%x\n", PciConfig.Hdr.HeaderType));
 
+      //
       // PCH Acs Ech Ports Test
-      if (PciConfig.Hdr.VendorId == V_PCH_INTEL_VENDOR_ID && (PciConfig.Hdr.HeaderType & HEADER_LAYOUT_CODE) == HEADER_TYPE_PCI_TO_PCI_BRIDGE) {
+      //
+      if ((PciConfig.Hdr.VendorId == V_PCH_INTEL_VENDOR_ID) &&
+      ((PciConfig.Hdr.HeaderType & HEADER_LAYOUT_CODE) == HEADER_TYPE_PCI_TO_PCI_BRIDGE) &&
+      (PciConfig.Hdr.DeviceId != 0x0000) &&
+      (PciConfig.Hdr.DeviceId != 0xFFFF)) {
+        PciIo->GetLocation (PciIo, &SegmentNumber, &BusNumber, &DeviceNumber, &FunctionNumber);
+        DEBUG ((DEBUG_INFO, "PCI device location Segment = 0x%x BDF = 0x%x : 0x%x : 0x%x\n", SegmentNumber, BusNumber, DeviceNumber, FunctionNumber));
+
         Status = SecurePchAcsEchPortsConfiguration (PciIo, &PciConfig);
         if (EFI_ERROR (Status)) {
           Result = FALSE;
