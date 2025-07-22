@@ -274,18 +274,14 @@ Method (PSOS) {
 // 0 = PMC does not allow stalling of the backbone or enabling the CWB and blocking the DMI transmit arbiter.
 //
 Method (CFAE, 1, NotSerialized) {
-  If (CondRefOf (CPPE)) {
-    If (LEqual(CPPE,1)) {
-      If (DerefOf (Index (Arg0, 0))) {
-        ADBG ("CPPM Forced Alignment Disable")
-        Store (0, CPPM)
-        Return (Buffer () {0})
-      } Else {
-        ADBG ("CPPM Forced Alignment Enable")
-        Store (1, CPPM)
-        Return (Buffer () {0})
-      }
-    }
+  If (DerefOf (Index (Arg0, 0))) {
+    ADBG ("CPPM Forced Alignment Disable")
+    Store (0, CPPM)
+    Return (Buffer () {0})
+  } Else {
+    ADBG ("CPPM Forced Alignment Enable")
+    Store (1, CPPM)
+    Return (Buffer () {0})
   }
   Return (Buffer () {0})
 }
@@ -326,7 +322,7 @@ Method (TCMP, 2) {
 //2 - MIN_TEMP < DTR LOVAL
 //0-  others
 //
-Method (MTDL) 
+Method (MTDL)
 {
   Local0 = TCMP (MTEM, HIVA)
   If (LEqual (Local0, 1)) {
