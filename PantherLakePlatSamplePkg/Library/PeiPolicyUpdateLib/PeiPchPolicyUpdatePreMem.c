@@ -481,10 +481,11 @@ UpdateHdaPreMemPolicy (
   for (Index = 0; Index < GetPchHdaMaxSndwMultilaneNum (); Index++) {
     COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneEnable[Index], HdaPreMemConfig->SndwMultilane[Index].Enable,        PchSetup->PchHdAudioSndwMultilaneEnable[Index], Index);
   }
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_4__DMIC_CLK_A_0);
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_5__DMIC_DATA_0);
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__DMIC_CLK_A_1);
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_7__DMIC_DATA_1);
+
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_4__DMIC_CLK_A_0);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_5__DMIC_DATA_0);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__DMIC_CLK_A_1);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_7__DMIC_DATA_1);
 
   for (Index = 0; Index < GetPchHdaMaxSndwMultilaneNum (); Index++) {
     COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneClkPinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Clk,    0, Index);
