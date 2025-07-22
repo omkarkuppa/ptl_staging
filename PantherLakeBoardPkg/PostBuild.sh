@@ -454,7 +454,7 @@ rm $TEMP_FLASHMAP_FDF
 # [START] BIOS Resiliency Support
 #
 
-if ["$RESILIENCY_BUILD" != "TRUE" ]; then
+if [ "$RESILIENCY_BUILD" != "TRUE" ]; then
   echo "Resiliency Build is not enabled. Skip BIOS Resiliency support process in post build."
 else
   export IBB_BGSL_FILE_GUID=F53FC14B-025C-4477-9B48-7A1B19F80F30
