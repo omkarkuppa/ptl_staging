@@ -72,6 +72,7 @@ export ROM_FILENAME_SPECIAL_BUILD_TYPE=
 export PERFORMANCE_BUILD=FALSE
 export RPMC_BUILD=FALSE
 export SPECIAL_POOL_BUILD=FALSE
+export FSPV_BUILD=FALSE
 
 #
 # If MAX_CONCURRENT_THREADS environment variable is uninitialized
@@ -108,7 +109,8 @@ function PrintUsage {
   echo "  ptlp     To do build ptlp debug build"
   echo "  fspapi   To build using FSP API Mode."
   echo "  perf     To set gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable|TRUE. See note 1"
-  echo "  rpmc     To set gMinPlatformPkgTokenSpaceGuid.PcdProtectedVariableEnable|TRUE. See note 1"
+  echo "  rpmc     To set gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable|TRUE. See note 1"
+  echo "  fspv     To set gSiPkgTokenSpaceGuid.PcdFspVEnable=TRUE. See note 1"
   echo "  fsp32    To build using 32-bit PEI for FSP."
   echo "  fsp64    To build using 64-bit PEI for FSP."
 
@@ -257,8 +259,13 @@ for ((i=1 ; i <= numargs ; i++)); do
   elif [ "$1" = "rpmc" ]; then
     export RPMC_BUILD=TRUE
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable=TRUE"
-    export RPMC_BUILD=TRUE
     export ROM_FILENAME_SPECIAL_BUILD_TYPE=_RPMC
+  elif [ "$1" = "fspv" ]; then
+    export FSPV_BUILD=TRUE
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdFspVEnable=TRUE"
+    export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdFspVEnable=TRUE"
+    export FSP_VALIDATION_BUILD=TRUE
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE=_FSPV
 
   elif [ "$1" = "xcode" ]; then
     export COMPILER=XCODE
@@ -273,11 +280,6 @@ for ((i=1 ; i <= numargs ; i++)); do
     # Workaround for boot issue - get assertion at "SystemFirmwareDescriptor.efi".
     #
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable=FALSE"
-  elif [ "$1" = "perf" ]; then
-    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable=TRUE"
-    export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable=TRUE"
-    export BUILD=P
-    export ROM_FILENAME_SPECIAL_BUILD_TYPE=_Performance
   elif [ "$1" = "embedded" ]; then
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEmbeddedEnable=0x1"
     export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEmbeddedEnable=0x1"
