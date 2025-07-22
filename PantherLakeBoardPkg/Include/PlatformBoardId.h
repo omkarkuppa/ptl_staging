@@ -133,24 +133,40 @@ Defines Platform BoardIds
 #define SkuIdPtlUHLp5MemSdChromeRvp1      0x00050001
 #define SkuIdPtlUHLp5Rvp1Bom              0x00060001
 #define SkuIdPtlUHLp5MemSdMeccRvp1        0x00070001
+#define SkuIdPtlUHLp5Rvp1Fab1             0x00000101
+#define SkuIdPtlUHLp5MemSdRvp1Fab1        0x00010101
+#define SkuIdPtlUHLp5MemSktPnpRvp1Fab1    0x00020101
+#define SkuIdPtlUHLp5MemSdEpsRvp1Fab1     0x00030101
+#define SkuIdPtlUHLp5MemSktChromeRvp1Fab1 0x00040101
+#define SkuIdPtlUHLp5MemSdChromeRvp1Fab1  0x00050101
+#define SkuIdPtlUHLp5Rvp1BomFab1          0x00060101
+#define SkuIdPtlUHLp5MemSdMeccRvp1Fab1    0x00070101
 
 #define SkuIdPtlUHCammDTbTRvp2            0x00000002
 #define SkuIdPtlUHCammDTbTExtGfxRvp2      0x00010002
 #define SkuIdPtlUHCammDTbTRvp2Bom         0x00060002
-#define SkuIdPtlUHCammDTbTRvp2Rev1        0x00000102
-#define SkuIdPtlUHCammDTbTExtGfxRvp2Rev1  0x00010102
-#define SkuIdPtlUHCammDTbTRvp2BomRev1     0x00060102
+#define SkuIdPtlUHCammDTbTRvp2Fab1        0x00000102
+#define SkuIdPtlUHCammDTbTExtGfxRvp2Fab1  0x00010102
+#define SkuIdPtlUHCammDTbTRvp2BomFab1     0x00060102
+#define SkuIdPtlUHCammDTbTRvp2Fab2        0x00000202
+#define SkuIdPtlUHCammDTbTExtGfxRvp2Fab2  0x00010202
+#define SkuIdPtlUHCammDTbTRvp2BomFab2     0x00060202
 
 #define SkuIdPtlUHLp5Rvp3                 0x00000003
 #define SkuIdPtlUHLp5MemSdRvp3            0x00010003
 #define SkuIdPtlUHLp5MemSktPnpRvp3        0x00020003
 #define SkuIdPtlUHLp5Rvp3PpvBom           0x00050003
 #define SkuIdPtlUHLp5Rvp3Bom              0x00060003
-#define SkuIdPtlUHLp5Rvp3Rev1             0x00000103
-#define SkuIdPtlUHLp5MemSdRvp3Rev1        0x00010103
-#define SkuIdPtlUHLp5MemSktPnpRvp3Rev1    0x00020103
-#define SkuIdPtlUHLp5Rvp3PpvBomRev1       0x00050103
-#define SkuIdPtlUHLp5Rvp3BomRev1          0x00060103
+#define SkuIdPtlUHLp5Rvp3Fab1             0x00000103
+#define SkuIdPtlUHLp5MemSdRvp3Fab1        0x00010103
+#define SkuIdPtlUHLp5MemSktPnpRvp3Fab1    0x00020103
+#define SkuIdPtlUHLp5Rvp3PpvBomFab1       0x00050103
+#define SkuIdPtlUHLp5Rvp3BomFab1          0x00060103
+#define SkuIdPtlUHLp5Rvp3Fab2             0x00000203
+#define SkuIdPtlUHLp5MemSdRvp3Fab2        0x00010203
+#define SkuIdPtlUHLp5MemSktPnpRvp3Fab2    0x00020203
+#define SkuIdPtlUHLp5Rvp3PpvBomFab2       0x00050203
+#define SkuIdPtlUHLp5Rvp3BomFab2          0x00060203
 
 #define SkuIdPtlUHDdr5Rvp4                0x00000004
 #define SkuIdPtlUHDdr5Rvp4Chrome          0x00040004
@@ -160,6 +176,14 @@ Defines Platform BoardIds
 #define SkuIdPtlUHDdr5Rvp4DpChrome        0x01040004
 #define SkuIdPtlUHDdr5Rvp4DpPpvBom        0x01050004
 #define SkuIdPtlUHDdr5Rvp4DpBom           0x01060004
+#define SkuIdPtlUHDdr5Rvp4Fab1            0x00000104
+#define SkuIdPtlUHDdr5Rvp4ChromeFab1      0x00040104
+#define SkuIdPtlUHDdr5Rvp4PpvBomFab1      0x00050104
+#define SkuIdPtlUHDdr5Rvp4BomFab1         0x00060104
+#define SkuIdPtlUHDdr5Rvp4DpFab1          0x01000104
+#define SkuIdPtlUHDdr5Rvp4DpChromeFab1    0x01040104
+#define SkuIdPtlUHDdr5Rvp4DpPpvBomFab1    0x01050104
+#define SkuIdPtlUHDdr5Rvp4DpBomFab1       0x01060104
 
 #define SkuIdPtlUHLp5MemSktmRvp           0x00000005
 #define SkuIdPtlHLp5Gcs1                  0x00000011
