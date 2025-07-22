@@ -3858,6 +3858,8 @@ endform;
         option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN (STR_SOL_TEXT_MODE_3_STRING), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN (STR_SOL_GRAPHICS_MODE_12_STRING), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_SOL_MODE_3_NO_EXIT_STRING), value = 3, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_SOL_MODE_12_NO_EXIT_STRING), value = 4, flags = RESET_REQUIRED;
       endoneof;
 
       suppressif ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorUpServer;

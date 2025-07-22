@@ -1762,6 +1762,8 @@
 #string STR_PEI_SOL_DISPLAY_HELP                #language en-US "Choose PreMem SOL Mode"
 #string STR_SOL_TEXT_MODE_3_STRING              #language en-US "Text Mode"
 #string STR_SOL_GRAPHICS_MODE_12_STRING         #language en-US "Graphics Mode"
+#string STR_SOL_MODE_3_NO_EXIT_STRING           #language en-US "eSOL Text Mode"
+#string STR_SOL_MODE_12_NO_EXIT_STRING          #language en-US "eSOL Graphics Mode"
 
 #string STR_CONFIGURE_GT                        #language en-US "Configure GT for use"
 #string STR_CONFIGURE_GT_HELP                   #language en-US "Enable/Disable GT configuration in BIOS"

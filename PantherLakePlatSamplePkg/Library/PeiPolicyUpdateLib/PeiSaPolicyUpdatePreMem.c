@@ -748,6 +748,10 @@ UpdatePeiSaPolicyPreMem (
           VgaInitControl = (VGA_TEXT_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
         } else if (SaSetup.SolFeatureEnabled == 2) {
           VgaInitControl = (VGA_GRAPHICS_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
+        } else if (SaSetup.SolFeatureEnabled == 3) {
+          VgaInitControl = (VGA_NO_EXIT_SUPPORT | VGA_TEXT_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
+        } else if (SaSetup.SolFeatureEnabled == 4) {
+          VgaInitControl = (VGA_NO_EXIT_SUPPORT | VGA_GRAPHICS_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
         } else {
           VgaInitControl = VGA_DISPLAY_DISABLED;
         }
