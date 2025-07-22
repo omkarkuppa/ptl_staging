@@ -1524,6 +1524,8 @@
 #string STR_IBECC_ECC_INJ_ADDRESS_PROMPT_HELP             #language en-US "Address to match against for ECC error injection. Example: 1 = 32MB, 2 = 64MB"
 #string STR_IBECC_ECC_INJ_COUNT_PROMPT                    #language en-US "Error Injection Insertion Count"
 #string STR_IBECC_ECC_INJ_COUNT_PROMPT_HELP               #language en-US "Number of memory transactions between ECC error injection"
+#string STR_IS_WCK_IDLE_EXIT_ENABLED_PROMPT               #language en-US "Enable WCK Idle Exit"
+#string STR_IS_WCK_IDLE_EXIT_ENABLED_PROMPT_HELP          #language en-US "Enable/disable WCK Idle Exit (0 = Disable, 1 = Enable)"
 
 #string STR_REMAP_ENABLE_PROMPT                 #language en-US "Memory Remap"
 #string STR_REMAP_ENABLE_PROMPT_HELP            #language en-US "Enable/Disable Memory Remap above 4GB"

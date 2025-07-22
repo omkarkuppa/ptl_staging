@@ -3853,6 +3853,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.Use1p5ReadPostamble|0x0                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccEccInjControl|0x0                                         # Offset 330 In-band ECC: Error Injection Control 0: No Error Injection, 1:Inject Correctable Error Address match, 3:Inject Correctable Error on insertion counter, 5: Inject Uncorrectable Error Address match, 7:Inject Uncorrectable Error on insertion counter
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccEccInjAddrBase|0x0                                        # Offset 331 Address to match against for ECC error injection
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccEccInjCount|0x1                                           # Offset 335 Number of memory transactions between ECC error injection
+gStructPcdTokenSpaceGuid.PcdSaSetup.IsWckIdleExitEnabled|0x1                                       # Offset 336 Enable/disable WCK Idle Exit: 0 = Disable, 1 = Enable
 
 ##############################
 # MRC - ExtInputs end

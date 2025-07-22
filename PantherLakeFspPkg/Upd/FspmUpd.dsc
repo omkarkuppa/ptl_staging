@@ -1500,11 +1500,16 @@
   # !BSF HELP:{Enables/Disable using 1p5 tCK Read Postamble for higher freqencies}
   gPlatformFspPkgTokenSpaceGuid.Use1p5ReadPostamble         | * | 0x01 | 0x00
 
+  # !BSF NAME:{IsWckIdleExitEnabled}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disables WCK Idle Exit}
+  gPlatformFspPkgTokenSpaceGuid.IsWckIdleExitEnabled        | * | 0x01 | 0x01
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 18  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 17  | {0x00}
 
   #
   # MRC Block End

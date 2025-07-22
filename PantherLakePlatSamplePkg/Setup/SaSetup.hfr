@@ -1809,6 +1809,13 @@
 #endif
       endif;
 
+      oneof varid   = SA_SETUP.IsWckIdleExitEnabled,
+        prompt      = STRING_TOKEN (STR_IS_WCK_IDLE_EXIT_ENABLED_PROMPT),
+        help        = STRING_TOKEN (STR_IS_WCK_IDLE_EXIT_ENABLED_PROMPT_HELP),
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
       oneof varid  = SA_SETUP.RemapEnable,
         prompt   = STRING_TOKEN (STR_REMAP_ENABLE_PROMPT),
         help     = STRING_TOKEN (STR_REMAP_ENABLE_PROMPT_HELP),

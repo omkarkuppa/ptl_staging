@@ -280,7 +280,7 @@ typedef struct {
   UINT8   PchUart1SensorDevice;
   UINT8   PchUart2SensorDevice;
   UINT8   PchI2cWittDevice;
-  UINT8   PchI2cWittVersion;  
+  UINT8   PchI2cWittVersion;
   UINT8   PchUartUtkDevice;
 
   UINT8   PchSerialIoUseTimingParameters;
@@ -1279,9 +1279,10 @@ typedef struct {
   <b>Revision 12</b>: - Add Fusa Cfi Parity variables and FusaConfigEnable
   <b>Revision 13</b>: - Add Lockstep variables
   <b>Revision 14</b>: - Add StreamTracer support variables
+  <b>Revision 15</b>: - Add IsWckIdleExitEnabled variable
 **/
 
-#define SA_SETUP_REVISION   14
+#define SA_SETUP_REVISION   15
 
 typedef struct {
   UINT8   Revision;
@@ -1805,10 +1806,16 @@ typedef struct {
   UINT8   Module1Lockstep;
   UINT8   LpcLockstep;
 
+<<<<<<< HEAD
   UINT32  PmtStreamTracerSize;
   UINT8   PmtStreamTracerMode;
 
   UINT8   Rsvd[3];
+=======
+  UINT8   IsWckIdleExitEnabled;
+
+  UINT8   Rsvd[7];
+>>>>>>> 0725f1058001 (MRC Knob for WCK Idle Exit)
 } SA_SETUP;
 
 /**

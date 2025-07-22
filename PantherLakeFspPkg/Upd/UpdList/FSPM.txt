@@ -381,6 +381,7 @@ tWTR_S
 Vdd2Mv
 DFETap1StepSize
 DFETap2StepSize
+IsWckIdleExitEnabled
 CsVrefLow
 CsVrefHigh
 CaVrefLow
