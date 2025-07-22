@@ -18,6 +18,8 @@
   @par Specification Reference:
 **/
 
+#include <Protocol/AsfProtocol.h>
+#include <Library/DxeAsfLib.h>
 #include "BdsPlatform.h"
 #include "FastBootSupport.h"
 #include "OemSetup.h"
@@ -356,6 +358,12 @@ IsFastBootException(
   //
   ExceptionOccurred = FALSE;
   Handle            = NULL;
+
+  // Check ASF Boot Option Before exception check
+  if (!AsfIsBootOptionsPresent ()){
+      return FALSE; 
+  }
+
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
                   &gFastBootExceptionProtocolGuid,
@@ -404,7 +412,7 @@ FastBootEnumConInDevice (
 
   Status = EFI_SUCCESS;
 
-  if ((!IsFastBootException ()) || (mSystemConfiguration.ConInBehavior == USB_CONSOLE)) {
+  if ((IsFastBootException ()) || (mSystemConfiguration.ConInBehavior == USB_CONSOLE)) {
 
     GetEfiGlobalVariable2 (L"ConIn", (VOID **) &VarConIn, &Size);
     if ((VarConIn == NULL) || (Size < sizeof (EFI_DEVICE_PATH_PROTOCOL))) {
