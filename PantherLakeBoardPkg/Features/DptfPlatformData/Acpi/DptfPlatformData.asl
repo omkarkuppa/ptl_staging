@@ -161,6 +161,14 @@ Scope(\_SB)
             }
           })
         }
+        Case (Package () {BoardIdPtlUHLp5Adk1, BoardIdPtlUHLp5Adk2}) {
+          ADBG ("Use platform ADK data vault")
+          Return (Package () {
+            Buffer () {
+              Include ("BiosDataVaultAdk.asl") // Adk data vault
+            }
+          })
+        }
         Default {
           ADBG ("Use Default data vault")
           Return (Package () {

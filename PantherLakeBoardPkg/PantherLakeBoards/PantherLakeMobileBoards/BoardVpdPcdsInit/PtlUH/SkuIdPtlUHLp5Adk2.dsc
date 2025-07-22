@@ -901,6 +901,23 @@
 [PcdsDynamicHii.common.SkuIdPtlUHLp5Adk2.STANDARD]
   gStructPcdTokenSpaceGuid.PcdSetup.PowermeterDeviceEnable|0x1              # Enable PowerMeter = Enabled
   gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x0               # Enable Telemetry = Disabled
+
+  #
+  # DDT Fan
+  #
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen2Participant|0x1                                   # Sensor Device 2
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen3Participant|0x1                                   # Sensor Device 3
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen4Participant|0x1                                   # Sensor Device 4
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen5Participant|0x1                                   # Sensor Device 5
+
+  #
+  # Platform Thermal Configuration
+  #
+  gStructPcdTokenSpaceGuid.PcdSetup.Ac0FanSpeed|0x41                        # Active Trip Point 0 Fan Speed
+  gStructPcdTokenSpaceGuid.PcdSetup.Ac0TripPoint|0x5F                       # Active Trip Point 0
+  gStructPcdTokenSpaceGuid.PcdSetup.Ac1FanSpeed|0x2D                        # Active Trip Point 1 Fan Speed
+  gStructPcdTokenSpaceGuid.PcdSetup.CpuFanSpeed|0x64                        # CPU Fan Speed
+  gStructPcdTokenSpaceGuid.PcdSetup.CpuTemp|0x64                            # CPU Temp
   #
   # HD Audio
   #
