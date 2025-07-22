@@ -114,11 +114,11 @@ IpUsb3GetControl (
 
   switch (FeatureId) {
     case IpUsb3FeatIdAudioOffload:
-      Data = IP_WR_READ_32 (pInst->RegCntxtMem, R_XHCI_MEM_HCCPARAMS2);
+      Data = IP_WR_READ_32 (pInst->RegCntxtMem, R_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER);
       if (pCsiSts != NULL) {
         *pCsiSts = IpCsiStsSuccess;
       }
-      if ((Data & B_XHCI_MEM_HCCPARAMS2_GSPC) == B_XHCI_MEM_HCCPARAMS2_GSPC) {
+      if ((Data & B_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER_UAOL) == B_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER_UAOL) {
         return IpUsb3FeatValAudioOffloadEn;
       } else {
         return IpUsb3FeatValAudioOffloadDis;
@@ -331,14 +331,14 @@ IpUsb3SetControl (
   switch (FeatureId) {
     case IpUsb3FeatIdAudioOffload:
       if (FeatureVal == IpUsb3FeatValAudioOffloadEn) {
-        IP_WR_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_HCCPARAMS2, B_XHCI_MEM_HCCPARAMS2_GSPC);
+        IP_WR_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER, B_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER_UAOL);
 
         IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem,
                             R_XHCI_MEM_PWR_SCHED_CTRL0,
                             ~(B_XHCI_MEM_PWR_SCHED_CTRL0_BPSAW),
                             (pInst->FabricPllAdvanceWake << N_XHCI_MEM_PWR_SCHED_CTRL0_BPSAW) & B_XHCI_MEM_PWR_SCHED_CTRL0_BPSAW);
       } else if (FeatureVal == IpUsb3FeatValAudioOffloadDis) {
-        IP_WR_AND_32 (pInst->RegCntxtMem, R_XHCI_MEM_HCCPARAMS2, ~(B_XHCI_MEM_HCCPARAMS2_GSPC));
+        IP_WR_AND_32 (pInst->RegCntxtMem, R_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER, ~(B_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER_UAOL));
       } else {
         PRINT_WARNING ("Invalid parameter provided to %s\n", __FUNCTION__);
         return IpCsiStsErrorBadParam;
@@ -577,8 +577,6 @@ IpUsb3IpInit (
                          (V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK << N_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK));
 
     IP_WR_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2, (B_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2_CFG_DIS_U2_SS | B_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2_CFG_DIS_U1_SS));
-
-    IP_WR_AND_32 (pInst->RegCntxtPci, R_XHCI_CFG_SSCFG1, ~(B_XHCI_CFG_SSCFG1_SSOAFM | B_XHCI_CFG_SSCFG1_SSIAFM));
   }
 
   if (IpUsb3VersionSpecificConfigurationEnabled (pInst, IpUsb3VscIdC20PhyElasticBuffer)) {

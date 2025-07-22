@@ -82,9 +82,6 @@
 #define R_XHCI_CFG_PCE_REG                  0xA2
 #define B_XHCI_CFG_PCE_REG_D3_HOT_EN        BIT2
 #define R_XHCI_CFG_HSCFG2                   0xA4    ///< High Speed Configuration 2
-#define R_XHCI_CFG_SSCFG1                   0xA8    ///< Super Speed Configuration 1
-#define B_XHCI_CFG_SSCFG1_SSOAFM            BIT11
-#define B_XHCI_CFG_SSCFG1_SSIAFM            BIT10
 #define R_XHCI_CFG_HSCFG1                   0xAC    ///< High Speed Configuration 1
 #define B_XHCI_CFG_HSCFG1_HSAAPE            BIT9
 #define R_XHCI_CFG_XHCC3                    0xFC    ///< XHC System Bus Configuration 3
@@ -103,8 +100,6 @@
 #define R_XHCI_MEM_HCSPARAMS3               0x0C    ///< Structural Parameters 3
 #define B_XHCI_MEM_HCSPARAMS3_U2DEL         0xFFFF0000
 #define N_XHCI_MEM_HCSPARAMS3_U2DEL         16
-#define R_XHCI_MEM_HCCPARAMS2               0x1C    ///< Capability Parameters
-#define B_XHCI_MEM_HCCPARAMS2_GSPC          BIT8    ///< Get/Set Extended Property Capability
 
 //
 // 0x80 - 0xBF - Operational Registers
@@ -182,6 +177,8 @@
 #define N_XHCI_MEM_PM_CTRL_REG1_IP_INACCESSIBLE_HYSTERESIS_TIMER          7  ///< Inaccessible Hysteresis Timer
 #define V_XHCI_MEM_PM_CTRL_REG1_IP_INACCESSIBLE_HYSTERESIS_TIMER_150US    BIT8                  ///< Force PG timeout 150us
 #define B_XHCI_MEM_PM_CTRL_REG1_OVERRIDE_DISABLE    BIT6                  ///< Override_Disable
+#define R_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER        0x81EC  ///< Get/Set Property Extended Capability Identifier Register
+#define B_XHCI_MEM_GET_SET_EXTD_CAP_IDENTIFIER_UAOL   BIT0    ///< USB Audio OffLoad
 
 #define R_XHCI_MEM_DBGDEV_CTRL_REG1                     0x8754  ///< Debug Device Control Register 1
 

@@ -447,6 +447,7 @@ InitIpInstance (
     pInst->OverCurrentLock       = !!UsbConfig->XhciOcLock;
     pInst->UsbAudioOffloadEnable = !!UsbConfig->UaolEnable;
     pInst->Usb31SpeedAdvertise   = UsbConfig->Usb31Speed;
+    pInst->IsDwbEnabled          = !!UsbConfig->DwbEnable;
 
     for (Index = 0; Index < pInst->Usb2PortCount; Index++) {
       pInst->Usb2PortConfig[Index].Enable = !!UsbConfig->PortUsb20[Index].Enable;
