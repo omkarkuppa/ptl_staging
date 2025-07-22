@@ -86,7 +86,6 @@ echo %CD%
 @if %RESILIENCY_BUILD% EQU TRUE (
   @REM
   @REM For Resiliency BIOS, BPM manifest need to toggle the TopSwap Supported bit to 1 (ColdBoot).
-  @REM Only MSVC build support the resiliency BIOS, doing this patch action on batch file only.
   @REM
   call %PYTHON_COMMAND% %WORKSPACE_COMMON%\Features\FirmwareGuard\CapsuleFeaturePkg\Tools\ToolScripts\ModifyBpmManifest\ModifyBpmManifest.py -F %BPM_PARAMS_FILE% -TS True
   @if !ERRORLEVEL! NEQ 0 (

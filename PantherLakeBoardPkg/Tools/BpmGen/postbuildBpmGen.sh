@@ -50,6 +50,23 @@ if [ $? -ne 0 ]; then
   exit
 fi
 
+if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
+  #
+  # For Resiliency BIOS, BPM manifest need to toggle the TopSwap Supported bit to 1 (ColdBoot).
+  #
+  $PYTHON_COMMAND $WORKSPACE_COMMON/Features/FirmwareGuard/CapsuleFeaturePkg/Tools/ToolScripts/ModifyBpmManifest/ModifyBpmManifest.py \
+    -F $BPMGEN2_PARAM \
+    -TS True
+  if [ $? -ne 0 ]; then
+    echo "#### Failed to patch the BPM manifest. ####"
+    exit 1
+  fi
+
+  export BPMGEN2_PARAM="$BPMGEN2_PARAM.patched"
+fi
+
+echo "Use the BPM PARAMS File: $BPMGEN2_PARAM"
+
 echo "#### BpmGen2:  Generating Manifest.bin ####"
 BPMGEN2_ARG="GEN $WORKSPACE/$BUILD_DIR/FV/$1.fd $BPMGEN2_PARAM -BPM $WORKSPACE/$BUILD_DIR/FV/Manifest.bin -U $WORKSPACE/$BUILD_DIR/FV/$1_MBIOS.fd -KM $WORKSPACE/$BUILD_DIR/FV/KeyManifest.bin -d:2"
 
@@ -61,5 +78,9 @@ if [ $? -ne 0 ]; then
 fi
 
 cp -f $WORKSPACE/$BUILD_DIR/FV/$1_MBIOS.fd $WORKSPACE/$BUILD_DIR/FV/$2.fd
+
+if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
+  rm $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/$BPMGEN2_PARAM
+fi
 
 cd $WORKSPACE
