@@ -60,6 +60,7 @@ export FSP_ARCH=X64
 export FSP64_BUILD=TRUE
 export FSP_RESET=TRUE
 export FSP_MODE=Dispatch
+export FSP_TARGET=
 export SYMBOL_PREFIX=
 export PCH_TYPE=P
 export UNIVERSAL_PAYLOAD=FALSE
@@ -401,6 +402,8 @@ else
   echo
   exit 1
 fi
+
+export FSP_TARGET=$TARGET
 
 echo "BuildIafw.sh $FSP_ARCH $FSP64_BUILD $SYMBOL_PREFIX"
 . $WORKSPACE_COMMON/$PLATFORM_SI_PACKAGE/Fsp/BuildFsp.sh $TARGET_PLATFORM $FspTargetOption $COMPILER $FSP_BUILD_PARAMETER
