@@ -852,11 +852,17 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[3]|0x1                               # SNDW #3
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwMultilaneEnable[0]|0x0                          # SNDW #2 Multilane
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwMultilaneEnable[1]|0x0                          # SNDW #3 Multilane
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaSndwClockSrcSelect|0x0                                  # SoundWire clock source
   gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicMonoEnabled|0x0        # Dmic Mono
   gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoEnabled|0x0      # Dmic Stereo
   gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicQuadEnabled|0x1        # Dmic Quad
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x1                                     # ACX/SDCA
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[11]|0x1                                     # ACX/SDCA speaker aggregation
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[8]|0x1                                         # GP_8
+  gStructPcdTokenSpaceGuid.PcdPchSetup.StateAfterG3|0x0                                              # State After G3
+  gStructPcdTokenSpaceGuid.PcdSetup.PseudoG3State|0x1                                                # Pseudo G3
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[1]|0x1                                            # DYSNC input
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PcieRootPortHPE[2]|0x1                                        # Hot Plug
 
 #####################################################################
 #  PTL UH LP5x AEP MEM 32GB
