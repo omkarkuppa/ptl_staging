@@ -1160,7 +1160,8 @@ UpdatePeiCpuPolicyPreMem (
   //
   // VR Acoustic Noise Mitigation
   //
-  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EcoreHysteresisWindow, CpuPowerMgmtVrConfig->EcoreHysteresisWindow,   CpuSetup.EcoreHysteresisWindow  );
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcoreHysteresisWindow, CpuPowerMgmtVrConfig->PcoreHysteresisWindow, CpuSetup.PcoreHysteresisWindow );
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EcoreHysteresisWindow, CpuPowerMgmtVrConfig->EcoreHysteresisWindow, CpuSetup.EcoreHysteresisWindow );
 
   ///
   /// Update VrPowerDeliveryDesign when cTDP up selected
