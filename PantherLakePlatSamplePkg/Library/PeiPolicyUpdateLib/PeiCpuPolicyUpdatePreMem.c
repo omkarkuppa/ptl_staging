@@ -1333,7 +1333,7 @@ UpdatePeiCpuPolicyPreMem (
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
   if (!EFI_ERROR (Status)) {
-    if ((BootMode == BOOT_IN_RECOVERY_MODE || BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {  /// First Boot
+    // if ((BootMode == BOOT_IN_RECOVERY_MODE || BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {  /// First Boot
       //
       // If it is frist boot, change the default value of FastPkgCRampDisable to 1 for some SKU.
       //
@@ -1360,7 +1360,7 @@ UpdatePeiCpuPolicyPreMem (
           COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableFastVmode[0], CpuPowerMgmtVrConfig->EnableFastVmode[0],0, 0);
       }
  
-    }
+    // }
   }
   return EFI_SUCCESS;
 }

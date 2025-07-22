@@ -1649,7 +1649,7 @@ InitCPUInfo (
          );
  
   BootMode = GetBootModeHob ();
-  if ((BootMode == BOOT_IN_RECOVERY_MODE || BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {  /// First Boot
+  // if ((BootMode == BOOT_IN_RECOVERY_MODE || BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {  /// First Boot
       //
       // If it is first boot, change the default value of FastPkgCRampDisable to 1 for some SKU.
       //
@@ -1676,7 +1676,7 @@ InitCPUInfo (
         case 0xB000:
           mCpuSetup.EnableFastVmode[0] = 0;
       }
-    }
+    // }
 
 
   //
