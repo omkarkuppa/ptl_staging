@@ -448,3 +448,4 @@ SocTraceHubMemReg1Size
 PprRetryLimit
 PhyClockToCkdDimm
 ChannelToCkdQckMapping
+TdcCurrentLimit
