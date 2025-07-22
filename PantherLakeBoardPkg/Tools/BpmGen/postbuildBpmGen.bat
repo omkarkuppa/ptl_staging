@@ -72,8 +72,7 @@ echo %CD%
 
 @if %FSP_SIGNED% EQU TRUE (
   @REM
-  @REM For Signed Fsp, BPM manifest need to toggle the Boot componenet bit to 1 (ColdBoot & S3Resume).
-  @REM Only MSVC build support the Signed Fsp, doing this patch action on batch file only.
+  @REM For Signed Fsp, BPM manifest need to toggle the Boot component bit to 1 (ColdBoot & S3Resume).
   @REM
   %PYTHON_COMMAND% %WORKSPACE_COMMON%\%PLATFORM_BOARD_PACKAGE%\BoardSupport\Tools\ModifyBpmManifest\ModifyBpmManifest.py -F %BPM_PARAMS_FILE% -BC True
   @if !ERRORLEVEL! NEQ 0 (

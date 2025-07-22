@@ -610,7 +610,7 @@ def main():
             Fm = Flashmap(FlashmapFile, PrepRelease, ExtendedRegionBuildFlag)
             Fm.ReadAllSettings()
             bspConfig = BspConfig(Fm, Args.FdDir, Args.FspmLoadingPolicy)
-            OpenSslCommand = os.path.join(os.getenv('OPENSSL_PATH'), 'openssl.exe')
+            OpenSslCommand = os.path.join(os.getenv('OPENSSL_PATH'), 'openssl')
             bspConfig.genBsisBin(Fm.BiosFlashBaseAddr, OpenSslCommand, Args.Output, FspSigned)
 
     if Args.PatchOutput != None:

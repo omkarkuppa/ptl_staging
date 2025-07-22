@@ -393,6 +393,18 @@ function PostBuild(){
     PreBuildFail
     exit 1
   fi
+
+  CopyFspBinaryToBinPkg
+
+  if [ "$FSP_SIGNED" = "TRUE" ]; then
+    python3 $WORKSPACE_COMMON/$FSP_PKG_NAME/Tools/FspoPatcher/FspoPatcher.py \
+       -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Fsp.fd
+    if [ $? -ne 0 ]
+    then
+      PreBuildFail
+      exit 1
+    fi
+  fi
 }
 
 function Build(){
@@ -406,7 +418,7 @@ function Build(){
     exit 1
   fi
 
-  build $BD_ARGS $FSP_BUILD_OPTION_PCD
+  build $BD_ARGS $SI_BUILD_OPTION_PCD $FSP_BUILD_OPTION_PCD
   if [ $? -ne 0 ]
   then
     exit 1
@@ -597,25 +609,34 @@ if [ "$3" = "fsp64" ] || [ -z "${FSP_ARCH}" ]; then
   export EXT_BUILD_FLAGS="$EXT_BUILD_FLAGS -D FSP_ARCH=X64 -D FSP64_BUILD=TRUE"
 fi
 
+if [ "$4" = "fspsigned" ]; then
+  export FSP_ARCH=X64
+  export FSP64_BUILD=TRUE
+  export FSP_RESET=TRUE
+  export FSP_SIGNED=TRUE
+  export EXT_BUILD_FLAGS="$EXT_BUILD_FLAGS -D FSP_ARCH=X64 -D FSP64_BUILD=TRUE"
+  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE"
+  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0"
+  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0"
+  export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=TRUE"
+fi
+
 #
 # Check for -r32 / -tr32 / -d32 so other platform build targets don't have to change build parameters in their manifest.
 #
 if [ "$2" = "-r" ] || [ "$2" = "-r32" ]
  then
   ReleaseBuild
-  CopyFspBinaryToBinPkg
+  
 elif [ "$2" = "-tr" ] || [ "$2" = "-tr32" ]
  then
   ReleaseTypeTest
-  CopyFspBinaryToBinPkg
 elif [ "$2" = "-d" ] || [ "$2" = "-d32" ]
  then
    DebugBuild
-   CopyFspBinaryToBinPkg
 elif [ -z "$2" ]
  then
    DebugBuild
-   CopyFspBinaryToBinPkg
 else
   echo
   echo  ERROR: $2 is not valid parameter.

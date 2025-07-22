@@ -61,6 +61,7 @@ export TARGET_PLATFORM_SHORT=PTL
 export FSP_ARCH=X64
 export FSP64_BUILD=TRUE
 export FSP_RESET=TRUE
+export FSP_SIGNED=FALSE
 export FSP_MODE=Dispatch
 export FSP_TARGET=
 export SYMBOL_PREFIX=
@@ -97,7 +98,7 @@ export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.P
 function PrintUsage {
   echo "Client BIOS build script"
   echo
-  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fsp64] [res] [cln]"
+  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fspapi] [fsp64] [fspsigned] [res] [cln]"
   echo
   echo "  Default build flags: build in Debug Mode; 32-bit PEI for FSP; FSP Dispatch Mode"
   echo
@@ -143,6 +144,8 @@ function BuildClean {
   echo
   . $WORKSPACE_COMMON/$PLATFORM_SI_PACKAGE/Fsp/BuildFsp.sh $TARGET_PLATFORM -clean
   cd $WORKSPACE_CORE/BaseTools/Source/C
+  make clean
+  cd $WORKSPACE_CORE_SILICON/Tools
   make clean
   rm -fr $WORKSPACE/parser.out
   rm -fr $WORKSPACE/parsetab.py
@@ -249,6 +252,16 @@ for ((i=1 ; i <= numargs ; i++)); do
     export FSPM_COMPRESSED=FALSE
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE"
     export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize=0x0"
+  elif [ "$1" = "fspsigned" ]; then
+    export FSP_ARCH=X64
+    export FSP64_BUILD=TRUE
+    export FSP_RESET=TRUE
+    export FSP_SIGNED=TRUE
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE="${ROM_FILENAME_SPECIAL_BUILD_TYPE}_FSPSIGNED"
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE"
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0"
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0"
+    export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=TRUE"
   elif [ "$1" = "res" ]; then
     export RESILIENCY_BUILD=TRUE
     export ROM_FILENAME_SPECIAL_BUILD_TYPE=_Resiliency
@@ -448,6 +461,13 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+
+if [ "$FSP_SIGNED" = "TRUE" ]; then
+  if [ ! -f $WORKSPACE_COMMON/PantherLakeFspBinPkg/Fbm.bin ]; then
+    echo !!! ERROR: FBM binary file is missing !!!
+    exit 1
+  fi
+fi
 #
 # Configure the active Flash Map.
 #
@@ -475,13 +495,28 @@ fi
 
 
 python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/StripFlashmap.py "$TARGET" $FLASHMAP_FDF $WORKSPACE/FlashMapInclude_Temp.fdf
-python3 $WORKSPACE_CORE_PLATFORM/MinPlatformPkg/Tools/Fsp/RebaseFspBinBaseAddress.py $WORKSPACE/FlashMapInclude_Temp.fdf $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp.fd 0x0 $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
+if [ $? -ne 0 ]
+then
+  echo "!!! ERROR:StripFlashmap failed!!!"
+  exit 1
+fi
+if [ "$FSP_SIGNED" = "TRUE" ]; then
+  python3 $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py split -f $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg/Fsp.fd -o $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg -n Fsp_Rebased.fd
+else
+  python3 $WORKSPACE_CORE_PLATFORM/MinPlatformPkg/Tools/Fsp/RebaseFspBinBaseAddress.py $WORKSPACE/FlashMapInclude_Temp.fdf $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp.fd 0x0 $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
+fi
 
 if [ $? -ne 0 ]
 then
   echo "!!! ERROR:RebaseFspBinAddress failed!!!"
   exit 1
 fi
+
+cat $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_S.fd \
+  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_M.fd \
+  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_T.fd \
+  > $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased.fd
+
 if [ "$FSPM_COMPRESSED" = "TRUE" ]; then
   echo "FSP-M is compressed, Rebase FSP-M"
   python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/RebaseFspmBinBaseAddress.py $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp_Rebased.fd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardPkgPcdUpdate.dsc $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
@@ -491,6 +526,11 @@ then
   echo "!!! ERROR:RebaseFspmBinAddress failed!!!"
   exit 1
 fi
+
+cat $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_S.fd \
+  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_M.fd \
+  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_T.fd \
+  > $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased.fd
 
 BUILD_DIR="Build/$PLATFORM_BOARD_PACKAGE/$TARGET"
 BUILD_DIR+="_$TOOL_CHAIN_TAG"

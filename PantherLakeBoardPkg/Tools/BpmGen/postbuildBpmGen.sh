@@ -36,7 +36,6 @@ fi
 echo "#### BpmGen2:  Generating KeyManifest.bin ####"
 
 BPMGEN2=$WORKSPACE_BINARIES/Tools/InternalOnly/BpmGen2/bpmgen2
-BPMGEN2_PARAM=bpmgen2_fsp.params
 
 
 cd $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen
@@ -48,6 +47,24 @@ $BPMGEN2 $BPMGEN2_ARG  > bpmgen2_km.txt
 if [ $? -ne 0 ]; then
   echo "#### Error generating KM file #####"
   exit
+fi
+
+if [ "$FSP_SIGNED" = "TRUE" ]; then
+  BPMGEN2_PARAM=bpmgen2_signed_fsp.params
+else
+  BPMGEN2_PARAM=bpmgen2_fsp.params
+fi
+
+if [ "$FSP_SIGNED" = "TRUE" ]; then
+  #
+  # For Signed Fsp, BPM manifest need to toggle the Boot component bit to 1 (ColdBoot & S3Resume).
+  #
+  python3 $WORKSPACE_COMMON/$PLATFORM_BOARD_PACKAGE/BoardSupport/Tools/ModifyBpmManifest/ModifyBpmManifest.py -F $BPMGEN2_PARAM -BC True
+  if [ $? -ne 0 ]; then
+    echo "#### Failed to patch the BPM manifest. ####"
+    exit
+  fi
+  BPMGEN2_PARAM="$BPMGEN2_PARAM.patched"
 fi
 
 if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
@@ -79,8 +96,8 @@ fi
 
 cp -f $WORKSPACE/$BUILD_DIR/FV/$1_MBIOS.fd $WORKSPACE/$BUILD_DIR/FV/$2.fd
 
-if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
-  rm $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/$BPMGEN2_PARAM
+if [ "$FSP_SIGNED" = "TRUE" ] || [ "$RESILIENCY_BUILD" = "TRUE" ]; then
+  rm -f $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/$BPMGEN2_PARAM
 fi
 
 cd $WORKSPACE

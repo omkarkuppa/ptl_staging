@@ -40,10 +40,7 @@ def CreateDigest (Payload, PayloadDigest, ToolPath, Verbose = False):
 
     if ToolPath is None:
         ToolPath = ''
-    Command = ''
-    if os.name != 'nt':
-        Command = 'wine '
-    Command = Command + '"{Path}" '.format (Path = os.path.join (ToolPath, 'openssl.exe'))
+    Command = '"{Path}" '.format (Path = os.path.join (ToolPath, 'openssl'))
     Command = Command + 'dgst -binary -sha384 '
     Command = Command + '{input} '.format (input = Payload)
     Command = Command + '> {output}'.format (output = PayloadDigest)
@@ -53,6 +50,7 @@ def CreateDigest (Payload, PayloadDigest, ToolPath, Verbose = False):
     try:
         Process = subprocess.Popen (Command, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True)
         Result = Process.communicate('')
+        print(Result[0].decode('utf-8', 'ignore'))
     except:
         raise ValueError ('{FileName}: error: can not generate digest.'.format (FileName = os.path.basename (__file__)))
 
@@ -133,7 +131,7 @@ if __name__ == "__main__":
     OPENSSL_FOLDER = args.OpensslToolPath
 
     # Gen FvIbbnp1Digest
-    CreateDigest (os.path.join (BUILD_FV_FOLDER, 'FvIbbnp1.Fv'),
+    CreateDigest (os.path.join (BUILD_FV_FOLDER, 'FVIBBNP1.Fv'),
                   os.path.join (HASH_TMP_FOLDER, 'FvIbbnp1Digest.bin'),
                   OPENSSL_FOLDER)
 

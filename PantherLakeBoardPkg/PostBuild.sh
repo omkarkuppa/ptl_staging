@@ -219,11 +219,6 @@ cp -f $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADPOST.fd $WORKSPACE/$BUILD_DIR/F
 #
 
 
-# In FSP@Reset solution, FspO Fv will be located at 4G memory address.
-# FIT table should not be in FspO Fv and will be put at 4G - 0x5400.
-#
-FIXED_FIT_LOCATION=0xFFFFAC00
-
 #
 # XmlCli: Post Build Process Begin
 #
@@ -341,6 +336,23 @@ fi
 
 export TEMP_FLASHMAP_FDF=$WORKSPACE/FlashMapInclude_Temp.fdf
 export OPENSSL_PATH=$WORKSPACE_BINARIES/Tools/OpenSSL
+$PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/StripFlashmap.py "$TARGET" $FLASHMAP_FDF $TEMP_FLASHMAP_FDF
+
+#
+# Calculate FIT location, which is located FIT_OFFSET_TO_FSP_TOP size before FSP-T and FSP-O
+# Prevent values in excess of 2^31 by cutting off the first "FF" before calculation, and inserting "FF" after that
+#
+FIXED_FIT_LOCATION=
+if [ "$FSP_RESET" = "TRUE" ]; then
+  FIT_OFFSET_TO_FSP_TOP=0x200
+  FLASH_FSPO_SIZE=$(awk '/gBoardModuleTokenSpaceGuid\.PcdFlashFvFspOSize/ {print $4}' $TEMP_FLASHMAP_FDF)
+  FLASH_FSPT_SIZE=$(awk '/gMinPlatformPkgTokenSpaceGuid\.PcdFlashFvFspTSize/ {print $4}' $TEMP_FLASHMAP_FDF)
+  FLASH_FSPO_SIZE=0x${FLASH_FSPO_SIZE: -6}
+  FLASH_FSPT_SIZE=0x${FLASH_FSPT_SIZE: -6}
+  FIXED_FIT_LOCATION=$((0x1000000 - $FLASH_FSPO_SIZE - $FLASH_FSPT_SIZE - $FIT_OFFSET_TO_FSP_TOP))
+  FIXED_FIT_LOCATION=$(printf "0xFF%X\n" $FIXED_FIT_LOCATION)
+  echo "FIXED_FIT_LOCATION: $FIXED_FIT_LOCATION"
+fi
 
 #
 # Create PostIbbDigest.hash
@@ -348,14 +360,24 @@ export OPENSSL_PATH=$WORKSPACE_BINARIES/Tools/OpenSSL
 #
 export POST_IBB_HASH_TMP_FOLDER=$BUILD_DIR/FV/PostIbbDigestTmp
 
-$PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/CreatePostIbbHash.py \
-  -i $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
-  --fdf $TEMP_FLASHMAP_FDF \
-  --fv "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset" \
-  --fv "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset" \
-  --temp $POST_IBB_HASH_TMP_FOLDER \
-  --openssl-tool-path $OPENSSL_PATH \
-  -o $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/PostIbbDigest.hash
+if [ "$FSP_SIGNED" = "TRUE" ]; then
+  $PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/CreatePostIbbHash.py \
+    -i $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
+    --fdf $TEMP_FLASHMAP_FDF \
+    --fv "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset" \
+    --temp $POST_IBB_HASH_TMP_FOLDER \
+    --openssl-tool-path $OPENSSL_PATH \
+    -o $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/PostIbbDigest.hash
+else
+  $PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/CreatePostIbbHash.py \
+    -i $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
+    --fdf $TEMP_FLASHMAP_FDF \
+    --fv "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset" \
+    --fv "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset" \
+    --temp $POST_IBB_HASH_TMP_FOLDER \
+    --openssl-tool-path $OPENSSL_PATH \
+    -o $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/PostIbbDigest.hash
+fi
 if [ $? -ne 0 ]
 then
   echo "!!! ERROR: CreatePostIbbHash.py execute failure !!!"
@@ -584,28 +606,49 @@ export STARTUP_AC_PARA="$STARTUP_AC_PARA $STARTUP_ACM_PARA"
     #   -O RecordType <RecordDataAddress RecordDataSize>|<RESERVE RecordDataSize>
     #   -P RecordType <IndexPort DataPort Width Bit Index>
     #
-    # For slot mode, the SLOT_SIZE envir variable already defined in PriBuild.sh script
+    # For slot mode, the SLOT_SIZE environment variable already defined in PriBuild.sh script
     #
 
-# Gerneate Bsis binary for both FSP Signing and non FSP Signing cases.
+# Generate Bsis binary for both FSP Signing and non FSP Signing cases.
 # In FSP Signing case, Bsis binary includes data for FSP verification;
 # In non FSP Signing case, Bsis binary only includes FSP-T UPD and BSP entry.
-# FSP Signing feature is not enabeld in GCC build environment yet.
+# FSP Signing feature is not enabled in GCC build environment yet.
 export FSPM_LOADING_POLICY=0x0
 if [ "$FSPM_COMPRESSED" = "TRUE" ]; then
-  export FSPM_LOADING_POLICY=0x2
+  export FSPM_LOADING_POLICY=$(($FSPM_LOADING_POLICY + 0x2))
 fi
+if [ "$FSP_SIGNED" = "TRUE" ]; then
+  if [ "$MULTI_IBB_BUILD" != "TRUE" ]; then
+    export FSPM_LOADING_POLICY=$(($FSPM_LOADING_POLICY + 0x1))
+  fi
+fi
+
 $PYTHON_COMMAND $WORKSPACE_COMMON/$PLATFORM_BOARD_PACKAGE/BoardSupport/Tools/BsssGen/BsssGen.py \
       -Fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
       -FspmLP $FSPM_LOADING_POLICY \
+      -s $FSP_SIGNED \
       -o $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/bsis.bin \
       -d $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/bsis.bin
 
+BuildFitArgs="-D $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd"
+BuildFitArgs="$BuildFitArgs -F 0x40 -NA -L $SLOT_SIZE $MICROCODE_ARRAY_FFS_GUID"
+BuildFitArgs="$BuildFitArgs -I $BIOS_INFO_GUID $STARTUP_AC_PARA -O 0x0B RESERVE 0x400"
 if [ "$FSP_RESET" = "TRUE" ]; then
-    FitGen -D $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd -F 0x40 -NA -L $SLOT_SIZE $MICROCODE_ARRAY_FFS_GUID -I $BIOS_INFO_GUID $STARTUP_AC_PARA -O 0x0C RESERVE 0x800 -O 0x0B RESERVE 0x400 -P 0xA 0x70 0x71 0x1 0x4 0x2A -T $FIXED_FIT_LOCATION
+  if [ "$FSP_SIGNED" = "TRUE" ]; then
+    FBM_OFFSET_TO_FIT=0x1E00
+    FIXED_FBM_LOCATION=0x${FIXED_FIT_LOCATION: -6}
+    FIXED_FBM_LOCATION=$((FIXED_FBM_LOCATION - FBM_OFFSET_TO_FIT))
+    FIXED_FBM_LOCATION=$(printf "0xFF%X\n" $FIXED_FBM_LOCATION)
+    echo "FIXED_FBM_LOCATION: $FIXED_FBM_LOCATION"
+    BuildFitArgs="$BuildFitArgs -O 0x0C RESERVE 0x800 -O 0x0D $FIXED_FBM_LOCATION"
+    BuildFitArgs="$BuildFitArgs 0x800 -P 0xA 0x70 0x71 0x1 0x4 0x2a -T $FIXED_FIT_LOCATION"
+  else
+    BuildFitArgs="$BuildFitArgs -O 0x0C RESERVE 0x800 -P 0xA 0x70 0x71 0x1 0x4 0x2A -T $FIXED_FIT_LOCATION"
+  fi
 else
-    FitGen -D $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd -F 0x40 -NA -L $SLOT_SIZE $MICROCODE_ARRAY_FFS_GUID -I $BIOS_INFO_GUID $STARTUP_AC_PARA -O 0x0C RESERVE 0x600 -O 0x0B RESERVE 0x400 -P 0xA 0x70 0x71 0x1 0x4 0x2A
+  BuildFitArgs="$BuildFitArgs -O 0x0C RESERVE 0x600 -P 0xA 0x70 0x71 0x1 0x4 0x2A"
 fi
+FitGen $BuildFitArgs
 if [ $? -ne 0 ]; then
   echo "FitGen failure - fail."
   exit $?
@@ -623,10 +666,10 @@ else
     . $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BpmGen/postbuildBpmGen.sh CLIENTBIOS CLIENTBIOS
   fi
 fi
-  if [ $? -ne 0 ]; then
-    echo "postbuildBpmGen.sh - fail."
-    exit $?
-  fi
+if [ $? -ne 0 ]; then
+  echo "postbuildBpmGen.sh - fail."
+  exit $?
+fi
 
 rm $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/bsis.bin
 #

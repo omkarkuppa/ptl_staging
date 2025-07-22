@@ -840,7 +840,7 @@ setlocal ENABLEDELAYEDEXPANSION
   )
 ) else (
   @REM
-  @REM Gerneate BSPM binary in No ACM case, BSPM binary is generated and patched into the BIOS image at 4G - 4K address
+  @REM Generate BSPM binary in No ACM case, BSPM binary is generated and patched into the BIOS image at 4G - 4K address
   @REM
 
   @echo generate BSPM binary

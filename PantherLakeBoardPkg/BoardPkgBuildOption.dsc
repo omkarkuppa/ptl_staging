@@ -121,11 +121,11 @@ MSFT:  *_*_X64_ASLCC_FLAGS    = $(DSC_PLTPKG_FEATURE_BUILD_OPTIONS)
 ##################
 # Rsa2048Sha256Sign tool definitions
 #
-# Notes: This tool defintion uses a test signing key for development purposes only.
+# Notes: This tool definition uses a test signing key for development purposes only.
 #        The tool Rsa2048Sha256GenerateKeys can be used to generate a new private/public key
 #        and the gEfiSecurityPkgTokenSpaceGuid.PcdRsa2048Sha256PublicKeyBuffer PCD value.
 #        A custom tool/script can be implemented using the new private/public key with
-#        the Rsa2048Sha256Sign tool and this tool defintiion can be updated to use a
+#        the Rsa2048Sha256Sign tool and this tool definition can be updated to use a
 #        custom tool/script.
 #
 #   Generate new private/public key and gEfiSecurityPkgTokenSpaceGuid.PcdRsa2048Sha256PublicKeyBuffer PCD value
