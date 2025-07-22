@@ -147,7 +147,7 @@ Name (SBFI, ResourceTemplate () {
   }
 
   Name (_HID, "XXXX0000")
-  Name (_CID, "PNP0C50")
+  Name (_CID, EISAID ("PNP0C50"))
 
   Method (_UID, 0) {
     Return (TPCT)

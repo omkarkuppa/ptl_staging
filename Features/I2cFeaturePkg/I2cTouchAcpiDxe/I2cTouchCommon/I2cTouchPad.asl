@@ -106,7 +106,7 @@ External (\_SB.GRXE, MethodObj)
       }
     }
 
-    Name (_HID, EISAID("PNP0C50"))
+    Name (_HID, EISAID ("PNP0C50"))
     Name (_S0W, 3)          // PTP will be in D3hot during CS, and wake capable
     Method (_DSM, 0x4, Serialized) {
       If (LEqual (Arg0,HIDG)) { Return (HIDD (Arg0,Arg1,Arg2,Arg3,HID2)) }
