@@ -2202,9 +2202,9 @@ UpdateProgressBar (
   }
 
   //
-  // Exit if the VGA display is disabled
+  // Exit if the VGA display or Mrc progress bar is disabled
   //
-  if (IGpuDataHob->VgaDisplayConfig == VGA_DISPLAY_DISABLED) {
+  if ((IGpuDataHob->VgaDisplayConfig == VGA_DISPLAY_DISABLED) || (IS_VGA_MRC_PROGRESS_BAR_DISABLED(IGpuDataHob->VgaDisplayConfig) == TRUE)) {
     return;
   }
 

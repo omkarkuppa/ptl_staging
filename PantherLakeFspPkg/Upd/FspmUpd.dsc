@@ -3310,7 +3310,7 @@
 
   # !BSF NAME:{Control SOL VGA Initialition sequence} TYPE:{Combo}
   # !BSF TYPE:{Combo} OPTION:{0:VGA Disable, 1:Mode 3 VGA, 2:Mode 12 VGA}
-  # !BSF HELP:{Initialise SOL Init, BIT0 - (0 : Disable VGA Support, 1 : Enable VGA Support),, BIT1 - (0 : VGA Text Mode 3, 1 : VGA Graphics Mode 12), BIT2 - (0 : VGA Exit Supported, 1: NO VGA Exit)}
+  # !BSF HELP:{Initialise SOL Init, BIT0 - (0 : Disable VGA Support, 1 : Enable VGA Support),, BIT1 - (0 : VGA Text Mode 3, 1 : VGA Graphics Mode 12), BIT2 - (0 : VGA Exit Supported, 1: NO VGA Exit), BIT3 - (0 : VGA Init During Display Init, 1 - VGA Init During MRC Cold Boot), BIT4 - (0 : Enable Progress Bar, 1 : Disable Progress Bar)}
   gPlatformFspPkgTokenSpaceGuid.VgaInitControl              | * | 0x01 | 0x0
 
   # !BSF NAME:{SOL VGA Graphics Mode 12 LogoPixelHeight}

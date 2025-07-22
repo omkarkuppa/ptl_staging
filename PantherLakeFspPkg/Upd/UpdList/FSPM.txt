@@ -419,6 +419,11 @@ AcousticNoiseMitigation
 VgaInitControl
 GenerateNewTmeKey
 VgaMessage
+VgaGraphicsMode12ImagePtr
+LogoPixelHeight
+LogoPixelWidth
+LogoXPosition
+LogoYPosition
 VbtSize
 FastPkgCRampDisable
 AcLoadline
