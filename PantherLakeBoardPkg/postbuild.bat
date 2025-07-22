@@ -914,6 +914,7 @@ call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\ToolScripts\RomImage\Setu
 )
 
 
+
 :EndPostBuild
 @set STARTUP_AC_MODULE_GUID=
 @set BIOS_INFO_GUID=
