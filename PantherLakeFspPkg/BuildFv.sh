@@ -303,7 +303,11 @@ function PostBuild(){
     "0x0000,            _BASE_FSP-O_,                                                                                       @Temporary Base" \
     "<[0x0000]>+0x00AC, [<[0x0000]>+0x0020],                                                                                @FSP-O Size" \
     "<[0x0000]>+0x00B0, [0x0000],                                                                                           @FSP-O Base" \
-    "<[0x0000]>+0x00B6, ([<[0x0000]>+0x00B6] & 0xFFFF0FFC) | 0x8000 | $FSP_BUILD_TYPE | $FSP_RELEASE_TYPE,                  @FSP-O Component Attribute"
+    "<[0x0000]>+0x00B6, ([<[0x0000]>+0x00B6] & 0xFFFF0FFC) | 0x8000 | $FSP_BUILD_TYPE | $FSP_RELEASE_TYPE,                  @FSP-O Component Attribute" \
+    "<[0x0000]>+0x010C, 0x$YYYY,                                                                                            @BuildTimeStamp" \
+    "<[0x0000]>+0x0110, 0x$MMDD,                                                                                            @BuildTimeStamp" \
+    "<[0x0000]>+0x0114, 0x$HHMM,                                                                                            @BuildTimeStamp" \
+    "0x0000,            0x00000000,                                                                                         @Restore the value"
   if [ $? -ne 0 ]
   then
     PreBuildFail
