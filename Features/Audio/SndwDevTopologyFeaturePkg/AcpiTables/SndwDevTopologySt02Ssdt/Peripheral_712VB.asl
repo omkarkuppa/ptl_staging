@@ -290,7 +290,7 @@ Device(AF01)
 Device(AF02)
 {
   Name (_ADR, 0x2)
-  Include ("AudioFunction_712VB_MIC.asl")
+  Include ("AudioFunction_712VB_MIC_2CH_VAD.asl")
 }
 
 Device(AF03)

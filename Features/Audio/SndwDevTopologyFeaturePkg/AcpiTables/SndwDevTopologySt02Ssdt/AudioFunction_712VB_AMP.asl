@@ -82,7 +82,7 @@ Name(_DSD, Package()
     Package(2) {"mipi-sdca-entity-id-0x12-subproperties", "E012"},  // PPU 26
     Package(2) {"mipi-sdca-entity-id-0x5E-subproperties", "E05E"},  // MFPU 26
     Package(2) {"mipi-sdca-entity-id-0x66-subproperties", "E066"},  // FU 26
-    Package(2) {"mipi-sdca-entity-id-0x68-subproperties", "E068"},  // FU 26
+    Package(2) {"mipi-sdca-entity-id-0x68-subproperties", "E068"},  // IT 29
     Package(2) {"mipi-sdca-function-expansion-subproperties", "EXT0"},
     // Cluster ID subproperties
     Package(2) {"mipi-sdca-cluster-id-0x11-subproperties", "CL11"},
@@ -570,14 +570,14 @@ Name(PSM1, Buffer()
   0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
   0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
   0x00, 0x00, 0x00, 0x00, // System Extension Value
-  0x10, 0x00, 0x00, 0x00, // Posture Number = 0x00 (L, R)
+  0x10, 0x00, 0x00, 0x00, // Posture Number = 0x10 (L, R)
   0x21, 0x00, 0x00, 0x00, // Cluster ID
   0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
   0x2E, 0x00, 0x00, 0x00, 0x87, 0x00, 0x00, 0x00, // Roll Min (46), Roll Max (135)
   0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
   0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
   0x00, 0x00, 0x00, 0x00, // System Extension Value
-  0x22, 0x00, 0x00, 0x00, // Posture Number = 0x08 (L+R/2)
+  0x22, 0x00, 0x00, 0x00, // Posture Number = 0x22 (L+R/2)
   0x22, 0x00, 0x00, 0x00, // Cluster ID
   0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
   0x88, 0x00, 0x00, 0x00, 0xE1, 0x00, 0x00, 0x00, // Roll Min (136), Roll Max (225)
@@ -591,7 +591,7 @@ Name(PSM1, Buffer()
     0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
   0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
   0x00, 0x00, 0x00, 0x00, // System Extension Value
-  0x22, 0x00, 0x00, 0x00, // Posture Number = 0x08 (L+R/2)
+  0x22, 0x00, 0x00, 0x00, // Posture Number = 0x22 (L+R/2)
   0x24, 0x00, 0x00, 0x00, // Cluster ID
 }) //End PSM1
 
@@ -998,6 +998,7 @@ Name(C621, Package()
         // Mixer, Class, DC, The Q7.8dB format used for MU Controls represents the gain range ??28 dB to +127.996 dB
         Package(2) {"mipi-sdca-control-access-layer", 4},
         Package(2) {"mipi-sdca-control-access-mode", 5},
+        Package(2) {"mipi-sdca-control-cn-list", 0xFF }, // channel number 0~7
         Package(2) {"mipi-sdca-control-cn-0-dc-value", 0x0000},  // Input Pin 1, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
         Package(2) {"mipi-sdca-control-cn-1-dc-value", 0x8000},  // Input Pin 1, Ch 1 => Output Pin 1, Ch 2 => -128dB mute
         Package(2) {"mipi-sdca-control-cn-2-dc-value", 0x8000},  // Input Pin 1, Ch 2 => Output Pin 1, Ch 1 => -128dB mute
@@ -1949,7 +1950,7 @@ Name(E066, Package()
   {
     Package(2) {"mipi-sdca-input-pin-1", "E05E"}, // Input Pin 1 connected to PPU21
     Package(2) {"mipi-sdca-control-0x1-subproperties", "C661"},
-    Package(2) {"mipi-sdca-control-0xb-subproperties", "C662"},
+    Package(2) {"mipi-sdca-control-0xB-subproperties", "C662"},
     Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
   }
 }) //End E006
@@ -2054,7 +2055,7 @@ Name(E044, Package()
   Package ()
   {
     Package (2) {"mipi-sdca-entity-type", 0x13},
-    Package (2) {"mipi-sdca-entity-label", "PE 199"}, // = PE 44 in ALC722 internal spec
+    Package (2) {"mipi-sdca-entity-label", "SPE 199"},
     Package (2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1
     //Package (2) {"mipi-sdca-control-list",  Package() {0x10} },  // Sample_Freq_Index
     Package (2) {"mipi-sdca-control-list",  0x001E}, // Bitmap: 0x01 - Private, 0x02 - Privacy_policy, 0x03 - Privacy_lockstate, 0x04 - Privacy_owner
@@ -2293,7 +2294,7 @@ Name(CH13, Package()
   }
 }) //End CH13
 
-Name(CL21, Package()  // Posture UDMPU 21 ClusterIndex 1, OT23 ch1=Left, OT23 ch2=right
+Name(CL21, Package()  // Posture PPU 21, ClusterID 0x21, OT23 ch1=Left, OT23 ch2=right
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
@@ -2308,7 +2309,7 @@ Name(CL21, Package()  // Posture UDMPU 21 ClusterIndex 1, OT23 ch1=Left, OT23 ch
   }
 }) //End CL21
 
-Name(CL22, Package()  // Posture UDMPU 21 ClusterIndex 2, OT23 ch1=(left+right)/2, OT23 ch2=(left+right)/2
+Name(CL22, Package()  // Posture PPU 21, ClusterID 0x22, OT23 ch1=(left+right)/2, OT23 ch2=(left+right)/2
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
@@ -2323,7 +2324,7 @@ Name(CL22, Package()  // Posture UDMPU 21 ClusterIndex 2, OT23 ch1=(left+right)/
   }
 }) //End CL29
 
-Name(CL23, Package()  // Posture UDMPU 21 ClusterIndex 3, OT23 ch1=right, OT23 ch2=left
+Name(CL23, Package()  // Posture PPU 21, ClusterID 0x23, OT23 ch1=right, OT23 ch2=left
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
@@ -2338,7 +2339,7 @@ Name(CL23, Package()  // Posture UDMPU 21 ClusterIndex 3, OT23 ch1=right, OT23 c
   }
 }) //End CL23
 
-Name(CL24, Package()  // Posture UDMPU 21 ClusterIndex 4, OT23 ch1=(left+right)/2, OT23 ch2=(left+right)/2
+Name(CL24, Package()  // Posture PPU 21, ClusterID 0x24, OT23 ch1=(left+right)/2, OT23 ch2=(left+right)/2
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
@@ -2353,7 +2354,7 @@ Name(CL24, Package()  // Posture UDMPU 21 ClusterIndex 4, OT23 ch1=(left+right)/
   }
 }) //End CL24
 
-Name(CL25, Package()  // Posture UDMPU 26 ClusterIndex 1, OT23 ch1=Left, OT23 ch2=right
+Name(CL25, Package()  // Posture PPU 26, ClusterID 0x25, OT24 ch1=Left, OT24 ch2=right
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
@@ -2368,7 +2369,7 @@ Name(CL25, Package()  // Posture UDMPU 26 ClusterIndex 1, OT23 ch1=Left, OT23 ch
   }
 }) //End CL25
 
-Name(CL26, Package()  // Posture UDMPU 26 ClusterIndex 2, OT23 ch1=(left+right)/2, OT23 ch2=(left+right)/2
+Name(CL26, Package()  // Posture PPU 26, ClusterID 0x26, OT24 ch1=(left+right)/2, OT24 ch2=(left+right)/2
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
@@ -2383,7 +2384,7 @@ Name(CL26, Package()  // Posture UDMPU 26 ClusterIndex 2, OT23 ch1=(left+right)/
   }
 }) //End CL26
 
-Name(CL27, Package()  // Posture UDMPU 26 ClusterIndex 3, OT23 ch1=right, OT23 ch2=left
+Name(CL27, Package()  // Posture PPU 26, ClusterID 0x27, OT24 ch1=right, OT24 ch2=left
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
@@ -2398,7 +2399,7 @@ Name(CL27, Package()  // Posture UDMPU 26 ClusterIndex 3, OT23 ch1=right, OT23 c
   }
 }) //End CL27
 
-Name(CL28, Package()  // Posture UDMPU 26 ClusterIndex 4, OT23 ch1=(left+right)/2, OT23 ch2=(left+right)/2
+Name(CL28, Package()  // Posture PPU 26, ClusterID 0x28, OT24 ch1=(left+right)/2, OT24 ch2=(left+right)/2
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()

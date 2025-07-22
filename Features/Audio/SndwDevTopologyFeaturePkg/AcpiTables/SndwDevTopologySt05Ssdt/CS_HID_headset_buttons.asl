@@ -212,9 +212,9 @@ Name(CS10, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
-    {   // HIDTx_CurrentOwner, Class, RO
+    {   // HIDTx_CurrentOwner, Class, RW1S
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-access-mode", CAM_RO},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_RW1S},
         Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT},   // HID interrupt bit position
     }
 }) // End CS10

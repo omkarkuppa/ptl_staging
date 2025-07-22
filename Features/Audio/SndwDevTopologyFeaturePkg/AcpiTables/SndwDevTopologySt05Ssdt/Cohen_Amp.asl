@@ -247,6 +247,12 @@ Name(EXT0, Package()
         // all audio functions involved with FDL must have it defined.
         Package(2) {"01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
                                          FEATURE_CS42L43_AMP_NO_VOL_MUTE_R_COND)},
+#ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM
+        package(2) {"01fa-global-mute-led-mic-mute-gpio", GLOBAL_MUTE_LED_MIC_GPIO_NUM },
+#endif
+#ifdef GLOBAL_MUTE_LED_SPK_GPIO_NUM
+        package(2) {"01fa-global-mute-led-spk-mute-gpio", GLOBAL_MUTE_LED_SPK_GPIO_NUM },
+#endif
     }
 }) // End EXT0
 
@@ -824,7 +830,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 22"},
         Package(2) { "mipi-sdca-input-pin-list", 0x6}, // Pin1 and Pin2 connected
-        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
+        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -832,6 +838,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-control-0x1-subproperties", "C901"}, // Bypass
         Package(2) { "mipi-sdca-control-0x7-subproperties", "C907"}, // XU_ID
         Package(2) { "mipi-sdca-control-0x8-subproperties", "C908"}, // XU_Version
+        Package(2) { "mipi-sdca-control-0x30-subproperties", "C930"}, // GPIO
         Package(2) { "mipi-sdca-input-pin-1", "E010"}, // Input Pin 1 connected to MFPU_21
         Package(2) { "mipi-sdca-input-pin-2", "E007"}, // Input Pin 2 connected to IT_29
     }
@@ -869,6 +876,18 @@ Name(C908, Package()
         Package(2) { "mipi-sdca-control-dc-value", 0x10},
     }
 }) // End C908
+
+Name(C930, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {   // GPIO, Extension, RW.
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x7}, // Control Numbers = {0,1,2}
+    }
+}) // End C930
 
 
 // +------------------------------------+

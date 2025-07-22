@@ -119,7 +119,7 @@ Name(CL33, Package()
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package () {
        Package (2) {"mipi-sdca-channel-1-subproperties", "CHC3"},
-       Package (2) {"mipi-sdca-channel-2-subproperties", "CHC3"},
+       Package (2) {"mipi-sdca-channel-2-subproperties", "CHC4"},
     }
 })
 
@@ -127,6 +127,15 @@ Name(CHC3, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
        Package (2) {"mipi-sdca-cluster-channel-id", 1},
+       Package (2) {"mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO},
+       Package (2) {"mipi-sdca-cluster-channel-relationship", CHR_GENERIC_MONO},
+    }
+})
+
+Name(CHC4, Package() {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+       Package (2) {"mipi-sdca-cluster-channel-id", 2},
        Package (2) {"mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO},
        Package (2) {"mipi-sdca-cluster-channel-relationship", CHR_GENERIC_MONO},
     }

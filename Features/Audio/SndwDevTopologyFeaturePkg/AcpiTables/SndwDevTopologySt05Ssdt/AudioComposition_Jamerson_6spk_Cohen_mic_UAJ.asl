@@ -19,6 +19,10 @@
 @par Specification Reference:
 **/
 
+//
+// _DSD package moved to a separate file.
+//
+
 #ifdef COHEN_ONLY
 # define SPEAKER_RENDER_DATA_PORT       5
 #else   // !COHEN_ONLY
@@ -79,7 +83,7 @@
 #endif
 
 #ifndef DSP_ACPI_ACD_DEVICE_NAMESTRING
-# define DSP_ACPI_ACD_DEVICE_NAMESTRING "\\_SB.PC00.HDAS.IDA.ISSW"
+# define DSP_ACPI_ACD_DEVICE_NAMESTRING "\\_SB.PC00.HDAS"
 #endif
 
 Name(EP00, Package() {

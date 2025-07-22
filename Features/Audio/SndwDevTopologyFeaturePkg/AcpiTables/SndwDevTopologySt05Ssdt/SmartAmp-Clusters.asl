@@ -156,7 +156,6 @@ Name(CM29, Buffer()
 // | Clusters for IT21 |
 // | Amp Render Stream |
 // +-------------------+
-// TODO: Check and see if this should be single channel for left and right.
 Name(CL21, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -363,21 +362,21 @@ Name(CM23, Buffer()
 }) // End CMP1
 
 // +----------------------+
-// | Clusters for UDMDP25 |
+// | Clusters for UDMPU25 |
 // | Amp Reference Stream |
 // +----------------------+
-// @@@@ Is this correct or channel-count 2?
 Name(CL25, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        Package(2) { "mipi-sdca-channel-count", 1 },
+        Package(2) { "mipi-sdca-channel-count", 2 },
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHE1" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CHE2" },
     }
 })
 
@@ -392,6 +391,16 @@ Name(CHE1, Package()
     }
 })
 
+Name(CHE2, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 102 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_ECHO_REF_2 },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_REFERENCE },
+    }
+})
 Name(CI25, Package()
 {
     // Class, DC, ClusterIndex = 0x1
@@ -413,9 +422,9 @@ Name(CI25, Package()
 Name(CM25, Buffer()
 {
     0x02, 0x00,    // Range type 0x0002
-    0x01, 0x00,    // 2 rows
+    0x01, 0x00,    // 1 row
     0x01, 0x00, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00    // ClusterIndex 01 --> ClusterID 25
-}) // End CMP1
+}) // End CM25
 
 // +--------------------------+
 // | Clusters for Posture L/R |

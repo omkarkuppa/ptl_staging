@@ -174,6 +174,13 @@ Name(EXT0, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
+#ifdef AMP_VARIABLE_SPEAKER_SELECT
+        // NOTE: 01fa-spk-id-val must ALWAYS be the first package inside the
+        // inner package of EXT0. It will be updated at ACPI initialization time
+        // by the _INI method in the SDCA function ACPI driver node for this
+        // device.
+        Package(2) {"01fa-spk-id-val", 0}, // value to be set by _INI function
+#endif
         Package(2) { "mipi-sdca-function-expansion-subsystem-id", 0 },  // MIPI required, but not used by MSFT
         Package(2) { "01fa-chip-id", 0x3556 },
         Package(2) { "01fa-release-version", RELEASE_VERSION },
@@ -822,39 +829,33 @@ Name(C040, Package() {
 // Protection_Status BitIndex Mapping Table (BMT)
 Name(BMT1, Buffer() {
     0x03, 0x00,             // Range type 0x0003
-    0x08, 0x00,             // NumRows = 8
-    // Bit 0: SAPU_FIRMWARE_MISSING = 0x1
+    0x06, 0x00,             // NumRows = 6
+    // Bit 0: Firmware and/or parameters are missing
     0x00, 0x00, 0x00, 0x00, // Bit Number = 0
     0x00, 0x00, 0x00, 0x00, // Behavior Set ID = 0 -> CBN = 1010
     0x00, 0x00, 0x00, 0x00, // String Number = 0 -> "Firmware Missing"
-    // Bit 1: SAPU_MISSING_OPAQUE_SET = 0x2
-    0x01, 0x00, 0x00, 0x00, // Bit Number = 1
-    0x01, 0x00, 0x00, 0x00, // Behavior Set ID = 1 -> CBN = 1080
-    0x01, 0x00, 0x00, 0x00, // String Number = 1 -> "Opaque Set Missing"
-    // Bit 2: SAPU_PROTECT_LITE_FAULT = 0x4
+    // Bit 1: Reserved
+    // Bit 2: Speaker protection internal fault
     0x02, 0x00, 0x00, 0x00, // Bit Number = 2
-    0x02, 0x00, 0x00, 0x00, // Behavior Set ID = 2 -> CBN = 1060
-    0x02, 0x00, 0x00, 0x00, // String Number = 2 -> "Internal Condition"
-    // Bit 3: SAPU_SUPPLY_FAULT = 0x8
+    0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
+    0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
+    // Bit 3: Power Supply Fault
     0x03, 0x00, 0x00, 0x00, // Bit Number = 3
     0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
     0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
-    // Bit 4: SAPU_INTERNAL_FAULT = 0x10
+    // Bit 4: Hardware Internal Fault
     0x04, 0x00, 0x00, 0x00, // Bit Number = 4
-    0x02, 0x00, 0x00, 0x00, // Behavior Set ID = 2 -> CBN = 1060
-    0x02, 0x00, 0x00, 0x00, // String Number = 2 -> "Internal Condition"
-    // Bit 5: SAPU_TRANSDUCER_FAULT = 0x20
+    0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
+    0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
+    // Bit 5: Transducer Fault
     0x05, 0x00, 0x00, 0x00, // Bit Number = 5
     0x04, 0x00, 0x00, 0x00, // Behavior Set ID = 4 -> CBN = 1070
     0x04, 0x00, 0x00, 0x00, // String Number = 4 -> "External Condition"
-    // Bit 6: SAPU_CRC_FAULT = 0x40
+    // Bit 6: Parameter CRC Fault
     0x06, 0x00, 0x00, 0x00, // Bit Number = 6
     0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
     0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
-    // Bit 7: SAPU_THERM_WARNING = 0x80
-    0x07, 0x00, 0x00, 0x00, // Bit Number = 7
-    0x02, 0x00, 0x00, 0x00, // Behavior Set ID = 2 -> CBN = 1060
-    0x02, 0x00, 0x00, 0x00, // String Number = 2 -> "Internal Condition"
+    // Bit 7: Reserved
 }) // End BMT1
 
 //

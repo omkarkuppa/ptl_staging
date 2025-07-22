@@ -1,5 +1,4 @@
-/** @file
-  SoundWire topology definitions
+/*++
 
   @copyright
   INTEL CONFIDENTIAL

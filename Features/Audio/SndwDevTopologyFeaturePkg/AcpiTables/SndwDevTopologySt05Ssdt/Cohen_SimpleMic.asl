@@ -149,6 +149,37 @@ Name(MGEO, Buffer()
 }) //End MGEO
 #endif
 
+//
+// Microphone Sensitivity and SNR
+// It is possible that MSEN and MSNR were overloaded before this file was included.  In this case MIC_SENS_SNR_OVERLOAD must be
+// defined to keep this table from being included.  It is intentionally at the top of this file so that it dis-assembles into
+// the same location when it is overloaded.
+#ifndef MIC_SENS_SNR_OVERLOAD
+
+//
+// Microphone sensitivity
+// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SENSITIVITY2 - Windows drivers | Microsoft Learn)
+Name(MSEN, Buffer()
+{
+    0x00, 0x01,             // Version
+    0x02, 0x00,             // NumberOfMicrophones
+    0x00, 0x00, 0xe6, 0xFF, // Mic 1 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
+    0x00, 0x00, 0xe6, 0xFF, // Mic 2 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
+}) //End MSEN
+
+//
+// Microphone snr
+// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SNR - Windows drivers | Microsoft Learn)
+Name(MSNR, Buffer()
+{
+    0x00, 0x01,             // Version
+    0x02, 0x00,             // NumberOfMicrophones
+    0x00, 0x80, 0x40, 0x00, // Mic 1 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
+    0x00, 0x80, 0x40, 0x00, // Mic 2 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
+}) //End MSNR
+#endif //#ifndef MIC_SENS_SNR_OVERLOAD
+
+
 #ifdef EXCLUDE_FU_113_VOLUME_CONTROL
 // Remove FU113 and FU13
 # define COHEN_MAIN_PCM_MIC_STREAM_ENTITY_ID_LIST         0x4, 0x5, 0x2, 0x6, 0x10, 0x1, 0x7, 0x9, 0xA
@@ -340,6 +371,12 @@ Name(EXT0, Package()
         // all audio functions involved with FDL must have it defined.
         Package(2) {"01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
                                          FEATURE_CS42L43_DMIC_NO_VOL_MUTE_C_COND)},
+#ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM
+        package(2) {"01fa-global-mute-led-mic-mute-gpio", GLOBAL_MUTE_LED_MIC_GPIO_NUM },
+#endif
+#ifdef GLOBAL_MUTE_LED_SPK_GPIO_NUM
+        package(2) {"01fa-global-mute-led-spk-mute-gpio", GLOBAL_MUTE_LED_SPK_GPIO_NUM },
+#endif
     }
 }) // End EXT0
 
@@ -528,27 +565,6 @@ Name(E004, Package()
     }
 }) // End E004
 
-//
-// Microphone sensitivity
-// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SENSITIVITY - Windows drivers | Microsoft Learn)
-Name(MSEN, Buffer()
-{
-    0x00, 0x01,             // Version
-    0x02, 0x00,             // NumberOfMicrophones
-    0x00, 0x00, 0xe6, 0xFF, // Mic 1 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
-    0x00, 0x00, 0xe6, 0xFF, // Mic 2 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
-}) //End MSEN
-
-//
-// Microphone snr
-// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SNR - Windows drivers | Microsoft Learn)
-Name(MSNR, Buffer()
-{
-    0x00, 0x01,             // Version
-    0x02, 0x00,             // NumberOfMicrophones
-    0x00, 0x80, 0x40, 0x00, // Mic 1 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
-    0x00, 0x80, 0x40, 0x00, // Mic 2 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
-}) //End MSNR
 
 Name(C108, Package()
 {
@@ -782,7 +798,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 12"},
         Package(2) { "mipi-sdca-input-pin-list", 0x2}, // Pin1 has a connection
-        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
+        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -790,6 +806,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-control-0x1-subproperties", "C301"}, // Bypass
         Package(2) { "mipi-sdca-control-0x7-subproperties", "C307"}, // XU_ID
         Package(2) { "mipi-sdca-control-0x8-subproperties", "C308"}, // XU_Version
+        Package(2) { "mipi-sdca-control-0x30-subproperties", "C330"}, // GPIO
         Package(2) { "mipi-sdca-input-pin-1", "E010"}, // Input Pin 1 connected to PPU 11
     }
 }) // End E001
@@ -826,6 +843,18 @@ Name(C308, Package()
         Package(2) { "mipi-sdca-control-dc-value", 0x10},
     }
 }) // End C308
+
+Name(C330, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {   // GPIO, Extension, RW.
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x7}, // Control Numbers = {0,1,2}
+    }
+}) // End C330
 
 
 

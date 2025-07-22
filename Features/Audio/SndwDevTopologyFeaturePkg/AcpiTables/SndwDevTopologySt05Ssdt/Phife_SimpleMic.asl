@@ -144,6 +144,37 @@ Name(MGEO, Buffer()
 }) //End MGEO
 #endif
 
+//
+// Microphone Sensitivity and SNR
+// It is possible that MSEN and MSNR were overloaded before this file was included.  In this case MIC_SENS_SNR_OVERLOAD must be
+// defined to keep this table from being included.  It is intentionally at the top of this file so that it dis-assembles into
+// the same location when it is overloaded.
+#ifndef MIC_SENS_SNR_OVERLOAD
+
+//
+// Microphone sensitivity
+// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SENSITIVITY2 - Windows drivers | Microsoft Learn)
+Name(MSEN, Buffer()
+{
+    0x00, 0x01,             // Version
+    0x02, 0x00,             // NumberOfMicrophones
+    0x00, 0x00, 0xe6, 0xFF, // Mic 1 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
+    0x00, 0x00, 0xe6, 0xFF, // Mic 2 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
+}) //End MSEN
+
+//
+// Microphone snr
+// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SNR - Windows drivers | Microsoft Learn)
+Name(MSNR, Buffer()
+{
+    0x00, 0x01,             // Version
+    0x02, 0x00,             // NumberOfMicrophones
+    0x00, 0x80, 0x40, 0x00, // Mic 1 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
+    0x00, 0x80, 0x40, 0x00, // Mic 2 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
+}) //End MSNR
+#endif //#ifndef MIC_SENS_SNR_OVERLOAD
+
+
 #ifdef EXCLUDE_FU_113_VOLUME_CONTROL
 // Remove FU113 and FU13
 # define PHIFE_MAIN_PCM_MIC_STREAM_ENTITY_ID_LIST         0x4, 0x5, 0x2, 0x6, 0x10, 0x1, 0x7, 0x9, 0xA
@@ -462,28 +493,6 @@ Name(E004, Package()
         Package (2) {"mipi-sdca-microphone-array-snr", "MSNR"},
     }
 }) // End E004
-
-//
-// Microphone sensitivity
-// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SENSITIVITY - Windows drivers | Microsoft Learn)
-Name(MSEN, Buffer()
-{
-    0x00, 0x01,             // Version
-    0x02, 0x00,             // NumberOfMicrophones
-    0x00, 0x00, 0xe6, 0xFF, // Mic 1 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
-    0x00, 0x00, 0xe6, 0xFF, // Mic 2 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
-}) //End MSEN
-
-//
-// Microphone snr
-// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SNR - Windows drivers | Microsoft Learn)
-Name(MSNR, Buffer()
-{
-    0x00, 0x01,             // Version
-    0x02, 0x00,             // NumberOfMicrophones
-    0x00, 0x80, 0x40, 0x00, // Mic 1 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
-    0x00, 0x80, 0x40, 0x00, // Mic 2 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
-}) //End MSNR
 
 Name(C108, Package()
 {

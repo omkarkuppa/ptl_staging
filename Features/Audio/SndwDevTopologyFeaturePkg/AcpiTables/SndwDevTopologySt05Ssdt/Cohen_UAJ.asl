@@ -1480,13 +1480,14 @@ Name(E01F, Package()
     {
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 36"},
-        Package(2) { "mipi-sdca-control-list", CTL_XU_BYPASS},
+        Package(2) { "mipi-sdca-control-list", CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO},
         Package(2) { "mipi-sdca-input-pin-list", 0x2 }, // Input Pin 1 connected
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
         Package(2) { "mipi-sdca-control-0x1-subproperties", "CF01"}, // Bypass
+        Package(2) { "mipi-sdca-control-0x30-subproperties", "CF30"}, // GPIO
         Package(2) { "mipi-sdca-input-pin-1", "E00D"}, // Input Pin 1 connected to SU_35
     }
 }) // End E01F
@@ -1502,6 +1503,19 @@ Name(CF01, Package()
         Package(2) { "mipi-sdca-control-deferrable", 1},
     }
 }) // End CF01
+
+
+Name(CF30, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {   // GPIO, Extension, RW.
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x7}, // Control Numbers = {0,1,2}
+    }
+}) // End CF30
 
 
 

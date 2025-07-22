@@ -19,6 +19,47 @@
 @par Specification Reference:
 **/
 
+/*
+ *  Main flags that defines the rest of the topology
+ */
+#define DISABLE_AEC        1
+#define AIC_V2             1
+#define SIX_SPEAKERS       1
+#define HWKWS              1
+#define UAJ_RENDER_192KHZ  1
+#define JAMERSON_96K       1
+
+//
+// 24-bit sample depth for DMIC capture
+// This MUST be defined for all non MTL or later platforms which use 24 bit or greater mic sample sizes.
+//
+#ifdef DMIC_16BIT
+# undef DMIC_16BIT
+#endif
+
+#ifdef SIX_SPEAKERS
+# define INTEL_DSP_NUM_AMPS 6
+#endif
+
+// SDCA version 1.0
+#define CTL_E0_FUNCTION_SDCA_VERSION_VAL        0x10
+#define CTL_E0_DEVICE_SDCA_VERSION_VAL          0x10
+
+// SDCA interface version 1.0
+#define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x1000
+
+
+//
+// Prevent the class driver from creating volume and mute nodes.
+// Force XU to create volume and mute nodes.
+//
+#define EXCLUDE_FU_21_VOLUME_CONTROL
+#define EXCLUDE_FU_36_VOLUME_CONTROL
+#define EXCLUDE_FU_41_VOLUME_CONTROL
+#define EXCLUDE_FU_113_VOLUME_CONTROL
+
+#define EXCLUDE_FUN_STS
+
 #include "common6ch.h"
 
 // GPIO for speaker selection is not used on the RVP.
