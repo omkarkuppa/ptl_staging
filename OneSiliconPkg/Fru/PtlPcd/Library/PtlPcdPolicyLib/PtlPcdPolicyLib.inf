@@ -67,3 +67,6 @@ gLpcPreMemConfigGuid               ## CONSUMES
 gHsioPciePreMemConfigGuid          ## CONSUMES
 gPcieRpPreMemConfigGuid            ## CONSUMES
 gFiaConfigGuid                     ## CONSUMES
+
+[FixedPcd]
+gSiPkgTokenSpaceGuid.PcdWclSupport    ## CONSUMES

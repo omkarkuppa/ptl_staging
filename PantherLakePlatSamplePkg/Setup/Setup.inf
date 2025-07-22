@@ -419,6 +419,7 @@
 
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable                      ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber               ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdWclSupport                                    ## CONSUMES
 
 [Depex]
   gMemInfoProtocolGuid                AND

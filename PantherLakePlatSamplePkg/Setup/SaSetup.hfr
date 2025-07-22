@@ -3748,6 +3748,7 @@ endform;
         option text = STRING_TOKEN(STR_HG_STRING) ,  value = 2, flags = RESET_REQUIRED;
       endoneof;
 
+    suppressif FixedPcdGetBool(PcdWclSupport) == 1;
       oneof varid    = SA_SETUP.SkipExtGfxScan,
         prompt   = STRING_TOKEN(STR_SKIP_EXT_GFX_SCAN),
         help     = STRING_TOKEN(STR_SKIP_EXT_GFX_SCAN_HELP),
@@ -3763,7 +3764,7 @@ endform;
         option text = STRING_TOKEN(STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED_STRING),  value = 1, flags = RESET_REQUIRED;
       endoneof;
-
+    endif;
 
       oneof varid   = SA_SETUP.PavpEnable,
         prompt  = STRING_TOKEN(STR_PAVP_ENABLE),

@@ -1643,14 +1643,10 @@
 #string STR_IGPU_MEDIA_VALUE                    #language en-US "N/A"
 #string STR_IGPU_GT_HELP                        #language en-US "GT capability"
 #string STR_IGPU_GT_VALUE                       #language en-US "N/A"
-//
-// SA:GfxRemovePostPOBegin
-//
+
 #string STR_SKIP_EXT_GFX_SCAN                   #language en-US "Skip Scanning of External Gfx Card"
 #string STR_SKIP_EXT_GFX_SCAN_HELP              #language en-US "If Enable, it will not scan for External Gfx Card on PCIE Ports"
-//
-// SA:GfxRemovePostPOEnd
-//
+
 #string STR_PCH_STRING                          #language en-US "PCH Slot"
 
 #string STR_HG_DELAY_AFTR_PWR_EN                #language en-US "HG Delay After Power Enable"

@@ -402,15 +402,9 @@ UpdatePcieRpPreMemPolicy (
                                );
   ASSERT_EFI_ERROR (Status);
   //
-  // SA:GfxRemovePostPOBegin
-  //
-  //
   // External Graphics card scan option.
   //
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SkipExtGfxScan, PcieRpPreMemConfig->SkipExtGfxScan, SaSetup.SkipExtGfxScan);
-  //
-  // SA:GfxRemovePostPOEnd
-  //
   UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcieResizableBarSupport, PcieRpPreMemConfig->PcieResizableBarSupport, PchSetup->PcieResizableBarSupport);
 
   UpdatePcieClockInfo (PcieRpPreMemConfig,  0, PcdGet64(PcdPcieClock0));

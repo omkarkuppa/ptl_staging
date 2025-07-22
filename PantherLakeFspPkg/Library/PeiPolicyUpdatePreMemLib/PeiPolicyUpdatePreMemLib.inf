@@ -68,6 +68,7 @@
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdOverclockEnable                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdWclSupport                     ## CONSUMES
 
 [Guids]
   gTdxActmMacNvVarGuid
