@@ -38,8 +38,8 @@
 
 @if "%1"=="" goto End
 
-@if exist %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\SignFv\privkey.pem (
-  set PRIVATE_KEY_PATH=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\SignFv\privkey.pem
+@if exist %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\InternalOnly\ToolScripts\SignFv\privkey.pem (
+  set PRIVATE_KEY_PATH=%WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\InternalOnly\ToolScripts\SignFv\privkey.pem
 ) else (
   @echo "Can not find privkey.pem, use open source TestSigningPrivateKey.pem"
   set PRIVATE_KEY_PATH=%WORKSPACE_CORE%\BaseTools\Source\Python\Rsa2048Sha256Sign\TestSigningPrivateKey.pem
