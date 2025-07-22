@@ -24,14 +24,6 @@ function EndPreBuild {
 
 cd $WORKSPACE
 
-#
-# Set build capsule flag with default of OFF
-#
-CAPSULE_BUILD=0
-if [ "$2" = "TRUE" ]; then
-  CAPSULE_BUILD=1
-fi
-
 echo
 echo "Prebuild:  Set build environment."
 echo
@@ -48,56 +40,55 @@ echo "TOOL_CHAIN_TAG    = $TOOL_CHAIN_TAG"                                      
 echo "BUILD_RULE_CONF   = $WORKSPACE/Conf/build_rule.txt"                           >> $BUILD_DIR/target.txt
 mv -f $BUILD_DIR/target.txt $WORKSPACE/Conf
 
-if [ $CAPSULE_BUILD -eq 0 ]; then
-  echo
-  echo "Prebuild:  Create BiosId"
-  echo
-  if [ ! -d $BUILD_X64 ]; then
-    mkdir -p $BUILD_X64
-  fi
-  #
-  # @todo: Code Coverage not supported at this time
-  #
-
-
-  #
-  # Create BiosId.env based on the build type
-  #
-  BIOSID_FILENAME=BiosId
-
-  cp -f $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/$BIOSID_FILENAME.env $BIOS_ID_FILE
-
-  BOARD_ID_STRING="BOARD_ID      = ${TARGET_PLATFORM_SHORT}$PCH_TYPE"
-  BOARD_ID_STRING+="FW$BUILD"
-  echo "$BOARD_ID_STRING" >> $BIOS_ID_FILE
-
-  BOARD_EXT_STRING="BOARD_EXT    = $TARGET_SHORT"
-  BOARD_EXT_STRING+="00"
-  echo "$BOARD_EXT_STRING" >> $BIOS_ID_FILE
-  BIOS_ID_OUTPUT_DIR=$BUILD_IA32
-  if [ ! -d $BIOS_ID_OUTPUT_DIR ]; then
-    mkdir -p $BIOS_ID_OUTPUT_DIR
-  fi
-  if [ "$NOTIMESTAMP" = "1" ];then
-    export NoTime=-nt
-  else
-    export NoTime=
-  fi
-  python3 $WORKSPACE_CORE_PLATFORM/Tools/GenBiosId/GenBiosId.py -i $BIOS_ID_FILE -o $BIOS_ID_OUTPUT_DIR/BiosId.bin $NoTime
-  ret=$?
-  if [ $ret -ne 0 ]; then
-    EndPreBuild
-    exit $ret
-  fi
-
-  #
-  # Create dummy ClientBios.fd file to pass the first build. In post build, the real image will be generated
-  #
-  if [ ! -d $BUILD_DIR/FV ]; then
-    mkdir -p $BUILD_DIR/FV
-  fi
-  echo 2> $BUILD_DIR/FV/CLIENTBIOS.fd
+echo
+echo "Prebuild:  Create BiosId"
+echo
+if [ ! -d $BUILD_X64 ]; then
+  mkdir -p $BUILD_X64
 fi
+#
+# @todo: Code Coverage not supported at this time
+#
+
+
+#
+# Create BiosId.env based on the build type
+#
+BIOSID_FILENAME=BiosId
+
+cp -f $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/$BIOSID_FILENAME.env $BIOS_ID_FILE
+
+BOARD_ID_STRING="BOARD_ID      = ${TARGET_PLATFORM_SHORT}$PCH_TYPE"
+BOARD_ID_STRING+="FW$BUILD"
+echo "$BOARD_ID_STRING" >> $BIOS_ID_FILE
+
+BOARD_EXT_STRING="BOARD_EXT    = $TARGET_SHORT"
+BOARD_EXT_STRING+="00"
+echo "$BOARD_EXT_STRING" >> $BIOS_ID_FILE
+BIOS_ID_OUTPUT_DIR=$BUILD_IA32
+if [ ! -d $BIOS_ID_OUTPUT_DIR ]; then
+  mkdir -p $BIOS_ID_OUTPUT_DIR
+fi
+if [ "$NOTIMESTAMP" = "1" ];then
+  export NoTime=-nt
+else
+  export NoTime=
+fi
+python3 $WORKSPACE_CORE_PLATFORM/Tools/GenBiosId/GenBiosId.py -i $BIOS_ID_FILE -o $BIOS_ID_OUTPUT_DIR/BiosId.bin $NoTime
+ret=$?
+if [ $ret -ne 0 ]; then
+  EndPreBuild
+  exit $ret
+fi
+
+#
+# Create dummy ClientBios.fd file to pass the first build. In post build, the real image will be generated
+#
+if [ ! -d $BUILD_DIR/FV ]; then
+  mkdir -p $BUILD_DIR/FV
+fi
+echo 2> $BUILD_DIR/FV/CLIENTBIOS.fd
+
 echo
 echo "Prebuild is complete."
 echo "  ACTIVE_PLATFORM      = $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardPkg.dsc"

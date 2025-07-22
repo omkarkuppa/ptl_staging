@@ -49,15 +49,6 @@ set WORKSPACE=%CD%
   goto :EndPreBuild
 )
 
-@set CAPSULE_BUILD=0
-
-@if /I "%2" == "TRUE" (
-  @set CAPSULE_BUILD=1
-  goto StartCapsulePrep
-)
-
-:StartCapsulePrep
-
 set WORKSPACE=%CD%
 @REM
 @REM In order to avoid dual backslash marks, remove the ending backslash mark for file path concatenation.
@@ -200,9 +191,6 @@ cl
 
 @echo Current Directory = %CD%
 @echo WORKSPACE_FSP_BIN = %WORKSPACE_FSP_BIN%
-@if %CAPSULE_BUILD% == 1 (
-  goto EndCapsulePrep
-)
 
 @REM
 @echo Skip BIOS_SIZE_OPTION if it is predefined
@@ -217,7 +205,6 @@ cl
 :BiosSizeDone
 @echo BIOS_SIZE_OPTION=%BIOS_SIZE_OPTION%
 
-:EndCapsulePrep
 @echo.
 @echo  Call this script to pad each Microcode patch under PantherLakeBinPkg\Binaries\Microcode\
 @echo  And also create MicrocodeVersion.data

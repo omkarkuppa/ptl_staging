@@ -49,7 +49,6 @@ export PTL_BUILD=TRUE
 export PrepRelease=DEBUG
 export FSPM_COMPRESSED=TRUE
 export SILENT_MODE=FALSE
-CapsuleBuild=FALSE
 export COMPILER=GCC
 export TARGET_PLATFORM=PantherLake
 export FspTargetOption=PantherLake
@@ -92,14 +91,12 @@ export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.P
 function PrintUsage {
   echo "Client BIOS build script"
   echo
-  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [c] [rc] [gcc] [clang] [xcode] [fsp64] [cln]"
+  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fsp64] [cln]"
   echo
   echo "  Default build flags: build in Debug Mode; 32-bit PEI for FSP; FSP Dispatch Mode"
   echo
   echo "  r        Build in Release mode."
   echo "  s        Build in Silent mode."
-  echo "  c        Build with CapsuleBuild=TRUE (Debug build). See note 1"
-  echo "  rc       Build with CapsuleBuild=TRUE (Release build). See note 1"
   echo "  gcc      Build whole source with GCC. See note 1"
   echo "  clang    Build whole source with CLANG. See note 1"
   echo "  xcode    Build whole source with XCODE. See note 1"
@@ -213,11 +210,6 @@ for ((i=1 ; i <= numargs ; i++)); do
     PrepRelease=RELEASE
   elif [ "$1" = "s" ]; then
     export SILENT_MODE=TRUE
-  elif [ "$1" = "c" ]; then
-    CapsuleBuild=TRUE
-  elif [ "$1" = "rc" ]; then
-    PrepRelease=RELEASE
-    CapsuleBuild=TRUE
   elif [ "$1" = "gcc" ]; then
     export COMPILER=GCC
   elif [ "$1" = "clang" ]; then
@@ -458,28 +450,25 @@ export BIOS_ID_FILE=$BUILD_DIR/BiosId.env
 
 export PPL_SETUP_FV_LIST=$BUILD_DIR/FV/FVSETUPDATA.Fv
 
-if [ "$CapsuleBuild" = "FALSE" ]; then
-  export INTERNAL_BUILD=0
+export INTERNAL_BUILD=0
 
-  #
-  # Determine BIOS Build Type
-  #
-  # R - RVP/Restricted, N - Non-Restricted, I - Internal, P - Performance, S - SV, E - SLE
-  #
+#
+# Determine BIOS Build Type
+#
+# R - RVP/Restricted, N - Non-Restricted, I - Internal, P - Performance, S - SV, E - SLE
+#
 
-  export BUILD=X
-  echo $EXT_BUILD_FLAGS | grep "PERFORMANCE_ENABLE=TRUE"
-  if [ $? -eq 0 ]; then
-    export BUILD=P
-  fi
-
-  export EXT_BUILD_FLAGS="$EXT_BUILD_FLAGS $BIOS_SIZE_OPTION"
-  echo
-  echo "printing the build type ([U]nified, [N]on-Restricted, [I]nternal, [P]erformance, [S]V, SL[E])"
-  echo "Build type ($BUILD)"
-  echo
-
+export BUILD=X
+echo $EXT_BUILD_FLAGS | grep "PERFORMANCE_ENABLE=TRUE"
+if [ $? -eq 0 ]; then
+  export BUILD=P
 fi
+
+export EXT_BUILD_FLAGS="$EXT_BUILD_FLAGS $BIOS_SIZE_OPTION"
+echo
+echo "printing the build type ([U]nified, [N]on-Restricted, [I]nternal, [P]erformance, [S]V, SL[E])"
+echo "Build type ($BUILD)"
+echo
 
 cd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE
 
@@ -487,9 +476,9 @@ if [ "$SILENT_MODE" = "TRUE" ]; then
   echo "************************************************************************" > Prep.log
   echo "***********           PreBuild.sh is launched here          ***********" >> Prep.log
   echo "************************************************************************" >> Prep.log
-  . PreBuild.sh $PrepRelease $CapsuleBuild >> Prep.log 2>&1
+  . PreBuild.sh $PrepRelease >> Prep.log 2>&1
 else
-  . PreBuild.sh $PrepRelease $CapsuleBuild
+  . PreBuild.sh $PrepRelease
 fi
 
 if [ $? -ne 0 ]; then

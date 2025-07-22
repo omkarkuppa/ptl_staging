@@ -58,7 +58,6 @@ cd ..\..\
 @echo ********************************************************************
 
 @set SILENT_MODE=FALSE
-@set CapsuleBuild=FALSE
 @set CATALOG_RELEASE=FALSE
 @REM CATALOG_DEBUG_PRINT_LEVEL value can be changed to override PcdFixedDebugPrintErrorLevel during catalog build.
 @set CATALOG_DEBUG_PRINT_LEVEL=0x80000000
@@ -142,12 +141,6 @@ cd ..\..\
   set FSP_PDB_RELEASE=TRUE
 ) else if /i "s" == "%1" (
   set SILENT_MODE=TRUE
-) else if /i "c" == "%1" (
-  set CapsuleBuild=TRUE
-) else if /i "rc" == "%1" (
-  echo "rc"
-  set PrepRELEASE=RELEASE
-  set CapsuleBuild=TRUE
 ) else if /i "clang" == "%1" (
   echo "clang"
   set TOOL_CHAIN_TAG=CLANGPDB
@@ -349,7 +342,6 @@ set EXT_BUILD_FLAGS=%EXT_BUILD_FLAGS% -D FSP_ARCH=%FSP_ARCH% -D FSP64_BUILD=%FSP
 @echo PrepRELEASE         =  %PrepRELEASE%
 @echo FSP_PDB_RELEASE     =  %FSP_PDB_RELEASE%
 @echo SILENT_MODE         =  %SILENT_MODE%
-@echo CapsuleBuild        =  %CapsuleBuild%
 @echo CATALOG_RELEASE     =  %CATALOG_RELEASE%
 @echo Current Directory   =  %CD%
 @echo WORKSPACE           =  %WORKSPACE%
@@ -365,13 +357,11 @@ goto SkipHelp
 cd %TIP_DIR%
 @echo Preparation for BIOS build.
 @echo.
-@echo prep [ptlp][non_upl][r][rp][s][c][rc][clang][fsp32][fsp64][tr][perf][catalog][notimestamp][whp][help]
+@echo prep [ptlp][non_upl][r][rp][s][clang][fsp32][fsp64][tr][perf][catalog][notimestamp][whp][help]
 @echo.
 @echo   r         To do release build. Default is debug build. See note 1
 @echo   rp        To do release build with Symbols - For source level debugging. See note 1
 @echo   s         To build in silent mode. See note 1
-@echo   c         To build with CapsuleBuild=TRUE (Debug build). See note 1
-@echo   rc        To build with CapsuleBuild=TRUE (Release build). See note 1
 @echo   clang     To build using CLANGPDB tool chain.
 @echo   fsp32     To build using 32-bit PEI for FSP.
 @echo   fsp64     To build using 64-bit PEI for FSP.
@@ -425,18 +415,17 @@ cd %TIP_DIR%
 @echo WORKSPACE_SILICON   =  %WORKSPACE_SILICON%
 @echo WORKSPACE_BINARIES  =  %WORKSPACE_BINARIES%
 @echo PrepRelease         =  %PrepRelease%
-@echo CapsuleBuild        =  %CapsuleBuild%
 @echo UplBuild            =  %UNIVERSAL_PAYLOAD%
 
 @if %IBBSIGN% EQU TRUE goto BldIbbSign
 @if %SILENT_MODE% EQU TRUE goto BldSilent
 
-call prebuild.bat %PrepRelease% %CapsuleBuild%
+call prebuild.bat %PrepRelease%
 goto PrePrepDone
 
 :BldSilent
 cd %TIP_DIR%
-call prebuild.bat %PrepRelease% %CapsuleBuild% 1>>%WORKSPACE%\Prep.log 2>&1
+call prebuild.bat %PrepRelease% 1>>%WORKSPACE%\Prep.log 2>&1
 
 :PrePrepDone
 @If %SCRIPT_ERROR% EQU 1 goto PrepFail

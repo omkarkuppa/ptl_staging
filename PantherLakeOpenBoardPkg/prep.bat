@@ -51,7 +51,6 @@ cd ..\..\
 @echo ********************************************************************
 
 @set SILENT_MODE=FALSE
-@set CapsuleBuild=FALSE
 @set PrepRELEASE=DEBUG
 
 @set EXT_CONFIG_CLEAR=
@@ -124,16 +123,15 @@ cd %TIP_DIR%
 @echo WORKSPACE_PLATFORM  =  %WORKSPACE_PLATFORM%
 @echo WORKSPACE_SILICON   =  %WORKSPACE_SILICON%
 @echo PrepRelease         =  %PrepRelease%
-@echo CapsuleBuild        =  %CapsuleBuild%
 
 @if %SILENT_MODE% EQU TRUE goto BldSilent
 
-call prebuild.bat %PrepRelease% %CapsuleBuild%
+call prebuild.bat %PrepRelease%
 goto PrePrepDone
 
 :BldSilent
 cd %TIP_DIR%
-call prebuild.bat %PrepRelease% %CapsuleBuild% 1>>%WORKSPACE%\Prep.log 2>&1
+call prebuild.bat %PrepRelease% 1>>%WORKSPACE%\Prep.log 2>&1
 
 :PrePrepDone
 @If %SCRIPT_ERROR% EQU 1 goto PrepFail

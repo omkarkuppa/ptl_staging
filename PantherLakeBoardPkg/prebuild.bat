@@ -51,16 +51,6 @@ set WORKSPACE=%CD%
   goto :EndPreBuild
 )
 
-@echo Set build capsule flag with default being OFF
-@set CAPSULE_BUILD=0
-
-@if /I "%2" == "TRUE" (
-  @set CAPSULE_BUILD=1
-  goto StartCapsulePrep
-)
-
-:StartCapsulePrep
-
 set WORKSPACE=%CD%
 @REM
 @REM In order to avoid dual backslash marks, remove the ending backslash mark for file path concatenation.
@@ -389,10 +379,6 @@ echo BOARD_EXT     = %TARGET_SHORT%00>> %BIOS_ID_FILE%
 )
 
 
-@if %CAPSULE_BUILD% == 1 (
-  goto EndCapsulePrep
-)
-
 @REM
 @echo Skip BIOS_SIZE_OPTION if it is predefined
 @REM
@@ -406,7 +392,6 @@ echo BOARD_EXT     = %TARGET_SHORT%00>> %BIOS_ID_FILE%
 :BiosSizeDone
 @echo BIOS_SIZE_OPTION=%BIOS_SIZE_OPTION%
 
-:EndCapsulePrep
 @echo.
 @echo   Prebuild is complete.
 @echo   Current Directory    = %CD%
@@ -432,4 +417,3 @@ cd %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%
 @echo BUILD_X64           = %BUILD_X64%
 @echo PERFORMANCE_BUILD   = %PERFORMANCE_BUILD%
 @echo BUILD_OPTION_PCD    = %BUILD_OPTION_PCD%
-
