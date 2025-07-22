@@ -71,6 +71,7 @@ export IBBSIGN=FALSE
 export ROM_FILENAME_SPECIAL_BUILD_TYPE=
 export PERFORMANCE_BUILD=FALSE
 export RPMC_BUILD=FALSE
+export SPECIAL_POOL_BUILD=FALSE
 
 #
 # If MAX_CONCURRENT_THREADS environment variable is uninitialized
@@ -114,6 +115,7 @@ function PrintUsage {
   echo "  cln      Build clean."
   echo "  notimestamp To eliminate the effect of timestamp."
   echo "  ibbsign To Re-Sign the BIOS Binaries"
+  echo "  specialpool To enable gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable"
   echo "  chksize threshold To enable FV_SPARE_SPACE_THRESHOLD check."
   echo "           BaseTools will check every FV with the threshold."
   echo "           Build tool will report error message to say there is no enough spare space if check fail."
@@ -317,7 +319,14 @@ for ((i=1 ; i <= numargs ; i++)); do
 --pcd gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable=TRUE"
     export FSP_BUILD_OPTION_PCD="${FSP_BUILD_OPTION_PCD} \
 --pcd gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable=TRUE"
-  elif [ -n "$1" ]; then # !!! Additional arguments must be added above this line, otherwise it breaks the parsing logic
+  elif [[ "$1" == "specialpool" ]]; then
+    export SPECIAL_POOL_BUILD=TRUE
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE="_SpecialPool"
+    export SI_BUILD_OPTION_PCD="${SI_BUILD_OPTION_PCD} \
+--pcd gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable=TRUE"
+    export FSP_BUILD_OPTION_PCD="${FSP_BUILD_OPTION_PCD} \
+--pcd gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable=TRUE"
+  elif [ -n "$1" ]; then  # !!! Additional arguments must be added above this line, otherwise it breaks the parsing logic
     echo "Invalid input argument: $1"
     echo
     PrintUsage

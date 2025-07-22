@@ -119,9 +119,18 @@ if [ "$SILENT_MODE" = "TRUE" ]; then
 else
   if [ "$UNIVERSAL_PAYLOAD" = "TRUE" ]; then
     export PPL_SETUP_FV_LIST="$PPL_SETUP_FV_LIST $BUILD_DIR/FV/FVPPLBDSUNCOMPACT.Fv"
+
+    # Set DXE NX MEMORY PROTECTION POLICY
+    if [[ "$SPECIAL_POOL_BUILD" == "TRUE" ]]; then
+      export PCD_DXE_NX_MEMORY_PROTECTION_POLICY=0x7BD4
+    else
+      export PCD_DXE_NX_MEMORY_PROTECTION_POLICY=0x0
+    fi
+
     python3 $WORKSPACE_CORE/UefiPayloadPkg/UniversalPayloadBuild.py \
-    -t $TOOL_CHAIN_TAG -b $PrepRelease \
+    -t $TOOL_CHAIN_TAG \
     -s $UPL_SPEC_REVISION \
+    -b $PrepRelease \
     -D UNIVERSAL_PAYLOAD=TRUE \
     -D DISABLE_RESET_SYSTEM=TRUE \
     -D NETWORK_DRIVER_ENABLE=TRUE \
@@ -146,7 +155,10 @@ else
     -p gUefiCpuPkgTokenSpaceGuid.PcdCpuApLoopMode=0x2 \
     -p gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport=TRUE \
     -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE \
-    -p gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=$(date +'%Y')
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod=0x01 \
+    -p gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=$(date +'%Y') \
+    -p gUefiCpuPkgTokenSpaceGuid.PcdCpuInitIpiDelayInMicroSeconds=100 \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy=$PCD_DXE_NX_MEMORY_PROTECTION_POLICY
     ret=$?
     if [ $ret -ne 0 ]; then
       BuildFail $ret
