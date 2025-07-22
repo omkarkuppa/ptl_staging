@@ -75,6 +75,7 @@ export RPMC_BUILD=FALSE
 export SPECIAL_POOL_BUILD=FALSE
 export FSPV_BUILD=FALSE
 export EXTENDEDREGION_BUILD=FALSE
+export ATOM_BUILD=FALSE
 
 #
 # If MAX_CONCURRENT_THREADS environment variable is uninitialized
