@@ -736,6 +736,42 @@ DefinitionBlock (
     }
   }
 
+If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03)) {
+    Scope (\_SB.PC00.XHCI.RHUB.HS03) {
+      If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 3), LEqual (SXP2, 3))) { // This entry will expose only when Root Port Number is 3
+          Device (CIR) {
+            Method (_ADR) {
+              If (LEqual (SXP1, 3)) {
+                Return (Add (SXP1, SXI1)) // Address = Port + Interface
+              } Else {
+                Return (Add (SXP2, SXI2)) // Address = Port + Interface
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS04)) {
+    Scope (\_SB.PC00.XHCI.RHUB.HS04) {
+      If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 4), LEqual (SXP2, 4))) { // This entry will expose only when Root Port Number is 4
+          Device (CIR) {
+            Method (_ADR) {
+              If (LEqual (SXP1, 4)) {
+                Return (Add (SXP1, SXI1)) // Address = Port + Interface
+              } Else {
+                Return (Add (SXP2, SXI2)) // Address = Port + Interface
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS05)) {
     Scope (\_SB.PC00.XHCI.RHUB.HS05) {
       If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
