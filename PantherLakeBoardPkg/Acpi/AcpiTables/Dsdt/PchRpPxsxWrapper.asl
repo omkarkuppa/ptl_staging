@@ -129,6 +129,60 @@ Scope (\_SB.PC00.RP05.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
+//
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  If (LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0))))
+  {
+    Method (_DSM, 4, Serialized)
+    {
+      //
+      // DLRM support
+      //
+      If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
+      {
+        If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
+        {
+          Switch (ToInteger (Arg2))            // Switch to Function Index.
+          {
+            //
+            // Function 0, Query of supported functions.
+            //
+            Case (0)
+            {
+              Return (Buffer () {0x03})
+            }
+
+            //
+            // Function 1, DLRM Support for Storage to reduce active power usage in D3.
+            //
+            Case (1)
+            {
+              // Only return support if platform enabled DLRM via setup.
+              If (LAnd (PNVM (), LAnd (LNotEqual (\DLRM, 0), LEqual (S1G4, 1)))) {
+                ADBG ("Enable DLRM for Storage")
+                Return (1)
+              } Else {
+                ADBG ("Disable DLRM for Storage")
+                Return (0)
+              }
+            }
+          }
+        } Else {
+          ADBG ("DLRM Revision 0: No function supported")
+        }
+        Return (Buffer() {0x00})
+      }
+
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
+  }
+
 }
 
 Scope (\_SB.PC00.RP06.PXSX)
@@ -150,5 +204,60 @@ Scope (\_SB.PC00.RP09.PXSX)
 #if FixedPcdGetBool (PcdCnvAcpiTables) == 1
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
+
+  //
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  //
+  If (LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0))))
+  {
+    Method (_DSM, 4, Serialized)
+    {
+      //
+      // DLRM support
+      //
+      If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
+      {
+        If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
+        {
+          Switch (ToInteger (Arg2))            // Switch to Function Index.
+          {
+            //
+            // Function 0, Query of supported functions.
+            //
+            Case (0)
+            {
+              Return (Buffer () {0x03})
+            }
+
+            //
+            // Function 1, DLRM Support for Storage to reduce active power usage in D3.
+            //
+            Case (1)
+            {
+              // Only return support if platform enabled DLRM via setup.
+              If (LAnd (PNVM (), LAnd (LNotEqual (\DLRM, 0), LEqual (S2G4, 1)))) {
+                ADBG ("Enable DLRM for Storage")
+                Return (1)
+              } Else {
+                ADBG ("Disable DLRM for Storage")
+                Return (0)
+              }
+            }
+          }
+        } Else {
+          ADBG ("DLRM Revision 0: No function supported")
+        }
+        Return (Buffer () {0x00})
+      }
+
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
+  }
 
 }
