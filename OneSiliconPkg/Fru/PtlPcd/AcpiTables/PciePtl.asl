@@ -331,7 +331,6 @@ Scope (\_SB.PC00) {
     Include ("PcieCommon.asl")
     #undef PCIE_HP_EN
   }                                                // end "PCIE Root Port#06"
-
   //
   // PCIE Root Port #07
   //
