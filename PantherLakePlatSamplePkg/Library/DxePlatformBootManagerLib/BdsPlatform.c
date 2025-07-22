@@ -3283,7 +3283,6 @@ PlatformBootManagerBeforeConsole (
 
   IsIgd  = FALSE;
   switch (mSaSetup.PrimaryDisplay) {
-
     case DISPLAY_AUTO:
       //
       // Add PCIe to ConOut if it exists

@@ -147,6 +147,7 @@
   gPlatformModuleTokenSpaceGuid.PcdTerminalOverDebugEnable          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalBase                 ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvOptionalSize                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdWclSupport                                ## CONSUMES
 
 [Sources]
   AmtSupport.c
