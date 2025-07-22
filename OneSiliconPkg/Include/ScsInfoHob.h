@@ -28,7 +28,8 @@ extern EFI_GUID  gScsInfoHobGuid;
 
 typedef struct {
   UINT32  Supported :  1;  ///< TRUE if UFS is supported by current hardware configuration
-  UINT32  Reserved  : 31;
+  UINT32  IsFuseDisabled : 1;   ///< TRUE if UFS is fuse disabled
+  UINT32  Reserved  : 30;
 } SCS_UFS_INFO;
 
 typedef struct {

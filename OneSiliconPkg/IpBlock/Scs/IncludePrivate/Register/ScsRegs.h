@@ -61,4 +61,7 @@
 #define B_SCS_CFG_PG_CONFIG_SE            BIT3                          ///< Sleep Enable
 #define B_SCS_CFG_PG_CONFIG_PGE           BIT2                          ///< PG Enable
 #define B_SCS_CFG_PG_CONFIG_I3E           BIT1                          ///< I3 Enable
+
+#define R_SCS_UFS_PGA_FUSE_BIOS_DISABLE   0x3500
+#define B_SCS_UFS_BIOS_DISABLE            BIT8
 #endif

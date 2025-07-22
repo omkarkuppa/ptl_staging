@@ -62,6 +62,8 @@ typedef struct {
 
 typedef struct {
   BOOLEAN  IsBootMedium;
+  BOOLEAN  IsFuseDisabled;
+  BOOLEAN  IsMPhyUlpUpdateRequired;
   UINT8    NumOfLanes;
   UINT8    IntPin;
   UINT8    Irq;

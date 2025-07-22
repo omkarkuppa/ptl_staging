@@ -29,6 +29,20 @@
 #include <PcdSbPortIds.h>
 #include <Library/PmcPrivateLib.h>
 #include <Library/SiScheduleResetLib.h>
+#include <Library/PcdInfoLib.h>
+
+/**
+  This function checks if SCS UFS device is Fuse disabled or not.
+
+  @retval SCS device fuse disable state
+**/
+BOOLEAN
+IsScsUfsFuseDisabled (
+  VOID
+  )
+{
+  return FALSE;
+}
 
 /**
   Schedules Global Reset required to change UFS static power gating state.
@@ -82,7 +96,6 @@ PtlPcdScsUfsDisable (
   )
 {
   UINTN                PchPwrmBase;
-
   PchPwrmBase = PmcGetPwrmBase ();
   //
   // NOTE: IOSF2OCP controller index just happens to match the PSF and PMC controller index. In general they do not
@@ -148,6 +161,8 @@ PtlPcdScsInitUfsHandle (
   ScsUfsHandle->Controller.MmioBase = PcdGet32 (PcdSiliconInitTempMemBaseAddr);
 
   ScsUfsHandle->SocConfig.IsBootMedium = FALSE;
+  ScsUfsHandle->SocConfig.IsFuseDisabled = IsScsUfsFuseDisabled ();
+  ScsUfsHandle->SocConfig.IsMPhyUlpUpdateRequired = FALSE;
   ScsUfsHandle->SocConfig.NumOfLanes = 2;
   ItssGetDevIntConfig (
     SiPolicyPpi,

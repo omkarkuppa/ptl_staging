@@ -51,3 +51,4 @@ PeiDxeSmmPmcSocLib.c
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdWclSupport

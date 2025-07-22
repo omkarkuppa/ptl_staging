@@ -50,6 +50,9 @@
 
 #ifndef _SCS_UFS_REGS_H_
 #define _SCS_UFS_REGS_H_
+
+#define UFS_UIC_ARG_MIB_SEL(x,y)   ((((x) & 0xFFFF) << 16) | ((y) & 0xFFFF))
+
 //
 // UFS Mmio Registers
 //
@@ -70,5 +73,62 @@
 #define B_SCS_PCR_MMPUFS_DLANEX_IMP22_CNFGUPD            (BIT26 | BIT25 | BIT24)
 #define N_SCS_PCR_MMPUFS_DLANEX_IMP22_CNFGUPD            24
 #define V_SCS_PCR_MMPUFS_DLANEX_IMP22_CNFGUPD            0x7
+
+typedef struct {
+  UINT32    UicOpcode;
+  UINT32    Arg1;
+  UINT32    Arg2;
+  UINT32    Arg3;
+} EDKII_UIC_COMMAND;
+
+//
+// UIC command opcodes
+//
+typedef enum {
+  UfsUicDmeGet            = 0x01,
+  UfsUicDmeSet            = 0x02,
+  UfsUicDmePeerGet        = 0x03,
+  UfsUicDmePeerSet        = 0x04,
+  UfsUicDmePwrOn          = 0x10,
+  UfsUicDmePwrOff         = 0x11,
+  UfsUicDmeEnable         = 0x12,
+  UfsUicDmeReset          = 0x14,
+  UfsUicDmeEndpointReset  = 0x15,
+  UfsUicDmeLinkStartup    = 0x16,
+  UfsUicDmeHibernateEnter = 0x17,
+  UfsUicDmeHibernateExit  = 0x18,
+  UfsUicDmeTestMode       = 0x1A
+} UFS_UIC_OPCODE;
+
+typedef enum {
+  ULP_REG                = 0x8130,
+  SRAM_CFG_8116          = 0x8116,
+  SRAM_CFG_8117          = 0x8117,
+  SRAM_CFG_8118          = 0x8118,
+  SRAM_CFG_8119          = 0x8119,
+  SRAM_CFG_811C          = 0x811C,
+  VS_MPHYCFG_UPDT        = 0xD085,
+  MPHY_DISABLE           = 0xD0C1,
+} ULP_ATTRIBUTES;
+
+//
+// UFS Mmio Registers
+//
+#define R_SCS_MEM_UFS_EN                                             0x34
+#define B_SCS_MEM_UFS_EN                                             BIT0
+#define R_SCS_MEM_UFS_UIC_CMD                                        0x90
+#define V_SCS_MEM_UFS_UIC_CMD_DME_SET                                0x2
+#define R_SCS_MEM_UFS_UCMD_ARG1                                      0x94
+#define R_SCS_MEM_UFS_UCMD_ARG2                                      0x98
+#define R_SCS_MEM_UFS_UCMD_ARG3                                      0x9C
+#define R_SCS_MEM_UFS_IS                                             0x20
+#define B_SCS_MEM_UFS_IS_UCCS                                        BIT10
+#define R_SCS_MEM_UFS_HC_STATUS                                      0x30
+#define B_SCS_MEM_UFS_HCS_UCRDY                                      BIT3
+#define UIC_CMD_TIMEOUT                                              500                ///< UIC Command Timeout in us
+#define R_UFS_MEM_REF_CLK                                            0x85C              ///< Ref Clock Register
+#define V_UFS_MEM_REF_CLK                                            0x3
+#define UFS_HC_AHIT_OFFSET                                           0x18               ///< Auto-Hibernate Idle Timer
+#define V_UFS_MEM_AHIT_VALUE                                         0x100              ///< Auto-Hibernate Idle Timer Value
 
 #endif

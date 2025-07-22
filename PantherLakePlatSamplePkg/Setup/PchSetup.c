@@ -48,6 +48,8 @@
 #include <Library/PmcLib.h>
 #include <Library/PcdInfoLib.h>
 #include <Register/PmcRegs.h>
+#include <ScsInfoHob.h>
+
 //
 // Print primitives
 //
@@ -478,10 +480,20 @@ PchSetupScs (
   OUT SETUP_VOLATILE_DATA*  SetupVolatileData
   )
 {
-  UINT8  UfsIndex;
+  UINT8                UfsIndex;
+  BOOLEAN              IsScsUfsFuseDisabled = 0;
+  EFI_PEI_HOB_POINTERS HobPtr;
+  SCS_INFO_HOB         *ScsInfoHob;
 
+  // Get SCS Info HOB.
+  HobPtr.Guid = GetFirstGuidHob (&gScsInfoHobGuid);
+  if (HobPtr.Guid != NULL) {
+    ScsInfoHob = (SCS_INFO_HOB*) GET_GUID_HOB_DATA (HobPtr.Guid);
+    IsScsUfsFuseDisabled = (BOOLEAN)ScsInfoHob->UfsInfo->IsFuseDisabled;
+  }
   for (UfsIndex = 0; UfsIndex < PchGetMaxUfsNum (); UfsIndex++) {
-    SetupVolatileData->UfsSupported[UfsIndex] = PmcIsScsUfsSupported (UfsIndex);
+    SetupVolatileData->UfsSupported[UfsIndex] = PmcIsScsUfsSupported (UfsIndex) && !(IsScsUfsFuseDisabled);
+    DEBUG ((DEBUG_INFO, "VolatileData.UfsSupported[%d] = %d\n", UfsIndex, SetupVolatileData->UfsSupported[UfsIndex]));
   }
 }
 

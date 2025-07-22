@@ -313,6 +313,7 @@
   gTpmErrorHobGuid                              ## CONSUMES
   gVtioSetupGuid                                ## CONSUMES
   gRmtVariableGuid                              ## CONSUMES
+  gScsInfoHobGuid                               ## CONSUMES
 
 [Protocols]
   gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
