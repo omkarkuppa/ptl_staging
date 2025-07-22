@@ -210,8 +210,65 @@ rem ---------------------------------------------------------------------------
   goto END
 
 :PREBUILD
-  if /I "%CLEAN_BUILD%" == "TRUE" goto END
-  call %WORKSPACE_CORE%\edksetup.bat Rebuild VS2019
+if /I "%CLEAN_BUILD%" == "TRUE" goto END
+
+rem
+rem Determine which version of Visual Studio is installed and configure
+rem TOOL_CHAIN_TAG appropriately.
+rem Order of precedence is 2019, and then 2017.
+rem
+if not defined TOOL_CHAIN_TAG (
+  if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" (
+    set "VS_WHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+    goto VsCheck
+  ) else if exist "%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe" (
+    set "VS_WHERE=%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe"
+    goto VsCheck
+  ) else (
+    goto VsCheckDone
+  )
+) else (
+  goto VsCheckDone
+)
+:VSCheck
+for /f "usebackq tokens=1* delims=: " %%i in (`"%VS_WHERE%" -version [16.0^,17.0^) -products * -requires Microsoft.Component.MSBuild`) do (
+  if /i "%%i"=="installationPath" set VS_INSTALL_PATH=%%j
+)
+if defined VS_INSTALL_PATH (
+  set TOOL_CHAIN_TAG=VS2019
+  goto VsCheckDone
+)
+for /f "usebackq tokens=1* delims=: " %%i in (`"%VS_WHERE%" -version [15.0^,16.0^) -products * -requires Microsoft.Component.MSBuild`) do (
+  @if /i "%%i"=="installationPath" set VS_INSTALL_PATH=%%j
+)
+if defined VS_INSTALL_PATH (
+  set TOOL_CHAIN_TAG=VS2017
+  goto VsCheckDone
+)
+:VsCheckDone
+set VS_INSTALL_PATH=
+set USE_VS_COMPILER=0
+set USE_MINGW=0
+if /I "%TOOL_CHAIN_TAG%"=="VS2019" (
+  set USE_VS_COMPILER=1
+)
+if /I "%TOOL_CHAIN_TAG%"=="VS2017" (
+  set USE_VS_COMPILER=1
+)
+if /I "%TOOL_CHAIN_TAG%"=="CLANGPDB" (
+  if defined BASETOOLS_MINGW_PATH (
+    set USE_MINGW=1
+  )
+)
+if %USE_VS_COMPILER% NEQ 0 (
+  call %WORKSPACE_CORE%\edksetup.bat Rebuild %TOOL_CHAIN_TAG%
+) else (
+  if %USE_MINGW% NEQ 0 (
+    call %WORKSPACE_CORE%\edksetup.bat Rebuild Mingw-w64
+  )
+)
+set USE_VS_COMPILER=
+set USE_MINGW=
 
 @REM
 @REM Check for Python support

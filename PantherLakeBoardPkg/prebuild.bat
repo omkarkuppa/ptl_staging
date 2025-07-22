@@ -55,7 +55,7 @@ set WORKSPACE=%CD%
 @REM
 @REM In order to avoid dual backslash marks, remove the ending backslash mark for file path concatenation.
 @REM
-if %WORKSPACE:~-1%==\ (
+@if %WORKSPACE:~-1%==\ (
   set WORKSPACE_ROOT=%WORKSPACE:~0,-1%
 ) else (
   set WORKSPACE_ROOT=%WORKSPACE%
@@ -69,7 +69,6 @@ if %WORKSPACE:~-1%==\ (
 @set WORKSPACE_SILICON=%WORKSPACE_ROOT%\Intel
 @set WORKSPACE_FSP_BIN=%WORKSPACE%\Intel
 @set WORKSPACE_BINARIES=%WORKSPACE%\Binaries
-@set EDK_TOOLS_BIN=%WORKSPACE_CORE%\BaseTools\Bin\Win32
 @set EDK_TOOLS_PATH=%WORKSPACE_CORE%\BaseTools
 @set WORKSPACE_CONF=%WORKSPACE_ROOT%\Conf
 @set WORKSPACE_ROM=%WORKSPACE_ROOT%\RomImages
@@ -97,8 +96,6 @@ if %WORKSPACE:~-1%==\ (
 @echo %WORKSPACE_PLATFORM%
 @echo %WORKSPACE_SILICON%
 @echo %WORKSPACE_BINARIES%
-@echo %PACKAGES_PATH%
-@echo %EDK_TOOLS_BIN%
 @echo %EDK_TOOLS_PATH%
 @echo %WORKSPACE_CONF%
 @echo %WORKSPACE_ROM%
@@ -130,10 +127,73 @@ if %WORKSPACE:~-1%==\ (
 @echo Prebuild:  Run edksetup.bat batch file.
 @echo.
 
-echo %CD%
-cd %WORKSPACE_CORE%
-echo %CD%
-@call edksetup.bat Rebuild VS2019
+@echo %CD%
+@cd %WORKSPACE_CORE%
+@echo %CD%
+
+@REM
+@REM Determine which version of Visual Studio is installed and configure
+@REM TOOL_CHAIN_TAG appropriately.
+@REM Order of precedence is 2019, and then 2017.
+@REM
+@if not defined TOOL_CHAIN_TAG (
+  if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" (
+    set "VS_WHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+    goto VsCheck
+  ) else if exist "%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe" (
+    set "VS_WHERE=%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe"
+    goto VsCheck
+  ) else (
+    goto VsCheckDone
+  )
+) else (
+  goto VsCheckDone
+)
+:VSCheck
+@echo off
+for /f "usebackq tokens=1* delims=: " %%i in (`"%VS_WHERE%" -version [16.0^,17.0^) -products * -requires Microsoft.Component.MSBuild`) do (
+  if /i "%%i"=="installationPath" set VS_INSTALL_PATH=%%j
+)
+if defined VS_INSTALL_PATH (
+  set TOOL_CHAIN_TAG=VS2019
+  goto VsCheckDone
+)
+for /f "usebackq tokens=1* delims=: " %%i in (`"%VS_WHERE%" -version [15.0^,16.0^) -products * -requires Microsoft.Component.MSBuild`) do (
+  @if /i "%%i"=="installationPath" set VS_INSTALL_PATH=%%j
+)
+if defined VS_INSTALL_PATH (
+  set TOOL_CHAIN_TAG=VS2017
+  goto VsCheckDone
+)
+:VsCheckDone
+@echo on
+@set VS_INSTALL_PATH=
+@set USE_VS_COMPILER=0
+@set USE_MINGW=0
+@if /I "%TOOL_CHAIN_TAG%"=="VS2019" (
+  set USE_VS_COMPILER=1
+)
+@if /I "%TOOL_CHAIN_TAG%"=="VS2017" (
+  set USE_VS_COMPILER=1
+)
+@if /I "%TOOL_CHAIN_TAG%"=="CLANGPDB" (
+  if defined BASETOOLS_MINGW_PATH (
+    set USE_MINGW=1
+    set CLANG_HOST_BIN=
+    set CLANG_BIN=
+  )
+)
+@if %USE_VS_COMPILER% NEQ 0 (
+  echo call edksetup.bat Rebuild %TOOL_CHAIN_TAG%
+  call edksetup.bat Rebuild %TOOL_CHAIN_TAG%
+) else (
+  if %USE_MINGW% NEQ 0 (
+    echo call edksetup.bat Rebuild Mingw-w64
+    call edksetup.bat Rebuild Mingw-w64
+  )
+)
+@set USE_VS_COMPILER=
+@set USE_MINGW=
 @if %ERRORLEVEL% NEQ 0 (
   @echo !!! ERROR !!! Failed to run edksetup.bat Rebuild. !!!
   set SCRIPT_ERROR=1
@@ -193,8 +253,6 @@ echo %CD%
   goto :EndPreBuild
 )
 
-
-
 @set TARGET_PLATFORM=PantherLake
 @set TARGET_PLATFORM_SHORT=PTL
 
@@ -202,7 +260,11 @@ echo %CD%
 @echo Build tools in Edk2Platforms
 @echo.
 cd %WORKSPACE_CORE_SILICON%\Tools
-nmake
+if defined BASETOOLS_MINGW_BUILD (
+  mingw32-make
+) else (
+  nmake
+)
 @if %ERRORLEVEL% NEQ 0 (
   @echo !!! ERROR !!! Failed to build tools in Edk2Platforms !!!
   set SCRIPT_ERROR=1
@@ -215,19 +277,7 @@ echo %CD%
 @set EFI_SOURCE=%WORKSPACE_CORE%
 
 :Toolchains
-@REM
-@REM Get Visual Studio environment Setting By Edksetup.
-@REM Order of precedence is 2019 and then 2017.
-@REM
-@if not defined TOOL_CHAIN_TAG (
-  if defined VS160COMNTOOLS (
-    set TOOL_CHAIN_TAG=VS2019
-  ) else if defined VS150COMNTOOLS (
-    set TOOL_CHAIN_TAG=VS2017
-  )
-)
-
-REM If no supported version of Visual Studio was detected, return an error.
+@REM If no supported version of Visual Studio was detected, return an error.
 @if not defined TOOL_CHAIN_TAG (
   echo.
   echo !!! ERROR !!! Preferred Visual Studio not detected!!!
@@ -238,12 +288,23 @@ REM If no supported version of Visual Studio was detected, return an error.
 )
 
 @if %IBBSIGN% EQU FALSE (
-  @echo Show CL revision
-  cl
+  if not defined BASETOOLS_MINGW_BUILD (
+    @echo Show CL revision
+    cl
     @if %ERRORLEVEL% NEQ 0 (
-    @echo !!! ERROR !!! Failed to show CL revision !!!
-    set SCRIPT_ERROR=1
-    goto :EndPreBuild
+      @echo !!! ERROR !!! Failed to show CL revision !!!
+      set SCRIPT_ERROR=1
+      goto :EndPreBuild
+    )
+  ) else (
+    if /I "%TOOL_CHAIN_TAG%"=="CLANGPDB" (
+      clang --version
+      @if %ERRORLEVEL% NEQ 0 (
+        @echo !!! ERROR !!! Failed to show CLANG revision !!!
+        set SCRIPT_ERROR=1
+        goto :EndPreBuild
+      )
+    )
   )
 )
 
@@ -396,6 +457,7 @@ echo BOARD_EXT     = %TARGET_SHORT%00>> %BIOS_ID_FILE%
 @echo   Prebuild is complete.
 @echo   Current Directory    = %CD%
 @echo   EFI_SOURCE           = %EFI_SOURCE%
+@echo   EDK_TOOLS_BIN        = %EDK_TOOLS_BIN%
 @echo   TARGET               = %TARGET%
 @echo   TARGET_ARCH          = %FSP_ARCH% X64
 @echo   TOOL_CHAIN_TAG       = %TOOL_CHAIN_TAG%

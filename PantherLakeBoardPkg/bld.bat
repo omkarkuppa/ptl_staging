@@ -112,7 +112,7 @@ CALL %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\BtgAcm
   -I %BTG_ACM_BASE_PATH% ^
   -S %BTG_ACM_SLOT_SIZE% ^
   -O %BTG_ACM_OUTPUT_PATH%
-IF %ERRORLEVEL% NEQ 0 (
+@IF %ERRORLEVEL% NEQ 0 (
   @ECHO ERROR: Failed to do the padding operation on BtGACM
   GOTO :BldFail
 )
@@ -134,7 +134,7 @@ IF %ERRORLEVEL% NEQ 0 (
   set PYTHON_COMMAND=py -3
 )
 
-:: Loop through arguements until all are processed
+:: Loop through arguments until all are processed
 :BUILD_FLAGS_LOOP
 @if "%~1" == "" goto BUILD_FLAGS_LOOP_DONE
 
@@ -201,7 +201,7 @@ goto BUILD_FLAGS_LOOP
 @if /I "%NOTIMESTAMP%" == "1" (
   set FSP_BUILD_PARAMETER=%FSP_BUILD_PARAMETER% notimestamp
 )
-set WORKSPACE_FSP_BIN=%WORKSPACE%\Intel
+@set WORKSPACE_FSP_BIN=%WORKSPACE%\Intel
 
 @echo %CD%
 @rem

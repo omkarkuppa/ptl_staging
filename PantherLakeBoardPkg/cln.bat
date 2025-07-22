@@ -57,6 +57,7 @@ if exist %WORKSPACE_SILICON%\.git (
 ) else (
   set SILICON_GIT=0
 )
+set GIT_FOUND=
 
 REM build cleanall
 
@@ -69,6 +70,9 @@ if exist %WORKSPACE%\Conf\.cache rmdir /q /s %WORKSPACE%\Conf\.cache
 if exist %WORKSPACE%\RomImages rmdir /q /s %WORKSPACE%\RomImages
 if exist %WORKSPACE%\BaseToolsTmp rmdir /q /s %WORKSPACE%\BaseToolsTmp
 if exist %WORKSPACE%\__pycache__ rmdir /q /s %WORKSPACE%\__pycache__
+if exist %WORKSPACE_CORE%\BaseTools\Bin\Win32 rmdir /q /s %WORKSPACE_CORE%\BaseTools\Bin\Win32
+if exist %WORKSPACE_CORE%\BaseTools\Bin\Win64 rmdir /q /s %WORKSPACE_CORE%\BaseTools\Bin\Win64
+if exist %WORKSPACE_CORE%\BaseTools\Lib rmdir /q /s %WORKSPACE_CORE%\BaseTools\Lib
 
 echo.
 echo Files to clean...
@@ -80,6 +84,33 @@ if exist %WORKSPACE_ROOT%\Conf\FrameworkDatabase.db del %WORKSPACE_ROOT%\Conf\Fr
 if exist %WORKSPACE_ROOT%\Conf\target.txt del %WORKSPACE_ROOT%\Conf\target.txt
 if exist %WORKSPACE_ROOT%\Conf\tools_def.txt del %WORKSPACE_ROOT%\Conf\tools_def.txt
 
+set SILICON_GIT=
+set UNSET_EDK_TOOLS_PATH=0
+if defined BASETOOLS_MINGW_PATH (
+  if exist %WORKSPACE_CORE%\BaseTools\Source\C\bin (
+    echo.
+    echo Cleaning BaseTools...
+    echo.
+    if not defined EDK_TOOLS_PATH (
+      set EDK_TOOLS_PATH=%WORKSPACE_CORE%\BaseTools
+      set UNSET_EDK_TOOLS_PATH=1
+    )
+  )
+)
+if defined BASETOOLS_MINGW_PATH (
+  if exist %WORKSPACE_CORE%\BaseTools\Source\C\bin (
+    pushd %WORKSPACE_CORE%\BaseTools\Source\C
+    %BASETOOLS_MINGW_PATH%\bin\mingw32-make clean
+    popd
+    pushd %WORKSPACE_ROOT%\Edk2Platforms\Silicon\Intel\Tools
+    %BASETOOLS_MINGW_PATH%\bin\mingw32-make clean
+    popd
+    if %UNSET_EDK_TOOLS_PATH% NEQ 0 (
+      set EDK_TOOLS_PATH=
+    )
+  )
+)
+set UNSET_EDK_TOOLS_PATH=
 
 @REM
 @REM Delete FspBinPackage files
