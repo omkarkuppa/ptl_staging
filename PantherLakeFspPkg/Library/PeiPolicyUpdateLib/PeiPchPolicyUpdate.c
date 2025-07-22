@@ -242,6 +242,7 @@ FspUpdateCnviPolicy (
   CnviConfig->PinMux.RfReset = FspsUpd->FspsConfig.CnviRfResetPinMux;
   CnviConfig->PinMux.Clkreq  = FspsUpd->FspsConfig.CnviClkreqPinMux;
   CnviConfig->WwanCoex       = FspsUpd->FspsConfig.CnviWwanCoex;
+  CnviConfig->SkipBtPreInit  = FspsUpd->FspsConfig.CnviWwanCoex;
 }
 
 /**

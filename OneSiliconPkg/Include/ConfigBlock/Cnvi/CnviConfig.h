@@ -23,7 +23,7 @@
 
 #include <ConfigBlock.h>
 
-#define CNVI_CONFIG_REVISION 5
+#define CNVI_CONFIG_REVISION 6
 extern EFI_GUID gCnviConfigGuid;
 
 #define CNVI_PREMEM_CONFIG_REVISION 1
@@ -74,6 +74,7 @@ typedef struct {
   <b>Revision 3</b>: - Add WifiCore.
   <b>Revision 4</b>: - Move DdrRfim to Pre-Mem config.
   <b>Revision 5</b>: - Add WwanCoex.
+  <b>Revision 6</b>: - Add SkipBtPreInit.
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;      ///< Config Block Header
@@ -103,7 +104,8 @@ typedef struct {
   **/
   UINT32 BtInterface              :  2;
   UINT32 WwanCoex                 :  1;
-  UINT32 RsvdBits                 : 24;
+  UINT32 SkipBtPreInit            :  1;
+  UINT32 RsvdBits                 : 23;
   /**
     CNVi PinMux Configuration
     RESET#/CLKREQ to CRF, can have two alternative mappings, depending on board routing requirements.

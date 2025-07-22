@@ -335,7 +335,9 @@ CnviInit (
     CnviDisable (CnviHandle);
   }
 
-  CnviCallbacks->BtPreInit (CnviHandle);
+  if (!CnviConfig->SkipBtPreInit) {
+    CnviCallbacks->BtPreInit (CnviHandle);
+  }
 
   BuildCnviConfigHob (CnviConfig);
 
