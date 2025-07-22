@@ -156,6 +156,9 @@ MrcMcCapabilityPreSpd (
   UINT32                        MaxQclkFreqRatio;
   UINT32                        MaxQclkDataRate;
   BOOLEAN                       OverclockCapable;
+  UINT8                         SaGvIndex;
+  MrcFrequency                  FreqOutLocal;
+  BOOLEAN                       GearOutLocal;
   MEMSS_PMA_CR_CAPABILITIES_TECH_EN_MAX_F_STRUCT PmaFuseTechEn;
   MEMSS_PMA_CR_CAPABILITIES_MISC_STRUCT        PmaMcCap;
 
@@ -253,6 +256,21 @@ MrcMcCapabilityPreSpd (
   // Check if the max DIMM frequency is the limiter
   if (Outputs->MaxDimmFreq < Outputs->FreqMax) {
     Outputs->FreqMax = Outputs->MaxDimmFreq;
+  }
+
+  if (ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
+    if (MrcIsSaGvEnabled (MrcData)) {
+      for (SaGvIndex = 0; SaGvIndex < MAX_SAGV_POINTS; SaGvIndex++) {
+        MrcGetSagvConfig (MrcData, SaGvIndex, Outputs->FreqMax, MaxQclkFreq, FALSE, &FreqOutLocal, &GearOutLocal);
+
+        if (FreqOutLocal >= f8533) {
+          Outputs->ApplyWckIdleMrsFsm126 = TRUE;
+          break;
+        }
+      }
+    } else {
+      Outputs->ApplyWckIdleMrsFsm126 = (Outputs->FreqMax >= f8533);
+    }
   }
 
   if (MrcIsSaGvEnabled (MrcData) && ((ExtInputs->MemoryProfile == STD_PROFILE) || ((ExtInputs->SafeModeOverride & MRC_SAFE_OVERRIDE_SAGV) != 0))) {

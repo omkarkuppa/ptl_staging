@@ -27,6 +27,7 @@
 #include "MrcMaintenance.h"
 #include "MrcChipApi.h"
 #include "MrcDdrIoDefines.h"
+#include "MrcSagv.h"
 
 ///
 /// Timing Frequency Range defines
@@ -1111,6 +1112,12 @@ InitMrwLpddr5 (
           Mr18.Bits.WckAlwaysOn = (ChannelOut->ValidRankBitMask >  1) ? 1 : 0;
         }
 
+        if (ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
+          if (Outputs->Frequency >= f8533) {
+            Mr18.Bits.WckAlwaysOn = 1;
+          }
+        }
+
         MrPtr[mrIndexMR18] = Mr18.Data8;
 
         //MR3 - DBI-RD/WR = 0 (Disabled)
@@ -1624,29 +1631,35 @@ MrcSagvMrSeqLpddr5 (
   )
 {
   static const MrcModeRegister SagvMrOrder[] = {
-    mrREFab, mrMR127, mrMR16, mrMR17, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15,
+    mrREFab, mrMR126, mrMR127, mrMR16, mrMR17, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15,
     mrMR18, mrMR3, mrMR1, mrMR2, mrMR19, mrMR30, mrMR69, mrMR37, mrMR41, mrMR24, mrMR58, mrMR16FspOp, mrREFab
     };
-  MrcModeRegister    CurMrAddr;
-  MrcOutput          *Outputs;
-  MrcStatus          Status;
-  UINT32             Index;
-  UINT32             OutIdx;
-  UINT8              SagvMrLen;
-  BOOLEAN            ByteMode;
-  BOOLEAN            IsFirstRefab;
-  GmfLpddr5DelayType DelayType;
+  MrcModeRegister     CurMrAddr;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
+  MrcInput            *Inputs;
+  MrcOutput           *Outputs;
+  MrcStatus           Status;
+  UINT32              Index;
+  UINT32              OutIdx;
+  UINT8               SagvMrLen;
+  BOOLEAN             ByteMode;
+  BOOLEAN             IsFirstRefab;
+  BOOLEAN             Mr126Applied;
+  GmfLpddr5DelayType  DelayType;
 #ifdef MRC_DEBUG_PRINT
   MrcDebug  *Debug;
 
   Debug = &MrcData->Outputs.Debug;
 #endif
 
-  Outputs = &MrcData->Outputs;
-  Status  = mrcSuccess;
+  Inputs    = &MrcData->Inputs;
+  Outputs   = &MrcData->Outputs;
+  ExtInputs = Inputs->ExtInputs.Ptr;
+  Status    = mrcSuccess;
   SagvMrLen = ARRAY_COUNT (SagvMrOrder);
-  ByteMode = MrcData->Outputs.LpByteMode;
+  ByteMode  = MrcData->Outputs.LpByteMode;
   IsFirstRefab = TRUE;
+  Mr126Applied = FALSE;
 
   if ((MrSeq == NULL) || (MrDelay == NULL) || (Length == NULL)) {
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "MrcSagvMrSeqLpddr5: %s %s\n", gErrString, gNullPtrErrStr);
@@ -1658,14 +1671,24 @@ MrcSagvMrSeqLpddr5 (
     for (Index = 0, OutIdx = 0; Index < SagvMrLen; Index++) {
       CurMrAddr = SagvMrOrder[Index];
 
+      if (CurMrAddr == mrMR126) {
+        if (ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0 &&
+            Outputs->ApplyWckIdleMrsFsm126 && (Outputs->ValidRankMask == 0x1)) { // Apply for 1R only
+          // Apply MR126
+          Mr126Applied = TRUE;
+        } else {
+          continue;   // Skip MR126
+        }
+      }
+
       // MRS FSM to send MRW to the non-existing MR127. MC internal modeling will decode it and change it to CAS(WCK_OFF) + NOP
       // Should be done just for LP5 and if WCK is in always_on mode (MR18 OP[4]=1).
       // Storage value is a don't care.
       // MRC can allocate storage for the command or share storage pointer with any other command.
       // As for the flow, MR127 should be executed after the 1st REFab and before FSP-WR (MR16 programming)
       if (CurMrAddr == mrMR127) {
-        if (!Outputs->IsLpddr5 || !IsWckInAlwaysOnMode (MrcData)) {
-          continue;   // Remove mrMR127 from the sequence if not LP5 or CAS-OFF is not needed
+        if (Mr126Applied || !Outputs->IsLpddr5 || !IsWckInAlwaysOnMode (MrcData)) {
+          continue;   // Skip MR127 if MR126 was applied, or not LP5, or CAS-OFF not needed
         }
       }
 

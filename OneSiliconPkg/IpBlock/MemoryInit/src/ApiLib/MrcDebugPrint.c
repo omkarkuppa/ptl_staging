@@ -80,6 +80,7 @@ const char  *gMarginTypesStr[] = {
   "CtlV",
   "RdTN",
   "RdTP",
+  "CmdTBit",
   "RdTDbi",
   "WrTDbi",
   "RdVDbi",

@@ -105,6 +105,7 @@ typedef enum {
   mrMR28ZqStop = 123,    ///< This is a special case to set ZQ stop in LP5 SAGV flow.
   mrREFab = 124,         ///< This is a special case to issue REFab via MRS FSM.
   mrPreAll= 125,         ///< This is a special case to issue PreAll via MRS FSM.
+  mrMR126 = 126,         ///< This is a special case to for WCK Idle Exit issue.
   mrMR127 = 127,         ///< This is a special case to issue CAS-OFF via MRS FSM by sending MRW to the non-existing MR127.
   mrMR129 = 129, ///< DFE MR DQL
   mrMR130 = 130, ///< DFE MR DQL
@@ -2194,7 +2195,8 @@ typedef struct {
   UINT16              DivCode0;
   UINT16              DivCode2;
   UINT16              DivCode3;
-  UINT8               ReservedBytesForAlignment[4]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  BOOLEAN             ApplyWckIdleMrsFsm126;
+  UINT8               ReservedBytesForAlignment[3]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;

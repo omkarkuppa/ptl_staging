@@ -177,6 +177,7 @@ ConfigGenMrsFsmTiming  (
   )
 {
   MrcStatus        Status;
+  MrcInput         *Inputs;
   MrcOutput        *Outputs;
   UINT32           Data;
   UINT16           MrDelay;
@@ -185,11 +186,14 @@ ConfigGenMrsFsmTiming  (
   UINT32           ScaledTimeMax;
   UINT16           TimingEncode;
   BOOLEAN          IsLpddr5;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
   GENERIC_MRS_FSM_TIMING_STORAGE_STRUCT GenMrsFsmTiming;
 
-  Outputs  = &MrcData->Outputs;
-  IsLpddr5 = Outputs->IsLpddr5;
-  Data     = 0;
+  Inputs    = &MrcData->Inputs;
+  ExtInputs = Inputs->ExtInputs.Ptr;
+  Outputs   = &MrcData->Outputs;
+  IsLpddr5  = Outputs->IsLpddr5;
+  Data      = 0;
 
   // Configure all of the Generic MRS FSM Timing registers on the current Controller, McCh
   for (TimingSetIdx = GmfTimingIndex0; TimingSetIdx < GmfTimingIndexMax; TimingSetIdx++) {
@@ -221,6 +225,14 @@ ConfigGenMrsFsmTiming  (
       TimingEncode = ((UINT16) DIVIDECEIL (MrDelay, GEN_MRS_FSM_TIME_SCALAR_x16)) | GEN_MRS_FSM_TIME_SCALAR_BIT_x16;
     } else {
       TimingEncode = MrDelay;
+    }
+
+    if (IsLpddr5 && ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
+      if (Outputs->Frequency >= f8533) {
+        if (TimingSetIdx == GmfTimingIndex9) {
+          TimingEncode = 0xFF;
+        }
+      }
     }
 
     // Calculate the register offset

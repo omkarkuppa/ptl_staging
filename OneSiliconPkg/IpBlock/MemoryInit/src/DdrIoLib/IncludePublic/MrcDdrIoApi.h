@@ -80,6 +80,14 @@ extern const char *GlobalCompOffsetStr[];
 #define  DCC_RXDQS_NUM_SAMPLES_ON_ALL_LANES                  (16 * 512) // 16 lanes * 512
 #define  DCC_RXDQS_SENSE_AT_RXDLL_NUM_SAMPLES_ON_ALL_LANES   (4 * 512)  // 4 lanes * 512
 
+// RxDQS DCC Loopback Calibration
+#define  DUTY_CYCLE_TARGET_RXDQSDCC_LP                       256
+#define  DCC_CORRECTION_LIMIT_RXDQSDCC_LP                    32
+#define  DCC_THRESHOLD_HIGH_RXDQSDCC_LP                      269
+#define  DCC_THRESHOLD_LOW_RXDQSDCC_LP                       243
+#define  DQS_TCO_CODE_RANGE_MAX                              31
+#define  DQS_TCO_CODE_RANGE_MIN                              -32
+
 #define  DCC_SAMPLE                    5   // Max out samples for best result
 
 #define  RXDQS_VOC_RANGE_MAX           29

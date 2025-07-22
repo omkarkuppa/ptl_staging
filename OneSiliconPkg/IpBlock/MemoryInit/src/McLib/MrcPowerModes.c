@@ -38,7 +38,7 @@
 void
 MrcPowerDownConfig (
   IN MrcParameters *const MrcData
-)
+  )
 {
   const MrcInput* Inputs;
   MrcOutput*      Outputs;
@@ -98,5 +98,13 @@ MrcPowerDownConfig (
       }
     }
   }
+
+  if (IsLpddr && ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
+    if (Outputs->Frequency >= f8533) {
+      GetSetVal = 0;
+      MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccPPD, WriteToCache | PrintValue, &GetSetVal);
+    }
+  }
+
   MrcFlushRegisterCachedData (MrcData);
 }

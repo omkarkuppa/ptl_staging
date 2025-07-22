@@ -1588,6 +1588,7 @@ MrcMrAddrToIndex (
       MrIndex = mrIndexMR75;
       break;
 
+    case mrMR126:
     case mrMR127:
       MrIndex = 0;  // Dummy index, we do not store any MR data for this one
       break;

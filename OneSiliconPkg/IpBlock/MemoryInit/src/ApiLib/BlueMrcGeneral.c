@@ -463,7 +463,9 @@ MrcNormalMode (
   BOOLEAN             MemInSr;
   BOOLEAN             IsLpddr;
   UINT8               Channel;
+  UINT8               Rank;
   MrcStatus           Status;
+  UINT8               MrrResult[MRC_MRR_ARRAY_SIZE];
   const MRC_EXT_INPUTS_TYPE *ExtInputs;
   DDR_PTM_CTL_PCU_STRUCT  DdrPtmCtl;
   MRC_DDR5_CS_GEARDOWN_SAVE CsGearDownSaveData;
@@ -476,7 +478,6 @@ MrcNormalMode (
   BootMode  = Inputs->BootMode;
   MemInSr   = (BootMode == bmWarm) || (BootMode == bmS3);
   IsLpddr   = Outputs->IsLpddr;
-
 
   MrcEnableTelemetry (MrcData);
 
@@ -505,11 +506,25 @@ MrcNormalMode (
     }
   }
 
-
   if (IsLpddr) {
     {
       // Synchronize MC lpddr_current_fsp With LPDDR5 MR16.FSP-OP
       SyncLpddrFspOp (MrcData);
+    }
+
+    if (ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
+      if (Outputs->Frequency >= f8533) {
+        for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+          for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+            for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+              if (!(MrcRankExist (MrcData, Controller, Channel, Rank))) {
+                continue;
+              }
+              MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR5, MrrResult);
+            }
+          }
+        }
+      }
     }
   }
 
@@ -1520,7 +1535,9 @@ MrcSetOverrides (
     ExtInputs->TrainingEnables.ECT       = 0;
     ExtInputs->TrainingEnables2.DQDQSSWZ = 0;
     ExtInputs->TrainingEnables.JWRL      = 0;
+#ifndef HVM_MODE
     ExtInputs->TrainingEnables3.RXDQSDCC = 0;
+#endif
   }
 
   return Status;
@@ -1941,10 +1958,12 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tIbeccEccInjControl: 0x%X\n"
     "\tIbeccEccInjAddrBase: 0x%X\n"
-    "\tIbeccEccInjCount: 0x%X\n",
+    "\tIbeccEccInjCount: 0x%X\n"
+    "\tIsWckIdleExitEnabled: %u\n",
     ExtInputs->IbeccEccInjControl,
     ExtInputs->IbeccEccInjAddrBase,
-    ExtInputs->IbeccEccInjCount
+    ExtInputs->IbeccEccInjCount,
+    ExtInputs->IsWckIdleExitEnabled
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,

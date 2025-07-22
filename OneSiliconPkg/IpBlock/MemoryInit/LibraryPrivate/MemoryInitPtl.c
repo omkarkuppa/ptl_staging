@@ -3180,7 +3180,7 @@ DEBUG_CODE_END();
   Inputs->LockUiDiv6Flow = FALSE;
 
   Inputs->EnablePda = TRUE;
-  Inputs->Lp5NZQCount = 0;
+  Inputs->Lp5NZQCount = 0;                // 0 = Auto, will be set in SPD Processing
   Inputs->IsXtensaEccDisabled = TRUE;
   Inputs->SenseAtRxDll = TRUE;
   Inputs->MinAllowedNModeOvrd = CA_2_NMODE;

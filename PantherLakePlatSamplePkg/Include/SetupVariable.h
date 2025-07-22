@@ -1806,16 +1806,12 @@ typedef struct {
   UINT8   Module1Lockstep;
   UINT8   LpcLockstep;
 
-<<<<<<< HEAD
   UINT32  PmtStreamTracerSize;
   UINT8   PmtStreamTracerMode;
 
-  UINT8   Rsvd[3];
-=======
   UINT8   IsWckIdleExitEnabled;
 
-  UINT8   Rsvd[7];
->>>>>>> 0725f1058001 (MRC Knob for WCK Idle Exit)
+  UINT8   Rsvd[2];
 } SA_SETUP;
 
 /**

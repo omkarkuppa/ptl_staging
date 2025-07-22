@@ -165,7 +165,7 @@ MrcInternalCheckPoint (
       break;
 
     case OemWriteDqDqsReTraining:
-      if (!TrainingEnables3->WRTRETRAIN || Outputs->IsLpddr5) {
+      if (!TrainingEnables3->WRTRETRAIN) {
         Status = mrcFail; // Skip this training step
       }
       break;

@@ -291,6 +291,11 @@ MrcSchedulerParametersConfig (
           // Ranks must be present incrementally.  Thus we can check the bit mask > 1 to determine that we have more than 1 rank present.
           GetSetVal = (ChannelOut->ValidRankBitMask > 1) ? 1 : 2;
         }
+        if (Outputs->IsLpddr5 && Inputs->ExtInputs.Ptr->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
+          if (Outputs->Frequency >= f8533) {
+            GetSetVal = 0;
+          }
+        }
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccLp5WckMode, WriteToCache | PrintValue, &GetSetVal);
         if (GetSetVal == MrcLp5WckDynamic) {
           MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccLp5WckFastMode, WriteCached | PrintValue, &GetSetDis);

@@ -299,6 +299,10 @@ MrcSaGvSwitch (
   UINT32              SBClock;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
   MrcInput            *Inputs;
+  BOOLEAN             IsLpddr5;
+  UINT32              Controller;
+  UINT32              Channel;
+  UINT32              Data;
   DDRPHY_MISC_SAUG_CR_PHYPMOVRD_STRUCT  PhyPmOvrd;
 
   Outputs     = &MrcData->Outputs;
@@ -306,6 +310,7 @@ MrcSaGvSwitch (
   Debug       = &Outputs->Debug;
   Status      = mrcSuccess;
   Inputs      = &MrcData->Inputs;
+  IsLpddr5    = Outputs->IsLpddr5;
 
   if (ExtInputs->TargetedRowRefreshMode < TrrDisabled || ExtInputs->DramRfmMode < DramRfmDisabled) {
     MrcRhPtrrLfsrConfig (MrcData);
@@ -334,6 +339,19 @@ MrcSaGvSwitch (
       PhyPmOvrd.Bits.EnPeriodicComp = RANGE (MrcLog2Round (MrcData, 1280 * 1000000/SBClock) - 12, 0 ,13);
     }
     MrcWriteCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD_REG, PhyPmOvrd.Data);
+    
+    if (IsLpddr5 && ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
+      Data = 0x1;
+      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+        for (Channel = 0; Channel < MAX_CHANNEL_SHARE_REGS; Channel++) {
+          if (!MrcChannelExist (MrcData, Controller, Channel)) {
+            continue;
+          }
+          GenericMrsFsmMailboxAccess (MrcData, Controller, Channel, GmfMailboxWrite, GmfMailboxTypeControl, 100, &Data);
+        }
+      }
+    }
+    
   }
 
   if (ExtInputs->RealtimeMemoryFrequency && (Outputs->SaGvPoint != MrcSaGvPoint0)) {

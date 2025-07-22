@@ -290,7 +290,8 @@ typedef struct {
   UINT32  IbeccEccInjAddrBase;            ///< Offset 332 Address to match against for ECC error injection, in units of 32MB (Eg. 1 = 32MB, 2 = 64MB, 3 = 96MB)
   UINT8   IbeccEccInjCount;               ///< Offset 336 Number of memory transactions between ECC error injection
 
-  UINT8   Reserved337[51];                ///< Offset 337 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (337 + 51 bytes) = 416 should be a multiple of 8 bytes.
+  UINT8   IsWckIdleExitEnabled;           ///< Offset 337 Enable/disable WCK Idle Exit: 0 = Disable, 1 = Enable
+  UINT8   Reserved338[50];                ///< Offset 338 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (338 + 50 bytes) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

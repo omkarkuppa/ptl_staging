@@ -968,12 +968,14 @@ ValidSdramDeviceWidth (
   )
 {
   MrcDebug    *Debug;
+  MrcInput    *Inputs;
   MrcOutput   *Outputs;
   MrcDdrType  DdrType;
   BOOLEAN     IsLpddr;
   UINT8       ChPerSdramPkg;
 
   Outputs = &MrcData->Outputs;
+  Inputs  = &MrcData->Inputs;
   Debug   = &Outputs->Debug;
   DdrType = DimmOut->DdrType;
   IsLpddr = (Outputs->IsLpddr);
@@ -1027,6 +1029,14 @@ ValidSdramDeviceWidth (
       return FALSE;
   }
 
+  if (Inputs->Lp5NZQCount == 0) { // 0 means Auto
+    if (Outputs->IsLpddr5) {
+      // Set NZQ according to the package type.
+      // LP5: only x8 devices have NZQ = 8 (in 2Rx8 ODP package), all other packages have NZQ = 4
+      Inputs->Lp5NZQCount = Outputs->LpByteMode ? 8 : 4;
+    }
+  }
+
   if (IsLpddr && !Outputs->IsLP5Camm2) {
     switch (ChPerSdramPkg) {
       case MRC_SPD_CH_PER_SDRAM_PKG_1:
@@ -1059,7 +1069,7 @@ ValidSdramDeviceWidth (
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  %s: %u\n", ChPerSdramPkgStr, ChPerSdramPkg);
   }
   if (IsLpddr) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Die per SDRAM Package: %u\n", DimmOut->DiePerSdramPackage);
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Die per SDRAM Package: %u, NZQ: %u\n", DimmOut->DiePerSdramPackage, Inputs->Lp5NZQCount);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  SDRAM device width: %u\n", DimmOut->SdramWidth);
 
