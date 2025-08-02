@@ -1281,9 +1281,10 @@ typedef struct {
   <b>Revision 14</b>: - Add StreamTracer support variables
   <b>Revision 15</b>: - Add IsWckIdleExitEnabled variable
   <b>Revision 16</b>: - Add WREQT variable
+  <b>Revision 17</b>: - Remove FUSA CFI variables
 **/
 
-#define SA_SETUP_REVISION   16
+#define SA_SETUP_REVISION   17
 
 typedef struct {
   UINT8   Revision;
@@ -1780,27 +1781,6 @@ typedef struct {
   UINT8   MsHashOverride;
   UINT8   MsHashInterleaveBit;
   UINT16  MsHashMask;
-
-  UINT8   FusaCfiParityIDIBE2E;
-  UINT8   FusaCfiParityCCFE2E_SANTA1;
-  UINT8   FusaCfiParityCCFE2E_SANTA0;
-  UINT8   FusaCfiParityHBOE2E_HBO0;
-  UINT8   FusaCfiParityHBOE2E_HBO1;
-  UINT8   FusaCfiParityPBE2E_AXI2CFI_IPU;
-  UINT8   FusaCfiParityPBE2E_AXI2CFI_VPU;
-  UINT8   FusaCfiParityPBE2E_ICXL2CFI_MEDIA;
-  UINT8   FusaCfiParityPBE2E_ICXL2CFI_GT;
-  UINT8   FusaCfiParityPBE2E_ICXL2CFI_IAX;
-  UINT8   FusaCfiParityPBE2E_DNI2CFI;
-  UINT8   FusaCfiParitySVTUE2E;
-  UINT8   FusaCfiParitySNCUE2E;
-  UINT8   FusaCfiParityPUNITE2E;
-  UINT8   FusaCfiParityIOCE2E;
-  UINT8   FusaCfiParityIOCCEE2E;
-  UINT8   FusaCfiParityIVTUE2E;
-  UINT8   FusaCfiParityCCEE2E_CCE0;
-  UINT8   FusaCfiParityCCEE2E_CCE1;
-
   UINT8   FusaConfigEnable;
 
   UINT8   Module0Lockstep;
@@ -1813,7 +1793,7 @@ typedef struct {
   UINT8   IsWckIdleExitEnabled;
   UINT8   WREQT;
 
-  UINT8   Rsvd;
+  UINT8   Rsvd[20];
 } SA_SETUP;
 
 /**
