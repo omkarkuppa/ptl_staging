@@ -1492,7 +1492,6 @@ gSiPkgTokenSpaceGuid.PcdBootGuardEnable              |FALSE|BOOLEAN|0xF0000030
 gSiPkgTokenSpaceGuid.PcdCacheDisabled                |FALSE|BOOLEAN|0xF0000031
 gSiPkgTokenSpaceGuid.PcdLpssUartEnable               |FALSE|BOOLEAN|0xF0000033
 gSiPkgTokenSpaceGuid.PcdTcssSupport                  |TRUE |BOOLEAN|0xF0000034
-gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable         |FALSE|BOOLEAN|0xF0000037
 gSiPkgTokenSpaceGuid.PcdThcEnable                    |FALSE|BOOLEAN|0xF000003B
 gSiPkgTokenSpaceGuid.PcdDtprEnable                   |FALSE|BOOLEAN|0xF000003D
 
