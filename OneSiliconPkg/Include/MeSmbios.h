@@ -89,13 +89,15 @@ typedef struct {
 } SMBIOS_TABLE_TYPE130;
 
 typedef struct {
-  UINT32  VMXState     : 1;    ///< [0]     VMX enabled state (On/Off) (This bit is a duplicate of Bit 5 and maintained for backward compatibility)
-  UINT32  SMXState     : 1;    ///< [1]     SMX enabled state (On/Off) (This bit is a duplicate of Bit 3 and maintained for backward compatibility)
-  UINT32  LtTxtCap     : 1;    ///< [2]     LT/TXT capability
-  UINT32  LtTxtEnabled : 1;    ///< [3]     LT/TXT Enabled state (Optional for vPro verification)
-  UINT32  VTxCap       : 1;    ///< [4]     VT-x capability
-  UINT32  VTxEnabled   : 1;    ///< [5]     VT-x Enabled state (Optional for vPro verification)
-  UINT32  Reserved     : 26;   ///< [31:6]  Reserved, set to 0
+  UINT32  VMXState          : 1;    ///< [0]     VMX enabled state (On/Off) (This bit is a duplicate of Bit 5 and maintained for backward compatibility)
+  UINT32  SMXState          : 1;    ///< [1]     SMX enabled state (On/Off) (This bit is a duplicate of Bit 3 and maintained for backward compatibility)
+  UINT32  LtTxtCap          : 1;    ///< [2]     LT/TXT capability
+  UINT32  LtTxtEnabled      : 1;    ///< [3]     LT/TXT Enabled state (Optional for vPro verification)
+  UINT32  VTxCap            : 1;    ///< [4]     VT-x capability
+  UINT32  VTxEnabled        : 1;    ///< [5]     VT-x Enabled state (Optional for vPro verification)
+  UINT32  VTrpSupport       : 1;    ///< [6]     VT-rp capability support
+  UINT32  BiosGuardEnabled  : 1;    ///< [7]     BIOS Guard Enabled state
+  UINT32  Reserved          : 24;   ///< [31:8]  Reserved, set to 0
 } CPU_CAP;
 
 typedef struct {

@@ -30,6 +30,7 @@
 #include <Library/PchPciBdfLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PciHostBridgeLib.h>
+#include <Library/CpuPlatformLib.h>
 #include <Protocol/MeSmbiosUpdateProtocol.h>
 #include <Protocol/OneClickRecoveryProtocol.h>
 #include <Protocol/MebxConfigProtocol.h>
@@ -37,6 +38,7 @@
 #include <Register/PchRegs.h>
 #include <Register/Msr.h>
 #include <Register/Cpuid.h>
+#include <Register/GenerationMsr.h>
 #include <MeBiosPayloadHob.h>
 #include <Uefi.h>
 #include <MebxData.h>
@@ -360,18 +362,26 @@ UpdateCpuCapabilities (
   )
 {
   MSR_IA32_FEATURE_CONTROL_REGISTER Ia32FeatureControlMsr;
+  MSR_VMX_PROCBASED_CTLS3_REGISTER  VmxProcbasedControlMsr;
   CPUID_VERSION_INFO_ECX            Ecx;
 
-  Ia32FeatureControlMsr.Uint64 = AsmReadMsr64 (MSR_IA32_FEATURE_CONTROL);
+  Ia32FeatureControlMsr.Uint64  = AsmReadMsr64 (MSR_IA32_FEATURE_CONTROL);
+  VmxProcbasedControlMsr.Uint64 = AsmReadMsr64 (MSR_VMX_PROCBASED_CTLS3);
 
   CpuCapabilities->VMXState     = Ia32FeatureControlMsr.Bits.EnableVmxOutsideSmx;
   CpuCapabilities->VTxEnabled   = CpuCapabilities->VMXState;
   CpuCapabilities->SMXState     = Ia32FeatureControlMsr.Bits.EnableVmxInsideSmx;
   CpuCapabilities->LtTxtEnabled = CpuCapabilities->SMXState;
 
+  // MSR_VMX_PROCBASED_CTLS3_REGISTER BIT1 represents "Enable HLAT"
+  CpuCapabilities->VTrpSupport = (VmxProcbasedControlMsr.Bits.Data0 & BIT1) ? 1 : 0;
+
   AsmCpuid (CPUID_VERSION_INFO, NULL, NULL, &Ecx.Uint32, NULL);
   CpuCapabilities->LtTxtCap     = Ecx.Bits.SMX;
   CpuCapabilities->VTxCap       = Ecx.Bits.VMX;
+
+  CpuCapabilities->BiosGuardEnabled = IsBiosGuardEnabled () ? 1 : 0;
+
 }
 
 /**

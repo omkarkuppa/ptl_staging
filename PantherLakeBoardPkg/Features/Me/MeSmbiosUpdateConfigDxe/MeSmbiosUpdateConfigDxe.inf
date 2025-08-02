@@ -39,6 +39,7 @@
   PchPciBdfLib
   PcdLib
   PciHostBridgeLib
+  CpuPlatformLib
 
 [Packages]
   MdePkg/MdePkg.dec
