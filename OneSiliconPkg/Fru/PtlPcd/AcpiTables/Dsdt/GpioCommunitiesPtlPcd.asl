@@ -131,8 +131,8 @@ Scope (\_SB)
       },
       ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
       Package () {
-        Package () {"intc-gpio-group-0-subproperties", GPPV},
-        Package () {"intc-gpio-group-1-subproperties", GPPC}
+        Package () {"intc-gpio-group-0-subproperties", "GPPV"},
+        Package () {"intc-gpio-group-1-subproperties", "GPPC"}
       }
     })
 
@@ -162,8 +162,8 @@ Scope (\_SB)
       },
       ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
       Package () {
-        Package () {"intc-gpio-group-0-subproperties", GPPF},
-        Package () {"intc-gpio-group-1-subproperties", GPPE}
+        Package () {"intc-gpio-group-0-subproperties", "GPPF"},
+        Package () {"intc-gpio-group-1-subproperties", "GPPE"}
       }
     })
     //
@@ -211,10 +211,10 @@ Scope (\_SB)
       },
       ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
       Package () {
-        Package () {"intc-gpio-group-0-subproperties", JTAG},
-        Package () {"intc-gpio-group-1-subproperties", GPPH},
-        Package () {"intc-gpio-group-2-subproperties", SPI0},
-        Package () {"intc-gpio-group-3-subproperties", PIO3}
+        Package () {"intc-gpio-group-0-subproperties", "JTAG"},
+        Package () {"intc-gpio-group-1-subproperties", "GPPH"},
+        Package () {"intc-gpio-group-2-subproperties", "SPI0"},
+        Package () {"intc-gpio-group-3-subproperties", "PIO3"}
       }
     })
     //
@@ -278,7 +278,7 @@ Scope (\_SB)
       },
       ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
       Package () {
-        Package () {"intc-gpio-group-0-subproperties", GPPS}
+        Package () {"intc-gpio-group-0-subproperties", "GPPS"}
       }
     })
     //
@@ -318,9 +318,9 @@ Scope (\_SB)
       },
       ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
       Package () {
-        Package () {"intc-gpio-group-0-subproperties", GPPB},
-        Package () {"intc-gpio-group-1-subproperties", GPPD},
-        Package () {"intc-gpio-group-2-subproperties", GPIO}
+        Package () {"intc-gpio-group-0-subproperties", "GPPB"},
+        Package () {"intc-gpio-group-1-subproperties", "GPPD"},
+        Package () {"intc-gpio-group-2-subproperties", "GPIO"}
       }
     })
     //
