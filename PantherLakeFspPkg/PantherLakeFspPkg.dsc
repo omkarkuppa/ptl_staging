@@ -221,11 +221,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
 !if $(TARGET) == DEBUG
   DebugLib|$(SILICON_FSP_PATH)/Library/FspDebugLibService/FspDebugLibService.inf
 !else
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  DebugLib|$(SILICON_FSP_PATH)/Library/FspCatalogTHDebugLibService/FspCatalogTHDebugLibService.inf
-!else
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-!endif
 !endif
   CpuCacheInfoLib|UefiCpuPkg/Library/CpuCacheInfoLib/PeiCpuCacheInfoLib.inf
 
@@ -325,12 +321,8 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   LocalApicLib|UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
   ### Base on debug/release mode, choose one of the DebugLib
   ####  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  DebugLib|$(PLATFORM_SI_PACKAGE)/Fsp/Library/BaseDebugLibFspTraceHubCatalog/BaseDebugLibFspTraceHubCatalog.inf
-  TraceHubDebugSysTLib|MdeModulePkg/Library/TraceHubDebugSysTLib/BaseTraceHubDebugSysTLib.inf
-!else
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-!endif
+
   FspSerialIoUartDebugHelperLib|$(SILICON_FSP_PATH)/Library/FspSerialIoUartDebugHelperLib/FspSerialIoUartDebugHelperLib.inf
   MicrocodeLib|UefiCpuPkg/Library/MicrocodeLib/MicrocodeLib.inf
   RngLib|MdePkg/Library/BaseRngLib/BaseRngLib.inf
@@ -466,11 +458,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
 !if $(TARGET) == RELEASE
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  DebugLib|$(PLATFORM_SI_PACKAGE)/Fsp/Library/BaseDebugLibFspTraceHubCatalog/BaseDebugLibFspTraceHubCatalog.inf
-!else
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-!endif
 !else
   DebugLib|$(SILICON_FSP_PATH)/Library/DebugLibDebugPort/Dxe/DebugLibDebugPort.inf
 !endif
@@ -629,11 +617,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       MmPciLib|$(SILICON_FSP_PATH)/Library/MmPciCf8Lib/MmPciCf8Lib.inf
       PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
     <PcdsFixedAtBuild>
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
-!else
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x27
-!endif
 !if (gSiPkgTokenSpaceGuid.PcdSignedFspEnable == TRUE)
 # todo : Review how GS flag impacting PeiMain execution in Post memory phase.
 !if $(TARGET) == DEBUG
@@ -689,13 +673,6 @@ $(SILICON_FSP_PATH)/FspRsc2PostCodeMapInit/Pei/FspRsc2PostCodeMapServicePei.inf 
   }
 !endif
 
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  $(SILICON_FSP_PATH)/FspCatalogTHDebugInit/Pei/FspCatalogTHDebugServicePei.inf {
-    <LibraryClasses>
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  }
-!endif
-
   $(FSP_PACKAGE)/FspHeader/FspHeader.inf
   $(SILICON_PRODUCT_PATH)/SiInit/Pei/SiInitPreMem.inf {
     <LibraryClasses>
@@ -723,9 +700,6 @@ $(SILICON_FSP_PATH)/FspRsc2PostCodeMapInit/Pei/FspRsc2PostCodeMapServicePei.inf 
 !if $(TARGET) == DEBUG
       DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_SI_PACKAGE)/Fsp/Library/BaseDebugLibFspTraceHubCatalog/BaseDebugLibFspTraceHubCatalog.inf
-!endif
   }
 
   #
@@ -736,9 +710,6 @@ $(SILICON_FSP_PATH)/FspRsc2PostCodeMapInit/Pei/FspRsc2PostCodeMapServicePei.inf 
       RegisterCpuFeaturesLib|UefiCpuPkg/Library/RegisterCpuFeaturesLib/PeiRegisterCpuFeaturesLib.inf
 !if $(TARGET) == DEBUG
       DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-!endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_SI_PACKAGE)/Fsp/Library/BaseDebugLibFspTraceHubCatalog/BaseDebugLibFspTraceHubCatalog.inf
 !endif
       NULL|UefiCpuPkg/Library/CpuCommonFeaturesLib/CpuCommonFeaturesLib.inf
       NULL|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/LibraryPrivate/PeiCpuSpecificFeaturesLib/PeiCpuSpecificFeaturesLib.inf

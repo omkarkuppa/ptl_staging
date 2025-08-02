@@ -266,11 +266,6 @@ INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.
   INF $(SILICON_FSP_PATH)/FspDebugInit/Pei/FspDebugServicePei.inf
 !endif
 
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  INF $(SILICON_FSP_PATH)/FspCatalogTHDebugInit/Pei/FspCatalogTHDebugServicePei.inf
-
-!endif
-
 FILE RAW = BC09E184-0407-4334-8589-6E32813F435C {
 !if $(TARGET) == DEBUG
     SECTION RAW = PantherLakeBinPkg/MemoryInit/GreenMrc.bin

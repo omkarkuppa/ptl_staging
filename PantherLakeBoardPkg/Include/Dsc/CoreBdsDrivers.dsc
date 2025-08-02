@@ -31,9 +31,6 @@
         # the log of 'Welcome Admin' or 'Admin password is not set' will not shown.
         DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
       !endif
-      !if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-        DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-      !endif
   }
   MdeModulePkg/Application/BootManagerMenuApp/BootManagerMenuApp.inf
 

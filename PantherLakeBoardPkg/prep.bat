@@ -58,9 +58,6 @@ cd ..\..\
 @echo ********************************************************************
 
 @set SILENT_MODE=FALSE
-@set CATALOG_RELEASE=FALSE
-@REM CATALOG_DEBUG_PRINT_LEVEL value can be changed to override PcdFixedDebugPrintErrorLevel during catalog build.
-@set CATALOG_DEBUG_PRINT_LEVEL=0x80000000
 @set FSP_PDB_RELEASE=FALSE
 @set PrepRELEASE=DEBUG
 @set SECURE_BOOT_ENABLE=FALSE
@@ -342,7 +339,6 @@ set EXT_BUILD_FLAGS=%EXT_BUILD_FLAGS% -D FSP_ARCH=%FSP_ARCH% -D FSP64_BUILD=%FSP
 @echo PrepRELEASE         =  %PrepRELEASE%
 @echo FSP_PDB_RELEASE     =  %FSP_PDB_RELEASE%
 @echo SILENT_MODE         =  %SILENT_MODE%
-@echo CATALOG_RELEASE     =  %CATALOG_RELEASE%
 @echo Current Directory   =  %CD%
 @echo WORKSPACE           =  %WORKSPACE%
 @echo WORKSPACE_CORE      =  %WORKSPACE_CORE%
@@ -357,7 +353,7 @@ goto SkipHelp
 cd %TIP_DIR%
 @echo Preparation for BIOS build.
 @echo.
-@echo prep [ptlp][non_upl][r][rp][s][clang][fsp32][fsp64][tr][perf][catalog][notimestamp][whp][help]
+@echo prep [ptlp][non_upl][r][rp][s][clang][fsp32][fsp64][tr][perf][notimestamp][whp][help]
 @echo.
 @echo   r         To do release build. Default is debug build. See note 1
 @echo   rp        To do release build with Symbols - For source level debugging. See note 1

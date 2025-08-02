@@ -28,12 +28,8 @@
 !if gSiPkgTokenSpaceGuid.PcdSmmVariableEnable == FALSE
   gSiPkgTokenSpaceGuid.PcdBiosGuardEnable|FALSE
 !endif
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-  gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported|FALSE
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
-!else
   gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported|TRUE
-!endif
+
 !if $(TARGET) == DEBUG
   gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|1
   gSiPkgTokenSpaceGuid.PcdLpssUartNumber|0
@@ -52,10 +48,6 @@
   gPantherLakeFspPkgTokenSpaceGuid.PcdFspImageAttributes|0x0017
 !else
   gPantherLakeFspPkgTokenSpaceGuid.PcdFspImageAttributes|0x0013
-!endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel|0x80000000      # This PCD gets overriden in prep.bat based on 'CATALOG_DEBUG_PRINT_LEVEL' ENV variable.
-  gSiPkgTokenSpaceGuid.PcdTraceHubCatalogEnable|TRUE
 !endif
   gSiPkgTokenSpaceGuid.PcdDmiEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdOverclockEnable|FALSE
@@ -87,9 +79,5 @@
 !if $(TARGET) == DEBUG
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
 !else
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000000
-!else
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x00000001
-!endif
 !endif

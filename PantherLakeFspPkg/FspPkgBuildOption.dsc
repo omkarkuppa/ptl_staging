@@ -30,12 +30,6 @@
   DEFINE DSC_SYMBOL_IN_RELEASE_LINK_BUILD_OPTIONS =
 !endif
 
-#
-# Catalog
-#
-*_*_*_PYTHON_PATH             = $(PYTHON_DIR)\python.exe
-*_*_*_CATALOGENCODER_PATH     = $(CATALOG_ENCODER)
-
 ##################
 # Rsa2048Sha256Sign tool definitions
 #

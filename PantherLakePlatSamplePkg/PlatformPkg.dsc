@@ -276,10 +276,6 @@
     <LibraryClasses>
       !if $(TARGET) == DEBUG
         DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-      !else
-        !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-          DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-        !endif
       !endif
   }
 
@@ -321,10 +317,6 @@
       !if $(TARGET) == DEBUG
         DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
         SerialIoUartDebugPropertyLib|$(PLATFORM_FULL_PACKAGE)/Library/SerialIoUartDebugPropertyLib/DxeSmmSerialIoUartDebugPropertyLib.inf
-      !else
-        !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-          DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-        !endif
       !endif
   }
 

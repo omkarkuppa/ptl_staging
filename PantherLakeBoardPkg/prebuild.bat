@@ -203,39 +203,6 @@ if defined VS_INSTALL_PATH (
    goto Toolchains
 )
 
-@if %CATALOG_RELEASE% EQU TRUE (
-  %PYTHON_COMMAND% --version
-  if not %ERRORLEVEL% == 0 (
-    echo.
-    echo !!! ERROR !!! Catalog feature requirement issue: PYTHON_COMMAND is not defined and py -3 is invalid.
-    echo.
-    goto :PreBuildFail
-  ) else (
-    call %PYTHON_COMMAND% -c "import sys;print(sys.executable.split('python.exe')[0])" > Output
-    set /p PYTHON_DIR= < Output
-    del Output
-  )
-  @if exist %WORKSPACE_COMMON%\OneSiliconPkg\Tools\Catalog\CatalogEncoder.py (
-    set BIOS_DECODER_XML_TEMPLATE=%WORKSPACE_COMMON%\OneSiliconPkg\Tools\Catalog\BIOS_Decoder.xml.template
-    set BIOS_DECODER_XML_CATALOGBLD=%WORKSPACE%\Build\BIOS_Decoder.xml
-    set RELEASEBIOS_DECODER_XML=%WORKSPACE%\Build\ReleaseBIOS_Decoder.xml
-    set CATALOGBIOS_DECODER_XML=%WORKSPACE%\Build\CatalogBIOS_Decoder.xml
-    set BIOS_DECODER_XML=%WORKSPACE%\Build\BIOS_Decoder.xml
-    set CATALOG_ENCODER=%WORKSPACE_COMMON%\OneSiliconPkg\Tools\Catalog\CatalogEncoder.py
-    set REPLACECL_PATH=%WORKSPACE%\Intel\OneSiliconPkg\Tools\Catalog
-    set EXT_BUILD_FLAGS=%EXT_BUILD_FLAGS% --cmd-len=2048
-    set CATALOG_DICT_GENERATOR=%WORKSPACE_COMMON%\OneSiliconPkg\Tools\Catalog\CatalogDictionaryGen.py
-    set CATALOG_STATUS_CODE_LIBHDR=%WORKSPACE_COMMON%\OneSiliconPkg\Tools\Catalog\CatalogReportStatusCodeLib.h
-    set MRC_DEBUG_HOOK_HEADER_FILE=%WORKSPACE_COMMON%\OneSiliconPkg\IpBlock\MemoryInit\src\IncludePublic\MrcPostCodes.h
-  ) else (
-    echo.
-    echo !!! ERROR !!! Catalog feature requirement issue: CatalogEncoder.py is not found.
-    echo.
-    set SCRIPT_ERROR=1
-    goto :EndPreBuild
-  )
-)
-
 @set PACKAGES_PATH=
 @for /f %%i in (
   '%PYTHON_COMMAND% %WORKSPACE_CORE_PLATFORM%\Tools\AppendPackagesPath\GetPackagesPath.py ^
@@ -474,7 +441,6 @@ cd %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%
 @echo TARGET              = %TARGET%
 @echo FSP_BUILD_PARAMETER = %FSP_BUILD_PARAMETER%
 @echo FSP_BINARY_BUILD    = %FSP_BINARY_BUILD%
-@echo CATALOG_RELEASE     = %CATALOG_RELEASE%
 @echo FSP_TEST_RELEASE    = %FSP_TEST_RELEASE%
 @echo BUILD_X64           = %BUILD_X64%
 @echo PERFORMANCE_BUILD   = %PERFORMANCE_BUILD%

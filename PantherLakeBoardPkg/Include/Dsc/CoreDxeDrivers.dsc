@@ -42,10 +42,6 @@
       SerialIoUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Uart/Library/PeiDxeSmmSerialIoUartLib/DxeRuntimeSerialIoUartLib.inf
       !if $(TARGET) == DEBUG
         DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-      !else
-        !if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-          DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-        !endif
       !endif
   }
   MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
@@ -117,9 +113,6 @@
     !if $(TARGET) == DEBUG
       # It can't use PeiDxeDebugLibReportStatusCode as DebugLib, otherwise some FPDT log will not shown.
       DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-    !endif
-    !if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
     !endif
   }
 !endif

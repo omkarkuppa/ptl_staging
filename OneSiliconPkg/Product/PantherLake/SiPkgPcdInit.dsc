@@ -50,7 +50,6 @@
   gSiPkgTokenSpaceGuid.PcdTdxEnable                    |FALSE
   gSiPkgTokenSpaceGuid.PcdOptimizeCompilerEnable       |TRUE
   gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable             |TRUE
-  gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable         |FALSE
   gSiPkgTokenSpaceGuid.PcdNpuEnable                    |TRUE
   gSiPkgTokenSpaceGuid.PcdOcWdtEnable                  |TRUE
   gSiPkgTokenSpaceGuid.PcdBootGuardEnable              |TRUE

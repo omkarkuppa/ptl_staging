@@ -615,9 +615,6 @@ APRIORI PEI {
 !if $(TARGET) == DEBUG
   INF MdeModulePkg/Universal/DebugServicePei/DebugServicePei.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  INF $(PLATFORM_FULL_PACKAGE)/Features/CatalogTrace/TraceHubDebugServicePei/CatalogTHDebugServicePei.inf
-!endif
   INF $(PLATFORM_BOARD_PACKAGE)/Features/ModularUsbCIo/ModularUsbCIoPei.inf
 }
 !if (gEfiMdeModulePkgTokenSpaceGuid.PcdMigrateTemporaryRamFirmwareVolumes == TRUE)
@@ -698,10 +695,6 @@ FILE FREEFORM = PCD(gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid
 !if gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable == TRUE
 # ROYAL_PARK_PORTING - Porting Required
   INF RuleOverride = LzmaCompress MdeModulePkg/Universal/SectionExtractionPei/SectionExtractionPei.inf
-!endif
-
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  INF $(PLATFORM_FULL_PACKAGE)/Features/CatalogTrace/TraceHubDebugServicePei/CatalogTHDebugServicePei.inf
 !endif
 
 FILE FREEFORM = C3E36D09-8294-4b97-A857-D5288FE33E28 Align=1K {

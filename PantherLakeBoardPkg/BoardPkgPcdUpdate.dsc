@@ -123,7 +123,6 @@
   gSiPkgTokenSpaceGuid.PcdBootGuardEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdTxtEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdTseEnable|TRUE
-  gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable|FALSE
 
   gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported|TRUE
 
@@ -282,16 +281,6 @@
     gEfiMdeModulePkgTokenSpaceGuid.PcdSerialUseHardwareFlowControl|FALSE
     gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x07
   !endif
-
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
-  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel|0x80000000   # This PCD gets overriden in prep.bat based on 'CATALOG_DEBUG_PRINT_LEVEL' ENV variable.
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000000
-  gPlatformModuleTokenSpaceGuid.PcdStatusCodeUseUsb3|FALSE
-  gPlatformModuleTokenSpaceGuid.PcdStatusCodeUseSerialIoUart|FALSE
-  gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported|FALSE
-  gSiPkgTokenSpaceGuid.PcdTraceHubCatalogEnable|TRUE
-!endif
 
   gBoardModulePkgTokenSpaceGuid.PcdPs2KbMsEnable|0x01
   gBoardModulePkgTokenSpaceGuid.PcdSuperIoPciIsaBridgeDevice|{0x00, 0x00, 0x1F, 0x00}

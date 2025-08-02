@@ -59,11 +59,6 @@
       TraceHubDebugSysTLib|MdeModulePkg/Library/TraceHubDebugSysTLib/BaseTraceHubDebugSysTLib.inf
       TraceHubHookLib|$(SILICON_PRODUCT_PATH)/Library/TraceHubHookLib/BaseTraceHubHookLib.inf
     !endif
-    !if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-      TraceHubDebugSysTLib|MdeModulePkg/Library/TraceHubDebugSysTLib/BaseTraceHubDebugSysTLib.inf
-      TraceHubHookLib|$(SILICON_PRODUCT_PATH)/Library/TraceHubHookLib/BaseTraceHubHookLib.inf
-    !endif
   }
 !endif # gSiPkgTokenSpaceGuid.PcdS3Enable
 
@@ -79,10 +74,6 @@
     <LibraryClasses>
     !if $(TARGET) == DEBUG
       DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-    !else
-    !if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-    !endif
     !endif
     !if gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable == TRUE
       NULL|BeepDebugFeaturePkg/Library/BeepStatusCodeHandlerLib/SmmBeepStatusCodeHandlerLib.inf
@@ -108,9 +99,6 @@
     !if $(TARGET) == DEBUG
       # It can't use PeiDxeDebugLibReportStatusCode as DebugLib, otherwise some FPDT log will not shown.
       DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-    !endif
-    !if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
     !endif
   }
 
@@ -251,9 +239,6 @@
       !if $(TARGET) == DEBUG
         DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
         SerialIoUartDebugPropertyLib|$(PLATFORM_FULL_PACKAGE)/Library/SerialIoUartDebugPropertyLib/DxeSmmSerialIoUartDebugPropertyLib.inf
-      !endif
-      !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-        DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
       !endif
   }
   SecurityPkg/Tcg/Tcg2Config/Tcg2ConfigDxe.inf {

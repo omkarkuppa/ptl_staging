@@ -409,7 +409,6 @@
   gBoardModuleTokenSpaceGuid.PcdUplImageId                              ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTcssSupport                                   ## CONSUMES
   gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryEnable   ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable                          ## CONSUMES
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu
   gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdFspVEnable                                    ## CONSUMES

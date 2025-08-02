@@ -74,7 +74,6 @@ if %WORKSPACE:~-1%==\ (
 if not defined BOARD set BOARD=PantherLakeOpenboard
 
 @set SCRIPT_ERROR=0
-@set CATALOG_DEBUG=0
 
 @if not exist %WORKSPACE_CONF% mkdir %WORKSPACE_CONF%
 
@@ -102,11 +101,9 @@ if not defined BOARD set BOARD=PantherLakeOpenboard
 @echo.
 @echo Prebuild:  Run edksetup.bat batch file.
 @echo.
-echo %CD%
-@if %CATALOG_DEBUG% == 0 (
-  @del %WORKSPACE%\Conf\build_rule.txt
-)
-echo %CD%
+
+@del %WORKSPACE%\Conf\build_rule.txt
+
 cd %WORKSPACE_CORE%
 echo %CD%
 @call edksetup.bat Rebuild

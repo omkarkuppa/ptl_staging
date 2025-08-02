@@ -70,11 +70,7 @@
   gPantherLakeFspPkgTokenSpaceGuid.PcdSymbolInReleaseEnable|FALSE
 
 !if $(TARGET) == RELEASE
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
-!else
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0
-!endif
 !else
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x27
 !endif

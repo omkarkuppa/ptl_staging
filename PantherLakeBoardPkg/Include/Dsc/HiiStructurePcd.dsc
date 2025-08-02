@@ -4213,11 +4213,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.VirtualKeyboard|0x0                           
 gStructPcdTokenSpaceGuid.PcdSetup.WakeOnRTCS5|0x0                                                  # Wake System from S5 via RTC
 gStructPcdTokenSpaceGuid.PcdSetup.SafeLoadingBiosEnable|0x0                                        # Safe Loading Bios Enable
 gStructPcdTokenSpaceGuid.PcdSetup.TsegReallocateEnableCount|0x0                                    # Tseg Reallocate Enable Count
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-    gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x2                                    # Platform Debug Option
-!else
-    gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x0                                    # Platform Debug Option
-!endif
+gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x0                                        # Platform Debug Option
   gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x4     # SoundWire codecs topology
 gStructPcdTokenSpaceGuid.PcdTCG2_CONFIGURATION.TpmDevice|0x1                                       # Attempt TPM Device
 gStructPcdTokenSpaceGuid.PcdTCG2_VERSION.PpiVersion|0x332e31                                       # Attempt PPI Version

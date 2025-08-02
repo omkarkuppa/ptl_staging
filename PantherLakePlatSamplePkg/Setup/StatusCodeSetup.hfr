@@ -34,11 +34,8 @@ form formid = AUTO_ID(DEBUG_INTERFACE_FORM_ID),
   checkbox varid = DEBUG_CONFIG_DATA.UartDebugInterface,
     prompt       = STRING_TOKEN(STR_UART_DEBUG_INTERFACE_PROMPT),
     help         = STRING_TOKEN(STR_DEBUG_INTERFACE_PROMPT_HELP),
-#ifndef RELEASE_CATALOG
     flags        = CHECKBOX_DEFAULT | RESET_REQUIRED,
-#else
-    flags        = RESET_REQUIRED,
-#endif
+
     key          = 1,
   endcheckbox;
   checkbox varid = DEBUG_CONFIG_DATA.Usb3DebugInterface,
@@ -51,11 +48,7 @@ form formid = AUTO_ID(DEBUG_INTERFACE_FORM_ID),
   checkbox varid = DEBUG_CONFIG_DATA.SerialIoDebugInterface,
     prompt       = STRING_TOKEN(STR_SERIAL_IO_DEBUG_INTERFACE_PROMPT),
     help         = STRING_TOKEN(STR_DEBUG_INTERFACE_PROMPT_HELP),
-#ifndef RELEASE_CATALOG
     flags        = CHECKBOX_DEFAULT | RESET_REQUIRED,
-#else
-    flags        = RESET_REQUIRED,
-#endif
     key          = 1,
   endcheckbox;
   checkbox varid = DEBUG_CONFIG_DATA.TraceHubDebugInterface,

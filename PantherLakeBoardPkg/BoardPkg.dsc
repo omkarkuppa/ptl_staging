@@ -452,9 +452,6 @@
 !if $(TARGET) == DEBUG
 DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
 !endif
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-  DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
 
 [LibraryClasses.common]
   PlatformHookLib|$(PLATFORM_BOARD_PACKAGE)/Library/BasePlatformHookLib/BasePlatformHookLib.inf
@@ -520,9 +517,6 @@ PciHostBridgeLib|$(PLATFORM_PACKAGE)/Pci/Library/PciHostBridgeLibSimple/PciHostB
 
   PostCodeMapLib|$(PLATFORM_SI_PACKAGE)/Library/Rsc2PostCodeMapLib/PostCodeMapLib.inf
 
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-  DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
   BeepLib|$(PLATFORM_FULL_PACKAGE)/Library/BeepLib/BeepLib.inf
   BeepMapLib|BeepDebugFeaturePkg/Library/BeepMapLib/BeepMapLib.inf
   PostCodeToScratchPadLib|$(PLATFORM_SI_PACKAGE)/Library/BasePostCodeToScratchPadLibNull/BasePostCodeToScratchPadLibNull.inf
@@ -730,10 +724,6 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   DebugPrintErrorLevelLib|$(PLATFORM_FULL_PACKAGE)/Library/PeiDxeSmmDebugPrintErrorLevelLib/PeiDebugPrintErrorLevelLib.inf
 !endif
 
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  DebugLib|$(PLATFORM_SI_PACKAGE)/Library/TraceHubDebugLibPpi/CatalogTraceHubDebugLibPpi.inf
-!endif
-
   #
   # Use Null library instance to skip MTRR initialization from MinPlatformPkg PlatformInit modules.
   # MTRR configuration will be done by FSP or PlatformInitAdvanced modules.
@@ -928,9 +918,6 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   SerialIoUartDebugPropertyLib|$(PLATFORM_FULL_PACKAGE)/Library/SerialIoUartDebugPropertyLib/DxeCoreSerialIoUartDebugPropertyLib.inf
   DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
 
 [LibraryClasses.X64.DXE_SMM_DRIVER]
 !if gSiPkgTokenSpaceGuid.PcdBiosGuardEnable == TRUE
@@ -999,9 +986,6 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
   SerialIoUartDebugPropertyLib|$(PLATFORM_FULL_PACKAGE)/Library/SerialIoUartDebugPropertyLib/DxeSmmSerialIoUartDebugPropertyLib.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
 
 [Components.$(FSP_ARCH)]
 
@@ -1040,10 +1024,6 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
     <LibraryClasses>
 !if $(TARGET) == DEBUG
       DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-!else
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-    DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
 !endif
 !if gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable == TRUE
       NULL|BeepDebugFeaturePkg/Library/BeepStatusCodeHandlerLib/PeiBeepStatusCodeHandlerLib.inf
@@ -1084,10 +1064,6 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
       DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
       TraceHubDebugSysTLib|MdeModulePkg/Library/TraceHubDebugSysTLib/BaseTraceHubDebugSysTLib.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-      TraceHubDebugSysTLib|MdeModulePkg/Library/TraceHubDebugSysTLib/BaseTraceHubDebugSysTLib.inf
-!endif
   }
 !endif
 
@@ -1098,9 +1074,6 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
 !if gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable == TRUE
   MdeModulePkg/Universal/CapsulePei/CapsulePei.inf  {
     <LibraryClasses>
-!if ($(TARGET) == RELEASE) AND (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-    DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-!endif
 !if ($(TARGET) == DEBUG)
       # To support debugging capsule update within debug resiliency BIOS in PEI phase
       DebugLib|MdeModulePkg/Library/PeiDebugLibDebugPpi/PeiDebugLibDebugPpi.inf
@@ -1127,9 +1100,6 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
 !if $(TARGET) == DEBUG
       DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
       NULL|UefiCpuPkg/Library/CpuCommonFeaturesLib/CpuCommonFeaturesLib.inf
       NULL|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/LibraryPrivate/PeiCpuSpecificFeaturesLib/PeiCpuSpecificFeaturesLib.inf
   }
@@ -1143,21 +1113,10 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
   }
 !endif
 
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-  $(PLATFORM_FULL_PACKAGE)/Features/CatalogTrace/TraceHubDebugServicePei/CatalogTHDebugServicePei.inf {
-    <LibraryClasses>
-     DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-}
-!endif
-
 $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandlerPei.inf {
     <LibraryClasses>
 !if $(TARGET) == DEBUG
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-!else
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-    DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
 !endif
 }
 
@@ -1527,9 +1486,6 @@ $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
       # It can't use PeiDxeDebugLibReportStatusCode as DebugLib, otherwise some HECI log will not shown.
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
   }
 !endif
 
@@ -1639,9 +1595,6 @@ $(PLATFORM_BOARD_PACKAGE)/Features/ModularUsbCIo/ModularUsbCIoDxe.inf
       # It can't use PeiDxeDebugLibReportStatusCode as DebugLib, otherwise some Telemetry log will not shown.
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
 !endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
   }
 
 !if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
@@ -1681,9 +1634,6 @@ $(PLATFORM_FEATURES_PATH)/Usb4Cm/Usb4PlatformDxe/Usb4PlatformDxe.inf
       # If want to use PeiDxeDebugLibReportStatusCode as DebugLib to save size,
       # the log of 'Welcome Admin' or 'Admin password is not set' will not shown.
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-!endif
-!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
 !endif
     }
   UserAuthFeaturePkg/UserAuthenticationDxeSmm/UserAuthenticationSmm.inf {
@@ -1862,9 +1812,6 @@ $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
       # It can't use PeiDxeDebugLibReportStatusCode as DebugLib, otherwise some forward SMM log will not shown.
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
 !endif
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
   }
   $(PLATFORM_FEATURES_PATH)/GuidForwardHandler/RuntimeDxe/GuidForwardHandlerRuntimeDxe.inf {
     <LibraryClasses>
@@ -1872,9 +1819,6 @@ $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
       # It can't use PeiDxeDebugLibReportStatusCode as DebugLib, otherwise some forward DXE log will not shown.
       DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
       LpssUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartLib/DxeRuntimeLpssUartLib.inf
-!endif
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-    DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
 !endif
   }
 
@@ -1893,10 +1837,6 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/RuntimeDxe/PlatformStatusCod
 !if $(TARGET) == DEBUG
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
     LpssUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartDebugPropertyPcdLib/LpssUartDebugPropertyPcdLib.inf
-!else
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-    DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
-!endif
 !endif
 !if gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable == TRUE
   NULL|BeepDebugFeaturePkg/Library/BeepStatusCodeHandlerLib/RuntimeDxeBeepStatusCodeHandlerLib.inf

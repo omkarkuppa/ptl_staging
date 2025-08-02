@@ -102,9 +102,6 @@ for /f "usebackq tokens=3" %%i in (`FINDSTR /b /c:"VERSION_MAJOR" %WORKSPACE%\%B
 
 set BIOS_ROM_FILENAME_INTEXT=External
 @set BUILD_TYPE=%TARGET%
-@if %CATALOG_RELEASE% EQU TRUE (
-  set BUILD_TYPE=%BUILD_TYPE%_CATALOG
-)
 
 @if not "%TOOL_CHAIN_TAG%"=="%TOOL_CHAIN_TAG:VS=%" (
   set ROM_FILENAME_COMPILER=VS
@@ -898,20 +895,6 @@ call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\ToolScripts\RomImage\Setu
   goto EndPostBuild
 )
 
-
-@echo ---Prepare the BIOS Decoder Dictionaries for the Release Build and Catalog Build BIOS---
-@if %CATALOG_RELEASE% EQU TRUE (
-  @rem Catalog Dictionary Generation script will parse through the source and preprocessed files to prepare the entries for the RELEASE BIOS decoder.
-  call %PYTHON_COMMAND% %CATALOG_DICT_GENERATOR%
-  @if %errorlevel% NEQ 0 (
-      @echo !!! ERROR !!! BIOS Decoder Dictionary generation failed  !!!
-      set SCRIPT_ERROR=1
-      goto EndPostBuild
-  )
-  @rem Placing the Release Build and Catalog Build BIOS Decoder files from the Build to the workspace folder.
-  @copy /Y /b %RELEASEBIOS_DECODER_XML% %WORKSPACE%\BIOS_Decoder_Release_%BIOS_PREFIX%_%BIOS_MAJOR_VERSION%_%BIOS_MIN_VERSION%.xml > NUL 2>&1
-  @copy /Y /b %CATALOGBIOS_DECODER_XML% %WORKSPACE%\BIOS_Decoder_Catalog_%BIOS_PREFIX%_%BIOS_MAJOR_VERSION%_%BIOS_MIN_VERSION%.xml > NUL 2>&1
-)
 
 
 
