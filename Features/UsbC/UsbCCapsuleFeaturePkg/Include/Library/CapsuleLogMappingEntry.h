@@ -24,7 +24,7 @@
 
 ///
 /// Define the structure of string mapping
-///   EvtCode - (EvtId << 2) | (argument number:2 bits)
+///   EvtCode = (EventId << EVT_CODE_EVT_ID_OFFSET) | (ArgumentNumber << EVT_CODE_ARG_NUM_OFFSET) | EVT_CODE_ARG1_STATUS | EVT_CODE_ARG0_STATUS
 ///   LogStr  - return the corresponding message by EvtCode
 ///
 typedef struct {

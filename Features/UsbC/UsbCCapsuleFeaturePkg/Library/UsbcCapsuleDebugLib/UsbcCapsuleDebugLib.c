@@ -53,6 +53,8 @@ CapsuleLogWrite (
   CHAR8                            LogStr[200];
   UINT32                           Argc;
   UINT32                           NumOfEntries;
+  UINTN                            Arg0;
+  UINTN                            Arg1;
 #else
   USBC_CAPSULE_DEBUG_PROTOCOL      *CapsuleDebugProtocol;
   UINT8                            CapsuleReleaseEnable;
@@ -66,27 +68,39 @@ CapsuleLogWrite (
   /// Make sure Event ID is same with Log Mapping Entry number
   ///
   NumOfEntries = mUsbCCapsuleLogMappingEntries;
-  EvtId = ((EventCode) >> 2);
+  EvtId = ((EventCode) >> EVT_CODE_EVT_ID_OFFSET);
   if (EvtId >= NumOfEntries) {
     DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Invalid Event ID 0x%x for Log Mapping table\n", EvtId));
     return EFI_UNSUPPORTED;
   }
 
+  if ((EventCode & EVT_CODE_ARG0_STATUS) && (EvtArg0 != EFI_SUCCESS)) {
+    Arg0 = ((UINTN) EvtArg0 | MAX_BIT);
+  } else {
+    Arg0 = (UINTN) EvtArg0;
+  }
+
+  if ((EventCode & EVT_CODE_ARG1_STATUS) && (EvtArg1 != EFI_SUCCESS)) {
+    Arg1 = ((UINTN) EvtArg1 | MAX_BIT);
+  } else {
+    Arg1 = (UINTN) EvtArg1;
+  }
+
   MappingTable = mUsbCCapsuleLogMappingTable;
   ///
-  /// Get the argument count of event from lower two bits of Event code
+  /// Get the argument count of event from Bit2-3 of Event code
   ///
-  Argc = EventCode & 0x3;
+  Argc = EVT_CODE_ARG_NUM_MASK (EventCode);
 
   switch (Argc) {
     case 0:
       Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
       break;
     case 1:
-      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr, EvtArg0) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr, Arg0) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
       break;
     case 2:
-      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr, EvtArg0, EvtArg1) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+      Status = (LogDataToStr (LogStr, sizeof (LogStr), MappingTable[EvtId].LogStr, Arg0, Arg1) == 0) ? EFI_UNSUPPORTED : EFI_SUCCESS;
       break;
     default:
       DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Unsupported argument number %d\n", Argc));
@@ -125,7 +139,7 @@ CapsuleLogWrite (
     ///
     /// Make sure Event ID is same with Log Mapping Entry number
     ///
-    EvtId = ((EventCode) >> 2);
+    EvtId = ((EventCode) >> EVT_CODE_EVT_ID_OFFSET);
     if (EvtId >= CapsuleDebugProtocol->LogMappingEntries) {
       DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Invalid Event ID 0x%x for Log Mapping table\n", EvtId));
       Status = EFI_UNSUPPORTED;

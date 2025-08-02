@@ -47,11 +47,24 @@
 typedef struct _USBC_CAPSULE_DEBUG_PROTOCOL USBC_CAPSULE_DEBUG_PROTOCOL;
 
 ///
-/// Define the structure of  log record
-///  EvtCode - (EvtId << 2) | (argument number:2 bits)
+/// Define the structure of log record
+///  EvtCode Structure (32 bits):
+///    - Bit 0: Indicates if EvtArg0 is a Status value (1 = Yes, 0 = No).
+///    - Bit 1: Indicates if EvtArg1 is a Status value (1 = Yes, 0 = No).
+///    - Bits 2-3: Number of arguments (0-2).
+///    - Bits 4-31: Event ID
+///  EvtCode = (EventId << EVT_CODE_EVT_ID_OFFSET) | (ArgumentNumber << EVT_CODE_ARG_NUM_OFFSET) | EVT_CODE_ARG1_STATUS | EVT_CODE_ARG0_STATUS
 ///  EvtArg0 - Argument 0 of Log data
 ///  EvtArg1 - Argument 1 of Log data
 ///
+
+#define EVT_CODE_ARG0_STATUS       BIT0
+#define EVT_CODE_ARG1_STATUS       BIT1
+#define EVT_CODE_EVT_ID_OFFSET     4
+#define EVT_CODE_ARG_NUM_OFFSET    2
+
+#define EVT_CODE_ARG_NUM_MASK(Value) ((((Value) & (BIT2 | BIT3))) >> 2)
+
 #pragma pack (1)
 typedef struct _CAPSULE_LOG_ENTRY {
   UINT32 EvtCode;

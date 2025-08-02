@@ -236,8 +236,13 @@ LogParse (
   UINT16                           EvtId;
   UINT32                           Argc;
   const CAPSULE_LOG_MAPPING_ENTRY  *Mappings;
+  UINTN                            Arg0;
+  UINTN                            Arg1;
+
 
   Status = EFI_SUCCESS;
+  Arg0   = 0;
+  Arg1   = 0;
 
   if (This == NULL) {
     Status = EFI_INVALID_PARAMETER;
@@ -260,7 +265,7 @@ LogParse (
   /// Event ID is used as index for looking up Log mapping table
   /// Make sure Log data Event ID is valid for Log mapping table
   ///
-  EvtId = (UINT16) (((UINT32) LogData->EvtCode) >> 2);
+  EvtId = (UINT16) (((UINT32) LogData->EvtCode) >> EVT_CODE_EVT_ID_OFFSET);
   if (EvtId >= This->LogMappingEntries) {
     DEBUG ((DEBUG_ERROR, "CapsuleLogParse: Invalid Event ID 0x%x for Log Mapping table\n", EvtId));
     Status = EFI_UNSUPPORTED;
@@ -278,10 +283,22 @@ LogParse (
     goto Exit;
   }
 
+  if ((LogData->EvtCode & EVT_CODE_ARG0_STATUS) && (LogData->EvtArg0 != EFI_SUCCESS)) {
+    Arg0 = ((UINTN) LogData->EvtArg0 | MAX_BIT);
+  } else {
+    Arg0 = (UINTN) LogData->EvtArg0;
+  }
+
+  if ((LogData->EvtCode & EVT_CODE_ARG1_STATUS) && (LogData->EvtArg1 != EFI_SUCCESS)) {
+    Arg1 = ((UINTN) LogData->EvtArg1 | MAX_BIT);
+  } else {
+    Arg1 = (UINTN) LogData->EvtArg1;
+  }
+
   ///
-  /// Get the argument count of event from lower two bits of Event code
+  /// Get the argument count of event from Bit2-3 of Event code
   ///
-  Argc = (UINT32)(LogData->EvtCode & 0x0003);
+  Argc = EVT_CODE_ARG_NUM_MASK (LogData->EvtCode);
 
   ///
   /// LogDataToStr returns the character count of produced log string
@@ -294,12 +311,12 @@ LogParse (
       }
       break;
     case 1:
-      if (LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, LogData->EvtArg0) == 0) {
+      if (LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, Arg0) == 0) {
         Status = EFI_UNSUPPORTED;
       }
       break;
     case 2:
-      if (LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, LogData->EvtArg0, LogData->EvtArg1) == 0) {
+      if (LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, Arg0, Arg1) == 0) {
         Status = EFI_UNSUPPORTED;
       }
       break;
@@ -368,7 +385,7 @@ InstallCapsuleDebugLibProtocol (
   /// Validate Event ID of each mapping entry align with entry index
   ///
   for (Index = 0; Index < LogMappingEntries; Index++) {
-    EvtId = LogMappingTable[Index].EvtCode >> 2;
+    EvtId = LogMappingTable[Index].EvtCode >> EVT_CODE_EVT_ID_OFFSET;
     if (Index != EvtId) {
       DEBUG ((DEBUG_ERROR, "Log mapping entry %d Event ID mismatch, Event ID = %d\n", Index, EvtId));
       Status = EFI_UNSUPPORTED;

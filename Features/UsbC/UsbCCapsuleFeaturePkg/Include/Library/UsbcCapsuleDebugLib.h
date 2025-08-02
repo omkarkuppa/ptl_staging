@@ -39,7 +39,7 @@ extern UINT32  mUsbCCapsuleLogMappingEntries;
   @param[in] EvtArg1   - Argument 1 of Log data
 
   @retval EFI_SUCCESS           - Write Log data to Log buffer successfully
-  @retval EFI_INVALID_PARAMETER - Invalid parameter
+  @retval EFI_UNSUPPORTED       - Unable to support log write
   @retval EFI_OUT_OF_RESOURCES  - Log buffer is full
 
 **/

@@ -23,6 +23,7 @@
 #define _USBC_CAPSULE_EVT_ID_H_
 
 #include <Uefi.h>
+#include <UsbCCapsuleDebugProtocol.h>
 
 typedef enum {
   ///
