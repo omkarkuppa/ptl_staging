@@ -81,11 +81,13 @@ MSFT:  *_*_X64_ASLCC_FLAGS    = $(DSC_PLTPKG_FEATURE_BUILD_OPTIONS)
 [BuildOptions.common.EDKII.DXE_SMM_DRIVER, BuildOptions.common.EDKII.SMM_CORE]
   MSFT:*_*_*_DLINK_FLAGS = /ALIGN:4096
   GCC:*_GCC*_*_DLINK_FLAGS = -z common-page-size=0x1000
+  CLANGPDB: *_CLANGPDB_*_DLINK_FLAGS = /ALIGN:4096
 
 # Force PE/COFF sections to be aligned at 4KB boundaries to support MemoryAttribute table
 [BuildOptions.common.EDKII.DXE_RUNTIME_DRIVER]
   MSFT:*_*_*_DLINK_FLAGS = /ALIGN:4096
   GCC:*_GCC*_*_DLINK_FLAGS = -z common-page-size=0x1000
+  CLANGPDB: *_CLANGPDB_*_DLINK_FLAGS = /ALIGN:4096
 
 # Force PE/COFF sections to be aligned at 4KB boundaries to support NX protection
 [BuildOptions.common.EDKII.DXE_DRIVER, BuildOptions.common.EDKII.DXE_CORE, BuildOptions.common.EDKII.UEFI_DRIVER, BuildOptions.common.EDKII.UEFI_APPLICATION]
