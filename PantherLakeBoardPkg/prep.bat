@@ -224,7 +224,7 @@ set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
 --pcd gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable=TRUE
 ) else if /i "res" == "%1" (
   set RESILIENCY_BUILD=TRUE
-  set ROM_FILENAME_SPECIAL_BUILD_TYPE=_Resiliency
+  set ROM_FILENAME_SPECIAL_BUILD_TYPE=%ROM_FILENAME_SPECIAL_BUILD_TYPE%_Resiliency
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
 --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable=TRUE ^
 --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdMeResiliencyEnable=TRUE
@@ -287,7 +287,7 @@ set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
 --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosExtenedRegionEnable=TRUE
   set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD% ^
 --pcd gSiPkgTokenSpaceGuid.PcdExtendedBiosRegionSupport=TRUE
-  set ROM_FILENAME_SPECIAL_BUILD_TYPE=_EXTEND
+  set ROM_FILENAME_SPECIAL_BUILD_TYPE=%ROM_FILENAME_SPECIAL_BUILD_TYPE%_EXTEND
 ) else if /i "help" == "%1" (
   goto PrepHelp
 ) else if /i "notimestamp" == "%1" (

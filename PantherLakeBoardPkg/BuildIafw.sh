@@ -268,7 +268,7 @@ for ((i=1 ; i <= numargs ; i++)); do
     export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=TRUE"
   elif [ "$1" = "res" ]; then
     export RESILIENCY_BUILD=TRUE
-    export ROM_FILENAME_SPECIAL_BUILD_TYPE=_Resiliency
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE="${ROM_FILENAME_SPECIAL_BUILD_TYPE}_Resiliency"
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable=TRUE --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdMeResiliencyEnable=TRUE"
   elif [ "$1" = "ptlp" ]; then
     export PTL_BUILD=TRUE
@@ -347,7 +347,7 @@ for ((i=1 ; i <= numargs ; i++)); do
 --pcd gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable=TRUE"
   elif [ "$1" = "extended" ]; then
     export EXTENDEDREGION_BUILD=TRUE
-    export ROM_FILENAME_SPECIAL_BUILD_TYPE=_EXTEND
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE="${ROM_FILENAME_SPECIAL_BUILD_TYPE}_EXTEND"
     export BIOS_SIZE_OPTION=-DBIOS_SIZE_OPTION=SIZE_170
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD \
 --pcd gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport=TRUE \
