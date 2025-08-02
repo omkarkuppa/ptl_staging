@@ -620,10 +620,9 @@ PetMessageInit (
   }
 
   ///
-  /// Register our Status Code Report Function.
-  /// This function is notified at the highest TPL
+  /// Register our Status Code Report Function to report ASF progress and error codes.
   ///
-  Status = RscHandlerProtocol->Register (PetStatusCodeReportListener, TPL_HIGH_LEVEL);
+  Status = RscHandlerProtocol->Register (PetStatusCodeReportListener, TPL_NOTIFY);
   ASSERT_EFI_ERROR (Status);
   DEBUG ((DEBUG_INFO, "Register PetStatusCodeReportListener status is %r\n", Status));
 
