@@ -32,7 +32,7 @@
   PcdLib
   SecGetFsptApiParameterLib
   LpssUartDebugPropertyPcdLib
-  SecLpssInitLib
+  SecPreMemLpssInitLib
 
 [Packages]
   MdePkg/MdePkg.dec

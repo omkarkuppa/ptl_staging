@@ -42,7 +42,7 @@ LpssEnableMse (
 **/
 STATIC
 VOID
-SecLpssI2cGetOutOfReset (
+LpssI2cGetOutOfReset (
   IN UINTN                    MmioBaseAddress
   )
 {
@@ -110,6 +110,6 @@ SecLpssI2cConfiguration (
   SecLpssI2cPciSetFixedMmio (LpssI2cPciBase, LpssI2cMmioBase);
   LpssSetD0 (LpssI2cPciBase);
   LpssEnableMse (LpssI2cPciBase);
-  SecLpssI2cGetOutOfReset (LpssI2cMmioBase);
-  PtlPcdSecLpssI2cGpioConfigure (I2cDeviceConfig, I2cNumber);
+  LpssI2cGetOutOfReset (LpssI2cMmioBase);
+  PtlPcdPreMemLpssI2cGpioConfigure (I2cNumber, I2cDeviceConfig);
 }

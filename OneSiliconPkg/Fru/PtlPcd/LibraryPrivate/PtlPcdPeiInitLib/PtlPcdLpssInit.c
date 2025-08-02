@@ -164,7 +164,7 @@ PtlPcdLpssUartGpioConfigure (
 }
 
 /**
-  Add element and the en of the list
+  Add element and the end of the list
 
   @param ListHead    LPSS devices list head
   @return            Pointer to added device

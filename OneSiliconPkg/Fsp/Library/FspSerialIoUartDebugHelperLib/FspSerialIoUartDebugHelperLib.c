@@ -26,6 +26,8 @@
 #include <Library/FspCommonLib.h>
 #include <Library/LpssUartDebugPropertyPcdLib.h>
 #include <Library/LpssUartLib.h>
+#include <Library/SecPreMemLpssUartInitLib.h>
+#include <Library/PrintLib.h>
 
 
 
@@ -35,7 +37,7 @@
 **/
 FSPT_UPD *
 EFIAPI
-FspSerialIoUartDebugGetFsptUpdLocPpi (
+FspLpssUartDebugGetFsptUpdLocPpi (
   VOID
   )
 {
@@ -83,7 +85,7 @@ GetFsptConfig (
 {
   FSPT_UPD        *FsptUpd;
 
-  FsptUpd = FspSerialIoUartDebugGetFsptUpdLocPpi ();
+  FsptUpd = FspLpssUartDebugGetFsptUpdLocPpi ();
   if (FsptUpd != NULL) {
     *Fspt = &FsptUpd->FsptConfig;
     return TRUE;
@@ -122,13 +124,65 @@ GetFspmConfig (
 }
 
 /**
+  Returns UART attributes
+
+  @param[out] UartDeviceConfig           A pointer to the SERIAL_IO_UART_CONFIG.
+  @param[out] LpssUartNumber         The Number of Serial Io Uart.
+**/
+VOID
+STATIC
+FspLpssUartDebugGetDeviceConfig (
+  OUT LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
+  OUT UINT8                    *UartNumber
+  )
+{
+  FSP_M_CONFIG    *FspmConfig;
+  FSP_T_CONFIG    *FsptConfig;
+
+  FspmConfig = NULL;
+  FsptConfig = NULL;
+
+  if (GetFsptConfig (&FsptConfig)) {
+
+    UartDeviceConfig->Attributes.BaudRate = FsptConfig->PcdLpssUartBaudRate;
+    UartDeviceConfig->Attributes.Parity   = FsptConfig->PcdLpssUartParity;
+    UartDeviceConfig->Attributes.DataBits = FsptConfig->PcdLpssUartDataBits;
+    UartDeviceConfig->Attributes.StopBits = FsptConfig->PcdLpssUartStopBits;
+    UartDeviceConfig->Attributes.AutoFlow = FsptConfig->PcdLpssUartAutoFlow;
+    UartDeviceConfig->Mode                = FsptConfig->PcdLpssUartMode;
+    UartDeviceConfig->PinMux.Rx           = FsptConfig->PcdLpssUartRxPinMux;
+    UartDeviceConfig->PinMux.Tx           = FsptConfig->PcdLpssUartTxPinMux;
+    UartDeviceConfig->PinMux.Rts          = FsptConfig->PcdLpssUartRtsPinMux;
+    UartDeviceConfig->PinMux.Cts          = FsptConfig->PcdLpssUartCtsPinMux;
+    UartDeviceConfig->PowerGating         = FsptConfig->PcdLpssUartPowerGating;
+    *UartNumber =  FsptConfig->PcdLpssUartNumber;
+  } else if (GetFspmConfig (&FspmConfig)) {
+    UartDeviceConfig->Attributes.BaudRate = FspmConfig->SerialIoUartDebugBaudRate;
+    UartDeviceConfig->Attributes.Parity   = FspmConfig->SerialIoUartDebugParity;
+    UartDeviceConfig->Attributes.DataBits = FspmConfig->SerialIoUartDebugDataBits;
+    UartDeviceConfig->Attributes.StopBits = FspmConfig->SerialIoUartDebugStopBits;
+    UartDeviceConfig->Attributes.AutoFlow = FspmConfig->SerialIoUartDebugAutoFlow;
+    UartDeviceConfig->Mode                = FspmConfig->SerialIoUartDebugMode;
+    UartDeviceConfig->PinMux.Rx           = FspmConfig->SerialIoUartDebugRxPinMux;
+    UartDeviceConfig->PinMux.Tx           = FspmConfig->SerialIoUartDebugTxPinMux;
+    UartDeviceConfig->PinMux.Rts          = FspmConfig->SerialIoUartDebugRtsPinMux;
+    UartDeviceConfig->PinMux.Cts          = FspmConfig->SerialIoUartDebugCtsPinMux;
+    UartDeviceConfig->PowerGating         = FspmConfig->SerialIoUartPowerGating;
+    *UartNumber =  FspmConfig->SerialIoUartDebugControllerNumber;
+  } else {
+    LpssUartDebugPcdGetDeviceConfig (UartDeviceConfig, UartNumber);
+  }
+  return;
+}
+
+/**
   Returns Serial Io UART Controller Number used in Debug mode
 
   @retval  ControllerNumber   UART Controller Number
 **/
 UINT8
 STATIC
-FspSerialIoUartDebugGetControllerNumber (
+FspLpssUartDebugGetControllerNumber (
   VOID
   )
 {
@@ -154,7 +208,7 @@ FspSerialIoUartDebugGetControllerNumber (
 **/
 UINTN
 STATIC
-FspSerialIoUartDebugGetPciDefaultMmioBase (
+FspLpssUartDebugGetPciDefaultMmioBase (
   VOID
   )
 {
@@ -176,7 +230,7 @@ FspSerialIoUartDebugGetPciDefaultMmioBase (
 }
 
 /**
-  Initialize SerialIo UART for debug.
+  Initialize Lpss UART for debug.
 
 **/
 VOID
@@ -185,9 +239,23 @@ SerialIoUartDebugInit (
   VOID
   )
 {
-  //
-  // Skip the initialization for Debug Mode.
-  //
+  UINT8                     UartNumber;
+  LPSS_UART_DEVICE_CONFIG   UartDeviceConfig;
+
+  // Initalize the UartNumber
+  UartNumber = 0xFF;
+
+  FspLpssUartDebugGetDeviceConfig (&UartDeviceConfig, &UartNumber);
+
+  if (UartDeviceConfig.Mode != LpssUartPci) {
+    return;
+  }
+
+  UartDeviceConfig.DBG2        = FALSE;
+  UartDeviceConfig.DmaEnable   = FALSE;
+
+  LpssUartConfiguration (UartNumber, &UartDeviceConfig);
+
 }
 
 /**
@@ -210,10 +278,10 @@ SerialIoUartDebugWrite (
 {
   UINT8  UartIndex;
 
-  if (FspSerialIoUartDebugGetPciDefaultMmioBase () == 0x0) {
-    UartIndex = FspSerialIoUartDebugGetControllerNumber ();
+  if (FspLpssUartDebugGetPciDefaultMmioBase () == 0x0) {
+    UartIndex = FspLpssUartDebugGetControllerNumber ();
     return LpssUartWrite ((UINTN) GetLpssUartFixedMmioAddress (UartIndex), Buffer, NumberOfBytes);
   }
 
-  return LpssUartWrite ((UINTN) FspSerialIoUartDebugGetPciDefaultMmioBase (), Buffer, NumberOfBytes);
+  return LpssUartWrite ((UINTN) FspLpssUartDebugGetPciDefaultMmioBase (), Buffer, NumberOfBytes);
 }

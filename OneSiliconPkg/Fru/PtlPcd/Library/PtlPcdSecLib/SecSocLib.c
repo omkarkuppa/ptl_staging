@@ -43,7 +43,7 @@
 #include <Library/SecPchLib.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <IncludePrivate/PtlPcdSbPortIds.h>
-#include <Library/SecLpssUartInitLib.h>
+#include <Library/SecPreMemLpssUartInitLib.h>
 #include <Library/LpssUartLib.h>
 #include <Register/TcoRegs.h>
 #include <LpssI2cConfig.h>
@@ -207,7 +207,7 @@ LpssUartDebugConfiguration (
   // Initialize LpssUart UART for debug message
   //
   if (LpssUartDebugEnable == 1) {
-    SecLpssUartConfiguration (LpssUartNumber, &UartDeviceConfig);
+    LpssUartConfiguration (LpssUartNumber, &UartDeviceConfig);
     LpssUartWrite (
         GetLpssUartFixedMmioAddress (LpssUartNumber),
         (UINT8 *)CarInitBuffer,
@@ -217,7 +217,7 @@ LpssUartDebugConfiguration (
   Uart2ndDeviceConfig.DBG2      = FALSE;
   Uart2ndDeviceConfig.DmaEnable = FALSE;
   if (AdditionalUartEnabled == 1) {
-    SecLpssUartConfiguration (Lpss2ndUartNumber, &Uart2ndDeviceConfig);
+    LpssUartConfiguration (Lpss2ndUartNumber, &Uart2ndDeviceConfig);
   }
 
 

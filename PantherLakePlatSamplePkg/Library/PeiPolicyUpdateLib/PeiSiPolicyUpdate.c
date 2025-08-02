@@ -253,7 +253,7 @@ UpdatePeiSiPolicyPreMem (
         ((FSPM_UPD *)FspmUpd)->FspmConfig.SerialIoUartDebugTxPinMux         = 0x0;
         ((FSPM_UPD *)FspmUpd)->FspmConfig.SerialIoUartDebugRtsPinMux        = 0x0;
         ((FSPM_UPD *)FspmUpd)->FspmConfig.SerialIoUartDebugCtsPinMux        = 0x0;
-        ((FSPM_UPD *)FspmUpd)->FspmConfig.SerialIoUartDebugMode             = 0x2; //SerialIoUartHidden
+        ((FSPM_UPD *)FspmUpd)->FspmConfig.SerialIoUartDebugMode             = 0x1; //SerialIoUartPci
       }
     }
   }

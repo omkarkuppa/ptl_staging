@@ -21,11 +21,11 @@
 
 [Defines]
 INF_VERSION    = 0x00010017
-BASE_NAME      = SecLpssInitLib
+BASE_NAME      = SecPreMemLpssInitLib
 FILE_GUID      = 792331CF-9E5C-43C4-9F25-D8711480A416
 VERSION_STRING = 1.0
 MODULE_TYPE    = SEC
-LIBRARY_CLASS  = SecLpssInitLib | SEC PEI_CORE PEIM
+LIBRARY_CLASS  = SecPreMemLpssInitLib | SEC PEI_CORE PEIM
 
 [LibraryClasses]
 IoLib
@@ -41,6 +41,6 @@ MdePkg/MdePkg.dec
 OneSiliconPkg/SiPkg.dec
 
 [Sources]
-SecLpssUartInitLib.c
-SecLpssI2cInitLib.c
-SecLpssSpiInitLib.c
+SecPreMemLpssUartInitLib.c
+SecPreMemLpssI2cInitLib.c
+SecPreMemLpssSpiInitLib.c

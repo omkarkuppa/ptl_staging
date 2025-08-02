@@ -1,6 +1,6 @@
 ## @file
 # PTL Pcd Gpio Initialization library.
-# All function in this library is available for SEC phase.
+# All function in this library is available for SEC or PreMem phase.
 #
 #
 #  @copyright
@@ -27,7 +27,7 @@
   FILE_GUID      = 320E7B85-4105-44CE-9BEF-6F4ACD3DECCC
   VERSION_STRING = 1.0
   MODULE_TYPE    = SEC
-  LIBRARY_CLASS  = PtlPcdSecGpioInitLib
+  LIBRARY_CLASS  = PtlPcdSecGpioInitLib | SEC PEI_CORE PEIM
 
 [LibraryClasses]
   BaseLib

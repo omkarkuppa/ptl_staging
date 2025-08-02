@@ -44,7 +44,7 @@ LpssUartEnableMse (
 **/
 STATIC
 VOID
-SecLpssUartGetOutOfReset (
+PreMemLpssUartGetOutOfReset (
   IN UINTN            MmioBaseAddress
   )
 {
@@ -77,7 +77,7 @@ LpssUartSetD0 (
   @param[in] PsfPort             Psf Port data
 **/
 VOID
-SecLpssUartPciSetFixedMmio (
+PreMemLpssUartPciSetFixedMmio (
   IN UINT64            PciCfgBase,
   IN UINT32            FixedBaseAddress
   )
@@ -95,9 +95,9 @@ SecLpssUartPciSetFixedMmio (
   @param[in] UartDeviceConfig  LPSS UART Config
 **/
 VOID
-SecLpssUartConfiguration (
+LpssUartConfiguration (
   IN UINT8                        UartNumber,
-  IN LPSS_UART_DEVICE_CONFIG      *UartDeviceConfig                     
+  IN LPSS_UART_DEVICE_CONFIG      *UartDeviceConfig
   )
 {
   IN UINT64                        PciCfgBase;
@@ -106,12 +106,12 @@ SecLpssUartConfiguration (
   }
   
   PciCfgBase  = LpssUartPciCfgBase (UartNumber);
-  SecLpssUartPciSetFixedMmio (PciCfgBase, GetLpssUartFixedMmioAddress (UartNumber));
+  PreMemLpssUartPciSetFixedMmio (PciCfgBase, GetLpssUartFixedMmioAddress (UartNumber));
   // Enable MSE and set D0 before placing device in Hidden Mode, otherwise memory will not map
   //
   LpssUartSetD0 (PciCfgBase);
   LpssUartEnableMse (PciCfgBase);
-  SecLpssUartGetOutOfReset (GetLpssUartFixedMmioAddress (UartNumber));
+  PreMemLpssUartGetOutOfReset (GetLpssUartFixedMmioAddress (UartNumber));
   LpssUartSetAttributes (
     GetLpssUartFixedMmioAddress (UartNumber),
     UartDeviceConfig->Attributes.BaudRate,
@@ -120,7 +120,7 @@ SecLpssUartConfiguration (
     UartDeviceConfig->Attributes.StopBits,
     UartDeviceConfig->Attributes.AutoFlow
   );
-  PtlPcdSecLpssUartGpioConfigure (UartDeviceConfig, UartNumber);
+  PtlPcdPreMemLpssUartGpioConfigure (UartNumber, UartDeviceConfig);
 }
 
 

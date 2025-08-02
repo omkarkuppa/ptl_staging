@@ -66,9 +66,9 @@
   ## SERIAL_IO_UART_CONFIG Start
 
   # !BSF NAME:{Serial Io Uart Debug Mode} TYPE:{Combo}
-  # !BSF OPTION:{0:SerialIoUartDisabled, 1:SerialIoUartPci, 2:SerialIoUartHidden, 3:SerialIoUartCom, 4:SerialIoUartSkipInit}
+  # !BSF OPTION:{1:SerialIoUartPci, 4:SerialIoUartSkipInit}
   # !BSF HELP:{Select SerialIo Uart Controller mode}
-  gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugMode               | * | 0x01 | 0x02
+  gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugMode               | * | 0x01 | 0x01
 
   # !BSF NAME:{Serial Io Uart Debug Auto Flow} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables UART hardware flow control, CTS and RTS lines.}

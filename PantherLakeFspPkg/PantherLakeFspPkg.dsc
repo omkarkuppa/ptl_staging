@@ -412,7 +412,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   FspCommonLib|IntelFsp2Pkg/Library/BaseFspCommonLib/BaseFspCommonLib.inf
   FspPlatformLib|IntelFsp2Pkg/Library/BaseFspPlatformLib/BaseFspPlatformLib.inf
   PtlPcdSecGpioInitLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdLpssLib/PtlPcdSecGpioInitLib.inf
-  SecLpssInitLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate//SecLpssInitLib/SecLpssInitLib.inf
+  SecPreMemLpssInitLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/SecPreMemLpssInitLib/SecPreMemLpssInitLib.inf
   PtlPcdSecGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdSecGpioTopology.inf
 
 !if $(TARGET) == DEBUG

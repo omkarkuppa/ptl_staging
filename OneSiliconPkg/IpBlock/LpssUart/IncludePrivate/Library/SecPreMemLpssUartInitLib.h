@@ -30,7 +30,7 @@
   @param[in] UartDeviceConfig  LPSS UART Config
 **/
 VOID
-SecLpssUartConfiguration (
+LpssUartConfiguration (
   IN UINT8                        UartNumber,
   IN LPSS_UART_DEVICE_CONFIG      *UartDeviceConfig                     
   );

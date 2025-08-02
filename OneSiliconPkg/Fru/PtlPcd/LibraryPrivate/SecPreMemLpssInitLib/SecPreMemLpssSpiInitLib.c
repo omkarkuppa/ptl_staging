@@ -43,7 +43,7 @@ LpssSpiEnableMse (
 **/
 STATIC
 VOID
-SecLpssSpiGetOutOfReset (
+LpssSpiGetOutOfReset (
   IN UINTN                    MmioBaseAddress
   )
 {
@@ -71,7 +71,7 @@ LpssSpiSetD0 (
   @param[in] FixedBaseAddress    Fixed Base Address for BAR0
 **/
 VOID
-SecLpssSpiPciSetFixedMmio (
+LpssSpiPciSetFixedMmio (
   IN UINT64            PciCfgBase,
   IN UINTN             FixedBaseAddress
   )
@@ -108,10 +108,10 @@ SecLpssSpiConfiguration (
     return;
   }
 
-  SecLpssSpiPciSetFixedMmio (PciCfgBase, LpssSpiMmioBase);
+  LpssSpiPciSetFixedMmio (PciCfgBase, LpssSpiMmioBase);
   LpssSpiSetD0 (PciCfgBase);
   LpssSpiEnableMse (PciCfgBase);
-  SecLpssSpiGetOutOfReset (LpssSpiMmioBase);
+  LpssSpiGetOutOfReset (LpssSpiMmioBase);
   LpssSpiChipSelectConfig (
       PciCfgBase,
       SpiDeviceConfig->DefaultCsOutput,
@@ -123,5 +123,5 @@ SecLpssSpiConfiguration (
       (SpiDeviceConfig->CsPolarity [1] << 1))
       );
 
-  PtlPcdSecLpssSpiGpioConfigure (SpiDeviceConfig, SpiNumber);
+  PtlPcdPreMemLpssSpiGpioConfigure (SpiNumber, SpiDeviceConfig);
 }

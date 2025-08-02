@@ -34,9 +34,9 @@
 **/
 VOID
 EFIAPI
-PtlPcdSecLpssUartGpioConfigure (
-  IN LPSS_UART_DEVICE_CONFIG     *UartDeviceConfig,
-  IN UINT8                       UartInstance
+PtlPcdPreMemLpssUartGpioConfigure (
+  IN UINT8                       UartInstance,
+  IN LPSS_UART_DEVICE_CONFIG     *UartDeviceConfig
   );
 
 /**
@@ -46,9 +46,9 @@ PtlPcdSecLpssUartGpioConfigure (
 **/
 VOID
 EFIAPI
-PtlPcdSecLpssI2cGpioConfigure (
-  IN LPSS_I2C_CONTROLLER_CONFIG  *I2cDeviceConfig,
-  IN UINT8                       I2cInstance
+PtlPcdPreMemLpssI2cGpioConfigure (
+  IN UINT8                       I2cInstance,
+  IN LPSS_I2C_CONTROLLER_CONFIG  *I2cDeviceConfig
   );
 
 /**
@@ -57,9 +57,9 @@ PtlPcdSecLpssI2cGpioConfigure (
 **/
 VOID
 EFIAPI
-PtlPcdSecLpssSpiGpioConfigure (
-  IN LPSS_SPI_DEVICE_CONFIG    *SpiDeviceConfig,
-  IN UINT8                     SpiInstance
+PtlPcdPreMemLpssSpiGpioConfigure (
+  IN UINT8                     SpiInstance,
+  IN LPSS_SPI_DEVICE_CONFIG    *SpiDeviceConfig
   );
 
 #endif //_PTL_PCD_GPIO_INIT_LIB_H_
