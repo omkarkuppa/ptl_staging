@@ -113,13 +113,13 @@ SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x000400
 # FIT Payload Region - end
 #
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00CE0000  # Flash addr (0xFFCE0000)
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00020000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00D00000  # Flash addr (0xFFD00000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00010000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00CF0000  # Flash addr (0xFFCF0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00040000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D40000  # Flash addr (0xFFD40000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DA0000  # Flash addr (0xFFDA0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x000F0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D30000  # Flash addr (0xFFD30000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00050000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00D80000  # Flash addr (0xFFD80000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00110000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00E90000  # Flash addr (0xFFE90000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #
@@ -234,9 +234,9 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x000100
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00D30000  # Flash addr (0xFFD30000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00050000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D80000  # Flash addr (0xFFD80000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DE0000  # Flash addr (0xFFDE0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00100000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00050000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DD0000  # Flash addr (0xFFDD0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00110000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00EE0000  # Flash addr (0xFFEE0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #

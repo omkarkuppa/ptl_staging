@@ -157,22 +157,21 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
       FBM   = { Offset = '0x00DE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Debug.Default]
-      FspS  = { Offset = '0x00D40000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00DA0000', Size = '0x000F0000' }
+      FspS  = { Offset = '0x00D30000', Size = '0x00050000' }
+      FspM  = { Offset = '0x00D80000', Size = '0x00110000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
       FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Release.Default]
-      FspS  = { Offset = '0x00D80000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00DE0000', Size = '0x00100000' }
+      FspS  = { Offset = '0x00D80000', Size = '0x00050000' }
+      FspM  = { Offset = '0x00DD0000', Size = '0x00110000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
       FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.CompressInfo]
       FspS  = { CompressionGuid = 'EE4E5898-3914-4259-9D6E-DC7BD79403CF', FvNameGuid = 'C24E92DA-E0CD-436D-8188-F20677FF8EC4', FvImageGuid = '3417F275-4CF1-42D8-A0C3-B3F60779dF4D' }
-      FspM  = { CompressionGuid = 'EE4E5898-3914-4259-9D6E-DC7BD79403CF', FvNameGuid = '6041E403-75BB-44B1-8C5C-80F4AA3AAF10', FvImageGuid = 'BA983427-3CF1-49F0-AEB2-BE69C2F96CEA' }
 
   [Firmware.Ucode]
     Version   = 1
