@@ -213,7 +213,7 @@
   gSiPkgTokenSpaceGuid.PcdRegBarBaseAddress|0xF0000000
 
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection|0
-  gSiPkgTokenSpaceGuid.PcdEnableFspmCompression|TRUE
+  gSiPkgTokenSpaceGuid.PcdEnableFspmCompression|FALSE
   gSiPkgTokenSpaceGuid.PcdSignedFspEnable|FALSE
 
   ## This PCD decides how FSP is measured
