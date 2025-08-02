@@ -35,7 +35,6 @@
 #if FixedPcdGetBool(PcdSpiDmaEnable) == 1
 #include <Ppi/SpiDma.h>
 #endif
-#include <UnitTest/PrivateMock/PrivateMock.h>
 
 EFI_STATUS
 EFIAPI

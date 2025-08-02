@@ -28,7 +28,6 @@
 [Includes]
   Include
   StorageSanitize/Include
-  Test/Include                   # Unit Test
 
 [Guids]
   gPsFeatureModuleTokenSpaceGuid     = { 0x8458877, 0x113f, 0x4c2f, { 0xa5, 0xfe, 0x9b, 0x0, 0x6b, 0x1c, 0x48, 0xc3 } }
