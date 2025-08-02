@@ -22,9 +22,11 @@
 #include "Dptf.h"
 #include <DptfConfig.h>
 #include <Protocol/DptfNvsArea.h>
+#include <DptfBoardConfigPcd.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED  DPTF_CONFIG             mDptfSetupData;
 GLOBAL_REMOVE_IF_UNREFERENCED  DPTF_NVS_AREA_PROTOCOL  mDptfNvsAreaProtocol;
+GLOBAL_REMOVE_IF_UNREFERENCED  DPTF_BOARD_CONFIG       *mDptfDxeBoardConfigPtr;
 
 EFI_STATUS
 EFIAPI
@@ -76,6 +78,16 @@ InitializeDptf (
       return Status;
     }
     DEBUG ((DEBUG_INFO, "Intel(R) Dynamic Tuning Technology: Creating Dptf Config Variable\n"));
+  }
+
+  //
+  // Get DPTF Pcd Data Structure
+  //
+  mDptfDxeBoardConfigPtr = PcdGetPtr (PcdDptfBoardConfig);
+
+  if (mDptfDxeBoardConfigPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "CnvDxeEntryPoint Invalid PCD Pointer.\n"));
+    return EFI_NOT_FOUND;
   }
 
   mDptfSetupData.Revision = DPTF_CONFIG_REVISION;
@@ -152,6 +164,16 @@ InitializeDptf (
     mDptfNvsAreaProtocol.Area->OemDesignVariable3             = mDptfSetupData.OemDesignVariable3;
     mDptfNvsAreaProtocol.Area->OemDesignVariable4             = mDptfSetupData.OemDesignVariable4;
     mDptfNvsAreaProtocol.Area->OemDesignVariable5             = mDptfSetupData.OemDesignVariable5;
+
+    mDptfNvsAreaProtocol.Area->PChrg                          = mDptfDxeBoardConfigPtr->PChrg;
+    mDptfNvsAreaProtocol.Area->PUpper                         = mDptfDxeBoardConfigPtr->PUpper;
+    mDptfNvsAreaProtocol.Area->PLower                         = mDptfDxeBoardConfigPtr->PLower;
+    mDptfNvsAreaProtocol.Area->PRate                          = mDptfDxeBoardConfigPtr->PRate;
+    mDptfNvsAreaProtocol.Area->hEol                           = mDptfDxeBoardConfigPtr->hEol;
+    mDptfNvsAreaProtocol.Area->TNormal                        = mDptfDxeBoardConfigPtr->TNormal;
+
+    mDptfNvsAreaProtocol.Area->ContxCharging                  = PcdGet8(VpdPcdContxCharging);
+    mDptfNvsAreaProtocol.Area->TimeToEmpty                    = PcdGet8(VpdPcdTimeToEmpty);
 
     DEBUG ((DEBUG_INFO, "EnableDptf =0x%0x\n",mDptfSetupData.EnableDptf));
     DEBUG ((DEBUG_INFO, "EnableDCFG =0x%0x\n",mDptfSetupData.EnableDCFG));

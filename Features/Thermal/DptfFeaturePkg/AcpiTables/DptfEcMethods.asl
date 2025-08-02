@@ -53,6 +53,9 @@ External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RWPP, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.STSN, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RSSV, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.USTP, MethodObj)
+External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.SCLE, MethodObj)
+External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.B1CE, MethodObj)
+External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.GRBE, MethodObj)
 
 // UVTH (Under Voltage Threshold.)
 // UVTH is a command which BIOS sends to EC. [15:0]
@@ -647,3 +650,100 @@ Method (STRP, 4, Serialized, 0, IntObj)
     Return (0xFFFFFFFFF)
   }
 }
+
+If (LEqual (CBCF,0x01)) {
+
+  // B1CS (Battery 1 Remaining Charge Method)
+  //
+  // Returns Battery 1 Remaining Charge
+  //
+  //  Arguments: (0)
+  //    None
+  //  Return Value:
+  //    Battery 1 Remaining Charge
+  //    0xFFFFFFFFF   - EC is not available
+  //
+  Method (B1CS, 0, Serialized, 0, IntObj)
+  {
+    If (CondRefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC)) {
+      Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.B1CE(), Local0)
+      Return (Local0)
+    } Else {
+      Return (0xFFFFFFFF)
+    }
+  }
+
+  // BCCE (Participant Capabilities Discovery)
+  //
+  // The BCCE gets the capabilities of the participant.
+  //
+  // Arguments: (0)
+  //   None
+  // Return Value:
+  //    Bit 3:0   - Max num of elements in BCCS supported by BIOS (0 = no support). Default = 4
+  //    Bit 4     - Fast Charging Support Status (1 = This system has more than 1 charging mode)
+  //    Bit 5     - Charging Rate Control Support Status (1 = This system support charging rate request in BCCS)
+  //    Bit 7:6   - Reserved for future use 
+  //    Bit 11:8  - CxBP Parameter Version. 0 - default
+  //    Bit 31:12 - Reserved for future use
+  //
+  Method (BCCE, 0, Serialized, 0, IntObj)
+  {
+    Store (0x34,Local0)
+    Return (Local0)
+  }
+
+  // SCLC (Store Charge level cap)
+  //
+  // Method for Storing Charge level cap
+  // Arguments: (1)
+  //   Arg0 - Charge level cap
+  // Return Value:
+  //   None
+  //
+  Method (SCLC, 1, Serialized, 0, IntObj)
+  {
+    Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.SCLE (Arg0))
+  }
+
+} // End of CBCF
+
+If (LEqual (TTEF,0x01)) {  // Check for Time to Empty feature enable
+
+  //  PCCE (IPF BIOS Battery Participant Capabilities)
+  //
+  //  BIOS use this to inform IPF that it supports TTE enhancments
+  //
+  //  Arguments: (0)
+  //    None
+  //  Return Value:
+  //    An Integer containing participant capabilities
+  //      Bit 3:0   - Version
+  //      Bit 4     - This battery participant supports TTE enhancment methods (SPBD, GPBD, and GRBD)
+  //      Bit 5     - This battery participant supports DTT Power Boss
+  //      Bit 31:6  - Reserved
+  //
+  Method (PCCE, 0, Serialized, 0, IntObj)
+  {
+    Return (0x31)
+  }
+
+  // GRBC (Get Raw Battery Data)
+  //
+  // Arguments: (0)
+  //   None
+  // Return Value:
+  //   A Buffer containing revision number and Package of Raw Data
+  //    Package() {
+  //      BatteryState
+  //      BatteryPresentRate
+  //      BatteryRemainingCapacity
+  //      BatteryPresentVoltage
+  //    }
+  //
+  Method (GRBC, 0, Serialized, 0, IntObj)
+  {
+    Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.GRBE ())
+  }
+} // End of TTEF
+

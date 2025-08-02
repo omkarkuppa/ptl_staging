@@ -36,6 +36,28 @@
 #
 !include MdePkg/MdeLibs.dsc.inc
 
+[PcdsDynamicExDefault.common.DEFAULT]
+#
+# Table for Structural PCD Of Context-Based Charging
+#
+gDptfFeaturePkgTokenSpaceGuid.PcdDptfBoardConfig|{CODE(
+{
+  {
+    0,                     // PChrg
+    0,                     // PUpper
+    0,                     // PLower
+    0,                     // PRate
+    0,                     // hEol
+    0                      // TNormal
+  }
+})}
+
+# Time to Empty feature for Battery participant
+gDptfFeaturePkgTokenSpaceGuid.VpdPcdTimeToEmpty|*|0x0
+
+# Context-Based Charging feature for Charger participant
+gDptfFeaturePkgTokenSpaceGuid.VpdPcdContxCharging|*|0x0
+
 [LibraryClasses]
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf

@@ -64,6 +64,7 @@
   CnvFeaturePkg/CnvFeaturePkg.dec
   I2cFeaturePkg/I2cFeaturePkg.dec
   CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
 
 [Sources]
   PeiInitPostMemLib.c
@@ -76,7 +77,12 @@
   gSiPkgTokenSpaceGuid.PcdFusaSupport                                    ## CONSUMES
 
 [Pcd]
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable                     ## CONSUMES
   # Board GPIO Table
+
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfBoardConfig                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdDptfBoardConfig                       ## CONSUMES
+
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTable
 
   gMinPlatformPkgTokenSpaceGuid.PcdFadtPreferredPmProfile                ## CONSUMES
@@ -303,6 +309,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMrcNoOfDimmSlot                       ## CONSUMES
 
 [Guids]
+  gDptfConfigVariableGuid                                                ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid                                          ## CONSUMES
   gSetupVariableGuid                                                     ## CONSUMES
   gMeSetupVariableGuid                                                   ## CONSUMES

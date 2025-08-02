@@ -66,10 +66,14 @@ DefinitionBlock (
   //
   External (\_SB.DPTF.STRP, MethodObj)
   External (\_SB.DPTF.SNRD, MethodObj)
+  External (\_SB.DPTF.PCCE, MethodObj)
+  External (\_SB.DPTF.GRBC, MethodObj)
+
 
   External (\_SB.DPTF.GFNS, MethodObj)
   External (\_SB.DPTF.FNSL, MethodObj)
   External (\_SB.DPTF.B1RC, MethodObj)
+  External (\_SB.DPTF.B1CS, MethodObj)
   External (\_SB.DPTF.B1FC, MethodObj)
   External (\_SB.DPTF.BMAX, MethodObj)
 
@@ -137,6 +141,12 @@ DefinitionBlock (
   External (\_SB.PLDT.GDDV, MethodObj)
   External (\_SB.PLDT.GHID, MethodObj)
   External (\_SB.PLDT.FPST, MethodObj)
+
+  //
+  // Charger Participant APIs
+  //
+  External (\_SB.DPTF.BCCE, MethodObj)
+  External (\_SB.DPTF.SCLC, MethodObj)
 
 Scope (\_SB)
 {

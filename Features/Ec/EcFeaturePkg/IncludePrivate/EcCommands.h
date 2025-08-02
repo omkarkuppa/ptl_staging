@@ -112,6 +112,7 @@
                                                           // Send:
                                                           // 1 byte:  0x01  - Fast charging enable
                                                           //          0x00  - Fast charging disable
+#define SET_CHRG_MODE_CAP                         0x14    // Command to specify the Charge Cap and charge mode change by Contex-Based Charging
 #define EC_C_PWR_BOSS_OK                          0x15
 #define EC_C_UPDATE_UVTH                          0x17
 #define EC_C_TDP_WATTS                            0x18    // Pass TDP value in Watts to EC. EC will update UCSI bit according to charging rate when USBC adapter plug-in.

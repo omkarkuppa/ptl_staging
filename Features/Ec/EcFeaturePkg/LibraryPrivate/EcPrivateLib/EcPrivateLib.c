@@ -73,6 +73,7 @@ EC_COMMAND_TABLE mEcCommand[] = {
   {EC_C_PLN_ENABLE,                 1,              0,                    TRUE},
   {EC_C_SET_SYS_CHANGING_CFG,       0,              0,                    TRUE},
   {EC_C_SET_CHARGING_METHOD,        1,              0,                    TRUE},
+  {SET_CHRG_MODE_CAP,               0,              0,                    TRUE},
   {EC_C_PWR_BOSS_OK,                0,              0,                    TRUE},
   {EC_C_UPDATE_UVTH,                0,              0,                    TRUE},
   {EC_C_TDP_WATTS,                  1,              0,                    TRUE},

@@ -19,6 +19,8 @@
 @par Specification Reference:
 **/
 
+External (\_SB.PC00.LPCB.H_EC.B1C1, FieldUnitObj)
+
 Scope (\_SB.IETM)
 {
 
@@ -63,6 +65,43 @@ Scope (\_SB.IETM)
         Return (0x00)
       }
     }
+
+    // BCSP (Battery Charge control states package)
+    //
+    // This object evaluates to a packaged list of information about Battery Charge control states.
+    //
+    // Arguments: (0)
+    //   None
+    // Return Value:
+    //   Package of packages
+    //
+    Name (BCSP, Package ()
+    {
+      Package ()     // Definition of the Charge Control Object
+      {
+        0,           // DWordConst: UChrgLevel Upper Bound of charge level that the Charge rate needs to be used
+        0,           // DWordConst: ChrgMode Recommended charging mode (Bit 0 -> 0 = fast/no-restriction, 1 = normal) //7th bit is charging mode and remaining 7bits are reserved
+        0,           // DWordConst: ChargeLevelCap recommended Charge to limit
+      },
+      Package ()     // Charge Control Object
+      {
+        0,           // DWordConst: UChrgLevel Upper Bound of charge level that the Charge rate needs to be used
+        0,           // DWordConst: ChrgMode Recommended charging mode (Bit 0 -> 0 = fast/no-restriction, 1 = normal) //7th bit is charging mode and remaining 7bits are reserved
+        0,           // DWordConst: ChargeLevelCap recommended Charge to limit
+      },
+      Package ()     // Charge Control Object
+      {
+        0,           // DWordConst: UChrgLevel Upper Bound of charge level that the Charge rate needs to be used
+        0,           // DWordConst: ChrgMode Recommended charging mode (Bit 0 -> 0 = fast/no-restriction, 1 = normal) //7th bit is charging mode and remaining 7bits are reserved
+        0,           // DWordConst: ChargeLevelCap recommended Charge to limit
+      },
+      Package ()     // Charge Control Object
+      {
+        0,           // DWordConst: UChrgLevel Upper Bound of charge level that the Charge rate needs to be used
+        0,           // DWordConst: ChrgMode Recommended charging mode (Bit 0 -> 0 = fast/no-restriction, 1 = normal) //7th bit is charging mode and remaining 7bits are reserved
+        0,           // DWordConst: ChargeLevelCap recommended Charge to limit
+      }
+    })
 
     Name (PSSS, 0) // Participant Performance Supported States (PPSS) packge size
     Name (PPPS, 0) // Participant Performance Present State
@@ -455,6 +494,158 @@ Scope (\_SB.IETM)
       PCAL ()                     // Calculate the size of the relevant PPSS package.
       Return (Subtract (PSSS,1))
     }
+
+    If (LEqual (CBCF,0x01)) {
+      // BCCA (Participant Capabilities Discovery)
+      //
+      // The BCCA gets the capabilities of the participant.
+      //
+      // Arguments: (0)
+      //   None
+      // Return Value:
+      //   An Integer containing participant capabilities
+      //    Bit 3:0   - Smart Fuel Guage Revision
+      //    Bit 4     - Fast Charging Support Status
+      //    Bit 5     - Charging Rate Control Support Status
+      //    Bit 7:6   - Reserved
+      //    Bit 11:8  - CxBP parameter version
+      //    Bit 31:12 - reserved
+      //
+      Method (BCCA)
+      {
+        Return (\_SB.DPTF.BCCE)
+      }
+
+      // BCCS (Battery Charge Control States)
+      //
+      // BIOS sets battery charge control state objects.
+      //
+      // Arguments: (1)
+      //   Arg0 - BCCS_Version_Number
+      //   Arg1 - Num_Valid_States
+      //   Arg2 - BCCS Array
+      // Return Value:
+      //   An Integer containing Status
+      //    0x00  - Success
+      //    0x01  - Version num is incorrect
+      //    0x02  - Num of valid states is incorrect
+      //
+      Method (BCCS,3,Serialized)
+      {
+        If (LNotEqual (Arg0,1)) {
+          Return ( 0x01 )
+        }
+        If (LOr (LLess (Arg1,1),LGreater(Arg1,4))) {
+          Return ( 0x02 )
+        }
+
+        //  Store the BCCS content
+        for (Local0 = 0, Local0 < 3, Local0++) {
+          Store (DeRefOf(Index (Arg2,Local0)),Local1)
+          Store (Local1, Index (DeRefOf (Index (BCSP, 0)), Local0))
+        }
+        for (Local0 = 3, Local0 < 6, Local0++) {
+          Store (DeRefOf(Index (Arg2,Local0)),Local1)
+          Store (Local1, Index (DeRefOf (Index (BCSP, 1)), (Local0-3)))
+        }
+        for (Local0 = 6, Local0 < 9, Local0++) {
+          Store (DeRefOf(Index (Arg2,Local0)),Local1)
+          Store (Local1, Index (DeRefOf (Index (BCSP, 2)), (Local0-6)))
+        }
+        for (Local0 = 9, Local0 < 12, Local0++) {
+          Store (DeRefOf(Index (Arg2,Local0)),Local1)
+          Store (Local1, Index (DeRefOf (Index (BCSP, 3)), (Local0-9)))
+        }
+
+        //Get the remaining Battery capacity
+        Store (\_SB.DPTF.B1CS(), Local0)
+
+        for (Local1 = 0, Local1 < 4, Local1++)
+        {
+          If (Local0 < DeRefOf (Index (DeRefOf (Index (BCSP, Local1)), 0))) { //Comparing Battery 1 remaining percentage with UChrgLevel
+            //Store (DeRefOf (Index (DeRefOf (Index (BCSP, Local1)), 2)), 134)
+            Store (And(DeRefOf (Index (DeRefOf (Index (BCSP, Local1)), 1)), 0x01), Local2) //Get the value of ChrgMode
+            If (LEqual (Local2, 0x01)) {
+              Store (Or(DeRefOf (Index (DeRefOf (Index (BCSP, Local1)), 2)), 0x80), Local3) //Combine the value of ChrgMode and ChargeLevelCap
+            }
+            Else {
+              Store (And(DeRefOf (Index (DeRefOf (Index (BCSP, Local1)), 2)), 0x7F), Local3) //Combine the value of ChrgMode and ChargeLevelCap
+            }
+            \_SB.DPTF.SCLC(Local3)
+          }
+        }
+        Return ( 0x00 )
+      }
+
+      // C1BP (Context-based charging BIOS parameters-1)
+      //
+      // BIOS to relay battery subsystem specific parameters for Context-based Charging, 1 of 3
+      // These parameters are provided by OEM's based on battery Specification
+      // We are creating PCD's to generate battery related data based on platform
+      // Arguments: (0)
+      //   Arg0 - None
+      // Return Value:
+      //   An Integer containing participant capabilities
+      //    Bit 15:0   - Constant parameter for charge level related battery degradation calculation.
+      //    Bit 23:16  - Upper bound of charge level range in which charging rate benefit calculation applies
+      //    Bit 31:24  - Lower bound of charge level range in which charging rate benefit calculation applies
+      //
+      Method (C1BP,0,Serialized)
+      {
+        Store (0x00000000, Local0)
+        Or (Local0, PLOR, Local0)
+        ShiftLeft(Local0,8,Local0)
+        Or (Local0, PUPR, Local0)
+        ShiftLeft(Local0,16,Local0)
+        Or (Local0, PCGL, Local0)
+        Return (Local0)
+      }
+
+      // C2BP (Context-based charging BIOS parameters-2)
+      //
+      // BIOS to relay battery subsystem specific parameters for Context-based Charging, 2 of 3
+      // These parameters are provided by OEM's based on battery Specification
+      // We are creating PCD's to generate battery related data based on platform
+      // Arguments: (0)
+      //   Arg0 - None
+      // Return Value:
+      //   An Integer containing participant capabilities
+      //    Bit 7:0    - Reserved
+      //    Bit 23:8   - Constant parameter for charging rate
+      //    Bit 31:24  - Battery State of Health target % at battery end of life
+      //
+      Method (C2BP,0,Serialized)
+      {
+        Store (0x00000000, Local1)
+        Store (0x00000000, Local0)
+        Or (Local0, HEOL, Local0)
+        ShiftLeft(Local0,16,Local0)
+        Or (Local0, PRTE, Local0)
+        ShiftLeft(Local0,8,Local0)
+        Or (Local0, Local1, Local0)
+        Return (Local0)
+      }
+
+      // C3BP (Context-based charging BIOS parameters-3)
+      //
+      // BIOS to relay battery subsystem specific parameters for Context-based Charging, 3 of 3
+      // These parameters are provided by OEM's based on battery Specification
+      // We are creating PCD's to generate battery related data based on platform
+      // Arguments: (0)
+      //   Arg0 - None
+      // Return Value:
+      //   An Integer containing participant capabilities
+      //    Bit 15:0   - Number of seconds needed to charge battery from 0-80%(design capacity) with normal (not fast charging) rate
+      //    Bit 31:16  - Max charging current supported in mA
+      //
+      Method (C3BP,0,Serialized)
+      {
+        Store (0x00000000, Local0)
+        ShiftLeft(Local0,16,Local0)
+        Or (Local0, TNML, Local0)
+        Return (Local0)
+      }
+    }  // Endof CBCF
 
   } // End CHRG Device
 }// end Scope (\_SB.IETM)

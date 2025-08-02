@@ -59,15 +59,20 @@
   UefiLib
 
 [Guids]
-  gDptfAcpiTableStorageGuid                     ## CONSUMES
-  gDptfConfigVariableGuid                       ## CONSUMES
+  gDptfAcpiTableStorageGuid                           ## CONSUMES
+  gDptfConfigVariableGuid                             ## CONSUMES
 
 [Protocols]
-  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
-  gEfiAcpiTableProtocolGuid                     ## CONSUMES
-  gDptfNvsAreaProtocolGuid                      ## PRODUCES
+  gEfiFirmwareVolume2ProtocolGuid                     ## CONSUMES
+  gEfiAcpiTableProtocolGuid                           ## CONSUMES
+  gDptfNvsAreaProtocolGuid                            ## PRODUCES
 
 [Depex]
   gEfiAcpiTableProtocolGuid           AND
   gEfiVariableArchProtocolGuid        AND
   gEfiVariableWriteArchProtocolGuid
+
+[Pcd]
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfBoardConfig    ## CONSUMES
+  gDptfFeaturePkgTokenSpaceGuid.VpdPcdContxCharging   ## CONSUMES
+  gDptfFeaturePkgTokenSpaceGuid.VpdPcdTimeToEmpty     ## CONSUMES

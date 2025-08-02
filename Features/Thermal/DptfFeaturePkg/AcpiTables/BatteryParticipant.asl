@@ -60,6 +60,21 @@ Scope (\_SB.IETM)
       }
     }
 
+    If (LEqual (TTEF,0x01)) {  // Check for Time to Empty feature enable
+      Name (PBDP, Package ()
+      {
+        Package ()
+        {
+          0x01,            // Revision
+        },
+        Package ()
+        {
+          0xFFFFFFFF,      // DWordConst: ProcessedDischargeRate - only valid for  0-0x7FFFFFF, 0xFFFFFFFF (default) if there is no processed discharge rate (available)
+          0x00000000,      // DWordConst: Reserved (default = 0)
+        }
+      })
+    } // End of TTEF
+
     // PMAX (Platform MAXimum)
     //
     // The PMAX object provides maximum power that can be supported by the battery in mW.
@@ -223,6 +238,98 @@ Scope (\_SB.IETM)
       ADBG ("CMPP: EC not available")
       Return (0xFFFFFFFF)   //battery fuel gauge not supported.
     }
+
+    If (LEqual (TTEF,0x01)) {  // Check for Time to Empty feature enable
+      // PCAP (IPF BIOS Battery Participant CAPabilities)
+      //
+      // BIOS use this to inform IPF that it supports TTE enhancments
+      //
+      // Arguments: (0)
+      //   None
+      // Return Value:
+      //   An Integer containing participant capabilities
+      //    Bit 3:0   - Version
+      //    Bit 4     - This battery participant supports TTE enhancment methods (SPBD, GPBD, and GRBD)
+      //    Bit 5     - This battery participant supports DTT Power Boss
+      //    Bit 31:6  - Reserved
+      //
+      Method (PCAP)
+      {
+        Return (\_SB.DPTF.PCCE ())
+      }
+
+      // GRBD (Get Raw Battery Data)
+      //
+      // Arguments: (0)
+      //   None
+      // Return Value:
+      //   A package containing Raw Data
+      //    Revision // uint32 GRBD Revision Number
+      //    Package() {
+      //       BatteryState
+      //       BatteryPresentRate
+      //       BatteryRemainingCapacity
+      //       BatteryPresentVoltage
+      //    }
+      //
+      Method (GRBD)
+      {
+        Return (\_SB.DPTF.GRBC ())
+      }
+
+      // SPBD (Set Processed Battery Data)
+      //
+      // Arguments: (2)
+      //   Arg0 - An integer containing Revision number
+      //   Arg1 - A package containing the Processed Battery Data (Discharge Rate only in V1)
+      // Return Value:
+      //   None
+      //
+      Method (SPBD,2,Serialized)
+      {
+        //  Arg1 is a Buffer object
+        Store (DeRefOf (Index (Arg1, 0)), Local0) // Byte 0
+        Store (DeRefOf (Index (Arg1, 1)), Local1) // Byte 1
+        Store (DeRefOf (Index (Arg1, 2)), Local2) // Byte 2
+        Store (DeRefOf (Index (Arg1, 3)), Local3) // Byte 3
+
+        //  Combine the 4 bytes into a single 32-bit integer
+        ShiftLeft (Local3, 24, Local4)
+        ShiftLeft (Local2, 16, Local5)
+        Or (Local4, Local5, Local4)
+        ShiftLeft (Local1, 8, Local5)
+        Or (Local4, Local5, Local4)
+        Or (Local4, Local0, Local4)
+
+        //  Store processed data
+        Store (Local4, Index (DeRefOf (Index (PBDP, 1)), 0))
+      }
+
+      // GPBD (Get Processed Battery Data)
+      //
+      // Arguments: (0)
+      //   None
+      // Return Value:
+      //   A buffer containing Revision number and package with Processed Battery data
+      //
+      Method (GPBD)
+      {
+        Return ( PBDP )
+      }
+
+      // GPDE (Get Processed Battery Data For _BST method)
+      //
+      // Arguments: (0)
+      //   None
+      // Return Value:
+      //   An integer value with Processed Battery data
+      //
+      Method (GPDE)
+      {
+        Store (DeRefOf (Index (DeRefOf (Index (PBDP, 1)), 0)), Local1)
+        Return ( Local1 )
+      }
+    } // End of TTEF
 
   } // End Battery Participant
 }// end Scope (\_SB)

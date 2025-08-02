@@ -153,6 +153,7 @@ Offset(129),
 PPDT, 8,      // 129        PCH DTS reading from PCH
 PECL, 8,      // 130        CPU PECI reading fractional value (1/64 Celcius)
 PECH, 8,      // 131        CPU PECI reading integer value (unit Celicus)
+CCHR, 16,     // 132        Current Charging rate
 Offset(134),
 LSOC, 8,      // 134        Long term battery charge is based on c/20 SoC in %
 ARTG, 16,     // 135, 136   AC adapter rating in 10 mW. Max adapter power supported. Because of EC-space constraint EC can only send 2bytes=15000mW but system uses 150000mW hence bios will multiply this value by 10 and return.

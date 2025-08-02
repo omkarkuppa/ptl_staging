@@ -54,3 +54,29 @@
   gDptfFeaturePkgTokenSpaceGuid.PcdDttSen3Participant|TRUE|BOOLEAN|0xC0000020
   gDptfFeaturePkgTokenSpaceGuid.PcdDttSen4Participant|TRUE|BOOLEAN|0xC0000021
   gDptfFeaturePkgTokenSpaceGuid.PcdDttSen5Participant|TRUE|BOOLEAN|0xC0000022
+
+[PcdsDynamic, PcdsDynamicEx]
+#
+# Dynamic Non-Structural PCD with Start Base 0x0000D000
+#
+
+#
+# Dynamic Structural PCD with Start Base 0x0000E000
+#
+#
+# Structural PCD Of Dptf Board Configuration
+#
+gDptfFeaturePkgTokenSpaceGuid.PcdDptfBoardConfig|{0}|DPTF_BOARD_CONFIG_PCD|0x0000E000 {
+  <HeaderFiles>
+    DptfBoardConfigPcd.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    MdeModulePkg/MdeModulePkg.dec
+    DptfFeaturePkg/DptfFeaturePkg.dec
+}
+
+# Time to Empty feature for Battery participant
+gDptfFeaturePkgTokenSpaceGuid.VpdPcdTimeToEmpty|0|UINT8|0x00001142
+
+# Context-Based Charging feature for Charger participant
+gDptfFeaturePkgTokenSpaceGuid.VpdPcdContxCharging|0|UINT8|0x00001143

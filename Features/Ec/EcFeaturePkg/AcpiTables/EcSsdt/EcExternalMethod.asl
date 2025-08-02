@@ -1193,3 +1193,80 @@ Method (UPLD, 1, Serialized)
 {
   ECWT (Arg0, RefOf (^LSTE))
 }
+
+// B1CE (Store Charge level cap)
+//
+// Method for Storing Charge level cap
+// Arguments: (1)
+//   Arg0 - Charge level cap
+// Return Value:
+//   None
+//
+Method (B1CE, 0, Serialized)
+{
+  Store (ECRD (RefOf (^B1CS)), Local0)
+  Return (Local0)
+}
+
+// SCLE (Store Charge level cap)
+//
+// Method for Storing Charge level cap
+// Arguments: (1)
+//   Arg0 - Charge level cap
+// Return Value:
+//   None
+//
+Method (SCLE, 1, Serialized)
+{
+  ECWT (Arg0, RefOf (^LSOC))
+  ECMD (SET_CHRG_MODE_CAP)   // Set Charge Cap and charging mode
+}
+
+// GRBE (Get Raw Battery Data)
+//
+// Arguments: (0)
+//   None
+// Return Value:
+//   A Buffer containing revision number and Package of Raw Data
+//    Package() {
+//     BatteryState
+//     BatteryPresentRate
+//     BatteryRemainingCapacity
+//     BatteryPresentVoltage
+//    }
+//
+Method (GRBE, 0, Serialized)
+{
+  Name (PKG1, Package ()
+  {
+    Package ()
+    {
+      0x01,        // Revision
+    },
+    Package ()
+    {
+      0,           // DWordConst: Battery State
+      0,           // DWordConst: Battery present rate
+      0,           // DWordConst: Battery Remaining capacity
+      0,           // DWordConst: Battery present voltage
+    }
+  })
+  Store (And (ECRD (RefOf (B1ST)), 0x07), Index (DeRefOf (Index (PKG1, 1)), 0))
+
+  // Calculate discharge rate
+  // Return Rate in mW since we report _BIF data in mW
+  Store (Multiply (ECRD (RefOf (B1DI)), ECRD (RefOf (B1FV))), Local0)
+  Store (Divide (Local0, 1000), Local0)
+  Store (Local0, Index (DeRefOf (Index (PKG1, 1)), 1))
+
+  // Calculate Remaining Capacity in mWh =
+  // Remaining Capacity (mAh) * Design Voltage (V)
+  // Use Remaining Capacity in mAh multiply with a fixed Design Voltage
+  // for Remaining Capacity in mWh
+  Store (Divide (Multiply (ECRD (RefOf (B1RC)), ECRD (RefOf (B1DV))), 1000), Index (DeRefOf (Index (PKG1, 1)), 2))
+
+  // Report Battery Present Voltage (mV)
+  Store (ECRD (RefOf (B1FV)), Index (DeRefOf (Index (PKG1, 1)), 3))
+
+  Return (PKG1)
+}

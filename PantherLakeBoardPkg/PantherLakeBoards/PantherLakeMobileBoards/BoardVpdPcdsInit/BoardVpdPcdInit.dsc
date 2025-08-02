@@ -396,3 +396,17 @@
 
   # Gfx Workstation
   gBoardModuleTokenSpaceGuid.VpdPcdDev2IsGfxWorkstation|*|0x0
+
+  # Context-Based Charging
+
+  gBoardModuleTokenSpaceGuid.VpdPcdDptfBoardConfig| * |{CODE(
+  {
+    {
+      1300,                     // PChrg
+      60,                       // PUpper
+      50,                       // PLower
+      2710,                     // PRate
+      70,                       // hEol
+      8640                      // TNormal
+    }
+  })}

@@ -1039,6 +1039,15 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     GpioV2Config.h
   }
 
+  # Dptf
+  gBoardModuleTokenSpaceGuid.VpdPcdDptfBoardConfig|{0}|DPTF_BOARD_CONFIG_PCD|0x00001193 {
+    <HeaderFiles>
+      DptfBoardConfigPcd.h
+    <Packages>
+      MdePkg/MdePkg.dec
+      DptfFeaturePkg/DptfFeaturePkg.dec
+  }
+
   #Sata LED Enable
   gBoardModuleTokenSpaceGuid.VpdPcdSataLedEnable|0|BOOLEAN|0x000011A2
 

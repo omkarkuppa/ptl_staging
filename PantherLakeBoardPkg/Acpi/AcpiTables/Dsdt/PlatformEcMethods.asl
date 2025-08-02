@@ -62,9 +62,12 @@ External (\_SB.PC00.LPCB.H_EC.RPCS, MethodObj)
 External (\_SB.PC00.LPCB.H_EC.RPES, MethodObj)
 External (\_SB.PC00.LPCB.H_EC.ECNT, MethodObj)
 External (\_SB.PC00.LPCB.H_EC.RLDS, MethodObj)
+External (\_SB.PC00.LPCB.H_EC.B1CE, MethodObj)
+External (\_SB.PC00.LPCB.H_EC.SCLE, MethodObj)
 External (\_SB.PC00.LPCB.H_EC.ERB1, MethodObj)
 External (\_SB.PC00.LPCB.H_EC.BNUM, IntObj)
 External (\_SB.PC00.LPCB.H_EC.XDAT, MethodObj)
+External (\_SB.PC00.LPCB.H_EC.GRBE, MethodObj)
 
 
 External (\_SB.PWRB, DeviceObj)

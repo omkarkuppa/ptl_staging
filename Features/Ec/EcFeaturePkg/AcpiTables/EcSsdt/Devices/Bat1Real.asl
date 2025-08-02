@@ -20,6 +20,8 @@
 **/
 #include <EcCommands.h>
 
+External (\_SB.IETM.BAT1.GPDE, MethodObj)
+
 //
 // Define the Real Battery 1 Control Method.
 //
@@ -125,11 +127,21 @@ Device (BAT1) {
       // Fix up the Battery Status.
       Store (And (ECRD (RefOf (B1ST)), 0x07), Index (PKG1, 0))
       If (And (ECRD (RefOf (B1ST)), 0x01)) {
-        // Calculate discharge rate
-        // Return Rate in mW since we report _BIF data in mW
-        Store (Multiply (ECRD (RefOf (B1DI)), ECRD (RefOf (B1FV))), Local0)
-        Store (Divide (Local0, 1000), Local0)
-        Store (Local0, Index (PKG1, 1))
+        // Get discharge rate
+        If (CondRefOf (_SB.IETM.BAT1)) {
+          Store(\_SB.IETM.BAT1.GPDE(), Local1)
+        } Else {
+          Store(0, Local1)
+        }
+        If (LAnd (LGreater(Local1, 0), LLess(Local1, 0x7FFFFFF))) { // If Processed data is available
+          Store (Local1, Index (PKG1, 1))
+        } Else {  //Processed data is not available. Sending raw data
+          // Calculate discharge rate
+          // Return Rate in mW since we report _BIF data in mW
+          Store (Multiply (ECRD (RefOf (B1DI)), ECRD (RefOf (B1FV))), Local0)
+          Store (Divide (Local0, 1000), Local0)
+          Store (Local0, Index (PKG1, 1))
+        }
       } Else {
         // Calculate charge rate
         // Return Rate in mW since we report _BIF data in mW

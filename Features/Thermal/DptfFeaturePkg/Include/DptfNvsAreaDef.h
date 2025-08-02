@@ -63,9 +63,26 @@ typedef struct {
   UINT8    OemDesignVariable4;                      ///< Offset 27      Intel(R) Dynamic Tuning Technology Oem Design Variables
   UINT8    OemDesignVariable5;                      ///< Offset 28      Intel(R) Dynamic Tuning Technology Oem Design Variables
   //
+  // Enable Context-Based charging feature for Charger Participant
+  //
+  UINT8    ContxCharging;                           ///< Offset 29      Context-Based Charging feature
+  //
+  // Enable Time to Empty feature for Battery
+  //
+  UINT8    TimeToEmpty;                             ///< Offset 30      Time to Empty feature
+  //
   // Enabling Auto Mode
   //
-  UINT8    EnableFanAutoMode;                       ///< Offset 29      Enabling Auto Mode for DTT
+  UINT8    EnableFanAutoMode;                       ///< Offset 31      Enabling Auto Mode for DTT
+  //
+  // Context-Based charging parameters for battery participant
+  //
+  UINT16   PChrg;                                   ///< Offset 32      Battery charge level
+  UINT8    PUpper;                                  ///< Offset 34      Upper bound of charge level range
+  UINT8    PLower;                                  ///< Offset 35      Lower bound of charge level range
+  UINT16   PRate;                                   ///< Offset 36      Constant parameter for charging rate
+  UINT8    hEol;                                    ///< Offset 38      Battery State of Health target % at battery end of life
+  UINT16   TNormal;                                 ///< Offset 39      Number of seconds needed to charge battery from 0-80%(design capacity) with normal (not fast charging) rate
 } DPTF_NVS_AREA;
 
 #pragma pack(pop)

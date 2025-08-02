@@ -57,6 +57,7 @@
 #include <Library/PciSegmentLib.h>
 #include <IndustryStandard/Pci22.h>
 #include <Library/CnviLib.h>
+#include <DptfBoardConfigPcd.h>
 
 #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
 #include <Register/Ptl/GpioV2PcdPins/GpioV2PtlPcdPins.h>
@@ -524,6 +525,23 @@ PtlBoardFunctionInit (
 }
 
 /**
+  Set Dptf CBC feature PCD
+**/
+VOID
+EFIAPI
+DptfPostMemPcdInitBeforeSiliconInit (
+  VOID
+  )
+{
+  UINTN                  DataSize;
+  DPTF_BOARD_CONFIG_PCD  *DptfBoardConfigTable;
+
+  DptfBoardConfigTable = (DPTF_BOARD_CONFIG_PCD *) PcdGetPtr (VpdPcdDptfBoardConfig);
+  DataSize = sizeof (DPTF_BOARD_CONFIG);
+  PcdSetPtrS (PcdDptfBoardConfig, &DataSize, DptfBoardConfigTable);
+}
+
+/**
   Configure GPIO, TouchPanel, HDA, PMC, TBT etc.
 
   @retval  EFI_SUCCESS   Operation success.
@@ -591,6 +609,8 @@ PtlBoardInitBeforeSiliconInit (
   /// Do Late PCH init
   ///
   LateSiliconInit ();
+  // Dptf Board parameters Init for context-based charging
+  DptfPostMemPcdInitBeforeSiliconInit ();
 
 #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
 #if FixedPcdGetBool(PcdFusaSupport) == 1

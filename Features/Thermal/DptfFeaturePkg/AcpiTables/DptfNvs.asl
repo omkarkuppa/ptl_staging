@@ -63,7 +63,24 @@
   ODV4, 8,  // Offset(27),    Intel(R) Dynamic Tuning Technology Oem Design Variables
   ODV5, 8,  // Offset(28),    Intel(R) Dynamic Tuning Technology Oem Design Variables
   //
+  // Enable Context-Based charging feature for Charger Participant
+  //
+  CBCF, 8,  // Offset(29),    Context-Based Charging feature
+  //
+  // Enable Time to Empty feature for Battery
+  //
+  TTEF, 8,  // Offset(30),    Time to Empty feature
+  //
   // Enabling Auto Mode
   //
-  FNAU, 8,  // Offset(29),    Enabling Auto Mode for DTT
+  FNAU, 8,  // Offset(31),    Enabling Auto Mode for DTT
+  //
+  // Context-Based charging parameters for battery participant
+  //
+  PCGL, 16, // Offset(32),    Battery charge level
+  PUPR, 8,  // Offset(34),    Upper bound of charge level range
+  PLOR, 8,  // Offset(35),    Lower bound of charge level range
+  PRTE, 16, // Offset(36),    Constant parameter for charging rate
+  HEOL, 8,  // Offset(38),    Battery State of Health target % at battery end of life
+  TNML, 16, // Offset(39),    Number of seconds needed to charge battery from 0-80%(design capacity) with normal (not fast charging) rate
   }
