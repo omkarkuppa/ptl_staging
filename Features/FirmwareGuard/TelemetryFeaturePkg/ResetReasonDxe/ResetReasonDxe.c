@@ -597,7 +597,7 @@ UpdateSourceAndReasonInRecord (
   // Initialize reset reason and source.
   //
   ResetReasonRecord->Reason = EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_UNKNOWN;
-  ResetReasonRecord->Source = 0;
+  ResetReasonRecord->Source = EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
 
   if (IsColdBoot (&ResetCauseRegs, PmcSleepState, &(ResetReasonRecord->Source))) {
     ResetReasonRecord->Reason = EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_BOOT;
