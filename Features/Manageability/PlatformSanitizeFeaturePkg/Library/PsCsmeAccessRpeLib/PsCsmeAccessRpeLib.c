@@ -382,6 +382,9 @@ PsGetRpeSanitizeParameter (
         case ParamTypeBitMask:
           if (RpeParamTlv->Header.Length < MAX_UEFI_BOOT_PARAMETERS_ARRAY_SIZE) {
             CopyMem (&PsBootParameters->PsRequestedList, &RpeParamTlv->Value, RpeParamTlv->Header.Length);
+            if (PsBootParameters->PsRequestedList & PS_ERASE_STORAGE_MEDIA) {
+              PsBootParameters->PsRequestedList |= PS_GENERATE_SANITIZE_REPORT;
+            }
             DEBUG ((DEBUG_INFO, "PS: RequestedList bitMask = %x.\n", PsBootParameters->PsRequestedList));
           }
           break;

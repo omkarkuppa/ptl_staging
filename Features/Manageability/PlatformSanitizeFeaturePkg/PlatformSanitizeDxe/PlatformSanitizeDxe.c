@@ -274,17 +274,17 @@ PlatformSanitizeEntryPoint (
 #endif
 
   //
-  // If storage erase is requested, then before End Of Dxe, below execution should takes place
-  //    - PCD settings to take control over HDD's and OPAL's unlocking process and
-  //    - Registering notify function when device start connecting
-  // So Storage Sanitize should be treated separately and not to include with End Of Dxe Callback.
+  // If storage erase is selected, then this action should be performed first as per order of erase actions.
+  // But Storage erase can be done only when device is connecting using Connect controller in the BDS phase.
+  // So, a notify function is registered to call back when device start connecting along with PCD settings
+  // to take control over storage password unlocking process.
+  //
+  // After storage erase, system will issue restart and on the next boot, other erase actions (else part in
+  // the below if condition) takes place in this driver.
   //
   if (mPsBootParameters->PsPendingList & PS_ERASE_STORAGE_MEDIA) {
-    //
-    // Register SSD Erase Action as an event to be performed in BDS Phase.
-    //
     CopyMem (&(mPsBootStorageParameter.PsBootParameters), mPsBootParameters, sizeof (PS_BOOT_PARAMETERS));
-
+    PsPetAlert (PsProgressInProgress, PsPetEraseStorage, PsOperationStarted);
     Status = RegisterStorageEraseEvent (&mPsBootStorageParameter);
     DEBUG ((DEBUG_INFO, "PS: Storage Erase Register Event Status = %r\n", Status));
   } else {
