@@ -175,7 +175,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.CepEnable[3]|0x1                           
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableGv|0x1                                                  # Intel(R) SpeedStep(tm)
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwp|0x1                                                 # Intel(R) Speed Shift Technology
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwpAutoEppGrouping|0x1                                  # HwP Autonomous EPP Grouping
-gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableDynamicEfficiencyControl|0x0                            # Dynamic Efficiency Control
+gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableDynamicEfficiencyControl|0x1                            # Dynamic Efficiency Control
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwpAutoPerCorePstate|0x1                                # HwP Autonomous Per Core P State
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableRp|0x1                                                  # Resource Priority Feature
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableThermalMonitor|0x1                                      # Thermal Monitor
