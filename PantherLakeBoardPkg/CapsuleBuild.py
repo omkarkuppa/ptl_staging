@@ -144,7 +144,6 @@ class _PlatformHook (object):
         ExitCode: int       = None
         CmdList : List[str] = [
             JoinPath (PLAT_BOARD_PKG_PATH, 'prep.bat'),
-            'c',
             ]
 
         ExitCode, _, _ = ExecOsSystemCmd (CmdList)
