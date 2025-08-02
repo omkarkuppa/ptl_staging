@@ -62,10 +62,9 @@ export BTG_ACM_SLOT_SIZE=0x48000
 
 python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/microcode_padding.py \
   --opt padding \
-  --fw-version \
-  $FW_VERSION \
+  --fw-version $FW_VERSION \
   --lsv $LSV \
-  --fw-version-string $FW_VERSION_STRING \
+  --fw-version-string "$FW_VERSION_STRING" \
   --slotsize $SLOT_SIZE \
   --fdf $MICROCODE_FV_FDF
 
