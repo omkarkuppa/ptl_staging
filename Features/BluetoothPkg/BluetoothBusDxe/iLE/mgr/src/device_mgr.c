@@ -452,18 +452,6 @@ reset_cmpl_handler (
   )
 {
   logd (" send hci_read_local_feat");
- #if (CONTROLLER_ECDH)
-
-  /* This is a workaround for LNP.
-   * We try to generate DH public keys in the smp_init sequence
-   * But the controller is unable to generate a correct public key in such a short time after
-   * hci reset.( LNP controller needs 2.5s to generate public key after issuing a
-   * hci reset. This work around will be removed once public key generation is moved form the
-   * init sequence
-   */
-  logw ("Stack initializing. Please wait...");
-  osa_sleep (3);
- #endif /*CONTROLLER_ECDH*/
 
  #if (BLE_USE_FWINFO_FUNC_CALL == FALSE)
   if (hci_read_local_feat () != STATUS_SUCCESS) {

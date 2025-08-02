@@ -441,14 +441,15 @@
 #define SMP_DEFAULT_IO_CAP             SMP_KEYBOARD_DISPLAY
 #define THREADLESS_STACK               TRUE
 #define RX_PROCESSING_IN_TIMER_THREAD  TRUE
-#define SECURE_CONNECTION              FALSE
-#define CONTROLLER_ECDH                FALSE
+#define SECURE_CONNECTION              TRUE
+#define CONTROLLER_ECDH                TRUE
 #define HOST_ECDH                      FALSE
 #define PRIVACY_FEATURE                TRUE
 #define CONTROLLER_PRIVACY             TRUE
 #define HOST_PRIVACY                   FALSE
 #define HOST_RESOLVING_LIST_SIZE       10
 #define UEFI_HOGP_PTS                  FALSE
+#define ECC_TESTING                    FALSE
 #endif
 
 #if (TARGET_THREADX_RW == TRUE)
