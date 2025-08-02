@@ -2571,7 +2571,7 @@ typedef struct {
 
 #define BIOS_PAYLOAD_VARIABLE_NAME             L"BiosPayload"
 
-#define BOARD_INFO_SETUP_REVISION  3 //Reverting the original change 16027891755
+#define BOARD_INFO_SETUP_REVISION  3
 
 typedef struct {
   // @todo decouple Board related variables from SETUP_DATA
@@ -2589,6 +2589,7 @@ typedef struct {
   UINT8   PlatformGeneration;
   UINT16  DisplayId;
   BOOLEAN EcPresent;
+  UINT32  RevisionId;
 } BOARD_INFO_SETUP;
 
 /**

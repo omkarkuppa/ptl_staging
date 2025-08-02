@@ -335,6 +335,11 @@ IsValidBoardInformationStored (
     return FALSE;
   }
 
+  if (BoardInfoSetup.RevisionId != BOARD_INFO_SETUP_REVISION) {
+    DEBUG ((DEBUG_INFO, "IsValidBoardInformationStored : Board information outdated.\n"));
+    return FALSE;
+  }
+
   Size = sizeof (SETUP_DATA);
   Status = VariablePpi->GetVariable (
                           VariablePpi,

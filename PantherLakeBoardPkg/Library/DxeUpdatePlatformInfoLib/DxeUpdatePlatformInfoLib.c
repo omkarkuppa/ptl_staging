@@ -83,6 +83,7 @@ UpdatePlatformInfo (
   SetupVolatileData.VTdAvailable = (PciSegmentRead32 (HbPciD0F0RegBase + 0xe4) & BIT23) ? 0 : 1;
 
   // @todo separate board information varibales from Setup variables.
+  BoardInfoSetup.RevisionId              = BOARD_INFO_SETUP_REVISION;
   BoardInfoSetup.EcEnable                = FixedPcdGetBool (PcdEcEnable);
   BoardInfoSetup.EcEspiFlashSharingMode  = PcdGet8 (PcdEcEspiFlashSharingMode);
   BoardInfoSetup.EcMajorRevision         = PcdGet8 (PcdEcMajorRevision);
