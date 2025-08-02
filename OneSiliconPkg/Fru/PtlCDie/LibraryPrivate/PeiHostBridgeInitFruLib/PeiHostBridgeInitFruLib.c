@@ -369,6 +369,9 @@ SetNocImrExclusion (
   TELEMETRY_PEI_PREMEM_CONFIG                           *TelemetryPreMemConfig;
   UINT64                                                SizeAbove4Gb;
   UINT64                                                UpperBase;
+  BOOLEAN                                               TdxSupportBelow4Gb;
+  BOOLEAN                                               TseSupport;
+  BOOLEAN                                               TraceHubSupport;
 
   TseDataHobPtr         = NULL;
   TraceHubDataHob       = NULL;
@@ -376,22 +379,34 @@ SetNocImrExclusion (
   TdxDataHobPtr         = NULL;
   SizeAbove4Gb          = 0;
   UpperBase             = 0;
+  TseSupport            = 1;
+  TraceHubSupport       = 1;
 
   DEBUG ((DEBUG_INFO, "SetNocImrExclusion Start\n"));
 
   TseDataHobPtr = (TSE_DATA_HOB *)GetFirstGuidHob (&gTseDataHobGuid);
   if (TseDataHobPtr == NULL) {
-    return;
+    DEBUG ((DEBUG_ERROR, "TseDataHob not found!\n"));
+    TseSupport = 0;
+    ASSERT (FALSE);
   }
 
   TraceHubDataHob = (TRACEHUB_DATA_HOB *)GetFirstGuidHob (&gTraceHubDataHobGuid);
   if (TraceHubDataHob == NULL) {
-    return;
+    DEBUG ((DEBUG_ERROR, "TraceHubDataHob not found!\n"));
+    TraceHubSupport = 0;
+    ASSERT (FALSE);
   }
 
-  TdxDataHobPtr = (TDX_DATA_HOB *)GetFirstGuidHob (&gTdxDataHobGuid);
-  if (TdxDataHobPtr == NULL) {
-    return;
+  TdxSupportBelow4Gb = ((IsTdxSupported () == TRUE) && (TdxEnabled == TRUE) && (TotalPhysicalMemorySize <= 0x1000));
+
+  if (TdxSupportBelow4Gb) {
+    TdxDataHobPtr = (TDX_DATA_HOB *)GetFirstGuidHob (&gTdxDataHobGuid);
+    if (TdxDataHobPtr == NULL) {
+      DEBUG ((DEBUG_ERROR, "TDX Hob not found!\n"));
+      TdxSupportBelow4Gb = 0;
+      ASSERT (FALSE);
+    }
   }
 
   Status = GetConfigBlock ((VOID *)SiPreMemPolicyPpi, &gTelemetryPeiPreMemConfigGuid, (VOID *)&TelemetryPreMemConfig);
@@ -400,10 +415,10 @@ SetNocImrExclusion (
   }
 
   if (TotalPhysicalMemorySize <= 0x1000) {
-    if ((IsTdxSupported () == TRUE) && (TdxEnabled == TRUE)) {
+    if (TdxSupportBelow4Gb) {
       BaseBelow4Gb = (UINT32)(TdxDataHobPtr->SeamRrBaseAddress);
     }
-  } else if (TseDataHobPtr->TseDramMemBase != 0) {
+  } else if ((TseSupport) && (TseDataHobPtr->TseDramMemBase != 0)) {
     BaseBelow4Gb = (UINT32)TseDataHobPtr->TseDramMemBase;
   } else if (MeStolenBase != 0) {
     BaseBelow4Gb = MeStolenBase;
@@ -423,7 +438,7 @@ SetNocImrExclusion (
     }
   }
 
-  if (TseDataHobPtr != NULL) {
+  if (TseSupport) {
     if (TseDataHobPtr->TseDramMemSize != 0) {
       if (UpperBase == 0) {
         UpperBase = (UINT32)TseDataHobPtr->TseDramMemBase + TseDataHobPtr->TseDramMemSize;
@@ -432,8 +447,9 @@ SetNocImrExclusion (
   }
 
   if (TotalPhysicalMemorySize <= 0x1000) {
-    if ((IsTdxSupported () == TRUE) && (TdxEnabled == TRUE) && (TdxDataHobPtr->SeamRrBaseAddress != 0)) {
+    if ((TdxSupportBelow4Gb == TRUE) && (TdxDataHobPtr->SeamRrBaseAddress != 0)) {
       if (UpperBase == 0) {
+        DEBUG ((DEBUG_INFO, "Tdx Support below 4Gb is present\n"));
         UpperBase = (UINT32)(TdxDataHobPtr->SeamRrBaseAddress << 20) + (UINT32)(SeamrrSize << 20);
       }
     }
@@ -441,7 +457,7 @@ SetNocImrExclusion (
 
   BaseAbove4Gb = BASE_4GB;
 
-  if (TraceHubDataHob->TraceHubMemSize != 0) {
+  if ((TraceHubSupport) && (TraceHubDataHob->TraceHubMemSize != 0)){
     SizeAbove4Gb += TraceHubDataHob->TraceHubMemSize;
   }
 
