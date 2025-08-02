@@ -767,6 +767,14 @@
 
 [PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom.STANDARD, PcdsDynamicHii.common.SkuIdPtlUHLp5AepBom32Gb.STANDARD]
   #
+  # DDT Sensors
+  #
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen2Participant|0x1                                   # Sensor Device 2
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen3Participant|0x1                                   # Sensor Device 3
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen4Participant|0x1                                   # Sensor Device 4
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen5Participant|0x1                                   # Sensor Device 5
+
+  #
   # Scan Matrix keyboard
   #
   gStructPcdTokenSpaceGuid.PcdSetup.ScanMatrixEnable|0x1                                             # Scan Matrix Keyboard Support
