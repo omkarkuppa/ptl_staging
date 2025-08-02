@@ -370,3 +370,4 @@ VmdVariablePtr
 VmdMemBar1Base
 VmdMemBar2Base
 VmdGlobalMapping
+PchHdaMicPrivacyMode
