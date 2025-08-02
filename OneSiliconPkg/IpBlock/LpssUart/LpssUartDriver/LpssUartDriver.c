@@ -565,7 +565,7 @@ LpssUartDriverStart (
 
 
   UartDevice->Signature               = LPSS_UART_DEV_SIGNATURE;
-  UartDevice->Handle                  = NULL;
+  UartDevice->Handle                  = Controller;
   UartDevice->FixedMmio               = FixedMmio;
   UartDevice->AutoFlow                = FALSE;
 
@@ -620,15 +620,22 @@ LpssUartDriverStart (
   UartDevice->SerialIoMode.StopBits         = UartDevice->UartDevicePath.StopBits;
 
   //
-  // Install protocol interfaces for the serial device.
+  // Reinstall DevicePath protocol with appended UART.
   //
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &UartDevice->Handle,
+  Status = gBS->ReinstallProtocolInterface (
+                  UartDevice->Handle,
                   &gEfiDevicePathProtocolGuid,
-                  UartDevice->DevicePath,
+                  ParentDevicePath,
+                  UartDevice->DevicePath
+                  );
+  //
+  // Install Serial IO protocol.
+  //
+  Status = gBS->InstallProtocolInterface (
+                  &UartDevice->Handle,
                   &gEfiSerialIoProtocolGuid,
-                  &UartDevice->SerialIoProtocol,
-                  NULL
+                  EFI_NATIVE_INTERFACE,
+                  &UartDevice->SerialIoProtocol
                   );
 
 Error:
