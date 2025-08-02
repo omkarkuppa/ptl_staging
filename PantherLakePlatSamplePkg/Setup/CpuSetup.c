@@ -1299,7 +1299,6 @@ InitCPUInfo (
   UINT8                                LpAtomCoreCount;
   UINT8                                LpAtomThreadCount;
   UINT16                               CpuDid;
-  //EFI_BOOT_MODE                        BootMode;
 
   PowerLimitInteger = PowerLimitFraction = 0;
   PowerUnit                              = 0;
@@ -1648,36 +1647,32 @@ InitCPUInfo (
          &mCpuSetup
          );
  
-  //BootMode = GetBootModeHob ();
-  // if ((BootMode == BOOT_IN_RECOVERY_MODE || BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {  /// First Boot
-      //
-      // If it is first boot, change the default value of FastPkgCRampDisable to 1 for some SKU.
-      //
-      CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
-      switch (CpuDid) {
-        case 0xB000:
-        case 0xB002:
-        case 0xB005:
-        case 0xB003:
-        case 0xB008:
-        case 0xB00B:
-        case 0xB00C:
-        case 0xB014:
-        case 0xB015:
-        case 0xB016:
-        case 0xB017:
-        case 0xB01A:
-          mCpuSetup.AcousticNoiseMitigation = 1;
-          mCpuSetup.FastPkgCRampDisable[1] = 1;
-      }
-  
-      switch (CpuDid) {
-        case 0xB003:
-        case 0xB000:
-          mCpuSetup.EnableFastVmode[0] = 0;
-      }
-    // }
+    //
+    // If it is first boot, change the default value of FastPkgCRampDisable to 1 for some SKU.
+    //
+    CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+    switch (CpuDid) {
+      case 0xB000:
+      case 0xB002:
+      case 0xB005:
+      case 0xB003:
+      case 0xB008:
+      case 0xB00B:
+      case 0xB00C:
+      case 0xB014:
+      case 0xB015:
+      case 0xB016:
+      case 0xB017:
+      case 0xB01A:
+        mCpuSetup.AcousticNoiseMitigation = 1;
+        mCpuSetup.FastPkgCRampDisable[1] = 1;
+    }
 
+    switch (CpuDid) {
+      case 0xB003:
+      case 0xB000:
+        mCpuSetup.EnableFastVmode[0] = 0;
+    }
 
   //
   // Init CPU the number of all fused big, small cores and Atom cores off Ring.
