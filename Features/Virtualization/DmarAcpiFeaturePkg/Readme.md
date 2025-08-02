@@ -120,4 +120,4 @@ PcdDmarAtsrEnable | FALSE | This PCD may be used for enabling/disabling ATSR str
 >     Step5. Update other dependencies.
          Sample : stuart_update -c Intel/.pytool/CISettings.py -p DmarAcpiFeaturePkg -t NOOPT -a X64 TOOL_CHAIN_TAG=VS2019 --verbose
 >     Step6. Build unit test host.
-         Sample : stuart_ci_build -c Intel/.pytool/CISettings.py -p DmarAcpiFeaturePkg -t NOOPT -a X64 TOOL_CHAIN_TAG=VS2019 -–verbose
+         Sample : stuart_ci_build -c Intel/.pytool/CISettings.py -p DmarAcpiFeaturePkg -t NOOPT -a X64 TOOL_CHAIN_TAG=VS2019 --verbose

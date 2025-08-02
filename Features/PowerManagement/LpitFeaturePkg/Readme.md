@@ -11,7 +11,7 @@ The inference of LPI state(s) is insufficient for a contemporary OS to monitor a
 provide meaningful diagnostics of whether the LPI state was entered, for how long
 and diagnose if the desired state was not achieved.
 Intel is using a defined table to provide this information. The table has a reserved
-signature (â€œLPITâ€) in the ACPI specification, and must be included in the set of ACPI
+signature ("LPIT") in the ACPI specification, and must be included in the set of ACPI
 tables provided by Intel LPI capable platforms.
 
 # High-Level Theory of Operation

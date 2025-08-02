@@ -602,10 +602,10 @@ typedef struct {
 
 //
 // UefiCnvWlanWBEM Main Data Structure
-// WiFi320MHzPerMcc – enablement of Wi-Fi 320MHz per MCC. Default is 0x0.
+// WiFi320MHzPerMcc - enablement of Wi-Fi 320MHz per MCC. Default is 0x0.
 //                    Bit 0 - if set, Wi-Fi 320MHz is enabled for Japan if allowed at module level.
 //                    Bit 1 - if set, Wi-Fi 320MHz is enabled for South Korea if allowed at module level.
-//                    Bits 2-31 – Reserved (shall be set to 0).
+//                    Bits 2-31 - Reserved (shall be set to 0).
 //
 typedef struct {
   CNV_UEFI_VAR_HEADER    Header;

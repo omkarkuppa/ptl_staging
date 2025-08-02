@@ -102,6 +102,6 @@ C code:
 > Step4. Get the code dependencies.
          Sample : stuart_setup -c .pytool/CISettings.py -a X64 TOOL_CHAIN_TAG=VS2019
 > Step5. Update other dependencies.
-         Sample : stuart_update -c .pytool/CISettings.py -a X64 TOOL_CHAIN_TAG=VS2019​
+         Sample : stuart_update -c .pytool/CISettings.py -a X64 TOOL_CHAIN_TAG=VS2019
 > Step6. Build unit test host.
          Sample : stuart_ci_build -c Features\FvCopyFeaturePkg\CISettings.py -a X64 -t NOOPT -v TOOL_CHAIN_TAG=VS2019 -p FvCopyFeaturePkg BUILDMODULE=Features\FvCopyFeaturePkg\FreeSpaceSkipFvCopyPei\UnitTest\FreeSpaceSkipFvCopyHostTest.inf

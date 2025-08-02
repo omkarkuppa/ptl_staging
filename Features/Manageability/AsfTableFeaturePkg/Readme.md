@@ -4,8 +4,8 @@
 * **SMM Required?** NO
 
 ## Purpose
-A managed client’s ASF configuration and capabilities are reported by the system firmware (or BIOS) via ACPI description tables and control methods and, optionally, as static information stored within an SEEPROM.
-OS-present software uses this information to customize the system’s ASF-aware alert-sending device(s).
+A managed client's ASF configuration and capabilities are reported by the system firmware (or BIOS) via ACPI description tables and control methods and, optionally, as static information stored within an SEEPROM.
+OS-present software uses this information to customize the system's ASF-aware alert-sending device(s).
 
 # High-Level Theory of Operation
 This feature will install Alert Standard Format (ASF) ACPI Table when ReadyToBoot event is triggered.

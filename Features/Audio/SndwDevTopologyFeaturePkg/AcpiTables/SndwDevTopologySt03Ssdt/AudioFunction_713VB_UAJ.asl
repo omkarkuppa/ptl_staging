@@ -548,7 +548,7 @@ Name(C421, Package()
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package ()
   {
-    // Mixer, Class, DC, The Q7.8dB format used for MU Controls represents the gain range −128 dB to +127.996 dB
+    // Mixer, Class, DC, The Q7.8dB format used for MU Controls represents the gain range -128 dB to +127.996 dB
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
     Package(2) {"mipi-sdca-control-cn-0-dc-value", 0x0000},  // Input Pin 1, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
