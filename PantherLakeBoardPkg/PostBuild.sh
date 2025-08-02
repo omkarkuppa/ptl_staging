@@ -222,34 +222,55 @@ cp -f $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADPOST.fd $WORKSPACE/$BUILD_DIR/F
 #
 # XmlCli: Post Build Process Begin
 #
-XML_CLI_COMMON_BUILD_PATH=$BUILD_DIR/X64/XmlCliFeaturePkg/XmlCliCommon
-XML_CLI_COMMON_DIR=$WORKSPACE_COMMON/Features/XmlCliFeaturePkg/XmlCliCommon
-INPUT_VFR_DIRS=$BUILD_DIR/X64/$PLATFORM_PACKAGE/Setup/Setup/OUTPUT $BUILD_DIR/X64/$PLATFORM_PACKAGE/Features/UiApp/D89A7D8B-D016-4D26-93E3-EAB6B4D3B0A2/OUTPUT $XML_CLI_COMMON_BUILD_PATH/Dxe/OUTPUT
-if [ -d $XML_CLI_COMMON_BUILD_PATH ]; then
+
+# Set EDK2 tool paths for XmlCli processing
+EDK_TOOLS_BIN=$WORKSPACE/Edk2/BaseTools/Source/C/bin
+EDK_TOOLS_BINWRAPPERS=$WORKSPACE/Edk2/BaseTools/BinWrappers/PosixLike
+
+
+WORKSPACE_BUILD_DIR="$WORKSPACE/$BUILD_DIR"
+XML_CLI_COMMON_BUILD_PATH="$WORKSPACE_BUILD_DIR/X64/XmlCliFeaturePkg/XmlCliCommon"
+XML_CLI_COMMON_DIR="$WORKSPACE_COMMON/Features/XmlCliFeaturePkg/XmlCliCommon"
+INPUT_VFR_DIRS="$WORKSPACE_BUILD_DIR/X64/$PLATFORM_FULL_PACKAGE/Setup/Setup/OUTPUT $WORKSPACE_BUILD_DIR/X64/$PLATFORM_FULL_PACKAGE/Features/UiApp/D89A7D8B-D016-4D26-93E3-EAB6B4D3B0A2/OUTPUT $XML_CLI_COMMON_BUILD_PATH/Dxe/OUTPUT"
+if [ -d "$XML_CLI_COMMON_BUILD_PATH" ]; then
   echo "Create and insert Bios Knobs Data Bin file for XmlCli"
-  if [ ! -d $XML_CLI_COMMON_BUILD_PATH/Dummy ]; then
-   mkdir $XML_CLI_COMMON_BUILD_PATH/Dummy
+  if [ ! -d "$XML_CLI_COMMON_BUILD_PATH/Dummy" ]; then
+    mkdir -p "$XML_CLI_COMMON_BUILD_PATH/Dummy"
   fi
   #
-  #Extract Variable names & expression's, publish it in Build Dir/BiosKnobsData.bin file
+  # Extract Variable names & expression's, publish it in Build Dir/BiosKnobsData.bin file
   #
-  $PYTHON_COMMAND $XML_CLI_COMMON_DIR/Tool/ParseSetup.py post_build -b $BUILD_DIR -xb $XML_CLI_COMMON_BUILD_PATH -iv $INPUT_VFR_DIRS
-  echo "==== XmlCliPostBuild: BiosKnobsData.bin File Created ====="
-  GenSec -s EFI_SECTION_USER_INTERFACE -n "XmlCliBiosKnobsData" -o $XML_CLI_COMMON_BUILD_PATH/BiosKnobsUISec.ui
-  GenSec -s EFI_SECTION_RAW -o $XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.sec $XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.bin
-  GenFfs -t EFI_FV_FILETYPE_FREEFORM -g 615E6021-603D-4124-B7EA-C48A3737BACD -o $XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs -i $XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.sec -i $XML_CLI_COMMON_BUILD_PATH/BiosKnobsUISec.ui
-  $FMMT_PATH/FMMT -a $BUILD_DIR/FV/CLIENTBIOS.fd A881D567-6CB0-4EEE-8435-2E72D33E45B5 $XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs $BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd
-  if [ ! -f $BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd ]; then
-    echo "!!! XmlCliPostBuild-ERROR:Build Fail !!!"
-    echo "*** XmlCliPostBuild: $BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd does not exist. ***"
-    echo "-- XmlCliPostBuild: FMMT insertion process may have failed, please check logs above --"
-    return 1
+  "$PYTHON_COMMAND" "$XML_CLI_COMMON_DIR/Tool/ParseSetup.py" post_build -b "$WORKSPACE_BUILD_DIR" -xb "$XML_CLI_COMMON_BUILD_PATH" -iv $INPUT_VFR_DIRS -edk "$EDK_TOOLS_BIN" -ets "$EDK_TOOLS_BINWRAPPERS"
+  GenSec -s EFI_SECTION_USER_INTERFACE -n "XmlCliBiosKnobsData" -o "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsUISec.ui"
+  GenSec -s EFI_SECTION_RAW -o "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.sec" "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.bin"
+  GenFfs -t EFI_FV_FILETYPE_FREEFORM -g 615E6021-603D-4124-B7EA-C48A3737BACD -o "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs" -i "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.sec" -i "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsUISec.ui"
+  "$FMMT_PATH/FMMT" -a "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" A881D567-6CB0-4EEE-8435-2E72D33E45B5 "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd"
+  
+  if [ ! -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd" ]; then
+    echo "=== XmlCliPostBuild: Trying to generate fd file once again... ==="
+    "$FMMT_PATH/FMMT" -a "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" A881D567-6CB0-4EEE-8435-2E72D33E45B5 "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd"
+    if [ ! -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd" ]; then
+      echo "!!! XmlCliPostBuild-ERROR:Build Fail !!!"
+      echo "*** XmlCliPostBuild: $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd does not exist. ***"
+      echo "-- XmlCliPostBuild: FMMT insertion process may have failed, please check logs above --"
+      return 1
+    fi
+  fi
+  
+  # Backing up CLIENTBIOS.fd before overwriting
+  if [ ! -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd.bak" ]; then
+    cp "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd.bak"
   fi
 
-  cp $BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd $BUILD_DIR/FV/CLIENTBIOS.fd
-  rm $BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd
+  cp "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd"
+  # Clean up backup file
+  rm -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd.bak"
+  rm -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd"
 
   echo "==== BiosKnobsData.bin File Inserted ====="
+else
+  echo "DEBUG: Directory does not exist: $XML_CLI_COMMON_BUILD_PATH"
+  echo "DEBUG: Skipping XmlCli Post Build Process"
 fi
 #
 # XmlCli: Post Build Process End
