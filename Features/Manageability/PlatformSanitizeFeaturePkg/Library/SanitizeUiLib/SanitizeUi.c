@@ -286,7 +286,7 @@ PreserveConsoleMode (
   IN EFI_SIMPLE_TEXT_OUTPUT_MODE      *Mode
   )
 {
-  CopyMem (&Mode, gST->ConOut->Mode, sizeof (EFI_SIMPLE_TEXT_OUTPUT_MODE));
+  CopyMem (Mode, gST->ConOut->Mode, sizeof (EFI_SIMPLE_TEXT_OUTPUT_MODE));
 }
 
 /**
