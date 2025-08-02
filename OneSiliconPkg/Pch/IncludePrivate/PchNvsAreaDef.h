@@ -444,6 +444,10 @@ typedef struct {
   UINT8    SWCS;                                    ///< Offset 1317    SoundWire Clock Source Select
   UINT8    SSFP;                                    ///< Offset 1318    SoundWire Supported Frequency Pool
   UINT8    GlobalPcieAer;                           ///< Offset 1319    Global PCIe Advanced Error Reporting
+  UINT64   ThcHidI2cMaxFrameSize[2];                ///< Offset 1320    Touch Host Controller HID over I2C Max Frame size Enable
+  UINT64   ThcHidI2cMaxFrameSizeValue[2];           ///< Offset 1336    Touch Host Controller HID over I2C Max Frame size value
+  UINT64   ThcHidI2cIntDelay[2];                    ///< Offset 1352    Touch Host Controller HID over I2C Interrupt delay Enable
+  UINT64   ThcHidI2cIntDelayValue[2];               ///< Offset 1368    Touch Host Controller HID over I2C Interrupt delay value
 } PCH_NVS_AREA;
 
 #pragma pack(pop)

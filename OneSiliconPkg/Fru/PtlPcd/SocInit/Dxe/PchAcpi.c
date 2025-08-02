@@ -226,6 +226,10 @@ UpdateThcAcpiData (
     mPchNvsAreaProtocol.Area->ThcHidI2cHighSpeedModePlusSerialDataLineTransmitHoldPeriod[Index]  = ThcConfigHob->ThcPort[Index].HidOverI2c.HighSpeedModePlusSerialDataLineTransmitHoldPeriod;
     mPchNvsAreaProtocol.Area->ThcHidI2cHighSpeedModePlusSerialDataLineReceiveHoldPeriod[Index]   = ThcConfigHob->ThcPort[Index].HidOverI2c.HighSpeedModePlusSerialDataLineReceiveHoldPeriod;
     mPchNvsAreaProtocol.Area->ThcHidI2cMaximumLengthOfSuppressedSpikesInHighSpeedMode[Index]     = ThcConfigHob->ThcPort[Index].HidOverI2c.MaximumLengthOfSuppressedSpikesInHighSpeedMode;
+    mPchNvsAreaProtocol.Area->ThcHidI2cMaxFrameSize[Index]                                       = ThcConfigHob->ThcPort[Index].FrameSizeAndIntDelay.MaxFrameSize;
+    mPchNvsAreaProtocol.Area->ThcHidI2cMaxFrameSizeValue[Index]                                  = ThcConfigHob->ThcPort[Index].FrameSizeAndIntDelay.MaxFrameSizeValue;
+    mPchNvsAreaProtocol.Area->ThcHidI2cIntDelay[Index]                                           = ThcConfigHob->ThcPort[Index].FrameSizeAndIntDelay.IntDelay;
+    mPchNvsAreaProtocol.Area->ThcHidI2cIntDelayValue[Index]                                      = ThcConfigHob->ThcPort[Index].FrameSizeAndIntDelay.IntDelayValue;
 
     if (ThcConfigHob->ThcPort[Index].WakeOnTouch == TRUE) {
       DEBUG ((DEBUG_INFO, "UpdateThcAcpiData() THC %d WakeOnTouch Pad: %X \n", Index, PtlPcdGpioGetThcWotGpioPad(Index)));

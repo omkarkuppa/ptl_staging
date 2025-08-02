@@ -509,4 +509,12 @@
   SWCS, 8,  // Offset(1317),  SoundWire Clock Source Select
   SSFP, 8,  // Offset(1318),  SoundWire Supported Frequency Pool
   GAER, 8,  // Offset(1319),  Global PCIe Advanced Error Reporting
+  T004, 64, // Offset(1320),  Touch Host Controller HID over I2C Max Frame size Enable
+  T005, 64, // Offset(1328),
+  T006, 64, // Offset(1336),  Touch Host Controller HID over I2C Max Frame size value
+  T007, 64, // Offset(1344),
+  T008, 64, // Offset(1352),  Touch Host Controller HID over I2C Interrupt delay Enable
+  T009, 64, // Offset(1360),
+  T00A, 64, // Offset(1368),  Touch Host Controller HID over I2C Interrupt delay value
+  T00B, 64, // Offset(1376),
   }

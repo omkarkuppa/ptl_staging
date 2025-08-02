@@ -44,8 +44,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED  UINT8    mThcMode[2] = {0xFF, 0xFF};
 
 GLOBAL_REMOVE_IF_UNREFERENCED  THC_RESET mThcReset[2];
 
-GLOBAL_REMOVE_IF_UNREFERENCED  THC_HID_OVER_I2C  mHidOverI2c[2];
-
 GLOBAL_REMOVE_IF_UNREFERENCED  THC_PORT  mThcPort[2];
 
 typedef struct {
@@ -130,7 +128,7 @@ QuickI2cExitEvent (
     return;
   }
 
-  QuickI2cStop (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId], &mThcReset[QuickI2cDev->InstanceId]);
+  QuickI2cStop (QuickI2cDev, &mThcPort[QuickI2cDev->InstanceId].HidOverI2c, &mThcReset[QuickI2cDev->InstanceId]);
 
   if (Event != NULL) {
     gBS->CloseEvent (Event);
@@ -349,9 +347,6 @@ QuickI2cEntryPoint (
 
   mThcMode[0] = ThcConfigHob->ThcPort[0].Mode;
   mThcMode[1] = ThcConfigHob->ThcPort[1].Mode;
-
-  CopyMem (&mHidOverI2c[0], &ThcConfigHob->ThcPort[0].HidOverI2c, sizeof (THC_HID_OVER_I2C));
-  CopyMem (&mHidOverI2c[1], &ThcConfigHob->ThcPort[1].HidOverI2c, sizeof (THC_HID_OVER_I2C));
 
   CopyMem (&mThcPort[0], &ThcConfigHob->ThcPort[0], sizeof (THC_PORT));
   CopyMem (&mThcPort[1], &ThcConfigHob->ThcPort[1], sizeof (THC_PORT));
@@ -703,14 +698,14 @@ QuickI2cDriverBindingStart (
   }
 
   Status = QuickI2cReadDeviceDescriptor (QuickI2cDev,
-                                         mHidOverI2c[QuickI2cDev->InstanceId].DeviceAddress,
-                                         mHidOverI2c[QuickI2cDev->InstanceId].DeviceDescriptorAddress
+                                         mThcPort[QuickI2cDev->InstanceId].HidOverI2c.DeviceAddress,
+                                         mThcPort[QuickI2cDev->InstanceId].HidOverI2c.DeviceDescriptorAddress
                                        );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Read Device Descriptor for address 0x%x with status: %r\n", mHidOverI2c[QuickI2cDev->InstanceId].DeviceAddress, Status));
+    DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Read Device Descriptor for address 0x%x with status: %r\n", mThcPort[QuickI2cDev->InstanceId].HidOverI2c.DeviceAddress, Status));
     // Check for multiple vendor feature support to try VPD entries
     if (PcdGetBool (PcdThcMultipleVenFeatureSupport) == TRUE) {
-      Status = QuickI2cValidateAndProgramDeviceAddress (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId]);
+      Status = QuickI2cValidateAndProgramDeviceAddress (QuickI2cDev, &mThcPort[QuickI2cDev->InstanceId].HidOverI2c);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Validate and Program Device Address Status: %r\n", Status));
         goto THC_ERROR_EXIT;
@@ -865,7 +860,7 @@ QuickI2cDriverBindingStop (
 
   gBS->CloseEvent (QuickI2cDev->ExitEvent);
 
-  QuickI2cStop (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId], &mThcReset[QuickI2cDev->InstanceId]);
+  QuickI2cStop (QuickI2cDev, &mThcPort[QuickI2cDev->InstanceId].HidOverI2c, &mThcReset[QuickI2cDev->InstanceId]);
 
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   ControllerHandle,

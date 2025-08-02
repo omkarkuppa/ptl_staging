@@ -50,7 +50,7 @@
     //
     // I2C SubIP configuration data
     //
-    Name(ISUB, Buffer(145){})
+    Name(ISUB, Buffer(177){})
     CreateQWordField (ISUB, 0x00, SMHX) // Integer: Standard Mode (100 kbit/s) Serial Clock Line HIGH Period
     CreateQWordField (ISUB, 0x08, SMLX) // Integer: Standard Mode (100 kbit/s) Serial Clock Line LOW Period
     CreateQWordField (ISUB, 0x10, SMTD) // Integer: Standard Mode (100 kbit/s) Serial Data Line Transmit Hold Period
@@ -69,6 +69,10 @@
     CreateQWordField (ISUB, 0x78, HMTD) // Integer: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line Transmit HOLD Period
     CreateQWordField (ISUB, 0x80, HMRD) // Integer: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line Receive HOLD Period
     CreateQWordField (ISUB, 0x88, HMSL) // Integer: Maximum length (in ic_clk_cycles) of suppressed spikes in High Speed Mode.
+    CreateQWordField (ISUB, 0x90, FSEN) // Integer: Maximum Frame Size Enable
+    CreateQWordField (ISUB, 0x98, FSVL) // Integer: Maximum Frame Size Value
+    CreateQWordField (ISUB, 0xA0, INDE) // Integer: Interrupt Delay Enable
+    CreateQWordField (ISUB, 0xA8, INDV) // Integer: Interrupt Delay Value
 
     Store (THC_HIDI2C_DEVICE_ADDRESS, DADR)
     Store (THC_HIDI2C_CONNECTION_SPEED, DSPD)
@@ -91,6 +95,10 @@
     Store (THC_HIDI2C_HM_SDA_HOLD_TX_PERIOD, HMTD)
     Store (THC_HIDI2C_HM_SDA_HOLD_RX_PERIOD, HMRD)
     Store (THC_HIDI2C_SUPPRESSED_SPIKES_H, HMSL)
+    Store (THC_HIDI2C_MAX_FRAME_SIZE, FSEN)
+    Store (THC_HIDI2C_MAX_FRAME_SIZE_VALUE, FSVL)
+    Store (THC_HIDI2C_INT_DELAY, INDE)
+    Store (THC_HIDI2C_INT_DELAY_VALUE, INDV)
 
     //
     // _DSM - Device-Specific Method
