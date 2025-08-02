@@ -42,7 +42,7 @@ extern EFI_GUID gCpuPowerMgmtVrConfigGuid;
 
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;                   ///< Config Block Header
-  UINT32 AcousticNoiseMitigation        : 1;      ///< Enable or Disable Acoustic Noise Mitigation feature. <b>0: Disabled</b>; 1: Enabled
+  UINT32 AcousticNoiseMitigation        : 1;      ///< Enable or Disable Acoustic Noise Mitigation feature. 0: Disabled; 1: Enabled ; <b>2: Auto</b>
 
   UINT32 RfiMitigation                  : 1;      ///< Enable or Disable RFI Mitigation. <b>0: Disable - DCM is the IO_N default</b>; 1: Enable - Enable IO_N DCM/CCM switching as RFI mitigation.
   UINT32 RsvdBits                       : 30;     ///< Reserved for future use.

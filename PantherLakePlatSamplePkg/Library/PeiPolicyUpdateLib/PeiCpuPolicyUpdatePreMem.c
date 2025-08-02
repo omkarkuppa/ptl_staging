@@ -1160,6 +1160,7 @@ UpdatePeiCpuPolicyPreMem (
   //
   // VR Acoustic Noise Mitigation
   //
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.AcousticNoiseMitigation, CpuPowerMgmtVrConfig->AcousticNoiseMitigation, CpuSetup.AcousticNoiseMitigation);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcoreHysteresisWindow, CpuPowerMgmtVrConfig->PcoreHysteresisWindow, CpuSetup.PcoreHysteresisWindow );
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EcoreHysteresisWindow, CpuPowerMgmtVrConfig->EcoreHysteresisWindow, CpuSetup.EcoreHysteresisWindow );
 
@@ -1330,38 +1331,41 @@ UpdatePeiCpuPolicyPreMem (
     FixedPcdGet32 (PcdFlashFvMicrocodeSize) - FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
 #endif
-
-  Status = PeiServicesGetBootMode (&BootMode);
-  ASSERT_EFI_ERROR (Status);
-  if (!EFI_ERROR (Status)) {
-    // if ((BootMode == BOOT_IN_RECOVERY_MODE || BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {  /// First Boot
-      //
-      // If it is frist boot, change the default value of FastPkgCRampDisable to 1 for some SKU.
-      //
-      CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
-      switch (CpuDid) {
-        case 0xB000:
-        case 0xB002:
-        case 0xB005:
-        case 0xB003:
-        case 0xB008:
-        case 0xB00B:
-        case 0xB00C:
-        case 0xB014:
-        case 0xB015:
-        case 0xB016:
-        case 0xB017:
-        case 0xB01A:
-          COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.AcousticNoiseMitigation, CpuPowerMgmtVrConfig->AcousticNoiseMitigation, 1);
-          COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.FastPkgCRampDisable[1], CpuPowerMgmtVrConfig->FastPkgCRampDisable[1], 1, 1);
+      
+  //
+  // Update PTL H 4Xe and PTL U based on Cpu DID
+  // When Auto is selected, override with these values
+  //
+  CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+  switch (CpuDid) {
+    case 0xB000:
+    case 0xB002:
+    case 0xB005:
+    case 0xB003:
+    case 0xB008:
+    case 0xB00B:
+    case 0xB00C:
+    case 0xB014:
+    case 0xB015:
+    case 0xB016:
+    case 0xB017:
+    case 0xB01A:
+    if (CpuSetup.AcousticNoiseMitigation == 2) { // 2 = AUTO
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.AcousticNoiseMitigation, CpuPowerMgmtVrConfig->AcousticNoiseMitigation, 1);
+    }
+    if (CpuSetup.FastPkgCRampDisable[1] == 2) { // 2 = AUTO
+      COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.FastPkgCRampDisable[1], CpuPowerMgmtVrConfig->FastPkgCRampDisable[1], 1, 1);
+    }
+  }
+  switch (CpuDid) {
+    case 0xB003:
+    case 0xB000:
+      if (CpuSetup.IccMax[0] == 0) {
+        COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.IccMax[0],   CpuPowerMgmtVrConfig->IccMax[0],320, 0);
       }
-      switch (CpuDid) {
-        case 0xB003:
-        case 0xB000:
-          COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableFastVmode[0], CpuPowerMgmtVrConfig->EnableFastVmode[0],0, 0);
+      if (CpuSetup.IccLimit[0] == 0) {
+        COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.IccLimit[0], CpuPowerMgmtVrConfig->IccLimit[0],252, 0);
       }
- 
-    // }
   }
   return EFI_SUCCESS;
 }

@@ -105,7 +105,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.AcLoadline[1]|0x0                          
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AcLoadline[2]|0x0                                             # AC Loadline
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AcLoadline[3]|0x0                                             # AC Loadline
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AcheckRequest|0x0                                             # Alias Check Request
-gStructPcdTokenSpaceGuid.PcdCpuSetup.AcousticNoiseMitigation|0x0                                   # Acoustic Noise Mitigation
+gStructPcdTokenSpaceGuid.PcdCpuSetup.AcousticNoiseMitigation|0x2                                   # Acoustic Noise Mitigation
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PcoreHysteresisWindow|0x0                                     # IAcore Hysteresis Window
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EcoreHysteresisWindow|0x0                                     # Ecore Hysteresis Window
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ActiveCoreCount|0xff                                          # Active Performance-cores
@@ -184,7 +184,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.EnergyEfficientPState|0x1                  
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnergyEfficientTurbo|0x1                                      # Energy Efficient Turbo
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EpocFclkFreq|0x3                                              # FCLK Frequency for Early Power On
 gStructPcdTokenSpaceGuid.PcdCpuSetup.FastPkgCRampDisable[0]|0x0                                    # Disable Fast PKG C State Ramp for Core Domain
-gStructPcdTokenSpaceGuid.PcdCpuSetup.FastPkgCRampDisable[1]|0x0                                    # Disable Fast PKG C State Ramp for GT Domain
+gStructPcdTokenSpaceGuid.PcdCpuSetup.FastPkgCRampDisable[1]|0x2                                    # Disable Fast PKG C State Ramp for GT Domain
 gStructPcdTokenSpaceGuid.PcdCpuSetup.FastPkgCRampDisable[3]|0x0                                    # Disable Fast PKG C State Ramp for Atom Domain
 gStructPcdTokenSpaceGuid.PcdCpuSetup.HwpInterruptControl|0x1                                       # Intel(R) Speed Shift Technology Interrupt Control
 gStructPcdTokenSpaceGuid.PcdCpuSetup.HwpLock|0x1                                                   # HwP Lock

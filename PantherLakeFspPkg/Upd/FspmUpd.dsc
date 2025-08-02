@@ -2773,7 +2773,7 @@
   # !BSF NAME:{Acoustic Noise Mitigation feature}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enabling this option will help mitigate acoustic noise on certain SKUs when the CPU is in deeper C state. <b>0: Disabled</b>; 1: Enabled}
-  gPlatformFspPkgTokenSpaceGuid.AcousticNoiseMitigation     | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.AcousticNoiseMitigation     | * | 0x01 | 0x02
 
   # !BSF NAME:{RfiMitigation}  TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable or Disable RFI Mitigation. <b>0: Disable - DCM is the IO_N default</b>; 1: Enable - Enable IO_N DCM/CCM switching as RFI mitigation.}
@@ -2864,7 +2864,7 @@
   # !BSF NAME:{Disable Fast Slew Rate for Deep Package C States for VR domains}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state. [0] for IA, [1] for GT, [2] for SA, [3] through [5] are Reserved. <b>0: False</b>; 1: True}
-  gPlatformFspPkgTokenSpaceGuid.FastPkgCRampDisable       | * | 0x06 | {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+  gPlatformFspPkgTokenSpaceGuid.FastPkgCRampDisable       | * | 0x06 | {0x00, 0x02, 0x00, 0x00, 0x00, 0x00}
 
   # !BSF NAME:{Slew Rate configuration for Deep Package C States for VR domains}
   # !BSF TYPE:{Combo} OPTION:{0: Fast/2, 1: Fast/4, 2: Fast/8, 3: Fast/16, 0xFF: Ignore the configuration}

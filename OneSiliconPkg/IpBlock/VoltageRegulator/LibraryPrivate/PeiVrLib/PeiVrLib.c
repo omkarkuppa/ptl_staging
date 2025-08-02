@@ -296,7 +296,7 @@ SetVrCommon (
   ///
   /// Acoustic Noise Mitigation
   ///
-  if (CpuPowerMgmtVrConfig->AcousticNoiseMitigation) {
+  if (CpuPowerMgmtVrConfig->AcousticNoiseMitigation == 1) {
     ///
     /// Hysteresis Window programming for Pcore Acoustic Noise Mitigation.
     ///
@@ -609,7 +609,7 @@ SetVrNonOverrideValues (
   /// Acoustic Noise Mitigation
   /// VR Core, GT and Atom domains support Slow Slew Rate and Fast Pkg Ramp features
   ///
-  if (CpuPowerMgmtVrConfig->AcousticNoiseMitigation) {
+  if (CpuPowerMgmtVrConfig->AcousticNoiseMitigation == 1) {
     if ((VrIndex < 2) || (VrIndex == 3)) {
       ///
       /// Set Fast and Slow Slew Rate for Deep Package C States.
