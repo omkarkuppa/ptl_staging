@@ -499,6 +499,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables2.DIMMODTCA               = FspmUpd->FspmConfig.DIMMODTCA;
   MemConfig->ExternalInputs.TrainingEnables2.WRTDIMMDFE              = FspmUpd->FspmConfig.WRTDIMMDFE;
   MemConfig->ExternalInputs.TrainingEnables2.DDR5ODTTIMING           = FspmUpd->FspmConfig.DDR5ODTTIMING;
+  MemConfig->ExternalInputs.TrainingEnables2.WREQT                   = FspmUpd->FspmConfig.WREQT;
   MemConfig->ExternalInputs.TrainingEnables2.RDVREFDC                = FspmUpd->FspmConfig.RDVREFDC;
   MemConfig->ExternalInputs.TrainingEnables2.RDTCIDLE                = FspmUpd->FspmConfig.RDTCIDLE;
   MemConfig->ExternalInputs.TrainingEnables2.RMTBIT                  = FspmUpd->FspmConfig.RMTBIT;

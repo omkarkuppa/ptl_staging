@@ -459,8 +459,7 @@ MrcConfigRfm (
   }
 
   if (RfmSetupConfig->RfmDimmRequiredMap) {
-    // Subtract 5 from the POR value
-    GetSetVal = (RfmSetupConfig->Raammt > 5) ? (RfmSetupConfig->Raammt - 5) : 0;
+    GetSetVal = RfmSetupConfig->Raammt;
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhHighWM, WriteToCache | PrintValue, &GetSetVal);
     GetSetVal = RfmSetupConfig->Raaimt;
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhLowWM, WriteToCache | PrintValue, &GetSetVal);
@@ -899,7 +898,7 @@ MrcRhPrevention (
         if (PtrrConfigured) {
           RfmSetupConfig.Raammt = SUBTRACT_NO_OVERFLOW (RfmSetupConfig.Raammt, 3);
         } else {
-          RfmSetupConfig.Raammt = (IsLpddr) ? SUBTRACT_NO_OVERFLOW (RfmSetupConfig.Raammt, 2) : SUBTRACT_NO_OVERFLOW (RfmSetupConfig.Raammt, 1);
+          RfmSetupConfig.Raammt = SUBTRACT_NO_OVERFLOW (RfmSetupConfig.Raammt, 5);
         }
 
         MrcConfigRfm (MrcData, Controller, IpChannel, &RfmSetupConfig);

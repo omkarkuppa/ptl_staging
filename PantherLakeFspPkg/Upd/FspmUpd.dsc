@@ -959,9 +959,9 @@
   # !BSF HELP:{Enables/Disable DIMM RON Training}
   gPlatformFspPkgTokenSpaceGuid.DIMMRONT                    | * | 0x01 | 0x00
 
-  # !BSF NAME:{Write Drive Strength/Equalization 2D}
+  # !BSF NAME:{Write Drive Strength Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable Write Drive Strength/Equalization 2D}
+  # !BSF HELP:{Enables/Disable Write Drive Strength Training}
   gPlatformFspPkgTokenSpaceGuid.WRDSEQT                     | * | 0x01 | 0x01
 
   # !BSF NAME:{Read Equalization Training}
@@ -1227,8 +1227,10 @@
   # !BSF HELP:{Select the BIT to be used for Channel Interleaved mode. NOTE: BIT7 will interlave the channels at a 2 cacheline granularity, BIT8 at 4 and BIT9 at 8. Default is BIT8}
   gPlatformFspPkgTokenSpaceGuid.ChHashInterleaveBit         | * | 0x01 | 0x02
 
-  # Added reserved space UnusedUpdSpace6
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd6             | * | 0x01 | 0x00
+  # !BSF NAME:{Write Equalization Training}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disables Write Equalization Training}
+  gPlatformFspPkgTokenSpaceGuid.WREQT                       | * | 0x01 | 0x00
 
   # !BSF NAME:{Ch Hash Mask}
   # !BSF TYPE:{EditNum, HEX, (0x0000, 0x3FFF)}

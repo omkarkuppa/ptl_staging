@@ -411,7 +411,7 @@ MrcDdr5GetRfmThresholdInfo (
 
     // DDR5 should always use Fine Granularity Refresh numbers
     // RankRaa (RAAMMT) value will be later adjusted based on whether pTRR will be enabled:
-    // RAAMMT-1 if pTRR is not enabled
+    // RAAMMT-5 if pTRR is not enabled
     // RAAMMT-3 if pTRR is enabled
     RankRaaimt = Ddr5MR58.Bits.Raaimt * 4;
     RankRaa    = (RankRaaimt * Ddr5MR58.Bits.Raammt * 2);

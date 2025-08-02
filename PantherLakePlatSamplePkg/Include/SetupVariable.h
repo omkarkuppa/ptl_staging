@@ -1280,9 +1280,10 @@ typedef struct {
   <b>Revision 13</b>: - Add Lockstep variables
   <b>Revision 14</b>: - Add StreamTracer support variables
   <b>Revision 15</b>: - Add IsWckIdleExitEnabled variable
+  <b>Revision 16</b>: - Add WREQT variable
 **/
 
-#define SA_SETUP_REVISION   15
+#define SA_SETUP_REVISION   16
 
 typedef struct {
   UINT8   Revision;
@@ -1810,8 +1811,9 @@ typedef struct {
   UINT8   PmtStreamTracerMode;
 
   UINT8   IsWckIdleExitEnabled;
+  UINT8   WREQT;
 
-  UINT8   Rsvd[2];
+  UINT8   Rsvd;
 } SA_SETUP;
 
 /**

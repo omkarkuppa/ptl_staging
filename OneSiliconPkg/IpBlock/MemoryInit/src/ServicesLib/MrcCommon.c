@@ -4146,6 +4146,7 @@ MrcCalcMaxRxMargin (
 {
   const MRC_FUNCTION *MrcCall;
   const MrcInput     *Inputs;
+  const MrcSaveData  *SaveData;
   INT64         GetSetVal;
   INT64         GetSetMin;
   INT64         GetSetMax;
@@ -4168,6 +4169,7 @@ MrcCalcMaxRxMargin (
 
   Inputs  = &MrcData->Inputs;
   MrcCall = Inputs->Call.Func;
+  SaveData = &MrcData->Save.Data;
   MrcCall->MrcSetMem ((UINT8 *) ParamList, sizeof (ParamList), 0);
 
   // Check for saturation on Rx Timing
@@ -4210,12 +4212,12 @@ MrcCalcMaxRxMargin (
         // Calculate RxDqs Pi Code for P/N. ParamList[0] = RxDqsP, ParamList[1] = RxDqsN
         // DQS_P PICode = RxDqsPDelayPi + RxDqsDelayP - 64*DqsPOffsetNUI + RxDqsPiOffset + RxDQPerBitDeskew + RxDQPerBitDeskewOffset[3:1] + RxDQPerBitDeskewOffset[0]
         // Use of SignedValue to allow for negative value to be RANGE checked below to keep ParamList value from resulting in high unsigned value
-        SignedValue = (INT32) GetSetVal + RxDqsP + Inputs->RxDqsBaseOffset + BitDelayRxDqs + (BitOffsetRxDqs >> 1) + (BitOffsetRxDqs & 1);
+        SignedValue = (INT32) GetSetVal + RxDqsP + SaveData->RxDqsBaseOffset + BitDelayRxDqs + (BitOffsetRxDqs >> 1) + (BitOffsetRxDqs & 1);
         ParamList[0] = (UINT16) (RANGE (SignedValue, RX_DQS_PICODE_MIN_MARGIN, RX_DQS_PICODE_MAX_MARGIN));
         MrcGetSetStrobe (MrcData, Controller, Channel, Rank, Byte, RxDqsNDelay, ReadFromCache, &GetSetVal);
         // DQS_N PICode = RxDqsNDelayPi + RxDqsDelayN - 64*DqsNOffsetNUI + RxDqsPiOffset + RxDQPerBitDeskew - RxDQPerBitDeskewOffset[3:1]
         // Use of SignedValue to allow for negative value to be RANGE checked below to keep ParamList value from resulting in high unsigned value
-        SignedValue = (INT32) GetSetVal + RxDqsN + Inputs->RxDqsBaseOffset + BitDelayRxDqs - (BitOffsetRxDqs >> 1);
+        SignedValue = (INT32) GetSetVal + RxDqsN + SaveData->RxDqsBaseOffset + BitDelayRxDqs - (BitOffsetRxDqs >> 1);
         ParamList[1] = (UINT16) (RANGE (SignedValue, RX_DQS_PICODE_MIN_MARGIN, RX_DQS_PICODE_MAX_MARGIN));
 
         if (Param == RdT) {

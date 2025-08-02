@@ -358,7 +358,7 @@ MrcDefaultSetMemoryPmicVoltage (
     if (SWANeedSwitchStep || (Current != Data)) {
       Reg21.Bits.swa_voltage_setting = (UINT8) Data;
       Value = MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg21.Data, &Status);
-      Delta = ABS(Data - Current);
+      Delta = ABS((int)Data - (int)Current);
       MrcWait (MrcData, Delta * SWAStepSize * MRC_TIMER_1US);
       Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
       MRC_DEBUG_MSG (
@@ -393,7 +393,7 @@ MrcDefaultSetMemoryPmicVoltage (
     if (SWBNeedSwitchStep || (Current != Data)) {
       Reg25.Bits.swb_voltage_setting = (UINT8) Data;
       Value = MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg25.Data, &Status);
-      Delta = ABS(Data - Current);
+      Delta = ABS((int)Data - (int)Current);
       MrcWait (MrcData, Delta * SWBStepSize * MRC_TIMER_1US);
       Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
       MRC_DEBUG_MSG (
@@ -428,7 +428,7 @@ MrcDefaultSetMemoryPmicVoltage (
     if (SWCNeedSwitchStep || (Current != Data)) {
       Reg27.Bits.swc_voltage_setting = (UINT8) Data;
       Value = MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg27.Data, &Status);
-      Delta = ABS(Data - Current);
+      Delta = ABS((int)Data - (int)Current);
       MrcWait (MrcData, Delta * SWCStepSize * MRC_TIMER_1US);
       Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
       MRC_DEBUG_MSG (

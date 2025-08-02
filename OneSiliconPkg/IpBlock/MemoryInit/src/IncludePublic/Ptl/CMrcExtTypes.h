@@ -91,7 +91,7 @@ typedef struct {
   UINT32 RDTC2D:1;          ///< BIT14 - Read Timing Centering 2D
   UINT32 WRVC2D:1;          ///< BIT15 - Write Voltage Centering 2D
   UINT32 RDVC2D:1;          ///< BIT16 - Read Voltage Centering 2D
-  UINT32 WRDSEQT:1;         ///< BIT17 - Write Drive Strength / Equalization Training 2D
+  UINT32 WRDSEQT:1;         ///< BIT17 - Write Drive Strength Training
   UINT32 DQSRF:1;           ///< BIT18 - DQS Rise/Fall
   UINT32 RDDQSODTT:1;       ///< BIT19 - Read DQS ODT Training
   UINT32 RDEQT:1;           ///< BIT20 - Read Equalization Training
@@ -139,7 +139,7 @@ typedef struct {
   UINT32 WRTDIMMDFE:1;           ///< BIT27 - DIMM DFE Training
   UINT32 RMTLVR:1;               ///< BIT28 - LVR RMT
   UINT32 DCCDDR5READDCA:1;       ///< BIT29 - DRAM DCC for DDR5 READ DCA
-  UINT32 Reserved1Bits:1;        ///< BIT30 - Reserved
+  UINT32 WREQT:1;                ///< BIT30 - Write Equalization Training
   UINT32 SimicsReservedBit:1;    ///< BIT31 - Simics uses this bit for mrc_mem_flows
 } TrainingStepsEn2;
 

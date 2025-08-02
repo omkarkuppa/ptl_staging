@@ -579,7 +579,8 @@ typedef enum {
   OemDimmNTODTTraining,     ///<  before DIMM NT ODT Training
   OemDimmOdtCaTraining,     ///<  before DIMM ODT CA Training
   OemDimmDfeTraining,       ///<  before DIMM DFE Training
-  OemWriteDriveStrengthEq,  ///<  before Write Drive Strength/Equalization 2D Training
+  OemWriteDriveStrength,    ///<  before Write Drive Strength Training
+  OemWriteEqTraining,       ///<  before Write Equalization Training
   OemReadDqsODTTraining,    ///<  before Read Dqs ODT algorithm.
   OemReadDqODTTraining,     ///<  before Read Dq ODT algorithm.
   OemReadEQTraining,        ///<  before Read Equalization Training.
@@ -1988,6 +1989,7 @@ typedef struct {
   MrcSaGvPoint      SaGvPprPoint;                 ///< SA GV point at which PPR should be executed
   UINT8             SagvGeardownMask;             ///< SaGv points mask at which Geardown should be enabled
   MrcMptuChannelConfig MptuChannelMap[MAX_CONTROLLER][MAX_CHANNEL]; ///< System to MPTU channel map
+  INT32             RxDqsBaseOffset;              ///< Base value of DataOffsetTrain.RxDqsOffset
   UINT8             ReservedBytesAlign[4];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
@@ -2370,7 +2372,6 @@ typedef struct {
   UINT8   PhClkCheckPhError;      ///< Defines min to max tolerance for phase spacing check, specified max - min of all 8 phases in 1/512 * phclk increments
   UINT8   PhClkCheckDcError;      ///< Defines duty cycle tolerance in 1/512 * phclk increments
   BOOLEAN IsOneDpcSplitBgEnabled; ///< TRUE: 1Rank Split Bg On SubChannel Enabled.
-  INT32   RxDqsBaseOffset;        ///< Base value of DataOffsetTrain.RxDqsOffset
   UINT32  DebugValue;             ///< Used for general debug
   UINT16  Vout;
   MRC_PPR_ENTRY_INFO    PprEntryInfo[PPR_REQUEST_MAX];

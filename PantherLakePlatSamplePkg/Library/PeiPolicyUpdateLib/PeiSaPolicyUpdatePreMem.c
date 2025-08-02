@@ -1050,6 +1050,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CMDDSEQ,  MemConfig->ExternalInputs.TrainingEnables2.CMDDSEQ,        SaSetup.CMDDSEQ        );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DIMMODTCA,  MemConfig->ExternalInputs.TrainingEnables2.DIMMODTCA,      SaSetup.DIMMODTCA      );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DDR5ODTTIMING,  MemConfig->ExternalInputs.TrainingEnables2.DDR5ODTTIMING,  SaSetup.DDR5ODTTIMING  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WREQT,  MemConfig->ExternalInputs.TrainingEnables2.WREQT,  SaSetup.WREQT  );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DBI,  MemConfig->ExternalInputs.TrainingEnables2.DBI,            SaSetup.DBI            );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DLLDCC,  MemConfig->ExternalInputs.TrainingEnables2.DLLDCC,         SaSetup.DLLDCC         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DLLBWSEL,  MemConfig->ExternalInputs.TrainingEnables2.DLLBWSEL,       SaSetup.DLLBWSEL       );

@@ -1244,6 +1244,7 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables.RTL             = 0;
     ExtInputs->TrainingEnables.ERDMPRTC2D      = 0;
     ExtInputs->TrainingEnables.WRDSEQT         = 0;
+    ExtInputs->TrainingEnables2.WREQT          = 0;
     ExtInputs->TrainingEnables.DQSRF           = 0;
     ExtInputs->TrainingEnables.RMTEVENODD      = 0;
     ExtInputs->TrainingEnables.RCVENC1D        = 0;
@@ -2189,7 +2190,7 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "REFPI: %u\nDCCLP5READDCA: %u\nVCCCLKFF: %u\nFUNCDCCDQS: %u\n",           TrainingSteps2->REFPI,          TrainingSteps2->DCCLP5READDCA,  TrainingSteps2->VCCCLKFF,       TrainingSteps2->FUNCDCCDQS);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "FUNCDCCCLK: %u\nFUNCDCCWCK: %u\nFUNCDCCDQ: %u\nDATAPILIN: %u\n",         TrainingSteps2->FUNCDCCCLK,     TrainingSteps2->FUNCDCCWCK,     TrainingSteps2->FUNCDCCDQ,      TrainingSteps2->DATAPILIN);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5XTALK: %u\nDCCLP5WCKDCA: %u\nRXUNMATCHEDCAL: %u\nWRTDIMMDFE: %u\n",  TrainingSteps2->DDR5XTALK,      TrainingSteps2->DCCLP5WCKDCA,   TrainingSteps2->RXUNMATCHEDCAL, TrainingSteps2->WRTDIMMDFE);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RMTLVR: %u\n DCCDDR5READDCA: %u\n",                                      TrainingSteps2->RMTLVR,         TrainingSteps2->DCCDDR5READDCA /* Reserved2Bit30 */            /* SimicsReservedBit */);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RMTLVR: %u\nDCCDDR5READDCA: %u\nWREQT: %u\n",                            TrainingSteps2->RMTLVR,         TrainingSteps2->DCCDDR5READDCA, TrainingSteps2->WREQT           /* SimicsReservedBit */);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s3:\n", "TrainingEnables");
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nTXDQSDCC: %u\nRXVREFPERBIT: %u\n",              TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,   TrainingSteps3->TXDQSDCC,        TrainingSteps3->RXVREFPERBIT);

@@ -361,7 +361,7 @@ typedef struct {
 #pragma pack (pop)
 
 typedef struct {
-  INT64  DqsOffsetNUI;
+  INT64  DqsOffsetNUI[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
 } SenseAmpTrainingOverride;
 
 //***********************************************
@@ -690,18 +690,6 @@ MrcReadODTTraining (
 **/
 MrcStatus
 MrcReadDqsODTTraining (
-  IN MrcParameters *const MrcData
-  );
-
-/**
-  This function implements Write (Transmitter) Equalization training.
-
-  @param[in] MrcData - Include all MRC global data.
-
-  @retval MrcStatus - if it succeeds return mrcSuccess
-**/
-MrcStatus
-MrcWriteEqDsTraining (
   IN MrcParameters *const MrcData
   );
 

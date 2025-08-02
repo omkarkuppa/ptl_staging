@@ -381,8 +381,6 @@ Cpgc20SetupErrCounterCtl (
       IpChannel = DDR5_IP_CH (Outputs->IsDdr5, Channel);
       switch (ErrControlSel) {
         // Setup Error Counter Control for particular lane
-        // @todo: This always uses counter 0 for that Channel to count the lane.  This does not allow counting multiple lanes at a time, and should be fixed if feature is needed.
-        // @todo: Return Error as this mode isn't supported.
         case ErrCounterCtlPerLane:
           if ((CounterSetting > 72) || (CounterPointer > 8)) {
             MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Attempted to setup an error counter for invalid lane. Counter: %u, Lane: %u\n", CounterPointer, CounterSetting);

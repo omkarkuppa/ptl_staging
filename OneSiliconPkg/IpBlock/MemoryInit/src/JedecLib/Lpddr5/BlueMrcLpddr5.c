@@ -211,7 +211,7 @@ MrcLpddr5GetRfmThresholdInfo (
     // Once RAA reaches this value, stop sending ACTs
     // RH_HIGH_WM will be lower than result of expression given to RankRaammt
     // RankRaa (RAAMMT) value will be later adjusted based on whether pTRR will be enabled:
-    // RAAMMT-2 if pTRR is not enabled
+    // RAAMMT-5 if pTRR is not enabled
     // RAAMMT-3 if pTRR is enabled
     RankRaammt = (Lpddr5MR27.Bits.RAAMULT + 1) * 2 * RankRaaimt;
     RfmSetupConfig->RaammtOneDimm = MIN (RfmSetupConfig->RaammtOneDimm, RankRaammt);

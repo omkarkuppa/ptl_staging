@@ -186,23 +186,29 @@ SenseAmpOffsetOverrideNui (
 {
   MrcOutput *Outputs;
   INT64     DqsOffsetNUI;
-  UINT32    FirstController;
-  UINT32    FirstChannel;
+  UINT32    Controller;
+  UINT32    Channel;
   UINT32    Byte;
+  UINT32    Mode;
 
   Outputs = &MrcData->Outputs;
-  FirstController = Outputs->FirstPopController;
-  FirstChannel    = Outputs->Controller[FirstController].FirstPopCh;
-  Byte = 0;
 
 
-  if (Enable) {
-    MrcGetSetChStrb (MrcData, FirstController, FirstChannel, Byte, RxCompDqsOffset, ReadCached, &Override->DqsOffsetNUI);
-    DqsOffsetNUI = 0;
-  } else { // Restore
-    DqsOffsetNUI = Override->DqsOffsetNUI;
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
+      }
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        Mode = Enable ? ReadCached : WriteCached;
+        MrcGetSetChStrb (MrcData, Controller, Channel, Byte, RxCompDqsOffset, Mode, &Override->DqsOffsetNUI[Controller][Channel][Byte]);
+      }
+    }
   }
-  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, RxCompDqsOffset, WriteCached, &DqsOffsetNUI);
+  if (Enable) {
+    DqsOffsetNUI = 0;
+    MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, RxCompDqsOffset, WriteCached, &DqsOffsetNUI);
+  }
 }
 
 /**

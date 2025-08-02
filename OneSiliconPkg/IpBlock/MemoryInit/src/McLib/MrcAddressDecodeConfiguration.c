@@ -41,8 +41,6 @@ ZoneConfiguration (
   MrcInput            *Inputs;
   MrcOutput           *Outputs;
   MrcDebug            *Debug;
-  MrcControllerOut    *ControllerOut;
-  MrcChannelOut       *ChannelOut;
   INT64               DramType;
   INT64               LsbMaskBit;
   INT64               HashMask;
@@ -50,8 +48,6 @@ ZoneConfiguration (
   INT64               HashLsb;
   UINT32              MsHashMask;
   UINT32              MsHashLsb;
-  UINT32              Channel;
-  BOOLEAN             FullLpChPop;
   BOOLEAN             IsLpddr;
   MC0_MAD_SUB_CHANNEL_HASH_STRUCT  SubChannelHash;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
@@ -60,7 +56,6 @@ ZoneConfiguration (
   Outputs             = &MrcData->Outputs;
   ExtInputs           = Inputs->ExtInputs.Ptr;
   Debug               = &Outputs->Debug;
-  ControllerOut       = &Outputs->Controller[Controller];
   DramType            = Outputs->DdrType;
   IsLpddr             = Outputs->IsLpddr;
 
@@ -70,16 +65,6 @@ ZoneConfiguration (
   GetMcIbeccHash (MrcData, &MsHashMask, &MsHashLsb);
   HashLsb = MsHashLsb;
   MrcGetSetMc (MrcData, Controller, GsmMccHashLsb, WriteToCache | PrintValue, &HashLsb);
-
-  FullLpChPop = TRUE;   // Assume all LPDDR channels (4x16) are populated in the controller.
-  for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-    ChannelOut = &ControllerOut->Channel[Channel];
-    if (ChannelOut->Status != CHANNEL_PRESENT) {
-      // If any channel is not present in the controller, set the flag to false for LPDDR.
-      FullLpChPop = FALSE;
-      break;
-    }
-  }
 
   // Interleaved mode
   // Check for any Channel hash support
@@ -104,9 +89,7 @@ ZoneConfiguration (
   MrcGetSetMc (MrcData, Controller, GsmMccHashMask, WriteToCache | PrintValue, &HashMask);
 
   SubChannelHash.Data = 0;
-  if (IsLpddr && FullLpChPop) {
-    // HASH can only be enabled if all LPDDR channels are populated on the controller.
-    // If RI is off, HASH must be off.
+  if (IsLpddr) {
     if (ExtInputs->SubChHashOverride == TRUE) {
       SubChannelHash.Bits.SUBCH_HASH_LSB_MASK_BIT = ExtInputs->SubChHashInterleaveBit;
       SubChannelHash.Bits.SUBCH_HASH_MASK = ExtInputs->SubChHashMask;

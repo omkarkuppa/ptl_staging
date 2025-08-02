@@ -2021,7 +2021,7 @@ ChangeMargin (
   switch (param) {
     case RdT:
       UpdateGrp[0]  = TRUE;
-      GetSetVal[0]  = v0;
+      GetSetVal[0]  = v0 + MrcData->Save.Data.RxDqsBaseOffset;
       Group[0]      = RxDqsOffset;
       break;
 

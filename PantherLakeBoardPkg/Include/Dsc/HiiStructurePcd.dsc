@@ -3565,7 +3565,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.WRTC2D|0x0                                  
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDTC2D|0x0                                                     #           BIT14 - Read Timing Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRVC2D|0x0                                                     #           BIT15 - Write Voltage Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDVC2D|0x0                                                     #           BIT16 - Read Voltage Centering 2D
-gStructPcdTokenSpaceGuid.PcdSaSetup.WRDSEQT|0x1                                                    #           BIT17 - Write Drive Strength/Equalization 2D*
+gStructPcdTokenSpaceGuid.PcdSaSetup.WRDSEQT|0x1                                                    #           BIT17 - Write Drive Strength Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.DQSRF|0x1                                                      #           BIT18 - DQS Rise/Fall
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQSODTT|0x0                                                  #           BIT19 - Read DQS ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDEQT|0x1                                                      #           BIT20 - Read Equalization Training*
@@ -3610,6 +3610,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5WCKDCA|0x1                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXUNMATCHEDCAL|0x1                                             #           BIT26 - Unmatched Rx Calibaration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x1                                                 #           BIT27 - DIMM DFE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x1                                             #           BIT29 - DRAM DCC for DDR5 READ DCA
+gStructPcdTokenSpaceGuid.PcdSaSetup.WREQT|0x0                                                      #           BIT30 - Write Equalization Training
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                                   # Offset 56 BIT0 - RXDQS Duty Cycle Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training

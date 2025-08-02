@@ -148,7 +148,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_WRTDIMMDFE             (1)  // BIT27
 #define MRC_EXT_INPUTS_INIT_VAL_RMTLVR                 (0)  // BIT28
 #define MRC_EXT_INPUTS_INIT_VAL_DCCDDR5READDCA         (0)  // BIT29
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved1Bit30         (0)  // BIT30
+#define MRC_EXT_INPUTS_INIT_VAL_WREQT                  (0)  // BIT30
 #define MRC_EXT_INPUTS_INIT_VAL_SimicsReservedBit      (0)  // BIT31
 
 // TrainingEnables3
@@ -529,7 +529,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_WRTDIMMDFE,        // BIT27
       MRC_EXT_INPUTS_INIT_VAL_RMTLVR,            // BIT28
       MRC_EXT_INPUTS_INIT_VAL_DCCDDR5READDCA,    // BIT29
-      MRC_EXT_INPUTS_INIT_VAL_Reserved1Bit30,    // BIT30
+      MRC_EXT_INPUTS_INIT_VAL_WREQT,             // BIT30
       MRC_EXT_INPUTS_INIT_VAL_SimicsReservedBit, // BIT31
     },
     // TrainingEnables3

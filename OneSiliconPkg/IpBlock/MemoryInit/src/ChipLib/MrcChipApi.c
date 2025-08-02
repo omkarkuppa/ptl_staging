@@ -73,7 +73,7 @@ MrcPreTraining (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "CPGC Mode locked\n");
 
   TestDataEngineInit (MrcData);
-  //@TODO check if we need to do some sort of  clock ratio override LPDDR5 & Gear4
+
   if (Inputs->BootMode != bmWarm) {
     MrcCkeOnProgramming(MrcData);
   }

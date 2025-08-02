@@ -77,7 +77,7 @@
 #define MRC_DIMM_ODT                    (0xDD30)
 #define MRC_EARLY_WRITE_TIMING_2D       (0xDD31)
 #define MRC_TX_XTALK                    (0xDD32)
-#define MRC_WRITE_EQ                    (0xDD33)
+#define MRC_WRITE_DS                    (0xDD33)
 #define MRC_EARLY_READ_TIMING_2D        (0xDD34)
 #define MRC_READ_DQS_ODT                (0xDD35)
 #define MRC_READ_EQ                     (0xDD36)
@@ -182,7 +182,7 @@
 #define MRC_LVR_RMT                     (0xDD8A)
 #define MRC_PER_DEVICE_UPDATE           (0xDD8B)
 #define MRC_PH_CLK_CHECK                (0xDD8C)
-
-#define MRC_POST_CODE_LAST              (MRC_PH_CLK_CHECK) // IMPORTANT: Keep aligned to the largest post code
+#define MRC_WRITE_EQ                    (0xDD8D)
+#define MRC_POST_CODE_LAST              (MRC_WRITE_EQ) // IMPORTANT: Keep aligned to the largest post code
 
 #endif
