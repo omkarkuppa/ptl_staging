@@ -316,6 +316,47 @@ PtlPcdCnviBtCore (
   DEBUG ((DEBUG_INFO, "%a () - End.\n", __FUNCTION__));
 }
 
+
+/**
+  This function Configures GPIO for BT Interface
+  
+  @param[in] CnviHandle          Pointer to CNVi Handle Structure
+**/
+VOID
+ConfigureGpioForBtSetInterface (
+  IN CNVI_HANDLE                 *CnviHandle
+)
+{
+  CNVI_CONFIG                    *CnviConfig;
+  EFI_STATUS                     Status;
+  GPIOV2_SERVICES                *GpioServices;
+  
+  DEBUG ((DEBUG_INFO, "%a () - Start\n", __FUNCTION__));
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
+
+    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "GpioServices don't get successfully\n"));
+    return;
+  }
+
+  CnviConfig    = CnviHandle->Config;
+  switch (CnviConfig->BtInterface) {
+    case CnviBtIfPci: // BT over PCI
+      PtlPcdGpioEnableCnviBtInterface (GpioServices, GpioV2CnviBtIfPci);
+      break;
+    case CnviBtIfUsb: // BT over USB
+    default:
+      DEBUG ((DEBUG_INFO, "Enable BT Interface: USB\n"));
+      PtlPcdGpioEnableCnviBtInterface (GpioServices, GpioV2CnviBtIfUsb);
+      break;
+  }
+}
+
 /**
   This function sets CNVi Bluetooth Interface
 
@@ -330,50 +371,40 @@ PtlPcdCnviBtSetInterface (
   REGISTER_ACCESS                *CnviPcrAccess;
   UINT16                         Timeout;
   UINT32                         Data32;
-  EFI_STATUS                     Status;
-  GPIOV2_SERVICES                *GpioServices;
 
   DEBUG ((DEBUG_INFO, "%a () - Start\n", __FUNCTION__));
 
-    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "GpioServices don't get successfully\n"));
+  ConfigureGpioForBtSetInterface (CnviHandle);
+
+  if (CnviHandle == NULL) {
+    DEBUG ((DEBUG_INFO,"CnviConfig is NULL\n"));
     return;
   }
 
   CnviConfig    = CnviHandle->Config;
   CnviPcrAccess = CnviHandle->SbAccess;
 
-  switch (CnviConfig->BtInterface) {
-    case CnviBtIfPci: // BT over PCI
-      DEBUG ((DEBUG_INFO, "Enable BT Interface: PCI\n"));
-      //
-      // If the IOSF interface (PCIe) is selected, BIOS sets the BT_IF_SELECT register bit
-      // BT_EN (vGPIO_0) shall remain at the default, zero value.
-      // BT_IF_SELECT (vGPIO_5) shall set to ZERO value to disable UTIM2UTIM bridge
-      // PCIe enumeration should not happen until OTP read done indication is set, for the IOSF interface selection.
-      //
-      CnviPcrAccess->Write32 (CnviPcrAccess, R_CNVI_PCR_BT_PCIE_IF, B_CNVI_PCR_BT_PCIE_IF_BT_PCIE_IF_SEL);
-      Timeout = 10;
-      do {
-        MicroSecondDelay (1000);
-        Data32 = CnviPcrAccess->Read32 (CnviPcrAccess, R_CNVI_PCR_BT_OTP_RD_DONE) & B_CNVI_PCR_BT_OTP_RD_DONE_BT_OTP_READ_DONE;
-        if ((Data32 & B_CNVI_PCR_BT_OTP_RD_DONE_BT_OTP_READ_DONE) == B_CNVI_PCR_BT_OTP_RD_DONE_BT_OTP_READ_DONE) {
-          break;
-        }
-        Timeout--;
-      } while (Timeout > 0);
-      if (Data32 == 0) {
-        DEBUG ((DEBUG_INFO, "OTP_READ_DONE is not set by the hardware\n"));
+  if (CnviConfig->BtInterface == CnviBtIfPci) {
+    DEBUG ((DEBUG_INFO, "Enable BT Interface: PCI\n"));
+    //
+    // If the IOSF interface (PCIe) is selected, BIOS sets the BT_IF_SELECT register bit
+    // BT_EN (vGPIO_0) shall remain at the default, zero value.
+    // BT_IF_SELECT (vGPIO_5) shall set to ZERO value to disable UTIM2UTIM bridge
+    // PCIe enumeration should not happen until OTP read done indication is set, for the IOSF interface selection.
+    //
+    CnviPcrAccess->Write32 (CnviPcrAccess, R_CNVI_PCR_BT_PCIE_IF, B_CNVI_PCR_BT_PCIE_IF_BT_PCIE_IF_SEL);
+    Timeout = 10;
+    do {
+      MicroSecondDelay (1000);
+      Data32 = CnviPcrAccess->Read32 (CnviPcrAccess, R_CNVI_PCR_BT_OTP_RD_DONE) & B_CNVI_PCR_BT_OTP_RD_DONE_BT_OTP_READ_DONE;
+      if ((Data32 & B_CNVI_PCR_BT_OTP_RD_DONE_BT_OTP_READ_DONE) == B_CNVI_PCR_BT_OTP_RD_DONE_BT_OTP_READ_DONE) {
+        break;
       }
-      PtlPcdGpioEnableCnviBtInterface (GpioServices, GpioV2CnviBtIfPci);
-      break;
-
-    case CnviBtIfUsb: // BT over USB
-    default:
-      DEBUG ((DEBUG_INFO, "Enable BT Interface: USB\n"));
-      PtlPcdGpioEnableCnviBtInterface (GpioServices, GpioV2CnviBtIfUsb);
-      break;
+      Timeout--;
+    } while (Timeout > 0);
+    if (Data32 == 0) {
+      DEBUG ((DEBUG_INFO, "OTP_READ_DONE is not set by the hardware\n"));
+    }
   }
 }
 
