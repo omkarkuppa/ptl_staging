@@ -296,8 +296,10 @@ cd %WORKSPACE%
   @call %PYTHON_COMMAND% %WORKSPACE_CORE_PLATFORM%\%PLATFORM_PACKAGE%\Tools\Fsp\RebaseFspBinBaseAddress.py %WORKSPACE%\FlashMapInclude_Temp.fdf %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg Fsp.fd 0x0
 )
 @if %FSPM_COMPRESSED% EQU TRUE (
-  @echo FSP-M is compressed, Rebase FSP-M
-  @call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\RebaseFspmBinBaseAddress.py %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg Fsp_Rebased.fd %WORKSPACE_PLATFORM%\PantherLakeBoardPkg\BoardPkgPcdUpdate.dsc
+  if %FSP_SIGNED% EQU FALSE (
+    @echo FSP-M is compressed, Rebase FSP-M
+    @call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\RebaseFspmBinBaseAddress.py %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg Fsp_Rebased.fd %WORKSPACE_PLATFORM%\PantherLakeBoardPkg\BoardPkgPcdUpdate.dsc
+  )
 )
 @del %WORKSPACE_ROOT%\FlashMapInclude_Temp.fdf
 

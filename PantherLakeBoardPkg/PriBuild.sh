@@ -96,7 +96,7 @@ if [ "$SILENT_MODE" = "TRUE" ]; then
   echo "************************************************************************" >> Build.log
   echo "***********            build.sh is launched here             ***********" >> Build.log
   echo "************************************************************************" >> Build.log
-  build -n $MAX_CONCURRENT_THREADS $EXT_BUILD_FLAGS $BUILD_OPTION_PCD >> Build.log 2>&1
+  build -n $MAX_CONCURRENT_THREADS $EXT_BUILD_FLAGS $BUILD_OPTION_PCD $SI_BUILD_OPTION_PCD >> Build.log 2>&1
   ret=$?
   if [ $ret -ne 0 ]; then
     BuildFail $ret
@@ -174,7 +174,7 @@ else
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD $(echo $UPL_BUILD_OPTION_PCD | sed -e "s/\"//g")"
   fi
   export EXT_BUILD_FLAGS="$EXT_BUILD_FLAGS -y $WORKSPACE/Build/$LATFORM_BOARD_PACKAGE/BoardPkgReport.log"
-  build -n $MAX_CONCURRENT_THREADS $EXT_BUILD_FLAGS $BUILD_OPTION_PCD
+  build -n $MAX_CONCURRENT_THREADS $EXT_BUILD_FLAGS $BUILD_OPTION_PCD $SI_BUILD_OPTION_PCD
   ret=$?
   if [ $ret -ne 0 ]; then
     BuildFail $ret

@@ -94,6 +94,7 @@ fi
 export EXT_BUILD_FLAGS=$VAR_BUILD_FLAGS
 export BUILD_OPTION_PCD="--pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE"
 export FSP_BUILD_OPTION_PCD
+export SI_BUILD_OPTION_PCD
 
 export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=$(date +'%Y')"
 
@@ -582,8 +583,10 @@ cat $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_S.fd \
   > $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased.fd
 
 if [ "$FSPM_COMPRESSED" = "TRUE" ]; then
-  echo "FSP-M is compressed, Rebase FSP-M"
-  python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/RebaseFspmBinBaseAddress.py $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp_Rebased.fd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardPkgPcdUpdate.dsc $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
+  if [ "$FSP_SIGNED" != "TRUE" ]; then
+    echo "FSP-M is compressed, Rebase FSP-M"
+    python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/RebaseFspmBinBaseAddress.py $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp_Rebased.fd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardPkgPcdUpdate.dsc $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
+  fi
 fi
 if [ $? -ne 0 ]
 then
