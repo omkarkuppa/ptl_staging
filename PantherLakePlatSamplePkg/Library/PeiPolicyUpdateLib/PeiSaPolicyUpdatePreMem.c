@@ -1530,12 +1530,11 @@ UpdatePeiSaPolicyPreMem (
     }
 
     for (Index = 0; Index < UsbConnectorHobDataPtr->NumberOfUsbConnectors; Index++) {
-        if (UsbConnectorBoardConfig[Index].Usb3Controller == TCSS_USB3 &&
-            UsbConnectorBoardConfig[Index].Usb3PortNum == Index) {
-          if (UsbCConnectorBoardConfig[Index].RetimerCount > 0) {
-            TcssPlatConfig |= 0x01 << (UsbConnectorBoardConfig[Index].Usb3PortNum * 2);
-          }
-        }
+      if (UsbConnectorBoardConfig[Index].Usb3Controller == TCSS_USB3 &&
+          UsbConnectorBoardConfig[Index].Usb3PortNum < MAX_TCSS_USB3_PORTS &&
+          UsbCConnectorBoardConfig[Index].RetimerCount > 0) {
+        TcssPlatConfig |= 0x01 << (UsbConnectorBoardConfig[Index].Usb3PortNum * 2);
+      }
     }
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPlatConf,
       TcssPeiPreMemConfig->TcssPlatConf,

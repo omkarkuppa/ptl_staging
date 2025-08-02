@@ -694,6 +694,7 @@ UpdateUsb2PortEnablePolicy (
   USBC_CONNECTOR_HOB_DATA    *UsbCConnectorHobDataPtr;
   USB_CONNECTOR_BOARD_CONFIG *UsbConnectorBoardConfig;
   UINT8                      PchUsb2PortEnable;
+  UINT8                      TcssUsb3Port;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                       *FspsUpd;
@@ -740,16 +741,17 @@ UpdateUsb2PortEnablePolicy (
         // Disable USB2 port if the corresponding Type-C connector option is UsbCDisable or DpOnly
         // Enable USB2 port if the corresponding Type-C connector option is NoThunderbolt, NoPcie or FullFunction
         //
+        TcssUsb3Port = (UINT8) UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum;
 #if FixedPcdGet8(PcdFspModeSelection) == 0
-        CapPolicy = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[ConnectorIndex];
+        CapPolicy = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[TcssUsb3Port];
 #else
-        if (ConnectorIndex == 0) {
+        if (TcssUsb3Port == 0) {
           CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort0;
-        } else if (ConnectorIndex == 1) {
+        } else if (TcssUsb3Port == 1) {
           CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort1;
-        } else if (ConnectorIndex == 2) {
+        } else if (TcssUsb3Port == 2) {
           CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort2;
-        } else if (ConnectorIndex == 3) {
+        } else if (TcssUsb3Port == 3) {
           CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort3;
         } else {
           CapPolicy = 0;
