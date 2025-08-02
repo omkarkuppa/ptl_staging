@@ -346,6 +346,42 @@ NvmReset (
 }
 
 /**
+  The command indicates to the PD Bridge that the "second" PD Bridge starts NVM update flow.
+
+  @param[in]  This      The UsbC PD Bridge PROTOCOL Instance.
+  @param[in]  TcpIndex  TCP index which PD Bridge is connected to.
+
+  @retval EFI_SUCCESS   Send the command successfully
+  @retval others        Failed to send the command
+
+**/
+EFI_STATUS
+EnterNvmUpdateMode (
+  IN USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN UINT8                    TcpIndex
+  )
+{
+  EFI_STATUS  Status;
+  UINT32      DataSize;
+  UINT8       VendorCmd;
+
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_INDEX, (UINT32) TcpIndex, 0);
+
+  DataSize  = VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES;
+  VendorCmd = VENDOR_SPECIFIC_CMD_ENTER_NVM_UPDATE_MODE;
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET], &VendorCmd, sizeof (VendorCmd));
+
+  Status = This->ExecuteVendorCmd (This, TcpIndex, VENDOR_SPECIFIC_CMD_ENTER_NVM_UPDATE_MODE, FALSE, (UINT8 *) gVendorCommandData, (UINT8 *) &DataSize, NULL, NULL);
+  if (EFI_ERROR (Status)) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_VENDOR_CMD_FAILED, (UINT32) VENDOR_SPECIFIC_CMD_ENTER_NVM_UPDATE_MODE, (UINT32) Status);
+    return Status;
+  }
+
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_CMD_SUCCESS, (UINT32) TcpIndex, 0);
+  return EFI_SUCCESS;
+}
+
+/**
   Update NVM Firmware on PD Bridge with given PD Bridge index.
 
   Flow to update PD Bridge NVM Firmware:
@@ -424,6 +460,15 @@ UpdatePdBridgeNvmFirmware (
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL, (UINT32) Status, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_SET_OFFSET_FAILED;
       continue;
+    }
+
+    if (PrivateData->PdBridge.ShareFlashMode == SHARE_FLASH_MODE_ENABLE) {
+      Status = EnterNvmUpdateMode (This, TcpIndex + 1);
+      if (EFI_ERROR (Status)) {
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_ENTER_NVM_UPDATE_MODE_FAILED, (UINT32) Status, 0);
+        *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_ENTER_NVM_UPDATE_MODE_FAILED;
+        continue;
+      }
     }
 
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_TOTAL_SIZE, (UINT32) ImageSize, 0);

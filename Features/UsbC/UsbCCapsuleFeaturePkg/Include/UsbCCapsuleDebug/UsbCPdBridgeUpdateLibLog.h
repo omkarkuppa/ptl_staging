@@ -145,6 +145,24 @@
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS                  ((EVT_ID_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS))
 #define STR_ID_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS                    "NvmReset: Send NVM Reset command to PdBridge on TCP%d successfully\n"
 ///
+/// EnterNvmUpdateMode - Send Enter Nvm Update Mode command to PdBridge on TCP%d
+///
+#define EVT_ARGS_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_INDEX                   1
+#define EVT_CODE_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_INDEX                   ((EVT_ID_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_INDEX << 2) | (EVT_ARGS_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_INDEX))
+#define STR_ID_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_INDEX                     "EnterNvmUpdateMode: Send Enter Nvm Update Mode command to PdBridge on TCP%d\n"
+///
+/// EnterNvmUpdateMode - Execute Vendor command code :0x%x failed, Status:%r
+///
+#define EVT_ARGS_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_VENDOR_CMD_FAILED       2
+#define EVT_CODE_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_VENDOR_CMD_FAILED       ((EVT_ID_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_VENDOR_CMD_FAILED << 2) | (EVT_ARGS_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_VENDOR_CMD_FAILED))
+#define STR_ID_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_VENDOR_CMD_FAILED         "EnterNvmUpdateMode: Execute Vendor command code :0x%x failed, Status:%r\n"
+///
+/// EnterNvmUpdateMode - Send Enter Nvm Update Mode command to PdBridge on TCP%d successfully
+///
+#define EVT_ARGS_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_CMD_SUCCESS             1
+#define EVT_CODE_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_CMD_SUCCESS             ((EVT_ID_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_CMD_SUCCESS << 2) | (EVT_ARGS_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_CMD_SUCCESS))
+#define STR_ID_USBC_PD_BRIDGE_ENTER_NVM_UPDATE_MODE_CMD_SUCCESS               "EnterNvmUpdateMode: Send Enter Nvm Update Mode command to PdBridge on TCP%d successfully\n"
+///
 /// UpdatePdBridgeNvmFirmware - UpdatePdBridgeNvmFirmware START (0x%06x bytes to write):
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_START                    1
@@ -156,6 +174,12 @@
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL          1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL          ((EVT_ID_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL))
 #define STR_ID_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL            "UpdatePdBridgeNvmFirmware: NvmSetOffset failed, Status:%r\n"
+///
+/// UpdatePdBridgeNvmFirmware - EnterNvmUpdateMode failed, Status:%r
+///
+#define EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_ENTER_NVM_UPDATE_MODE_FAILED          1
+#define EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_ENTER_NVM_UPDATE_MODE_FAILED          ((EVT_ID_USBC_PD_BRIDGE_NVM_FW_UPDATE_ENTER_NVM_UPDATE_MODE_FAILED << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_ENTER_NVM_UPDATE_MODE_FAILED))
+#define STR_ID_USBC_PD_BRIDGE_NVM_FW_UPDATE_ENTER_NVM_UPDATE_MODE_FAILED            "UpdatePdBridgeNvmFirmware: EnterNvmUpdateMode failed, Status:%r\n"
 ///
 /// UpdatePdBridgeNvmFirmware - The total data size to write is 0x%6x
 ///

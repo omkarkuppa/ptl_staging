@@ -184,6 +184,22 @@ NvmReset (
   );
 
 /**
+  The command indicates to the PD Bridge that the "second" PD Bridge starts NVM update flow.
+
+  @param[in]  This      The UsbC PD Bridge PROTOCOL Instance.
+  @param[in]  TcpIndex  TCP index which PD Bridge is connected to.
+
+  @retval EFI_SUCCESS   Send the command successfully
+  @retval others        Failed to send the command
+
+**/
+EFI_STATUS
+EnterNvmUpdateMode (
+  IN USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN UINT8                    TcpIndex
+  );
+
+/**
   Update NVM Firmware on PD Bridge with given PD Bridge index.
 
   Flow to update PD Bridge NVM Firmware:
