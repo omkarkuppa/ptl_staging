@@ -47,9 +47,9 @@ export NOTIMESTAMP=
 
 export PTL_BUILD=TRUE
 export PrepRelease=DEBUG
+export FSPM_COMPRESSED=TRUE
 export MULTI_IBB_BUILD=FALSE
 export RESILIENCY_BUILD=FALSE
-export FSPM_COMPRESSED=FALSE
 export SILENT_MODE=FALSE
 export COMPILER=GCC
 export TARGET_PLATFORM=PantherLake
@@ -362,6 +362,13 @@ for ((i=1 ; i <= numargs ; i++)); do
   fi
   shift
 done
+
+if [ "$PrepRelease" = "DEBUG" ]; then
+  echo "Disable FSP-M Compression in case of Debug build"
+  export FSPM_COMPRESSED=FALSE
+  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE"
+  export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize=0x0"
+fi
 
 #
 # Set EXT_BUILD_FLAGS with FSP env vars after checking cmdline parameters to determine 32-bit or 64-bit.

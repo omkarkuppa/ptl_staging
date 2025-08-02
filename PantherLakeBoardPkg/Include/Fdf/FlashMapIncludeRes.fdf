@@ -234,9 +234,9 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x000100
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00D30000  # Flash addr (0xFFD30000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00050000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D80000  # Flash addr (0xFFD80000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00050000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DD0000  # Flash addr (0xFFDD0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00110000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DE0000  # Flash addr (0xFFDE0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00100000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00EE0000  # Flash addr (0xFFEE0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #
