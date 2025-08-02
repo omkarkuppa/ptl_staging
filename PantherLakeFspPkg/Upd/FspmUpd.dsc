@@ -3047,8 +3047,10 @@
   # !BSF NAME:{Disable VT-d} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{0=Enable/FALSE(VT-d enabled), 1=Disable/TRUE (VT-d disabled)}
   gPlatformFspPkgTokenSpaceGuid.VtdDisable                  | * | 0x1 | 0x0
-  # Added reserved space   UnusedUpdSpace33[1]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd33               | * | 0x1 | 0x00
+
+  # !BSF NAME:{State of Vtd Capabilities} TYPE:{EditNum, HEX, (0, 0xFF)}
+  # !BSF HELP:{0x0=(No operation), BIT0 = 1 (Defeature Nested Support), BIT1 = 1 (Defeature Posted Interrupt Support)}
+  gPlatformFspPkgTokenSpaceGuid.VtdCapabilityControl        | * | 0x1 | 0x0
 
   # !BSF NAME:{Base addresses for VT-d function MMIO access} TYPE:{EditNum, HEX, (0, 0xFFFFFFFF)}
   # !HDR STRUCT:{UINT32}

@@ -66,6 +66,24 @@ typedef union {
   } Fields;
 } MAILBOX_DATA_DEV2_IS_IGPU_WORKSTATION;
 
+#define MAILBOX_BIOS_CMD_IOMMU_HANDLER                                     0x00000017
+#define MAILBOX_BIOS_SUBCMD_READ_IOMMU_HANDLER                             0x00000000
+#define MAILBOX_BIOS_SUBCMD_WRITE_IOMMU_HANDLER                            0x00000001
+#define MAX_IOMMU_HANDLER_INDEX                                            6
+
+///
+///  PCode Mailbox command structure for Vt-d capability indication
+///
+typedef union {
+  UINT32 Data32;
+  struct {
+    UINT32 Reserved1              :16;          ///< [15:0] Reserved for future use
+    UINT32 Nest                   :1;           ///< [16:16] Nested Support Bit
+    UINT32 Reserved2              :5;           ///< [21:17] Reserved for future use
+    UINT32 PI                     :1;           ///< [22:22] Posted Interrupt Support Bit
+    UINT32 Reserved3              :9;           ///< [31:23] Reserved for future
+  } Fields;
+} MAILBOX_DATA_IOMMU_HANDLER;
 ///
 ///  Expanded Pcode Mailbox interface defintion, contains command id, param1, param2,
 ///  and the run/busy bit

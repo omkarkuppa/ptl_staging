@@ -143,6 +143,7 @@ VtdPrintPolicyPpi (
   }
   DEBUG ((DEBUG_INFO, " PreBootDmaMask : 0x%x\n", Vtd->PreBootDmaMask));
   DEBUG ((DEBUG_INFO, " DmaBufferSize : 0x%x\n", Vtd->DmaBufferSize));
+  DEBUG ((DEBUG_INFO, " CapabilityControl : 0x%x\n", Vtd->CapabilityControl));
   DEBUG_CODE_END ();
   return;
 }

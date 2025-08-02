@@ -2512,3 +2512,8 @@
 #string STR_DMA_CONTROL_GUARANTEE_PROMPT        #language en-US "DMA Control Guarantee"
 #string STR_DMA_CONTROL_GUARANTEE_HELP          #language en-US "Enable/Disable DMA_CONTROL_GUARANTEE bit"
 
+#string STR_NESTED_SUPPORT                      #language en-US "Nested Support"
+#string STR_NESTED_SUPPORT_HELP                 #language en-US "Defeature Nested Capability"
+
+#string STR_POSTED_INTERRUPT_SUPPORT            #language en-US "Posted Interrupt Support"
+#string STR_POSTED_INTERRUPT_SUPPORT_HELP       #language en-US "Defeature Posted Interrupt Capability"

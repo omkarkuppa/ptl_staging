@@ -25,7 +25,7 @@
 
 #pragma pack(push, 1)
 
-#define VTD_CONFIG_REVISION 9
+#define VTD_CONFIG_REVISION 10
 
 //
 // Forward declaration for the VTd Enable DMA Buffer PPI.
@@ -68,6 +68,8 @@ EFI_STATUS
   - Removed Reserved fields.
   <b>Revision 9</b>:
   - Removed X2ApicOptOut field.
+  <b>Revision 10</b>:
+  - Added VtdCapability field.
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER  Header;                      ///< Offset 0-27 Config Block Header
@@ -79,10 +81,10 @@ typedef struct {
     <b>0 = To use Vt-d</b>;
     1 = Avoids programming Vtd bars, Vtd overrides and DMAR table.
   **/
-  UINT8                 VtdDisable;
-  UINT8                 DmaControlGuarantee; ///< Offset 30: This field is used to enable the DMA_CONTROL_GUARANTEE bit in the DMAR table. 1=Enable/Set and <b>0=Disable/Clear</b>
-  UINT8                 PreBootDmaMask;      ///< Offset 31: Convey PcdVTdPolicyPropertyMask value from EDK2 IntelSiliconPkg
-  UINT8                 Reserved;
+  UINT8                 VtdDisable;          ///< Offset 28: This field is used to disable VT-d support.
+  UINT8                 DmaControlGuarantee; ///< Offset 29: This field is used to enable the DMA_CONTROL_GUARANTEE bit in the DMAR table. 1=Enable/Set and <b>0=Disable/Clear</b>
+  UINT8                 PreBootDmaMask;      ///< Offset 30: Convey PcdVTdPolicyPropertyMask value from EDK2 IntelSiliconPkg
+  UINT8                 CapabilityControl;   ///< Offset 31: Defeature VT-d Scalable Mode support. 0 = Do nothing, 1 = Nested Support, 2 = Posted Interrupt Support, 3 = Nested and Posted Interrupt Support
   UINT32                DmaBufferSize;       ///< Offset 32: Protect Memory Region (PMR) DMA buffer size
   UINT32                BaseAddress[VTD_ENGINE_NUMBER];  ///< Offset 36: This field is used to describe the base addresses for VT-d function
 } VTD_CONFIG;

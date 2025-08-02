@@ -36,6 +36,7 @@
 #include <Register/VtdRegs.h>
 #include <Library/PeiVtdInitFruLib.h>
 #include <Library/PerformanceLib.h>
+#include <Library/CpuMailboxLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -350,6 +351,63 @@ UpdateVtdHobPostMem (
 }
 
 /**
+  @param[in]   VTD_CONFIG       VT-d config block from SA Policy PPI
+**/
+VOID
+ConfigureIommuCapability (
+  IN VTD_CONFIG  *Vtd
+  )
+{
+  PCODE_MAILBOX_INTERFACE                MailboxCommand;
+  MAILBOX_DATA_IOMMU_HANDLER             MailboxData;
+  UINT32                                 MailboxStatus;
+  UINT8                                  Index;
+  EFI_STATUS                             Status;
+
+  MailboxCommand.InterfaceData         = 0;
+  MailboxCommand.Fields.Command        = MAILBOX_BIOS_CMD_IOMMU_HANDLER;
+  ///
+  /// Mailbox write command when Nested Support is enabled.
+  ///
+  if ((Vtd->CapabilityControl & BIT0) != 0) {
+    for(Index = 1; Index < MAX_IOMMU_HANDLER_INDEX; Index = Index + 2) {
+      MailboxCommand.Fields.Param1           = MAILBOX_BIOS_SUBCMD_READ_IOMMU_HANDLER;
+      MailboxCommand.Fields.Param2           = Index;
+      Status = MailboxRead (MailboxCommand.InterfaceData, &MailboxData.Data32, &MailboxStatus);
+      if ((Status == EFI_SUCCESS) && (MailboxStatus == PCODE_MAILBOX_CC_SUCCESS)) {
+        MailboxCommand.Fields.Param1         = MAILBOX_BIOS_SUBCMD_WRITE_IOMMU_HANDLER;
+        MailboxData.Fields.Nest              = 1;
+        Status                               = MailboxWrite (MailboxCommand.InterfaceData, MailboxData.Data32, &MailboxStatus);
+        if ((Status != EFI_SUCCESS) || (MailboxStatus != EFI_SUCCESS)) {
+          DEBUG ((DEBUG_ERROR, "Write IOMMU handler failed. MailboxStatus = %x, Mailbox command return status: %r\n", MailboxStatus, Status));
+        }
+      }
+    }
+    DEBUG ((DEBUG_INFO, "Configure Nested Support capability successful\n"));
+  }
+
+  ///
+  /// Mailbox write command when Posted Interrupt Support is enabled.
+  ///
+  if ((Vtd->CapabilityControl & BIT1) != 0) {
+    for(Index = 1; Index < MAX_IOMMU_HANDLER_INDEX; Index = Index + 2) {
+      MailboxCommand.Fields.Param1           = MAILBOX_BIOS_SUBCMD_READ_IOMMU_HANDLER;
+      MailboxCommand.Fields.Param2           = Index;
+      Status = MailboxRead (MailboxCommand.InterfaceData, &MailboxData.Data32, &MailboxStatus);
+      if ((Status == EFI_SUCCESS) && (MailboxStatus == PCODE_MAILBOX_CC_SUCCESS)) {
+        MailboxCommand.Fields.Param1         = MAILBOX_BIOS_SUBCMD_WRITE_IOMMU_HANDLER;
+        MailboxData.Fields.PI                = 1;
+        Status                               = MailboxWrite (MailboxCommand.InterfaceData, MailboxData.Data32, &MailboxStatus);
+        if ((Status != EFI_SUCCESS) || (MailboxStatus != EFI_SUCCESS)) {
+          DEBUG ((DEBUG_ERROR, "Write IOMMU handler failed. MailboxStatus = %x, Mailbox command return status: %r\n", MailboxStatus, Status));
+        }
+      }
+    }
+    DEBUG ((DEBUG_INFO, "Configure Posted Interrupt Support capability successful\n"));
+  }
+}
+
+/**
   Enable non-Gfx VT-d engine if required.
 
   @param[in]   VTD_CONFIG       VT-d config block from SA Policy PPI
@@ -371,6 +429,7 @@ VtdLateInit (
   }
 
   ConfigureVtdBarPostMem (Vtd);
+  ConfigureIommuCapability (Vtd);
 
   return EFI_SUCCESS;
 }

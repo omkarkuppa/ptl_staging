@@ -256,6 +256,7 @@ UpdatePeiSaPolicyPreMem (
   UINTN                                           Size;
   VOID                                            *Buffer;
   UINT8                                           VgaInitControl;
+  UINT8                                           VtdCpabilityControl;
 
   DEBUG ((DEBUG_INFO, "Update %a Start\n", __FUNCTION__));
   ZeroMem ((VOID*) SaDisplayConfigTable, sizeof (SaDisplayConfigTable));
@@ -264,7 +265,7 @@ UpdatePeiSaPolicyPreMem (
   PlatformMemorySize   = 0;
   Buffer               = NULL;
   VgaInitControl       = 0;
-
+  VtdCpabilityControl  = 0;
   MemConfigNoCrc       = NULL;
   StreamTracerSize     = 0;
 
@@ -893,6 +894,12 @@ UpdatePeiSaPolicyPreMem (
     } else {
       StreamTracerSize = SetupData.StreamTracerSize;
     }
+    if (SaSetup.NestedSupport == 1) {
+      VtdCpabilityControl |= BIT0;
+    }
+    if (SaSetup.PostedInterruptSupport == 1) {
+      VtdCpabilityControl |= BIT1;
+    }
     //
     // Align StreamTracer Size to power of two
     //
@@ -903,6 +910,7 @@ UpdatePeiSaPolicyPreMem (
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.StreamTracerSize, TelemetryPreMemConfig->StreamTracerSize, StreamTracerSize);
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DmaControlGuarantee, Vtd->DmaControlGuarantee, SaSetup.DmaControlGuarantee);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VtdCapabilityControl, Vtd->CapabilityControl, VtdCpabilityControl);
 #if FixedPcdGetBool(PcdIpuEnable) == 1
     //
     // Initialize IPU PreMem Configuration

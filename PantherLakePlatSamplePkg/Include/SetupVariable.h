@@ -1282,9 +1282,10 @@ typedef struct {
   <b>Revision 15</b>: - Add IsWckIdleExitEnabled variable
   <b>Revision 16</b>: - Add WREQT variable
   <b>Revision 17</b>: - Remove FUSA CFI variables
+  <b>Revision 18</b>: - Add Nest Support and Posted Interrupt Support variables for Vt-d
 **/
 
-#define SA_SETUP_REVISION   17
+#define SA_SETUP_REVISION   18
 
 typedef struct {
   UINT8   Revision;
@@ -1793,7 +1794,9 @@ typedef struct {
   UINT8   IsWckIdleExitEnabled;
   UINT8   WREQT;
 
-  UINT8   Rsvd[20];
+  UINT8   NestedSupport;
+  UINT8   PostedInterruptSupport;
+  UINT8   Rsvd[18];
 } SA_SETUP;
 
 /**
