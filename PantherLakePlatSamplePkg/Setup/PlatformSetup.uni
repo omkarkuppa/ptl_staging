@@ -871,7 +871,7 @@
 #string STR_USBC_DRSWAP_PLATFORM_DISABLE_HELP   #language en-US "Enable/Disable setting USBC DataRole Swap Platform Disable Option"
 
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_PROMPT     #language en-US "USB4 Capsule Debug Level"
-#string STR_USBC_CAPSULE_DEBUG_LEVEL_HELP       #language en-US "Control the level of USBC Capsule Log data that can be written to Log buffer"
+#string STR_USBC_CAPSULE_DEBUG_LEVEL_HELP       #language en-US "Control the level of USBC Capsule Log data that can be written to Log buffer. If the option is enabled, Boot from G3 is required for the PD bridge update to succeed."
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_DISABLED   #language en-US "DISABLED"
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_ERROR      #language en-US "ERROR"
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_WARN       #language en-US "WARNING"

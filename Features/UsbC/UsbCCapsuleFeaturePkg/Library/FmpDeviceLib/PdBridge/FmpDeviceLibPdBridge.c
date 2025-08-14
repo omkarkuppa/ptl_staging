@@ -856,7 +856,7 @@ UnLockEcPdCommunication:
   ///
   /// Initiate EC Reset sequence if the firmware update is successful.
   ///
-  if (InitiateEcResetNeeded) {
+  if (InitiateEcResetNeeded && PcdGet8 (PcdUsbCCapsuleDebugLevel) ==  USBC_CAPSULE_DBG_DISABLED) {
     PdBridgeProtocol->InitiateEcReset (PdBridgeProtocol);
   }
 Exit:
