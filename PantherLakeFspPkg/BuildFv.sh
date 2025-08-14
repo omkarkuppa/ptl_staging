@@ -30,7 +30,7 @@ ErrorCode=0
 function USAGE()
 {
   echo
-  echo  "$0 \[PantherLake\(Optional\)\| WildcatLake\(Optional\)\] \[GCC \| CLANG\] \[-h \| -? \| -r \| -tr \| -d \| -clean\] \[-header\]"
+  echo  "$0 \[PantherLake\(Optional\)\| WildcatLake\(Optional\)\] \[GCC \| CLANG\] \[-h \| -? \| -r \| -tr \| -d \| -clean\] \[/header\]"
   echo
   return 1
 }
@@ -422,6 +422,10 @@ function Build(){
     exit 1
   fi
 
+  if [ "$BuildHeaderOnly" == "TRUE" ]; then
+    exit 0
+  fi
+
   build $BD_ARGS $SI_BUILD_OPTION_PCD $FSP_BUILD_OPTION_PCD
   if [ $? -ne 0 ]
   then
@@ -631,13 +635,16 @@ fi
 if [ "$2" = "-r" ] || [ "$2" = "-r32" ]
  then
   ReleaseBuild
-  
 elif [ "$2" = "-tr" ] || [ "$2" = "-tr32" ]
  then
   ReleaseTypeTest
 elif [ "$2" = "-d" ] || [ "$2" = "-d32" ]
  then
    DebugBuild
+elif [ "$2" = "/header" ]
+ then
+  export BuildHeaderOnly="TRUE"
+  ReleaseBuild
 elif [ -z "$2" ]
  then
    DebugBuild
