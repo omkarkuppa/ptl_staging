@@ -258,13 +258,13 @@ if [ -d "$XML_CLI_COMMON_BUILD_PATH" ]; then
   fi
   
   # Backing up CLIENTBIOS.fd before overwriting
-  if [ ! -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd.bak" ]; then
-    cp "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd.bak"
+  if [ ! -f "$WORKSPACE/$BUILD_DIR/FV/ClientBios.fd.bak" ]; then
+    cp "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" "$WORKSPACE/$BUILD_DIR/FV/ClientBios.fd.bak"
   fi
 
   cp "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd"
   # Clean up backup file
-  rm -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd.bak"
+  rm -f "$WORKSPACE/$BUILD_DIR/FV/ClientBios.fd.bak"
   rm -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd"
 
   echo "==== BiosKnobsData.bin File Inserted ====="
