@@ -489,7 +489,24 @@ HiddenPciBusGetLocation (
   OUT UINTN                       *FunctionNumber
   )
 {
-  return EFI_UNSUPPORTED;
+  HIDDEN_PCI_DEVICE_PRIVATE_DATA  *PrivateData;
+
+  PrivateData = (HIDDEN_PCI_DEVICE_PRIVATE_DATA *) This;
+
+    if (This == NULL ||
+      SegmentNumber == NULL ||
+      BusNumber == NULL ||
+      DeviceNumber == NULL ||
+      FunctionNumber == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  
+  *SegmentNumber  = RShiftU64 (PrivateData->PciCfgAddress, 32) & 0xFFFF;
+  *BusNumber      = (PrivateData->PciCfgAddress >> 20) & 0xFF;
+  *DeviceNumber   = (PrivateData->PciCfgAddress >> 15) & 0x1F;
+  *FunctionNumber = (PrivateData->PciCfgAddress >> 12) & 0x7;
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -518,6 +535,19 @@ HiddenPciBusAttributes (
   OUT UINT64                                   *Result OPTIONAL
   )
 {
+  
+  if ((Operation == EfiPciIoAttributeOperationGet || Operation == EfiPciIoAttributeOperationSupported) && Result == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  if (Operation >= EfiPciIoAttributeOperationMaximum) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Operation == EfiPciIoAttributeOperationGet) {
+    *Result = 0;
+    return EFI_SUCCESS;
+  }
+
   return EFI_UNSUPPORTED;
 }
 
@@ -550,6 +580,11 @@ HiddenPciBusGetBarAtributes (
   OUT VOID                           **Resources OPTIONAL
   )
 {
+  
+  if (Supports == NULL || Resources == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   return EFI_UNSUPPORTED;
 }
 

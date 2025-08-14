@@ -108,7 +108,13 @@ PciBusAllocateBuffer (
     return EFI_UNSUPPORTED;
   }
 
-  return EFI_INVALID_PARAMETER;
+   if ((MemoryType != EfiBootServicesData && MemoryType != EfiRuntimeServicesData) || HostAddress == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  *HostAddress = NULL;
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -128,5 +134,5 @@ PciBusFreeBuffer (
   IN  VOID                         *HostAddress
   )
 {
-  return EFI_UNSUPPORTED;
+  return EFI_SUCCESS;
 }
