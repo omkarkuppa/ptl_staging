@@ -289,7 +289,37 @@
 
   #
   # *** IMPORTANT ***
-  #   All of the USBC connectors MUST be described at the beginning of the table.
+  #   For all of the USB ports or native display connector over TCSS lanes on platform.
+  #   All of the USBC connectors with PD or native display connector over TCSS lanes MUST be described at
+  #   the beginning of the 2 tables with same sequence. Suggest listed sequence: USBC ports (from TCSS lanes,
+  #   dTBT or standalone USBC) or native display connector over TCSS lanes, Type-A connectors and others.
+  #
+  #   Example:
+  #     gBoardModuleTokenSpaceGuid.VpdPcdUsbConnector| * |{CODE(
+  #     {
+  #     // Connectable,   Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
+  #       {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN0,  PCH_USB2,       PORT1,       TCSS_USB3,      PORT1}, // TCP0
+  #       {UNCONNECTABLE, VISIBLE,    0xFF,          0,            0,        0,              0,           TCSS_USB3,      PORT2}, // Native HDMI over TCP1
+  #       {UNCONNECTABLE, VISIBLE,    0xFF,          VW_OC,        OC_PIN3,  PCH_USB2,       PORT4,       TCSS_USB3,      PORT4}, // TCP3, default is HDMI (Modular IO)
+  #       {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT3,       TCSS_USB3,      PORT3}, // TCP2 converted TAP (Type-A)
+  #       {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT5,       PCH_USB3,       PORT1}, // TAP1
+  #       {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT6,       PCH_USB3,       PORT2}, // TAP2
+  #       {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT7,       0,              0    }, // FPS
+  #       {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT8,       0,              0    }, // M.2 WLAN
+  #       {0x0}  // terminator
+  #     })}
+  #
+  #   For all of the USBC connectors with PD or native display connector over TCSS lanes.
+  #   The sequence MUST align with the ones described in VpdPcdUsbConnector table.
+  #
+  #     gBoardModuleTokenSpaceGuid.VpdPcdUsbCConnector| * |{CODE(
+  #     {
+  #     // ModularIoSupported, EdpModularIoSupported, RetimerCount, PcieSupported, DpAltModeSupported, Usb4Supported, Tbt3Supported, PdNum,    AuxDpMode, TbtControllerType, TbtControllerNum, DmaPortNum, PcieType, PcieRootPortNum
+  #       {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
+  #       {FIXED_IO,           0,                     0,            0,             0,                  0,             0,             0,        2,         0,                 0,                0,          0,        0}, // Native HDMI over TCP1
+  #       {MODULAR_IO,         0,                     0,            0,             0,                  0,             0,             USBC_PD2, 2,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT2,  0,        0}, // TCP3, default is HDMI (Modular IO)
+  #       {0x0}  // terminator
+  #     })}
   #
   gBoardModuleTokenSpaceGuid.VpdPcdUsbConnector| * |{CODE(
   {

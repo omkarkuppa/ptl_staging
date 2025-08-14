@@ -397,7 +397,7 @@ typedef struct {
   **/
   UINT32 ConnectorConnectable  : 1;
   /**
-  Connector Visibility
+  Connector Visibility (Don't care for native display connector)
   0 - invisible, 1 - visible
   **/
   UINT32 ConnectorVisibility   : 1;
@@ -419,24 +419,24 @@ typedef struct {
   **/
   UINT32 ConnectorType         : 8;
   /**
-  USB Overcurrent Pin Type
+  USB Overcurrent Pin Type (Don't care for native display connector)
   0 - Unsupported, 1 - Physical, 2 - Virtual Wire
   **/
   UINT32 UsbOcPinType          : 2;
   /**
-  USB Overcurrent Pin
+  USB Overcurrent Pin (Don't care for native display connector)
   PhysicalOc1, PhysicalOc2, ..., PhysicalOcM, VirtualOc1, VirtualOc2, ..., VirtualOcN
   M: The number of the supported physical OC pins
   N: The number of the supported virtual OC pins
   **/
   UINT32 UsbOcPin              : 3;
   /**
-  USB2 controller type which is used by USB connector.
+  USB2 controller type which is used by USB connector. (Don't care for native display connector)
   0 - Unsupported, 1 - PCH, 3 - dTBT1, 4 - dTBT2
   **/
   UINT32 Usb2Controller        : 3;
   /**
-  USB2 port# which is used by USB connector.
+  USB2 port# which is used by USB connector. (Don't care for native display connector)
   0 - port1, 1 - port2, 2 - port3 and etc.
   **/
   UINT32 Usb2PortNum           : 5;

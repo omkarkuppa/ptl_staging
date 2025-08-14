@@ -1714,7 +1714,7 @@
   # !BSF HELP:{Override LTR based on Ep capability.}
   gPlatformFspPkgTokenSpaceGuid.PcieRpLtrOverrideSpecCompliant      | * | 0x1C | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
-  # !BSF NAME:{Global PCIe AER} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF NAME:{PCIe AER _OSC Setting} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF OPTION:{0:Disable, 1:Enable}
   # !BSF HELP:{Enable/Disable Global PCIe Advanced Error Reporting}
   gPlatformFspPkgTokenSpaceGuid.GlobalPcieAer                | * | 0x01 | 0x01
