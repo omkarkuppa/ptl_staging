@@ -62,6 +62,14 @@
 
 #define SNDW_MAX_PERIPHERAL_NUMBER                     11
 
+#define R_PCP_DevNumber                                0x46
+#define R_PCP_DevId_0                                  0x50
+#define R_PCP_DevId_1                                  0x51
+#define R_PCP_DevId_2                                  0x52
+#define R_PCP_DevId_3                                  0x53
+#define R_PCP_DevId_4                                  0x54
+#define R_PCP_DevId_5                                  0x55
+
 enum SNDW_PERIPHERAL_STATUS {
   SndwPeripheralNotPresent   = 0,
   SndwPeripheralAttachedOk   = 1,

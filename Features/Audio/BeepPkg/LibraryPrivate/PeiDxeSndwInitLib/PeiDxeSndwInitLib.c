@@ -42,45 +42,38 @@ GLOBAL_REMOVE_IF_UNREFERENCED SNDW_COMMAND mMipiSndwReadPeripheralIdsCmds[] = {
   {
     .TxRead = {
       .OpCode = SndwCmdRead,
-      .RegAddr = 0x0050,
+      .RegAddr = R_PCP_DevId_0,
     }
   },
   {
     .TxRead = {
       .OpCode = SndwCmdRead,
-      .RegAddr = 0x0051,
+      .RegAddr = R_PCP_DevId_1,
     }
   },
   {
     .TxRead = {
       .OpCode = SndwCmdRead,
-      .RegAddr = 0x0052,
+      .RegAddr = R_PCP_DevId_2,
     }
   },
   {
     .TxRead = {
       .OpCode = SndwCmdRead,
-      .RegAddr = 0x0053,
+      .RegAddr = R_PCP_DevId_3,
     }
   },
   {
     .TxRead = {
       .OpCode = SndwCmdRead,
-      .RegAddr = 0x0054,
+      .RegAddr = R_PCP_DevId_4,
     }
   },
   {
     .TxRead = {
       .OpCode = SndwCmdRead,
-      .RegAddr = 0x0055,
+      .RegAddr = R_PCP_DevId_5,
     }
-  }
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED SNDW_COMMAND mMipiSndwSetCodecAddressCmd = {
-  .TxWrite = {
-    .OpCode = SndwCmdWrite,
-    .RegAddr = 0x0046,
   }
 };
 
@@ -142,7 +135,7 @@ SndwPrintTxMsg (
 VOID
 Send (
   IN  UINTN                       SndwControllerSpace,
-  IN  SNDW_COMMAND*               TxCommands,
+  IN  SNDW_COMMAND                *TxCommands,
   IN  UINTN                       NumOfMessages
   )
 {
@@ -733,6 +726,7 @@ EnumerateSndwCodecs (
   UINT32            SndwLinkIndex;
   UINT32            PeripheralIndex;
   UINT32            PeripheralsStatus;
+  SNDW_COMMAND      TxCommand;
 
   CodecListHead = NULL;
 
@@ -769,7 +763,8 @@ EnumerateSndwCodecs (
         DEBUG ((DEBUG_INFO, "Peripheral#%d attached correctly.\n", 0));
 
         ///
-        /// Read if Codec is connected to PeripheralIndex
+        /// Read if a codec is connected to the Sndw bus
+        /// Every peripheral starts with DeviceAddress '0' at the start of the enumeration
         ///
         Status = ReadPeripheralId (HdaBar + SndwControllerMmioOffset, 0, &CodecId);
         if (EFI_ERROR (Status)) {
@@ -785,9 +780,11 @@ EnumerateSndwCodecs (
         ///
         /// Set Codec Address
         ///
-        mMipiSndwSetCodecAddressCmd.TxWrite.DeviceAddress = 0;
-        mMipiSndwSetCodecAddressCmd.TxWrite.RegData       = PeripheralIndex;
-        SendwAck (HdaBar + SndwControllerMmioOffset, mMipiSndwSetCodecAddressCmd, &RxCommand);
+        TxCommand.TxWrite.OpCode        = SndwCmdWrite;
+        TxCommand.TxWrite.RegAddr       = R_PCP_DevNumber;
+        TxCommand.TxWrite.DeviceAddress = 0;
+        TxCommand.TxWrite.RegData       = PeripheralIndex;
+        SendwAck (HdaBar + SndwControllerMmioOffset, TxCommand, &RxCommand);
 
         ///
         /// Waiting a few us after sending init msg
