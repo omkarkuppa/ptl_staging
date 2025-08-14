@@ -25,6 +25,7 @@
 External (\_SB.PC00.IMNG, MethodObj)
 External (S0ID, FieldUnitObj)
 External (PSON, FieldUnitObj)
+Name (MSEN,0) // Modern standby Entry Flag
 
 Scope (\_SB)
 {
@@ -93,9 +94,54 @@ Scope (\_SB)
 
     Include ("PepDevicesInit.asl")
 
+    //
+    // EC method for modern standby Entry notification
+    //
+    Method (ECEN ,0, Serialized)
+    {
+      If (LEqual (MSEN,0)) {
+        ADBG ("ECEN Method Entry")
+        Store (1, MSEN)
+        PESB (1)
+      }
+    }
+
+    //
+    // EC method for modern standby Exit notification
+    //
+    Method (ECEX ,0, Serialized)
+    {
+      If (LEqual (MSEN,1)) {
+        ADBG ("ECEN Method Exit")
+        Store (0, MSEN)
+        PESB (0)
+      }
+    }
+
     Method (_DSM, 0x4, Serialized)
     {
       ADBG ("Pep _DSM!")
+
+      If (LEqual (Arg0,ToUUID ("11E00D56-CE64-47ce-837B-1F898F9AA461")))
+      {
+        // Number of Functions (including this one)
+        If (LEqual (Arg2, Zero))
+        {
+          Return (Buffer () {0x81, 0x01})
+        }
+
+        If (LEqual (Arg2, 0x7))
+        {
+          ADBG ("[PEP] Modern Standby Entry")
+          ECEN ()
+        }
+
+        If (LEqual (Arg2, 0x8))
+        {
+          ADBG ("[PEP] Modern Standby Exit")
+          ECEX ()
+        }
+      }
 
       If (LEqual (Arg0,ToUUID ("c4eb40a0-6cd2-11e2-bcfd-0800200c9a66")))
       {
@@ -155,15 +201,23 @@ Scope (\_SB)
         // resiliency phase entry (deep standby entry)
         If (LEqual (Arg2, 0x5))
         {
-          ADBG ("[PEP] deep standby entry")
-          PESB (1)
+          ADBG ("[PEP] SWdrips entry")
+          If (LNotEqual (MSEN,1))
+          {
+            ADBG ("EC Notification on SWdrip Entry")
+            PESB (1)
+          }
         }
 
         // resiliency phase exit (deep standby exit)
         If (LEqual (Arg2, 0x6))
         {
-          ADBG ("[PEP] deep standby exit")
-          PESB (0)
+          ADBG ("[PEP] SWdrips exit")
+          If (LNotEqual (MSEN,1))
+          {
+            ADBG ("EC Notification on SWdrip Exit")
+            PESB (0)
+          }
         }
       }// If (LEqual (Arg0,ToUUID ("c4eb40a0-6cd2-11e2-bcfd-0800200c9a66")))
 
