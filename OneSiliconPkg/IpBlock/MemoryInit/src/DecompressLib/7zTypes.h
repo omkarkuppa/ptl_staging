@@ -90,7 +90,14 @@ typedef unsigned int SizeT;
 #ifndef FULL_HEADLESS
 #ifndef HEADLESS
 #ifndef NEW_STUB
+#if !defined(_SIZE_T_DEFINED) && !defined(__SIZE_T__) && !defined(_SIZE_T)
+#ifdef __SIZE_TYPE__
+typedef __SIZE_TYPE__ size_t;
+#else
 typedef unsigned int size_t;
+#endif
+#define _SIZE_T_DEFINED
+#endif
 #endif
 #endif
 #endif
