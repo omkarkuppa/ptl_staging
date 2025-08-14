@@ -62,8 +62,6 @@ typedef enum {
 
 #define FIX_CONNECTION_PORTS_MAX    6
 
-#define B_IOM_BIOS_MAIL_BOX_IOM_EN  BIT16
-
 typedef struct {
   UINT32  Lock1;
   UINT32  Lock3;

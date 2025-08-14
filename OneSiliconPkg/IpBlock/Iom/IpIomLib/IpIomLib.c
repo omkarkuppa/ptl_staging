@@ -51,7 +51,7 @@ IpIomMailboxWrite (
 
   Status = IpCsiStsSuccess;
 
-  IpWrRegWrite (pInst->RegCntxtIomSb, R_IOM_PCR_IOM_BIOS_MAILBOX_DATA, (Data | B_IOM_BIOS_MAIL_BOX_IOM_EN), IpWrRegFlagSize32Bits);
+  IpWrRegWrite (pInst->RegCntxtIomSb, R_IOM_PCR_IOM_BIOS_MAILBOX_DATA, Data, IpWrRegFlagSize32Bits);
   IOM_PRINT_INFO ("IOM mailbox data = 0x%08X\n", Data);
 
   IpWrRegWrite (pInst->RegCntxtIomSb, R_IOM_PCR_IOM_BIOS_MAILBOX_CMD, Command, IpWrRegFlagSize32Bits);
