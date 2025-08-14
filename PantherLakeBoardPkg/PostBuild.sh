@@ -804,3 +804,4 @@ fi
 
 # ---Create ROM images---
 . $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/ToolScripts/RomImage/SetupRomDirs.sh
+
