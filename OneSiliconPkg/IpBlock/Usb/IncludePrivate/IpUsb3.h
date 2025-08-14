@@ -396,6 +396,21 @@ IpUsb3EnableUsb3Ports (
   );
 
 /**
+  Configures if LBPM will advertise Gen2/Gen1 Speed by default in USB3 ports
+
+  @param[in]  pInst           USB3 IP Instance
+  @param[in]  Gen1PortsMask   Bitmask of enabled USB3 ports
+
+  @retval     IpCsiStsSuccess         programming completed without error
+  @retval     IpCsiStsErrorNullPtr    null pointer to IP Instance provided
+**/
+IP_CSI_STATUS
+IpUsb3ForceGen1Usb3Ports (
+  IP_USB3_INST  *pInst,
+  UINT32        Gen1PortsMask
+  );
+
+/**
   This goes through general USB3 controller initialization programming
   requirements described in USB3 Programming guide.
 
