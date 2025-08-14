@@ -871,30 +871,30 @@ MeExtractConfig (
     MeSetupStorage.FwUpdEnabled = (UINT8) FwUpdateState;
   }
 
+  //
+  // FIPS feature
+  //
+  Status = HeciGetFipsMode (&FipsModeData);
+  if (!EFI_ERROR (Status)) {
+    StringLength = sizeof (String);
+    HiiLibGetString (mHiiHandle, FipsMode[!!FipsModeData.FipsMode], String, &StringLength);
+    InitString (mHiiHandle, STRING_TOKEN (STR_ME_FW_FIPS_CURRENT_MODE_VALUE), L"%s", String);
+    InitString (
+      mHiiHandle,
+      STRING_TOKEN (STR_ME_FW_FIPS_CRYPTO_VER_VALUE),
+      L"%d.%d.%d.%d",
+      FipsModeData.CryptoVersion.Major,
+      FipsModeData.CryptoVersion.Minor,
+      FipsModeData.CryptoVersion.Hotfix,
+      FipsModeData.CryptoVersion.Build
+    );
+  }
+
   Size = sizeof (ME_SETUP);
   Status = gRT->GetVariable (L"MeSetup", &gMeSetupVariableGuid, NULL, &Size, &mMeSetup);
   ASSERT_EFI_ERROR (Status);
 
   if (mMeSetup.MeImageType == IntelMeCorporateFw) {
-    //
-    // FIPS feature
-    //
-    Status = HeciGetFipsMode (&FipsModeData);
-    if (!EFI_ERROR (Status)) {
-      StringLength = sizeof (String);
-      HiiLibGetString (mHiiHandle, FipsMode[!!FipsModeData.FipsMode], String, &StringLength);
-      InitString (mHiiHandle, STRING_TOKEN (STR_ME_FW_FIPS_CURRENT_MODE_VALUE), L"%s", String);
-      InitString (
-        mHiiHandle,
-        STRING_TOKEN (STR_ME_FW_FIPS_CRYPTO_VER_VALUE),
-        L"%d.%d.%d.%d",
-        FipsModeData.CryptoVersion.Major,
-        FipsModeData.CryptoVersion.Minor,
-        FipsModeData.CryptoVersion.Build,
-        FipsModeData.CryptoVersion.Hotfix
-      );
-    }
-
     //
     // UPID Platform Id feature
     //
