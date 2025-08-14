@@ -120,7 +120,8 @@ LoadFspm (
   DEBUG ((DEBUG_INFO, "FSP verifies FSPM region ...\n"));
   Status = mFspVerifyApiWrapper.VerifyFspmApiWrapper (Bspm, Fbm, AvailableMemoryBuffer);
   if (EFI_ERROR (Status)) {
-    CpuDeadLoop ();
+    VerifyCrtmStatusAndDisableTxtCmos ();
+    return EFI_UNSUPPORTED;
   }
 
   if (!(Bspm->FspmLoadingPolicy & FSPM_COMPRESSED)) {
@@ -198,7 +199,8 @@ LoadBspPreMem (
   DEBUG ((DEBUG_INFO, "FSP verifies Bsp region ...\n"));
   Status = mFspVerifyApiWrapper.VerifyBspApiWrapper (Bspm, AvailableMemoryBuffer);
   if (EFI_ERROR (Status)) {
-    CpuDeadLoop ();
+    VerifyCrtmStatusAndDisableTxtCmos ();
+    return EFI_UNSUPPORTED;
   }
 
   return EFI_SUCCESS;

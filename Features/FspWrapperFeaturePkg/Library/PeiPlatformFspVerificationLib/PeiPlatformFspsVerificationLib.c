@@ -24,26 +24,7 @@
 #include <Library/DebugLib.h>
 #include <Library/PeiPlatformFspsVerificationLib.h>
 #include <Library/BootGuardLib.h>
-
 #include <Ppi/FspLoaderPpi.h>
-
-/**
-  Check if this is VerifiedBoot
-
-  @retval TRUE  This is VerifiedBoot
-  @retval FALSE This is NOT VerifiedBoot
-**/
-BOOLEAN
-IsVerifiedBoot (
-  VOID
-  )
-{
-  if ((AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & B_BOOT_GUARD_SACM_INFO_VERIFIED_BOOT) != 0) {
-    return TRUE;
-  } else {
-    return FALSE;
-  }
-}
 
 /**
   Platform specific method to verify FSP-S, which should be executed after FSP-S is
@@ -93,17 +74,8 @@ PlatformVerifyFsps (
       DEBUG ((DEBUG_INFO, "FSP signing is not supported, skip FSP-S verification!\n"));
       return EFI_SUCCESS;
     } else {
-      if (IsVerifiedBoot ()) {
-        DEBUG ((DEBUG_ERROR, "FspLoaderPpi->FspVerifyFsps failed: %r\n", Status));
-        CpuDeadLoop ();
-      } else {
-        //
-        // Not verified boot, continue boot even when FSP-S verification failed.
-        //
-        return EFI_SUCCESS;
-      }
+      DEBUG ((DEBUG_ERROR, "FSP-S verification failed with status: %r\n", Status));
     }
   }
-
   return EFI_SUCCESS;
 }

@@ -1081,7 +1081,6 @@ VerifiedComponentSaveHashEvent (
   BSPM_ELEMENT                   *Bspm;
   UINT32                         TpmActivePcrBanks;
   TPML_DIGEST_VALUES             TpmDigestValues;
-  UINT64                         AcmPolicyStatus;
   CHAR16                         ScrtmUtf16String[SCRTM_VERSION_UTF16_LENGTH] = {'\0'};
 
   if (IsS3Resume () == 1) {
@@ -1097,19 +1096,6 @@ VerifiedComponentSaveHashEvent (
   // Check if signing is supported
   //
   if (!(IsSigningSupported (Fbm))) {
-    AcmPolicyStatus = MmioRead64 (MMIO_ACM_POLICY_STATUS);
-    //
-    // ACM measures FSP-OT for BTG0 with TXT enabled. Save event log for this case.
-    //
-    if ((Fbm != NULL) && (DetectBootGuardProfile () == 0) && (AcmPolicyStatus & B_SCRTM_STATUS)) {
-      Status = Tpm2RequestUseTpm ();
-      Status = FspGetSupportedPcrs (&TpmActivePcrBanks);
-      if (EFI_ERROR (Status)) {
-        return EFI_DEVICE_ERROR;
-      }
-      SaveFspotEventData (Fbm, TpmActivePcrBanks);
-      SaveIbbRegionNear4GEventData (TpmActivePcrBanks);
-    }
     return EFI_UNSUPPORTED;
   }
 

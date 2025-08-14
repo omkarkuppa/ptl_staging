@@ -81,7 +81,7 @@ FspLoaderVerifyAndLogEventFsps (
   }
 
   //
-  // Veify and create hash event log.
+  // Verify and create hash event log.
   //
   Status = mFspVerifyApiWrapper.VerifyFspsApiWrapper (FspsImageBase, Fbm, AvailableMemoryBuffer);
 

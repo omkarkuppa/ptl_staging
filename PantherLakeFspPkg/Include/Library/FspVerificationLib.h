@@ -182,6 +182,25 @@ VerifyBsp (
   IN VOID                           *Buffer
   );
 
+/**
+  UpdateTxtStatusCmos to write TXT Status to CMOS.
+  @param[in] TxtStatus To Enable/Disable TXT
+**/
+VOID
+UpdateTxtStatusCmos (
+  IN BOOLEAN TxtStatus
+  );
+
+/**
+  Verify CRTM Status and disable Txt Cmos
+  Disable TXT when verification fail in BTG 0T/3T.
+  
+**/
+VOID
+VerifyCrtmStatusAndDisableTxtCmos (
+  VOID
+  );
+
 //
 // FSP_VERIFY_API_WRAPPER is defined to allow crypto service share in FSP binaries,
 // which helps reduce FSP size a great deal.

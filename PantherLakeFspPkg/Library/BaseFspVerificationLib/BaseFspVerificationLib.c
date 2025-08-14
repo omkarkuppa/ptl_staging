@@ -30,6 +30,36 @@
 #include <Library/FspMeasurementLib.h>
 #include <Pi/PiFirmwareVolume.h>
 #include <Library/IoLib.h>
+#include <Txt.h>
+
+/**
+  UpdateTxtStatusCmos to write TXT Status to CMOS.
+  @param[in] TxtStatus To Enable/Disable TXT
+**/
+VOID
+UpdateTxtStatusCmos (
+  IN BOOLEAN TxtStatus
+  )
+{
+  UINT8    CmosStatus;
+
+  CmosStatus = 0;
+  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+  CmosStatus = IoRead8 (CMOS_IO_DATA);
+
+  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus = %d\n", CmosStatus));
+
+  if (TxtStatus == TRUE) {
+    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+    IoWrite8 (CMOS_IO_DATA, CmosStatus | BIT4);
+  } else {
+    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+    IoWrite8 (CMOS_IO_DATA, CmosStatus & ~BIT4);
+  }
+
+  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus Post Write = %d\n", IoRead8 (CMOS_IO_DATA)));
+}
 
 BOOLEAN
 Sha384Verify (
@@ -88,6 +118,31 @@ DetectBootGuardProfile (
   return BootGuardProfile;
 }
 
+/**
+  Verify CRTM Status and disable Txt Cmos
+  Disable TXT when verification fail in BTG 0T/3T.
+  
+**/
+VOID
+VerifyCrtmStatusAndDisableTxtCmos (
+  VOID
+  )
+{
+  UINT64            AcmPolicyStatus;
+  UINT64            MsrValue;
+  UINT8             BootGuardProfile;
+
+  MsrValue = AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO);
+  AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
+  BootGuardProfile = DetectBootGuardProfile ();
+
+  if ((BootGuardProfile < BOOT_GUARD_PROFILE_4) && (AcmPolicyStatus & (B_SCRTM_STATUS))) {
+      UpdateTxtStatusCmos (FALSE);
+      DEBUG ((DEBUG_INFO, "TXT disabled due to verification failure in BTG 0T/3T\n"));
+  } else {
+    CpuDeadLoop ();
+  }
+}
 
 /**
   Check if FSP signing is supported.
@@ -104,11 +159,16 @@ IsSigningSupported (
   )
 {
   UINT64  AcmPolicyStatus;
-  AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
+  UINT8   BootGuardProfile;
 
-  if ((DetectBootGuardProfile () >= BOOT_GUARD_PROFILE_4) && (Fbm != NULL) &&
-      (AcmPolicyStatus & B_FBM_VALID_STATUS)) {
-    return TRUE;
+  AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
+  BootGuardProfile = DetectBootGuardProfile ();
+  
+  if ((Fbm != NULL) && (AcmPolicyStatus & B_FBM_VALID_STATUS)) {
+    if ((BootGuardProfile >= BOOT_GUARD_PROFILE_4) || 
+        ((BootGuardProfile < BOOT_GUARD_PROFILE_4) && (AcmPolicyStatus & (B_SCRTM_STATUS)))) {
+      return TRUE;
+    } 
   }
   return FALSE;
 }
@@ -393,8 +453,11 @@ VerifyAndLogEventFsps (
     DEBUG ((DEBUG_INFO, "FSP-S Verification Pass!\n"));
     return EFI_SUCCESS;
   }
-  DEBUG ((DEBUG_INFO, "FSP-S Verification Fail!\n"));
-  return EFI_ACCESS_DENIED;
+
+  DEBUG ((DEBUG_ERROR, "FSP-S Verification Fail!\n"));
+  VerifyCrtmStatusAndDisableTxtCmos ();
+
+  return EFI_SUCCESS;
 }
 
 /**
