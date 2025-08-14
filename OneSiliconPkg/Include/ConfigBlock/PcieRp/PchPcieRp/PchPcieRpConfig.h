@@ -57,8 +57,10 @@ Added EqPhBypass polices to PCIE_ROOT_PORT_COMMON_CONFIG
 Deprecated EqPhBypass policies from PCIE_ROOT_PORT_COMMON_CONFIG
 <b>Revision 9</b>:
 Added GlobalPcieAer policy to PCH_PCIE_CONFIG
+<b>Revision 10</b>:
+Added PcieTbtPerfBoost policy to PCH_PCIE_CONFIG
 */
-#define PCH_PCIE_CONFIG_REVISION  9
+#define PCH_PCIE_CONFIG_REVISION  10
 
 /*
  Making any setup structure change after code frozen
@@ -263,7 +265,13 @@ typedef struct {
   UINT8                             PchPciePort8xhDecodePortIndex;
   UINT8                             DmiPowerReduction;
   UINT8                             GlobalPcieAer;
-  UINT8                             RsvdBytes0;
+  /**
+    Bitmap of TBT performance boost enabled PCIe controllers to which discrete TBT controllers connect.
+    Each bit represents a specific controller:
+    BIT0 - BIT7: PCIe controllers bitmap, where bit i corresponds to PCIe controller(i),
+                 e.g. BIT0 - PXPA. The max supported PCIe controller number depends on silicon.
+  **/
+  UINT8                             PcieTbtPerfBoost;
 
   ///
   /// This member describes whether the PCI Express Clock Gating for each root port

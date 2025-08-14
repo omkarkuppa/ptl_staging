@@ -1283,9 +1283,10 @@ typedef struct {
   <b>Revision 16</b>: - Add WREQT variable
   <b>Revision 17</b>: - Remove FUSA CFI variables
   <b>Revision 18</b>: - Add Nest Support and Posted Interrupt Support variables for Vt-d
+  <b>Revision 19</b>: - Add TbtPerfBoostEn for TBT Performance Boost Enable/Disable.
 **/
 
-#define SA_SETUP_REVISION   18
+#define SA_SETUP_REVISION   19
 
 typedef struct {
   UINT8   Revision;
@@ -1796,7 +1797,8 @@ typedef struct {
 
   UINT8   NestedSupport;
   UINT8   PostedInterruptSupport;
-  UINT8   Rsvd[18];
+  UINT8   TbtPerfBoostEn;
+  UINT8   Rsvd[17];
 } SA_SETUP;
 
 /**

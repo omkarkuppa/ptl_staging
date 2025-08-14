@@ -2517,3 +2517,7 @@
 
 #string STR_POSTED_INTERRUPT_SUPPORT            #language en-US "Posted Interrupt Support"
 #string STR_POSTED_INTERRUPT_SUPPORT_HELP       #language en-US "Defeature Posted Interrupt Capability"
+
+#string STR_TBT_PERFORMANCE_BOOST_PROMPT        #language en-US "TBT Performance Boost"
+#string STR_TBT_PERFORMANCE_BOOST_HELP          #language en-US "Enable/Disable TBT Performance Boost through PCode mailbox"
+

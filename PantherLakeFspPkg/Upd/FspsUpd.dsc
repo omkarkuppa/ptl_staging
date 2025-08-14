@@ -1719,8 +1719,9 @@
   # !BSF HELP:{Enable/Disable Global PCIe Advanced Error Reporting}
   gPlatformFspPkgTokenSpaceGuid.GlobalPcieAer                | * | 0x01 | 0x01
 
-  # Added reserved space   UnusedUpdSpace7[1]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd7                 | * | 0x01 | {0x00}
+  # !BSF NAME:{PCIe TBT Performance Boost Bitmap} TYPE:{EditNum, HEX, (0x00,0x1F)}
+  # !BSF HELP:{Bitmap of TBT performance boost enabled PCIe controllers to which discrete TBT controllers connect. Bit0: PXPA, Bit1: PXPB, Bit2: PXPC, Bit3: PXPD, Bit4: PXPE}
+  gPlatformFspPkgTokenSpaceGuid.PcieTbtPerfBoost             | * | 0x01 | 0x00
 
   ## PCH_PCIE_CONFIG End
 
@@ -1940,8 +1941,13 @@
   # !BSF NAME:{Enable D3 Hot in TCSS } TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{This policy will enable/disable D3 hot support in IOM}
   gPlatformFspPkgTokenSpaceGuid.D3HotEnable                 | * | 0x01 | 0x00
-  # Added reserved space    UnusedUpdSpace15[3]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd15               | * | 0x3 | {0x00}
+
+  # !BSF NAME:{TCSS TBT Performance Boost Bitmap} TYPE:{EditNum, HEX, (0x00,0x0F)}
+  # !BSF HELP:{Bitmap of TBT performance boost enabled TCSS PCIe root ports. Bit0: TCSS port0, Bit1: TCSS port1, Bit2: TCSS port2, Bit3: TCSS port3}
+  gPlatformFspPkgTokenSpaceGuid.TcssTbtPerfBoost            | * | 0x01 | 0x0F
+
+  # Added reserved space    UnusedUpdSpace15[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd15               | * | 0x02 | {0x00}
 
   # !BSF NAME:{TypeC port GPIO setting} TYPE:{EditNum, HEX, (0, 0xFFFFFFFF)}
   # !HDR STRUCT:{UINT32}

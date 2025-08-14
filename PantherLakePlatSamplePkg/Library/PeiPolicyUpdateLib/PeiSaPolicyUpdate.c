@@ -31,6 +31,7 @@
 #include <Library/PlatformUsbConfigLib.h>
 #include <Pi/PiFirmwareFile.h>
 #include <Protocol/GraphicsOutput.h>
+#include <DTbtBoardConfigPcd.h>
 
 #include <IndustryStandard/Bmp.h>
 #include <Platform.h>
@@ -51,6 +52,7 @@
 #include <SiliconPolicyHob.h>
 #include <Library/PeiLib.h>
 #include <Library/PchInfoLib.h>
+#include <PchPcieRpConfig.h>
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 EFI_STATUS
@@ -200,6 +202,8 @@ UpdatePeiSaPolicy (
   EFI_BOOT_MODE                   BootMode;
   PCH_SETUP                       PchSetup;
   UINT8                           CapPolicy;
+  UINT8                           TcssTbtPerfBoost;
+  UINT8                           PcieTbtPerfBoost;
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
   VOID                            *FspmUpd;
@@ -210,6 +214,7 @@ UpdatePeiSaPolicy (
   TELEMETRY_PEI_CONFIG            *TelemetryPeiConfig;
   TCSS_PEI_PREMEM_CONFIG          *TcssPeiPreMemConfig;
   IGPU_PEI_CONFIG                 *IGpuConfig;
+  PCH_PCIE_CONFIG                 *PchPcieConfig;
 #if FixedPcdGetBool(PcdVmdEnable) == 1
   VMD_PEI_CONFIG                  *VmdPeiConfig;
 #endif
@@ -227,6 +232,11 @@ UpdatePeiSaPolicy (
   UINT8                           PchUsb2PortNo;
   TCSS_TYPEC_CONV_USBA            TcssPortConvProperties;
 #endif
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  UINT8                           DtbtIndex;
+  UINT32                          PcieControllerIndex;
+  DTBT_BOARD_CONFIG_PCD           *DtbtBoardConfigTable;
+#endif
 
   DEBUG ((DEBUG_INFO, "Update PeiSaPolicyUpdate Pos-Mem Start\n"));
 
@@ -239,6 +249,8 @@ UpdatePeiSaPolicy (
 #endif
 
   Buffer     = NULL;
+  TcssTbtPerfBoost = 0;
+  PcieTbtPerfBoost = 0;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
@@ -252,6 +264,7 @@ UpdatePeiSaPolicy (
   TelemetryPeiConfig    = NULL;
   TcssPeiPreMemConfig   = NULL;
   IGpuConfig            = NULL;
+  PchPcieConfig         = NULL;
 #if FixedPcdGetBool(PcdVmdEnable) == 1
   VmdPeiConfig          = NULL;
 #endif
@@ -271,7 +284,10 @@ UpdatePeiSaPolicy (
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gNpuPeiConfigGuid, (VOID *) &NpuPeiConfig);
   ASSERT_EFI_ERROR(Status);
 
-  Status = GetConfigBlock((VOID *)SiPolicyPpi, &gTelemetryPeiConfigGuid, (VOID *)&TelemetryPeiConfig);
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gTelemetryPeiConfigGuid, (VOID *)&TelemetryPeiConfig);
+  ASSERT_EFI_ERROR(Status);
+
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gPchPcieConfigGuid, (VOID *) &PchPcieConfig);
   ASSERT_EFI_ERROR(Status);
 
 #if FixedPcdGetBool(PcdVmdEnable) == 1
@@ -362,8 +378,36 @@ UpdatePeiSaPolicy (
       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[Index],TcssPeiConfig->UsbConfig.PortUsb30[Index].OverCurrentPin, USB_OC_SKIP);
       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.TcssCpuUsbPdoProgramming,    TcssPeiConfig->UsbConfig.PdoProgramming, TRUE);
     }
+    if (SaSetup.TbtPerfBoostEn && IS_TCSS_SETUP_PCIE_EN (CapPolicy)) {
+      // Update TBT Performance Boost Bitmap when port is capable of PCIe tunneling.
+      TcssTbtPerfBoost |= (1 << Index);
+    }
   }
 #endif
+
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  PcieControllerIndex  = 0;
+  DtbtBoardConfigTable = (DTBT_BOARD_CONFIG_PCD *) PcdGetPtr (VpdPcdDTbtBoardConfig);
+  if (DtbtBoardConfigTable == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a Failed to get dTBT board config data!!\n", __FUNCTION__));
+  } else {
+    if (SaSetup.TbtPerfBoostEn) {
+      for (DtbtIndex = 0; DtbtIndex < MAX_DTBT_CONTROLLER_NUMBER; DtbtIndex++) {
+        if (DtbtBoardConfigTable->DTbtBoardConfig[DtbtIndex].DTbtBoardSupport) {
+          PcieControllerIndex = RpIndexToControllerIndex (DtbtBoardConfigTable->DTbtBoardConfig[DtbtIndex].DTbtPcieRpNumber);
+          if (PcieControllerIndex < GetPchMaxPcieControllerNum ()) {
+            DEBUG ((DEBUG_INFO, "DtbtPcieRpNumber[%d]: 0x%x, PcieControllerIndex: %d\n", DtbtIndex, DtbtBoardConfigTable->DTbtBoardConfig[DtbtIndex].DTbtPcieRpNumber, PcieControllerIndex));
+            PcieTbtPerfBoost |= (UINT8) (1 << (PcieControllerIndex));
+          } else {
+            DEBUG ((DEBUG_ERROR, "dTBT%d PcieControllerIndex %d is not supported!!\n", DtbtIndex, PcieControllerIndex));
+          }
+        }
+      }
+    }
+  }
+#endif
+  UPDATE_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.TcssTbtPerfBoost, TcssPeiConfig->PciePolicy.TcssTbtPerfBoost, TcssTbtPerfBoost);
+  UPDATE_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.PcieTbtPerfBoost, PchPcieConfig->PcieTbtPerfBoost, PcieTbtPerfBoost);
 
   CopyMem (&BmpImageGuid, PcdGetPtr(PcdIntelGraphicsVbtFileGuid), sizeof(BmpImageGuid));
 

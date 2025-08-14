@@ -195,6 +195,7 @@ TcssLoadConfigDefault (
     LoadPeiPcieCommonConfigDefault (&(TcssConfig->PciePolicy.PciePortPolicy[Index]));
     (&(TcssConfig->PciePolicy.PciePortPolicy[Index]))->SlotNumber = GetPchMaxPciePortNum () + (UINT8)Index;
   }
+  TcssConfig->PciePolicy.TcssTbtPerfBoost = 0x0F;
 
   LoadTcssUsb3ConfigDefault (&(TcssConfig->UsbConfig));
   LoadTcssMiscConfigDefault (&(TcssConfig->MiscConfig));

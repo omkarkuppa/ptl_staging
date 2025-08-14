@@ -26,7 +26,7 @@
 #include <TcssInfo.h>
 #include <TcssPeiPreMemConfig.h>
 
-#define TCSS_PEI_CONFIG_REVISION 4
+#define TCSS_PEI_CONFIG_REVISION 5
 extern EFI_GUID gTcssPeiConfigGuid;
 
 #pragma pack (push,1)
@@ -100,7 +100,15 @@ typedef struct {
 ///
 typedef struct {
   TCSS_PCIE_PORT_POLICY  PciePortPolicy[MAX_ITBT_PCIE_PORT];
-  UINT8   Reserved[4];                  ///< Reserved bytes
+  /**
+    Bitmap of TBT performance boost enabled TCSS PCIe root ports.
+    Each bit represents a specific port:
+    BIT0 - BIT7: TCSS PCIe root ports bitmap, where bit i corresponds to TCSS PCIe root port(i),
+                 e.g. BIT0 - TCSS PCIe root port0. The max supported TCSS PCIe root port number
+                 depends on silicon.
+  **/
+  UINT8   TcssTbtPerfBoost;
+  UINT8   Reserved[3];                  ///< Reserved bytes
 } TCSS_PCIE_PEI_POLICY;
 
 ///
@@ -125,9 +133,9 @@ typedef struct {
 ///
 typedef struct {
   TCSS_TYPEC_CONV_USBA      TcssConvUsbA[MAX_TCSS_USB3_PORTS];       ///< TCSS Port Convert to TypeA
-  TBT_LSX_OE_PAD_CONFIG     LsxOePortPad[MAX_TCSS_USB3_PORTS];     ///< The Lsx Oe port config setting.
-  UINT8                     LsxOe;                                    ///< Bits defining value for LSx OE Orientation
-  UINT8                     Reserved[3];                              ///< Reserved bytes
+  TBT_LSX_OE_PAD_CONFIG     LsxOePortPad[MAX_TCSS_USB3_PORTS];       ///< The Lsx Oe port config setting.
+  UINT8                     LsxOe;                                   ///< Bits defining value for LSx OE Orientation
+  UINT8                     Reserved[3];                             ///< Reserved bytes
 } TCSS_MISC_PEI_CONFIG;
 
 ///

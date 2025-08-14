@@ -38,6 +38,8 @@
 #define MAILBOX_VR_CMD_ACOUSTIC_MITIGATION_CONFIG                          0x0A
 #define MAILBOX_VR_SUBCMD_GET_HYST_WINDOW_PARAMS                           0x01
 #define MAILBOX_VR_SUBCMD_SET_HYST_WINDOW_PARAMS                           0x00
+#define MAILBOX_PCODE_CMD_TBT_PERF_BOOST                                   0x00000022
+#define MAILBOX_PCODE_CMD_TBT_PERF_BOOST_PARAMS                            0x00000041
 ///
 /// Hysteresis window
 ///

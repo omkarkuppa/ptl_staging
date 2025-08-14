@@ -260,6 +260,7 @@ LoadPcieCommonConfigDefault (
 
   PchPcieConfig->PchPciePort8xhDecodePortIndex = 1;
   PchPcieConfig->GlobalPcieAer = 1;
+  PchPcieConfig->PcieTbtPerfBoost = 0;
 }
 
 /**

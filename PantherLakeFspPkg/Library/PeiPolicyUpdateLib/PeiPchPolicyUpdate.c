@@ -783,6 +783,8 @@ FspUpdatePcieRpPolicy (
     PchPcieConfig->RootPort[RpIndex].PcieRpCommonConfig.PcieGen5LinkEqPlatformSettings.TsLockTimer                          = FspsUpd->FspsConfig.PcieGen5TsLockTimer[RpIndex];
   }
 
+  PchPcieConfig->PcieTbtPerfBoost = FspsUpd->FspsConfig.PcieTbtPerfBoost;
+
 }
 
 /**

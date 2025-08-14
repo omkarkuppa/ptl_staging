@@ -296,6 +296,9 @@
 
   gSiPkgTokenSpaceGuid.PcdTccSupport                     ## CONSUMES
 
+  # Discrete Thunderbolt Board Configuration VPD
+  gBoardModuleTokenSpaceGuid.VpdPcdDTbtBoardConfig       ## CONSUMES
+
 [Sources]
   PeiPchPolicyUpdatePreMem.c
   PeiPchPolicyUpdate.c
@@ -419,3 +422,4 @@
   gCnviPreMemConfigGuid                         ## CONSUMES
   gUefiIntelCnvWlanVariablesGuid                ## CONSUMES
   gRmtVariableGuid                              ## CONSUMES
+  gPchPcieConfigGuid                            ## CONSUMES

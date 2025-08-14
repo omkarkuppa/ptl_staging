@@ -36,6 +36,8 @@
 #include <SiConfigHob.h>
 #include <Library/PsmiInitLib.h>
 
+#define N_TBT_PERF_BOOST_PCIE_CONTROLLERS 8
+
 /**
   PPI function to print Silicon Policy config block settings
 

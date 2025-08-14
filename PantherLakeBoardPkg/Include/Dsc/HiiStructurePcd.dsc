@@ -3380,6 +3380,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DllBwEn3|0x2                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.DmaControlGuarantee|0x1                                        # DMA Control Guarantee
 gStructPcdTokenSpaceGuid.PcdSaSetup.NestedSupport|0x0                                              # Nested Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.PostedInterruptSupport|0x0                                     # Posted Interrupt Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.TbtPerfBoostEn|0x1                                             # TBT Performance Boost Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnableMediaStandby|0x1                                         # MC6(Media Standby)
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnableRenderStandby|0x1                                        # RC6(Render Standby)
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnableVtd|0x1                                                  # VT-d

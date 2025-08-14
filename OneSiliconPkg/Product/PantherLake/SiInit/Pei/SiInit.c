@@ -101,6 +101,9 @@
 #include <Library/DomainPcie.h>
 #include <IpCpcie.h>
 #include <Library/PeiVmdInitFruLib.h>
+#include <Library/CpuMailboxLib.h>
+#include <Library/PchInfoLib.h>
+#include <PchPcieRpConfig.h>
 
 extern EFI_GUID gIpPcieInstHobGuid;
 
@@ -221,6 +224,43 @@ EFI_PEI_PPI_DESCRIPTOR      mIDispCodecReadyPpi = {
 };
 
 /**
+  TBT Performance Boost
+  This function enable/disable TBT Performance Boost through PCode mailbox.
+
+  @param[in] TbtPerfBoostBitmap   Tbt Performance Boost Bitmap.
+**/
+VOID
+TbtPerfBoost (
+  IN UINT16  TbtPerfBoostBitmap
+  )
+{
+  EFI_STATUS                      Status;
+  UINT32                          MailboxStatus;
+  UINT32                          RequestedValue;
+  PCODE_MAILBOX_INTERFACE         MailboxCommand;
+  UINT16                          TbtPerfBoostBitMask;
+  UINT8                           Index;
+
+  TbtPerfBoostBitMask = 0;
+  for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
+    TbtPerfBoostBitMask |= (1 << Index);
+  }
+  for (Index = 0; Index < GetPchMaxPcieControllerNum (); Index++) {
+    TbtPerfBoostBitMask |= (1 << (Index + N_TBT_PERF_BOOST_PCIE_CONTROLLERS));
+  }
+  DEBUG ((DEBUG_INFO, "TbtPerfBoostBitMask: 0x%04x, TbtPerfBoostBitmap: 0x%04x\n", TbtPerfBoostBitMask, TbtPerfBoostBitmap));
+  TbtPerfBoostBitmap &= TbtPerfBoostBitMask;
+  DEBUG ((DEBUG_INFO, "Sending TbtPerfBoostBitmap 0x%04x to PCode\n", TbtPerfBoostBitmap));
+  RequestedValue = TbtPerfBoostBitmap;
+  MailboxCommand.Fields.Command = MAILBOX_PCODE_CMD_TBT_PERF_BOOST;
+  MailboxCommand.Fields.Param1 = MAILBOX_PCODE_CMD_TBT_PERF_BOOST_PARAMS;
+  Status = MailboxWrite (MailboxCommand.InterfaceData, RequestedValue, &MailboxStatus);
+  if (Status != EFI_SUCCESS || MailboxStatus != PCODE_MAILBOX_CC_SUCCESS) {
+    DEBUG ((DEBUG_ERROR, "TBT Performance Boost failed, Status = %r, MailboxStatus = 0x%08x\n", Status, MailboxStatus));
+  }
+}
+
+/**
   Silicon Init End of PEI callback function. This is the last change before entering DXE and OS when S3 resume.
 
   @param[in] PeiServices   - Pointer to PEI Services Table.
@@ -248,6 +288,8 @@ SiInitOnEndOfPei (
   IGPU_PEI_PREMEM_CONFIG      *IGpuPreMemConfig;
   IGPU_PEI_CONFIG             *IGpuConfig;
   CPU_POWER_DELIVERY_CONFIG   *CpuPowerDeliveryConfig;
+  TCSS_PEI_CONFIG             *TcssPeiConfig;
+  PCH_PCIE_CONFIG             *PchPcieConfig;
 
   //
   // Get Policy settings through the SiPolicy PPI
@@ -295,6 +337,12 @@ SiInitOnEndOfPei (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gCpuPowerDeliveryConfigGuid, (VOID *) &CpuPowerDeliveryConfig);
   ASSERT_EFI_ERROR (Status);
 
+  Status = GetConfigBlock ((VOID *) SiPolicy, &gTcssPeiConfigGuid, (VOID *) &TcssPeiConfig);
+  ASSERT_EFI_ERROR(Status);
+
+  Status = GetConfigBlock ((VOID *) SiPolicy, &gPchPcieConfigGuid, (VOID *) &PchPcieConfig);
+  ASSERT_EFI_ERROR(Status);
+
   DEBUG ((DEBUG_INFO, "SiInitOnEndOfPei - Start\n"));
 
 #if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
@@ -304,6 +352,11 @@ SiInitOnEndOfPei (
   }
 #endif
 #endif
+
+  //
+  // Perform TBT Performance Boost. This must be done before SetBiosResetCpl.
+  //
+  TbtPerfBoost ((UINT16) TcssPeiConfig->PciePolicy.TcssTbtPerfBoost | (PchPcieConfig->PcieTbtPerfBoost << N_TBT_PERF_BOOST_PCIE_CONTROLLERS));
 
   //
   // Initializes PCH after End of Pei

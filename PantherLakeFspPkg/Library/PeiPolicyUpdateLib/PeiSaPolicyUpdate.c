@@ -191,6 +191,7 @@ FspUpdatePeiSaPolicy (
         TcssPeiConfig->PciePolicy.PciePortPolicy[Index].LtrConfigLock                     = FspsConfig->SaPcieItbtRpLtrConfigLock[Index];
       }
     }
+    TcssPeiConfig->PciePolicy.TcssTbtPerfBoost = FspsConfig->TcssTbtPerfBoost;
   }
 
   IGpuConfig->PavpEnable = ((FSPS_UPD *) FspsUpd)->FspsConfig.PavpEnable;
