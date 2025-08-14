@@ -117,11 +117,14 @@ typedef struct _EFI_TOUCH_INIT_TAB EFI_TOUCH_INIT_TABLE;
 //
 // I2C Touch Panel command set
 //
-#define OPCODE_SET_POWER  0x8
-#define POWER_STATE_ON    0x0
-#define POWER_STATE_SLEEP 0x1
-#define OPCODE_RESET      0x1
-#define RESET_REPORT_ID   0x0
+#define OPCODE_SET_POWER       0x8
+#define POWER_STATE_ON         0x0
+#define POWER_STATE_SLEEP      0x1
+#define OPCODE_RESET           0x1
+#define RESET_REPORT_ID        0x0
+#define WAIT_FOR_RESET_TIMEOUT 5000
+#define RESET_RESPONSE_BYTE_0  0x0
+#define RESET_RESPONSE_BYTE_1  0x0
 
 #define SET_IDLE                   0x05
 #define I2C_HID_LENGTH_PREFIX      2

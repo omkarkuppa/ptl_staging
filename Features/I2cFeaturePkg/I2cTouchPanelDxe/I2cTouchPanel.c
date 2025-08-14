@@ -841,9 +841,13 @@ SetHidReset (
 {
   EFI_STATUS             Status;
   UINT8                  WriteBuffer[4];
-  UINT8                  ReadData[20];
+  UINT8                  ReadData[2];
   EFI_I2C_REQUEST_PACKET *RequestPacket;
+  UINT32                 Timeout;
+  Timeout = WAIT_FOR_RESET_TIMEOUT;
 
+  ReadData[0] = 0xFF;
+  ReadData[1] = 0xFF;
   WriteBuffer[0] = TouchDev->HidDescriptor.CommandRegisterLsb;
   WriteBuffer[1] = TouchDev->HidDescriptor.CommandRegisterMsb;
   WriteBuffer[2] = RESET_REPORT_ID;
@@ -858,7 +862,7 @@ SetHidReset (
   RequestPacket->Operation[0].LengthInBytes = 4;
   RequestPacket->Operation[0].Buffer        = WriteBuffer;
   RequestPacket->Operation[1].Flags         = I2C_FLAG_READ;
-  RequestPacket->Operation[1].LengthInBytes = 20;
+  RequestPacket->Operation[1].LengthInBytes = 2;
   RequestPacket->Operation[1].Buffer        = ReadData;
 
   Status = TouchDev->I2cIoProtocol->QueueRequest (TouchDev->I2cIoProtocol,
@@ -867,6 +871,40 @@ SetHidReset (
                                                   RequestPacket,
                                                   NULL
                                                   );
+
+  if (Timeout > 0) {
+    do {
+      if ((ReadData[0] == RESET_RESPONSE_BYTE_0) && (ReadData[1] == RESET_RESPONSE_BYTE_1)) {
+        DEBUG ((DEBUG_INFO, "SetHidReset() RESET response received.\n"));
+        break;
+      }
+
+      DeleteRequestPacket(RequestPacket);
+      RequestPacket = NewRequestPacket(1);
+      if (RequestPacket == NULL) {
+        return EFI_OUT_OF_RESOURCES;
+      }
+
+      ReadData[0] = 0xFF;
+      ReadData[1] = 0xFF;
+      RequestPacket->Operation[0].Flags = I2C_FLAG_READ;
+      RequestPacket->Operation[0].LengthInBytes = 2;
+      RequestPacket->Operation[0].Buffer = ReadData;
+
+      Status = TouchDev->I2cIoProtocol->QueueRequest (TouchDev->I2cIoProtocol,0,NULL,RequestPacket,NULL);
+      if (!EFI_ERROR (Status)) {
+        Status = EFI_SUCCESS;
+        break;
+      }
+      MicroSecondDelay (1000);
+      Timeout--;
+    } while (Timeout > 0);
+
+    if (Timeout == 0) {
+      // Output reponse is optional
+      DEBUG ((DEBUG_WARN, "SetHidReset Response Timeout might be expected\n"));
+    }
+  }
   DeleteRequestPacket (RequestPacket);
 
 if (EFI_ERROR (Status)) {

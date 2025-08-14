@@ -39,6 +39,7 @@
   UefiLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
+  TimerLib
 
 [Packages]
   MdePkg/MdePkg.dec
