@@ -1063,16 +1063,16 @@ IpIGpuGetRegistersData (
         return (BOOLEAN)GtRc6Ctx.Bits.rc6memlock;
       } else {
         GtRc6Ctx.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_GCD_0_GT_REG, IpWrRegFlagSize32Bits);
-        return GtRc6Ctx.Bits.rc6membase << RC6CTXBASE_RPM_GCD_0_GT_RC6MEMBASE_LSB;
+        return IpWrLShiftU64 ((UINT64)GtRc6Ctx.Bits.rc6membase, RC6CTXBASE_RPM_GCD_0_GT_RC6MEMBASE_LSB);
       }
 
     case DsmBaseReg:
       DsmBaseCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DSMBASE0_IGPU_REG, IpWrRegFlagSize32Bits);
-      return (DsmBaseCfg.Bits.bdsm_0 << DSMBASE0_IGPU_BDSM_0_LSB);
+      return IpWrLShiftU64((UINT64)DsmBaseCfg.Bits.bdsm_0, DSMBASE0_IGPU_BDSM_0_LSB);
 
     case GsmBaseReg:
       GsmBaseCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, GSMBASE0_IGPU_REG, IpWrRegFlagSize32Bits);
-      return (GsmBaseCfg.Bits.bgsm_lsb << GSMBASE0_IGPU_BGSM_LSB_LSB);
+      return IpWrLShiftU64((UINT64)GsmBaseCfg.Bits.bgsm_lsb, GSMBASE0_IGPU_BGSM_LSB_LSB);
 
     case GgcIGpuSgReg:
       GgcIGpuSgCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, GGC_IGPU_REG, IpWrRegFlagSize32Bits);
@@ -1163,7 +1163,7 @@ IpIGpuGetRegistersData (
         return (BOOLEAN)MediaRc6Ctx.Bits.rc6memlock;
       } else {
         MediaRc6Ctx.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_MEDIA_0_MEDIA_REG, IpWrRegFlagSize32Bits);
-        return MediaRc6Ctx.Bits.rc6membase << RC6CTXBASE_RPM_MEDIA_0_MEDIA_RC6MEMBASE_LSB;
+        return IpWrLShiftU64 ((UINT64)MediaRc6Ctx.Bits.rc6membase, RC6CTXBASE_RPM_MEDIA_0_MEDIA_RC6MEMBASE_LSB);
       }
 
     case DispDsmBaseReg:

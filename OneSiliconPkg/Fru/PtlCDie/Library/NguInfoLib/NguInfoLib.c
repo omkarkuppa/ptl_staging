@@ -133,7 +133,7 @@ GetImrCcsBase (
   IMR1M6BASE_IMPH_IOC_MCHBAR_STRUCT ImrCcsStruct;
 
   ImrCcsStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M6BASE_IMPH_IOC_MCHBAR_REG))));
-  ImrCcsBase = (ImrCcsStruct.Bits.imr_base_rw << IMR1M6BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
+  ImrCcsBase = LShiftU64 ((UINT64)ImrCcsStruct.Bits.imr_base_rw, IMR1M6BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
   return ImrCcsBase;
 }
 
