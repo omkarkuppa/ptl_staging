@@ -23,6 +23,8 @@
 #define MRC_DDR5_SETTINGS_H_
 
 #include "CMrcApi.h"  // Indirectly provides "IN" and "OUT"
+#include "MrcDdrCommon.h"
+#include "MrcDdr5.h"
 
 // AUTO-GENERATED DDR5 TABLE DECLARATIONS START
 // AUTO-GENERATED CODE
@@ -30,47 +32,41 @@
 #define DDR5_NUM_OF_OPTS (7)
 
 typedef enum {
-    Card_207G = 0,
-    Card_240C = 1,
-    Card_241G = 2,
-    Card_246C = 3,
-    Card_256B = 4,
-    Card_269C = 5,
-    Card_279C = 6,
-    Card_default = 7,
+    Card_240C = 0,
+    Card_256B = 1,
+    Card_269C = 2,
+    Card_276C = 3,
+    Card_default = 4,
     Card_Max
 } CardEnum;
 
 typedef enum {
-  Card_default_1R_6400 = 0,
-  Card_default_1R_7200 = 1,
-  Card_default_2R_6400 = 2,
-  Card_default_2R_7200 = 3,
-  Card_240C_1R_6400 = 4,
-  Card_246C_1R_6400 = 5,
-  Card_246C_1R_7200 = 6,
-  Card_269C_1R_6400 = 7,
-  Card_279C_1R_6400 = 8,
-  Card_279C_1R_7200 = 9,
-  Card_207G_2R_6400 = 10,
-  Card_241G_2R_6400 = 11,
-  Card_256B_2R_6400 = 12,
-  Card_256B_2R_7200 = 13,
+  Card_240C_1R_6400 = 0,
+  Card_256B_2R_6400 = 1,
+  Card_256B_2R_7200 = 2,
+  Card_269C_1R_6400 = 3,
+  Card_276C_1R_6400 = 4,
+  Card_276C_1R_7200 = 5,
+  Card_default_1R_6400 = 6,
+  Card_default_1R_7200 = 7,
+  Card_default_2R_6400 = 8,
+  Card_default_2R_7200 = 9,
   Card_NotFound
 } Ddr5ParamIndex;
 
 typedef struct {
-  INT8 ddr5_dfe_tap1;
-  INT8 ddr5_dfe_tap2;
-  INT8 ddr5_rtt_wr;
-  INT8 ddr5_rtt_nom_wr;
-  INT8 ddr5_rtt_park_rx;
-  INT8 ddr5_ron_up;
-  INT8 ddr5_ron_dn;
+  INT8    DfeTap1;
+  INT8    DfeTap2;
+  UINT16  RttWr;
+  UINT16  RttNomWr;
+  UINT16  RttNomRd;
+  UINT16  RonUp;
+  UINT16  RonDn;
 } NnFlexDdr5Params;
 
 extern const char* CardPartNumber[];
 extern const char* Ddr5OptParamNames[];
+extern const char* Ddr5CardToName[];
 extern const NnFlexDdr5Params NnFlexInitialSettingsDdr5[];
 /**
   This function returns index NN Flex csv according to to Dimm/Rank/Freq.
@@ -169,7 +165,7 @@ SelectDfeTableDdr5 (
   @returns - The corresponding card index.
 **/
 CardEnum
-GetCardEnumFromPartNumber (
-  IN const char* ModulePartNumber
+Ddr5GetCardEnumFromPartNumber (
+  IN const CHAR8* ModulePartNumber
   );
 #endif // MRC_DDR5_SETTINGS_H_

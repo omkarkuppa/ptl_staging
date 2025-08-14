@@ -223,5 +223,17 @@ GetDdr5DFETableIndex (
   IN const UINT32             Dimm,
   IN OUT   TDFEValueDdr5      *TDFEValueDdr5Table
   );
+
+/**
+  This function converts from Ohms to DDR5 MR5 PU/PD Drive Strength encoding.
+
+  @param[in]  DrvStrValue  - Ron Value in Ohms.
+
+  @retval INT8 - Encoding if valid Ron value.  Else, -1.
+**/
+INT8
+Ddr5DriveStrengthEncode (
+  IN  UINT16  DrvStrValue
+  );
 #endif // MRC_DDR_5_PRIVATE_H_
 

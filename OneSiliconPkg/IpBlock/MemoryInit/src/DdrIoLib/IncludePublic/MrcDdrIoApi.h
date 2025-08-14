@@ -408,20 +408,40 @@ typedef struct {
   INT64  GetSetDccSamples;
 } MRC_DATA_PI_LIN_SAVE;
 
+// AUTO-GENERATED LP5 TABLE DECLARATIONS START
+// AUTO-GENERATED CODE
+typedef struct {
+  INT8  RxEqTap0;
+  INT8  RxEqTap1;
+  INT8  DqTcoComp;
+} NnFlexDdrioLpddr5Params;
+
+typedef struct {
+  UINT16 RdOdt;
+  UINT16 WrDS;
+  UINT16 WrDSCmd;
+  UINT16 WrDSCtl;
+  UINT16 WrDSClk;
+} NnFlexRcompLpddr5Params;
+
+extern const NnFlexDdrioLpddr5Params NnFlexDdrioInitialSettingsLpddr5[MaxNnFlexDramPart];
+extern const NnFlexRcompLpddr5Params NnFlexRcompInitialSettingsLpddr5[MaxNnFlexDramPart];
+// AUTO-GENERATED LP5 TABLE DECLARATIONS END
+
 // AUTO-GENERATED DDR5 TABLE DECLARATIONS START
 // AUTO-GENERATED CODE
 typedef struct {
-  INT8 cpu_ron;
-  INT8 dq_tco;
-  INT8 dq_odt;
-  INT8 rxtap0;
-  INT8 rxtap1;
-  INT8 ctle_r;
-  INT8 ctle_c;
-  INT8 ctle_rcmn;
-  INT8 ctle_dccmn;
-  INT8 ctle_eq;
-  INT8 ctle_tailctl;
+  UINT16 WrDS;
+  INT8   DqTcoComp;
+  UINT16 RdOdt;
+  INT8   RxEqTap0;
+  INT8   RxEqTap1;
+  INT8   RxCtleR;
+  INT8   RxCtleC;
+  INT8   RxCtleRcmn;
+  INT8   RxCtleDcCmn;
+  INT8   RxCtleEq;
+  INT8   RxCtleTailCtl;
 } NnFlexPhyDdr5Params;
 
 extern const NnFlexPhyDdr5Params NnFlexPhyInitialSettingsDdr5[];
@@ -3161,7 +3181,7 @@ IoReset (
   );
 
 /**
-  This function overriding Ddrio Phy initial settings based on NN Flex settings.
+  This function overrides DDRIO PHY initial settings for DDR5 based on NN Flex settings.
 
   @param[in]  MrcData                - Pointer to MRC global data.
   @param[in]  NnFlexPhyDdr5Params    - Phy initial settings for Dimm card.
@@ -3172,9 +3192,25 @@ IoReset (
 **/
 VOID
 NnFlexPerDeviceDdr5PhyUpdate (
+  IN  MrcParameters* const  MrcData,
+  IN  const NnFlexPhyDdr5Params* Ddr5PhyParamsConfig,
+  IN  UINT8  Controller,
+  IN  UINT8  Channel
+  );
+
+/**
+  This function overrides DDRIO PHY initial settings for LPDDR5 based on NN Flex settings.
+
+  @param[in]  MrcData                  - Pointer to MRC global data.
+  @param[in]  Lpddr5DdrioParamsConfig  - Ddrio initial settings for Dimm card.
+  @param[in]  Lpddr5RcompParamsConfig  - Rcomp initial settings for Dimm card.
+
+  @return VOID
+**/
+VOID
+NnFlexPerDeviceLpddr5PhyUpdate (
   IN  MrcParameters* const MrcData,
-  IN  NnFlexPhyDdr5Params Ddr5PhyParamsConfig,
-  IN  UINT8           Controller,
-  IN  UINT8           Channel
+  IN  const NnFlexDdrioLpddr5Params* Lpddr5DdrioParamsConfig,
+  IN  const NnFlexRcompLpddr5Params* Lpddr5RcompParamsConfig
   );
 #endif //MRC_DDR_IO_API_H_

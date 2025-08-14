@@ -438,6 +438,76 @@ EncodeDdr5TccdlTdllk (
 }
 
 /**
+  This function converts from Ohms to DDR5 MR5 PU/PD Drive Strength encoding.
+
+  @param[in]  DrvStrValue  - Ron Value in Ohms.
+
+  @retval INT8 - Encoding if valid Ron value.  Else, -1.
+**/
+INT8
+Ddr5DriveStrengthEncode (
+  IN  UINT16  DrvStrValue
+  )
+{
+  INT8      EncodeVal;
+
+  switch (DrvStrValue) {
+    case 48:
+      EncodeVal = DDR5_ODIC_48;
+      break;
+
+    case 40:
+      EncodeVal = DDR5_ODIC_40;
+      break;
+
+    case 34:
+      EncodeVal = DDR5_ODIC_34;
+      break;
+
+    default:
+      EncodeVal = DDR5_ODIC_INVALID_VALUE;
+      break;
+  }
+
+  return EncodeVal;
+}
+
+/**
+  This function converts from DDR5 MR5 PU/PD Drive Strength encoding to Ohms.
+
+  @param[in]  DecodeVal - Decoded Ron value.
+
+  @retval INT16 - Ron Value in Ohms if valid. Else, -1.
+**/
+INT16
+Ddr5DriveStrengthDecode (
+  IN  UINT16 DecodeVal
+  )
+{
+  INT16      RonValue;
+
+  switch (DecodeVal) {
+    case DDR5_ODIC_48:
+      RonValue = 48;
+      break;
+
+    case DDR5_ODIC_40:
+      RonValue = 40;
+      break;
+
+    case DDR5_ODIC_34:
+      RonValue = 34;
+      break;
+
+    default:
+      RonValue = DDR5_ODIC_INVALID_VALUE;
+      break;
+  }
+
+  return RonValue;
+}
+
+/**
   Enable/Disable DDR5 Read Preamble Training mode on DRAM.
 
   @param[in] MrcData              - Include all MRC global data.
@@ -830,6 +900,7 @@ Ddr5JedecInitVal (
   UINT8          DfeTap4;
   UINT32         Profile;
   UINT32         Dimm;
+  INT8           Mr5Encoding;
   DDR5_MR32_CKCSCA_ODT CccRttValue;
   DDR5_MR33_RTT_PARK   DataRttValue;
   DDR5_MR33_RTT_PARK   RttNomWr;
@@ -837,6 +908,7 @@ Ddr5JedecInitVal (
   TOdtValueDqDdr5  DqOdtTableIndex;
   TOdtValueCccDdr5 CccOdtTableIndex[2];
   TDFEValueDdr5    DFETableIndex;
+  Ddr5ParamIndex   OptParamIndex;
   DDR5_MR8_tRPRE   RpreVal;
   DDR5_MR8_tRPOST  RpostVal;
   DDR5_MR8_tWPRE   WpreVal;
@@ -876,6 +948,12 @@ Ddr5JedecInitVal (
   RetVal     = 0;
   CccRttValue = 0;
   DataRttValue = 0;
+  OptParamIndex = GetDdr5ParamIndex (Outputs->Frequency, DimmOut->RankInDimm, Card_default);
+
+  if (OptParamIndex == Card_NotFound) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s: Unexpected. Card not found.\n", gWrongInputParam);
+    return mrcFail;
+  }
 
   Dimm = RANK_TO_DIMM_NUMBER (Rank);
   Status = GetOdtTableIndex (MrcData, Controller, Channel, Dimm, &DqOdtTableIndex);
@@ -890,6 +968,17 @@ Ddr5JedecInitVal (
   if (Status != mrcSuccess) {
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s: invalid DFE index", gErrString);
     return mrcFail;
+  }
+
+  if (Inputs->InitPerDeviceNnFlex) {
+    // Update Odt table
+    DqOdtTableIndex.RttWr    = NnFlexInitialSettingsDdr5[OptParamIndex].RttWr;
+    DqOdtTableIndex.RttNomRd = NnFlexInitialSettingsDdr5[OptParamIndex].RttNomRd;
+    DqOdtTableIndex.RttNomWr = NnFlexInitialSettingsDdr5[OptParamIndex].RttNomWr;
+
+    // Update Dfe table
+    DFETableIndex.Tap1 = NnFlexInitialSettingsDdr5[OptParamIndex].DfeTap1;
+    DFETableIndex.Tap2 = NnFlexInitialSettingsDdr5[OptParamIndex].DfeTap2;
   }
 
   // We will only return one value for the input MR Num.
@@ -948,11 +1037,31 @@ Ddr5JedecInitVal (
       break;
 
     case mrMR5:
-      // Mr5->Bits.DataOutputDisable = 0; (Default)
-      // Mr5->Bits.PullUpOutputDriverImpedance = 0; (RZQ/7)
-      // Mr5->Bits.TdqsEnable = 0; (Default)
-      // Mr5->Bits.DmEnable = 0; (Default)
-      Mr5->Bits.PullDownOutputDriverImpedance = 0; // (RZQ/7)
+      if (Inputs->InitPerDeviceNnFlex) {
+        // Ron Up
+        Mr5Encoding = Ddr5DriveStrengthEncode (NnFlexInitialSettingsDdr5[OptParamIndex].RonUp);
+        if (Mr5Encoding == DDR5_ODIC_INVALID_VALUE) {
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, NnFlexInitialSettingsDdr5[OptParamIndex].RonUp);
+          Status = mrcWrongInputParameter;
+          break;
+        } else {
+          Mr5->Bits.PullUpOutputDriverImpedance = Mr5Encoding;
+        }
+        // Ron Dn
+        Mr5Encoding = Ddr5DriveStrengthEncode (NnFlexInitialSettingsDdr5[OptParamIndex].RonDn);
+        if (Mr5Encoding == DDR5_ODIC_INVALID_VALUE) {
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, NnFlexInitialSettingsDdr5[OptParamIndex].RonDn);
+          Status = mrcWrongInputParameter;
+        } else {
+          Mr5->Bits.PullDownOutputDriverImpedance = Mr5Encoding;
+        }
+      } else {
+        // Mr5->Bits.DataOutputDisable = 0; (Default)
+        // Mr5->Bits.PullUpOutputDriverImpedance = 0; (RZQ/7)
+        // Mr5->Bits.TdqsEnable = 0; (Default)
+        // Mr5->Bits.DmEnable = 0; (Default)
+        Mr5->Bits.PullDownOutputDriverImpedance = 0; // (RZQ/7)
+      }
       break;
 
     case mrMR6:
@@ -1303,76 +1412,6 @@ Ddr5JedecInitVal (
   }
 
   return Status;
-}
-
-/**
-  This function converts from Ohms to DDR5 MR5 PU/PD Drive Strength encoding.
-
-  @param[in]  DrvStrValue  - Ron Value in Ohms.
-
-  @retval INT8 - Encoding if valid Ron value.  Else, -1.
-**/
-INT8
-Ddr5DrvStrEncode (
-  IN  UINT16  DrvStrValue
-  )
-{
-  INT8      EncodeVal;
-
-  switch (DrvStrValue) {
-    case 48:
-      EncodeVal = DDR5_ODIC_48;
-      break;
-
-    case 40:
-      EncodeVal = DDR5_ODIC_40;
-      break;
-
-    case 34:
-      EncodeVal = DDR5_ODIC_34;
-      break;
-
-    default:
-      EncodeVal = -1;
-      break;
-  }
-
-  return EncodeVal;
-}
-
-/**
-  This function converts from DDR5 MR5 PU/PD Drive Strength encoding to Ohms.
-
-  @param[in]  DecodeVal - Decoded Ron value.
-
-  @retval INT16 - Ron Value in Ohms if valid. Else, -1.
-**/
-INT16
-DdrDrvStrDecode (
-  IN  UINT16 DecodeVal
-  )
-{
-  INT16      RonValue;
-
-  switch (DecodeVal) {
-    case DDR5_ODIC_48:
-      RonValue = 48;
-      break;
-
-    case DDR5_ODIC_40:
-      RonValue = 40;
-      break;
-
-    case DDR5_ODIC_34:
-      RonValue = 34;
-      break;
-
-    default:
-      RonValue = -1;
-      break;
-  }
-
-  return RonValue;
 }
 
 /**
@@ -2354,8 +2393,8 @@ MrcDdr5SetMr5 (
   }
 
   if (PuDrvStr != MRC_IGNORE_ARG_16) {
-    Encoding = Ddr5DrvStrEncode (PuDrvStr);
-    if (Encoding == -1) {
+    Encoding = Ddr5DriveStrengthEncode (PuDrvStr);
+    if (Encoding == DDR5_ODIC_INVALID_VALUE) {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, PuDrvStr);
       Status = mrcWrongInputParameter;
     } else {
@@ -2372,8 +2411,8 @@ MrcDdr5SetMr5 (
   }
 
   if (PdDrvStr != MRC_IGNORE_ARG_16) {
-    Encoding = Ddr5DrvStrEncode (PdDrvStr);
-    if (Encoding == -1) {
+    Encoding = Ddr5DriveStrengthEncode (PdDrvStr);
+    if (Encoding == DDR5_ODIC_INVALID_VALUE) {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, PdDrvStr);
       Status = mrcWrongInputParameter;
     } else {
@@ -4735,13 +4774,13 @@ Ddr5CalcDimmImpedance (
       case OptDimmRon:
       case OptDimmRonUp:
         Ddr5ModeRegister5.Data8 = (UINT8) MrValue;
-        // Need call DdrDrvStrDecode as DimmOptParamValues points to a table which is hard to map to MrValue directly
-        Impedance = Override ? OverrideValue : ((UINT16) (DdrDrvStrDecode(Ddr5ModeRegister5.Bits.PullUpOutputDriverImpedance)));
+        // Need call Ddr5DriveStrengthDecode as DimmOptParamValues points to a table which is hard to map to MrValue directly
+        Impedance = Override ? OverrideValue : ((UINT16) (Ddr5DriveStrengthDecode(Ddr5ModeRegister5.Bits.PullUpOutputDriverImpedance)));
         break;
       case OptDimmRonDn:
         Ddr5ModeRegister5.Data8 = (UINT8) MrValue;
-        // Need call DdrDrvStrDecode as DimmOptParamValues points to a table which is hard to map to MrValue directly
-        Impedance = Override ? OverrideValue : ((UINT16) (DdrDrvStrDecode(Ddr5ModeRegister5.Bits.PullDownOutputDriverImpedance)));
+        // Need call Ddr5DriveStrengthDecode as DimmOptParamValues points to a table which is hard to map to MrValue directly
+        Impedance = Override ? OverrideValue : ((UINT16) (Ddr5DriveStrengthDecode(Ddr5ModeRegister5.Bits.PullDownOutputDriverImpedance)));
         break;
       case OptDimmOdtCA:
         /*

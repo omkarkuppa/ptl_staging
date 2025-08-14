@@ -731,12 +731,17 @@ typedef struct {
   UINT16  MinMargin[LoopBackTasksMax];
   // Bitmasks of failed partitions
   UINT32  FailedMcChMask;         // [0:3] - MC0 CH[0..3], [4:7] - MC1 CH[0..3]; CH2/3 are not used in DDR5 case
+                                  // Can also represent CCC[0..7] partitions for both LP5/DDR5
   UINT32  FailedByteMask;         // LP5:  [0:1] - MC0 C0 Byte[0..1], [2:3] - MC0 C1 Byte[0..1], etc.
                                   // DDR5: [0:3] - MC0 C0 Byte[0..3], [4:7] - MC0 C1 Byte[0..3], etc.
+                                  // Can also represent Data[0..7]Ch[0..1] partitions for both LP5/DDR5
   UINT32  FailedDataSharedMask;   // [0:7] - DataShared[0..7]
   UINT32  FailedCccSharedMask;    // [0:3] - CccShared[0..3]
   UINT32  FailedCompMask;         // [0]   - COMP
   UINT32  FailedLvrMask;          // Bitmask of (1 << Supply), where Supply is one of LVR_AUTO_TRIM_SUPPLY_TYPE
+  UINT32  FailedPhClkCheckMask;   // Bitmask of failed phase clock check stages
+                                  // [0:9] - bitmask corresponding to DcdType enum
+                                  // [16:17] - bitmask corresponding to SweepType enum
   INT16   LeftEdgeResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS];
 } LOOPBACK_RESULT;
 #pragma pack (pop)

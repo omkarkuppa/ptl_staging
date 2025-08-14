@@ -96,6 +96,12 @@ MrcPowerDownConfig (
           MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPPD, WriteToCache | PrintValue, &GetSetEn);
           break;
       }
+
+      GetSetVal = 0x3FF;
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMaxPcit, WriteToCache | PrintValue, &GetSetVal);
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMaxPdwnIdleCounter, WriteToCache | PrintValue, &GetSetVal);
+      GetSetVal = 0x20;
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMinPdwnIdleCounter, WriteToCache | PrintValue, &GetSetVal);
     }
   }
 

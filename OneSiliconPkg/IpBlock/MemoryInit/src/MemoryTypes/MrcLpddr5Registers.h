@@ -321,6 +321,14 @@ typedef union {
   UINT8 Data8;
 } LPDDR5_MODE_REGISTER_4_TYPE;
 
+/// Mode Register 5 is Read Only
+typedef union {
+  struct {
+    UINT8 Manufacturer    : 8;  ///< Bits 0:7
+  } Bits;
+  UINT8 Data8;
+} LPDDR5_MODE_REGISTER_5_TYPE;
+
 /// Mode Register 8 is Read Only
 typedef union {
   struct {

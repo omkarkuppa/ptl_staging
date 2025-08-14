@@ -585,6 +585,9 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccCmiSourceId2",
   "GsmMccCmiSourceId3",
   "GsmMccDelayPMAckCycles",
+  "GsmMccMinPdwnIdleCounter",
+  "GsmMccMaxPdwnIdleCounter",
+  "GsmMccMaxPcit",
   "GsmMccEnSrxTempRead",
   "GsmMccSrxZqcal",
   "GsmMccEcDis",
@@ -2119,6 +2122,9 @@ MrcCheckGroupSupported (
     case GsmMccCmiSourceId2:
     case GsmMccCmiSourceId3:
     case GsmMccDelayPMAckCycles:
+    case GsmMccMinPdwnIdleCounter:
+    case GsmMccMaxPdwnIdleCounter:
+    case GsmMccMaxPcit:
     case GsmMccRrdValidTrigger:
     case GsmMccRrdValidOverflow:
     case GsmMccRrdValidValue:

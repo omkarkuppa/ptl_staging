@@ -26,6 +26,43 @@
 #include "CMrcApi.h"
 #include "MrcMemoryApi.h"
 #include "MrcDdrIoUtils.h"
+// AUTO-GENERATED LP5 TABLES START
+// AUTO-GENERATED CODE
+// Lp5 Parameters Table
+#define MICRON_MANUFACTURE_ID                      (0xFF)
+#define SAMSUNG_MANUFACTURE_ID                     (0x1)
+#define SKHYNIX_MANUFACTURE_ID                     (0x6)
+
+// Dfeq/ PdDrvStr/ SocOdt/ PreEmpDn/ PreEmpUp/ WckDcaWr/ WckDcaRd/ RttWr/ RttCa/ RttNT/
+const NnFlexLpddr5Params NnFlexInitialSettingsLpddr5[] = {
+  {   4,  60,  40,   2,   3,   1,  -2, 120, 240,   0 },
+  {   4,  60,  40,   2,   3,   1,  -2, 120, 240,   0 },
+  {   2,  40,  40,   2,   1,  -2,  -2,  80, 240,   0 },
+  {   7,  48,  40,   3,   3,  -3,   2,  80, 240,   0 },
+  {   2,  40,  40,   2,   1,  -2,  -2,  80, 240,   0 },
+  {   7,  48,  40,   3,   3,  -3,   2,  80, 240,   0 },
+};
+
+static const DramPartMap NnFlexDramPartMap[MaxNnFlexDramPart] = {
+  {DeviceDefault_key,        DramTypeDefault},
+  {DeviceDefault1_key,       DramTypeDefault1},
+  {Samsung_2R_8533_1_key,    Samsung_2R_8533_1},
+  {Micron_2R_8533_1_key,     Micron_2R_8533_1},
+  {Samsung_2R_8533_0_key,    Samsung_2R_8533_0},
+  {Micron_2R_8533_0_key,     Micron_2R_8533_0},
+};
+
+typedef union {
+  struct {
+    UINT32 Vendor           :  3; // Bits 0:2   - Default = 0, Micron = 1, Samsung = 2, Hynix = 3
+    UINT32 Rank             :  2; // Bits 3:4   -  0 = 1R, 1 = 2R
+    UINT32 Freq             : 14; // Bits 5:18  - 2133 < Freq < 11000
+    UINT32 Board            :  1; // Bit  19    - 0 = Non Typical Board (Type3), 1 = Typical Board (Type4)
+    UINT32 ModulePartNumber :  4; // Bits 20:23 - Module Part Number
+  } Bits;
+  UINT32 Data;
+} DRAM_TYPE_STRUCT;
+// AUTO-GENERATED LP5 TABLES END
 
 // LPDDR5 ODT Values
 // ODT values are in this order: { RttWr, RttWck, RttCa, RttCa2RByteMode, RttCs, RttCs2RByteMode, RttNT}
@@ -79,6 +116,13 @@ SelectTableLpddr5 (
     OdtTable = (TOdtValueLpddr*) &Lpddr5OdtTableType3[Dimm][OdtIndex];
   }
 
+  if (Inputs->InitPerDeviceNnFlex) {
+    // Nn Flex RttWr/ RttCa/ RttNT settings for Lpddr5 - All Cards can have same default values
+    OdtTable->RttWr = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttWr;
+    OdtTable->RttCa = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttCa;
+    OdtTable->RttNT = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttNT;
+  }
+
   return OdtTable;
 }
 
@@ -98,12 +142,19 @@ MrcLp5GetDFE (
   OUT UINT8          *Dfequ
   )
 {
-  // EV Feedback - All configurations should have same value
-  if ((Dfeql != NULL) && (Dfequ != NULL)) {
-    *Dfeql = 4;
-    *Dfequ = 4;
-  }
+  const MrcInput* Inputs;
+  Inputs = &MrcData->Inputs;
 
+  // DFE setting range is from -0.052V to -0.01V in step size of 7mV. Tap=1: -0.052V, Tap=7: -0.01V
+  if ((Dfeql != NULL) && (Dfequ != NULL)) {
+    if (Inputs->InitPerDeviceNnFlex) { // Nn Flex initial settings for Lpddr5
+      *Dfeql = NnFlexInitialSettingsLpddr5[DramTypeDefault].Dfeq; // NN "Per Device" logic
+      *Dfequ = NnFlexInitialSettingsLpddr5[DramTypeDefault].Dfeq; // NN "Per Device" logic
+    } else {
+      *Dfeql = 4;
+      *Dfequ = 4;
+    }
+  }
   return mrcSuccess;
 }
 
@@ -136,4 +187,105 @@ MrcLp5GetVrefDq (
   }
 
   return (UINT16) DqVrefMv;
+}
+
+/**
+  This function map between pre-defined Vendor,Freq,Rank,BoardType combination formatted kay
+  to a table entry containing configuration values defined for that specific combination
+
+  @param[in] DramKey - pre-defined Vendor,Freq,Rank,BoardType combination formatted kay
+
+  @returns NnFlexDramPart - Table entry containing configuration values defined per dimm specific combination.
+**/
+NnFlexDramPart
+GetNnFlexDramPart (
+  IN UINT32 DramKey
+)
+{
+  UINT8 Index;
+  for (Index = 0; Index < MaxNnFlexDramPart; ++Index) {
+    if (DramKey == NnFlexDramPartMap[Index].Key) {
+      return NnFlexDramPartMap[Index].DevIndex;
+    }
+  }
+  return DramTypeDefault;
+}
+
+/**
+  This function returns DRAM type for NN Flex per device usage.
+
+  @param[in] MrcData - Pointer to global MRC data.
+
+  @returns NnFlexDramPart - Table entry containing configuration values defined per dimm specific combination.
+**/
+NnFlexDramPart
+Lpddr5NnFlexGetDramType (
+  IN MrcParameters* MrcData
+)
+{
+  MrcInput*       Inputs;
+  MrcOutput*      Outputs;
+  MrcDebug*       Debug;
+  MrcBoardInputs* BoardDetails;
+
+  BOOLEAN     IsTypicalBoard;
+  UINT32      FirstController;
+  UINT32      FirstChannel;
+  UINT16      Manufacture;
+  UINT8       MrrResult[MRC_MRR_ARRAY_SIZE];
+
+  NnFlexDramPart   DramType;
+  DRAM_TYPE_STRUCT DramTypeStruct;
+  LPDDR5_MODE_REGISTER_5_TYPE Mr5;
+
+  Inputs  = &MrcData->Inputs;
+  Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
+
+  BoardDetails    = &Inputs->ExtInputs.Ptr->BoardDetails;
+  IsTypicalBoard  = BoardDetails->BoardStackUp == 0;
+  FirstController = Outputs->FirstPopController;
+  FirstChannel    = Outputs->Controller[FirstController].FirstPopCh;
+
+  if (Outputs->Frequency < f8533) {
+    return DramTypeDefault;
+  }
+
+  // Read Manufacture id
+  MrcIssueMrr (MrcData, FirstController, FirstChannel, dDIMM0, mrMR5, MrrResult);
+  Mr5.Data8   = MrrResult[0];
+  Manufacture = Mr5.Data8;
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MR5: %d\n", Manufacture);
+
+  // compress/map ModulePartNumber into small enum,per limited relevant cases
+  switch (Manufacture) {
+    case MICRON_MANUFACTURE_ID:
+      Manufacture = 1;
+      break;
+    case SAMSUNG_MANUFACTURE_ID:
+      Manufacture = 2;
+      break;
+    case SKHYNIX_MANUFACTURE_ID:
+      Manufacture = 3;
+      break;
+    default:
+      Manufacture = 0;
+  }
+
+  DramTypeStruct.Bits.Vendor = (Manufacture & 0x7);
+  DramTypeStruct.Bits.Rank   = Outputs->IsAny2Ranks;
+  DramTypeStruct.Bits.Freq   = Outputs->Frequency;
+  DramTypeStruct.Bits.Board  = IsTypicalBoard;
+  DramTypeStruct.Bits.ModulePartNumber = 0; // No ModulePartNumber for LP
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DramTypeStruct.Bits.Vendor: %d\n", DramTypeStruct.Bits.Vendor);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DramTypeStruct.Bits.Rank: %d\n", DramTypeStruct.Bits.Rank);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DramTypeStruct.Bits.Freq: %d\n", DramTypeStruct.Bits.Freq);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DramTypeStruct.Bits.Board: %d\n", DramTypeStruct.Bits.Board);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DramTypeStruct.Bits.ModulePartNumber: %d\n", DramTypeStruct.Bits.ModulePartNumber);
+
+  DramType = GetNnFlexDramPart (DramTypeStruct.Data);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DramType: %x\n", DramType);
+
+  return DramType;
 }

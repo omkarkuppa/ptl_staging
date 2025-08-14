@@ -246,4 +246,30 @@ typedef union {
   UINT64 Value;
 } MRC_PPR_TEST_TYPE;
 
+// AUTO-GENERATED LP5 TABLE DECLARATIONS START
+// AUTO-GENERATED CODE
+typedef enum {
+  DramTypeDefault,
+  DramTypeDefault1,
+  Samsung_2R_8533_1,
+  Micron_2R_8533_1,
+  Samsung_2R_8533_0,
+  Micron_2R_8533_0,
+  MaxNnFlexDramPart
+} NnFlexDramPart;
+
+// Refers DRAM_TYPE_STRUCT:    Vendor |   Rank   |      Freq     |   BoardType
+#define DeviceDefault_key     (  0  )
+#define DeviceDefault1_key    (  0    |     0    |       0       |   (1 << 19)  )
+#define Samsung_2R_8533_1_key (  2    | (1 << 3) |  (8533 << 5)  |   (1 << 19)  )
+#define Micron_2R_8533_1_key  (  1    | (1 << 3) |  (8533 << 5)  |   (1 << 19)  )
+#define Samsung_2R_8533_0_key (  2    | (1 << 3) |  (8533 << 5)  |   (0 << 19)  )
+#define Micron_2R_8533_0_key  (  1    | (1 << 3) |  (8533 << 5)  |   (0 << 19)  )
+
+typedef struct {
+  UINT32  Key;
+  NnFlexDramPart  DevIndex;
+} DramPartMap;
+
+// AUTO-GENERATED LP5 TABLE DECLARATIONS END
 #endif

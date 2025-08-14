@@ -23,6 +23,23 @@
 #define MRC_LPDDR5_SETTINGS_H_
 
 #include "CMrcApi.h"  // Indirectly provides "IN" and "OUT"
+// AUTO-GENERATED LP5 TABLE DECLARATIONS START
+// AUTO-GENERATED CODE
+typedef struct {
+  UINT8  Dfeq;
+  UINT16 PdDrvStr;
+  UINT16 SocOdt;
+  INT8   PreEmpDn;
+  INT8   PreEmpUp;
+  INT8   WckDcaWr;
+  INT8   WckDcaRd;
+  UINT16 RttWr;
+  UINT16 RttCa;
+  UINT16 RttNT;
+} NnFlexLpddr5Params;
+
+extern const NnFlexLpddr5Params NnFlexInitialSettingsLpddr5[MaxNnFlexDramPart];
+// AUTO-GENERATED LP5 TABLE DECLARATIONS END
 
 /**
   This function selects the ODT table according to the board type.
@@ -40,4 +57,15 @@ SelectTableLpddr5 (
   IN const TOdtIndex      OdtIndex
   );
 
+/**
+  This function returns DRAM type for NN Flex per device usage.
+
+  @param[in] MrcData - Pointer to global MRC data.
+
+  @returns NnFlexDramPart - table entry containing configuration values defined for that specific combination
+**/
+NnFlexDramPart
+Lpddr5NnFlexGetDramType (
+  IN  MrcParameters* MrcData
+  );
 #endif // MRC_LPDDR5_SETTINGS_H_

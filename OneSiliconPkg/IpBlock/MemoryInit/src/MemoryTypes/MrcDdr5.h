@@ -347,10 +347,11 @@ typedef struct {
 } TCkdValue;
 
 typedef enum {
-  DDR5_ODIC_34,     // 0 - RZQ/7 = 34 Ohm
-  DDR5_ODIC_40,     // 1 - RZQ/6 = 40 Ohm
-  DDR5_ODIC_48,     // 2 - RZQ/5 = 48 Ohm
-  DDR5_ODIC_RSVD_1  // 3 - Reserved
+  DDR5_ODIC_34,           // 0 - RZQ/7 = 34 Ohm
+  DDR5_ODIC_40,           // 1 - RZQ/6 = 40 Ohm
+  DDR5_ODIC_48,           // 2 - RZQ/5 = 48 Ohm
+  DDR5_ODIC_RSVD_1,       // 3 - Reserved
+  DDR5_ODIC_INVALID_VALUE // 4 - Invalid value
 } OutputDriverImpedanceControlDdr5;
 
 // DDR5 Write leveling modes
@@ -929,7 +930,7 @@ MrcGetDdr5Tzqcs (
   @return Ron Value in Ohms if valid. Else, -1.
 **/
 INT16
-DdrDrvStrDecode (
+Ddr5DriveStrengthDecode (
   IN  UINT16 DecodeVal
   );
 

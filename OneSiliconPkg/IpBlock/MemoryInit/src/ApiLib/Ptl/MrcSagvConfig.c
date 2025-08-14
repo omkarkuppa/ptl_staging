@@ -195,7 +195,7 @@ MrcCalcSagvTypeConfig (
       if (FreqMax == f7200) {
         Freq = f6400;
       } else {
-        Freq = f5600;
+        Freq = f6000;
       }
     } else {
       // Recalculate Freq - 1 bin

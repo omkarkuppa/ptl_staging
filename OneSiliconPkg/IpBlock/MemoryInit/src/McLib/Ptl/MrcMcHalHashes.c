@@ -996,6 +996,18 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_PM_CONTROL_delay_PM_Ack_cycles_HSH;
     break;
 
+  case GsmMccMinPdwnIdleCounter:
+    HashPtr->Data = MC0_CH0_CR_PM_ADAPTIVE_CKE_MIN_PDWN_IDLE_COUNTER_HSH;
+    break;
+
+  case GsmMccMaxPdwnIdleCounter:
+    HashPtr->Data = MC0_CH0_CR_PM_ADAPTIVE_CKE_MAX_PDWN_IDLE_COUNTER_HSH;
+    break;
+
+  case GsmMccMaxPcit:
+    HashPtr->Data = MC0_CH0_CR_SC_ADAPTIVE_PCIT_MAX_PCIT_HSH;
+    break;
+
   case GsmMccWCKDiffLowInIdle:
     HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_wckdifflowinidle_HSH;
     break;

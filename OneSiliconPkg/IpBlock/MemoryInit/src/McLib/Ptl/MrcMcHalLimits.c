@@ -855,6 +855,21 @@ MrcGetMcConfigGroupLimits (
       Max = MC0_PM_CONTROL_delay_PM_Ack_cycles_MAX;
       break;
 
+    case GsmMccMinPdwnIdleCounter:
+      Min = MC0_CH0_CR_PM_ADAPTIVE_CKE_MIN_PDWN_IDLE_COUNTER_MIN;
+      Max = MC0_CH0_CR_PM_ADAPTIVE_CKE_MIN_PDWN_IDLE_COUNTER_MAX;
+      break;
+
+    case GsmMccMaxPdwnIdleCounter:
+      Min = MC0_CH0_CR_PM_ADAPTIVE_CKE_MAX_PDWN_IDLE_COUNTER_MIN;
+      Max = MC0_CH0_CR_PM_ADAPTIVE_CKE_MAX_PDWN_IDLE_COUNTER_MAX;
+      break;
+
+    case GsmMccMaxPcit:
+      Min = MC0_CH0_CR_SC_ADAPTIVE_PCIT_MAX_PCIT_MIN;
+      Max = MC0_CH0_CR_SC_ADAPTIVE_PCIT_MAX_PCIT_MAX;
+      break;
+
     case GsmMccForceSRState:
       Min = MC0_NORMALMODE_CFG_Force_SR_State_MIN;
       Max = MC0_NORMALMODE_CFG_Force_SR_State_MAX;

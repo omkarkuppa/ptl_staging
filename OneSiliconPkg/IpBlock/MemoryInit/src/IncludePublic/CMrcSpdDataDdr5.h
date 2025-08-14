@@ -588,6 +588,8 @@ typedef struct {
   UINT8                               ModulePartNumber[550 - 521 + 1]; ///< 521-550 Module Part Number
 } SPD5_MODULE_PART_NUMBER;
 
+#define SPD5_MODULE_PART_NUMBER_SIZE  (sizeof (SPD5_MODULE_PART_NUMBER))
+
 // Byte 551
 // Module Revision Code
 typedef UINT8                         SPD5_MODULE_REVISION_CODE;

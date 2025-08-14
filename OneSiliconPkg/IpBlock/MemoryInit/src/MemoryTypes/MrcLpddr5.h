@@ -1421,5 +1421,15 @@ EncodeReadLatencyLpddr5 (
   OUT UINT8         *EncVal
   );
 
+/**
+  This function converts from 2s complement value to LPDDR5 MR DCA encoding (MR30 for LPDDR5).
 
+  @param[in]  DcaValue - 2s complement value.
+
+  @retval UINT8 - Encoding if valid DCA value.  Else, 0xFF.
+**/
+UINT8
+Lpddr5DcaEncode (
+  IN  INT16  DcaValue
+);
 #endif // _MRC_LPDDR5_H_

@@ -246,7 +246,7 @@ MrcAliasCheck (
       //
       // Run the test
       //
-      //@todo      Status = MrcRunMemoryScrub (MrcData, ActiveChBitMask, TRUE);
+      // Status = MrcRunMemoryScrub (MrcData, ActiveChBitMask, TRUE);
       if (Status != mrcSuccess) {
         break;
       }

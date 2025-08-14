@@ -237,7 +237,7 @@ MrcMcCapabilityPreSpd (
       if (Inputs->IsDdrIoB0) {
         Outputs->FreqMax = MIN (Outputs->FreqMax, f7200); // Default SAGV: 3200, 4800, 6400, 7200 (all G4)
       } else {
-        Outputs->FreqMax = MIN (Outputs->FreqMax, f6400); // Default SAGV: 3200, 4800, 5600, 6400 (all G4)
+        Outputs->FreqMax = MIN (Outputs->FreqMax, f6400); // Default SAGV: 3200, 4800, 6000, 6400 (all G4)
       }
     }
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Auto FreqMax resolved to: %u\n", Outputs->FreqMax);

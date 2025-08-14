@@ -890,6 +890,19 @@ MrcGetMcConfigRegOffset (
       VolatileMask->Data = MC0_PM_CONTROL_VOLATILE_BITFIELDS_MSK;
       break;
 
+    case GsmMccMinPdwnIdleCounter:
+    case GsmMccMaxPdwnIdleCounter:
+      if (Channel < MaxChannel) {
+        Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_PM_ADAPTIVE_CKE_REG, MC1_CH0_CR_PM_ADAPTIVE_CKE_REG, Controller, MC0_CH1_CR_PM_ADAPTIVE_CKE_REG, Channel);
+      }
+      break;
+
+    case GsmMccMaxPcit:
+      if (Channel < MaxChannel) {
+        Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_ADAPTIVE_PCIT_REG, MC1_CH0_CR_SC_ADAPTIVE_PCIT_REG, Controller, MC0_CH1_CR_SC_ADAPTIVE_PCIT_REG, Channel);
+      }
+      break;
+
     case GsmMccEcDis:
     case GsmMccEccGranularity:
       Offset = OFFSET_CALC_CH (MC0_IBECC_CONTROL_REG, MC1_IBECC_CONTROL_REG, Controller);

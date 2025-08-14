@@ -21,6 +21,7 @@
 **/
 #include "MrcLpddr5Private.h" // to cross check declarations agains implementations here for private API
 #include "MrcLpddr5.h"  // to cross check declarations against implementations here for public API
+#include "MrcLpddr5Settings.h"
 #include "CMrcTypes.h"
 #include "CMrcApi.h"
 #include "MrcHalRegisterAccess.h"
@@ -104,6 +105,33 @@ const BOOLEAN  PuCalSocOdtValidLp5[OdtMax] = {
   // Disable,  240,  120,  80,    60,    48,    40  (Ohms)
   FALSE,   TRUE, TRUE, TRUE,  TRUE,  TRUE,  TRUE //  Vddq/3 mV
 };
+
+/**
+  This function converts from 2s complement value to LPDDR5 MR DCA encoding (MR30 for LPDDR5).
+
+  @param[in]  DcaValue - 2s complement value.
+
+  @retval UINT8 - Encoding if valid DCA value.  Else, 0xFF.
+**/
+UINT8
+Lpddr5DcaEncode (
+  IN  INT16  DcaValue
+)
+{
+  UINT8  EncodeVal;
+
+  if ((DcaValue < -LP5_DCA_VALID_RANGE) || (DcaValue > LP5_DCA_VALID_RANGE)) {
+    EncodeVal = 0xFF;
+  } else if (DcaValue <= 0) {
+    //Negative (include 0)
+    EncodeVal = (UINT8)(ABS(DcaValue));
+  } else {
+    //Positive (exclude 0)
+    EncodeVal = (UINT8)(DcaValue) | 0x8;
+  }
+
+  return EncodeVal;
+}
 
 /**
   This function checks that the Vref requested is within the spec defined range for LPDDR5.
@@ -858,6 +886,8 @@ InitMrwLpddr5 (
   UINT16        PdDrvStr;
   UINT16        SocOdt;
   UINT16        tCWL;
+  INT8          PreEmpUp;
+  INT8          PreEmpDn;
   INT32         Offset;
   INT8          CaOdtEnc;
   INT8          CsOdtEnc;
@@ -874,7 +904,8 @@ InitMrwLpddr5 (
   UINT8         DfeQu;
   UINT8         DfeQl;
   UINT8         DcaValue;
-
+  BOOLEAN       IsNnFlexEnabled;
+  const NnFlexLpddr5Params* NnFlexDramDefault;
   MRC_EXT_INPUTS_TYPE  *ExtInputs;
   TOdtValueLpddr LpddrOdtTableIndex;
   LPDDR5_MR10_tRPRE             RpreVal;
@@ -906,10 +937,16 @@ InitMrwLpddr5 (
   Debug = &Outputs->Debug;
   Profile = ExtInputs->MemoryProfile;
   Status = mrcSuccess;
-  //SocOdt = Outputs->RcompTarget[RdOdt];
-  SocOdt = 40; // Separate SocOdt from RdOdt
+
+  IsNnFlexEnabled     = Inputs->InitPerDeviceNnFlex;
+  NnFlexDramDefault = &NnFlexInitialSettingsLpddr5[DramTypeDefault];
+
+  SocOdt   = IsNnFlexEnabled ? NnFlexDramDefault->SocOdt : 40;
+  PreEmpUp = NnFlexDramDefault->PreEmpUp;
+  PreEmpDn = NnFlexDramDefault->PreEmpDn;
+
   CaDrvStrength = Outputs->RcompTarget[WrDSCmd];
-  PdDrvStr = 60; // Ohms
+  PdDrvStr = IsNnFlexEnabled ? NnFlexInitialSettingsLpddr5[DramTypeDefault].PdDrvStr : 60;
   CsOdtEnc = 0;
   if (ExtInputs->DqLoopbackTest) {
 #ifndef HVM_FLAG
@@ -1018,7 +1055,8 @@ InitMrwLpddr5 (
         MrPtr[mrIndexMR24] = Mr24.Data8;
 
         DcaValue = (Outputs->Frequency > f4800) ? 9 : 0;
-        //MR30 - DCA WCK
+        DcaValue   = IsNnFlexEnabled ? Lpddr5DcaEncode ((INT16) NnFlexDramDefault->WckDcaWr) : DcaValue;
+        //MR30 - WCK_DCA_WR
         Mr30.Data8 = 0;
         Mr30.Bits.DcaUpperByte = DcaValue;
         Mr30.Bits.DcaLowByte = DcaValue;
@@ -1026,20 +1064,22 @@ InitMrwLpddr5 (
 
         //MR58 - PRE EMP
         Mr58.Data8 = 0;
-        Mr58.Bits.PUEmphasisLower = 3;
-        Mr58.Bits.PDEmphasisLower = 2;
-        Mr58.Bits.PUEmphasisUpper = 3;
-        Mr58.Bits.PDEmphasisUpper = 2;
+        Mr58.Bits.PUEmphasisLower = IsNnFlexEnabled ? PreEmpUp : 3;
+        Mr58.Bits.PDEmphasisLower = IsNnFlexEnabled ? PreEmpDn : 2;
+        Mr58.Bits.PUEmphasisUpper = IsNnFlexEnabled ? PreEmpUp : 3;
+        Mr58.Bits.PDEmphasisUpper = IsNnFlexEnabled ? PreEmpDn : 2;
         MrPtr[mrIndexMR58] = Mr58.Data8;
 
         //MR69 - DCA READ
         Mr69.Data8 = 0;
         DcaValue = 2;
+        DcaValue = IsNnFlexEnabled ? Lpddr5DcaEncode ((INT16) NnFlexDramDefault->WckDcaRd) : DcaValue;
+        //MR69 - WCK_DCA_RD
         Mr69.Bits.ReadDcaUpperByte = DcaValue;
         Mr69.Bits.ReadDcaLowByte = DcaValue;
         MrPtr[mrIndexMR69] = Mr69.Data8;
 
-        //MR17 -Rank 0 CK/CA/CS ODT = 0 (Enabled), x8 ODT Lower/Upper = (Enabled)
+        //MR17 -Rank 0 CK/CA/CS ODT
         Mr17.Data8 = 0;
         SocOdtEnc = LpddrOdtEncode (SocOdt);
         if (SocOdtEnc == -1) {
@@ -1708,7 +1748,7 @@ MrcSagvMrSeqLpddr5 (
       // There is no VRCG change for MRS FSM, tMRW is sufficient.
       if (CurMrAddr == mrMR16) {
         DelayType = GmfLpddr5Delay_tMRW;
-      }                 
+      }
       if (Status != mrcSuccess) {
         break;
       }
@@ -2090,33 +2130,6 @@ Lpddr5SetDramVref (
 }
 
 /**
-  This function converts from 2s complement value to LPDDR5 MR DCA encoding (MR30 for LPDDR5).
-
-  @param[in]  DcaValue - 2s complement value.
-
-  @retval UINT8 - Encoding if valid DCA value.  Else, 0xFF.
-**/
-UINT8
-LpddrDcaEncode (
-  IN  INT16  DcaValue
-  )
-{
-  UINT8  EncodeVal;
-
-  if ((DcaValue < -LP5_DCA_VALID_RANGE) || (DcaValue > LP5_DCA_VALID_RANGE)) {
-    EncodeVal = 0xFF;
-  } else if (DcaValue <= 0) {
-    //Negative (include 0)
-    EncodeVal = (UINT8) (ABS (DcaValue));
-  } else {
-    //Positive (exclude 0)
-    EncodeVal = (UINT8) (DcaValue) | 0x8;
-  }
-
-  return EncodeVal;
-}
-
-/**
   This function will set up the pointer passed in based on LPDDR5 Mode Register definition.
   If MRC_IGNORE_ARGx is passed in, that parameter is ignored.
   PdDrvStr does error checking against spec valid values.
@@ -2332,7 +2345,7 @@ MrcLpddr5SetMr30 (
   Debug   = &MrcData->Outputs.Debug;
 
   if (DcaLower != MRC_IGNORE_ARG_16_2) {
-    Encoding = LpddrDcaEncode ((INT16) DcaLower);
+    Encoding = Lpddr5DcaEncode ((INT16) DcaLower);
 
     if (Encoding == 0xFF) {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid DCA Value (%d)\n", gErrString, DcaLower);
@@ -2342,7 +2355,7 @@ MrcLpddr5SetMr30 (
     }
   }
   if (DcaUpper != MRC_IGNORE_ARG_16_2) {
-    Encoding = LpddrDcaEncode ((INT16) DcaUpper);
+    Encoding = Lpddr5DcaEncode ((INT16) DcaUpper);
 
     if (Encoding == 0xFF) {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid DCA Value (%d)\n", gErrString, DcaUpper);
@@ -2505,7 +2518,7 @@ MrcLpddr5SetMr69 (
   Debug = &MrcData->Outputs.Debug;
 
   if (ReadDcaLower != MRC_IGNORE_ARG_16_2) {
-    Encoding = LpddrDcaEncode ((INT16)ReadDcaLower);
+    Encoding = Lpddr5DcaEncode ((INT16)ReadDcaLower);
 
     if (Encoding == 0xFF) {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid Read DCA Value (%d)\n", gErrString, ReadDcaLower);
@@ -2515,7 +2528,7 @@ MrcLpddr5SetMr69 (
     }
   }
   if (ReadDcaUpper != MRC_IGNORE_ARG_16_2) {
-    Encoding = LpddrDcaEncode ((INT16)ReadDcaUpper);
+    Encoding = Lpddr5DcaEncode ((INT16)ReadDcaUpper);
 
     if (Encoding == 0xFF) {
       MRC_DEBUG_MSG(Debug, MSG_LEVEL_ERROR, "%s Invalid Read DCA Value (%d)\n", gErrString, ReadDcaUpper);

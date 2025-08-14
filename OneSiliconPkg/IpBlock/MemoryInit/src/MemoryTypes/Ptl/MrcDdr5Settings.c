@@ -64,14 +64,11 @@ const TDFEValueDdr5 Ddr5DFETable[MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL] = {
 // AUTO-GENERATED DDR5 TABLES START
 // AUTO-GENERATED CODE
 const char* CardPartNumber[Card_Max] = {
-  "none",                   // Card_default
   "M435R1GB4PB1-CCPSG",     // Card_240C
-  "MTC4C1016ZS1VC72BCZKFF", // Card_246C
-  "M435RZGB4PB1-CCPRC",     // Card_269C
-  "MTC4C1016ZS1VC72BCZKFF", // Card_279C
-  "MTC16C208XS1VC64BBZKCF", // Card_207G
-  "M435R4GA3PB0-CCPDC",     // Card_241G
   "HMCGY8AKBVB318N",        // Card_256B
+  "M435RZGB4PB1-CCPRC",     // Card_269C
+  "MTC4C1016ZS1VC72BCZKFF", // Card_276C
+  "none",                   // Card_default
 };
 
 #ifdef MRC_DEBUG_PRINT
@@ -83,6 +80,19 @@ const char* Ddr5OptParamNames[DDR5_NUM_OF_OPTS] = {
   "DDR5_RTT_PARK_RX",
   "DDR5_RON_UP",
   "DDR5_RON_DN",
+};
+
+const char* Ddr5CardToName[Card_NotFound] = {
+  "240C_1R_6400",
+  "256B_2R_6400",
+  "256B_2R_7200",
+  "269C_1R_6400",
+  "276C_1R_6400",
+  "276C_1R_7200",
+  "DEFAULT_1R_6400",
+  "DEFAULT_1R_7200",
+  "DEFAULT_2R_6400",
+  "DEFAULT_2R_7200",
 };
 #endif
 
@@ -101,18 +111,8 @@ GetDdr5ParamIndex (
 )
 {
   switch (Card) {
-    case Card_207G:
-      if (NumOfRanks == 2 && Frequency <= 6400) return Card_207G_2R_6400;
-      break;
     case Card_240C:
       if (NumOfRanks == 1 && Frequency <= 6400) return Card_240C_1R_6400;
-      break;
-    case Card_241G:
-      if (NumOfRanks == 2 && Frequency <= 6400) return Card_241G_2R_6400;
-      break;
-    case Card_246C:
-      if (NumOfRanks == 1 && Frequency <= 6400) return Card_246C_1R_6400;
-      if (NumOfRanks == 1 && Frequency <= 7200) return Card_246C_1R_7200;
       break;
     case Card_256B:
       if (NumOfRanks == 2 && Frequency <= 6400) return Card_256B_2R_6400;
@@ -121,9 +121,9 @@ GetDdr5ParamIndex (
     case Card_269C:
       if (NumOfRanks == 1 && Frequency <= 6400) return Card_269C_1R_6400;
       break;
-    case Card_279C:
-      if (NumOfRanks == 1 && Frequency <= 6400) return Card_279C_1R_6400;
-      if (NumOfRanks == 1 && Frequency <= 7200) return Card_279C_1R_7200;
+    case Card_276C:
+      if (NumOfRanks == 1 && Frequency <= 6400) return Card_276C_1R_6400;
+      if (NumOfRanks == 1 && Frequency <= 7200) return Card_276C_1R_7200;
       break;
     default:
       if (NumOfRanks == 1 && Frequency <= 6400) {
@@ -142,22 +142,18 @@ GetDdr5ParamIndex (
 
 // Ddr5 Parameters Table
 
-// ddr5_dfe_tap1/ ddr5_dfe_tap2/ ddr5_rtt_wr/ ddr5_rtt_nom_wr/ ddr5_rtt_park_rx/ ddr5_ron_up/ ddr5_ron_dn/
+// DfeTap1/ DfeTap2/ RttWr/ RttNomWr/ RttNomRd/ RonUp/ RonDn/
 const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
-  { -23, -5, 120, 60, 60, 40, 48 },
-  { -23, -5, 120, 60, 60, 40, 48 },
-  { -12, -2, 80, 60, 80, 40, 40 },
-  { -12, -2, 80, 60, 80, 40, 40 },
-  { -32, -5, 80, 60, 60, 34, 40 },
-  { -23, -5, 80, 60, 60, 34, 40 },
-  { -23, -5, 80, 60, 60, 34, 40 },
-  { -21, 0, 120, 60, 60, 40, 48 },
-  { -33, -15, 120, 60, 60, 34, 40 },
-  { -33, -8, 80, 60, 60, 40, 40 },
-  { -33, -8, 120, 60, 60, 48, 40 },
-  { -40, 1, 120, 48, 34, 48, 40 },
-  { -25, -5, 120, 80, 80, 40, 40 },
-  { -25, -5, 120, 80, 48, 34, 34 },
+  { -32,  -5,  80,  60,  60,  34,  40 },
+  { -25,  -5, 120,  80,  80,  40,  40 },
+  { -25,  -5, 120,  80,  48,  34,  34 },
+  { -21,   0, 120,  60,  60,  40,  48 },
+  { -33, -15, 120,  60,  60,  34,  40 },
+  { -33,  -8,  80,  60,  60,  40,  40 },
+  { -23,  -5, 120,  60,  60,  40,  48 },
+  { -23,  -5, 120,  60,  60,  40,  48 },
+  { -23,  -5, 120,  48,  80,  40,  40 },
+  { -23,  -5, 120,  48,  80,  40,  40 },
 };
 // AUTO-GENERATED DDR5 TABLES END
 
@@ -254,9 +250,9 @@ SelectTableDdr5 (
     MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_ERROR, "%s SelectTableDdr5: array out of bounds! OdtIndex: %u, Dimm: %u\n", gErrString, OdtIndex, Dimm);
     return NULL;
   }
-  
+
   OdtTable = (TOdtValueDqDdr5*) &Ddr5DqOdtTable1Dpc[Dimm][OdtIndex];
-   
+
   return OdtTable;
 }
 
@@ -286,7 +282,7 @@ GetOdtIndexDdr5 (
   ChannelOut   = &Outputs->Controller[Controller].Channel[Channel];
   DimmOut      = &ChannelOut->Dimm[dDIMM0];
   RanksInDimm0 = DimmOut[dDIMM0].RankInDimm;
-  
+
   OdtIndex = (RanksInDimm0 == 2) ? oi1DPC2R : oi1DPC1R;
   return OdtIndex;
 }
@@ -337,42 +333,48 @@ MrcDdr5GetVrefDqCalibrationValue (
   @returns - The corresponding card index.
 **/
 CardEnum
-GetCardEnumFromPartNumber (
-  IN const char* ModulePartNumber
+Ddr5GetCardEnumFromPartNumber (
+  IN const CHAR8* ModulePartNumber
 )
 {
-  BOOLEAN IsPartNumberFound;
-  char  PartNumberSuffix;
-  int   PartNumberIdx = 0;
-  UINT8 Card;
+  BOOLEAN  IsPartNumberFound;
+  UINT16   PartNumberIdx;
+  UINT8    Card;
+  CHAR8    PartNumberNoSpaces[SPD5_MODULE_PART_NUMBER_SIZE + 1]; // +1 for null terminator
+  UINT16   PartNumberNoSpacesIdx;
 
   if (ModulePartNumber == NULL) {
     return Card_default;
   }
 
-  for (Card = 0; Card < Card_Max; Card++) {
-    IsPartNumberFound = TRUE;
-    PartNumberIdx = 0;
-    PartNumberSuffix = ModulePartNumber[0];
-
-    while (ModulePartNumber[PartNumberIdx] != '\0' && CardPartNumber[Card][PartNumberIdx] != '\0') {
-      if (ModulePartNumber[PartNumberIdx] != CardPartNumber[Card][PartNumberIdx]) { // break loop for non matching case.
-        break;
-      }
-      PartNumberSuffix = ModulePartNumber[++PartNumberIdx];
-    }
-
-    if (!MRC_ISSPACE(PartNumberSuffix)) { // not a space char. both part numbers are different.
-      IsPartNumberFound = FALSE;
-    }
-    else {
-      PartNumberSuffix = '\0';
-    }
-
-    if (IsPartNumberFound && PartNumberSuffix == CardPartNumber[Card][PartNumberIdx]) {
-      return (CardEnum)Card; // return matching index
+  // Remove whitespaces from ModulePartNumber, because
+  // according to spec unsed digits are coded as ASCII blanks (0x20).
+  for (PartNumberIdx = 0, PartNumberNoSpacesIdx = 0; ModulePartNumber[PartNumberIdx] && PartNumberIdx < SPD5_MODULE_PART_NUMBER_SIZE; PartNumberIdx++) {
+    if (!MRC_ISSPACE(ModulePartNumber[PartNumberIdx])) {
+      PartNumberNoSpaces[PartNumberNoSpacesIdx++] = ModulePartNumber[PartNumberIdx];
     }
   }
+  PartNumberNoSpaces[PartNumberNoSpacesIdx] = '\0';
+
+  // Find matching serial number in CardPartNumber
+  IsPartNumberFound = FALSE;
+  for (Card = 0; Card < Card_Max && IsPartNumberFound == FALSE; Card++) {
+
+    PartNumberIdx = 0;
+    while (PartNumberNoSpaces[PartNumberIdx] && (PartNumberNoSpaces[PartNumberIdx] == CardPartNumber[Card][PartNumberIdx])) {
+      PartNumberIdx++;
+    }
+
+    if (PartNumberNoSpaces[PartNumberIdx] == CardPartNumber[Card][PartNumberIdx]) {
+      IsPartNumberFound = TRUE;
+      break;
+    }
+  }
+
+  if (IsPartNumberFound) {
+    return (CardEnum) Card;
+  }
+
   return Card_default;
 }
 

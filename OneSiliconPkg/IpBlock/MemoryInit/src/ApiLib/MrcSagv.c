@@ -339,7 +339,7 @@ MrcSaGvSwitch (
       PhyPmOvrd.Bits.EnPeriodicComp = RANGE (MrcLog2Round (MrcData, 1280 * 1000000/SBClock) - 12, 0 ,13);
     }
     MrcWriteCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD_REG, PhyPmOvrd.Data);
-    
+
     if (IsLpddr5 && ExtInputs->IsWckIdleExitEnabled && !Inputs->IsDdrIoMbA0) {
       Data = 0x1;
       for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -351,10 +351,7 @@ MrcSaGvSwitch (
         }
       }
     }
-    
-  }
 
-  if (ExtInputs->RealtimeMemoryFrequency && (Outputs->SaGvPoint != MrcSaGvPoint0)) {
   }
 
   return Status;

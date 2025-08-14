@@ -3747,8 +3747,8 @@ BuildMemoryInfoDataHob (
             DimmInfo->SpdModuleType           = DimmSave->SpdModuleType;
             DimmInfo->Speed                   = (UINT16) DimmOut->Speed;
             MemoryBusWidthDdr5.Data           = DimmSave->SpdModuleMemoryBusWidth;
-            NumSubChannels                    = MemoryBusWidthDdr5.Bits.NumberOfChannels + 1;       // SPD encoding: 0: one channel, 1: two channels
-            // Double the bus width / bus width extension (ECC) if we have two channels - this only happens in case of DDR5
+            NumSubChannels                    = 1 << MemoryBusWidthDdr5.Bits.NumberOfChannels;       // SPD encoding: 0: one channel, 1: two channels, 2: four channels
+            // Double the bus width / bus width extension (ECC) if we have two channels, 4x the bus width / bus width extension if we have four channels - this only happens in case of DDR5
             DimmInfo->DataWidth               = 8 * (1 << MemoryBusWidthDdr5.Bits.PrimaryBusWidth) * NumSubChannels;
             DimmInfo->TotalWidth              = DimmInfo->DataWidth + (MemoryBusWidthDdr5.Bits.BusWidthExtension * 4 * NumSubChannels);
             if (Channel == 0 && IsDdr5) {
@@ -3756,7 +3756,7 @@ BuildMemoryInfoDataHob (
               // In order to report the combined BusWidth and Capacity in Smbios Type17 table and Setup menu,
               // modify the dimm info in HOB according to the number of subchannels in DDR5 module
               //
-              DimmInfo->DimmCapacity *= NumSubChannels;  // Double the capacity if we have two channels
+              DimmInfo->DimmCapacity *= NumSubChannels;  // Double the capacity if we have two channels, 4x the capacity if we have four channels
             }
             DEBUG ((DEBUG_INFO, "MC%u C%u D%u:\n MfgId: 0x%X, DramMfgID: 0x%X\n NumSubChannels: %u, DataWidth: %u, TotalWidth: %u\n",
               Controller, Channel, Dimm, DimmInfo->MfgId.Data, DimmInfo->DramMfgID.Data, NumSubChannels, DimmInfo->DataWidth, DimmInfo->TotalWidth));
