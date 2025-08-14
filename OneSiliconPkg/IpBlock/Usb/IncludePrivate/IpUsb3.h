@@ -46,9 +46,10 @@ typedef struct {
 // USB3 port configuration structure
 //
 typedef struct {
-  BOOLEAN    Enable;         // Port enable/disable control
-  UINT8      OverCurrentPin; // OverCurrent Pin number assigned to port
-  BOOLEAN    HasInboxDevice; // Flag for setting whether there's inbox device on a port
+  BOOLEAN    Enable;             // Port enable/disable control
+  UINT8      OverCurrentPin;     // OverCurrent Pin number assigned to port
+  UINT8      OverCurrentPinType; // OverCurrent Pin type: 1 - Physical, 2 - VW
+  BOOLEAN    HasInboxDevice;     // Flag for setting whether there's inbox device on a port
 } IP_USB3_USB3_PORT_CONFIG;
 
 //
@@ -184,12 +185,14 @@ typedef enum {
 
   @param[in]  pInst             IP_USB3_INST structure pointer
   @param[in]  OvercurrentPin    Index of OverCurrent Pin to be enabled
+  @param[in]  SbVwEnable        Flag to enable sideband messaging for physical OC pins in TCSS
 **/
 typedef
 void
 (*IP_USB3_ENABLE_OVERCURRENT_PIN) (
   IP_USB3_INST  *pInst,
-  UINT8         OverCurrentPin
+  UINT8         OverCurrentPin,
+  BOOLEAN       SbVwEnable
   );
 
 /**
@@ -209,7 +212,7 @@ BOOLEAN
   Calculates Overcurrent pin number to match USB3 OCM register bit map
 
   @param[in]  pInst             IP_USB3_INST structure pointer
-  @param[in]  OcPin             Index of lane to check
+  @param[in]  OcPin             USB OC pin number
 **/
 typedef
 UINT32

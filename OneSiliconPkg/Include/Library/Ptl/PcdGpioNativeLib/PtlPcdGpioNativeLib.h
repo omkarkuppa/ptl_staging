@@ -490,6 +490,16 @@ PtlPcdGpioSetIrq (
   );
 
 /**
+  This function returns the number of physical OC pins
+
+  @retval  Number of physical OC pins
+**/
+UINT8
+PtlPcdGpioGetNumberOfPhysicalOcPins (
+  VOID
+  );
+
+/**
   This function enables USB OverCurrent pins by setting
   USB1 OCB pins into native mode
 

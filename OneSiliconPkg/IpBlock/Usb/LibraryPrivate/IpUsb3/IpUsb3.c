@@ -208,6 +208,7 @@ IpUsb3OvercurrentMapping (
   UINT32   OcPin;
   UINT32   OcmRegIndex;
   UINT32   OcPinsUsedMask;
+  BOOLEAN  SbVwEn;
 
   if (pInst == NULL) {
     PRINT_ERROR_NULL_INST ("Instance pointer cannot be NULL\n");
@@ -229,7 +230,6 @@ IpUsb3OvercurrentMapping (
   }
 
   OcPinsUsedMask = 0;
-
   for (Index = 0; Index < pInst->Usb2PortCount; Index++) {
     if (pInst->Usb2PortConfig[Index].OverCurrentPin != USB_OC_SKIP) {
       OcPin = pInst->Usb2PortConfig[Index].OverCurrentPin;
@@ -264,7 +264,8 @@ IpUsb3OvercurrentMapping (
   {
     for (Index = 0; Index < USB_OC_MAX_PINS; Index++) {
       if ((OcPinsUsedMask >> Index) & 0x1) {
-        pInst->cEnableOvercurrentPin (pInst, Index);
+        SbVwEn = (pInst->Integration == IpUsb3IntegrationUsb4ss) ? TRUE : FALSE;
+        pInst->cEnableOvercurrentPin (pInst, Index, SbVwEn);
       }
     }
   }

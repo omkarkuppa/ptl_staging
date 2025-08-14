@@ -25,6 +25,4 @@
 #define MAX_ITBT_PCIE_PORT        4
 #define MAX_TCSS_USB3_PORTS       4
 
-#define USB2_OCM_REG_OFFSET       4
-
 #endif

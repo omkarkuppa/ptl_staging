@@ -50,22 +50,18 @@
 #include <Register/GpioAcpiDefines.h>
 #include <Library/GpioHelpersLib.h>
 
-//
-// USB OC Pin Type
-//
-#define PHYSICAL_OC      1
-#define VW_OC            2
-
 /**
   Configures GPIO pins for USB OverCurrent detection
 
-  @param[in]  UsbHandle         Pointer to USB_HANDLE instance
+  @param[in]  pInst             IP_USB3_INST structure pointer
   @param[in]  OvercurrentPin    Index of OverCurrent Pin to be enabled
+  @param[in]  SbVwEnable        Flag to enable sideband messaging for physical OC pins in TCSS
 **/
 VOID
 UsbEnableOvercurrentPin (
   IP_USB3_INST *pInst,
-  UINT8        OverCurrentPin
+  UINT8        OverCurrentPin,
+  BOOLEAN      SbVwEnable
   )
 {
   GPIOV2_SERVICES  *GpioServices;
@@ -83,7 +79,7 @@ UsbEnableOvercurrentPin (
     return;
   }
 
-  PtlPcdGpioEnableUsbOverCurrent (GpioServices, OverCurrentPin, FALSE);
+  PtlPcdGpioEnableUsbOverCurrent (GpioServices, OverCurrentPin, SbVwEnable);
 }
 
 /**

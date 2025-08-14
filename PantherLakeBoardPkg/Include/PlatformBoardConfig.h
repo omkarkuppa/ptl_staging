@@ -362,10 +362,9 @@ typedef struct {
 } TCSS_COV_USBA_BOARD_CONFIG;
 
 //
-// The macros below transfer USB OC pin to USB OCM register.
+// The macros below transfer physical/virtual USB OC pin to actual USB OC pin number.
 //
-#define GET_USB2_OCM_REG(OcPinType, OcPin) (OcPinType == PHYSICAL_OC ? OcPin : OcPin + USB2_OCM_REG_OFFSET)
-#define GET_USB3_OCM_REG(OcPinType, OcPin) OcPin
+#define GET_USB_OC_PIN(OcPinType, OcPin) (OcPinType == PHYSICAL_OC ? OcPin : OcPin + PtlPcdGpioGetNumberOfPhysicalOcPins ())
 
 /**
   Retimer Flash Configuration Structure

@@ -37,6 +37,8 @@
 #include <UsbHandle.h>
 #include <ITbtInfoHob.h>
 #include <Library/PcdInfoLib.h>
+#include <Library/GpioV2AccessLib.h>
+#include <Library/GpioHelpersLib.h>
 
 #ifdef IPSIM_ENABLE
 #include <stdio.h>
@@ -46,6 +48,38 @@
 #include <IpSimRegMap.h>
 #include <IpWrapper.h>
 #endif
+
+/**
+  Configures GPIO pins for USB OverCurrent detection
+
+  @param[in]  pInst             IP_USB3_INST structure pointer
+  @param[in]  OvercurrentPin    Index of OverCurrent Pin to be enabled
+  @param[in]  SbVwEnable        Flag to enable sideband messaging for physical OC pins in TCSS
+**/
+VOID
+TcssUsbEnableOvercurrentPin (
+  IP_USB3_INST *pInst,
+  UINT8        OverCurrentPin,
+  BOOLEAN      SbVwEnable
+  )
+{
+  GPIOV2_SERVICES  *GpioServices;
+  EFI_STATUS       Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return;
+  }
+
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
+    ASSERT (FALSE);
+    return;
+  }
+
+  PtlPcdGpioEnableUsbOverCurrent (GpioServices, OverCurrentPin, SbVwEnable);
+}
 
 /**
   Check if this chipset supports TCSS
@@ -406,7 +440,8 @@ Usb3InstOnCreate (
   }
 
   // Callbacks
-  Usb3Inst->cCalculateOcPin = CalculateOcPin;
+  Usb3Inst->cCalculateOcPin = TcssCalculateOcPin;
+  Usb3Inst->cEnableOvercurrentPin = TcssUsbEnableOvercurrentPin;
 }
 
 STATIC

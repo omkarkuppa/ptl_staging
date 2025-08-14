@@ -67,6 +67,7 @@
   NemMapLib
   TmeInfoLib
   FusaInfoLib
+  PtlPcdGpioNativeLib
 
 [Packages]
   MdePkg/MdePkg.dec

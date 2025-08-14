@@ -73,6 +73,7 @@
   PmcLib
   TxtLib
   PlatformUsbConfigLib
+  PtlPcdGpioNativeLib
 
 [Guids]
   gCpuSecurityPreMemConfigGuid                  ## CONSUMES

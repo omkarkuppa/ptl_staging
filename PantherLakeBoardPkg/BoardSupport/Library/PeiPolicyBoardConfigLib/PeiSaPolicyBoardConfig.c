@@ -28,7 +28,7 @@
 #endif
 #include <PlatformBoardId.h>
 #include <PolicyUpdateMacro.h>
-
+#include <Library/PcdGpioNativeLib.h>
 
 /**
   This function performs PEI SA Policy update by board configuration.
@@ -125,7 +125,7 @@ UpdatePeiSaPolicyBoardConfig (
                   UPDATE_POLICY (
                     ((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[UsbConnectorBoardConfig->Usb3PortNum],
                     TcssConfig->UsbConfig.PortUsb30[UsbConnectorBoardConfig->Usb3PortNum].OverCurrentPin,
-                    (UINT8) GET_USB3_OCM_REG (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
+                    (UINT8) GET_USB_OC_PIN (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
                     );
                 } else {
                   DEBUG ((DEBUG_ERROR, "Invalid OverCurrent pin specified TCSS USB3 port %d\n", UsbConnectorBoardConfig->Usb3PortNum));

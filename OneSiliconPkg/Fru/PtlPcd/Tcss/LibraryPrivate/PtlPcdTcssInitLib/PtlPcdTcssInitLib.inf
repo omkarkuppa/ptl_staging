@@ -69,6 +69,7 @@ gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMin   ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMax   ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdITbtToPcieRegister         ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdPcieToITbtRegister         ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdWclSupport                 ## CONSUMES
 
 [Ppis]
 gEfiEndOfPeiSignalPpiGuid                          ## CONSUMES

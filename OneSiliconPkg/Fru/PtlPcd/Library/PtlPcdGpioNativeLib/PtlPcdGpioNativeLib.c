@@ -1435,7 +1435,20 @@ PtlPcdGpioGetThcWotGpioPad (
   IN UINT8      ThcIndex
   )
 {
-    return mPtlPcdThcWotGpioPad[ThcIndex];
+  return mPtlPcdThcWotGpioPad[ThcIndex];
+}
+
+/**
+  Checks if Index is not exceeding the array size
+
+  @return TRUE if index is less than or equal to Array size
+**/
+
+BOOLEAN PtlPcdCheckArraySize (
+  IN  UINT32               SpiIndex
+  )
+{
+  return SpiIndex >= ARRAY_SIZE (mPtlPcdThcWotGpioPad);
 }
 
 /**
@@ -1847,12 +1860,26 @@ GpioCycleNafVweBit (
 }
 
 /**
-  This function enables USB OverCurrent pins by setting
-  USB1 OCB pins into native mode
+  This function returns the number of physical OC pins
 
-  @param[in]  GpioServices        Gpio Services
-  @param[in]  OcPinNumber         USB OC pin number
-  @param[in]  NativeActiveFlag    Native Function Virtual Wire Enable
+  @retval  Number of physical OC pins
+**/
+UINT8
+PtlPcdGpioGetNumberOfPhysicalOcPins (
+  VOID
+  )
+{
+  return ARRAY_SIZE (mPtlPcdUsbOcGpioPins);
+}
+
+/**
+  This function enables USB OverCurrent pins by setting USB1 OCB pins into native mode.
+
+  It also enables sideband messaging for physical OC pins used by TCSS ports.
+
+  @param[in]  GpioServices     Gpio Services
+  @param[in]  OcPinNumber      USB OC pin number
+  @param[in]  SbVwMsgEnable    Native Function Virtual Wire Enable
 
   @retval     EFI_SUCCESS         The function completed successfully
   @retval     EFI_UNSUPPORTED     Unsupported operation
@@ -1861,7 +1888,7 @@ EFI_STATUS
 PtlPcdGpioEnableUsbOverCurrent (
   IN GPIOV2_SERVICES     *GpioServices,
   IN UINTN               OcPinNumber,
-  IN UINT8               NativeActiveFlag
+  IN BOOLEAN             SbVwMsgEnable
   )
 {
   GPIOV2_VWOC_FUNCTION      VwOcGpio;
@@ -1889,8 +1916,8 @@ PtlPcdGpioEnableUsbOverCurrent (
   }
 
     UsbOcSignal = mPtlPcdUsbOcGpioPins[OcPinNumber];
-  // Set NafVweBit for PhysicalOcPin if NativeActiveFlag is TRUE
-  if (NativeActiveFlag) {
+  // Set NAF_VWE bit for physical OC pin
+  if (SbVwMsgEnable) {
     GpioPad = PtlPcdGpioGetNativePadByFunction (GpioServices, UsbOcSignal);
     GpioCycleNafVweBit (GpioServices, GpioPad);
   }

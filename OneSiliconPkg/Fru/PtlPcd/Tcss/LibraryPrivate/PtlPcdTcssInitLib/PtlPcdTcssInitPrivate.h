@@ -135,12 +135,12 @@ PtlEnablePciePmeEvents (
   );
 
 /**
-  Calculates Overcurrent pin number to match USB3 OCM register bit map
+  Calculates Overcurrent pin number to match TCSS USB3 OCM register bit map
   @param[in]  pInst             IP_USB3_INST structure pointer
-  @param[in]  OcPin             Index of lane to check
+  @param[in]  OcPin             USB OC pin number
 **/
 UINT32
-CalculateOcPin (
+TcssCalculateOcPin (
   IP_USB3_INST  *pInst,
   UINT32        OcPin
   );

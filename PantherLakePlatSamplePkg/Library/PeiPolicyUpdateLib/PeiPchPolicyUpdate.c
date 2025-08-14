@@ -99,6 +99,8 @@
 #include <Library/FusaInfoLib.h>
 #endif
 #endif
+#include <Library/PcdGpioNativeLib.h>
+
 /**
   Return if input ImageGuid belongs to a FMP device which would perform BIOS update
 
@@ -840,7 +842,7 @@ UpdateUsbOverCurrentPolicy (
               UPDATE_POLICY (
                 ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb2OverCurrentPin[UsbConnectorBoardConfig->Usb2PortNum],
                 UsbConfig->PortUsb20[UsbConnectorBoardConfig->Usb2PortNum].OverCurrentPin,
-                (UINT8) GET_USB2_OCM_REG (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
+                (UINT8) GET_USB_OC_PIN (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
                 );
             } else {
               DEBUG ((DEBUG_ERROR, "UpdateUsbOverCurrentPolicy: Invalid OverCurrent pin specified USB2 port %d.\n", UsbConnectorBoardConfig->Usb2PortNum));
@@ -862,7 +864,7 @@ UpdateUsbOverCurrentPolicy (
               UPDATE_POLICY (
                 ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb3OverCurrentPin[UsbConnectorBoardConfig->Usb3PortNum],
                 UsbConfig->PortUsb30[UsbConnectorBoardConfig->Usb3PortNum].OverCurrentPin,
-                (UINT8) GET_USB3_OCM_REG (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
+                (UINT8) GET_USB_OC_PIN (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
                 );
             } else {
               DEBUG ((DEBUG_ERROR, "UpdateUsbOverCurrentPolicy: Invalid OverCurrent pin specified USB3 port %d.\n", UsbConnectorBoardConfig->Usb3PortNum));
