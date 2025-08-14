@@ -192,6 +192,8 @@ typedef enum
   FusaTestNumCoreIdiParityCtcCore2,
   FusaTestNumCoreIdiParityCtcCore3,
 
+  FusaTestNumGtL3EccCtc,
+
   FusaTestNumTotal                        ///<Total CTC groups count
 } FUSA_TEST_NUMBER;
 

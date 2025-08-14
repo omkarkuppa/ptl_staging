@@ -46,6 +46,7 @@
 #define SA_MC_BUS               0x00
 #define SA_MC_DEV               0x00
 #define SA_MC_FUN               0x00
+#define SA_GT_DEV               0x02
 #define SAFBAR_HOSTBRIDGE_CFG_REG        (0x00000068U)
 #define DEV0_BAR_EN             0x0001
 #define SEGMENT_ID_C_DIE        0xEE

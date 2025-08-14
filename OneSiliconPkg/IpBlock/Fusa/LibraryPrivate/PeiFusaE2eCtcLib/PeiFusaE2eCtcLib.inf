@@ -57,6 +57,7 @@ PeiFusaE2eCtcLlcDoubleParity.c
 PeiFusaCcfE2eIdiParityCtc.c
 PeiFusaCoreCtc.c
 PeiFusaIbecc.c
+PeiFusaGtDeCtcLib.c
 
 [Ppis]
 gEdkiiPeiMpServices2PpiGuid      ## CONSUMES

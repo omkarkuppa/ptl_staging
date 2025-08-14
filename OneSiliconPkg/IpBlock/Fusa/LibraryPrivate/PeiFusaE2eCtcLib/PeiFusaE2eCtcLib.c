@@ -43,6 +43,7 @@
 #include "PeiFusaCcfE2eIdiParityCtc.h"
 #include "PeiFusaCoreCtc.h"
 #include "PeiFusaIbecc.h"
+#include "PeiFusaGtDeCtcLib.h"
 #include <Library/FusaInfoLib.h>
 #include <Register/Cpuid.h>
 #include <Register/Ptl/Msr/MsrRegs.h>
@@ -910,6 +911,7 @@ FspDxCheckEndofPei (
     }
 
     if (EFI_SUCCESS == Status) {
+      FspDxCheckGtL3EccCtc(&(TestResult[FusaTestNumGtL3EccCtc]));
     }
   } else {
     ASSERT (FALSE); //expect the existence of the HOB
