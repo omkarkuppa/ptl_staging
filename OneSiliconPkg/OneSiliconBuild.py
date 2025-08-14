@@ -336,7 +336,7 @@ def OneSiliconBuild(ProductName, ToolChain = None, Target = None):
               ]
     elif sys.platform == 'linux':
         cmd = [
-                os.path.join( os.environ['EDK_TOOLS_PATH'], u'Bin', u'CYGWIN_NT-5.1-i686', u'build'),
+                u'build',
                 '-b', os.environ['TARGET'],
                 '-t', os.environ.get('TOOL_CHAIN_TAG'),
                 '-p', os.path.join( os.environ['WORKSPACE_SILICON'], u'OneSiliconPkg', os.environ['rc-dsc']),
