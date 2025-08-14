@@ -2728,6 +2728,13 @@ UpdateFusaConfig (
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Module0Lockstep,  FusaConfig->Module0Lockstep,  SaSetup->Module0Lockstep);
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Module1Lockstep,  FusaConfig->Module1Lockstep,  SaSetup->Module1Lockstep);
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.LpcLockstep,      FusaConfig->LpcLockstep,      SaSetup->LpcLockstep);
+
+#if FixedPcdGet8(PcdFspModeSelection) == 0
+  if (IsInFusaDiagnosticMode()) {
+    FusaConfig->IsFusaDiagnosticMode = 1;
+  }
+#endif
+
 }
 #endif
 #endif

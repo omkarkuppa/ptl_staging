@@ -61,6 +61,10 @@ FspUpdateFusaPolicy (
     FusaConfig->Module0Lockstep         = FspsUpd->FspsConfig.Module0Lockstep;
     FusaConfig->Module1Lockstep         = FspsUpd->FspsConfig.Module1Lockstep;
     FusaConfig->LpcLockstep             = FspsUpd->FspsConfig.LpcLockstep;
+
+    if (IsInFusaDiagnosticMode()) {
+      FusaConfig->IsFusaDiagnosticMode = 1;
+    }
   }
 #endif
 }

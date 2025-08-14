@@ -82,10 +82,11 @@
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <Library/PeiPcdInitLib.h>
 #if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
-#if (FixedPcdGetBool(PcdFusaSupport) == 1)
+#if (FixedPcdGetBool(PcdFusaSupport) == 0x1)
 #include <Library/PeiFusaLib.h>
 #include <Library/FusaInfoLib.h>
 #include <Library/PeiFusaE2eCtcLib.h>
+#include <FusaConfig.h>
 #endif
 #if FixedPcdGet8(PcdTccSupport) == 1
 #include <Library/PeiTccInitLib.h>
@@ -167,6 +168,21 @@ EFI_PEI_NOTIFY_DESCRIPTOR  mEndOfFirmwareNotifyList[] = {
     SiOnEndOfFirmware
   }
 };
+
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+#if (FixedPcdGetBool(PcdFusaSupport) == 0x1)
+/**
+  Update the FusaConfig bit in the IGPU instance.
+  This function is used to set the FusaConfig value, which controls specific GT configurations.
+
+  @param[in] FusaConfig  The value to assign to FusaConfig.
+**/
+VOID
+IGpuUpdateFusaConfig (
+  IN UINT8  FusaConfig
+  );
+#endif
+#endif
 
 /**
   PPI function to install default ConfigBlock Policy PPI.
@@ -647,6 +663,11 @@ SiInitPostMemOnPolicy (
   TELEMETRY_PEI_CONFIG        *TelemetryPeiConfig;
   NPU_PEI_CONFIG              *NpuPeiConfig;
   VMD_PEI_CONFIG              *VmdPeiConfig;
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+#if (FixedPcdGetBool(PcdFusaSupport) == 0x1)
+  FUSA_CONFIG                 *FusaConfig;
+#endif
+#endif
 
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   OVERCLOCKING_PREMEM_CONFIG  *OverClockingConfig;
@@ -746,10 +767,25 @@ SiInitPostMemOnPolicy (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuPowerDeliveryConfigGuid, (VOID *) &CpuPowerDeliveryConfig);
   ASSERT_EFI_ERROR (Status);
 
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+#if (FixedPcdGetBool(PcdFusaSupport) == 0x1)
+  Status = GetConfigBlock ((VOID *) SiPolicy, &gFusaConfigGuid, (VOID *) &FusaConfig);
+  ASSERT_EFI_ERROR (Status);
+#endif
+#endif
+
   //
   // Initilizing Post Mem IGPU IP Instances
   //
   IGpuPostMemInit ();
+
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+#if (FixedPcdGetBool(PcdFusaSupport) == 0x1)
+  if (FusaConfig->IsFusaDiagnosticMode != 0) {
+    IGpuUpdateFusaConfig ((UINT8) FusaConfig->IsFusaDiagnosticMode);
+  }
+#endif
+#endif
 
   //
   // Program PMON address,

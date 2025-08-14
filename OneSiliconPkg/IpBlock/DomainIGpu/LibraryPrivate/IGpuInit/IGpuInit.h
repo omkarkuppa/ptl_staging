@@ -54,5 +54,4 @@ EFI_STATUS
 IGpuMediaInit (
   IP_IGPU_INST  *pInst
   );
-
 #endif // __IGPU_INIT_H__

@@ -150,6 +150,7 @@
   gSiPreMemPolicyHobGuid      ## CONSUMES
   gTraceHubDataHobGuid        ## CONSUMES
   gIpPcieInstHobGuid          ## CONSUMES
+  gFusaConfigGuid             ## CONSUMES
 
   ##
   ## Performance GUIDs

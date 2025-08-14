@@ -30,9 +30,10 @@
   <b>Revision 2</b>:  - Add FusaConfigEnable switch, BIST scan and locksteps for module.
   <b>Revision 3</b>:  - Add LpcLockstep
   <b>Revision 4</b>:  - Add CFI Parity variables
+  <b>Revision 5</b>:  - Add IsFusaDiagnosticMode bit
 **/
 
-#define FUSA_CONFIG_REVISION 4
+#define FUSA_CONFIG_REVISION 5
 
 extern EFI_GUID gFusaConfigGuid;
 
@@ -79,7 +80,7 @@ typedef struct {
   UINT32    FusaPeriodicPatternAddr;                        ///< <deprecated>
   UINT32    LpcLockstep                            :  2;    ///< Enable/Disable Lockstep for Atom Lpc module, which has 4 cores;
                                                             ///< 0: Disable lockstep; 1: Enable lockstep for Core 0 with Core 1, Core 2 with Core 3;
-                                                            ///< 2: Enable lockstep for Core 0 with Core 1; 3: Enable lockstep for Core 2 with Core 3                                                            
+                                                            ///< 2: Enable lockstep for Core 0 with Core 1; 3: Enable lockstep for Core 2 with Core 3
   UINT32    RsvdBits1                              :  30;   ///< Reserved Bits
 
   UINT32    FusaCfiParityIDIBE2E                   :  1;    ///< Enable/Disable IDI-B E2E CFI Parity
@@ -101,9 +102,10 @@ typedef struct {
   UINT32    FusaCfiParityIVTUE2E                   :  1;    ///< Enable/Disable IVTU E2E CFI Parity
   UINT32    FusaCfiParityCCEE2E_CCE0               :  1;    ///< Enable/Disable CCE E2E CCE0 CFI Parity
   UINT32    FusaCfiParityCCEE2E_CCE1               :  1;    ///< Enable/Disable CCE E2E CCE1 CFI Parity
-  UINT32    RsvdBits3                              :  13;   ///< Reserved Bits
-  UINT8     RsvdByte1[4];                                   ///< Reserved Byte                                  
-          
+  UINT32    IsFusaDiagnosticMode                   :  1;    ///< To indicate BIOS is in Fusa Diagnostics Mode
+  UINT32    RsvdBits3                              :  12;   ///< Reserved Bits
+  UINT8     RsvdByte1[4];                                   ///< Reserved Byte
+
 } FUSA_CONFIG;
 
 #pragma pack (pop)
