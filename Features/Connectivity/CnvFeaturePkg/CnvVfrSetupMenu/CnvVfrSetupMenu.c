@@ -334,6 +334,9 @@ InstallCnvVfrSetupMenuForm (
                   &CnvSetup
                   );
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   if (CnvSetup.CnviIsPresent != CnvFormPlatformProtocol->CnvFormData.CnviIsPresent) {
     CnvSetup.CnviIsPresent = CnvFormPlatformProtocol->CnvFormData.CnviIsPresent;
