@@ -121,7 +121,7 @@ DetectBootGuardProfile (
 /**
   Verify CRTM Status and disable Txt Cmos
   Disable TXT when verification fail in BTG 0T/3T.
-  
+
 **/
 VOID
 VerifyCrtmStatusAndDisableTxtCmos (
@@ -129,10 +129,8 @@ VerifyCrtmStatusAndDisableTxtCmos (
   )
 {
   UINT64            AcmPolicyStatus;
-  UINT64            MsrValue;
   UINT8             BootGuardProfile;
 
-  MsrValue = AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO);
   AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
   BootGuardProfile = DetectBootGuardProfile ();
 
@@ -163,12 +161,12 @@ IsSigningSupported (
 
   AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
   BootGuardProfile = DetectBootGuardProfile ();
-  
+
   if ((Fbm != NULL) && (AcmPolicyStatus & B_FBM_VALID_STATUS)) {
-    if ((BootGuardProfile >= BOOT_GUARD_PROFILE_4) || 
+    if ((BootGuardProfile >= BOOT_GUARD_PROFILE_4) ||
         ((BootGuardProfile < BOOT_GUARD_PROFILE_4) && (AcmPolicyStatus & (B_SCRTM_STATUS)))) {
       return TRUE;
-    } 
+    }
   }
   return FALSE;
 }

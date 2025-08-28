@@ -528,8 +528,10 @@ InstallMeasurementExcludedFvList (
   )
 {
   EFI_STATUS                   Status;
+#if FixedPcdGetBool (PcdSignedFspEnable) == 0
   BIOS_INFO_HEADER             *BiosInfoHeader;
   BIOS_INFO_STRUCT             *BiosInfoStruct;
+#endif
   EFI_FIRMWARE_VOLUME_HEADER   *FvHeader;
   UINT32                       IbbFvCount;
   UINTN                        Index;
@@ -539,6 +541,7 @@ InstallMeasurementExcludedFvList (
 
   DEBUG ((DEBUG_INFO, "InstallMeasurementExcludedFvList : Creating Exclude FV List from Measurement\n"));
 
+#if FixedPcdGetBool (PcdSignedFspEnable) == 0
   Status = PeiServicesLocatePpi (&gBiosInfoGuid, 0, NULL, (VOID **) &BiosInfoHeader);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "InstallMeasurementExcludedFvList : BiosInfo PPI not found\n"));
@@ -546,7 +549,7 @@ InstallMeasurementExcludedFvList (
     return EFI_NOT_FOUND;
   }
   BiosInfoStruct = (BIOS_INFO_STRUCT *) ((UINT8 *) BiosInfoHeader + sizeof (BIOS_INFO_HEADER));
-
+#endif
   /*
    First go through all BiosInfoStructure and store IBB FV to FvListTmp.
    - FvBase is filled with the value read from BiosInfoStruct.

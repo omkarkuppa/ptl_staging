@@ -104,6 +104,7 @@ echo "  FSPV_BUILD           = $FSPV_BUILD"
 echo "  SPECIAL_POOL_BUILD   = $SPECIAL_POOL_BUILD"
 echo "  EXTENDEDREGION_BUILD = $EXTENDEDREGION_BUILD"
 echo "  ATOM_BUILD           = $ATOM_BUILD"
+echo "  FSP_SIGNED           = $FSP_SIGNED"
 echo "  BUILD_OPTION_PCD     = $BUILD_OPTION_PCD"
 echo
 EndPreBuild

@@ -61,7 +61,7 @@ export TARGET_PLATFORM_SHORT=PTL
 export FSP_ARCH=X64
 export FSP64_BUILD=TRUE
 export FSP_RESET=TRUE
-export FSP_SIGNED=FALSE
+export FSP_SIGNED=TRUE
 export FSP_MODE=Dispatch
 export FSP_TARGET=
 export SYMBOL_PREFIX=
@@ -101,7 +101,7 @@ export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.P
 function PrintUsage {
   echo "Client BIOS build script"
   echo
-  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fspapi] [fsp64] [fspsigned] [res] [cln]"
+  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fspapi] [fsp64] [fspsigned] [fspunsigned] [res] [cln]"
   echo
   echo "  Default build flags: build in Debug Mode; 32-bit PEI for FSP; FSP Dispatch Mode"
   echo
@@ -118,6 +118,8 @@ function PrintUsage {
   echo "  extended To enable Extended BIOS Region so a single BIOS image larger than 16MB in size is built."
   echo "  fsp32    To build using 32-bit PEI for FSP."
   echo "  fsp64    To build using 64-bit PEI for FSP."
+  echo "  fspsigned To build Signed FSP."
+  echo "  fspunsigned To build UnSigned FSP."
 
   echo "  cln      Build clean."
   echo "  notimestamp To eliminate the effect of timestamp."
@@ -236,7 +238,10 @@ for ((i=1 ; i <= numargs ; i++)); do
     export COMPILER=CLANG
   elif [ "$1" = "fspapi" ]; then
     export FSP_MODE=API
-    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=1"
+    export FSP_SIGNED=FALSE
+    export BUILD_OPTION_PCD="${BUILD_OPTION_PCD} --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=1 \
+--pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F"
+    export SI_BUILD_OPTION_PCD="${SI_BUILD_OPTION_PCD} --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=FALSE"
   elif [ "$1" = "non_upl" ]; then
     export UNIVERSAL_PAYLOAD=FALSE
     export ROM_FILENAME_SPECIAL_BUILD_TYPE=_Non_UPL
@@ -266,6 +271,11 @@ for ((i=1 ; i <= numargs ; i++)); do
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0"
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0"
     export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=TRUE"
+  elif [ "$1" = "fspunsigned" ]; then
+    export FSP_SIGNED=FALSE
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE="_FSPUNSIGNED"
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F"
+    export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=FALSE"
   elif [ "$1" = "res" ]; then
     export RESILIENCY_BUILD=TRUE
     export ROM_FILENAME_SPECIAL_BUILD_TYPE="${ROM_FILENAME_SPECIAL_BUILD_TYPE}_Resiliency"

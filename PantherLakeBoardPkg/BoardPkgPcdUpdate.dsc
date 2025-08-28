@@ -624,7 +624,7 @@
   #   1: measure FSP UPD region in one record (PCR1),
   #      measure the FSP code without UPD in another record (PCR0).
   #
-  gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x8000000F  #Enable FSP measurement by platform
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x0
 
   gUefiCpuPkgTokenSpaceGuid.PcdMaxMappingAddressBeforeTempRamExit|0x100000000
 
