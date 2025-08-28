@@ -38,6 +38,7 @@
 #include <IntelRcStatusCode.h>
 #include <Library/NguInfoLib.h>
 #include <HostBridgeDataHob.h>
+#include <Library/TseInfoLib.h>
 #include <Library/TseDataHob.h>
 #include <TraceHubDataHob.h>
 #include <CMrcInterface.h>
@@ -384,11 +385,15 @@ SetNocImrExclusion (
 
   DEBUG ((DEBUG_INFO, "SetNocImrExclusion Start\n"));
 
-  TseDataHobPtr = (TSE_DATA_HOB *)GetFirstGuidHob (&gTseDataHobGuid);
-  if (TseDataHobPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "TseDataHob not found!\n"));
+  if (IsTseSupported() && IsTseEnabled()) {
+    TseDataHobPtr = (TSE_DATA_HOB *)GetFirstGuidHob (&gTseDataHobGuid);
+    if (TseDataHobPtr == NULL) {
+      DEBUG ((DEBUG_ERROR, "TseDataHob not found!\n"));
+      TseSupport = 0;
+      ASSERT (FALSE);
+    }
+  } else {
     TseSupport = 0;
-    ASSERT (FALSE);
   }
 
   TraceHubDataHob = (TRACEHUB_DATA_HOB *)GetFirstGuidHob (&gTraceHubDataHobGuid);

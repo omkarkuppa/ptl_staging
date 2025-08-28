@@ -41,6 +41,7 @@ TimerLib
 PeiHostBridgeIpStatusLib
 ReportStatusCodeLib
 BaseIGpuInfoLib
+TseInfoLib
 TdxInfoLib
 PeiTdxLib
 TdxFruLib
