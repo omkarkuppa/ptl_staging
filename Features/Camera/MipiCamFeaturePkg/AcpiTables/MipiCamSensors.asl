@@ -25,19 +25,6 @@
 #define IR_LED    3
 #define XEON_LED  4
 
-//
-// Arg1 possible values for internal GINF function
-//
-#define GPIO_COM_FIELD               0
-#define GPIO_PAD_NUM_FIELD           1
-#define GPIO_PADCFG_REG_FIELD        2
-#define GPIO_HOSTOWN_REG_FIELD       3
-#define GPIO_PADOWN_REG_FIELD        4
-#define GPIO_GPE_STS_REG_FIELD       5
-#define GPIO_LOCK_CONFIG_REG_FIELD   6
-#define GPIO_LOCK_TX_REG_FIELD       7
-#define GPIO_DRIVER_PIN_BASE_NUMBER  8
-
 #define MIPICAM_GPIO_FUNCTION_FLASH_DRIVER_EN  2
 
 DefinitionBlock (
@@ -59,7 +46,6 @@ DefinitionBlock (
  External (\_SB.PC0X.FLMD, MethodObj)
  External (\_SB.PC0X.DSMM, MethodObj)
  External (\_SB.GNUM, MethodObj)
- External (\_SB.GINF, MethodObj)
  External (\ADBG, MethodObj)
  #define ADBG(x) \
  If (CondRefOf(ADBG)) {\
@@ -89,37 +75,37 @@ Scope (\_SB) {
   Include ("MipiCamNvs.asl")
 
   Method (PINR, 3, Serialized) { // Create GPIO resource template buffer
-    // Arg0 - Group Pad Number
-    // Arg1 - Com number
-    // Arg2 - Group Number
-    If (LEqual (Arg1, 0)) {
-      Name (GPR0, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI0", 0x00, ResourceConsumer, GPD0,) { 0xFFFF } })
+    // Arg0 - Com number
+    // Arg1 - Group number
+    // Arg2 - Pad Number
+    If (LEqual (Arg0, 0)) {
+      Name (GPR0, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI0", 0x00, ResourceConsumer, GPD0) { 0xFFFF } })
       CreateWordField (GPR0, GPD0._PIN, PIN0)
-      Store (Add (GINF (Arg1, Arg2, 7), Arg0), PIN0)
+      Store (GNUM (GPAD (Arg0, Arg1, Arg2)), PIN0)
       Return (GPR0)
     }
-    ElseIf (LEqual (Arg1, 1)) {
-      Name (GPR1, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI1", 0x00, ResourceConsumer, GPD1,) { 0xFFFF } })
+    ElseIf (LEqual (Arg0, 1)) {
+      Name (GPR1, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI1", 0x00, ResourceConsumer, GPD1) { 0xFFFF } })
       CreateWordField (GPR1, GPD1._PIN, PIN1)
-      Store (Add (GINF (Arg1, Arg2, 7), Arg0), PIN1)
+      Store (GNUM (GPAD (Arg0, Arg1, Arg2)), PIN1)
       Return (GPR1)
     }
-    ElseIf (LEqual (Arg1, 2)) {
-      Name (GPR3, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI3", 0x00, ResourceConsumer, GPD3,) { 0xFFFF } })
+    ElseIf (LEqual (Arg0, 2)) {
+      Name (GPR3, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI3", 0x00, ResourceConsumer, GPD3) { 0xFFFF } })
       CreateWordField (GPR3, GPD3._PIN, PIN3)
-      Store (Add (GINF (Arg1, Arg2, 7), Arg0), PIN3)
+      Store (GNUM (GPAD (Arg0, Arg1, Arg2)), PIN3)
       Return (GPR3)
     }
-    ElseIf (LEqual (Arg1, 3)) {
-      Name (GPR4, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI4", 0x00, ResourceConsumer, GPD4,) { 0xFFFF } })
+    ElseIf (LEqual (Arg0, 3)) {
+      Name (GPR4, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI4", 0x00, ResourceConsumer, GPD4) { 0xFFFF } })
       CreateWordField (GPR4, GPD4._PIN, PIN4)
-      Store (Add (GINF (Arg1, Arg2, 7), Arg0), PIN4)
+      Store (GNUM (GPAD (Arg0, Arg1, Arg2)), PIN4)
       Return (GPR4)
     }
-    ElseIf (LEqual (Arg1, 4)) {
-      Name (GPR5, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI5", 0x00, ResourceConsumer, GPD5,) { 0xFFFF } })
+    ElseIf (LEqual (Arg0, 4)) {
+      Name (GPR5, ResourceTemplate () { GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly, "\\_SB.GPI5", 0x00, ResourceConsumer, GPD5) { 0xFFFF } })
       CreateWordField (GPR5, GPD5._PIN, PIN5)
-      Store (Add (GINF (Arg1, Arg2, 7), Arg0), PIN5)
+      Store (GNUM (GPAD (Arg0, Arg1, Arg2)), PIN5)
       Return (GPR5)
     }
     Else {
@@ -151,28 +137,19 @@ Scope (\_SB) {
     Store (0, Local1)
     Store (0, Local2)
 
-    And (0, 0x3FF, Local2)
-    ShiftLeft (Local0, 22, Local2)
-    And (CHID, 0x1F, Local2)
-    ShiftLeft (Local1, 17, Local2)
-    Or (Local0, Local1, Local0)
+    Store (ShiftLeft (And (0, 0x3FF), 22), Local0)
+    Store (ShiftLeft (And (CHID, 0x1F), 17), Local1)
+    Store (ShiftLeft (And (0, 0xF), 13), Local2)
+    Store (ShiftLeft (And (Arg0, 0x7), 10), Local3)
+    Store (ShiftLeft (And (Arg1, 0x7), 7), Local4)
+    Store (ShiftLeft (And (Arg2, 0x7F), 0), Local5)
 
-    And (0 ,0xF, Local2)
-    ShiftLeft (Local1, 13, Local2)
-    Or (Local0, Local1, Local0)
-
-    And (Arg0 , 0x7, Local2)
-    ShiftLeft (Local1, 10, Local2)
-    Or (Local0, Local1, Local0)
-
-    And (Arg1 , 0x7, Local2)
-    ShiftLeft (Local1, 7, Local2)
-    Or (Local0, Local1, Local0)
-
-    And (Arg2 , 0x7F, Local2)
-    Or (Local0, Local2, Local0)
-
-    Return (Local0)
+    Or (Local0, Local1, Local6)
+    Or (Local6, Local2, Local6)
+    Or (Local6, Local3, Local6)
+    Or (Local6, Local4, Local6)
+    Or (Local6, Local5, Local6)
+    Return (Local6)
   }
 
   Method (GPPI, 4, Serialized) { // Create information about GPIO pin used by sensor driver in _DSM method
@@ -498,30 +475,30 @@ Scope (\_SB) {
           Return (\_SB.PC0X.DSCR (_UID))
         }
         If (LGreater (C0GP, 0)) {
-          Store (PINR (C0P0, C0C0, C0G0), Local0)
+          Store (PINR (C0C0, C0G0, C0P0), Local0)
         }
         If (LGreater (C0GP, 1)) {
-          Store (PINR (C0P1, C0C1, C0G1), Local1)
+          Store (PINR (C0C1, C0G1, C0P1), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C0GP, 2)) {
-          Store (PINR (C0P2, C0C2, C0G2), Local1)
+          Store (PINR (C0C2, C0G2, C0P2), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C0GP, 3)) {
-          Store (PINR (C0P3, C0C3, C0G3), Local1)
+          Store (PINR (C0C3, C0G3, C0P3), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C0GP, 4)) {
-          Store (PINR (C0P4, C0C4, C0G4), Local1)
+          Store (PINR (C0C4, C0G4, C0P4), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C0GP, 5)) {
-          Store (PINR (C0P5, C0C5, C0G5), Local1)
+          Store (PINR (C0C5, C0G5, C0P5), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
@@ -616,30 +593,30 @@ Scope (\_SB) {
           Return (\_SB.PC0X.DSCR (_UID))
         }
         If (LGreater (C1GP, 0)) {
-          Store (PINR (C1P0, C1C0, C1G0), Local0)
+          Store (PINR (C1C0, C1G0, C1P0), Local0)
         }
         If (LGreater (C1GP, 1)) {
-          Store (PINR (C1P1, C1C1, C1G1), Local1)
+          Store (PINR (C1C1, C1G1, C1P1), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C1GP, 2)) {
-          Store (PINR (C1P2, C1C2, C1G2), Local1)
+          Store (PINR (C1C2, C1G2, C1P2), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C1GP, 3)) {
-          Store (PINR (C1P3, C1C3, C1G3), Local1)
+          Store (PINR (C1C3, C1G3, C1P3), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C1GP, 4)) {
-          Store (PINR (C1P4, C1C4, C1G4), Local1)
+          Store (PINR (C1C4, C1G4, C1P4), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C1GP, 5)) {
-          Store (PINR (C1P5, C1C5, C1G5), Local1)
+          Store (PINR (C1C5, C1G5, C1P5), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
@@ -733,30 +710,30 @@ Scope (\_SB) {
           Return (\_SB.PC0X.DSCR (_UID))
         }
         If (LGreater (C2GP, 0)) {
-          Store (PINR (C2P0, C2C0, C2G0), Local0)
+          Store (PINR (C2C0, C2G0, C2P0), Local0)
         }
         If (LGreater (C2GP, 1)) {
-          Store (PINR (C2P1, C2C1, C2G1), Local1)
+          Store (PINR (C2C1, C2G1, C2P1), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C2GP, 2)) {
-          Store (PINR (C2P2, C2C2, C2G2), Local1)
+          Store (PINR (C2C2, C2G2, C2P2), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C2GP, 3)) {
-          Store (PINR (C2P3, C2C3, C2G3), Local1)
+          Store (PINR (C2C3, C2G3, C2P3), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C2GP, 4)) {
-          Store (PINR (C2P4, C2C4, C2G4), Local1)
+          Store (PINR (C2C4, C2G4, C2P4), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C2GP, 5)) {
-          Store (PINR (C2P5, C2C5, C2G5), Local1)
+          Store (PINR (C2C5, C2G5, C2P5), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
@@ -850,30 +827,30 @@ Scope (\_SB) {
           Return (\_SB.PC0X.DSCR (_UID))
         }
         If (LGreater (C3GP, 0)) {
-          Store (PINR (C3P0, C3C0, C3G0), Local0)
+          Store (PINR (C3C0, C3G0, C3P0), Local0)
         }
         If (LGreater (C3GP, 1)) {
-          Store (PINR (C3P1, C3C1, C3G1), Local1)
+          Store (PINR (C3C1, C3G1, C3P1), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C3GP, 2)) {
-          Store (PINR (C3P2, C3C2, C3G2), Local1)
+          Store (PINR (C3C2, C3G2, C3P2), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C3GP, 3)) {
-          Store (PINR (C3P3, C3C3, C3G3), Local1)
+          Store (PINR (C3C3, C3G3, C3P3), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C3GP, 4)) {
-          Store (PINR (C3P4, C3C4, C3G4), Local1)
+          Store (PINR (C3C4, C3G4, C3P4), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C3GP, 5)) {
-          Store (PINR (C3P5, C3C5, C3G5), Local1)
+          Store (PINR (C3C5, C3G5, C3P5), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
@@ -967,30 +944,30 @@ Scope (\_SB) {
           Return (\_SB.PC0X.DSCR (_UID))
         }
         If (LGreater (C4GP, 0)) {
-          Store (PINR (C4P0, C4C0, C4G0), Local0)
+          Store (PINR (C4C0, C4G0, C4P0), Local0)
         }
         If (LGreater (C4GP, 1)) {
-          Store (PINR (C4P1, C4C1, C4G1), Local1)
+          Store (PINR (C4C1, C4G1, C4P1), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C4GP, 2)) {
-          Store (PINR (C4P2, C4C2, C4G2), Local1)
+          Store (PINR (C4C2, C4G2, C4P2), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C4GP, 3)) {
-          Store (PINR (C4P3, C4C3, C4G3), Local1)
+          Store (PINR (C4C3, C4G3, C4P3), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C4GP, 4)) {
-          Store (PINR (C4P4, C4C4, C4G4), Local1)
+          Store (PINR (C4C4, C4G4, C4P4), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C4GP, 5)) {
-          Store (PINR (C4P5, C4C5, C4G5), Local1)
+          Store (PINR (C4C5, C4G5, C4P5), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
@@ -1084,30 +1061,30 @@ Scope (\_SB) {
           Return (\_SB.PC0X.DSCR (_UID))
         }
         If (LGreater (C5GP, 0)) {
-          Store (PINR (C5P0, C5C0, C5G0), Local0)
+          Store (PINR (C5C0, C5G0, C5P0), Local0)
         }
         If (LGreater (C5GP, 1)) {
-          Store (PINR (C5P1, C5C1, C5G1), Local1)
+          Store (PINR (C5C1, C5G1, C5P1), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C5GP, 2)) {
-          Store (PINR (C5P2, C5C2, C5G2), Local1)
+          Store (PINR (C5C2, C5G2, C5P2), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C5GP, 3)) {
-          Store (PINR (C5P3, C5C3, C5G3), Local1)
+          Store (PINR (C5C3, C5G3, C5P3), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C5GP, 4)) {
-          Store (PINR (C5P4, C5C4, C5G4), Local1)
+          Store (PINR (C5C4, C5G4, C5P4), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
         If (LGreater (C5GP, 5)) {
-          Store (PINR (C5P5, C5C5, C5G5), Local1)
+          Store (PINR (C5C5, C5G5, C5P5), Local1)
           ConcatenateResTemplate (Local0, Local1, Local2)
           Store (Local2, Local0)
         }
