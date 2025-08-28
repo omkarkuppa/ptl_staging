@@ -24,6 +24,25 @@ function EndPreBuild {
 
 cd $WORKSPACE
 
+# Check $FSP_BINARY_BUILD and set $FSP_TEST_RELEASE
+
+export FSP_TEST_RELEASE=FALSE
+if [ "$FSP_BINARY_BUILD" == "TRUE" ]; then
+  if [ "$1" == "TEST_RELEASE" ]; then
+    export FSP_TEST_RELEASE=TRUE
+  fi
+  echo "FSP BINARY_BUILD = $FSP_BINARY_BUILD"
+  echo "FSP_TEST_RELEASE = $FSP_TEST_RELEASE"
+
+  if [ "$FSP_BINARY_BUILD_ONLY" == "TRUE" ]; then
+    exit 0
+  fi
+
+  echo "FSP_BINARY_BUILD = $FSP_BINARY_BUILD"
+  echo "FSP_TEST_RELEASE = $FSP_TEST_RELEASE"
+  echo "RESILIENCY_BUILD = $RESILIENCY_BUILD"
+fi
+
 echo
 echo "Prebuild:  Set build environment."
 echo
@@ -106,5 +125,9 @@ echo "  EXTENDEDREGION_BUILD = $EXTENDEDREGION_BUILD"
 echo "  ATOM_BUILD           = $ATOM_BUILD"
 echo "  FSP_SIGNED           = $FSP_SIGNED"
 echo "  BUILD_OPTION_PCD     = $BUILD_OPTION_PCD"
+echo "  FSP_BINARY_BUILD     = $FSP_BINARY_BUILD"
+echo "  FSP_TEST_RELEASE     = $FSP_TEST_RELEASE"
+echo "  FSPB_BUILD           = $FSPB_BUILD"
+echo "  FSPW_BUILD           = $FSPW_BUILD"
 echo
 EndPreBuild

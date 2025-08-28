@@ -76,6 +76,11 @@ export SPECIAL_POOL_BUILD=FALSE
 export FSPV_BUILD=FALSE
 export EXTENDEDREGION_BUILD=FALSE
 export ATOM_BUILD=FALSE
+export FSP_BINARY_BUILD=TRUE
+export FSP_BINARY_BUILD_ONLY=FALSE
+export FSPB_BUILD=FALSE
+export FSPW_BUILD=FALSE
+
 
 #
 # If MAX_CONCURRENT_THREADS environment variable is uninitialized
@@ -113,6 +118,8 @@ function PrintUsage {
   echo "  ptlp     To do build ptlp debug build"
   echo "  fspapi   To build using FSP API Mode."
   echo "  perf     To set gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable|TRUE. See note 1"
+  echo "  fspb      To build *Only* FSP Binary (Default is Debug build, adding r for Release build). See note 1"
+  echo "  fspw     To build *Only* FSP Wrapper         (Default is Debug build, adding r for Release build). See note 1"
   echo "  rpmc     To set gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable|TRUE. See note 1"
   echo "  fspv     To set gSiPkgTokenSpaceGuid.PcdFspVEnable=TRUE. See note 1"
   echo "  extended To enable Extended BIOS Region so a single BIOS image larger than 16MB in size is built."
@@ -225,7 +232,7 @@ if [ "$PACKAGES_PATH" = "" ]; then
 fi
 
 cd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE
-# @todo: Add support for FSP build options (fspb, fspw) and pacm
+# @todo: Add support for pacm
 numargs=$#
 for ((i=1 ; i <= numargs ; i++)); do
   if [ "$1" = "r" ]; then
@@ -257,6 +264,15 @@ for ((i=1 ; i <= numargs ; i++)); do
     export FSP_RESET=TRUE
     export SYMBOL_PREFIX=
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE"
+  elif [ "$1" = "fspb" ]; then
+    export FSPB_BUILD=TRUE
+    export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdFspBinaryEnable=TRUE"
+    export FSP_BINARY_BUILD=TRUE
+    export FSP_BINARY_BUILD_ONLY=TRUE
+  elif [ "$1" = "fspw" ]; then
+    export FSPW_BUILD=TRUE
+    export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdFspBinaryEnable=FALSE"
+    export FSP_BINARY_BUILD=FALSE
   elif [ "$1" = "fspmuncompressed" ]; then
     export FSPM_COMPRESSED=FALSE
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE"
@@ -479,22 +495,25 @@ fi
 
 if [ "$FSP_SIGNED" = "TRUE" ]; then
   export FSP_BUILD_PARAMETER=$FSP_BUILD_PARAMETER fspsigned
-else (
+else
   export FSP_BUILD_PARAMETER=$FSP_BUILD_PARAMETER fspunsigned
-)
-
-echo "BuildIafw.sh $FSP_ARCH $FSP64_BUILD $SYMBOL_PREFIX"
-. $WORKSPACE_COMMON/$PLATFORM_SI_PACKAGE/Fsp/BuildFsp.sh $TARGET_PLATFORM $FspTargetOption $COMPILER $FSP_BUILD_PARAMETER
-if [ $? -ne 0 ]; then
-  echo "!!! ERROR:FSP build Failed !!!"
-  exit 1
 fi
 
-
-if [ "$FSP_SIGNED" = "TRUE" ]; then
-  if [ ! -f $WORKSPACE_COMMON/PantherLakeFspBinPkg/Fbm.bin ]; then
-    echo !!! ERROR: FBM binary file is missing !!!
+if [ "$FSP_BINARY_BUILD" = "TRUE" ]; then
+  echo "BuildIafw.sh $FSP_ARCH $FSP64_BUILD $SYMBOL_PREFIX"
+  . $WORKSPACE_COMMON/$PLATFORM_SI_PACKAGE/Fsp/BuildFsp.sh $TARGET_PLATFORM $FspTargetOption $COMPILER $FSP_BUILD_PARAMETER
+  if [ $? -ne 0 ]; then
+    echo "!!! ERROR:FSP build Failed !!!"
     exit 1
+  fi
+
+fi
+if [ "FSP_BINARY_BUILD_ONLY" = "FALSE" ]; then
+  if [ "$FSP_SIGNED" = "TRUE" ]; then
+    if [ ! -f $WORKSPACE_COMMON/PantherLakeFspBinPkg/Fbm.bin ]; then
+      echo !!! ERROR: FBM binary file is missing !!!
+      exit 1
+    fi
   fi
 fi
 #
@@ -538,83 +557,81 @@ echo "***********************************"
 echo
 echo "Parsing FlashMapInclude FDFs and checking if all offset and size requirements are met"
 echo
+if [ "$FSPB_BUILD" = "FALSE" ]; then
+  # FSP build
+  BB_CHECK=TRUE
+  if [ "$ATOM_BUILD" == "TRUE" ]; then
+    BB_CHECK=FALSE
+  fi
+  if [ "$TARGET" == "DEBUG" ]; then
+    BB_CHECK=FALSE
+  fi
 
-# FSP build
-BB_CHECK=TRUE
-if [ "$ATOM_BUILD" == "TRUE" ]; then
-  BB_CHECK=FALSE
-fi
+  # Topswap for PTL is 8MB. Setting build specific limit to 6.2MB after arch discussion
+  TOPSWAP_LIMIT=0x00650000
 
-if [ "$TARGET" == "DEBUG" ]; then
-  BB_CHECK=FALSE
-fi
+  if [ "$BB_CHECK" == "TRUE" ]; then
+    "$PYTHON_COMMAND" "$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/FvAlignment/FvAlignment.py" --flashmap "$FLASHMAP_FDF" --topswap_size "$TOPSWAP_LIMIT" -cl all fv_alignment_check
+    if [ $? -ne 0 ]; then
+      exit 1
+    fi
+  fi
 
-# Topswap for PTL is 8MB. Setting build specific limit to 6.2MB after arch discussion
-TOPSWAP_LIMIT=0x00650000
+  echo
+  echo "PASS all flash map quick check successfully!"
+  echo "***********************************"
 
-if [ "$BB_CHECK" == "TRUE" ]; then
-  "$PYTHON_COMMAND" "$WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/FvAlignment/FvAlignment.py" --flashmap "$FLASHMAP_FDF" --topswap_size "$TOPSWAP_LIMIT" -cl all fv_alignment_check
-  if [ $? -ne 0 ]; then
+  echo "ACTIVE FLASH MAP FDF = $FLASHMAP_FDF"
+
+  # Split Fsp.fd and generate FspTopAt4G.fd, then add padding data before this binary to FspTopAt4G.fd for alignment
+  if [ "$FSP_RESET" = "TRUE" ]; then
+    echo "call FspTopGen.py to generate FspTopAt4G.fd."
+    python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardSupport/Tools/FspTopGen/FspTopGen.py -SplitBin $EDK_TOOLS_PATH/Source/Python/Split/Split.py
+    if [ $? -ne 0 ]; then
+      echo "!!! ERROR:FspTopAt4G.fd build Failed !!!"
+      exit 1
+    fi
+  fi
+  python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/StripFlashmap.py "$TARGET" $FLASHMAP_FDF $WORKSPACE/FlashMapInclude_Temp.fdf
+  if [ $? -ne 0 ]
+  then
+    echo "!!! ERROR:StripFlashmap failed!!!"
     exit 1
   fi
-fi
-echo
-echo "PASS all flash map quick check successfully!"
-echo "***********************************"
+  if [ "$FSP_SIGNED" = "TRUE" ]; then
+    python3 $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py split -f $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg/Fsp.fd -o $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg -n Fsp_Rebased.fd
+  else
+    python3 $WORKSPACE_CORE_PLATFORM/MinPlatformPkg/Tools/Fsp/RebaseFspBinBaseAddress.py $WORKSPACE/FlashMapInclude_Temp.fdf $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp.fd 0x0 $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
+  fi
 
-echo "ACTIVE FLASH MAP FDF = $FLASHMAP_FDF"
-
-# Split Fsp.fd and generate FspTopAt4G.fd, then add padding data before this binary to FspTopAt4G.fd for alignment
-if [ "$FSP_RESET" = "TRUE" ]; then
-  echo "call FspTopGen.py to generate FspTopAt4G.fd."
-  python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardSupport/Tools/FspTopGen/FspTopGen.py -SplitBin $EDK_TOOLS_PATH/Source/Python/Split/Split.py
-  if [ $? -ne 0 ]; then
-    echo "!!! ERROR:FspTopAt4G.fd build Failed !!!"
+  if [ $? -ne 0 ]
+  then
+    echo "!!! ERROR:RebaseFspBinAddress failed!!!"
     exit 1
   fi
-fi
 
+  cat $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_S.fd \
+    $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_M.fd \
+    $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_T.fd \
+    > $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased.fd
 
-python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/StripFlashmap.py "$TARGET" $FLASHMAP_FDF $WORKSPACE/FlashMapInclude_Temp.fdf
-if [ $? -ne 0 ]
-then
-  echo "!!! ERROR:StripFlashmap failed!!!"
-  exit 1
-fi
-if [ "$FSP_SIGNED" = "TRUE" ]; then
-  python3 $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py split -f $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg/Fsp.fd -o $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg -n Fsp_Rebased.fd
-else
-  python3 $WORKSPACE_CORE_PLATFORM/MinPlatformPkg/Tools/Fsp/RebaseFspBinBaseAddress.py $WORKSPACE/FlashMapInclude_Temp.fdf $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp.fd 0x0 $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
-fi
-
-if [ $? -ne 0 ]
-then
-  echo "!!! ERROR:RebaseFspBinAddress failed!!!"
-  exit 1
-fi
-
-cat $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_S.fd \
-  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_M.fd \
-  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_T.fd \
-  > $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased.fd
-
-if [ "$FSPM_COMPRESSED" = "TRUE" ]; then
-  if [ "$FSP_SIGNED" != "TRUE" ]; then
-    echo "FSP-M is compressed, Rebase FSP-M"
-    python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/RebaseFspmBinBaseAddress.py $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp_Rebased.fd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardPkgPcdUpdate.dsc $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
+  if [ "$FSPM_COMPRESSED" = "TRUE" ]; then
+    if [ "$FSP_SIGNED" != "TRUE" ]; then
+      echo "FSP-M is compressed, Rebase FSP-M"
+      python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/RebaseFspmBinBaseAddress.py $WORKSPACE_FSP_BIN/PantherLakeFspBinPkg Fsp_Rebased.fd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/BoardPkgPcdUpdate.dsc $WORKSPACE_CORE/IntelFsp2Pkg/Tools/SplitFspBin.py
+    fi
   fi
-fi
-if [ $? -ne 0 ]
-then
-  echo "!!! ERROR:RebaseFspmBinAddress failed!!!"
-  exit 1
-fi
+  if [ $? -ne 0 ]
+  then
+    echo "!!! ERROR:RebaseFspmBinAddress failed!!!"
+    exit 1
+  fi
 
-cat $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_S.fd \
-  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_M.fd \
-  $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_T.fd \
-  > $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased.fd
-
+  cat $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_S.fd \
+    $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_M.fd \
+    $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased_T.fd \
+    > $WORKSPACE_SILICON/PantherLakeFspBinPkg/Fsp_Rebased.fd
+fi
 BUILD_DIR="Build/$PLATFORM_BOARD_PACKAGE/$TARGET"
 BUILD_DIR+="_$TOOL_CHAIN_TAG"
 export BUILD_DIR
