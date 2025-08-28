@@ -189,5 +189,6 @@
 #define V_THC_PCR_SB_RESOURCE_EN_CTL_DISABLE_0_9          (BIT0|BIT1|BIT2|BIT3|BIT4|BIT5|BIT6|BIT7|BIT8|BIT9)
 #define R_THC_PCR_SLEEP_STATES_CTL                        0xA8           ///< THC Sleep States Control
 #define B_THC_PCR_SLEEP_STATES_CTL_DIS_QOS_DMD_RSP        BIT15          ///< When set THC will send QOS_DMD request, which do not require SOC to return QOS_RSP
+#define R_THC_SB_SSC_CLK_CFG                              0x8            ///< THC SSC Config Register
 
 #endif //_THC_REGS_

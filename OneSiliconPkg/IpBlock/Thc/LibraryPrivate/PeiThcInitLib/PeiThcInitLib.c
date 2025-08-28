@@ -66,6 +66,13 @@ typedef union {
   } Fields;
   UINT32 Data32;
 } THC_SB_PM_CTRL;
+typedef union {
+  struct {
+    UINT32 SscClkGateEn        : 1;  // [0][RW] SSC Clock Gate Enable
+    UINT32 Rsvd0               : 31;  // [31:1][RO] Reserved
+  } Fields;
+  UINT32 Data32;
+} THC_SB_SSC_CLK_CFG;
 
 /**
   Configures THC PM Ctrl D0i2 Entry Timer
@@ -154,6 +161,31 @@ ThcSetMicroSecCntAndTimeStampMode (
   ThcSbPmCtrl.Fields.ThcTsD0i2Mode = TimestampTimerMode;
   ThcPcrAccess->Write32 (ThcPcrAccess, R_THC_PCR_SB_PM_CTRL, ThcSbPmCtrl.Data32);
 }
+
+/**
+  This function does a read and write to 0x8.
+
+  @param[in] ThcPcrAccess             THC PCR Register Access
+
+**/
+VOID
+STATIC
+ThcClkCfgReadAndWrite (
+  IN REGISTER_ACCESS     *ThcPcrAccess
+  )
+{
+  THC_SB_SSC_CLK_CFG ThcSbSscClkCfg;
+
+  if (ThcPcrAccess == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a - ThcClkCfgReadAndWrite ThcPcrAccess is null\n", __FUNCTION__));
+    return;
+  }
+
+  ThcSbSscClkCfg.Data32 = ThcPcrAccess->Read32 (ThcPcrAccess, R_THC_SB_SSC_CLK_CFG);
+  DEBUG ((DEBUG_INFO, "ThcSbSscClkCfg.Data32: 0x%x\n", ThcSbSscClkCfg.Data32));
+  ThcPcrAccess->Write32 (ThcPcrAccess, R_THC_SB_SSC_CLK_CFG, ThcSbSscClkCfg.Data32);
+}
+
 
 /**
   Configures THC-SPI Interface Clock
@@ -363,6 +395,8 @@ ThcInit (
           ThcHandle->ThcPortConfig[ThcIndex].TimestampTimerMode
           );
       }
+
+      ThcClkCfgReadAndWrite (ThcHandle->Controller[ThcIndex].ThcPcrAccess);
 
       ThcConfigurePort (
         ThcHandle->Controller[ThcIndex].PciCfgBaseAddr,
