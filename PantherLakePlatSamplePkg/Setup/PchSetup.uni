@@ -299,7 +299,7 @@
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_DEFAULT              #language en-US "Default codecs topology"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_ALC722_SN_PTL        #language en-US "ALC722-CG, Single Lane Configuration (09.04.25)"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_4STAR_1_PTL          #language en-US "ALC722-CG, 4-Star(2) Configuration (09.04.25)"
-#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_5STAR_MP_PTL         #language en-US "[MP-chip] ALC712-VB, ALC1320, 5-Star Configuration (17.06.25)"
+#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_5STAR_MP_PTL         #language en-US "[MP-chip] ALC712-VB, ALC1320, 5-Star Configuration (17.06.25, 4-Ch)"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_4STAR_3_MP_PTL       #language en-US "[MP-chip] ALC713-VB, 2xALC1320, 4-Star(3) Configuration (17.06.25)"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_CIRRUS_PTL           #language en-US "Cirrus 6-speaker Configuration v6.23.0"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_GCS_ADK              #language en-US "Configuration GCS/ADK ALC712-VB, ALC1320"

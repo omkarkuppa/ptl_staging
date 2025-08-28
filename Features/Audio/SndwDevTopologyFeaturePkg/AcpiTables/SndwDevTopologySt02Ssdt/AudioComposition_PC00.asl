@@ -143,8 +143,8 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        // Reference aggregation
        Package (2) {"acpi-vendor-amp-degraded-mode", 0x00}, // 0: Speaker protection on codec, 1: Speaker protection on DSP
        //Package (2) {"acpi-vendor-amp-degraded-mode", 0x01}, // 0: Speaker protection on codec, 1: Speaker protection on DSP
-       //Package (2) {"acpi_vendor_smart_amp", 0x01}, // 0: Simple amp, 1: Smart amp
-       Package (2) {"acpi_vendor_smart_amp", 0x00}, // 0: Simple amp, 1: Smart amp   //20250210 update for Intel streaming driver
+       Package (2) {"acpi_vendor_smart_amp", 0x01}, // 0: Simple amp, 1: Smart amp //20250613 enable Smart amp for Resp182(PCM feedback module) which load in Intel Extended Smart AMP
+       //Package (2) {"acpi_vendor_smart_amp", 0x00}, // 0: Simple amp, 1: Smart amp   //20250210 update for Intel streaming driver
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-count", 0x02},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-aec-feedback-channel-mask", 0x03},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-aec-feedback-channel-mask", 0x0C},
@@ -282,42 +282,88 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_MicrophoneArray"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x0205},
-      Package (2) {"acpi-acd-sdca-terminal-type", 0x0205},
       Package (2) {"acpi-acd-connection-count", 1},
       Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
       Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
-      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x8},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x08},
+      // Begin - Addition for Multichannel capture
+      Package () {"conn-info", Package () {
+         // Per connection / stream
+         Package () {"conn-agg-path-0", Package () {
+            Package (2) {"sdca-stream-type", 0x0181}, // Microphone Array RAW Capture Stream (mipi-sdca-terminal-type Raw PCM Capture of Streaming OT 113)
+//#if MICARRAY_2CH
+            //Package (2) {"agg-channel-count", 0x2}, // Channel count of enumerated endpoint
+//#elif MICARRAY_3CH
+            // Package (2) {"agg-channel-count", 0x3}, // Channel count of enumerated endpoint
+//#else // MICARRAY_4CH
+             Package (2) {"agg-channel-count", 0x4}, // Channel count of enumerated endpoint
+//#endif // MICARRAY_2CH | MICARRAY_3CH | MICARRAY_4CH
+            Package (2) {"agg-component-count", 0x1}, // No peripheral/function aggregation
+            // Per Peripheral
+            Package () {"agg-component-0", Package () {
+               Package(2) {"function-manufacturer-id", 0x025D},
+               Package(2) {"function-id", 0x0712},
+               Package(2) {"controller-id", 0x0},
+               Package(2) {"link-id", 0x3},
+               Package(2) {"unique-id", 0x0},
+               Package(2) {"function-number", 0x2},
+               Package(2) {"function-type", 0x3},
+               Package(2) {"terminal-entity-id", 0x20}, // entity ID of Streaming OT 113
+               Package(2) {"dp-map", 0x1},
+//#if MICARRAY_2CH
+               //Package(2) {"dp-peripheral-mask", 0x03},
+//#elif MICARRAY_3CH
+               // Package(2) {"dp-peripheral-mask", 0x07},
+//#else // MICARRAY_4CH
+                Package(2) {"dp-peripheral-mask", 0x33},
+//#endif // MICARRAY_2CH | MICARRAY_3CH | MICARRAY_4CH
+               Package () {"data-port-map-0", Package () {
+                  Package (2) {"data-port-num", 0x8},
+                  Package (2) {"data-port-mode", 0x1},
+//#if MICARRAY_2CH
+                  //Package (2) {"data-port-channel-mask", 0x3},
+//#elif MICARRAY_3CH
+                  // Package (2) {"data-port-channel-mask", 0x7},
+//#else // MICARRAY_4CH
+                   Package (2) {"data-port-channel-mask", 0xF},
+//#endif // MICARRAY_2CH | MICARRAY_3CH | MICARRAY_4CH
+               },},
+            },},
+         },},
+      },},
+      // Ends - Addition for multichannel capture
       Package (2) {"acpi-acd-connection-0-properties",
          Buffer()
          {
             0x02,
-            0x00, 0x03, 0x00, 0x00,
-            0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
-            0x08
+            0x00, 0x00, 0x00, 0x00,
+            0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+            0x08  // data port
          }
       },
-      Package (2) {"custom-acd-buffered-count", 1},
-      Package (2) {"custom-acd-buffered-0-properties",
-         Buffer()
-         {
-            0x02,
-            0x00, 0x03, 0x00, 0x00,
-            0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
-            0x0A,                   // dataport
-            0xFE, 0xFF,             // wFormatTag
-            0x02, 0x00,             // nChannels
-            0x80, 0xBB, 0x00, 0x00, // nSamplesPerSec
-            0x00, 0xEE, 0x02, 0x00, // nAvgBytesPerSec
-            0x04, 0x00,             // nBlockAlign
-            0x10, 0x00,             // wBitsPerSample
-            0x16, 0x00,             // cbSize
-            0x10, 0x00,             // wValidBitsPerSample
-            0x03, 0x00, 0x00, 0x00, // dwChannelMask
-            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71  // SubFormat
-         }
-      },
+      // Package (2) {"custom-acd-buffered-count", 1},
+      // Package (2) {"custom-acd-buffered-0-properties",
+      //    Buffer()
+      //    {
+      //       0x02,
+      //       0x00, 0x00, 0x00, 0x00,
+      //       0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+      //       0x0A,                   // dataport
+      //       0xFE, 0xFF,             // wFormatTag
+      //       0x02, 0x00,             // nChannels
+      //       0x80, 0xBB, 0x00, 0x00, // nSamplesPerSec
+      //       0x00, 0xEE, 0x02, 0x00, // nAvgBytesPerSec
+      //       0x04, 0x00,             // nBlockAlign
+      //       0x10, 0x00,             // wBitsPerSample
+      //       0x16, 0x00,             // cbSize
+      //       0x10, 0x00,             // wValidBitsPerSample
+      //       0x03, 0x00, 0x00, 0x00, // dwChannelMask
+      //       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71  // SubFormat
+      //    }
+      // },
    }
 }) //End VN01
+
 
 Name(CC11, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
