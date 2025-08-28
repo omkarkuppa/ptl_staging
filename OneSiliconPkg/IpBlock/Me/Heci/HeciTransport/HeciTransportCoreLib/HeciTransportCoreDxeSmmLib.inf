@@ -44,6 +44,7 @@
   HeciUtilsLib
   HeciTraceLib
   PreSiliconEnvDetectLib
+  PerformanceLib
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress

@@ -410,7 +410,7 @@ SiInitOnEndOfPei (
   //
   // Set BIOS_RESET_CPL to indicate BIOS initialization completed
   //
-  PERF_START_EX (&gPerfSaResetPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4090);
+  PERF_INMODULE_BEGIN ("PostMemSaReset");
 
   ///
   /// Set BIOS_RESET_CPL
@@ -455,14 +455,14 @@ SiInitOnEndOfPei (
   ///
   IGpuPrintPciConfig ();
 
-  PERF_END_EX (&gPerfSaResetPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4091);
+  PERF_INMODULE_END ("PostMemSaReset");
 
   //
   // Initialize power management after RESET_CPL at post-memory phase.
   //
-  PERF_START_EX (&gPerfCpuPowerMgmtGuid, NULL, NULL, AsmReadTsc (), 0x40A0);
+  PERF_INMODULE_BEGIN("PostMemCpuPowerMgmt");
   CpuPowerMgmtInit (CpuPowerDeliveryConfig);
-  PERF_END_EX (&gPerfCpuPowerMgmtGuid, NULL, NULL, AsmReadTsc (), 0x40A1);
+  PERF_INMODULE_END("PostMemCpuPowerMgmt");
 
   //
   // Lock PAM register at End Of PEI.
@@ -822,7 +822,7 @@ SiInitPostMemOnPolicy (
   // Perform ME post mem init
   // Call before PchInit to have MbpHob data ready.
   //
-  PERF_START_EX (&gPerfMePostMemGuid, NULL, NULL, AsmReadTsc (), 0x40B0);
+  PERF_INMODULE_BEGIN ("PostMemMeInit");
   //
   // Configure MCTP
   //
@@ -830,19 +830,19 @@ SiInitPostMemOnPolicy (
     PtlPcdPsfMctpConfigure ();
   }
   MePostMemInit (SiPolicy);
-  PERF_END_EX (&gPerfMePostMemGuid, NULL, NULL, AsmReadTsc (), 0x40B1);
+  PERF_INMODULE_END ("PostMemMeInit");
 
   //
   // Initializes PCH after memory services initialized
   //
-  PERF_START_EX (&gPerfPchPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4020);
+  PERF_INMODULE_BEGIN ("PostMemPchInit");
   PtlPcdInit (SiPolicy);
-  PERF_END_EX (&gPerfPchPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4021);
+  PERF_INMODULE_END ("PostMemPchInit");
 
   //
   // SA Post Mem initialization
   //
-  PERF_START_EX (&gPerfSaPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4030);
+  PERF_INMODULE_BEGIN ("PostMemSaInit");
 
   ///
   /// SA device configuration
@@ -948,7 +948,7 @@ SiInitPostMemOnPolicy (
     SetStreamTracerMemoryBuffer (SiPreMemPolicyPpi);
   }
 
-  PERF_END_EX (&gPerfSaPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4031);
+  PERF_INMODULE_END ("PostMemSaInit");
 
   //
   //  IPU Initilization
@@ -979,18 +979,18 @@ SiInitPostMemOnPolicy (
   // Overclocking Post memory Initialize.
   //
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
-  PERF_START_EX (&gPerfCpuPostMemGuid, NULL, NULL, AsmReadTsc (), 0x407E);
+  PERF_INMODULE_BEGIN ("PostMemCpuInitOc");
   Status = CpuOcInitPostMem (OverClockingConfig, MpServices2Ppi);
   ASSERT_EFI_ERROR (Status);
-  PERF_END_EX (&gPerfCpuPostMemGuid, NULL, NULL, AsmReadTsc (), 0x407F);
+  PERF_INMODULE_END ("PostMemCpuInitOc");
 #endif
   //
   // Initialize processor features, performance and power management features
   // before RESET_CPL at post-memory phase.
   //
-  PERF_START_EX (&gPerfCpuPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4080);
+  PERF_INMODULE_BEGIN ("PostMemCpuInit");
   CpuInit (SiPolicy);
-  PERF_END_EX (&gPerfCpuPostMemGuid, NULL, NULL, AsmReadTsc (), 0x4081);
+  PERF_INMODULE_END ("PostMemCpuInit");
 
 #if FixedPcdGet8(PcdTccSupport) == 0x1
   //

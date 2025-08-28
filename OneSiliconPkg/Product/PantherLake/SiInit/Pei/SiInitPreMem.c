@@ -456,30 +456,30 @@ SiInitPreMemOnPolicy (
   //
   // Validate PCH policies
   //
-  PERF_START_EX (&gPerfPchValidateGuid, NULL, NULL, AsmReadTsc (), 0x5010);
+  PERF_INMODULE_BEGIN ("PchValidatePolicy");
   PtlPcdValidatePolicy (SiPreMemPolicyPpi);
-  PERF_END_EX (&gPerfPchValidateGuid, NULL, NULL, AsmReadTsc (), 0x5011);
+  PERF_INMODULE_END ("PchValidatePolicy");
 
   //
   // Validate CPU policies
   //
-  PERF_START_EX (&gPerfCpuValidateGuid, NULL, NULL, AsmReadTsc(), 0x5030);
+  PERF_INMODULE_BEGIN ("CpuValidatePolicy");
   CpuValidatePolicy (SiPreMemPolicyPpi);
-  PERF_END_EX (&gPerfCpuValidateGuid, NULL, NULL, AsmReadTsc(), 0x5031);
+  PERF_INMODULE_END ("CpuValidatePolicy");
 
   //
   // Validate ME policies
   //
-  PERF_START_EX (&gPerfMeValidateGuid, NULL, NULL, AsmReadTsc (), 0x5040);
+  PERF_INMODULE_BEGIN ("MeValidatePolicy");
   MeValidatePolicy (SiPreMemPolicyPpi);
-  PERF_END_EX (&gPerfMeValidateGuid, NULL, NULL, AsmReadTsc (), 0x5041);
+  PERF_INMODULE_END ("MeValidatePolicy");
 
   //
   // Validate SA policies
   //
-  PERF_START_EX (&gPerfSaValidateGuid, NULL, NULL, AsmReadTsc (), 0x5050);
+  PERF_INMODULE_BEGIN ("SaValidatePolicy");
   SaValidatePolicy (SiPreMemPolicyPpi);
-  PERF_END_EX (&gPerfSaValidateGuid, NULL, NULL, AsmReadTsc (), 0x5051);
+  PERF_INMODULE_END ("SaValidatePolicy");
 
 #endif // MDEPKG_NDEBUG
   //
@@ -489,9 +489,9 @@ SiInitPreMemOnPolicy (
   //
   // Initialize PCH after Policy PPI produced
   //
-  PERF_START_EX (&gPerfPchPreMemGuid, NULL, NULL, AsmReadTsc (), 0x5070);
+  PERF_INMODULE_BEGIN ("PchOnPolicyInstalled");
   PtlPcdOnPolicyInstalled (SiPreMemPolicyPpi);
-  PERF_END_EX (&gPerfPchPreMemGuid, NULL, NULL, AsmReadTsc (), 0x5071);
+  PERF_INMODULE_END ("PchOnPolicyInstalled");
   //
   // Initialize PSMI handler/trace sizes before MRC
   //
@@ -499,9 +499,9 @@ SiInitPreMemOnPolicy (
   //
   // Initialize CPU after Policy PPI produced
   //
-  PERF_START_EX (&gPerfCpuPreMemGuid, NULL, NULL, AsmReadTsc(), 0x5080);
+  PERF_INMODULE_BEGIN ("CpuOnPolicyInstalled");
   CpuOnPolicyInstalled (SiPreMemPolicyPpi);
-  PERF_END_EX (&gPerfCpuPreMemGuid, NULL, NULL, AsmReadTsc(), 0x5081);
+  PERF_INMODULE_END ("CpuOnPolicyInstalled");
 
   ///
   /// Program the OverClocking Lock Bit before 2nd patch load
@@ -514,9 +514,9 @@ SiInitPreMemOnPolicy (
   ///
   /// Init Overclocking
   ///
-  PERF_START_EX (&gPerfCpuPreMemGuid, NULL, NULL, AsmReadTsc(), 0x5082);
+  PERF_INMODULE_BEGIN ("CpuOcInitPreMem");
   CpuOcInitPreMem (SiPreMemPolicyPpi);
-  PERF_END_EX (&gPerfCpuPreMemGuid, NULL, NULL, AsmReadTsc(), 0x5083);
+  PERF_INMODULE_END ("CpuOcInitPreMem");
 #endif
 
   ///
@@ -563,14 +563,14 @@ SiInitPreMemOnPolicy (
   //
   // Initialize ME after Policy PPI produced
   //
-  PERF_START_EX (&gPerfMePreMemGuid, NULL, NULL, AsmReadTsc (), 0x5090);
+  PERF_INMODULE_BEGIN ("MeOnPolicyInstalled");
   MeOnPolicyInstalled ();
-  PERF_END_EX (&gPerfMePreMemGuid, NULL, NULL, AsmReadTsc (), 0x5091);
+  PERF_INMODULE_END ("MeOnPolicyInstalled");
 
   //
   // Initialize SA after Policy PPI produced
   //
-  PERF_START_EX (&gPerfSaPreMemGuid, NULL, NULL, AsmReadTsc (), 0x50B0);
+  PERF_INMODULE_BEGIN ("SaOnPolicyPpiProduced");
 
   ///
   /// Program Host Bridge Bar Registers
@@ -657,7 +657,7 @@ SiInitPreMemOnPolicy (
   ///
   MmioSizeCalculation (PchPcieMmioLength, PegMmioLength, IGpuMmioLength);
 
-  PERF_END_EX (&gPerfSaPreMemGuid, NULL, NULL, AsmReadTsc (), 0x50B1);
+  PERF_INMODULE_END ("SaOnPolicyPpiProduced");
 
   //
   // Register MRC initialization callback when gEfiPeiMasterBootModePpiGuid is installed.

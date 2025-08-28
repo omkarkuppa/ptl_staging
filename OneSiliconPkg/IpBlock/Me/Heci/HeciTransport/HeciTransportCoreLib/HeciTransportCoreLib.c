@@ -35,6 +35,7 @@
 #include "HeciTransportCore.h"
 #include <Protocol/HeciAccessProtocol.h>
 #include <Library/PreSiliconEnvDetectLib.h>
+#include <Library/PerformanceLib.h>
 
 #define HECI_TRANSPORT_NUM_DEBUG   "[HECI Transport (%d)]"
 
@@ -1464,6 +1465,8 @@ HeciSendAndReceive (
   UINT8         ReceiveHostAddress;
   UINT8         ReceiveEngineAddress;
 
+  PERF_INMODULE_BEGIN ("HeciSendAndReceive");
+
   if (ReqMsg == NULL || (RspMsg != NULL && RspLen == NULL) || ReqMsg == RspMsg || HeciTransport == NULL || Retries == 0) {
     if (SendStatus != NULL) {
       *SendStatus = EFI_INVALID_PARAMETER;
@@ -1575,6 +1578,8 @@ HeciSendAndReceive (
   if (RspLen != NULL) {
     *RspLen = RspLenTemp;
   }
+
+  PERF_INMODULE_END ("HeciSendAndReceive");
 
   return Status;
 }

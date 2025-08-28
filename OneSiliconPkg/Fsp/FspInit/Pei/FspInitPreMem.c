@@ -527,7 +527,7 @@ MemoryDiscoveredPpiNotifyCallback (
     Pei2LoaderSwitchStack ();
 
     if (GetFspApiCallingIndex () == TempRamExitApiIndex) {
-      PERF_START_EX(&gFspPerformanceDataGuid, "EventRec", NULL, 0, 0xB000);
+      PERF_INMODULE_BEGIN ("TempRamExitApi");
       //TempRamExit Phase PostCode Set
       SetPhaseStatusCode (0xB000);
       //TempRamExit Api Entry PostCode
@@ -555,7 +555,7 @@ MemoryDiscoveredPpiNotifyCallback (
       // Give control back to the boot loader
       //
       DEBUG ((DEBUG_INFO | DEBUG_INIT, "TempRamExitApi() - End\n"));
-      PERF_END_EX(&gFspPerformanceDataGuid, "EventRec", NULL, 0, 0xB07F);
+      PERF_INMODULE_END ("TempRamExitApi");
       //TempRamExit Api Exit PostCode
       //FSP Common Module(0x800) | Api Exit(0x7F)
       //
@@ -565,6 +565,7 @@ MemoryDiscoveredPpiNotifyCallback (
     }
 
     PERF_START_EX(&gFspPerformanceDataGuid, "EventRec", NULL, 0, 0x9000);
+    PERF_INMODULE_BEGIN ("FspSiliconInitApi");
     //SiliconInit Phase PostCode set
     SetPhaseStatusCode (0x9000);
     //SiliconInt Api Entry PostCode
@@ -592,6 +593,7 @@ MemoryDiscoveredPpiNotifyCallback (
     // Install FSP silicon FV
     //
     ReportAndInstallNewFv ();
+    PERF_INMODULE_END ("FspSiliconInitApi");
   }
 
   DEBUG ((DEBUG_INFO | DEBUG_INIT, "Memory Discovered Notify completed ...\n"));

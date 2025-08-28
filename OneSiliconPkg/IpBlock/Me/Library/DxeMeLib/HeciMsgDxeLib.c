@@ -3667,7 +3667,7 @@ HeciAssetUpdateFwMsg (
 
   ReqLength = SendAssetTableDataMsg->Header.Fields.MessageLength + sizeof (HWA_MESSAGE_HEADER);
 
-  PERF_START_EX (NULL, "EventRec", NULL, AsmReadTsc (), 0x3020);
+  PERF_INMODULE_BEGIN ("HeciSendAssetTable");
 
   Status = HeciWrapperSend (
             BIOS_FIXED_HOST_ADDR,
@@ -3679,7 +3679,7 @@ HeciAssetUpdateFwMsg (
     DEBUG ((DEBUG_ERROR, "%a: Failed to SendAssetTableDataMsg\n", __FUNCTION__));
   }
 
-  PERF_END_EX (NULL, "EventRec", NULL, AsmReadTsc (), 0x3021);
+  PERF_INMODULE_END ("HeciSendAssetTable");
 
   FreePool (SendAssetTableDataMsg);
 

@@ -3266,9 +3266,9 @@ PlatformBootManagerBeforeConsole (
   //
   // Connect Root Bridge to make PCI BAR resource allocated and all PciIo created
   //
-  PERF_START_EX(NULL,"EventRec", NULL, AsmReadTsc(), 0x7010);
+  PERF_INMODULE_BEGIN ("ConnectRootBridge");
   ConnectRootBridge (FALSE);
-  PERF_END_EX(NULL,"EventRec", NULL, AsmReadTsc(), 0x7011);
+  PERF_INMODULE_END ("ConnectRootBridge");
 
   //
   // Update on board XHCI device path to connect the correct controller.
@@ -3671,9 +3671,9 @@ PlatformBootManagerBeforeConsole (
     }
   }
 
-  PERF_START_EX (NULL,"EventRec", NULL, AsmReadTsc (), 0x7020);
+  PERF_INMODULE_BEGIN ("ExitPmAuth");
   ExitPmAuth ();
-  PERF_END_EX (NULL,"EventRec", NULL, AsmReadTsc (), 0x7021);
+  PERF_INMODULE_END ("ExitPmAuth");
 
   //
   // Dispatch the deferred 3rd party images.
@@ -4129,13 +4129,13 @@ PlatformBootManagerAfterConsole (
     // Memory test
     //
     Status = MemoryTest((EXTENDMEM_COVERAGE_LEVEL) PcdGet8 (PcdPlatformMemoryCheck));
-    PERF_START_EX(NULL,"EventRec", NULL, AsmReadTsc(), 0x7050);
+    PERF_INMODULE_BEGIN ("ConnectDriverToPciCtrllrs");
     ConnectDriversToRequiredPciControllers ();
     //
     // Perform some platform specific connect sequence
     //
     ConnectSequence (LocalBootMode);
-    PERF_END_EX(NULL,"EventRec", NULL, AsmReadTsc(), 0x7051);
+    PERF_INMODULE_END ("ConnectDriverToPciCtrllrs");
 
     SignalAllDriversConnected ();
 
