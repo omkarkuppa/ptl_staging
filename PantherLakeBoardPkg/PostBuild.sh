@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ## @file
 #
 #  @copyright
@@ -245,7 +247,7 @@ if [ -d "$XML_CLI_COMMON_BUILD_PATH" ]; then
   GenSec -s EFI_SECTION_RAW -o "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.sec" "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.bin"
   GenFfs -t EFI_FV_FILETYPE_FREEFORM -g 615E6021-603D-4124-B7EA-C48A3737BACD -o "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs" -i "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.sec" -i "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsUISec.ui"
   "$FMMT_PATH/FMMT" -a "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" A881D567-6CB0-4EEE-8435-2E72D33E45B5 "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd"
-  
+
   if [ ! -f "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd" ]; then
     echo "=== XmlCliPostBuild: Trying to generate fd file once again... ==="
     "$FMMT_PATH/FMMT" -a "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" A881D567-6CB0-4EEE-8435-2E72D33E45B5 "$XML_CLI_COMMON_BUILD_PATH/BiosKnobsData.ffs" "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_XmlCli.fd"
@@ -256,7 +258,7 @@ if [ -d "$XML_CLI_COMMON_BUILD_PATH" ]; then
       return 1
     fi
   fi
-  
+
   # Backing up CLIENTBIOS.fd before overwriting
   if [ ! -f "$WORKSPACE/$BUILD_DIR/FV/ClientBios.fd.bak" ]; then
     cp "$WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd" "$WORKSPACE/$BUILD_DIR/FV/ClientBios.fd.bak"
@@ -374,7 +376,7 @@ else
   cp -f $BUILD_FV_FOLDER/CLIENTBIOS.fd $BUILD_FV_FOLDER/ClientBios_ExtSplitPre.fd
 
   Split -f $BUILD_FV_FOLDER/CLIENTBIOS.fd -s $CUTOFF_SIZE -t $BUILD_FV_FOLDER/ClientBios_ExtSplitPost.fd -o $BUILD_FV_FOLDER/Garbage.bin
-  
+
 
   cp -f $BUILD_FV_FOLDER/ClientBios_ExtSplitPost.fd $BUILD_FV_FOLDER/CLIENTBIOS.fd
   rm -f $BUILD_FV_FOLDER/Garbage.bin
