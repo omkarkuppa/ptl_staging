@@ -379,7 +379,6 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   SecSerialPortLib|$(SILICON_FSP_PATH)/Library/SecSerialPortInitLib/SecSerialPortInitLibNull.inf
 !endif
   GpioHelpersLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gpio/LibraryPrivate/BaseGpioHelpersLibNull/BaseGpioHelpersLibNull.inf
-  PtlPcdSerialIoGpioAccessLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdSerialIoLib/PtlPcdSecSerialIoGpioAccessLib.inf
 
   SecHostBridgeLib|$(PLATFORM_SI_PACKAGE)/IpBlock/HostBridge/Library/SecHostBridgeLib/SecHostBridgeLib.inf
 
@@ -405,7 +404,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   FspPlatformLib|IntelFsp2Pkg/Library/BaseFspPlatformLib/BaseFspPlatformLib.inf
   PtlPcdSecGpioInitLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdLpssLib/PtlPcdSecGpioInitLib.inf
   SecPreMemLpssInitLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/SecPreMemLpssInitLib/SecPreMemLpssInitLib.inf
-  PtlPcdSecGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdSecGpioTopology.inf
+  PtlPcdMinGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdMinGpioTopology.inf
 
 !if $(TARGET) == DEBUG
   SerialPortLib|$(SILICON_FSP_PATH)/Library/SerialPortLib/SerialPortLib.inf

@@ -159,7 +159,6 @@
 # GPIOV2
 #
   GpioV2AccessLib|$(PLATFORM_SI_PACKAGE)/IpBlock/GpioV2/Library/GpioV2Services/GpioV2AccessPeiLib.inf
-  PtlPcdSerialIoGpioAccessLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdSerialIoLib/PtlPcdPeiSerialIoGpioAccessLib.inf
 
 #
 # Pch

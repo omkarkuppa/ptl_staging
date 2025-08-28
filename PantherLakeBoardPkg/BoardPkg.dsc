@@ -807,7 +807,6 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   SecGetFsptApiParameterLib|$(PLATFORM_SI_PACKAGE)/Library/SecGetFsptApiParameterLib/SecGetFsptApiParameterLib.inf
   GpioHelpersLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gpio/LibraryPrivate/BaseGpioHelpersLibNull/BaseGpioHelpersLibNull.inf
   TraceHubHookLib|$(SILICON_PRODUCT_PATH)/Library/TraceHubHookLib/BaseTraceHubHookLib.inf
-  PtlPcdSerialIoGpioAccessLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdSerialIoLib/PtlPcdSecSerialIoGpioAccessLib.inf
 
 [LibraryClasses.X64.DXE_CORE, LibraryClasses.X64.DXE_DRIVER, LibraryClasses.X64.SMM_CORE, LibraryClasses.X64.DXE_SMM_DRIVER, LibraryClasses.X64.UEFI_DRIVER, LibraryClasses.X64.UEFI_APPLICATION]
   TraceHubDebugSysTLib|MdeModulePkg/Library/TraceHubDebugSysTLib/DxeSmmTraceHubDebugSysTLib.inf

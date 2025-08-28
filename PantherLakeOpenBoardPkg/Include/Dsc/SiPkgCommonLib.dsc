@@ -87,8 +87,8 @@ LpssUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/Lpss
 # GPIOV2
 #
 GpioV2ServicesCommonLib|$(PLATFORM_SI_PACKAGE)/IpBlock/GpioV2/Library/GpioV2Services/Common/GpioV2ServicesCommonLib.inf
-PtlPcdGpioTopologyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdGpioTopology.inf
-PtlPcdSecGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdSecGpioTopology.inf
+	GpioTopologyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdGpioTopology.inf
+PtlPcdMinGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdMinGpioTopology.inf
 
 #!include $(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/CommonLib.dsc
 CpuInfoFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/BaseCpuInfoFruLib/BaseCpuInfoFruLib.inf

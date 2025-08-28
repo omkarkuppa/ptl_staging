@@ -25,7 +25,7 @@
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <IncludePrivate/Library/Ptl/PtlPcdP2SbSocLib.h>
-#include <Include/Library/Ptl/PcdSecGpioTopologyLib/PtlPcdSecGpioTopologyLib.h>
+#include <Include/Library/Ptl/PcdMinGpioTopologyLib/PtlPcdMinGpioTopologyLib.h>
 #include <GpioV2Signals.h>
 #include <GpioV2Pad.h>
 #include <LpssUartConfig.h>
@@ -88,57 +88,7 @@ typedef struct {
 typedef struct {
   SPI_PIN SpiPin[MAX_SPI_INSTANCES];
 } SPI_PIN_SET;
-/**
-  This procedure does minimum Gpio Configuration required for Lpss Devices
-  in SEC phase.
 
-  @param[in] GpioPad             GPIO pad
-  @param[in] PadModeValue        GPIO pad mode value, please refer to GpioV2Pad.h
-
-  @retval EFI_SUCCESS             The function completed successfully
-**/
-EFI_STATUS
-STATIC
-EFIAPI
-LpssGpioConfigure (
-  IN  GPIOV2_PAD                  GpioPad,
-  IN  GPIOV2_PAD_MODE             PadMode
-  )
-{
-  UINT32                          RegisterOffset;
-  UINT32                          AndValue;
-  UINT32                          OrValue;
-  P2SB_CONTROLLER                 P2SbController;
-  P2SB_PORT_16_ID                 Pid;
-  UINT32                          Value;
-  UINT32                          CommunityIndex;
-
-  if (GpioPad == 0) {
-    ASSERT (GpioPad == GPIOV2_PAD_NONE);
-    return EFI_INVALID_PARAMETER;
-  }
-  CommunityIndex = GPIOV2_PAD_GET_COMMUNITY_INDEX (GpioPad);
-  Pid.Pid16bit   = ((UINT16) (PtlPcdSecGpioGetCommunityPid (CommunityIndex)));
-  PtlPcdGetP2SbController (&P2SbController, Pid);
-
-  //
-  //
-  //  Get DW0 Register Offset to program Pad Mode
-  //
-  PtlPcdSecGpioGetDw0RegOffset (GpioPad, &RegisterOffset);
-
-  //
-  //  Program Pad Mode
-  //
-  AndValue = (UINT32)~(GPIOV2_PAD_MODE_MASK << GPIOV2_PAD_MODE_DW0_POS);
-  OrValue  = ((PadMode >> 1) & GPIOV2_PAD_MODE_MASK) << GPIOV2_PAD_MODE_DW0_POS;
-  Value    = MmioRead32(P2SB_PCR_ADDRESS (P2SbController.Mmio, Pid.PortId.LocalPid, RegisterOffset));
-  Value    &= AndValue;
-  Value    |= OrValue;
-  MmioWrite32( P2SB_PCR_ADDRESS (P2SbController.Mmio, Pid.PortId.LocalPid, RegisterOffset), Value);
-
-  return EFI_SUCCESS;
-}
 
 UART_PIN_SET PtlUartPinSet = {
     {
@@ -319,20 +269,20 @@ PtlPcdPreMemLpssUartGpioConfigure (
 
   // RX
   GpioPad = PtlPcdGetUartGpioPad (UartDeviceConfig->PinMux.Rx, UartInstance, GpioUartPinRx);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   // TX
   GpioPad = PtlPcdGetUartGpioPad (UartDeviceConfig->PinMux.Tx, UartInstance, GpioUartPinTx);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   if (UartDeviceConfig->Attributes.AutoFlow) {
     // RTS
     GpioPad = PtlPcdGetUartGpioPad (UartDeviceConfig->PinMux.Rts, UartInstance, GpioUartPinRts);
-    LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+    GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
     // CTS
     GpioPad = PtlPcdGetUartGpioPad (UartDeviceConfig->PinMux.Cts, UartInstance, GpioUartPinCts);
-    LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+    GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
   }
 
   return;
@@ -351,12 +301,12 @@ PtlPcdPreMemLpssI2cGpioConfigure (
   )
 {
   GPIOV2_PAD                     GpioPad;
-  
+
   GpioPad = PtlPcdSecGetI2cGpioPad (I2cDeviceConfig->PinMux.Scl, I2cInstance, GpioI2cPinScl);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   GpioPad = PtlPcdSecGetI2cGpioPad (I2cDeviceConfig->PinMux.Sda, I2cInstance, GpioI2cPinSda);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   return;
 }
@@ -376,16 +326,16 @@ PtlPcdPreMemLpssSpiGpioConfigure (
   GPIOV2_PAD                 GpioPad;
 
   GpioPad = PtlPcdGetSpiGpioPad (SpiDeviceConfig->PinMux.Cs[0],SpiInstance,GpioSpiPinCs);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   GpioPad = PtlPcdGetSpiGpioPad (SpiDeviceConfig->PinMux.Clk, SpiInstance, GpioSpiPinClk);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   GpioPad = PtlPcdGetSpiGpioPad (SpiDeviceConfig->PinMux.Miso, SpiInstance, GpioSpiPinMiso);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   GpioPad = PtlPcdGetSpiGpioPad (SpiDeviceConfig->PinMux.Mosi, SpiInstance, GpioSpiPinMosi);
-  LpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+  GpioMinSetPadMode (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   return;
 }

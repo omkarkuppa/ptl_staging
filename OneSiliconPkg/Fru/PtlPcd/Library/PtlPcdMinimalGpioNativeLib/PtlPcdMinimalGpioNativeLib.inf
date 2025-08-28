@@ -31,9 +31,9 @@
   BaseLib
   DebugLib
   SocInfoLib
-  P2SbSocLib
+  IoLib
   P2SbSidebandAccessLib
-  PtlPcdGpioTopologyLib
+  PtlPcdMinGpioTopology
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -42,5 +42,6 @@
 
 [Sources]
   PtlPcdMinimalGpioNativeLib.c
+  PtlPcdMinimalPadData.c
 
 [Pcd]

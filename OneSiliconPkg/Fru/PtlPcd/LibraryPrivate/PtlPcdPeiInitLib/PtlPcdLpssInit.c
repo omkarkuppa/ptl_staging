@@ -58,6 +58,105 @@
 #include <Library/GpioHelpersLib.h>
 
 /**
+  Configures GPIO for each Lpss IO I2C Controller
+
+  @param[in] I2cNumber         I2C Number
+  @param[in] I2cDeviceConfig   Lpss I2C Config
+**/
+VOID
+EFIAPI
+PtlPcdLpssI2cGpioConfigure (
+  IN UINT8                       I2cNumber,
+  IN LPSS_I2C_CONTROLLER_CONFIG  *I2cDeviceConfig
+  )
+{
+  GPIOV2_SERVICES*   GpioServices;
+  EFI_STATUS         Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    return;
+  }
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a - failed to get GpioV2Access\n", __FUNCTION__));
+    return;
+  }
+
+  switch (I2cDeviceConfig->PadTermination) {
+    case GpioV2TermDefault:
+    case GpioV2TermNone:
+    case GpioV2TermWpu1K:
+    case GpioV2TermWpu5K:
+    case GpioV2TermWpu20K:
+      break;
+    default:
+      DEBUG ((DEBUG_ERROR, "Gpio Pad Termination must be set as Default, None, None with 1v8 tolerance, 1k, 2k, 5k or 20k WPU\n"));
+      ASSERT (FALSE);
+  }
+
+  //
+  // SCL
+  //
+  PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_LPSS_I2C_SCL (I2cNumber), I2cDeviceConfig->PinMux.Scl);
+  GpioServices->SetInputInversion (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I2C_SCL (I2cNumber), I2cDeviceConfig->PinMux.Scl), GpioV2InputInversionDisable);
+  GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I2C_SCL (I2cNumber), I2cDeviceConfig->PinMux.Scl), I2cDeviceConfig->PadTermination);
+
+  //
+  // SDA
+  //
+  PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_LPSS_I2C_SDA (I2cNumber), I2cDeviceConfig->PinMux.Sda);
+  GpioServices->SetInputInversion (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I2C_SDA (I2cNumber), I2cDeviceConfig->PinMux.Sda), GpioV2InputInversionDisable);
+  GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I2C_SDA (I2cNumber), I2cDeviceConfig->PinMux.Sda), I2cDeviceConfig->PadTermination);
+}
+
+/**
+  Configures GPIO for each Lpss I3C Controller
+
+  @param[in] I3cNumber         I3C Number
+  @param[in] I3cDeviceConfig   I3C Config
+**/
+VOID
+PtlPcdLpssI3cGpioConfigure (
+  IN UINT8                  I3cNumber,
+  IN LPSS_I3C_DEVICE_CONFIG      *I3cDeviceConfig
+  )
+{
+  GPIOV2_SERVICES*   GpioServices;
+  EFI_STATUS         Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    return;
+  }
+
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a - failed to get GpioV2Access\n", __FUNCTION__));
+    return;
+  }
+
+  //
+  // SDA
+  //
+  PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SDA (I3cNumber), I3cDeviceConfig->Sda.PinMux);
+  GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SDA (I3cNumber), I3cDeviceConfig->Sda.PinMux), I3cDeviceConfig->Sda.PadTermination);
+  GpioServices->SetInputInversion (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SDA (I3cNumber), I3cDeviceConfig->Sda.PinMux), GpioV2InputInversionDisable);
+
+  //
+  // SCL
+  //
+  PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL (I3cNumber), I3cDeviceConfig->Scl.PinMux);
+  GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL (I3cNumber), I3cDeviceConfig->Scl.PinMux), I3cDeviceConfig->Scl.PadTermination);
+  GpioServices->SetInputInversion (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL (I3cNumber), I3cDeviceConfig->Scl.PinMux), GpioV2InputInversionDisable);
+
+  //
+  //  SCL_FB
+  //
+  PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->SclFb.PinMux);
+  GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->SclFb.PinMux), I3cDeviceConfig->SclFb.PadTermination);
+  GpioServices->SetInputInversion (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->SclFb.PinMux), GpioV2InputInversionDisable);
+}
+
+/**
   Configures GPIO for each LPSS SPI Controller
 
   @param[in] SpiNumber         SPI Number
@@ -534,7 +633,7 @@ GpioI2cInit (
   for (Index = 0; Index < GetMaxI2cInterfacesNum (); Index++) {
     I2cDeviceConfig = &LpssI2cConfig->I2cDeviceConfig[Index];
     if (I2cDeviceConfig->Mode != LpssI2cDisabled) {
-      SerialIoI2cGpioEnable (Index, I2cDeviceConfig);
+      PtlPcdLpssI2cGpioConfigure (Index, I2cDeviceConfig);
     }
   }
 }
@@ -558,7 +657,7 @@ GpioI3cInit (
   for (Index = 0; Index < GetMaxI3cInterfacesNum (); Index++) {
     I3cDeviceConfig = &LpssI3cConfig->I3cDeviceConfig[Index];
     if (I3cDeviceConfig->Mode != I3cDisabled) {
-      SerialIoI3cGpioEnable (Index, I3cDeviceConfig);
+      PtlPcdLpssI3cGpioConfigure (Index, I3cDeviceConfig);
     }
   }
 }

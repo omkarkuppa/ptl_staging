@@ -149,19 +149,6 @@ PtlPcdGpioSetCnviMfUart2ExternalPins (
   );
 
 /**
-  This function provides CNVi CRF presence strap pin
-
-  @param[in]  GpioServices        Gpio Services
-
-  @retval     BOOLEAN             True: Device is present
-                                  False : Device is absent
-**/
-BOOLEAN
-PtlPcdGpioGetCnviCrfStrapPinStatus (
-  IN  GPIOV2_SERVICES    *GpioServices
-  );
-
-/**
   This function provides CNVi BT I2S pins
 
   @param[in]  GpioServices        GPIO Services
@@ -462,34 +449,6 @@ PtlPcdGpioEnableThcI2cInt (
   );
 
 /**
-  The function performs GPIO Power Management programming.
-
-  @param[in] GpioServices            GPIO Services
-
-  @retval    EFI_SUCCESS             The function completed successfully
-  @retval    EFI_INVALID_PARAMETER   GPIO V2 Services were not found
-**/
-EFI_STATUS
-PtlPcdGpioConfigurePm (
-  IN GPIOV2_SERVICES    *GpioServices
-  );
-
-/**
-  This procedure will set GPIO Driver IRQ number
-
-  @param[in] GpioServices            GPIO Services
-  @param[in] Irq                     Irq number
-
-  @retval    EFI_SUCCESS             The function completed successfully
-  @retval    EFI_INVALID_PARAMETER   Invalid parameter
-**/
-EFI_STATUS
-PtlPcdGpioSetIrq (
-  IN GPIOV2_SERVICES    *GpioServices,
-  IN UINT8              Irq
-  );
-
-/**
   This function returns the number of physical OC pins
 
   @retval  Number of physical OC pins
@@ -498,6 +457,7 @@ UINT8
 PtlPcdGpioGetNumberOfPhysicalOcPins (
   VOID
   );
+
 
 /**
   This function enables USB OverCurrent pins by setting
@@ -564,28 +524,6 @@ EFI_STATUS
 PtlPcdGpioEnableImguClkOut (
   IN  GPIOV2_SERVICES    *GpioServices,
   IN  UINT8              ImguClkOutPinIndex
-  );
-
-/**
-  This function performs basic initialization IOM for AUX Layout in PEI phase after Policy produced at Pre-Mem phase.
-  For those GPIO pins used for DP Aux orientation control and enabled, BIOS is responsible to -
-  1. Configure Pad Mode (PMode) to function# associated with IOM_GPP*_*
-     The Pad Mode here could be various per PCH design.
-  2. BIOS Provide the following information for the DP Aux orientation bias control for provide the GPIO VwIndex,
-     Bit Position, and VW Index information to IOM FW.
-     I. GPIO endpoint IOSF-SB port ID (Pch Community port ID)
-     II. VW index and data bit position
-  @param[in]  GpioPad    - GPIO Pad
-  @param[out] PchPortId  - GPIO Pad mapping GPCOM PortID number
-  @param[out] Bits       - GPIO Pad mapping Bit position
-  @param[out] VwIndex    - GPIO Pad mapping Virtual Wire Index number
-**/
-VOID
-PtlGpioIomAuxOriSetting (
-  UINT32   GpioPadNum,
-  UINT16   *PortId,
-  UINT8    *Bits,
-  UINT8    *VwIndex
   );
 
 /**
