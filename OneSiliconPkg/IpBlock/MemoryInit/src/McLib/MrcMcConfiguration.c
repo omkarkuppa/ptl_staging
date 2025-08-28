@@ -559,3 +559,46 @@ MrcLpMode4Enable (
   GetSetVal = SrxDelay;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctLpMode4SrxDelay, WriteCached | PrintValue, &GetSetVal);
 }
+
+/**
+  Clear MC_MCAERR_CTL.err_address_access using Pcode mailbox.
+
+  @param[in] MrcData  - Include all MRC global data.
+**/
+VOID
+MrcClearMcMcaErrCtrl (
+  IN MrcParameters *const MrcData
+  )
+{
+  const MRC_FUNCTION  *MrcCall;
+  MrcDebug            *Debug;
+  UINT32              Controller;
+  UINT32              MailboxCommand;
+  UINT32              MailboxStatus;
+  UINT32              McMcaErrControl;
+
+  MrcCall = MrcData->Inputs.Call.Func;
+  Debug   = &MrcData->Outputs.Debug;
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    if (!MrcControllerExist (MrcData, Controller)) {
+      continue;
+    }
+    MailboxCommand = CPU_MAILBOX_CMD (CPU_MAILBOX_BIOS_CMD_MRC_CR_INTERFACE, CPU_MRC_CR_INTERFACE_GET_MC_MCAERR_CTL, Controller);
+    MrcCall->MrcCpuMailboxRead (MailboxCommand, &McMcaErrControl, &MailboxStatus);
+    if (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS) {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s_MC_MCAERR_CTL: Status=0x%x, Data=0x%x\n", "READ", MailboxStatus, McMcaErrControl);
+    } else {
+      McMcaErrControl |= MC_MCAERR_CTL_ERR_ADDRESS_ACCESS;  // Write 1 to clear the bit
+      MailboxCommand = CPU_MAILBOX_CMD (CPU_MAILBOX_BIOS_CMD_MRC_CR_INTERFACE, CPU_MRC_CR_INTERFACE_SET_MC_MCAERR_CTL, Controller);
+      MrcCall->MrcCpuMailboxWrite (MailboxCommand, McMcaErrControl, &MailboxStatus);
+      if (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS) {
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s_MC_MCAERR_CTL: Status=0x%x, Data=0x%x\n", "WRITE", MailboxStatus, McMcaErrControl);
+      }
+    }
+    if (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS) {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Mc%u: Cannot set MC_MCAERR_CTL_ERR_ADDRESS_ACCESS!\n", gErrString, Controller);
+    } else {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Mc%u: Clear MC_MCAERR_CTL.err_address_access\n", Controller);
+    }
+  }
+}

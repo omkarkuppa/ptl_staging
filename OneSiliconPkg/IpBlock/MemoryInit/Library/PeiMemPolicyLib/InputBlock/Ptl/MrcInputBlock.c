@@ -147,7 +147,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RXUNMATCHEDCAL         (1)  // BIT26
 #define MRC_EXT_INPUTS_INIT_VAL_WRTDIMMDFE             (1)  // BIT27
 #define MRC_EXT_INPUTS_INIT_VAL_RMTLVR                 (0)  // BIT28
-#define MRC_EXT_INPUTS_INIT_VAL_DCCDDR5READDCA         (0)  // BIT29
+#define MRC_EXT_INPUTS_INIT_VAL_DCCDDR5READDCA         (1)  // BIT29
 #define MRC_EXT_INPUTS_INIT_VAL_WREQT                  (0)  // BIT30
 #define MRC_EXT_INPUTS_INIT_VAL_SimicsReservedBit      (0)  // BIT31
 
@@ -178,7 +178,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC           (0)  // BIT23
 #define MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC              (0)  // BIT24
 #define MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN            (0)  // BIT25
-#define MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC              (1)  // BIT26
+#define MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC              (0)  // BIT26
 #define MRC_EXT_INPUTS_INIT_VAL_ISENSERMT              (0)  // BIT27
 #define MRC_EXT_INPUTS_INIT_VAL_WCKCLKRF               (0)  // BIT28
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit29         (0)  // BIT29
@@ -211,7 +211,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_VoltageCurrentSensor   (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DataInvertNibble       (0)
 #define MRC_EXT_INPUTS_INIT_VAL_CccPinsInterleaved     (0)
-#define MRC_EXT_INPUTS_INIT_VAL_EnPeriodicComp         (0)
+#define MRC_EXT_INPUTS_INIT_VAL_EnPeriodicComp         (1)
 #define MRC_EXT_INPUTS_INIT_VAL_AsyncOdtDis            (0)
 #define MRC_EXT_INPUTS_INIT_VAL_OpportunisticRead      (1)
 #define MRC_EXT_INPUTS_INIT_VAL_Disable2CycleBypass    (0)

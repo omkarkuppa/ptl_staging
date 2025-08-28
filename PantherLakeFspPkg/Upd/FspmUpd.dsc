@@ -680,7 +680,7 @@
   # !BSF NAME:Functional Duty Cycle Correction for LP5 WCK}
   # !BSF TYPE:{Combo} OPTION:{0:Disable, 1:Enable}
   # !BSF HELP:{Enable/Disable Functional Duty Cycle Correction for LP5 WCK}
-  gPlatformFspPkgTokenSpaceGuid.FUNCDCCWCK                  | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.FUNCDCCWCK                  | * | 0x01 | 0x00
 
   # !BSF NAME:{Duty Cycle Correction for LP5 DCA}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -786,7 +786,7 @@
   # !BSF NAME:{Memory Slice Hash Mask}
   # !BSF TYPE:{EditNum, HEX, (0x0000, 0x3FFF)}
   # !BSF HELP:{Memory Slice (Controller) Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum); used when MsHashOverride is set}
-  gPlatformFspPkgTokenSpaceGuid.MsHashMask                  | * | 0x02 | 0x2094
+  gPlatformFspPkgTokenSpaceGuid.MsHashMask                  | * | 0x02 | 0x2090
 
   # !BSF NAME:{PPR Repair Row}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Deprecated}
@@ -822,7 +822,7 @@
   # !BSF NAME:{DCC Phase Clk Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable DCC Phase Clk Calibration}
-  gPlatformFspPkgTokenSpaceGuid.PHASECLKCAL                 | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.PHASECLKCAL                 | * | 0x01 | 0x01
 
   # !BSF NAME:{DCC Tline Clk Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -852,7 +852,7 @@
   # !BSF NAME:{RX DQS VOC Centring Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable RX DQS VOC Centring Training}
-  gPlatformFspPkgTokenSpaceGuid.RXDQSVOCC                   | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.RXDQSVOCC                   | * | 0x01 | 0x00
 
   # !BSF NAME:{NMode}
   # !BSF TYPE:{EditNum, HEX, (0x00,0x02)}

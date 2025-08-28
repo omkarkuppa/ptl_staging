@@ -43,7 +43,7 @@ const NnFlexLpddr5Params NnFlexInitialSettingsLpddr5[] = {
   {   7,  48,  40,   3,   3,  -3,   2,  80, 240,   0 },
 };
 
-static const DramPartMap NnFlexDramPartMap[MaxNnFlexDramPart] = {
+const static DramPartMap NnFlexDramPartMap[MaxNnFlexDramPart] = {
   {DeviceDefault_key,        DramTypeDefault},
   {DeviceDefault1_key,       DramTypeDefault1},
   {Samsung_2R_8533_1_key,    Samsung_2R_8533_1},
@@ -66,12 +66,13 @@ typedef union {
 
 // LPDDR5 ODT Values
 // ODT values are in this order: { RttWr, RttWck, RttCa, RttCa2RByteMode, RttCs, RttCs2RByteMode, RttNT}
-const TOdtValueLpddr Lpddr5OdtTableType3[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
+// ODT tables will only be modified in Green MRC (JEDEC reset) during the cold boot.
+TOdtValueLpddr Lpddr5OdtTableType3[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
 /// 1DPC 1R,                    1DPC 2R
   {{120, 60, 240, 240, 80, 0, 0},  {120, 60, 240, 240, 80, 120, 0}},
 };
 
-const TOdtValueLpddr Lpddr5OdtTableType4[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
+TOdtValueLpddr Lpddr5OdtTableType4[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
 /// 1DPC 1R,                    1DPC 2R
   {{120, 60, 240, 240, 80, 0, 0},  {120, 48, 240, 240, 80, 120, 0}},
 };

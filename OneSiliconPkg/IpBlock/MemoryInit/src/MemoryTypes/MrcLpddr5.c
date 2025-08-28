@@ -1185,7 +1185,6 @@ InitMrwLpddr5 (
           Status = mrcWrongInputParameter;
         }
         Mr1.Bits.WriteLatency = WlEnc;
-        Mr1.Bits.CkMode = Outputs->HighFrequency <= f3600;
         MrPtr[mrIndexMR1] = Mr1.Data8;
 
         //MR2

@@ -846,7 +846,7 @@ MrcRhPrevention (
         }
       } // for Dimm
 
-      if ((PopulatedDimmMask == 0) || IsMcSubChannel) {
+      if ((PopulatedDimmMask == 0) || !IsMcSubChannel) {
         //  MC registers are per big ch0/1 only
         //  As for LPDDR, we need check sub channel both 0 and 1,
         //  or both 2 and 3, before going ahead to configure RHCTL or PTRR.

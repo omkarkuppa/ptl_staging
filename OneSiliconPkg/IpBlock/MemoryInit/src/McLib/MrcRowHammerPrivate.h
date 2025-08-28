@@ -212,4 +212,20 @@ MrcConfigDrfm (
   IN UINT8                DrfmEnableBits
   );
 
+/**
+  Configure Refresh Management (RFM) on the given controller / channel
+
+   @param[in] MrcData        - Pointer to global MRC data.
+   @param[in] Controller     - MC index
+   @param[in] Channel        - Channel index
+   @param[in] RfmSetupConfig - Holds Rfm Required and Threshold information
+**/
+VOID
+MrcConfigRfm (
+  IN MrcParameters *const MrcData,
+  IN UINT8  Controller,
+  IN UINT8  Channel,
+  IN MRC_RFM_SETUP_CONFIG *RfmSetupConfig
+  );
+
 #endif // MrcRowHammerPrivate_h_

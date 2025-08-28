@@ -964,7 +964,7 @@
           minimum = 0x0001,  // Minimum is BIT6
           maximum = 0x3FFF,  // Maximum is BITS 19-6
           step    = 1,
-          default = 0x2094,
+          default = 0x2090,
         endnumeric;
 
         oneof varid  = SA_SETUP.MsHashInterleaveBit,
@@ -4287,8 +4287,8 @@ endform;
       oneof varid   = SA_SETUP.FUNCDCCWCK,
         prompt      = STRING_TOKEN(STR_FUNCDCCWCK_NAME),
         help        = STRING_TOKEN(STR_FUNCDCCWCK_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.FUNCDCCDQ,
@@ -4301,8 +4301,8 @@ endform;
       oneof varid   = SA_SETUP.PHASECLKCAL,
         prompt      = STRING_TOKEN(STR_PHASECLKCAL_NAME),
         help        = STRING_TOKEN(STR_PHASECLKCAL_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.DATAPILIN,
@@ -4504,8 +4504,8 @@ endform;
       oneof varid   = SA_SETUP.RXDQSVOCC,
         prompt      = STRING_TOKEN(STR_RXDQSVOCC_TRNG_NAME),
         help        = STRING_TOKEN(STR_RXDQSVOCC_TRNG_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.MarginLimitCheck,

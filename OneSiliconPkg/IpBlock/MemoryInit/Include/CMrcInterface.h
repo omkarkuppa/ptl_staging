@@ -1031,9 +1031,9 @@ typedef UINT32 MrcFrequency;
 #define MAX_FREQ_OC   f15067
 
 // Memory Max POR speeds
-#define LPDDR_MAX_POR_SPEED (f8400)
-#define DDR_MAX_POR_SPEED_DTHALO (f6400)
-#define DDR_MAX_POR_SPEED_ULXULT (f5600)
+#define LPDDR_MAX_POR_SPEED (f9600)
+#define DDR_MAX_POR_SPEED_DTHALO (f7200)
+#define DDR_MAX_POR_SPEED_ULXULT (f7200)
 
 // tCK value in femtoseconds for various frequencies
 // If Freq is in MHz, then tCK[fs] = 10^9 * 1/(Freq/2)
@@ -2198,7 +2198,8 @@ typedef struct {
   UINT16              DivCode2;
   UINT16              DivCode3;
   BOOLEAN             ApplyWckIdleMrsFsm126;
-  UINT8               ReservedBytesForAlignment[3]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  INT8                BwselTemp;
+  UINT8               ReservedBytesForAlignment[2]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;
@@ -2384,8 +2385,10 @@ typedef struct {
   UINT8 PprRetryLimit;
   McRegOffsets OffsetKnobs;       ///< Options for MC Register Offset settings
   BOOLEAN InitPerDeviceNnFlex;
-  BOOLEAN PhClkCheck;             ///< Phase Clock Check
-  UINT8 Reserved3[2];             ///< Reserved to ensure config block size is a multiple of DWORDs
+  BOOLEAN PhClkCheck;                    ///< Phase Clock Check
+  UINT8   PhClkCheckPerLanePhError;      ///< Min to max tolerance for the per-lane PhClkCheck (phase). 0 - Auto
+  UINT8   PhClkCheckPerLanePiLinError;   ///< Min to max tolerance for the per-lane PhClkCheck (PI Linearity). 0 - Auto
+//UINT8   Reserved3[4];                  ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

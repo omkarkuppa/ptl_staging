@@ -435,5 +435,8 @@ MrcMcAddressDecoderValuesSaveRestore (
     MrcCall->MrcWriteMsr64 (MRC_MSR_IA32_MC5_STATUS, 0);
     MrcCall->MrcWriteMsr64 (MRC_MSR_IA32_MC5_MISC, 0);
     MrcCall->MrcWriteMsr64 (MRC_MSR_IA32_MC5_CTL, SavedValues->Mc5_Control);
+
+    // Also clear err_address_access indication
+    MrcClearMcMcaErrCtrl (MrcData);
   }
 }

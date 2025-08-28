@@ -3611,7 +3611,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5READDCA|0x1                           
 gStructPcdTokenSpaceGuid.PcdSaSetup.VCCCLKFF|0x0                                                   #           BIT18 - VccCLK FF Offset Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCDQS|0x0                                                 #           BIT19 - Functional Duty Cycle Correction for DDR5 DQS
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCCLK|0x0                                                 #           BIT20 - Functional Duty Cycle Correction for DDR5 CLK
-gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCWCK|0x1                                                 #           BIT21 - Functional Duty Cycle Correction for LP5 WCK
+gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCWCK|0x0                                                 #           BIT21 - Functional Duty Cycle Correction for LP5 WCK
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCDQ|0x0                                                  #           BIT22 - Functional Duty Cycle Correction for Data DQ
 gStructPcdTokenSpaceGuid.PcdSaSetup.DATAPILIN|0x1                                                  #           BIT23 - Data PI Linearity Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5XTALK|0x0                                                  #           BIT24 - Ddr5 Rx Cross-Talk Cancellation
@@ -3630,12 +3630,12 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.OPTIMIZECOMP|0x0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTRETRAIN|0x1                                                 #           BIT8 - Write Dq/Dqs Retraining
 gStructPcdTokenSpaceGuid.PcdSaSetup.TLINECLKCAL|0x1                                                #           BIT13 - Tline Clk Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPISERIALCAL|0x1                                             #           BIT14 - DCC PI Serializer Calibration
-gStructPcdTokenSpaceGuid.PcdSaSetup.PHASECLKCAL|0x0                                                #           BIT15 - DCC Phase Clk Calibration
+gStructPcdTokenSpaceGuid.PcdSaSetup.PHASECLKCAL|0x1                                                #           BIT15 - DCC Phase Clk Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WCKPADDCCCAL|0x1                                               #           BIT16 - Wck Pad DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x1                                                    #           BIT17 - Read CTLE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x1                                                   #           BIT18 - Read DQ ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x1                                                   #           BIT19 - Pre-Emphasis LP5 Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSVOCC|0x1                                                  #           BIT26 - RxDqsVocCentering1D Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSVOCC|0x0                                                  #           BIT26 - RxDqsVocCentering1D Training
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x1                                             # Offset 60 Bit 0 - Time Measure
 !else
@@ -3839,7 +3839,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                          
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.MsHashOverride|0x0                                             # Memory Slice (Controller) Hash Mask and LSB Override. 0 = Use default memory slice hash mask / lsb, 1 = Use values from MsHashMask and MsHashInterleaveBit
 gStructPcdTokenSpaceGuid.PcdSaSetup.MsHashInterleaveBit|0x2                                        # Memory Slice (Controller) Hash LSB bit. Valid values are 0..7 for BITS 6..13; used when MsHashOverride is set
-gStructPcdTokenSpaceGuid.PcdSaSetup.MsHashMask|0x2094                                              # Memory Slice (Controller) Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum); used when MsHashOverride is set
+gStructPcdTokenSpaceGuid.PcdSaSetup.MsHashMask|0x2090                                              # Memory Slice (Controller) Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum); used when MsHashOverride is set
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 316 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 318 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)

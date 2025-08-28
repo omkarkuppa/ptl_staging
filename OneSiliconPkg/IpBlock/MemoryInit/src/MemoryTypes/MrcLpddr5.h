@@ -264,6 +264,7 @@
 
 /// MR30 range for DCA
 #define LP5_DCA_VALID_RANGE     (7)
+#define LP5_RDDCA_TEMP          (25)
 
 /// ODT C/A Value Update Time tODTUP (pS)
 #define LPDDR5_CA_ODT_DELAY (250000)

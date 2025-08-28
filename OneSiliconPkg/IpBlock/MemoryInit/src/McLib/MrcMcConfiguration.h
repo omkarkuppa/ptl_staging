@@ -182,4 +182,14 @@ MrcRestoreDisSchedsClkGate (
   IN INT64 DisSchedsClkGateSave
   );
 
+/**
+  Clear MC_MCAERR_CTL.err_address_access using Pcode mailbox.
+
+  @param[in] MrcData  - Include all MRC global data.
+**/
+VOID
+MrcClearMcMcaErrCtrl (
+  IN MrcParameters *const MrcData
+  );
+
 #endif // __MrcMcConfiguration_h__

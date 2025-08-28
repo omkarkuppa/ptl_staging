@@ -274,8 +274,6 @@ MrcUcExecuteGreen (
   MrcCall->MrcSetMem ((UINT8 *)&CommBuffer, sizeof (CommBuffer), 0);
 
   CommBuffer.Misc.Bits.ExecutingCommand = Outputs->IsInterpreterCommand;
-    // Load the initial CMOS breakpoint.
-    CommBuffer.TaskControl.PostCodes.Stop = (MrcCall->MrcRtcCmos (MRC_POST_CODE_HIGH_BYTE_ADDR) << 8) | MrcCall->MrcRtcCmos (MRC_POST_CODE_LOW_BYTE_ADDR);
 
   BlueMrcWriteUcCommBuffer (MrcData, &CommBuffer);
   Status = BlueMrcSetXtensaFwDownloadDone (MrcData);
@@ -385,6 +383,9 @@ MrcUcExecuteGreen (
       return Status;
     }
   } while (!GreenDone && (MrcCall->MrcGetCpuTime() <= Timeout));
+
+  // Read the CommBuffer again, to get the latest Green status
+  BlueMrcReadUcData (MrcData, gUcCommBufferAddress, (UINT32 *) (UINTN) &CommBuffer, MRC_BLUE_GREEN_COMM_CONTROLS_SIZE);
   Status = (MrcStatus) CommBuffer.GreenStatus;
 
   if (!GreenDone) {
