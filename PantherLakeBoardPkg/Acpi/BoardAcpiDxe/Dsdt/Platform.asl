@@ -898,7 +898,6 @@ Scope (\)
     Or (Local0,ShiftLeft (SS2,2),Local0)      // S2 ?
     Or (Local0,ShiftLeft (SS3,3),Local0)      // S3 ?
     Or (Local0,ShiftLeft (SS4,4),Local0)      // S4 ?
-    Or (Local0,ShiftLeft (SS5,5),Local0)      // S5 ?
     //
     // Local0 has a bit mask of enabled Sx (1 based)
     // bit mask of enabled in BIOS Setup Sleep states (1 based)
