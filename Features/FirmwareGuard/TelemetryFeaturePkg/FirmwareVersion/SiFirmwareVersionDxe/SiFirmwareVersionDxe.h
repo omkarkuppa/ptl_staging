@@ -27,7 +27,10 @@ typedef enum {
   TxtVer
 } TELEMETRY_CPU_FVI_INDEX;
 
-
+typedef enum {
+  MeFwVer = 0,
+  MeSseFwVer
+} TELEMETRY_ME_FVI_INDEX;
 
 typedef enum {
   PchCridOriginal = 0,

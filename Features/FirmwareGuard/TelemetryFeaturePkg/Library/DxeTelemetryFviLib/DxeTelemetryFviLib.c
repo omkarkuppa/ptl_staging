@@ -114,6 +114,7 @@ FviAipGetInfo (
   if (*InformationBlock == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   CopyMem (*InformationBlock, mFviAipBuffer, *InformationBlockSize);
 
   return EFI_SUCCESS;
@@ -187,7 +188,6 @@ ProcessFviPartitionTable (
   UINT32                        j;
   UINT64                        StartingRecordCount;
   UINT32                        CurrentPartitionId;
-  BOOLEAN                       MappingFound;
   UINT64                        RecordIndex;
 
   RecordIndex         = 0;
@@ -202,7 +202,6 @@ ProcessFviPartitionTable (
 
   for (i = 0; i < NumOfModules && ProcessedEntries < FVI_PARTITION_MAPPING_COUNT; i++) {
     CurrentPartitionId = PartitionData[i].PartitionId;
-    MappingFound = FALSE;
 
     for (j = 0; j < FVI_PARTITION_MAPPING_COUNT; j++) {
       if (mPartitionMappings[j].PartitionId == CurrentPartitionId) {
@@ -218,25 +217,19 @@ ProcessFviPartitionTable (
 
         mFviAipBuffer->Record[RecordIndex].ProducerId = ProducerId;
         ProcessedEntries++;
-        MappingFound = TRUE;
 
-        DEBUG ((DEBUG_INFO, "[%a] Found partition 0x%08X at HECI index %u, mapped to PHAT entry %u (processed %u/%u)\n", 
-                __FUNCTION__, CurrentPartitionId, i, j, ProcessedEntries, FVI_PARTITION_MAPPING_COUNT));
+        DEBUG ((DEBUG_VERBOSE, "[%a] Found partition 0x%08X (%c%c%c%c) at HECI index %u, mapped to PHAT entry %llu\n",
+                __FUNCTION__, CurrentPartitionId,
+                (CHAR8) (CurrentPartitionId & 0xFF), (CHAR8)((CurrentPartitionId >> 8) & 0xFF),
+                (CHAR8) ((CurrentPartitionId >> 16) & 0xFF), (CHAR8)((CurrentPartitionId >> 24) & 0xFF),
+                i, RecordIndex));
         break;
       }
-    }
-
-    if (!MappingFound) {
-      DEBUG ((DEBUG_VERBOSE, "[%a] HECI partition 0x%08X not in supported mapping table\n", __FUNCTION__, CurrentPartitionId));
     }
   }
 
   // Update record count to include all allocated slots (found + zero entries)
   *RecordCount = StartingRecordCount + FVI_PARTITION_MAPPING_COUNT;
-
-  DEBUG ((DEBUG_INFO, "[%a] Completed processing: found %u/%u supported partitions in %u HECI entries\n", 
-          __FUNCTION__, ProcessedEntries, FVI_PARTITION_MAPPING_COUNT, NumOfModules));
-
   return EFI_SUCCESS;
 }
 
@@ -271,21 +264,27 @@ AppendTelemetryFviBlock (
   NumOfModules = 0;
   EntriesToAdd = 1;
 
+  //
+  // Get the FW Version data
+  //
   if (CompareGuid (&ComponentId, &gFviFullPartitionTableComponentId)) {
     Status = GetFullFviPartitionTable (&GenericPartitionData, &NumOfModules);
     if (EFI_ERROR (Status) || NumOfModules == 0) {
       DEBUG ((DEBUG_WARN, "[%a] No partition data received from HECI call\n", __FUNCTION__));
       return EFI_ABORTED;
     }
-    PartitionData = (FLASH_PARTITION_DATA *)GenericPartitionData;
+    PartitionData = (FLASH_PARTITION_DATA *) GenericPartitionData;
     EntriesToAdd = FVI_PARTITION_MAPPING_COUNT;
-  } else {
+  } else if (CompareGuid (&ComponentId, &gMeFirmwareVersionComponentId)) {
     Status = TelemetryFirmwareVersionUpdate (ComponentId, &Version);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_WARN, "[%a] Fail to update Fvi data: %r\n", __FUNCTION__, Status));
     }
   }
 
+  //
+  // Update the FVI AIP buffer to hold new data
+  //
   if (mFviAipBuffer == NULL) {
     RecordCount = 0;
     NewBufferSize = sizeof (EFI_AIP_TELEMETRY_VERSION_RECORD) + sizeof (EFI_ACPI_6_5_PHAT_VERSION_ELEMENT) * EntriesToAdd;
@@ -305,31 +304,37 @@ AppendTelemetryFviBlock (
       return EFI_OUT_OF_RESOURCES;
     }
   }
+
+  //
+  // Handle the Full partition table data parsing if applicable
+  //
   if (CompareGuid (&ComponentId, &gFviFullPartitionTableComponentId)) {
     if (NumOfModules == 0) {
-      DEBUG ((DEBUG_WARN, "[%a] No partition data received from HECI call\n", __FUNCTION__));
+      DEBUG ((DEBUG_WARN, "[%a] No partition data received\n", __FUNCTION__));
       return EFI_ABORTED;
-    } else {
-
-      //
-      // Process the full partition table using dedicated handler
-      //
-      Status = ProcessFviPartitionTable (PartitionData, NumOfModules, ProducerId, &RecordCount);
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_WARN, "[%a] Failed to process FVI partition table: %r\n", __FUNCTION__, Status));
-      }
-
-      //
-      // RecordCount is already updated by ProcessFviPartitionTable to include all allocated slots
-      //
-      mFviAipBuffer->RecordCount = RecordCount;
-
+    }
+    //
+    // Process the full partition table using dedicated handler
+    //
+    Status = ProcessFviPartitionTable (PartitionData, NumOfModules, ProducerId, &RecordCount);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "[%a] Failed to process FVI partition table: %r\n", __FUNCTION__, Status));
       if (PartitionData != NULL) {
         FreePool (PartitionData);
         PartitionData = NULL;
       }
+      return Status;
     }
 
+    //
+    // RecordCount is already updated by ProcessFviPartitionTable to include all allocated slots
+    //
+    mFviAipBuffer->RecordCount = RecordCount;
+
+    if (PartitionData != NULL) {
+      FreePool (PartitionData);
+      PartitionData = NULL;
+    }
   } else {
     CopyGuid (&mFviAipBuffer->Record[RecordCount].ComponentId, &ComponentId);
     mFviAipBuffer->Record[RecordCount].VersionValue = Version;

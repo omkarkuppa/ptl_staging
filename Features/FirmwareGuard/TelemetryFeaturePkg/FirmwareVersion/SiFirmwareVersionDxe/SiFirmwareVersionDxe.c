@@ -78,7 +78,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_ACPI_6_5_PHAT_VERSION_ELEMENT mCpuFviTelemetry
   { CPU_TXT_ACM_VERSION_COMPONENT_ID,  DEFAULT_FVI_TELEMETRY_VERSION,   FVI_INTEL_SIGNATURE,  },
 };
 
+//
+// The order of this array must match TELEMETRY_ME_FVI_INDEX
+//
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_ACPI_6_5_PHAT_VERSION_ELEMENT mMeFviTelemetryData[] = {
 
+  { ME_FIRMWARE_VERSION_COMPONENT_ID,  DEFAULT_FVI_TELEMETRY_VERSION,  FVI_INTEL_SIGNATURE,  },
+};
 
 /**
   Covert INTEL_FIRMWARE_VERSION to UINT64 Telemetry Version
@@ -318,12 +324,52 @@ InitializeCpuFviData (
 }
 
 /**
-  Append full partition ID table to the telemetry PHAT
+  Publish ME Fvi in AIP protocol.
 
-  @retval EFI_SUCCESS     Table appended successfully
-  @retval Others          Failed to append table
+  @param[in] MeFviData         A pointer to the INTEL_FIRMWARE_VERSION_INFO
+  @param[in] MeFviStrings      A pointer to the Fvi Strings information
+
+  @retval EFI_SUCCESS          The Fvi data is published in AIP protocol.
+  @retval Others               Failed to publish Fvi data in AIP protocol.
+
 **/
 EFI_STATUS
+EFIAPI
+InitializeMeFviData (
+  IN INTEL_FIRMWARE_VERSION_INFO    *MeFviData,
+  IN CHAR8                          **MeFviStrings
+  )
+{
+  EFI_STATUS  Status;
+  UINT16      RecordCount;
+  UINT16      Index;
+
+  Index  = 0;
+  Status = EFI_SUCCESS;
+
+  //
+  // ME
+  //
+  mMeFviTelemetryData[MeFwVer].VersionValue = IntelFwVerToUint64 (&MeFviData[EnumMeFw].Version);
+
+  RecordCount = sizeof (mMeFviTelemetryData) / sizeof (EFI_ACPI_6_5_PHAT_VERSION_ELEMENT);
+  for (Index = 0; Index < RecordCount; Index++) {
+    DEBUG ((EFI_D_INFO, "mMeFviTelemetryData[%d].VersionValue is %d\n", Index, mMeFviTelemetryData[Index].VersionValue));
+    Status = AppendTelemetryFviBlock (mMeFviTelemetryData[Index].ComponentId, mMeFviTelemetryData[Index].VersionValue,
+                                      mMeFviTelemetryData[Index].ProducerId);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "ME Fvi: AppendTelemetryFviBlock returns %r.\n", Status));
+      return Status;
+    }
+  }
+  DEBUG ((DEBUG_INFO, "ME Fvi: AppendTelemetryFviBlock returns %r.\n", Status));
+  return Status;
+}
+
+/**
+  Append full partition ID table to the telemetry PHAT
+**/
+VOID
 EFIAPI
 AppendPartitionIdTableToTelemetryPhat (
   VOID
@@ -332,10 +378,8 @@ AppendPartitionIdTableToTelemetryPhat (
   EFI_STATUS  Status;
 
   Status = AppendTelemetryFviBlock (gFviFullPartitionTableComponentId, 0x00, FVI_INTEL_SIGNATURE);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Full Partition Table Fvi: AppendTelemetryFviBlock returns %r.\n", Status));
-  }
-  return Status;
+  DEBUG ((DEBUG_INFO, "Full Partition Table Fvi: AppendTelemetryFviBlock returns %r.\n", Status));
+  return;
 }
 
 /**
@@ -428,6 +472,10 @@ InitFviTelemetryAip (
         InitializeCpuFviData (FviData, (CHAR8 **) &FviString);
       }
 
+      if (AsciiStrnCmp ((CHAR8 *) &FviString->ComponentName, ME_FW_FVI_STRING, AsciiStrLen (ME_FW_FVI_STRING)) == 0) {
+        InitializeMeFviData (FviData, (CHAR8 **) &FviString);
+      }
+
       //
       // BiosGuard Fvi
       //
@@ -440,12 +488,9 @@ InitFviTelemetryAip (
 
   //
   // Process the full partition table to get all CSE firmware component versions
-  // This includes ME, SSE, PMC, RBEP, OEMP, PCHC, PUnit, aCode, NPHY, SPHY, CNVi, NFTP, ISH, ACE, LOCL, WLAN, iUNP
+  // [ME, SSE, PMC, RBEP, OEMP, PCHC, PUnit, aCode, NPHY, SPHY, CNVi, NFTP, ISH, ACE, LOCL, WLAN, iUNP]
   //
-  Status = AppendPartitionIdTableToTelemetryPhat ();
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "AppendPartitionIdTableToTelemetryPhat Failed with status: %r\n", Status));
-  }
+  AppendPartitionIdTableToTelemetryPhat ();
 
   DEBUG ((DEBUG_INFO, "%a - End\n", __FUNCTION__));
 
