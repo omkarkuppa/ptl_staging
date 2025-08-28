@@ -58,8 +58,13 @@
   gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable            |FALSE
   gSiPkgTokenSpaceGuid.PcdPsmiEnable                   |TRUE
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable               |0x0
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+  gSiPkgTokenSpaceGuid.PcdTsnSupport                   |0x0
+  gSiPkgTokenSpaceGuid.PcdFusaSupport                  |0x1
+!else
   gSiPkgTokenSpaceGuid.PcdTsnSupport                   |0x0
   gSiPkgTokenSpaceGuid.PcdFusaSupport                  |0x0
+!endif
   gSiPkgTokenSpaceGuid.PcdCanSupport                   |0x0
   gSiPkgTokenSpaceGuid.PcdTccSupport                   |0x0
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
@@ -80,7 +85,7 @@
   gSiPkgTokenSpaceGuid.PcdSiliconSegment               |0x0
   gSiPkgTokenSpaceGuid.PcdFspSku                       |0x0
   gSiPkgTokenSpaceGuid.PcdFspYear                      |0x25
-  gSiPkgTokenSpaceGuid.PcdFspBuildVer                  |0x3232
+  gSiPkgTokenSpaceGuid.PcdFspBuildVer                  |0x3220
   gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress             |0x0000EFA0
   gSiPkgTokenSpaceGuid.PcdSpiDmaEnable                 |TRUE
   gIntelSiliconPkgTokenSpaceGuid.PcdVTdPeiDmaBufferSize|0x00600000
