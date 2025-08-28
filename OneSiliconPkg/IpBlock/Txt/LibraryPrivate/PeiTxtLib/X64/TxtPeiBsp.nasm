@@ -302,9 +302,8 @@ ASM_PFX(LaunchBiosAcm):
 
     enter  0x30,0
 
-    mov     ecx, DWORD [ebp+0x8]
-    mov     ecx, [ecx]              ; ecx = AcmBase
-    mov     edx, DWORD [ebp+0xc]    ; edx = Function
+    mov      ecx, [ecx]              ; ecx = AcmBase
+                                     ; edx = Function (already passed by caller)
 
     ;
     ; Save the general purpose register state
