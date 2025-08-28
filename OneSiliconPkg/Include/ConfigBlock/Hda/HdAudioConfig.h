@@ -26,7 +26,7 @@
 
 #define HDAUDIO_PREMEM_CONFIG_REVISION 5
 #define HDAUDIO_CONFIG_REVISION 1
-#define HDAUDIO_DXE_CONFIG_REVISION 3
+#define HDAUDIO_DXE_CONFIG_REVISION 4
 
 extern EFI_GUID gHdAudioPreMemConfigGuid;
 extern EFI_GUID gHdAudioConfigGuid;
@@ -287,7 +287,11 @@ typedef struct {
   UINT32  ClockLoopbackDelaySelectSndw   :  4;    ///< SoundWire link clock loopback delay select 0x0: 3 clock periods; 0x1: 0x4 clock periods; ... ; 0xE - 17 clock periods
   UINT32  ClockLoopbackEnableSndw        :  1;    ///< SoundWire link clock loopback enable 0: Disable; 1: Enable
   UINT32  ClockLoopbackSourceSndw        :  1;    ///< SoundWire link clock loopback source 0: External Loopback; 1: Internal Loopback
-  UINT32  RsvdBits1                      : 18;    ///< Reserved bits 1
+  UINT32  DynamicFrameShape              :  1;    ///< SoundWire link dynamic frame shape 0: Disable; 1: Enable
+  UINT32  FrameRowSize                   :  9;    ///< SoundWire link frame row size; Allowed value range 48-256, not all values are valid, refer to sndw specification.
+  UINT32  FrameColSize                   :  5;    ///< SoundWire link frame col size; Allowed value range 2-16, not all values are valid, refer to sndw specification.
+  UINT32  SoundFreqPoolSelect            :  2;    ///< SoundWire supported frequency pool select: <b> 0: Dynamic</b>; 1: Static High Frequency</b> 2: Static Low Frequency.
+  UINT32  RsvdBits1                      :  1;    ///< Reserved bits 1
 } HDAUDIO_SNDW_CONFIG;
 
 /**
@@ -300,6 +304,7 @@ typedef struct {
   - Remove IoControlEnabled
   <b>Revision 4:</b>
   - Add SoundFreqPoolSelect and RsvdBits1
+  - Add SoundWire properties controls
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER        Header;          ///< Config Block Header
@@ -319,7 +324,11 @@ typedef struct {
    *  Discrete BT HCI Audio Offload Support
    **/
   HDAUDIO_DISC_BT_OFFLOAD HdaDiscBtOffload;
-  UINT32                  SoundFreqPoolSelect   :  1; ///< SoundWire supported frequency pool select: <b> 0: Dynamic</b>; 1: Static HiRes.
+  /**
+   * Deprecated: SoundWire supported frequency pool select has been moved to HDAUDIO_SNDW_CONFIG
+   *             to enable per-link configuration of each SoundWire interface.
+   **/
+  UINT32                  SoundFreqPoolSelect   :  1;
   UINT32                  RsvdBits1             :  31;
 } HDAUDIO_DXE_CONFIG;
 

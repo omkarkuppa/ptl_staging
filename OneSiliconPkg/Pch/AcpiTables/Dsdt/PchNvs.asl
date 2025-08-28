@@ -507,7 +507,7 @@
   SML4, 8,  // Offset(1315),  HD-Audio SoundWire Link #5 Multilane lanes enabled
   DTRE, 8,  // Offset(1316),  PMC DTR SCI enable
   SWCS, 8,  // Offset(1317),  SoundWire Clock Source Select
-  SSFP, 8,  // Offset(1318),  SoundWire Supported Frequency Pool
+  SSF0, 8,  // Offset(1318),  SoundWire Supported Frequency Pool Link #0
   GAER, 8,  // Offset(1319),  Global PCIe Advanced Error Reporting
   T004, 64, // Offset(1320),  Touch Host Controller HID over I2C Max Frame size Enable
   T005, 64, // Offset(1328),
@@ -517,4 +517,23 @@
   T009, 64, // Offset(1360),
   T00A, 64, // Offset(1368),  Touch Host Controller HID over I2C Interrupt delay value
   T00B, 64, // Offset(1376),
+  DFS0, 8,  // Offset(1384),  HD-Audio SoundWire Link #1 Dynamic Frame Shape
+  DFS1, 8,  // Offset(1385),  HD-Audio SoundWire Link #2 Dynamic Frame Shape
+  DFS2, 8,  // Offset(1386),  HD-Audio SoundWire Link #3 Dynamic Frame Shape
+  DFS3, 8,  // Offset(1387),  HD-Audio SoundWire Link #4 Dynamic Frame Shape
+  DFS4, 8,  // Offset(1388),  HD-Audio SoundWire Link #5 Dynamic Frame Shape
+  FRS0, 16, // Offset(1389),  HD-Audio SoundWire Link #1 Frame Row Size
+  FRS1, 16, // Offset(1391),  HD-Audio SoundWire Link #2 Frame Row Size
+  FRS2, 16, // Offset(1393),  HD-Audio SoundWire Link #3 Frame Row Size
+  FRS3, 16, // Offset(1395),  HD-Audio SoundWire Link #4 Frame Row Size
+  FRS4, 16, // Offset(1397),  HD-Audio SoundWire Link #5 Frame Row Size
+  FCS0, 8,  // Offset(1399),  HD-Audio SoundWire Link #1 Frame Col Size
+  FCS1, 8,  // Offset(1400),  HD-Audio SoundWire Link #2 Frame Col Size
+  FCS2, 8,  // Offset(1401),  HD-Audio SoundWire Link #3 Frame Col Size
+  FCS3, 8,  // Offset(1402),  HD-Audio SoundWire Link #4 Frame Col Size
+  FCS4, 8,  // Offset(1403),  HD-Audio SoundWire Link #5 Frame Col Size
+  SSF1, 8,  // Offset(1404),  SoundWire Supported Frequency Pool Link #1
+  SSF2, 8,  // Offset(1405),  SoundWire Supported Frequency Pool Link #2
+  SSF3, 8,  // Offset(1406),  SoundWire Supported Frequency Pool Link #3
+  SSF4, 8,  // Offset(1407),  SoundWire Supported Frequency Pool Link #4
   }

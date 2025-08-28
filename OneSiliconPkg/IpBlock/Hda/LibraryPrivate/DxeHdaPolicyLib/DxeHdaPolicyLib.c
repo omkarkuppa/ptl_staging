@@ -56,11 +56,14 @@ HdaDxePrintConfig (
     DEBUG ((DEBUG_INFO, " SNDW%d CLDE                 : %d\n", Index, HdaDxeConfig->SndwConfig[Index].ClockLoopbackEnableSndw));
     DEBUG ((DEBUG_INFO, " SNDW%d CLDS                 : %d\n", Index, HdaDxeConfig->SndwConfig[Index].ClockLoopbackDelaySelectSndw));
     DEBUG ((DEBUG_INFO, " SNDW%d CLSS                 : %d\n", Index, HdaDxeConfig->SndwConfig[Index].ClockLoopbackSourceSndw));
+    DEBUG ((DEBUG_INFO, " SNDW%d Dynamic Frame Shape  : %d\n", Index, HdaDxeConfig->SndwConfig[Index].DynamicFrameShape));
+    DEBUG ((DEBUG_INFO, " SNDW%d Frame Row Size       : %d\n", Index, HdaDxeConfig->SndwConfig[Index].FrameRowSize));
+    DEBUG ((DEBUG_INFO, " SNDW%d Frame Col Size       : %d\n", Index, HdaDxeConfig->SndwConfig[Index].FrameColSize));
+    DEBUG ((DEBUG_INFO, " SNDW%d Frequency Pool       : %d\n", Index, HdaDxeConfig->SndwConfig[Index].SoundFreqPoolSelect));
   }
   DEBUG ((DEBUG_INFO, " DSP Feature Mask              : 0x%x\n", HdaDxeConfig->DspFeatureMask));
   DEBUG ((DEBUG_INFO, " Discrete BT Offload Enabled   : %d\n", HdaDxeConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled));
   DEBUG ((DEBUG_INFO, " Discrete BT Offload Ssp Link  : %d\n", HdaDxeConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink));
-  DEBUG ((DEBUG_INFO, " Frequency Pool for SoundWire  : %d\n", HdaDxeConfig->SoundFreqPoolSelect));
 }
 
 /**
@@ -82,12 +85,16 @@ HdaDxeLoadConfigDefault (
   DEBUG ((DEBUG_INFO, "HdaDxeConfig->Header.GuidHob.Header.HobLength = 0x%x\n", HdAudioDxeConfig->Header.GuidHob.Header.HobLength));
 
   for (Index = 0; Index < PCH_MAX_HDA_SNDW_LINK_NUM; Index++) {
-    HdAudioDxeConfig->SndwConfig[Index].DataOnDelayExtSelect          = 0x1;
-    HdAudioDxeConfig->SndwConfig[Index].DataOnDelayExt2Select         = 0x1;
-    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalSelect    = 0x3;
-    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalExtSelect = 0x1;
-    HdAudioDxeConfig->SndwConfig[Index].ClockLoopbackSourceSndw       = 0x1;
-    HdAudioDxeConfig->SndwConfig[Index].ClockLoopbackDelaySelectSndw  = 0x2;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnDelayExtSelect          = 1;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnDelayExt2Select         = 1;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalSelect    = 3;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalExtSelect = 1;
+    HdAudioDxeConfig->SndwConfig[Index].ClockLoopbackSourceSndw       = 1;
+    HdAudioDxeConfig->SndwConfig[Index].ClockLoopbackDelaySelectSndw  = 2;
+    HdAudioDxeConfig->SndwConfig[Index].DynamicFrameShape             = 1;
+    HdAudioDxeConfig->SndwConfig[Index].FrameRowSize                  = 50;
+    HdAudioDxeConfig->SndwConfig[Index].FrameColSize                  = 4;
+    HdAudioDxeConfig->SndwConfig[Index].SoundFreqPoolSelect           = 0; // Dynamic
   }
 
   // WoV; BT Sideband; BT Intel HFP, A2DP, LE; ACX/SDCA and speaker aggregation

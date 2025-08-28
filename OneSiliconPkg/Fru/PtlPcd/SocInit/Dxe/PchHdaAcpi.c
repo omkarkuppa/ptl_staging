@@ -238,11 +238,33 @@ UpdateHdaAcpiData (
   mPchNvsAreaProtocol.Area->CLS3 = (UINT8)HdAudioDxeConfig->SndwConfig[3].ClockLoopbackSourceSndw;
   mPchNvsAreaProtocol.Area->CLS4 = (UINT8)HdAudioDxeConfig->SndwConfig[4].ClockLoopbackSourceSndw;
 
+  mPchNvsAreaProtocol.Area->DFS0 = (UINT8)HdAudioDxeConfig->SndwConfig[0].DynamicFrameShape;
+  mPchNvsAreaProtocol.Area->DFS1 = (UINT8)HdAudioDxeConfig->SndwConfig[1].DynamicFrameShape;
+  mPchNvsAreaProtocol.Area->DFS2 = (UINT8)HdAudioDxeConfig->SndwConfig[2].DynamicFrameShape;
+  mPchNvsAreaProtocol.Area->DFS3 = (UINT8)HdAudioDxeConfig->SndwConfig[3].DynamicFrameShape;
+  mPchNvsAreaProtocol.Area->DFS4 = (UINT8)HdAudioDxeConfig->SndwConfig[4].DynamicFrameShape;
+
+  mPchNvsAreaProtocol.Area->FRS0 = (UINT8)HdAudioDxeConfig->SndwConfig[0].FrameRowSize;
+  mPchNvsAreaProtocol.Area->FRS1 = (UINT8)HdAudioDxeConfig->SndwConfig[1].FrameRowSize;
+  mPchNvsAreaProtocol.Area->FRS2 = (UINT8)HdAudioDxeConfig->SndwConfig[2].FrameRowSize;
+  mPchNvsAreaProtocol.Area->FRS3 = (UINT8)HdAudioDxeConfig->SndwConfig[3].FrameRowSize;
+  mPchNvsAreaProtocol.Area->FRS4 = (UINT8)HdAudioDxeConfig->SndwConfig[4].FrameRowSize;
+
+  mPchNvsAreaProtocol.Area->FCS0 = (UINT8)HdAudioDxeConfig->SndwConfig[0].FrameColSize;
+  mPchNvsAreaProtocol.Area->FCS1 = (UINT8)HdAudioDxeConfig->SndwConfig[1].FrameColSize;
+  mPchNvsAreaProtocol.Area->FCS2 = (UINT8)HdAudioDxeConfig->SndwConfig[2].FrameColSize;
+  mPchNvsAreaProtocol.Area->FCS3 = (UINT8)HdAudioDxeConfig->SndwConfig[3].FrameColSize;
+  mPchNvsAreaProtocol.Area->FCS4 = (UINT8)HdAudioDxeConfig->SndwConfig[4].FrameColSize;
+
+  mPchNvsAreaProtocol.Area->SSF0 =  (UINT8)HdAudioDxeConfig->SndwConfig[0].SoundFreqPoolSelect;
+  mPchNvsAreaProtocol.Area->SSF1 =  (UINT8)HdAudioDxeConfig->SndwConfig[1].SoundFreqPoolSelect;
+  mPchNvsAreaProtocol.Area->SSF2 =  (UINT8)HdAudioDxeConfig->SndwConfig[2].SoundFreqPoolSelect;
+  mPchNvsAreaProtocol.Area->SSF3 =  (UINT8)HdAudioDxeConfig->SndwConfig[3].SoundFreqPoolSelect;
+  mPchNvsAreaProtocol.Area->SSF4 =  (UINT8)HdAudioDxeConfig->SndwConfig[4].SoundFreqPoolSelect;
+
   mPchNvsAreaProtocol.Area->HDBO =  (UINT8)HdAudioDxeConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled;
   mPchNvsAreaProtocol.Area->HDBO |= (UINT8)HdAudioDxeConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink << 8;
   DEBUG ((DEBUG_INFO, "HDBO NVS Value: %x\n", mPchNvsAreaProtocol.Area->HDBO));
-
-  mPchNvsAreaProtocol.Area->SSFP =  (UINT8)HdAudioDxeConfig->SoundFreqPoolSelect;
 }
 
 /**

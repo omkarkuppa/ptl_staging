@@ -113,6 +113,7 @@ HdaPreMemLoadConfigDefault (
   HdaPreMemConfig->IDispLinkTmode          = HdaIDispMode8T;
   HdaPreMemConfig->PowerGatingSupported    = TRUE;
   HdaPreMemConfig->ResetWaitTimer          = 600; // Must be at least 521us (25 frames)
+  HdaPreMemConfig->SoundWireClockSelect    = FALSE; // XTAL
 }
 
 STATIC COMPONENT_BLOCK_ENTRY  mHdaPreMemBlocks = {

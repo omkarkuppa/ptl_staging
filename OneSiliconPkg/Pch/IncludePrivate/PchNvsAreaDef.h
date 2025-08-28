@@ -442,12 +442,31 @@ typedef struct {
   UINT8    SML4;                                    ///< Offset 1315    HD-Audio SoundWire Link #5 Multilane lanes enabled
   UINT8    DtrSciEnable;                            ///< Offset 1316    PMC DTR SCI enable
   UINT8    SWCS;                                    ///< Offset 1317    SoundWire Clock Source Select
-  UINT8    SSFP;                                    ///< Offset 1318    SoundWire Supported Frequency Pool
+  UINT8    SSF0;                                    ///< Offset 1318    SoundWire Supported Frequency Pool Link #0
   UINT8    GlobalPcieAer;                           ///< Offset 1319    Global PCIe Advanced Error Reporting
   UINT64   ThcHidI2cMaxFrameSize[2];                ///< Offset 1320    Touch Host Controller HID over I2C Max Frame size Enable
   UINT64   ThcHidI2cMaxFrameSizeValue[2];           ///< Offset 1336    Touch Host Controller HID over I2C Max Frame size value
   UINT64   ThcHidI2cIntDelay[2];                    ///< Offset 1352    Touch Host Controller HID over I2C Interrupt delay Enable
   UINT64   ThcHidI2cIntDelayValue[2];               ///< Offset 1368    Touch Host Controller HID over I2C Interrupt delay value
+  UINT8    DFS0;                                    ///< Offset 1384    HD-Audio SoundWire Link #1 Dynamic Frame Shape
+  UINT8    DFS1;                                    ///< Offset 1385    HD-Audio SoundWire Link #2 Dynamic Frame Shape
+  UINT8    DFS2;                                    ///< Offset 1386    HD-Audio SoundWire Link #3 Dynamic Frame Shape
+  UINT8    DFS3;                                    ///< Offset 1387    HD-Audio SoundWire Link #4 Dynamic Frame Shape
+  UINT8    DFS4;                                    ///< Offset 1388    HD-Audio SoundWire Link #5 Dynamic Frame Shape
+  UINT16   FRS0;                                    ///< Offset 1389    HD-Audio SoundWire Link #1 Frame Row Size
+  UINT16   FRS1;                                    ///< Offset 1391    HD-Audio SoundWire Link #2 Frame Row Size
+  UINT16   FRS2;                                    ///< Offset 1393    HD-Audio SoundWire Link #3 Frame Row Size
+  UINT16   FRS3;                                    ///< Offset 1395    HD-Audio SoundWire Link #4 Frame Row Size
+  UINT16   FRS4;                                    ///< Offset 1397    HD-Audio SoundWire Link #5 Frame Row Size
+  UINT8    FCS0;                                    ///< Offset 1399    HD-Audio SoundWire Link #1 Frame Col Size
+  UINT8    FCS1;                                    ///< Offset 1400    HD-Audio SoundWire Link #2 Frame Col Size
+  UINT8    FCS2;                                    ///< Offset 1401    HD-Audio SoundWire Link #3 Frame Col Size
+  UINT8    FCS3;                                    ///< Offset 1402    HD-Audio SoundWire Link #4 Frame Col Size
+  UINT8    FCS4;                                    ///< Offset 1403    HD-Audio SoundWire Link #5 Frame Col Size
+  UINT8    SSF1;                                    ///< Offset 1404    SoundWire Supported Frequency Pool Link #1
+  UINT8    SSF2;                                    ///< Offset 1405    SoundWire Supported Frequency Pool Link #2
+  UINT8    SSF3;                                    ///< Offset 1406    SoundWire Supported Frequency Pool Link #3
+  UINT8    SSF4;                                    ///< Offset 1407    SoundWire Supported Frequency Pool Link #4
 } PCH_NVS_AREA;
 
 #pragma pack(pop)

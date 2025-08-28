@@ -20,10 +20,12 @@
 **/
 
 // Values for Audio PLL 96MHz
-#define V_HDA_SNDW_IP_CLOCK_PLL_96MHZ                       96000000 // 96 MHz
-#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ           6000000, 12000000 // 6 MHz, 12 MHz
-#define V_HDA_SNDW_FRAME_ROW_SIZE_PLL_96MHZ                 125
-#define V_HDA_SNDW_FRAME_COL_SIZE_PLL_96MHZ                 2
+#define V_HDA_SNDW_IP_CLOCK_PLL_96MHZ                             96000000 // 96 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ_DYNAMIC         6000000, 12000000 // 6 MHz, 12 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ_STATIC_6_MHZ    6000000 // 6 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ_STATIC_12_MHZ   12000000 // 12 MHz
+#define V_HDA_SNDW_FRAME_ROW_SIZE_PLL_96MHZ                       125
+#define V_HDA_SNDW_FRAME_COL_SIZE_PLL_96MHZ                       2
 
 // Values for XTAL 24MHz
 #define V_HDA_SNDW_IP_CLOCK_XTAL24MHZ                       24000000 // 24 MHz
@@ -34,7 +36,8 @@
 // Values for XTAL 38.4MHz
 #define V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ                           38400000 // 38.4 MHz
 #define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC       4800000, 9600000  // 4.8 MHz, 9.6 MHz
-#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_HIRES  9600000  // 9.6 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_9_6MHZ 9600000  // 9.6 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_4_8MHZ 4800000  // 4.8 MHz
 #define V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ                     50
 #define V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ                     4
 
@@ -74,6 +77,7 @@
 #define SDW_CLOCK_SOURCE_SELECT_APLL                        1
 #define SDW_MLCS_XTAL                                       0
 #define SDW_MLCS_APLL                                       2
+#define SDW_DYNAMIC_FRAME_SHAPE_DISABLED                    0
 
 #define SDW_LNK_DESC_DATA(LinkDesc) DeRefOf(Index(LinkDesc, 1))
 #define SDW_LNK_ENTRY(LinkDesc, EntryIndex) DeRefOf(Index(SDW_LNK_DESC_DATA(LinkDesc), EntryIndex))
@@ -136,7 +140,10 @@ Device (SNDW) {
   // Arg1 - XTAL Clock Value
   // Arg2 - SoundWire Clock Source Select
   // Arg3 - SoundWire supported frequency pool select
-  Method (XCFG, 4,  NotSerialized) {
+  // Arg4 - SoundWire Dynamic Frame Shape
+  // Arg5 - SoundWire Frame Row Size
+  // Arg6 - SoundWire Frame Col Size
+  Method (XCFG, 7,  NotSerialized) {
     Store (0x00, Local0)
     Store (Package () {0x00}, Local1)
     Store (0x00, Local2)
@@ -154,10 +161,12 @@ Device (SNDW) {
         } ElseIf (Arg1 == 38400000) {
           ADBG ("XTAL 38.4MHz")
           Store (V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ, Local0)
-          if (Arg3 == 0) {
-            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}, Local1)
+          if (Arg3 == 1) {
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_9_6MHZ}, Local1)
+          } ElseIf (Arg3 == 2) {
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_4_8MHZ}, Local1)
           } Else {
-            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_HIRES}, Local1)
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}, Local1)
           }
           Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ, Local2)
           Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ, Local3)
@@ -173,8 +182,14 @@ Device (SNDW) {
       }
       Case (SDW_CLOCK_SOURCE_SELECT_APLL) {
         ADBG ("APLL 96MHz")
+          if (Arg3 == 1) {
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ_STATIC_12_MHZ}, Local1)
+          } ElseIf (Arg3 == 2) {
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ_STATIC_6_MHZ}, Local1)
+          } Else {
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ_DYNAMIC}, Local1)
+          }
         Store (V_HDA_SNDW_IP_CLOCK_PLL_96MHZ, Local0)
-        Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ}, Local1)
         Store (V_HDA_SNDW_FRAME_ROW_SIZE_PLL_96MHZ, Local2)
         Store (V_HDA_SNDW_FRAME_COL_SIZE_PLL_96MHZ, Local3)
         Store (SDW_MLCS_APLL, Local4)
@@ -182,6 +197,12 @@ Device (SNDW) {
       Default {
         ADBG ("SOURCE CLOCK UNSUPPORTED")
       }
+    }
+
+    // Overwrite the row and column size when the dynamic frame shape is disabled
+    If (Arg4 == SDW_DYNAMIC_FRAME_SHAPE_DISABLED) {
+      Store (Arg5, Local2)
+      Store (Arg6, Local3)
     }
 
     // Update properties values: "intel-sdw-ip-clock", "mipi-sdw-clock-frequencies-supported",
@@ -197,6 +218,9 @@ Device (SNDW) {
 
     // LNK[N] (Arg0) - "intel-sdw-mlcs" property value for selected clock
     Store (Local4, SDW_LNK_ENTRY_DATA (Arg0, SDW_INTEL_SNDW_MLCS))
+
+    // LNK[N] (Arg0) - "mipi-sdw-dynamic-frame-shape" property value for selected frame shape (Arg4)
+    Store (Arg4, SDW_LNK_ENTRY_DATA (Arg0, SDW_MIPI_DYNAMIC_FRAME_SHAPE_INDEX))
   }
 
   // Update SoundWire AC I/O Clock Loopback based on PchPolicy
@@ -270,11 +294,11 @@ Device (SNDW) {
     // Update SoundWire clock source based properties
     // XTAL - PCH NVS variable with XTAL frequency (0 - 24MHz; 1 - 38.4MHz)
     // SWCS - PCH NVS variable with SoundWire Clock source value (0 - XTAL; 1 - Audio PLL)
-    XCFG (LNK0, XTAL, SWCS, SSFP)
-    XCFG (LNK1, XTAL, SWCS, SSFP)
-    XCFG (LNK2, XTAL, SWCS, SSFP)
-    XCFG (LNK3, XTAL, SWCS, SSFP)
-    XCFG (LNK4, XTAL, SWCS, SSFP)
+    XCFG (LNK0, XTAL, SWCS, SSF0, DFS0, FRS0, FCS0)
+    XCFG (LNK1, XTAL, SWCS, SSF1, DFS1, FRS1, FCS1)
+    XCFG (LNK2, XTAL, SWCS, SSF2, DFS2, FRS2, FCS2)
+    XCFG (LNK3, XTAL, SWCS, SSF3, DFS3, FRS3, FCS3)
+    XCFG (LNK4, XTAL, SWCS, SSF4, DFS4, FRS4, FCS4)
 
     // Update DOAIS and DODS based proparties
     // PCH NVS variables set in accordance with PchPolicy
