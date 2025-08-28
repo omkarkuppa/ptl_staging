@@ -504,6 +504,11 @@ GetRevisionTableString (
 
   Count = ARRAY_SIZE (mProcessorRevisionTable);
 
+  if ((CpuId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE + 2) && 
+      ((SrId == 0xB) || (SrId == 0xC) || (SrId == 0xE) || (SrId == 0xF))) {
+    return "A0";
+  }
+  
   for (Index = 0; Index < Count; Index++) {
     if ((CpuId == mProcessorRevisionTable[Index].CPUID) &&
         ((SrId == mProcessorRevisionTable[Index].SRID) || (mProcessorRevisionTable[Index].SRID == NOCARE))) {
