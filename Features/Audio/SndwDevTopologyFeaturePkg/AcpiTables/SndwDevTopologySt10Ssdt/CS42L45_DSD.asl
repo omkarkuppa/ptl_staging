@@ -143,6 +143,11 @@ Name(PDPN, Package()
     },
 }) //End PDPN
 
+// IT11: mipi-sdca-terminal-transducer-count = usNumberOfMicrophones
+#ifndef CS42L45_IT11_NUM_OF_MIC
+# define CS42L45_IT11_NUM_OF_MIC 2
+#endif
+
 Name(PDP1, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -150,8 +155,23 @@ Name(PDP1, Package()
     {
         Package(2) {"mipi-sdw-port-wordlength-configs", Package() {DP1_WORDLENGTH}},   // Package
         Package(2) {"mipi-sdw-data-port-type", 0},                              // Integer
-        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1, 2, 3} },   // Allow channels 0-3
-        Package(2) {"mipi-sdw-channel-combination-list", Package() {0xF}},      // Package
+#if CS42L45_IT11_NUM_OF_MIC > 3
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1, 2, 3} },   // Allow channels 0, 1, 2 and 3.
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0xf}},      // Valid channel combination bitmap
+#else
+# if CS42L45_IT11_NUM_OF_MIC > 2
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1, 2} },      // Allow channels 0, 1, and 2.
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x7}},      // Valid channel combination bitmap
+# else
+#  if CS42L45_IT11_NUM_OF_MIC > 1
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1} },         // Allow channels 0 and 1.
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}},      // Valid channel combination bitmap
+#  else
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0} },            // Allow channels 0 and 1.
+        Package(2) {"mipi-sdw-channel-combination-list", Package() {0x1}},      // Valid channel combination bitmap
+#  endif
+# endif
+#endif
         Package(2) {"mipi-sdw-port-encoding-type", 0x01},                       // PCM twos compliment
         Package(2) {"mipi-sdw-modes-supported", 0x01},                          // Isochronous mode only
         Package(2) {"mipi-sdw-max-async-buffer", 0},                            // Do not buffer

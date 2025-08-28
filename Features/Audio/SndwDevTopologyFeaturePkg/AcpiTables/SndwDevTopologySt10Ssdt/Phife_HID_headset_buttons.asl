@@ -195,7 +195,7 @@ Name(E001, Package()
     {
         Package(2) { "mipi-sdca-entity-type", 0x31 },
         Package(2) { "mipi-sdca-entity-label", "HIDE1"},
-        Package(2) { "mipi-sdca-hide-related-audio-function", Package() {0x3}}, // AF03 - UAJ
+        Package(2) { "mipi-sdca-hide-related-audio-function-list", Package() {0x3}}, // AF03 - UAJ
         //Package(2) { "mipi-sdca-hide-tx-report-type", Package() {0x22}}, // HID Report Descriptor Type, follo with MSFT
         Package(2) { "mipi-sdca-HIDTx-supported-report-ids", Package() {0x1, 0x2}}, // HID report ID = 1, 2
         Package(2) { "mipi-sdca-control-list", 0xD0000}, // HIDTx_???
@@ -213,9 +213,9 @@ Name(CS10, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
-    {   // HIDTx_CurrentOwner, Class, RO
+    {   // HIDTx_CurrentOwner, Class, RW1S
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-access-mode", CAM_RO},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_RW1S},
         Package(2) { "mipi-sdca-control-interrupt-position", PHIFE_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT},   // HID interrupt bit position   // ATR Phife: Make a define
     }
 }) // End CS10

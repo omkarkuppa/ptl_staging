@@ -149,6 +149,37 @@ Name(MGEO, Buffer()
 }) //End MGEO
 #endif
 
+//
+// Microphone Sensitivity and SNR
+// It is possible that MSEN and MSNR were overloaded before this file was included.  In this case MIC_SENS_SNR_OVERLOAD must be
+// defined to keep this table from being included.  It is intentionally at the top of this file so that it dis-assembles into
+// the same location when it is overloaded.
+#ifndef MIC_SENS_SNR_OVERLOAD
+
+//
+// Microphone sensitivity
+// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SENSITIVITY2 - Windows drivers | Microsoft Learn)
+Name(MSEN, Buffer()
+{
+    0x00, 0x01,             // Version
+    0x02, 0x00,             // NumberOfMicrophones
+    0x00, 0x00, 0xe6, 0xFF, // Mic 1 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
+    0x00, 0x00, 0xe6, 0xFF, // Mic 2 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
+}) //End MSEN
+
+//
+// Microphone snr
+// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SNR - Windows drivers | Microsoft Learn)
+Name(MSNR, Buffer()
+{
+    0x00, 0x01,             // Version
+    0x02, 0x00,             // NumberOfMicrophones
+    0x00, 0x80, 0x40, 0x00, // Mic 1 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
+    0x00, 0x80, 0x40, 0x00, // Mic 2 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
+}) //End MSNR
+#endif //#ifndef MIC_SENS_SNR_OVERLOAD
+
+
 #ifdef EXCLUDE_FU_113_VOLUME_CONTROL
 // Remove FU113 and FU13
 # define COHEN_MAIN_PCM_MIC_STREAM_ENTITY_ID_LIST         0x4, 0x5, 0x2, 0x6, 0x10, 0x1, 0x7, 0x9, 0xA
@@ -340,6 +371,12 @@ Name(EXT0, Package()
         // all audio functions involved with FDL must have it defined.
         Package(2) {"01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
                                          FEATURE_CS42L43_DMIC_NO_VOL_MUTE_C_COND)},
+#ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM
+        package(2) {"01fa-global-mute-led-mic-mute-gpio", GLOBAL_MUTE_LED_MIC_GPIO_NUM },
+#endif
+#ifdef GLOBAL_MUTE_LED_SPK_GPIO_NUM
+        package(2) {"01fa-global-mute-led-spk-mute-gpio", GLOBAL_MUTE_LED_SPK_GPIO_NUM },
+#endif
     }
 }) // End EXT0
 
@@ -528,27 +565,6 @@ Name(E004, Package()
     }
 }) // End E004
 
-//
-// Microphone sensitivity
-// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SENSITIVITY - Windows drivers | Microsoft Learn)
-Name(MSEN, Buffer()
-{
-    0x00, 0x01,             // Version
-    0x02, 0x00,             // NumberOfMicrophones
-    0x00, 0x00, 0xe6, 0xFF, // Mic 1 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
-    0x00, 0x00, 0xe6, 0xFF, // Mic 2 Sensitivity, Knowles KAS-700-0145, sensitivity= -26.0 dB (+/-1 dB)
-}) //End MSEN
-
-//
-// Microphone snr
-// (16.16 fixed point value KSPROPERTY\_AUDIO\_MIC\_SNR - Windows drivers | Microsoft Learn)
-Name(MSNR, Buffer()
-{
-    0x00, 0x01,             // Version
-    0x02, 0x00,             // NumberOfMicrophones
-    0x00, 0x80, 0x40, 0x00, // Mic 1 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
-    0x00, 0x80, 0x40, 0x00, // Mic 2 SNR, Knowles KAS-700-0145, SNR= 64.5 dB
-}) //End MSNR
 
 Name(C108, Package()
 {
@@ -782,7 +798,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 12"},
         Package(2) { "mipi-sdca-input-pin-list", 0x2}, // Pin1 has a connection
-        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
+        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -790,6 +806,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-control-0x1-subproperties", "C301"}, // Bypass
         Package(2) { "mipi-sdca-control-0x7-subproperties", "C307"}, // XU_ID
         Package(2) { "mipi-sdca-control-0x8-subproperties", "C308"}, // XU_Version
+        Package(2) { "mipi-sdca-control-0x30-subproperties", "C330"}, // GPIO
         Package(2) { "mipi-sdca-input-pin-1", "E010"}, // Input Pin 1 connected to PPU 11
     }
 }) // End E001
@@ -826,6 +843,18 @@ Name(C308, Package()
         Package(2) { "mipi-sdca-control-dc-value", 0x10},
     }
 }) // End C308
+
+Name(C330, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {   // GPIO, Extension, RW.
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x7}, // Control Numbers = {0,1,2}
+    }
+}) // End C330
 
 
 
@@ -976,6 +1005,7 @@ Name(C610, Package()
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
         Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-default-value", 0}, // 48kHz
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
     Package()
@@ -987,12 +1017,21 @@ Name(C610, Package()
 // {SampleRateIndex, SampleRate} mapping.
 Name(BUF5, Buffer()
 {
+#ifdef MIC_CAPTURE_96KHZ
+    0x02, 0x00,  // Range type 0x0002 (Pairs)
+    0x02, 0x00,  // Count of ranges = 0x2;
+    0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 48000 (0x0000BB80)
+    //0x01, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 44100 (0x0000AC44)
+    0x02, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 96000 (0x00017700)
+    //0x03, 0x00, 0x00, 0x00, 0x80, 0x3e, 0x00, 0x00, // SampleRateIndex = 0x00000003, SampleRate = 16000 (0x00003e80)
+#else
     0x02, 0x00,  // Range type 0x0002 (Pairs)
     0x01, 0x00,  // Count of ranges = 0x1;
     0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 48000 (0x0000BB80)
     //0x01, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 44100 (0x0000AC44)
     //0x02, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 96000 (0x00017700)
     //0x03, 0x00, 0x00, 0x00, 0x80, 0x3e, 0x00, 0x00, // SampleRateIndex = 0x00000003, SampleRate = 16000 (0x00003e80)
+#endif MIC_CAPTURE_96KHZ
 }) // End BUF5
 
 
@@ -1272,9 +1311,7 @@ Name(E013, Package()
     {
         Package(2) { "mipi-sdca-entity-type", 0x23},
         Package(2) { "mipi-sdca-entity-label", "SMPU 13"},
-        Package(2) { "mipi-sdca-control-list", (CTL_SMPU_HIST_MESSAGELENGTH | CTL_SMPU_HIST_MESSAGEOFFSET | CTL_SMPU_HIST_CURRENTOWNER |
-                                                CTL_SMPU_TRIGGER_READY | CTL_SMPU_HIST_ERROR | CTL_SMPU_HIST_BUFFER_PREAMBLE |
-                                                CTL_SMPU_HIST_BUFFER_MODE | CTL_SMPU_TRIGGER_STATUS | CTL_SMPU_TRIGGER_ENABLE)}, // Simple History Buffer mode Saurin: Changed 1A to 1B
+        Package(2) { "mipi-sdca-control-list", (CTL_SMPU_TRIGGER_READY | CTL_SMPU_HIST_BUFFER_MODE | CTL_SMPU_TRIGGER_STATUS | CTL_SMPU_TRIGGER_ENABLE)}, // Simple History Buffer mode Saurin: Changed 1A to 1B
         Package(2) { "mipi-sdca-input-pin-list", 0x2 }, // Input Pin 1 connected
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
@@ -1283,12 +1320,7 @@ Name(E013, Package()
         Package(2) { "mipi-sdca-control-0x10-subproperties", "CB10"}, // Trigger_Enable
         Package(2) { "mipi-sdca-control-0x11-subproperties", "CB11"}, // Trigger_Status
         Package(2) { "mipi-sdca-control-0x12-subproperties", "CB12"}, // Hist_Buffer_Mode
-        Package(2) { "mipi-sdca-control-0x13-subproperties", "CB13"}, // Hist_Buffer_Preamble
-        Package(2) { "mipi-sdca-control-0x14-subproperties", "CB14"}, // Hist_Error
         Package(2) { "mipi-sdca-control-0x16-subproperties", "CB16"}, // Trigger_Ready
-        Package(2) { "mipi-sdca-control-0x18-subproperties", "CB18"}, // Hist_CurrentOwner
-        Package(2) { "mipi-sdca-control-0x1A-subproperties", "CB1A"}, // Hist_MessageOffset
-        Package(2) { "mipi-sdca-control-0x1B-subproperties", "CB1B"}, // Hist_MessageLength
 #ifdef EXCLUDE_FU_113_VOLUME_CONTROL
         Package(2) { "mipi-sdca-input-pin-1", "E011"}, // Input Pin 1 connected to MFPU 13
 #else
@@ -1305,6 +1337,10 @@ Name(CB10, Package()
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
         Package(2) { "mipi-sdca-control-deferrable", 1},
+    },
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range", "BMT1"},
     }
 }) // End CB10
 
@@ -1316,6 +1352,11 @@ Name(CB11, Package()
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_RW1C},
         Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_MIC_TRIGGET_STATUS_INT},
+    },
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range", "BMT1"},
     }
 }) // End CB11
 
@@ -1328,29 +1369,12 @@ Name(CB12, Package()
         Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
         //Package(2) { "mipi-sdca-control-dc-value", 0x3 },    // No History Buffer (NHB)
         Package(2) { "mipi-sdca-control-dc-value", 0x0 },    // Simple History Buffer (SHB)
+    },
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range", "BUF9"},
     }
 }) // End CB12
-
-Name(CB13, Package()
-{
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-    Package()
-    {   // Class, DC, Hist_Buffer_Preamble = 0
-        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
-        Package(2) { "mipi-sdca-control-dc-value", 0 },
-    }
-}) // End CB13
-
-Name(CB14, Package()
-{
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-    Package()
-    {   // Class, RO, Hist_Error
-        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-access-mode", CAM_RO},
-    }
-}) // End CB14
 
 Name(CB16, Package()
 {
@@ -1360,40 +1384,31 @@ Name(CB16, Package()
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
         Package(2) { "mipi-sdca-control-dc-value", 0 },
+    },
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range", "BMT1"},
     }
 }) // End CB16
 
-Name(CB18, Package()
-{
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-    Package()
-    {   // Class, RW1S, Hist_CurrentOwner
-        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-access-mode", CAM_RW1S},
-    }
-}) // End CB18
+// Trigger_Enable, Trigger_Status, and Trigger_Ready BitIndex Mapping Table (BMT)
+Name(BMT1, Buffer() {
+    0x03, 0x00,             // Range type 0x0003
+    0x01, 0x00,             // NumRows = 1
+    // Bit 0: Voice
+    0x00, 0x00, 0x00, 0x00, // Bit Number = 0
+    0x00, 0x00, 0x00, 0x00, // Behavior Set ID = 0 -> CBN = 02000 (Voice), DBN=12000 (human voice)
+    0x00, 0x00, 0x00, 0x00, // String Number = 0 -> "Voice"
+}) // End BMT1
 
-Name(CB1A, Package()
+// Hist_Buffer_Mode supported modes
+Name(BUF9, Buffer()
 {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-    Package()
-    {   // Class, DC, Hist_MessageOffset = 0
-        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
-        Package(2) { "mipi-sdca-control-dc-value", 0 },
-    }
-}) // End CB1A
-
-Name(CB1B, Package()
-{
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-    Package()
-    {   // Class, DC, Hist_MessageLength = 0
-        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
-        Package(2) { "mipi-sdca-control-dc-value", 0 },
-    }
-}) // End CB1B
+    0x01, 0x00,  // Range type 0x0001
+    0x01, 0x00,  // Count of ranges = 0x1
+    0x00, 0x00, 0x00, 0x00, // Simple History Buffer (SHB)
+    //0x03, 0x00, 0x00, 0x00, // No History Buffer (NHB)
+}) // End BUF9
 
 
 // +------------------------------------+

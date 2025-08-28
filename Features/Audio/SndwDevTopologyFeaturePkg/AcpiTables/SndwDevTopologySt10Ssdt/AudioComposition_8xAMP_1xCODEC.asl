@@ -19,6 +19,10 @@
 @par Specification Reference:
 **/
 
+//-----------------
+// Configuration
+//-----------------
+
 #ifdef AMP6_UID
 # define _NUM_AMP_AMPS 6
 #else
@@ -54,240 +58,6 @@
 #else
 # define _NUM_CODEC_AMPS 0
 #endif // CODEC1_UID
-
-#if _NUM_AMP_AMPS > 0
-# ifdef CODEC1_UID
-#  ifdef CODEC1_AMP
-#   ifdef CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    8 Endpoints: Aggregated Speaker, Internal Microphone, Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  8
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP01"},
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-6-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-7-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    2 Endpoints: Aggregated Speaker, Internal Microphone
-#     define ENDPOINT_CNT  2
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP01"},
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#    endif // CODEC1_UAJ
-#   else // !CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    7 Endpoints: Aggregated Speaker, Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  7
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-6-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    1 Endpoints: Aggregated Speaker
-#     define ENDPOINT_CNT  1
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#    endif // CODEC1_UAJ
-#   endif // CODEC1_MIC
-#  else // !CODEC1_AMP
-#   ifdef CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    8 Endpoints: Aggregated Speaker, Internal Microphone, Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  8
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP01"},
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-6-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-7-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    8 Endpoints: Aggregated Speaker, Internal Microphone
-#     define ENDPOINT_CNT  2
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP01"},
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#    endif // CODEC1_UAJ
-#   else // !CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    7 Endpoints: Aggregated Speaker, Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  7
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-6-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    1 Endpoints: Aggregated Speaker
-#     define ENDPOINT_CNT  1
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#    endif // CODEC1_UAJ
-#   endif // CODEC1_MIC
-#  endif // CODEC1_AMP
-# else // !CODEC1_UID
-// 1 Endpoints: Aggregated Speaker
-#  define ENDPOINT_CNT  1
-#  define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#  define EP01_PROPERTIES
-#  define EP02_PROPERTIES
-#  define EP03_PROPERTIES
-#  define EP04_PROPERTIES
-#  define EP05_PROPERTIES
-#  define EP06_PROPERTIES
-#  define EP07_PROPERTIES
-# endif // CODEC1_UID
-#else // !(_NUM_AMP_AMPS > 0)
-# ifdef CODEC1_UID
-#  ifdef CODEC1_AMP
-#   ifdef CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    8 Endpoints: Aggregated Speaker, Internal Microphone, Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  8
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP01"},
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-6-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-7-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    2 Endpoints: Aggregated Speaker, Internal Microphone
-#     define ENDPOINT_CNT  2
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP01"},
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#    endif // CODEC1_UAJ
-#   else // !CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    7 Endpoints: Aggregated Speaker, Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  7
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-6-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    1 Endpoints: Aggregated Speaker
-#     define ENDPOINT_CNT  1
-#     define EP00_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#    endif // CODEC1_UAJ
-#   endif // CODEC1_MIC
-#  else // !CODEC1_AMP
-#   ifdef CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    8 Endpoints: Internal Microphone, Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  7
-#     define EP00_PROPERTIES
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP01"},
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-6-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    8 Endpoints: Internal Microphone
-#     define ENDPOINT_CNT  1
-#     define EP00_PROPERTIES
-#     define EP01_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP01"},
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#    endif // CODEC1_UAJ
-#   else // !CODEC1_MIC
-#    ifdef CODEC1_UAJ
-//    6 Endpoints: Headphones, LineOut, HeadsetOutput, Stereo Microphone, LineIn, HeadsetMic
-#     define ENDPOINT_CNT  6
-#     define EP00_PROPERTIES
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES Package (2) {"acpi-acd-endpoint-0-properties", "EP02"},
-#     define EP03_PROPERTIES Package (2) {"acpi-acd-endpoint-1-properties", "EP03"},
-#     define EP04_PROPERTIES Package (2) {"acpi-acd-endpoint-2-properties", "EP04"},
-#     define EP05_PROPERTIES Package (2) {"acpi-acd-endpoint-3-properties", "EP05"},
-#     define EP06_PROPERTIES Package (2) {"acpi-acd-endpoint-4-properties", "EP06"},
-#     define EP07_PROPERTIES Package (2) {"acpi-acd-endpoint-5-properties", "EP07"},
-#    else // !CODEC1_UAJ
-//    0 Endpoints:
-#     define ENDPOINT_CNT  0
-#     define EP00_PROPERTIES
-#     define EP01_PROPERTIES
-#     define EP02_PROPERTIES
-#     define EP03_PROPERTIES
-#     define EP04_PROPERTIES
-#     define EP05_PROPERTIES
-#     define EP06_PROPERTIES
-#     define EP07_PROPERTIES
-#     error "No endpoints available!"
-#    endif // CODEC1_UAJ
-#   endif // CODEC1_MIC
-#  endif // CODEC1_AMP
-# else // !CODEC1_UID
-// 0 Endpoints:
-#  define ENDPOINT_CNT  0
-#  define EP00_PROPERTIES
-#  define EP01_PROPERTIES
-#  define EP02_PROPERTIES
-#  define EP03_PROPERTIES
-#  define EP04_PROPERTIES
-#  define EP05_PROPERTIES
-#  define EP06_PROPERTIES
-#  define EP07_PROPERTIES
-#  error "No endpoints available!"
-# endif // CODEC1_UID
-#endif // _NUM_AMP_AMPS > 0
 
 //-----------------
 // HW specific configuration
@@ -548,25 +318,6 @@
 # endif
 #endif
 
-Name(_DSD, Package() {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-        Package (2) {"acpi-acd-interface-revision", 0x00000001},    // 0.1 Spec Version Bits 31-16: (Upper word) Major version number. Bits 15-0: (Lower word) Minor version number
-        Package (2) {"acpi-acd-endpoint-count", ENDPOINT_CNT},
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-    Package () {
-        EP00_PROPERTIES
-        EP01_PROPERTIES
-        EP02_PROPERTIES
-        EP03_PROPERTIES
-        EP04_PROPERTIES
-        EP05_PROPERTIES
-        EP06_PROPERTIES
-        EP07_PROPERTIES
-    }
-}) //End _DSD
-
 Name(AC00, Package() {    // This package is shared by all DSP devices in this composition table
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
@@ -648,6 +399,90 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #else  // !_AMD
 # ifdef _NVIDIA
         // NVidia_Arm specific information for Speaker
+#  if (_NUM_AMP_AMPS==0) && (_NUM_CODEC_AMPS==1)
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_AMP_RENDER_DATA_PORT},  // Raw Stream Data port number on SPK device
+#  endif
+#  if (_NUM_AMP_AMPS>1) && (_NUM_CODEC_AMPS==0)
+        Package (2) {"acpi-vendor-sdw-data-port-number", AMP1_RENDER_DATA_PORT},        // Raw Stream Data port number on SPK device
+#  endif
+#  if (_NUM_AMP_AMPS>1) && (_NUM_CODEC_AMPS==1) // dissimilar amp aggregation
+        Package (2) {"acpi-vendor-aggregation-peripheral-count", (_NUM_AMP_AMPS + _NUM_CODEC_AMPS)},
+#   if (_NUM_AMP_AMPS==4)
+        // AMP #1
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-controller-id", AMP1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-unique-id", AMP1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-manufacturer-id", AMP1_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-part-id", AMP1_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-data-port-number", AMP1_RENDER_DATA_PORT},
+
+        // AMP #2
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-controller-id", AMP2_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", AMP2_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-manufacturer-id", AMP2_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-part-id", AMP2_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-data-port-number", AMP2_RENDER_DATA_PORT},
+
+        // AMP #3
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-controller-id", AMP3_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-unique-id", AMP3_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-manufacturer-id", AMP3_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-part-id", AMP3_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-data-port-number", AMP3_RENDER_DATA_PORT},
+
+        // AMP #4
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-controller-id", AMP4_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-unique-id", AMP4_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-manufacturer-id", AMP4_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-part-id", AMP4_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-data-port-number", AMP4_RENDER_DATA_PORT},
+
+        // CODEC #1
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-controller-id", CODEC1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-unique-id", CODEC1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-manufacturer-id", CODEC1_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-part-id", CODEC1_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-data-port-number", CODEC1_AMP_RENDER_DATA_PORT},
+#   else //
+#    if (_NUM_AMP_AMPS==2)
+        // AMP #1
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-controller-id", AMP1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-unique-id", AMP1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-manufacturer-id", AMP1_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-part-id", AMP1_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-data-port-number", AMP1_RENDER_DATA_PORT},
+
+        // AMP #2
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-controller-id", AMP2_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", AMP2_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-manufacturer-id", AMP2_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-part-id", AMP2_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-data-port-number", AMP2_RENDER_DATA_PORT},
+
+        // CODEC #1
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-controller-id", CODEC1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-unique-id", CODEC1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-manufacturer-id", CODEC1_MANUFACTURER_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-part-id", CODEC1_PART_ID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-data-port-number", CODEC1_AMP_RENDER_DATA_PORT},
+#    endif // (_NUM_AMP_AMPS==2)
+#   endif // (_NUM_AMP_AMPS==4)
+#  endif // (_NUM_AMP_AMPS>1) && (_NUM_CODEC_AMPS==1)
 # else  // !_AMD && !_NVIDIA
 
 #  ifdef DEFAULT_STREAMING_SPK_VOL
@@ -1205,6 +1040,8 @@ Name(CC10, Package() {
 Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creation. Contents of this package are proprietary.
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
+        Package (2) {"acpi-vendor-id", 0x1},
+        Package (2) {"acpi-vendor-config-type", "Streaming_MicrophoneArray"},
 #  ifdef _AMD
         Package (2) {"amd-sdw-stream-type", 0},
         Package (2) {"amd-sdw-stream-count", 1},
@@ -1212,9 +1049,8 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  else // !_AMD
 #   ifdef _NVIDIA
         // NVidia_Arm specific information for Microphone Array
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_MIC_CAPTURE_DATA_PORT},
 #   else // !_NVIDIA
-        Package (2) {"acpi-vendor-id", 0x1},
-        Package (2) {"acpi-vendor-config-type", "Streaming_MicrophoneArray"},
         Package (2) {"acpi-acd-connection-count", 1},
         // Microphone Array Capture stream (raw)
         Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
@@ -1298,7 +1134,8 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_UAJ_RENDER_DATA_PORT},   // Raw Stream Data port number on SPK device
 #   else // !_AMD
 #   ifdef _NVIDIA
-       // NVidia_Arm specific information for Headphone
+        // NVidia_Arm specific information for Headphone
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_UAJ_RENDER_DATA_PORT},
 #   else // !_NVIDIA
         Package (2) {"acpi-vendor-sdca-terminal-type", 0x06c0},
         Package (2) {"acpi-acd-connection-count", 1},
@@ -1309,20 +1146,6 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  endif // _AMD
     }
 }) //End VN02
-
-Name(CC21, Package() {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"acpi-acd-device-namestring", CODEC1_UAJ_DEV_NAME},
-       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-       Package (2) {"acpi-acd-sdca-terminal-id", 0x13},    // Entity id of the Analog terminal used for this endpoint
-       Package (2) {"acpi-acd-sdca-terminal-type", 0x06c0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-    Package () {
-       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-    }
-}) //End CC21
 
 Name(EP03, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
@@ -1378,6 +1201,7 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  else // !_AMD
 #   ifdef _NVIDIA
         // NVidia_Arm specific information for Line-Out
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_UAJ_RENDER_DATA_PORT},
 #   else // !_NVIDIA
         Package (2) {"acpi-vendor-sdca-terminal-type", 0x0690},
         Package (2) {"acpi-acd-connection-count", 1},
@@ -1388,20 +1212,6 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  endif // _AMD
     }
 }) //End VN03
-
-Name(CC31, Package() {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"acpi-acd-device-namestring", CODEC1_UAJ_DEV_NAME},
-       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-       Package (2) {"acpi-acd-sdca-terminal-id", 0x15},    // Entity id of the Analog terminal used for this endpoint
-       Package (2) {"acpi-acd-sdca-terminal-type", 0x0690},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-    Package () {
-       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-    }
-}) //End CC31
 
 Name(EP04, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
@@ -1457,6 +1267,7 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  else // !_AMD
 #   ifdef _NVIDIA
         // NVidia_Arm specific information for Headset
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_UAJ_RENDER_DATA_PORT},
 #   else // !_NVIDIA
         Package (2) {"acpi-vendor-sdca-terminal-type", 0x06D0},
         Package (2) {"acpi-acd-connection-count", 1},
@@ -1467,20 +1278,6 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  endif // _AMD
     }
 }) //End VN04
-
-Name(CC41, Package() {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"acpi-acd-device-namestring", CODEC1_UAJ_DEV_NAME},
-       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-       Package (2) {"acpi-acd-sdca-terminal-id", 0x17},    // Entity id of the Analog terminal used for this endpoint
-       Package (2) {"acpi-acd-sdca-terminal-type", 0x06d0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-    Package () {
-       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-    }
-}) //End CC41
 
 Name(EP05, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
@@ -1536,6 +1333,7 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  else // !_AMD
 #   ifdef _NVIDIA
         // NVidia_Arm specific information for Microphone
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_UAJ_CAPTURE_DATA_PORT},
 #   else // !_NVIDIA
         Package (2) {"acpi-vendor-sdca-terminal-type", 0x06a0},
         Package (2) {"acpi-acd-connection-count", 1},
@@ -1546,20 +1344,6 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  endif // _AMD
     }
 }) //End VN05
-
-Name(CC51, Package() {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"acpi-acd-device-namestring", CODEC1_UAJ_DEV_NAME},
-       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-       Package (2) {"acpi-acd-sdca-terminal-id", 0x7},    // Entity id of the Analog terminal used for this endpoint
-       Package (2) {"acpi-acd-sdca-terminal-type", 0x06a0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-    Package () {
-       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-    }
-}) //End CC51
 
 Name(EP06, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
@@ -1615,6 +1399,7 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  else // !_AMD
 #   ifdef _NVIDIA
         // NVidia_Arm specific information for Line-In
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_UAJ_CAPTURE_DATA_PORT},
 #   else // !_NVIDIA
         Package (2) {"acpi-vendor-sdca-terminal-type", 0x0680},
         Package (2) {"acpi-acd-connection-count", 1},
@@ -1625,20 +1410,6 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  endif // _AMD
     }
 }) //End VN06
-
-Name(CC61, Package() {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"acpi-acd-device-namestring", CODEC1_UAJ_DEV_NAME},
-       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-       Package (2) {"acpi-acd-sdca-terminal-id", 0x9},    // Entity id of the Analog terminal used for this endpoint
-       Package (2) {"acpi-acd-sdca-terminal-type", 0x0680},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-    Package () {
-       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-    }
-}) //End CC61
 
 Name(EP07, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
@@ -1694,6 +1465,7 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  else // !_AMD
 #   ifdef _NVIDIA
         // NVidia_Arm specific information for Headset Microphone
+        Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_UAJ_CAPTURE_DATA_PORT},
 #   else // !_NVIDIA
         Package (2) {"acpi-vendor-sdca-terminal-type", 0x06d0},
         Package (2) {"acpi-acd-connection-count", 1},
@@ -1704,20 +1476,6 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #  endif // _AMD
     }
 }) //End VN07
-
-Name(CC71, Package() {
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"acpi-acd-device-namestring", CODEC1_UAJ_DEV_NAME},
-       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-       Package (2) {"acpi-acd-sdca-terminal-id", 0xB},    // Entity id of the Analog terminal used for this endpoint
-       Package (2) {"acpi-acd-sdca-terminal-type", 0x06d0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-    },
-    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-    Package () {
-       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-    }
-}) //End CC71
 # endif // CODEC1_UAJ
 #endif
 
@@ -1725,50 +1483,6 @@ Name(CC71, Package() {
 //
 // Cleanup
 //
-#ifdef _NUM_AMP_AMPS
-# undef _NUM_AMP_AMPS
-#endif
-
-#ifdef _NUM_CODEC_AMPS
-# undef _NUM_CODEC_AMPS
-#endif
-
-#ifdef ENDPOINT_CNT
-# undef ENDPOINT_CNT
-#endif
-
-#ifdef EP00_PROPERTIES
-# undef EP00_PROPERTIES
-#endif
-
-#ifdef EP01_PROPERTIES
-# undef EP01_PROPERTIES
-#endif
-
-#ifdef EP02_PROPERTIES
-# undef EP02_PROPERTIES
-#endif
-
-#ifdef EP03_PROPERTIES
-# undef EP03_PROPERTIES
-#endif
-
-#ifdef EP04_PROPERTIES
-# undef EP04_PROPERTIES
-#endif
-
-#ifdef EP05_PROPERTIES
-# undef EP05_PROPERTIES
-#endif
-
-#ifdef EP06_PROPERTIES
-# undef EP06_PROPERTIES
-#endif
-
-#ifdef EP07_PROPERTIES
-# undef EP07_PROPERTIES
-#endif
-
 #ifdef AMP1_RENDER_DATA_PORT
 # undef AMP1_RENDER_DATA_PORT
 #endif

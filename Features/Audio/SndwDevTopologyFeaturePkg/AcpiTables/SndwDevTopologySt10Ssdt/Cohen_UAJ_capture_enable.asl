@@ -91,6 +91,12 @@ Name(EXT0, Package()
         // all audio functions involved with FDL must have it defined.
         Package(2) {"01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
                                          FEATURE_CS42L43_UAJ_NO_VOL_MUTE_C_COND | FEATURE_CS42L43_UAJ_NO_VOL_MUTE_R_COND)},
+#ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM
+        package(2) {"01fa-global-mute-led-mic-mute-gpio", GLOBAL_MUTE_LED_MIC_GPIO_NUM },
+#endif
+#ifdef GLOBAL_MUTE_LED_SPK_GPIO_NUM
+        package(2) {"01fa-global-mute-led-spk-mute-gpio", GLOBAL_MUTE_LED_SPK_GPIO_NUM },
+#endif
     }
 }) // End EXT0
 
@@ -141,6 +147,12 @@ Name(E011, Package()
         Package(2) { "mipi-sdca-control-0x31-subproperties", "CE31"}, // Load Detection
         Package(2) { "mipi-sdca-control-0x32-subproperties", "CE32"}, // ASP Output
     },
+
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-ge-selectedmode-controls-affected", "MD01"},
+    }
 }) // End E011
 
 // Selected_Mode
@@ -158,3 +170,44 @@ Name(BMT2, Buffer() {
     0x07, 0x00, 0x00, 0x00, // Selected Mode = 7
     0xA0, 0x06, 0x00, 0x00, // Terminal Type = 0x06A0, Stereo Mic-on-Jack
 }) // End BMT2
+
+Name(MD01, Buffer()
+{
+    0x06, // Mode count
+    0x00, // Mode, No Jack
+        0x04, //Control count
+            0x0D, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 35, Selector, cn, value (4-bytes)
+            0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 43, Selector, cn, value (4-bytes)
+            0x14, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 44, Selector, cn, value (4-bytes)
+            0x16, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 45, Selector, cn, value (4-bytes)
+    0x03, // Mode, Headphone
+        0x04, //Control count
+            0x0D, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 35, Selector, cn, value (4-bytes)
+            0x12, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, // SU 43, Selector, cn, value (4-bytes)
+            0x14, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 44, Selector, cn, value (4-bytes)
+            0x16, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 45, Selector, cn, value (4-bytes)
+    0x04, // Mode, Headset
+        0x04, //Control count
+            0x0D, 0x01, 0x00, 0x03, 0x00, 0x00, 0x00, // SU 35, Selector, cn, value (4-bytes)
+            0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 43, Selector, cn, value (4-bytes)
+            0x14, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 44, Selector, cn, value (4-bytes)
+            0x16, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, // SU 45, Selector, cn, value (4-bytes)
+    0x05, // Mode, LineOut Stereo
+        0x04, //Control count
+            0x0D, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 35, Selector, cn, value (4-bytes)
+            0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 43, Selector, cn, value (4-bytes)
+            0x14, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, // SU 44, Selector, cn, value (4-bytes)
+            0x16, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 45, Selector, cn, value (4-bytes)
+    0x06, // Mode, LineIn Stereo
+        0x04, //Control count
+            0x0D, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, // SU 35, Selector, cn, value (4-bytes)
+            0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 43, Selector, cn, value (4-bytes)
+            0x14, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 44, Selector, cn, value (4-bytes)
+            0x16, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 45, Selector, cn, value (4-bytes)
+    0x07, // Mode, Microphone
+        0x04, //Control count
+            0x0D, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, // SU 35, Selector, cn, value (4-bytes)
+            0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 43, Selector, cn, value (4-bytes)
+            0x14, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 44, Selector, cn, value (4-bytes)
+            0x16, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, // SU 45, Selector, cn, value (4-bytes)
+}) // End MD01

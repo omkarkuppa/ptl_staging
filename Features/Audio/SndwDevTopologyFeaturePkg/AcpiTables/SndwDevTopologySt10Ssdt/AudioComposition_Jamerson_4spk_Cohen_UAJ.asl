@@ -19,6 +19,9 @@
 @par Specification Reference:
 **/
 
+//
+// Fall back acpi-acd-device-namestring
+//
 #ifndef COHEN_1_UAJ_DEV_NAME
 # define COHEN_1_UAJ_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF03"
 #endif

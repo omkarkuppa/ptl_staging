@@ -19,4 +19,9 @@
 @par Specification Reference:
 **/
 
-#define RELEASE_VERSION	"6.14.0"
+#ifndef _VERSION_H_
+#define _VERSION_H_
+
+#define RELEASE_VERSION	"6.23.0"
+
+#endif /** _VERSION_H_ **/

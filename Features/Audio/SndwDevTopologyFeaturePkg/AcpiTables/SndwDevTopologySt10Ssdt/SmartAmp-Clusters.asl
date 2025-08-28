@@ -28,7 +28,7 @@
 # define CLUSTER_UDMPU_23
 # define CLUSTER_UDMPU_25
 
-#define CLUSTER_ID_LIST_JAMERSON
+#define CLUSTER_ID_LIST_SMART_AMP
 #define CLUSTER_INIT_JAMERSON
 
 #else
@@ -54,9 +54,9 @@
 # define CLUSTER_UDMPU_25 Package(2) {"mipi-sdca-control-0x10-subproperties", "CI25"}
 
 # ifdef POSTURE_CLUSTER_FOUR_REL
-#  define CLUSTER_ID_LIST_JAMERSON Package (2) {"mipi-sdca-cluster-id-list", Package() {0x1, 0x21, 0x23, 0x25, 0x26, 0x29, 0xF0, 0xF1, 0xF2, 0xF3} }
+#  define CLUSTER_ID_LIST_SMART_AMP Package (2) {"mipi-sdca-cluster-id-list", Package() {0x1, 0x21, 0x23, 0x25, 0x26, 0x29, 0xF0, 0xF1, 0xF2, 0xF3} }
 # else
-#  define CLUSTER_ID_LIST_JAMERSON Package (2) {"mipi-sdca-cluster-id-list", Package() {0x1, 0x21, 0x23, 0x25, 0x26, 0x29, 0xF0, 0xF1} }
+#  define CLUSTER_ID_LIST_SMART_AMP Package (2) {"mipi-sdca-cluster-id-list", Package() {0x1, 0x21, 0x23, 0x25, 0x26, 0x29, 0xF0, 0xF1} }
 # endif
 
 // This is one really long line, since the preprocessor will not except line extenders '\'.
@@ -156,7 +156,6 @@ Name(CM29, Buffer()
 // | Clusters for IT21 |
 // | Amp Render Stream |
 // +-------------------+
-// TODO: Check and see if this should be single channel for left and right.
 Name(CL21, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -218,21 +217,23 @@ Name(CM21, Buffer()
     0x01, 0x00, 0x00, 0x00, 0x21, 0x00, 0x00, 0x00    // ClusterIndex 01 --> ClusterID 21
 }) // End CMP1
 
-// +-------------------+
-// | Clusters for IT26 |
-// | Amp Render Stream |
-// +-------------------+
+
+// +------------------------------+
+// |       Clusters for IT26      |
+// | Amp Ultrasonic Render Stream |
+// +------------------------------+
 Name(CL26, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        Package(2) { "mipi-sdca-channel-count", 1 },
+        Package(2) { "mipi-sdca-channel-count", 2 },
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHR4" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CHR5" },
     }
 })
 
@@ -242,7 +243,18 @@ Name(CHR4, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 1 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_MONO },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_LEFT },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
+    }
+})
+
+Name(CHR5, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_GENERIC_RIGHT },
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
     }
 })
@@ -272,8 +284,9 @@ Name(CM26, Buffer()
     0x01, 0x00, 0x00, 0x00, 0x26, 0x00, 0x00, 0x00    // ClusterIndex 01 --> ClusterID 26
 }) // End CMP1
 
+
 // +------------------------+
-// |  Clusters for UDMDP23  |
+// |  Clusters for UDMPU23  |
 // | Amp Transducer Mapping |
 // +------------------------+
 Name(CL23, Package()
@@ -281,12 +294,19 @@ Name(CL23, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
+#ifdef COHEN_AMP
+        Package(2) { "mipi-sdca-channel-count", 2 },
+#else
         Package(2) { "mipi-sdca-channel-count", 1 },
+#endif
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHR6" },
+#ifdef COHEN_AMP
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CHR7" },
+#endif
     }
 })
 
@@ -297,7 +317,22 @@ Name(CHR6, Package()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 0 },
        Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_PRIMARY_TRANSDUCER },
+#ifdef COHEN_AMP
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHR_GENERIC_LEFT },
+#else
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+#endif
+    }
+})
+
+Name(CHR7, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 0 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_PRIMARY_TRANSDUCER },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHR_GENERIC_RIGHT },
     }
 })
 
@@ -327,7 +362,7 @@ Name(CM23, Buffer()
 }) // End CMP1
 
 // +----------------------+
-// | Clusters for UDMDP25 |
+// | Clusters for UDMPU25 |
 // | Amp Reference Stream |
 // +----------------------+
 Name(CL25, Package()
@@ -335,12 +370,13 @@ Name(CL25, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        Package(2) { "mipi-sdca-channel-count", 1 },
+        Package(2) { "mipi-sdca-channel-count", 2 },
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHE1" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CHE2" },
     }
 })
 
@@ -355,6 +391,16 @@ Name(CHE1, Package()
     }
 })
 
+Name(CHE2, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 102 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_ECHO_REF_2 },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_REFERENCE },
+    }
+})
 Name(CI25, Package()
 {
     // Class, DC, ClusterIndex = 0x1
@@ -376,9 +422,9 @@ Name(CI25, Package()
 Name(CM25, Buffer()
 {
     0x02, 0x00,    // Range type 0x0002
-    0x01, 0x00,    // 2 rows
+    0x01, 0x00,    // 1 row
     0x01, 0x00, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00    // ClusterIndex 01 --> ClusterID 25
-}) // End CMP1
+}) // End CM25
 
 // +--------------------------+
 // | Clusters for Posture L/R |
@@ -489,6 +535,18 @@ Name(PMAP, Buffer()
 
 #  ifdef POSTURE_CLUSTER_FOUR_REL
 
+#   ifndef AMP3_UID
+Name(CHTC, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 1 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_COMBINED },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+#   else
 Name(CHTL, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -499,6 +557,7 @@ Name(CHTL, Package()
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
     }
 })
+#   endif
 
 Name(CHBL, Package()
 {
@@ -511,6 +570,18 @@ Name(CHBL, Package()
     }
 })
 
+#   ifndef AMP3_UID
+Name(CHBC, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 2 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_COMBINED },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+#   else
 Name(CHTR, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -518,9 +589,10 @@ Name(CHTR, Package()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 2 },
        Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_TOP_RIGHT },
-       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO} ,
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
     }
 })
+#   endif
 
 Name(CHBR, Package()
 {
@@ -529,9 +601,11 @@ Name(CHBR, Package()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 2 },
        Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_EQUIPMENT_BOTTOM_RIGHT },
-       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO} ,
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
     }
 })
+
+
 
 //
 //             rotation ->
@@ -598,13 +672,21 @@ Name(CLF1, Package()
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHTR" },
 #   else      // !CHANNEL_TOP_LEFT
 #    ifdef CHANNEL_BOTTOM_LEFT
+#     ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTC" },
+#     else
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHTL" },
+#     endif
 #    else     // !CHANNEL_BOTTOM_LEFT
 #     ifdef CHANNEL_TOP_RIGHT
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
 #     else    // !CHANNEL_TOP_RIGHT
 #      ifdef CHANNEL_BOTTOM_RIGHT
+#       ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBC" },
+#       else
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
+#       endif
 #      else   // !CHANNEL_BOTTOM_RIGHT
 #       error "No channel relationship defined"
 #      endif  // CHANNEL_BOTTOM_RIGHT
@@ -630,13 +712,21 @@ Name(CLF2, Package()
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
 #   else      // !CHANNEL_TOP_LEFT
 #    ifdef CHANNEL_BOTTOM_LEFT
+#     ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
+#     else
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHTR" },
+#     endif
 #    else     // !CHANNEL_BOTTOM_LEFT
 #     ifdef CHANNEL_TOP_RIGHT
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
 #     else    // !CHANNEL_TOP_RIGHT
 #      ifdef CHANNEL_BOTTOM_RIGHT
+#       ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
+#       else
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHTL" },
+#       endif
 #      else   // !CHANNEL_BOTTOM_RIGHT
 #       error "No channel relationship defined"
 #      endif  // CHANNEL_BOTTOM_RIGHT
@@ -662,13 +752,21 @@ Name(CLF3, Package()
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHBL" },
 #   else      // !CHANNEL_TOP_LEFT
 #    ifdef CHANNEL_BOTTOM_LEFT
+#     ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHBC" },
+#     else
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHBR" },
+#     endif
 #    else     // !CHANNEL_BOTTOM_LEFT
 #     ifdef CHANNEL_TOP_RIGHT
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHTL" },
 #     else    // !CHANNEL_TOP_RIGHT
 #      ifdef CHANNEL_BOTTOM_RIGHT
+#       ifndef AMP3_UID
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHTC" },
+#       else
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHTR" },
+#       endif
 #      else   // !CHANNEL_BOTTOM_RIGHT
 #       error "No channel relationship defined"
 #      endif  // CHANNEL_BOTTOM_RIGHT

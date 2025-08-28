@@ -27,3 +27,7 @@ If (Arg0 == ToUUID ("4dba4525-0cb8-4a09-b73d-e915fd8bc7bc")) /* Cirrus EFX APO *
 {
     Return (1)
 }
+If (Arg0 == ToUUID ("c97d0473-6918-4173-8e42-59cf432d8533")) /* Cirrus EFX UAJ APO */
+{
+    Return (1)
+}

@@ -68,7 +68,14 @@
 # define _SMART_AMP_REFERENCE_STREAM_FEATURE_BITS   (1 << 5) | (1 << 6)
 #endif
 
-#define COHEN_RENDER_STREAM_ENTITY_ID_LIST         0x8, 0x6, 0x4, 0x10, 0x1, 0x7, 0x9, 0xA, 0xB, 0x2, 0xC,
+#ifdef DISABLE_US_STREAM
+# define COHEN_RENDER_STREAM_ENTITY_ID_LIST         0x8, 0x6, 0x4, 0x10, 0x1, 0x7, 0x9, 0xA, 0xB, 0x2, 0xC,
+#else
+# define COHEN_RENDER_STREAM_ENTITY_ID_LIST         0x8, 0x6, 0x4, 0x10, 0x1, 0x7, 0x9, 0x18, 0xA, 0xB, 0x2, 0xC,
+#endif
+
+#define COHEN_US_STREAM_ENTITY_ID_LIST              0x13, 0x14, 0x15, 0x16, 0x17,
+
 #define COHEN_VOLUME_STREAM_ENTITY_ID_LIST_VOLUME  0x05,
 #define COHEN_REF_STREAM_ENTITY_ID_LIST            0x11, 0x12,
 
@@ -85,9 +92,15 @@ Name(_DSD, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package() {
         Package(2) { "mipi-sdw-sw-interface-revision", 0x00020001 },  // Revision 2.1
-        Package(2) { "mipi-sdca-function-topology-features",
-            _SMART_AMP_REFERENCE_STREAM_FEATURE_BITS
-        },
+        //
+        // NOTE:
+        //  The MSFT Class driver does not parse mipi-sdca-function-topology-features.
+        //  MSFT recommends not including it in DisCo until the Class driver has added
+        //  support for it.
+        //
+        //Package(2) { "mipi-sdca-function-topology-features",
+        //    _SMART_AMP_REFERENCE_STREAM_FEATURE_BITS
+        //},
         Package(2) { "mipi-sdca-control-list", (CTL_E0_FUNCTION_VERSION | CTL_E0_FUNCTION_ID | CTL_E0_FUNCTION_MANUFACTURER_ID |
                                                 CTL_E0_FUNCTION_TYPE | CTL_E0_FUNCTION_SDCA_VERSION | CTL_E0_COMMIT_GROUP_MASK | CTL_E0_FUNCTION_STATUS |
                                                 CTL_E0_DEVICE_MANUFACTURER_ID | CTL_E0_DEVICE_PART_ID | CTL_E0_DEVICE_VERSION | CTL_E0_DEVICE_SDCA_VERSION |
@@ -100,11 +113,14 @@ Name(_DSD, Package()
 #ifndef COHEN_DISABLE_REF_STREAM
             COHEN_REF_STREAM_ENTITY_ID_LIST
 #endif
+#ifndef DISABLE_US_STREAM
+            COHEN_US_STREAM_ENTITY_ID_LIST
+#endif
             },
         },
         Package(2) { "mipi-sdca-function-busy-max-delay", 5000},
         // Clusters
-        CLUSTER_ID_LIST_JAMERSON,
+        CLUSTER_ID_LIST_SMART_AMP,
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -140,15 +156,16 @@ Name(_DSD, Package()
         Package(2) { "mipi-sdca-entity-id-0xA-subproperties", "E00A"},      // UDMPU 23
         Package(2) { "mipi-sdca-entity-id-0xB-subproperties", "E00B"},      // FU 23
         Package(2) { "mipi-sdca-entity-id-0xC-subproperties", "E00C"},      // OT 23
-        // IT_199 currently not used
-        // Package(2) { "mipi-sdca-entity-id-0xD-subproperties", "E00D"},   // IT 199
-        // SPE_199 currently not used
-        // Package(2) { "mipi-sdca-entity-id-0xE-subproperties", "E00E"},   // SPE 199
-        // OT_199 currently not used
-        // Package(2) { "mipi-sdca-entity-id-0xF-subproperties", "E00F"},   // OT 199
         Package(2) { "mipi-sdca-entity-id-0x10-subproperties", "E010"},     // MFPU 21
         Package(2) { "mipi-sdca-entity-id-0x11-subproperties", "E011"},     // UDMPU 25
         Package(2) { "mipi-sdca-entity-id-0x12-subproperties", "E012"},     // OT 25
+
+        Package(2) { "mipi-sdca-entity-id-0x13-subproperties", "E013"},     // IT 26
+        Package(2) { "mipi-sdca-entity-id-0x14-subproperties", "E014"},     // CS 26
+        Package(2) { "mipi-sdca-entity-id-0x15-subproperties", "E015"},     // PPU 26
+        Package(2) { "mipi-sdca-entity-id-0x16-subproperties", "E016"},     // MFPU 26
+        Package(2) { "mipi-sdca-entity-id-0x17-subproperties", "E017"},     // FU 26
+        Package(2) { "mipi-sdca-entity-id-0x18-subproperties", "E018"},     // MU 26
         // Clusters
         CLUSTER_INIT_JAMERSON,
         // Vendor-specific
@@ -230,6 +247,12 @@ Name(EXT0, Package()
         // all audio functions involved with FDL must have it defined.
         Package(2) {"01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
                                          FEATURE_CS42L43_AMP_NO_VOL_MUTE_R_COND)},
+#ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM
+        package(2) {"01fa-global-mute-led-mic-mute-gpio", GLOBAL_MUTE_LED_MIC_GPIO_NUM },
+#endif
+#ifdef GLOBAL_MUTE_LED_SPK_GPIO_NUM
+        package(2) {"01fa-global-mute-led-spk-mute-gpio", GLOBAL_MUTE_LED_SPK_GPIO_NUM },
+#endif
     }
 }) // End EXT0
 
@@ -508,7 +531,7 @@ Name(C111, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        // DataPortSelector: Class, DC, *index* = 1 (see {DP_Index, DP_Num} map in DPM1)
+        // DataPortSelector: Class, DC, *index* = 1 (see {DP_Index, DP_Num} map in DPM3)
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
         Package(2) { "mipi-sdca-control-dc-value", 1},
@@ -533,7 +556,7 @@ Name(DPM3, Buffer() {
     // DP_Index_A
     0xFF, 0x00, 0x00, 0x00,     // 0: not used
     0x05, 0x00, 0x00, 0x00,     // 1: DP5
-    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0x07, 0x00, 0x00, 0x00,     // 2: DP7
     0xFF, 0x00, 0x00, 0x00,     // 3: not used
     0xFF, 0x00, 0x00, 0x00,     // 4: not used
     0xFF, 0x00, 0x00, 0x00,     // 5: not used
@@ -807,7 +830,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 22"},
         Package(2) { "mipi-sdca-input-pin-list", 0x6}, // Pin1 and Pin2 connected
-        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
+        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -815,6 +838,7 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-control-0x1-subproperties", "C901"}, // Bypass
         Package(2) { "mipi-sdca-control-0x7-subproperties", "C907"}, // XU_ID
         Package(2) { "mipi-sdca-control-0x8-subproperties", "C908"}, // XU_Version
+        Package(2) { "mipi-sdca-control-0x30-subproperties", "C930"}, // GPIO
         Package(2) { "mipi-sdca-input-pin-1", "E010"}, // Input Pin 1 connected to MFPU_21
         Package(2) { "mipi-sdca-input-pin-2", "E007"}, // Input Pin 2 connected to IT_29
     }
@@ -852,6 +876,18 @@ Name(C908, Package()
         Package(2) { "mipi-sdca-control-dc-value", 0x10},
     }
 }) // End C908
+
+Name(C930, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {   // GPIO, Extension, RW.
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x7}, // Control Numbers = {0,1,2}
+    }
+}) // End C930
 
 
 // +------------------------------------+
@@ -944,6 +980,59 @@ Name(BMT1, Buffer() {
 //
 
 
+
+// +------------------------------------+
+// |                MU_26               |
+// +------------------------------------+
+Name(E018, Package() {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-entity-type", 0x5},
+        Package (2) {"mipi-sdca-entity-label", "MU 26"},
+#ifdef DISABLE_US_STREAM
+        Package (2) {"mipi-sdca-input-pin-list", 0x2},
+#else
+        Package (2) {"mipi-sdca-input-pin-list", 0x6},
+#endif
+        Package (2) {"mipi-sdca-control-list", CTL_MU_MIXER},
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+        Package (2) {"mipi-sdca-input-pin-1", "E009"},
+#ifndef DISABLE_US_STREAM
+        Package (2) {"mipi-sdca-input-pin-2", "E017"},
+#endif
+        Package (2) {"mipi-sdca-control-0x1-subproperties", "C801"},
+    }
+}) // End E00A
+
+
+Name(C801, Package()
+{
+    // Mixer
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {    // Platform, DC, Control Numbers = {0,1}
+        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
+        Package(2) { "mipi-sdca-control-dc-value", 0x0000},  // Q7.8
+        Package(2) { "mipi-sdca-control-cn-list", 0x3},
+    },
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range", "B801"},
+    }
+}) // End C049
+
+
+// Mixer: unity gain
+Name(B801, Buffer() {
+    0x01, 0x00,             // Range type 0x0001
+    0x01, 0x00,             // NumRows = 1
+    0x00, 0x00, 0x00, 0x00, // 0.0dB
+}) // End B801
+
+
 // +------------------------------------+
 // |               UDMPU_23             |
 // +------------------------------------+
@@ -958,7 +1047,11 @@ Name(E00A, Package() {
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package () {
         Package (2) {"mipi-sdca-control-0x10-subproperties", "CI23"},
-        Package (2) {"mipi-sdca-input-pin-1", "E009"}, // Input Pin 1 connected to SAPU_29
+#ifdef DISABLE_US_STREAM
+        Package (2) {"mipi-sdca-input-pin-1", "E009"}, // Input Pin 1 connected to SAPU_29, skipping MU_26
+#else
+        Package (2) {"mipi-sdca-input-pin-1", "E018"}, // Input Pin 1 connected to MU_26
+#endif
     }
 }) // End E00A
 
@@ -973,12 +1066,13 @@ Name(E00B, Package()
     {
         Package(2) { "mipi-sdca-entity-type", 0x7},
         Package(2) { "mipi-sdca-entity-label", "FU 23"},
+        Package(2) { "mipi-sdca-control-list", CTL_FU_MUTE | CTL_FU_CHANNELGAIN},
         Package(2) { "mipi-sdca-input-pin-list", 0x2 }, // Input Pin 1 connected
-        Package(2) { "mipi-sdca-control-list", CTL_FU_CHANNELGAIN},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
+        Package(2) { "mipi-sdca-control-0x1-subproperties", "C02A"},
         Package(2) { "mipi-sdca-control-0xB-subproperties", "C400"},
         Package(2) { "mipi-sdca-input-pin-1", "E00A"}, // Input Pin 1 connected to UDMPU_23
     }
@@ -1201,6 +1295,7 @@ Name(DPM2, Buffer() {
 }) // End DPM2
 #endif
 
+
 Name(C056, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
@@ -1358,3 +1453,241 @@ Name(C300, Package() {
     }
 }) // End C300
 #endif
+
+
+// +------------------------------------+
+// |                IT_26               |
+// |      Ultrasound Render Stream      |
+// |            Sink Data Port          |
+// +------------------------------------+
+Name(E013, Package() {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-entity-type", 0x2},
+        Package (2) {"mipi-sdca-entity-label", "IT 26"},
+        Package (2) {"mipi-sdca-control-list", CTL_IT_DATAPORT_SELECTOR | CTL_IT_CLUSTERINDEX | CTL_IT_USAGE},
+        Package (2) {"mipi-sdca-terminal-type", 0x180},
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+        USAGE_IT_26,
+        CLUSTER_IT_26,
+        Package (2) {"mipi-sdca-control-0x11-subproperties", "C042"}, // DataPort_Selector
+        Package (2) {"mipi-sdca-terminal-clock-connection", "E014"},
+    },
+#if CTL_E0_FUNCTION_SDCA_VERSION_VAL < 0x10
+//
+// NOTE:
+//  "mipi-sdca-terminal-dp-numbers" has been removed from DisCo for SoundWire 2.1 spec so they should no longer be present in the ASL file.
+//  "mipi-sdca-terminal-dp-numbers" has been deprecated, and 1.0 Conformant devices will report DP numbers as a range for DataPort_Selector control.
+//
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) { "mipi-sdca-terminal-dp-numbers", "DPM7"}, // Legacy map
+    }
+#endif
+}) // End E013
+
+Name(C042, Package() {
+    // DataPortSelector: Class, DC, *index* = 1 (see {DP_Index, DP_Num} map in DPM8)
+    // NOTE: Potentially could change to DPM3, index 2
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_DC},
+        Package (2) {"mipi-sdca-control-dc-value", 1},
+    },
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range", "DPM8"},
+    }
+}) // End C042
+
+#if CTL_E0_FUNCTION_SDCA_VERSION_VAL < 0x10
+// DataPortMap7
+Name(DPM7, Buffer() {
+    0x1, 7, // {DP_Index, DP_Num}
+}) // End DPM7
+#endif
+
+// DataPortMap 8
+Name(DPM8, Buffer() {
+    0x10, 0x00,                 // Range type 0x0010
+    0x04, 0x00,                 // NumRows = 4
+    // DP_Index_A
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0x07, 0x00, 0x00, 0x00,     // 1: DP7
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
+    // DP_Index_B
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
+    // DP_Index_C
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
+    // DP_Index_D
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
+}) // End DPM8
+
+
+
+// +------------------------------------+
+// |                CS_26               |
+// +------------------------------------+
+Name(E014, Package() {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-entity-type", 0xB},
+        Package (2) {"mipi-sdca-entity-label", "CS 26"},
+        Package (2) {"mipi-sdca-cs-type", 0},
+        Package (2) {"mipi-sdca-control-list", CTL_CS_SAMPLERATEINDEX},
+        },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+        Package (2) {"mipi-sdca-control-0x10-subproperties", "C210"},
+    }
+}) // End E014
+
+
+// +------------------------------------+
+// |               PPU_26               |
+// +------------------------------------+
+Name(E015, Package() {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-entity-type", 0x25},
+        Package (2) {"mipi-sdca-entity-label", "PPU 26"},
+        Package (2) {"mipi-sdca-input-pin-list", 0x2},
+        Package (2) {"mipi-sdca-control-list", CTL_PPU_POSTURENUMBER},
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+        Package (2) {"mipi-sdca-input-pin-1", "E013"},
+        Package (2) {"mipi-sdca-control-0x10-subproperties", "C024"},
+    }
+}) // End E015
+
+
+// +------------------------------------+
+// |               MFPU_26              |
+// +------------------------------------+
+Name(E016, Package() {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-entity-type", 0x22},
+        Package (2) {"mipi-sdca-entity-label", "MFPU 26"},
+        Package (2) {"mipi-sdca-input-pin-list", 0x2},
+        Package (2) {"mipi-sdca-control-list", (CTL_MFPU_CLUSTER_INDEX | CTL_MFPU_BYPASS)},
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package () {
+        Package (2) {"mipi-sdca-input-pin-1", "E015"},
+        Package (2) {"mipi-sdca-control-0x1-subproperties", "C501"},    // Bypass
+        CLUSTER_MFPU_26,
+    }
+}) // End E016
+
+
+// +------------------------------------+
+// |                FU_26               |
+// +------------------------------------+
+Name(E017, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) {"mipi-sdca-entity-type", 0x07},
+        Package(2) {"mipi-sdca-entity-label", "FU 26"},
+        Package(2) {"mipi-sdca-control-list", CTL_FU_MUTE},
+        Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package()
+    {
+        Package(2) {"mipi-sdca-input-pin-1", "E016"},
+        Package(2) {"mipi-sdca-control-0x1-subproperties", "C02B"},
+    }
+}) // End E017
+
+Name(C02A, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {  // Mute, Platform, RW/Dual
+        Package(2) {"mipi-sdca-control-access-layer", CAL_PLATFORM},
+        Package(2) {"mipi-sdca-control-access-mode", CAM_DUAL},
+        Package(2) {"mipi-sdca-control-cn-list", 0x2},  // Control Numbers = {1}
+#ifdef FU_23_FIXED_RENDER_MUTE
+        Package(2) {"mipi-sdca-control-fixed-value", 0}, // Unmuted
+#endif
+    }
+}) // End C02A
+
+Name(C02B, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {   // Mute, Platform, RW/Dual
+        Package(2) {"mipi-sdca-control-access-layer", CAL_PLATFORM},
+        Package(2) {"mipi-sdca-control-access-mode", CAM_DUAL},
+        Package(2) {"mipi-sdca-control-cn-list", 0x2},  // Control Numbers = {1}
+#ifdef FU_26_FIXED_RENDER_MUTE
+        Package(2) {"mipi-sdca-control-fixed-value", 0}, // Unmuted
+#endif
+    }
+}) // End C02B

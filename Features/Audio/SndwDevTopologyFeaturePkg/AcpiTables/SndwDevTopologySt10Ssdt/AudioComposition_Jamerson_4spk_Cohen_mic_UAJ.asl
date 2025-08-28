@@ -19,6 +19,10 @@
 @par Specification Reference:
 **/
 
+//
+// _DSD package moved to a separate file.
+//
+
 // This would be so much cleaner with a real preprocessor.
 #ifdef JAMERSON_4_UID
    // Four or five SDCA Audio Functions
@@ -91,7 +95,7 @@
 #endif
 
 #ifndef DSP_ACPI_ACD_DEVICE_NAMESTRING
-# define DSP_ACPI_ACD_DEVICE_NAMESTRING  "\\_SB.PC00.HDAS.IDA.ISSW"
+# define DSP_ACPI_ACD_DEVICE_NAMESTRING "\\_SB.PC00.HDAS"
 #endif
 
 
@@ -200,7 +204,113 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 #endif // COHEN_JAMERSON_AMP_AGGREGATION
 #else  // !_AMD
 # ifdef _NVIDIA
+#  ifndef COHEN_JAMERSON_AMP_AGGREGATION
         // NVidia_Arm specific information for Speaker
+        Package (2) {"acpi-vendor-sdw-data-port-number", SPEAKER_RENDER_DATA_PORT},
+#  else // COHEN_JAMERSON_AMP_AGGREGATION
+        Package (2) {"acpi-vendor-aggregation-peripheral-count", (_NUM_JAMERSON_AMPS + _NUM_COHEN_AMPS)},
+#    ifdef _FOUR_JAMERSONS
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-controller-id", COHEN_1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-link-id", 0}, // always 0
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-unique-id", COHEN_1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-part-id", 0x4243},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-4-data-port-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-controller-id", JAMERSON_4_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-unique-id", JAMERSON_4_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-controller-id", JAMERSON_3_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-unique-id", JAMERSON_3_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-controller-id", JAMERSON_2_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", JAMERSON_2_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-controller-id", JAMERSON_1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-unique-id", JAMERSON_1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+#    else
+#    ifdef _THREE_JAMERSONS
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-controller-id", COHEN_1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-unique-id", COHEN_1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-part-id", 0x4243},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-3-data-port-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-controller-id", JAMERSON_3_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-unique-id", JAMERSON_3_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-controller-id", JAMERSON_2_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", JAMERSON_2_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-controller-id", JAMERSON_1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-unique-id", JAMERSON_1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+#    else
+#    ifdef _TWO_JAMERSONS
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-controller-id", COHEN_1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-unique-id", COHEN_1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-part-id", 0x4243},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-2-data-port-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-controller-id", JAMERSON_2_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", JAMERSON_2_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-1-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-controller-id", JAMERSON_1_LID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-link-id", 0},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-unique-id", JAMERSON_1_UID},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-manufacturer-id", 0x1fa},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-part-id", 0x3556},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-number", 1},
+        Package (2) {"acpi-vendor-aggregation-peripheral-0-data-port-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+#     endif  // _TWO_JAMERSONS
+#    endif  // _THREE_JAMERSONS
+#   endif  // _FOUR_JAMERSONS
+#  endif  // COHEN_JAMERSON_AMP_AGGREGATION
 # else  // !_AMD && !_NVIDIA
 
 #  ifdef DEFAULT_STREAMING_SPK_VOL
@@ -569,7 +679,8 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"amd-sdw-default-stream-dp-number", 0x1},    // Raw Stream Data port number on Mic device
 #else // !_AMD
 # ifdef _NVIDIA
-       // NVidia_Arm specific information for Microphone Array
+        // NVidia_Arm specific information for Microphone Array
+        Package (2) {"acpi-vendor-sdw-data-port-number", 0x1},
 # else // !_NVIDIA
        Package (2) {"acpi-acd-connection-count", 1},
        // Microphone Array Capture stream (raw)
@@ -650,7 +761,8 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"amd-sdw-default-stream-dp-number", 0x6},    // Raw Stream Data port number on SPK device
 # else // !_AMD
 # ifdef _NVIDIA
-       // NVidia_Arm specific information for Headphone
+        // NVidia_Arm specific information for Headphone
+        Package (2) {"acpi-vendor-sdw-data-port-number", 0x6},
 # else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06c0},
        Package (2) {"acpi-acd-connection-count", 1},
@@ -717,7 +829,8 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"amd-sdw-default-stream-dp-number", 0x6},    // Raw Stream Data port number on SPK device
 # else // !_AMD
 # ifdef _NVIDIA
-       // NVidia_Arm specific information for Line-Out
+        // NVidia_Arm specific information for Line-Out
+        Package (2) {"acpi-vendor-sdw-data-port-number", 0x6},
 # else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x0690},
        Package (2) {"acpi-acd-connection-count", 1},
@@ -784,7 +897,8 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"amd-sdw-default-stream-dp-number", 0x6},    // Raw Stream Data port number on SPK device
 # else // !_AMD
 # ifdef _NVIDIA
-       // NVidia_Arm specific information for Headset
+        // NVidia_Arm specific information for Headset
+        Package (2) {"acpi-vendor-sdw-data-port-number", 0x6},
 # else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06D0},
        Package (2) {"acpi-acd-connection-count", 1},
@@ -851,7 +965,8 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"amd-sdw-default-stream-dp-number", 0x2},    // Raw Stream Data port number on SPK device
 # else // !_AMD
 # ifdef _NVIDIA
-       // NVidia_Arm specific information for Microphone
+        // NVidia_Arm specific information for Microphone
+        Package (2) {"acpi-vendor-sdw-data-port-number", 0x2},
 # else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06a0},
        Package (2) {"acpi-acd-connection-count", 1},
@@ -918,7 +1033,8 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"amd-sdw-default-stream-dp-number", 0x2},    // Raw Stream Data port number on SPK device
 # else // !_AMD
 # ifdef _NVIDIA
-       // NVidia_Arm specific information for Line-In
+        // NVidia_Arm specific information for Line-In
+        Package (2) {"acpi-vendor-sdw-data-port-number", 0x2},
 # else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x0680},
        Package (2) {"acpi-acd-connection-count", 1},
@@ -985,7 +1101,8 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"amd-sdw-default-stream-dp-number", 0x2},    // Raw Stream Data port number on SPK device
 # else // !_AMD
 # ifdef _NVIDIA
-       // NVidia_Arm specific information for Headset Microphone
+        // NVidia_Arm specific information for Headset Microphone
+        Package (2) {"acpi-vendor-sdw-data-port-number", 0x2},
 # else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06d0},
        Package (2) {"acpi-acd-connection-count", 1},

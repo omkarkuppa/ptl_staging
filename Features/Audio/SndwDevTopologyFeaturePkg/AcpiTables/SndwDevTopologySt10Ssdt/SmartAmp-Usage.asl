@@ -65,7 +65,7 @@ Name(UB26, Buffer()
     0x01, 0x00,  // NumRows = 1
     // Usage Index 0 - Wildcard Sample Rate - Streaming terminals
     0x26, 0x00, 0x00, 0x00, // UsageNumber 0x26
-    0x9A, 0x01, 0x00, 0x00, // CBN 410 Full band
+    0xAE, 0x01, 0x00, 0x00, // CBN 430 Full band & near ultrasound
     0x00, 0x00, 0x00, 0x00, // Wildcard (0x0) - any sample rate should use these samples rates (opt. - see Table 143 CBN Fidelity Levels used in DisCo Usage Map)
     0x18, 0x00, 0x00, 0x00, // 24-bit (opt. - see Table 143 CBN Fidelity Levels used in DisCo Usage Map)
     0x00, 0x00, 0x00, 0x00, // Full Scale (dBSPL) (opt)
@@ -98,11 +98,7 @@ Name(UB21, Buffer()
     0x07, 0x00,  // Range type 0x0007 (Septuples)
     0x01, 0x00,  // NumRows = 1
     0x21, 0x00, 0x00, 0x00, // UsageNumber 0x21
-#ifdef JAMERSON_96K
-    0xCC, 0x01, 0x00, 0x00, // CBN 460 HiFi Full Band (10 Hz to 44 kHz)
-#else
     0x9A, 0x01, 0x00, 0x00, // CBN 410 Full band (20 Hz to 20 kHz)
-#endif
     0x00, 0x00, 0x00, 0x00, // Wildcard (0x0) - any sample rate should use these samples rates (opt. - see Table 185 Fidelity Level CBNs Used in DisCo Usage Map)
     0x18, 0x00, 0x00, 0x00, // 24-bit
     0x00, 0x00, 0x00, 0x00, // Full Scale (dBSPL) (opt)

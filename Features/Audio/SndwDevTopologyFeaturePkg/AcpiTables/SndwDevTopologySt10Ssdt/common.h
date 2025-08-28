@@ -18,7 +18,6 @@
 
 @par Specification Reference:
 **/
-
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
@@ -191,6 +190,7 @@
 #define COHEN_SDCA_HID_FUNC_STATUS_INT            9
 #define COHEN_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT  4
 #define COHEN_SDCA_UAJ_JACK_MODE_UPDATE_INT       11
+#define COHEN_SDCA_MIC_TRIGGET_STATUS_INT         13
 
 #define JAMERSON_B_SDCA_FUNC_STATUS_INT           1
 #define JAMERSON_B_SDCA_FDL_CURRENT_OWNER_INT     8
@@ -201,6 +201,7 @@
 #define PHIFE_SDCA_HID_FUNC_STATUS_INT            4
 #define PHIFE_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT  10
 #define PHIFE_SDCA_UAJ_JACK_MODE_UPDATE_INT       12
+#define PHIFE_SDCA_MIC_TRIGGET_STATUS_INT         14
 
 
 /*
@@ -247,7 +248,7 @@
 # define COHEN_AMP
 # define COHEN_DISABLE_REF_STREAM
 # define JAMERSON_DISABLE_REF_STREAM
-# define JAMERSON_DISABLE_US_STREAM
+# define DISABLE_US_STREAM
 #endif
 
 #ifdef SIDECAR_GPIO_SPEAKER_SELECT
@@ -273,6 +274,20 @@
 # endif
 # ifndef SIDECAR_VARIABLE_SPEAKER_SELECT_NAME
 #  error SIDECAR_VARIABLE_SPEAKER_SELECT requires SIDECAR_VARIABLE_SPEAKER_SELECT_NAME to be set
+# endif
+#endif
+
+//
+// AMP_VARIABLE_SPEAKER_SELECT allows reading the speaker set ID to use for
+// the speaker source from the 01fa-spk-id-val vendor-specific DisCo property
+// when the SpeakerSetSource registry entry set by the extension .inf is set to
+// 3 (DisCo). The SIDECAR_VARIABLE_SPEAKER_SELECT_NAME is either the name of a
+// four-character variable from which to source the ID, or a constant value for
+// use in testing.
+//
+#ifdef AMP_VARIABLE_SPEAKER_SELECT
+# ifndef AMP_VARIABLE_SPEAKER_SELECT_NAME
+#  error AMP_VARIABLE_SPEAKER_SELECT requires SIDECAR_VARIABLE_SPEAKER_SELECT_NAME to be set
 # endif
 #endif
 
@@ -472,6 +487,7 @@
 #define CTL_XU_FDL_STATUS                 (1 << 0x14)
 #define CTL_XU_FDL_SET_INDEX              (1 << 0x15)
 #define CTL_XU_FDL_HOST_REQUEST           (1 << 0x16)
+#define CTL_XU_IMPDEF_GPIO                (1 << 0x30)
 
 #define CTL_CS_CLOCK_VALID                (1 << 0x02)
 #define CTL_CS_SAMPLERATEINDEX            (1 << 0x10)
@@ -545,10 +561,16 @@
 #define CHR_RAW                  0x54
 #define CHR_SILENCED_MIC         0x56
 #define CHR_ECHO_REF_1           0x71
+#define CHR_ECHO_REF_2           0x72
+#define CHR_ECHO_REF_3           0x73
+#define CHR_ECHO_REF_4           0x74
+#define CHR_ECHO_REF_ALL         0x75
+#define CHR_ECHO_REF_LFE_ALL     0x76
 
 // Posture channel Relationship
 #define CHR_EQUIPMENT_LEFT          0x02
 #define CHR_EQUIPMENT_RIGHT         0x03
+#define CHR_EQUIPMENT_COMBINED      0x47
 #define CHR_EQUIPMENT_TOP_LEFT      0x4A
 #define CHR_EQUIPMENT_BOTTOM_LEFT   0x4B
 #define CHR_EQUIPMENT_TOP_RIGHT     0x4C
@@ -646,27 +668,43 @@
 #endif
 
 //
-// The default advertised SDCA version is 0.6r42/0.9r02
+// The default advertised SDCA version is 1.0
 //
 #ifndef MIPI_SDW_SDCA_INTERFACE_REVISION_VAL
-// mipi-sdw-sdca-interface-revision = SDCA 0.9r42
-# define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x0902
+// mipi-sdw-sdca-interface-revision = SDCA 1.0
+# define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x1000
 #endif
 
 #ifndef CTL_E0_FUNCTION_SDCA_VERSION_VAL
-// Function_SDCA_Version = SDCA 0.6
-# define CTL_E0_FUNCTION_SDCA_VERSION_VAL   0x06
+// Function_SDCA_Version = SDCA 1.0
+# define CTL_E0_FUNCTION_SDCA_VERSION_VAL   0x10
 #endif
 
 #ifndef CTL_E0_DEVICE_SDCA_VERSION_VAL
-// Device_SDCA_Version = SDCA 0.6
-# define CTL_E0_DEVICE_SDCA_VERSION_VAL   0x06
+// Device_SDCA_Version = SDCA 1.0
+# define CTL_E0_DEVICE_SDCA_VERSION_VAL   0x10
 #endif
 
 #ifdef UAJ_RENDER_192KHZ_DEFAULT
 # ifndef UAJ_RENDER_192KHZ
 #  define UAJ_RENDER_192KHZ
 # endif
+#endif
+
+#ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM_2
+#define GLOBAL_MUTE_LED_MIC_GPIO_NUM 0x2
+#endif
+
+#ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM_3
+#define GLOBAL_MUTE_LED_MIC_GPIO_NUM 0x3
+#endif
+
+#ifdef GLOBAL_MUTE_LED_SPK_GPIO_NUM_2
+#define GLOBAL_MUTE_LED_SPK_GPIO_NUM 0x2
+#endif
+
+#ifdef GLOBAL_MUTE_LED_SPK_GPIO_NUM_3
+#define GLOBAL_MUTE_LED_SPK_GPIO_NUM 0x3
 #endif
 
 #endif /* defined _COMMON_H_ */

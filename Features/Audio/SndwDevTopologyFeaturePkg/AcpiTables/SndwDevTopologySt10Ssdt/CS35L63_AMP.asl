@@ -19,6 +19,34 @@
 @par Specification Reference:
 **/
 
+/*
+    Handy Entity ID map
+    -------------------
+    CS_21         2
+    IT_21         3
+    PPU_21        4
+    FU_21         5
+    IT_29         6
+    XU_22         8
+    SAPU_29       9
+    MU_26         10 (0xA)
+    UDMPU_23      11 (0xB)
+    FU_23         12 (0xC)
+    PDE_23        13 (0xD)
+    OT_23         14 (0xE)
+    UDMPU_25      15 (0xF)      // only used when reference stream is enabled
+    OT_25         16 (0x10)     // only used when reference stream is enabled
+    CS_24         17 (0x11)     // only used when speaker sense is enabled
+    XU_24         19 (0x13)     // only used when speaker sense is enabled
+    OT_24         20 (0x14)     // only used when ultrasonic stream is enabled
+    CS_26         21 (0x15)     // only used when ultrasonic stream is enabled
+    IT_26         22 (0x16)     // only used when ultrasonic stream is enabled
+    PPU_26        23 (0x17)     // only used when ultrasonic stream is enabled
+    MFPU_26       24 (0x18)     // only used when ultrasonic stream is enabled
+    FU_26         25 (0x19)     // currently not used
+    MFPU_21       26 (0x1A)
+*/
+
 #include "version.h"
 
 #ifdef EXCLUDE_FU_21_VOLUME_CONTROL
@@ -139,7 +167,7 @@ Name(_DSD, Package()
             // BUFFETT_SPEAKER_SENSE_ENTITY_ID_LIST
             },
         },
-        CLUSTER_ID_LIST_JAMERSON,
+        CLUSTER_ID_LIST_SMART_AMP,
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -880,42 +908,35 @@ Name(C040, Package() {
     }
 }) //End C040
 
-// Protection_Status BitIndex Mapping Table (BMT)
 Name(BMT1, Buffer() {
     0x03, 0x00,             // Range type 0x0003
-    0x08, 0x00,             // NumRows = 8
-    // Bit 0: SAPU_FIRMWARE_MISSING = 0x1
+    0x06, 0x00,             // NumRows = 6
+    // Bit 0: Firmware and/or parameters are missing
     0x00, 0x00, 0x00, 0x00, // Bit Number = 0
     0x00, 0x00, 0x00, 0x00, // Behavior Set ID = 0 -> CBN = 1010
     0x00, 0x00, 0x00, 0x00, // String Number = 0 -> "Firmware Missing"
-    // Bit 1: SAPU_MISSING_OPAQUE_SET = 0x2
-    0x01, 0x00, 0x00, 0x00, // Bit Number = 1
-    0x01, 0x00, 0x00, 0x00, // Behavior Set ID = 1 -> CBN = 1080
-    0x01, 0x00, 0x00, 0x00, // String Number = 1 -> "Opaque Set Missing"
-    // Bit 2: SAPU_PROTECT_LITE_FAULT = 0x4
+    // Bit 1: Reserved
+    // Bit 2: Speaker protection internal fault
     0x02, 0x00, 0x00, 0x00, // Bit Number = 2
-    0x02, 0x00, 0x00, 0x00, // Behavior Set ID = 2 -> CBN = 1060
-    0x02, 0x00, 0x00, 0x00, // String Number = 2 -> "Internal Condition"
-    // Bit 3: SAPU_SUPPLY_FAULT = 0x8
+    0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
+    0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
+    // Bit 3: Power Supply Fault
     0x03, 0x00, 0x00, 0x00, // Bit Number = 3
     0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
     0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
-    // Bit 4: SAPU_INTERNAL_FAULT = 0x10
+    // Bit 4: Hardware Internal Fault
     0x04, 0x00, 0x00, 0x00, // Bit Number = 4
-    0x02, 0x00, 0x00, 0x00, // Behavior Set ID = 2 -> CBN = 1060
-    0x02, 0x00, 0x00, 0x00, // String Number = 2 -> "Internal Condition"
-    // Bit 5: SAPU_TRANSDUCER_FAULT = 0x20
+    0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
+    0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
+    // Bit 5: Transducer Fault
     0x05, 0x00, 0x00, 0x00, // Bit Number = 5
     0x04, 0x00, 0x00, 0x00, // Behavior Set ID = 4 -> CBN = 1070
     0x04, 0x00, 0x00, 0x00, // String Number = 4 -> "External Condition"
-    // Bit 6: SAPU_CRC_FAULT = 0x40
+    // Bit 6: Parameter CRC Fault
     0x06, 0x00, 0x00, 0x00, // Bit Number = 6
     0x03, 0x00, 0x00, 0x00, // Behavior Set ID = 3 -> CBN = 1100
     0x03, 0x00, 0x00, 0x00, // String Number = 3 -> "Catastrophic Fault"
-    // Bit 7: SAPU_THERM_WARNING = 0x80
-    0x07, 0x00, 0x00, 0x00, // Bit Number = 7
-    0x02, 0x00, 0x00, 0x00, // Behavior Set ID = 2 -> CBN = 1060
-    0x02, 0x00, 0x00, 0x00, // String Number = 2 -> "Internal Condition"
+    // Bit 7: Reserved
 }) // End BMT1
 
 //

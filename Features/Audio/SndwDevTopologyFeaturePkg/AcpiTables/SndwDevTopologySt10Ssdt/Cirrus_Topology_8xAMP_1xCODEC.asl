@@ -225,11 +225,13 @@ Scope (_SB)
         Name (_HID, "ACPI0018") // INF in MS audio compositor driver looks for this HWID (UEFI-defined for audio comp.)
         // #include is used so that the preprocessor is run on the contents of the file.
         #include <AudioComposition_8xAMP_1xCODEC.asl>
+        #include <AudioComposition_8xAMP_1xCODEC_all_endpoints.asl>
     }
 }
-
+#ifndef _AMD
 Scope (_SB.PC00.HDAS.IDA.SNDW)
 {
+#endif
 #ifdef AMP1_UID
     // AMP 1
     Device (SWD2)
@@ -1248,7 +1250,7 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #  if CODEC1_MANUFACTURER_ID==0x01FA
 #   ifdef MIC_GEOMETRY_OVERLOAD
-            #include <Mic_Geometry_Overload.asl>
+            //#include <Mic_Geometry_Overload.asl>
 #   endif
 #   if CODEC1_FUNC_ID==0x4243
             #include <Cohen_SimpleMic.asl>
@@ -1345,4 +1347,6 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 # endif // CODEC1_UAJ
     }
 #endif // CODEC1_UID
+#ifndef _AMD
 }
+#endif
