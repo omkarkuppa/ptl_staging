@@ -171,6 +171,11 @@ VmdDetectPcieStorageDevices (
         continue;
       }
       DEBUG ((DEBUG_VERBOSE, "VMD: Checking RP B/D/F %d/%d/%d with DID 0x%x\n", RpBus, RpDev, RpFunc, PciSegmentRead16 (RpDeviceBaseAddress + PCI_DEVICE_ID_OFFSET)));
+      // Check if the hot plug capability is enabled for this root port
+      if (PciSegmentRead16 (RpDeviceBaseAddress + R_PCIE_CFG_SLCAP) & B_PCIE_SLCAP_HPC) {
+        DEBUG ((DEBUG_INFO, "Hot-plug is enabled for this root port, hence skipping this RP entry from possible VMD mapped root ports\n"));
+        continue;
+      }
       ///
       /// Temporarily program the secondary and subordinate bus numbers (1, 0xFF) so that devices behind the bridge can be seen
       ///
