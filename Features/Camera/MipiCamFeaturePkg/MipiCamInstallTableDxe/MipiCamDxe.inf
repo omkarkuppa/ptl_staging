@@ -47,6 +47,8 @@
 [Packages]
   MdePkg/MdePkg.dec
   MipiCamFeaturePkg/MipiCamFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  NhltFeaturePkg/NhltFeaturePkg.dec
 
 [LibraryClasses]
   UefiDriverEntryPoint
@@ -64,6 +66,10 @@
   gMipiCamConfigVariableGuid             ## CONSUMES
   gMipiCamConfigHobGuid                  ## CONSUMES
   gMipiCamConfigHobExtGuid               ## CONSUMES
+  gNhltEndpointsTableConfigurationVariableGuid
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
 
 [Protocols]
   gEfiFirmwareVolume2ProtocolGuid        ## CONSUMES

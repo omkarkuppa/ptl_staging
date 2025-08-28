@@ -21,4 +21,8 @@
 ##
 
 INF MipiCamFeaturePkg/MipiCamInstallTableDxe/MipiCamDxe.inf
-INF RuleOverride = ACPITABLE MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTables.inf
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+  INF RuleOverride = ACPITABLE MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTablesEmbedded.inf
+!else
+  INF RuleOverride = ACPITABLE MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTables.inf
+!endif

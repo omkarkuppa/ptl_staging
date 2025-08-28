@@ -575,6 +575,15 @@ typedef struct {
   UINT8    MipiCamPlatformId;                       ///< Offset 1123    Platform ID
   UINT8    MipiCamEmulationConfig;                  ///< Offset 1124    Emulation Config Status
   UINT8    MipiCamChipsetId;                        ///< Offset 1125    ChipsetId
+  //Audio Custom HID Link0
+  UINT8    AudioLink0UserHid[9];                    ///< Offset 1126    User defined HID ASCII character 0
+                                                    ///< Offset 1134    User defined HID ASCII character 8
+  //Audio Custom HID Link1
+  UINT8    AudioLink1UserHid[9];                    ///< Offset 1135    User defined HID ASCII character 0
+                                                    ///< Offset 1143    User defined HID ASCII character 8
+  // HD Audio
+  UINT8    I2SE;                                    ///< Offset 1144    HD Audio I2S Enable
+  UINT8    PcdMipiCamSensor;                        ///< Offset 1145    Mipi Camera Sensor
 } MIPICAM_NVS_AREA;
 
 #pragma pack(pop)

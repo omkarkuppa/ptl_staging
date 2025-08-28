@@ -1,9 +1,9 @@
 ## @file
-#  This is a build description for the MIPI Camera advanced feature.
+#  Component description file for the ACPI tables
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2022 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -20,10 +20,19 @@
 #
 ##
 
-[Components.X64]
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
-  MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTablesEmbedded.inf
-!else
-  MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTables.inf
-!endif
-  MipiCamFeaturePkg/MipiCamInstallTableDxe/MipiCamDxe.inf
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = MipiCamAcpiTablesEmbedded
+#
+# If the value of this GUID is changed then make sure to change the
+# corresponding GUID (MIPICAM_ACPI_TABLE_STORAGE_GUID) in MipiCamAcpiTableStorage.h.
+#
+  FILE_GUID      = 2B55068D-0546-45E4-A0C9-0A09DDE10838
+  MODULE_TYPE    = USER_DEFINED
+  VERSION_STRING = 1.0
+
+[Sources]
+  MipiCamSensorsEmbedded.asl
+
+[Packages]
+  MdePkg/MdePkg.dec

@@ -562,9 +562,9 @@ MipiCamInitEntryPoint (
 {
   DEBUG ((DEBUG_INFO, "MipiCamInitEntryPoint() Start\n"));
   InstallMipiConfigHob ();
-  if (PcdGetBool (PcdMipiCamGpioEnable)) {
+  #if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
     MipiCamGpioInit ();
-  }
+  #endif
 
 #if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
   EverestGpioInit ();

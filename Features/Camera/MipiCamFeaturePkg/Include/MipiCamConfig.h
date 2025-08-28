@@ -22,7 +22,7 @@
 #ifndef _MIPICAM_CONFIG_H_
 #define _MIPICAM_CONFIG_H_
 
-#define MIPICAM_CONFIG_REVISION       1
+#define MIPICAM_CONFIG_REVISION       2
 #define MIPICAM_CONFIG_VARIABLE_NAME  L"MipiCamConfig"
 
 #define MIPICAM_I2C_DEVICES_COUNT         12
@@ -455,6 +455,9 @@ typedef struct {
   UINT8   MipiCam_Link3_Customize_Id[MIPICAM_CUSTOMIZE_DEVICE_COUNT];
   UINT8   MipiCam_Link4_Customize_Id[MIPICAM_CUSTOMIZE_DEVICE_COUNT];
   UINT8   MipiCam_Link5_Customize_Id[MIPICAM_CUSTOMIZE_DEVICE_COUNT];
+
+  UINT16  Audio_Link0_UserHid[MIPICAM_HID_LENGTH];
+  UINT16  Audio_Link1_UserHid[MIPICAM_HID_LENGTH];
 } MIPICAM_CONFIG;
 #pragma pack ()
 

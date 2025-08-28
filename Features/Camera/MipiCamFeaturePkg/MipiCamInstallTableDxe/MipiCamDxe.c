@@ -28,6 +28,11 @@
 #include <Library/HobLib.h>
 #include <Guid/MipiCamConfigHob.h>
 
+#include <Library/PcdLib.h>
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+    #include <NhltEndpointsConfigurationVariable.h>
+#endif
+
 GLOBAL_REMOVE_IF_UNREFERENCED  MIPICAM_NVS_AREA_PROTOCOL  mMipiCamNvsAreaProtocol;
 
 EFI_STATUS
@@ -54,6 +59,11 @@ InitializeMipiCam (
   UINTN                  VariableSize;
   UINT16                 MipiModuleName[MIPICAM_MODULE_NAME_LENGTH];
   UINT16                 MipiHidName[MIPICAM_HID_LENGTH];
+  #if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  UINT16                        AudioHidName[MIPICAM_HID_LENGTH];
+  UINT16                        InvalidHidName[MIPICAM_HID_LENGTH] = { 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x0 };
+  NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE  NhltConfigurationEfiVariable;
+#endif
   MIPICAM_CONFIG         MipiCamSetupData;
   MIPICAM_CONFIG_HOB     *MipiCamConfigDxeHob;
   EFI_HOB_GUID_TYPE      *GuidHob;
@@ -372,6 +382,20 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0I2cDevicesEnabled = MipiCamSetupData.MipiCam_Link0_I2cDevicesEnabled;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0I2cBus            = MipiCamSetupData.MipiCam_Link0_I2cChannel;
 
+  #if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  //
+  // Audio Dynamic HID Link 0
+  //
+  ZeroMem(AudioHidName, sizeof(AudioHidName));
+  if (MipiCamSetupData.Audio_Link0_UserHid[0] == '\0') {
+      CopyMem(AudioHidName, InvalidHidName, sizeof(AudioHidName));
+  }
+  else {
+      CopyMem(AudioHidName, MipiCamSetupData.Audio_Link0_UserHid, sizeof(AudioHidName));
+  }
+  UnicodeStrToAsciiStrS(AudioHidName, (CHAR8*)mMipiCamNvsAreaProtocol.Area->AudioLink0UserHid, sizeof(mMipiCamNvsAreaProtocol.Area->AudioLink0UserHid));
+#endif
+
   // MipiCam Link0 I2C Devices
   for (Index = 0; Index < MIPICAM_I2C_DEVICES_COUNT; Index++) {
     mMipiCamNvsAreaProtocol.Area->MipiCamLink0I2cAddrDev[Index]    = MipiCamSetupData.MipiCam_Link0_I2cAddress[Index];
@@ -428,6 +452,20 @@ InitializeMipiCam (
   UnicodeStrToAsciiStrS (MipiHidName, (CHAR8 *) mMipiCamNvsAreaProtocol.Area->MipiCamLink1UserHid, sizeof (mMipiCamNvsAreaProtocol.Area->MipiCamLink1UserHid));
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1I2cDevicesEnabled = MipiCamSetupData.MipiCam_Link1_I2cDevicesEnabled;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1I2cBus = MipiCamSetupData.MipiCam_Link1_I2cChannel;
+
+  #if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  //
+  // Audio Dynamic HID Link 0
+  //
+  ZeroMem(AudioHidName, sizeof(AudioHidName));
+  if (MipiCamSetupData.Audio_Link1_UserHid[0] == '\0') {
+      CopyMem(AudioHidName, InvalidHidName, sizeof(AudioHidName));
+  }
+  else {
+      CopyMem(AudioHidName, MipiCamSetupData.Audio_Link1_UserHid, sizeof(AudioHidName));
+  }
+  UnicodeStrToAsciiStrS(AudioHidName, (CHAR8*)mMipiCamNvsAreaProtocol.Area->AudioLink1UserHid, sizeof(mMipiCamNvsAreaProtocol.Area->AudioLink1UserHid));
+#endif
 
   // MipiCam Link1 I2C Devices
   for (Index = 0; Index < MIPICAM_I2C_DEVICES_COUNT; Index++) {
@@ -828,6 +866,39 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamFlash5OperatingMode        = MipiCamSetupData.MipiCam_Flash5_OperatingMode;
 
   DEBUG ((DEBUG_INFO, "Mipi Camera: Initializing acpi space\n"));
+
+  //
+      // HDAudio Configuration
+      //
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+mMipiCamNvsAreaProtocol.Area->I2SE = MipiCamSetupData.MipiCam_ControlLogic0 || \
+MipiCamSetupData.MipiCam_ControlLogic1 || \
+MipiCamSetupData.MipiCam_ControlLogic2 || \
+MipiCamSetupData.MipiCam_ControlLogic3 || \
+MipiCamSetupData.MipiCam_ControlLogic4 || \
+MipiCamSetupData.MipiCam_ControlLogic5;
+if (mMipiCamNvsAreaProtocol.Area->I2SE)
+{
+VariableSize = sizeof(NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE);
+Status = gRT->GetVariable(
+    NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME,
+    &gNhltEndpointsTableConfigurationVariableGuid,
+    NULL,
+    &VariableSize,
+    &NhltConfigurationEfiVariable
+);
+if (!EFI_ERROR(Status))
+{
+    if ((0 == NhltConfigurationEfiVariable.NhltI2sLontiumI2s0) &&
+        (0 == NhltConfigurationEfiVariable.NhltI2sLontiumI2s2))
+    {
+        mMipiCamNvsAreaProtocol.Area->I2SE = 0;
+    }
+}
+}
+#else
+mMipiCamNvsAreaProtocol.Area->I2SE = 0;
+#endif
 
   ///
   /// Get MipiCamera Config Hob

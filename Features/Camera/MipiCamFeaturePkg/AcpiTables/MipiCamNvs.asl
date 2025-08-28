@@ -1007,4 +1007,27 @@
   PLID, 8,  // Offset(1123),  Platform ID
   EMUS, 8,  // Offset(1124),  Emulation Config Status
   CHID, 8,  // Offset(1125),  ChipsetId
+  //Audio Custom HID Link0
+  A0H0, 8,  // Offset(1126),  User defined HID ASCII character 0
+  A0H1, 8,  // Offset(1127),
+  A0H2, 8,  // Offset(1128),
+  A0H3, 8,  // Offset(1129),
+  A0H4, 8,  // Offset(1130),
+  A0H5, 8,  // Offset(1131),
+  A0H6, 8,  // Offset(1132),
+  A0H7, 8,  // Offset(1133),
+  A0H8, 8,  // Offset(1134),  User defined HID ASCII character 8
+  //Audio Custom HID Link1
+  A1H0, 8,  // Offset(1135),  User defined HID ASCII character 0
+  A1H1, 8,  // Offset(1136),
+  A1H2, 8,  // Offset(1137),
+  A1H3, 8,  // Offset(1138),
+  A1H4, 8,  // Offset(1139),
+  A1H5, 8,  // Offset(1140),
+  A1H6, 8,  // Offset(1141),
+  A1H7, 8,  // Offset(1142),
+  A1H8, 8,  // Offset(1143),  User defined HID ASCII character 8
+  // HD Audio
+  I2SE, 8,  // Offset(1144),  HD Audio I2S Enable
+  SCSS, 8,  // Offset(1145),  Mipi Camera Sensor
   }
