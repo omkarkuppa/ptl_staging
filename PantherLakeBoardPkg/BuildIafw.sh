@@ -373,13 +373,6 @@ for ((i=1 ; i <= numargs ; i++)); do
   shift
 done
 
-if [ "$PrepRelease" = "DEBUG" ]; then
-  echo "Disable FSP-M Compression in case of Debug build"
-  export FSPM_COMPRESSED=FALSE
-  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE"
-  export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize=0x0"
-fi
-
 #
 # Set EXT_BUILD_FLAGS with FSP env vars after checking cmdline parameters to determine 32-bit or 64-bit.
 #

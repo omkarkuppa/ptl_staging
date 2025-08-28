@@ -329,16 +329,6 @@ goto CmdLineParse
 
 :Continue
 
-if /i "%PrepRELEASE%"=="DEBUG" (
-  echo "Disable FSP-M Compression in case of Debug build"
-  set FSPM_COMPRESSED=FALSE
-  set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
---pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE ^
---pcd gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain=TRUE
-set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
---pcd gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize=0x0
-)
-
 set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gBoardModuleTokenSpaceGuid.PcdUplEnable=%UNIVERSAL_PAYLOAD%
 set EXT_BUILD_FLAGS=%EXT_BUILD_FLAGS% -D FSP_ARCH=%FSP_ARCH% -D FSP64_BUILD=%FSP64_BUILD%
 
