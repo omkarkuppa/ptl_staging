@@ -463,10 +463,10 @@ ShowLpddrInfo (
   UINT32          Index;
   BOOLEAN         VendorFound;
   UINT16          JedecId;
-#ifdef MRC_DEBUG_PRINT
-  UINT8           MrrResult2[MRC_MRR_ARRAY_SIZE];
   MrcDimmOut      *DimmOut;
   LPDDR5_MODE_REGISTER_8_TYPE  Mr8;
+#ifdef MRC_DEBUG_PRINT
+  UINT8           MrrResult2[MRC_MRR_ARRAY_SIZE];
   static const UINT8 DensityMap[] = { 2, 3, 4, 6, 8, 12, 16, 24, 32 };
 #endif
 
@@ -490,7 +490,7 @@ ShowLpddrInfo (
         if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
           continue;
         }
-
+        DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER (Rank)];
         if (Outputs->IsLpddr) {
           DeviceMax = (Outputs->LpByteMode) ? 2 : 1;
           // MR5 - Manufacturer ID
@@ -523,12 +523,17 @@ ShowLpddrInfo (
             }
           }
 
-#ifdef MRC_DEBUG_PRINT
           // MR8 - I/O Width, Density, Type
           MrAddr = mrMR8;
           MrcIssueMrr (MrcData, Controller, Channel, Rank, MrAddr, MrrResult);
           for (Device = 0; Device < DeviceMax; Device++) {
             Mr8.Data8 = MrrResult[Device];
+            // Update max LP5 device speed in case it's slower than what SPD table reported
+            if (Mr8.Bits.Type == Lp5Mr8TypeLp5x8533) {
+              DimmOut->Speed = f8533;
+            } else if (Mr8.Bits.Type == Lp5Mr8TypeLp5x9600) {
+              DimmOut->Speed = f9600;
+            }
             MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDevice[%u]= 0x%02X - LP5%c %s %s %uGb\n", Device, MrrResult[Device],
               ((Mr8.Bits.Type == Lp5Mr8TypeLp5x8533) || (Mr8.Bits.Type == Lp5Mr8TypeLp5x9600) || (Mr8.Bits.Type == Lp5Mr8TypeLp5x10667)) ? 'X' : ' ',
               (CHAR8*[Lp5Mr8TypeLp5xMax]){"", "8533", "9600", "10667"}[MIN(Mr8.Bits.Type, (Lp5Mr8TypeLp5xMax - 1))],
@@ -536,10 +541,8 @@ ShowLpddrInfo (
               (Mr8.Bits.Density < ARRAY_COUNT (DensityMap)) ? DensityMap[Mr8.Bits.Density] : 0
               );
           }
-#endif // #ifdef MRC_DEBUG_PRINT
         } else { // DDR5
 #ifdef MRC_DEBUG_PRINT
-          DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER (Rank)];
           // Channel Width (ddr5 = 32 Bytes) / SdramWidth (x8 or x16)
           DeviceMax = DimmOut->PrimaryBusWidth / DimmOut->SdramWidth;
           MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR0, MrrResult);

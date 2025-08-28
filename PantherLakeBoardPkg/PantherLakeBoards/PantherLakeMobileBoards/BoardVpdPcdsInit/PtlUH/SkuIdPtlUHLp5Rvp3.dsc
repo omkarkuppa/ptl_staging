@@ -664,8 +664,8 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData|*|{CODE(
   {
     // LPDDR5x 315b 16Gb die, DDP 1Rx16, 4GB size per package
-    // Hynix H58G56BK8BX068
-    // 7500, ??-??-??-??
+    // Hynix H58G56DK9BX068
+    // 9600, ??-??-??-??
     // 4 Banks, 4 bank groups, 16Gb SDRAM density
     // 16 Row bits, 10 Column bits
     // Non-Monolithic DRAM Device, 2 dies, 2 Channels per package
@@ -686,9 +686,9 @@
       0x01,                                 ///< 13  Module Memory Bus width: 1 Channels, 16 bits channel width, no ECC
       0x00,                                 ///< 14  Module Thermal Sensor: none
       0x00,                                 ///< 15  Extended Module Type: Reserved
-      0x48,                                 ///< 16  Signal Loading: Data/Strobe/Mask: 2 loads, CAC: 2 loads, CS: 1 load
+      0x00,                                 ///< 16  Signal Loading: Data/Strobe/Mask: 2 loads, CAC: 2 loads, CS: 1 load
       0x00,                                 ///< 17  MTB = 0.125ns, FTB = 1 ps
-      0x08,                                 ///< 18  tCKAVGmin =  1.067 ns (LPDDR5X-8533 4:1)
+      0x07,                                 ///< 18  tCKAVGmin = .833 ns (LPDDR5X-9600 4:1)
       0xFF,                                 ///< 19  tCKAVGmax = 32.002 ns
       0x92,                                 ///< 20  CAS Latencies supported (First Byte) : 14, 10, 6
       0x55,                                 ///< 21  CAS Latencies supported (Second Byte): 28, 24, 20, 16
@@ -717,7 +717,7 @@
       0x00,                                 ///< 122 FTB for Minimum RAS-to-CAS delay (tRCDmin) = 18 ns
       0x00,                                 ///< 123 FTB for tAAmin = 21.25 ns
       0x7F,                                 ///< 124 FTB for tCKAVGmax = 32.002 ns
-      0xC1,                                 ///< 125 FTB for tCKAVGmin = -58ps
+      0xD6,                                 ///< 125 FTB for tCKAVGmin = -42ps
       0x00,                                 ///< 126 CRC A
       0x00,                                 ///< 127 CRC B
       0, 0,                                 ///< 128 - 129
@@ -1010,9 +1010,9 @@
   {
     // LPDDR5x 315b 16Gb die, DDP 2Rx16 QDP, 8GB size per package
     // Hynix H58G66BK8BX067
-    // 8500, ??-??-??-??
+    // 9600, ??-??-??-??
     // 4 Banks, 4 bank groups, 16Gb SDRAM density
-    // 16 Row bits, 11 Column bits
+    // 16 Row bits, 10 Column bits
     // Non-Monolithic DRAM Device, 2 dies, 2 Channels per package
      1,
      {0x23,                                 ///< 0   384 SPD bytes used, 512 total
@@ -1020,8 +1020,8 @@
       0x15,                                 ///< 2   DRAM Type: LPDDR5x SDRAM
       0x0E,                                 ///< 3   Module Type: Not Hybrid (DRAM only) / Non-DIMM Solution (on-board DRAM)
       0x86,                                 ///< 4   4 Bank Groups, 4 Banks, 16 Gb SDRAM density
-      0x22,                                 ///< 5   16 Rows, 11 Columns
-      0xB5,                                 ///< 6   Non-Monolithic DRAM Device, 2 die, 2 Channels per package, Signal Loading Matrix 1
+      0x21,                                 ///< 5   16 Rows, 10 Columns
+      0xB5,                                 ///< 6   Non-Monolithic DRAM Device, 4 die, 2 Channels per package, Signal Loading Matrix 1
       0x08,                                 ///< 7   SDRAM Optional Features: tMAW = 8192 * tREFI, Unlimited MAC
       0x00,                                 ///< 8   SDRAM Thermal / Refresh options: Reserved
       0x40,                                 ///< 9   Other SDRAM Optional Features: Post package repair supported, one row per bank group, Soft PPR not supported
@@ -1031,9 +1031,9 @@
       0x01,                                 ///< 13  Module Memory Bus width: 1 Channels, 16 bits channel width, no ECC
       0x00,                                 ///< 14  Module Thermal Sensor: none
       0x00,                                 ///< 15  Extended Module Type: Reserved
-      0x48,                                 ///< 16  Signal Loading: Data/Strobe/Mask: 2 loads, CAC: 2 loads, CS: 1 load
+      0x00,                                 ///< 16  Signal Loading: Data/Strobe/Mask: 2 loads, CAC: 2 loads, CS: 1 load
       0x00,                                 ///< 17  MTB = 0.125ns, FTB = 1 ps
-      0x08,                                 ///< 18  tCKAVGmin = 0.937 ns (LPDDR5X-8533 4:1)
+      0x07,                                 ///< 18  tCKAVGmin = .833 ns (LPDDR5X-9600 4:1)
       0xFF,                                 ///< 19  tCKAVGmax = 32.002 ns
       0x92,                                 ///< 20  CAS Latencies supported (First Byte) : 14, 10, 6
       0x55,                                 ///< 21  CAS Latencies supported (Second Byte): 28, 24, 20, 16
@@ -1062,7 +1062,7 @@
       0x00,                                 ///< 122 FTB for Minimum RAS-to-CAS delay (tRCDmin) = 18 ns
       0x00,                                 ///< 123 FTB for tAAmin = 21.25 ns
       0x7F,                                 ///< 124 FTB for tCKAVGmax = 32.002 ns
-      0xC1,                                 ///< 125 FTB for tCKAVGmin = -63 ps
+      0xD6,                                 ///< 125 FTB for tCKAVGmin = -42ps
       0x00,                                 ///< 126 CRC A
       0x00,                                 ///< 127 CRC B
       0, 0,                                 ///< 128 - 129
