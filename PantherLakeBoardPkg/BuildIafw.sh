@@ -289,7 +289,7 @@ for ((i=1 ; i <= numargs ; i++)); do
     export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=TRUE"
   elif [ "$1" = "fspunsigned" ]; then
     export FSP_SIGNED=FALSE
-    export ROM_FILENAME_SPECIAL_BUILD_TYPE="_FSPUNSIGNED"
+    export ROM_FILENAME_SPECIAL_BUILD_TYPE="${ROM_FILENAME_SPECIAL_BUILD_TYPE}_FSPUNSIGNED"
     export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F"
     export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=FALSE"
   elif [ "$1" = "res" ]; then

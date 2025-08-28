@@ -176,7 +176,7 @@ cd ..\..\
 ) else if /i "fspunsigned" == "%1" (
   echo "fspunsigned"
   set FSP_SIGNED=FALSE
-  set ROM_FILENAME_SPECIAL_BUILD_TYPE=_FSPUNSIGNED
+  set ROM_FILENAME_SPECIAL_BUILD_TYPE=%ROM_FILENAME_SPECIAL_BUILD_TYPE%_FSPUNSIGNED
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD%
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F \
 --pcd gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain=TRUE
