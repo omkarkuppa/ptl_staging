@@ -3177,6 +3177,7 @@ HeciFwFeatureStateOverride (
 /**
   Send Get Image Firmware Version Request to ME
 
+  @param[in]  SecurityEngine       Security engine type to notify.
   @param[in]  PartitionId          Partition ID
   @param[out] NumOfModules         Return the number of modules in the partition
   @param[out] PartitionIdData      Return the partition data structure containing all the version information
@@ -3189,43 +3190,70 @@ HeciFwFeatureStateOverride (
 **/
 EFI_STATUS
 HeciGetImageFwVersionMsg (
+  IN  SECURITY_ENGINE           SecurityEngine,
   IN  UINT32                    PartitionId,
   OUT UINT32                    *NumOfModules,
   OUT FLASH_PARTITION_DATA      *PartitionIdData
   )
 {
   EFI_STATUS                    Status;
-  GET_IMAGE_FW_VERSION_BUFFER   GetImageFwVersion;
+  HECI_CONTROL                  *HeciControl;
+  GET_IMAGE_FW_VERSION_BUFFER   *GetImageFwVersion;
   UINT32                        RecvLength;
   UINT32                        MeMode;
+
+  if ((NumOfModules == NULL) || (PartitionIdData == NULL)) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   Status = MeBiosGetMeMode (&MeMode);
   if (EFI_ERROR (Status) || (MeMode != ME_MODE_NORMAL)) {
     return EFI_UNSUPPORTED;
   }
 
-  GetImageFwVersion.Request.MkhiHeader.Data           = 0;
-  GetImageFwVersion.Request.MkhiHeader.Fields.GroupId = MKHI_GEN_GROUP_ID;
-  GetImageFwVersion.Request.MkhiHeader.Fields.Command = GEN_GET_IMAGE_FW_VERSION;
-  GetImageFwVersion.Request.PartitionId               = PartitionId;
-  RecvLength                                          = sizeof (GET_IMAGE_FW_VER_RESPONSE);
+  Status = gBS->LocateProtocol (&gHeciControlProtocolGuid, NULL, (VOID **) &HeciControl);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a () - HECI Control protocol could not be found!\n", __FUNCTION__));
+    return Status;
+  }
 
-  Status = HeciWrapperSendWithAck (
+  //
+  // More than 1 table expected if ID undefined value, expand the response buffer size
+  //
+  RecvLength = (PartitionId == FPT_PARTITION_NAME_UNDEFINED) ? (MAX_NUM_OF_PARTITIONS) * sizeof (FLASH_PARTITION_DATA) : sizeof (GET_IMAGE_FW_VER_RESPONSE);
+
+  GetImageFwVersion = (GET_IMAGE_FW_VERSION_BUFFER *) AllocateZeroPool (sizeof (GET_IMAGE_FW_VER_REQUEST) +           // Request buffer size
+                                                                        sizeof (GET_IMAGE_FW_VER_RESPONSE) +          // Response buffer size
+                                                                        (RecvLength - sizeof (FLASH_PARTITION_DATA))  // Expected Partition Table size minus 1 table existing in the response header
+                                                                       );
+  GetImageFwVersion->Request.MkhiHeader.Data           = 0;
+  GetImageFwVersion->Request.MkhiHeader.Fields.GroupId = MKHI_GEN_GROUP_ID;
+  GetImageFwVersion->Request.MkhiHeader.Fields.Command = GEN_GET_IMAGE_FW_VERSION;
+  GetImageFwVersion->Request.PartitionId               = PartitionId;
+
+  Status = HeciControl->HeciSendAndReceive (
+             HeciControl,
+             SecurityEngine,
+             HECI1,
+             NULL,
+             HECI_DEFAULT_RETRY_NUMBER,
              BIOS_FIXED_HOST_ADDR,
              HECI_MKHI_MESSAGE_ADDR,
-             (UINT32 *) &GetImageFwVersion.Request,
-             (UINT32) sizeof (GET_IMAGE_FW_VER_REQUEST),
-             (UINT32 *) &GetImageFwVersion.Response,
-             &RecvLength
+             (UINT32 *) &GetImageFwVersion->Request,
+             sizeof (GET_IMAGE_FW_VER_REQUEST),
+             (UINT32 *) &GetImageFwVersion->Response,
+             &RecvLength,
+             NULL,
+             NULL
              );
 
   if (!EFI_ERROR (Status) &&
-      (GetImageFwVersion.Response.MkhiHeader.Fields.Command == GEN_GET_IMAGE_FW_VERSION) &&
-      (GetImageFwVersion.Response.MkhiHeader.Fields.IsResponse == 1) &&
-      (GetImageFwVersion.Response.MkhiHeader.Fields.Result == 0) &&
-      (GetImageFwVersion.Response.ManifestData.PartitionId == PartitionId)) {
-    *NumOfModules = GetImageFwVersion.Response.NumOfModules;
-    *PartitionIdData = GetImageFwVersion.Response.ManifestData;
+      (GetImageFwVersion->Response.MkhiHeader.Fields.Command == GEN_GET_IMAGE_FW_VERSION) &&
+      (GetImageFwVersion->Response.MkhiHeader.Fields.IsResponse == 1) &&
+      (GetImageFwVersion->Response.MkhiHeader.Fields.Result == 0) &&
+      (GetImageFwVersion->Response.NumOfModules > 0)) {
+    CopyMem (NumOfModules, &GetImageFwVersion->Response.NumOfModules, sizeof (UINT32));
+    CopyMem (PartitionIdData, &GetImageFwVersion->Response.ManifestData, GetImageFwVersion->Response.NumOfModules * sizeof (FLASH_PARTITION_DATA));
   }
 
   return Status;

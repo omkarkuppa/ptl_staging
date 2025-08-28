@@ -35,30 +35,78 @@
 #include <Library/DevicePathLib.h>
 
 /**
+  Get the full partition table for telemetry reporting.
+
+  @param[out] PartitionTable       Pointer to receive partition table data pointe
+  @param[out] NumOfModules         Pointer to number of modules/partitions
+
+  @retval EFI_SUCCESS              Successfully retrieved partition table
+  @retval EFI_OUT_OF_RESOURCES     Failed to allocate memory
+  @retval Others                   HECI call failed
+**/
+EFI_STATUS
+EFIAPI
+GetFullFviPartitionTable (
+  OUT VOID      **PartitionTable,
+  OUT UINT32    *NumOfModules
+  )
+{
+  EFI_STATUS                  Status;
+  UINT32                      LocalNumOfModules;
+  FLASH_PARTITION_DATA        *AllPartitionsData;
+
+  *PartitionTable = NULL;
+  *NumOfModules = 0;
+  LocalNumOfModules = 0;
+
+  AllPartitionsData = (FLASH_PARTITION_DATA *) AllocateZeroPool (sizeof (FLASH_PARTITION_DATA) * MAX_NUM_OF_PARTITIONS);
+  if (AllPartitionsData == NULL) {
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to allocate memory for partition data\n", __FUNCTION__));
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  //
+  // Call HECI to get partition table
+  //
+  Status = HeciGetImageFwVersionMsg (Csme, FPT_PARTITION_NAME_UNDEFINED, (UINT32 *) &LocalNumOfModules, AllPartitionsData);
+  if (EFI_ERROR (Status) || NumOfModules == 0 || AllPartitionsData == NULL) {
+    DEBUG ((DEBUG_ERROR, "[%a] HECI call failed with number of modules %d and status: %r\n", __FUNCTION__, LocalNumOfModules, Status));
+
+    if (AllPartitionsData != NULL) {
+      FreePool (AllPartitionsData);
+    }
+
+    *PartitionTable = NULL;
+    *NumOfModules = 0;
+    return Status;
+  }
+
+  // Return pointer to the partition data blob and the count
+  *PartitionTable = AllPartitionsData;
+  *NumOfModules = LocalNumOfModules;
+  return Status;
+}
+
+/**
   Convert Fvi data from Smbios to Acpi.
 
   @param[in]  ComponentId          ComponentId for the FVI entry.
   @param[out] Version              A pointer to version value
 
   @retval EFI_SUCCESS              Update Telemetry firmware version successfully
+  @retval EFI_INVALID_PARAMETER    Invalid input parameters
   @retval Others                   Fail to update Telemetry firmware version.
 **/
 EFI_STATUS
 EFIAPI
-TelemeteryFirmwawreVersionUpdate (
-  OUT EFI_GUID  ComponentId,
+TelemetryFirmwareVersionUpdate (
+  IN  EFI_GUID  ComponentId,
   OUT UINT64    *Version
   )
 {
-  EFI_STATUS                  Status;
-  FLASH_PARTITION_DATA        PartitionIdData;
-  ME_BIOS_PAYLOAD_HOB         *MbpHob;
-  UINT32                      NumOfModules;
-
-  NumOfModules = 0;
-
   if (CompareGuid (&ComponentId, &gMeFirmwareVersionComponentId)) {
-    DEBUG ((DEBUG_INFO, "Enter Update ME FW Version.\n" ));
+    ME_BIOS_PAYLOAD_HOB         *MbpHob;
+
     MbpHob = NULL;
     MbpHob = GetFirstGuidHob (&gMeBiosPayloadHobGuid);
     if (MbpHob != NULL) {
@@ -67,22 +115,10 @@ TelemeteryFirmwawreVersionUpdate (
                  LShiftU64 ((UINT64) MbpHob->MeBiosPayload.FwVersionName.HotfixVersion, VERSION_REVISION_SHIFT)      | \
                            ((UINT16) MbpHob->MeBiosPayload.FwVersionName.BuildVersion));
     } else {
-      DEBUG ((DEBUG_ERROR, "Failed to get Me firmware version from hob.\n" ));
       return EFI_LOAD_ERROR;
     }
-  } else if (CompareGuid (&ComponentId, &gMeSseVersionComponentId)) {
-    DEBUG ((DEBUG_INFO, "Enter Update SSE FW Version.\n" ));
-    NumOfModules = 0;
-    Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &NumOfModules, &PartitionIdData);
-    if (!EFI_ERROR (Status)) {
-      *Version = (LShiftU64 ((UINT64) PartitionIdData.Version.Major,  VERSION_MAJOR_VERSION_SHIFT) | \
-                 LShiftU64 ((UINT64) PartitionIdData.Version.Minor,  VERSION_MINOR_VERSION_SHIFT) | \
-                 LShiftU64 ((UINT64) PartitionIdData.Version.Hotfix, VERSION_REVISION_SHIFT)      | \
-                           ((UINT16) PartitionIdData.Version.Build));
-    } else {
-      DEBUG ((DEBUG_ERROR, "Failed to get SSE version through Heci. Status: %r\n", Status));
-      return Status;
-    }
+  } else {
+    return EFI_INVALID_PARAMETER;
   }
 
   return EFI_SUCCESS;

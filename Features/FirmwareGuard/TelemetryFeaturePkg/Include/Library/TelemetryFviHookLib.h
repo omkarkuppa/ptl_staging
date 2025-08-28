@@ -22,18 +22,35 @@
 #define _TELEMETRY_FVI_HOOK_LIB_H_
 
 /**
-  Update Fvi data from Smbios to Acpi.
+  Get the full partition table for telemetry reporting.
 
-  @param[in] ComponentId           ComponentId for the Fvi entry.
-  @param[in] Version               Version for Fvi entry.
+  @param[out] PartitionTable       Pointer to receive partition table data pointer
+  @param[out] NumOfModules         Pointer to number of modules/partitions
 
-  @retval EFI_SUCCESS              Update Telemetry firmware version successfully
-  @retval Others                   Fail to update Telemetry firmware version.
+  @retval EFI_SUCCESS              Successfully retrieved partition table
+  @retval EFI_OUT_OF_RESOURCES     Failed to allocate memory
+  @retval Others                   HECI call failed
 **/
 EFI_STATUS
 EFIAPI
-TelemeteryFirmwawreVersionUpdate (
-  OUT EFI_GUID  ComponentId,
+GetFullFviPartitionTable (
+  OUT VOID      **PartitionTable,
+  OUT UINT32    *NumOfModules
+  );
+
+/**
+  Update Fvi data from Smbios to Acpi.
+
+  @param[in]  ComponentId          ComponentId for the FVI entry
+  @param[out] Version              A pointer to version value or partition table data
+
+  @retval EFI_SUCCESS              Update Telemetry firmware version successfully
+  @retval Others                   Fail to update Telemetry firmware version
+**/
+EFI_STATUS
+EFIAPI
+TelemetryFirmwareVersionUpdate (
+  IN  EFI_GUID  ComponentId,
   OUT UINT64    *Version
   );
 

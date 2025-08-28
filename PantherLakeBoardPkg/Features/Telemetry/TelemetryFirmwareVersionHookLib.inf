@@ -55,6 +55,7 @@
   gMeBiosPayloadHobGuid                         ## CONSUMES
   gMeFirmwareVersionComponentId                 ## PRODUCES
   gMeSseVersionComponentId                      ## PRODUCES
+  gFviFullPartitionTableComponentId             ## PRODUCES
 
 [Depex]
   TRUE

@@ -50,6 +50,22 @@
 [Guids]
   gTelemetryVersionRecord2Guid                  ## SOMETIMES_CONSUMES
   gPlatformAcpiUpdateEventGuid                  ## CONSUMES
+  gFviFullPartitionTableComponentId             ## CONSUMES
+  gPmcPartitionComponentId                      ## CONSUMES
+  gRbepPartitionComponentId                     ## CONSUMES
+  gOempPartitionComponentId                     ## CONSUMES
+  gPchcPartitionComponentId                     ## CONSUMES
+  gPcodPartitionComponentId                     ## CONSUMES
+  gAcodPartitionComponentId                     ## CONSUMES
+  gNphyPartitionComponentId                     ## CONSUMES
+  gSphyPartitionComponentId                     ## CONSUMES
+  gCnviPartitionComponentId                     ## CONSUMES
+  gNftpPartitionComponentId                     ## CONSUMES
+  gIshcPartitionComponentId                     ## CONSUMES
+  gWcodPartitionComponentId                     ## CONSUMES
+  gLoclPartitionComponentId                     ## CONSUMES
+  gAdspPartitionComponentId                     ## CONSUMES
+  gIunpPartitionComponentId                     ## CONSUMES
 
 [Pcd]
   gTelemetryFeaturePkgTokenSpaceGuid.PcdPlatformFviReadyProtocolGuid     ## CONSUMES

@@ -794,7 +794,7 @@ InitPlatformStrings (
       );
 
     NumOfModules = 0;
-    Status = HeciGetImageFwVersionMsg (FPT_PARTITION_NAME_EFWP, &NumOfModules, &PartitionIdData);
+    Status = HeciGetImageFwVersionMsg (Csme, FPT_PARTITION_NAME_EFWP, (UINT32 *) &NumOfModules, &PartitionIdData);
     if (!EFI_ERROR (Status)) {
       InitString (
         HiiHandle,
@@ -807,7 +807,7 @@ InitPlatformStrings (
         );
     }
 
-    Status = HeciGetImageFwVersionMsg (FTP_PARTITION_NAME_PMCP, &NumOfModules, &PartitionIdData);
+    Status = HeciGetImageFwVersionMsg (Csme, FTP_PARTITION_NAME_PMCP, (UINT32 *) &NumOfModules, &PartitionIdData);
     if (!EFI_ERROR (Status)) {
       InitString (
         HiiHandle,

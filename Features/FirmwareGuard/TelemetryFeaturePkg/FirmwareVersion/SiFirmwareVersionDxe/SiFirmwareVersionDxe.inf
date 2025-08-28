@@ -58,6 +58,7 @@
   gBiosGuardComponentId                            ## PRODUCES
   gFspBinVersionComponentId                        ## PRODUCES
   gRcVersionComponentId                            ## PRODUCES
+  gFviFullPartitionTableComponentId                ## PRODUCES
 
 [Depex]
   TRUE

@@ -160,6 +160,87 @@ FviAipSetInfo (
 }
 
 /**
+  Process the full partition table data and add individual PHAT entries.
+
+  @param[in]     PartitionData    Pointer to the array of partition data from HECI
+  @param[in]     NumOfModules     Number of partitions in the data
+  @param[in]     ProducerId       Producer ID for the entries
+  @param[in,out] RecordCount      Current record count, updated with new entries
+
+  @retval EFI_SUCCESS           Partition table processed successfully
+  @retval EFI_INVALID_PARAMETER Invalid input parameters
+  @retval EFI_NOT_FOUND         No valid partitions found
+**/
+STATIC
+EFI_STATUS
+EFIAPI
+ProcessFviPartitionTable (
+  IN     FLASH_PARTITION_DATA  *PartitionData,
+  IN     UINT32                NumOfModules,
+  IN     UINT32                ProducerId,
+  IN OUT UINT64                *RecordCount
+  )
+{
+  STATIC FVI_PARTITION_MAPPING  mPartitionMappings[] = FVI_PARTITION_MAPPING_TABLE;
+  UINT32                        ProcessedEntries;
+  UINT32                        i;
+  UINT32                        j;
+  UINT64                        StartingRecordCount;
+  UINT32                        CurrentPartitionId;
+  BOOLEAN                       MappingFound;
+  UINT64                        RecordIndex;
+
+  RecordIndex         = 0;
+  ProcessedEntries    = 0;
+
+  if ((PartitionData == NULL) || (RecordCount == NULL) || (NumOfModules == 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  StartingRecordCount = *RecordCount;
+  ZeroMem (&mFviAipBuffer->Record[StartingRecordCount], FVI_PARTITION_MAPPING_COUNT * sizeof(EFI_ACPI_6_5_PHAT_VERSION_ELEMENT));
+
+  for (i = 0; i < NumOfModules && ProcessedEntries < FVI_PARTITION_MAPPING_COUNT; i++) {
+    CurrentPartitionId = PartitionData[i].PartitionId;
+    MappingFound = FALSE;
+
+    for (j = 0; j < FVI_PARTITION_MAPPING_COUNT; j++) {
+      if (mPartitionMappings[j].PartitionId == CurrentPartitionId) {
+        RecordIndex = StartingRecordCount + j;
+        CopyGuid (&mFviAipBuffer->Record[RecordIndex].ComponentId, mPartitionMappings[j].ComponentGuid);
+
+        // Format version from FLASH_PARTITION_DATA
+        mFviAipBuffer->Record[RecordIndex].VersionValue =
+          (LShiftU64 ((UINT64) PartitionData[i].Version.Major,  VERSION_MAJOR_VERSION_SHIFT) | \
+           LShiftU64 ((UINT64) PartitionData[i].Version.Minor,  VERSION_MINOR_VERSION_SHIFT) | \
+           LShiftU64 ((UINT64) PartitionData[i].Version.Hotfix, VERSION_REVISION_SHIFT)      | \
+                     ((UINT16) PartitionData[i].Version.Build));
+
+        mFviAipBuffer->Record[RecordIndex].ProducerId = ProducerId;
+        ProcessedEntries++;
+        MappingFound = TRUE;
+
+        DEBUG ((DEBUG_INFO, "[%a] Found partition 0x%08X at HECI index %u, mapped to PHAT entry %u (processed %u/%u)\n", 
+                __FUNCTION__, CurrentPartitionId, i, j, ProcessedEntries, FVI_PARTITION_MAPPING_COUNT));
+        break;
+      }
+    }
+
+    if (!MappingFound) {
+      DEBUG ((DEBUG_VERBOSE, "[%a] HECI partition 0x%08X not in supported mapping table\n", __FUNCTION__, CurrentPartitionId));
+    }
+  }
+
+  // Update record count to include all allocated slots (found + zero entries)
+  *RecordCount = StartingRecordCount + FVI_PARTITION_MAPPING_COUNT;
+
+  DEBUG ((DEBUG_INFO, "[%a] Completed processing: found %u/%u supported partitions in %u HECI entries\n", 
+          __FUNCTION__, ProcessedEntries, FVI_PARTITION_MAPPING_COUNT, NumOfModules));
+
+  return EFI_SUCCESS;
+}
+
+/**
   Create an Fvi AIP record when the Fvi AIP record is empty,
   otherwise Append an entry after it.
 
@@ -178,44 +259,85 @@ AppendTelemetryFviBlock (
   IN  UINT32    ProducerId
   )
 {
-  UINTN        OldBufferSize;
-  UINTN        NewBufferSize;
-  UINT64       RecordCount;
-  EFI_STATUS   Status;
+  UINTN                 OldBufferSize;
+  UINTN                 NewBufferSize;
+  UINT64                RecordCount;
+  EFI_STATUS            Status;
+  UINT32                NumOfModules;
+  UINT32                EntriesToAdd;
+  VOID                  *GenericPartitionData;
+  FLASH_PARTITION_DATA  *PartitionData;
 
-  //Update Fvi data to Telemetry.
-  Status = TelemeteryFirmwawreVersionUpdate (ComponentId, &Version);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Fail to update Fvi data: %r\n", Status));
+  NumOfModules = 0;
+  EntriesToAdd = 1;
+
+  if (CompareGuid (&ComponentId, &gFviFullPartitionTableComponentId)) {
+    Status = GetFullFviPartitionTable (&GenericPartitionData, &NumOfModules);
+    if (EFI_ERROR (Status) || NumOfModules == 0) {
+      DEBUG ((DEBUG_WARN, "[%a] No partition data received from HECI call\n", __FUNCTION__));
+      return EFI_ABORTED;
+    }
+    PartitionData = (FLASH_PARTITION_DATA *)GenericPartitionData;
+    EntriesToAdd = FVI_PARTITION_MAPPING_COUNT;
+  } else {
+    Status = TelemetryFirmwareVersionUpdate (ComponentId, &Version);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_WARN, "[%a] Fail to update Fvi data: %r\n", __FUNCTION__, Status));
+    }
   }
 
   if (mFviAipBuffer == NULL) {
     RecordCount = 0;
-    NewBufferSize = sizeof (EFI_AIP_TELEMETRY_VERSION_RECORD) + sizeof (EFI_ACPI_6_5_PHAT_VERSION_ELEMENT);
-    DEBUG ((DEBUG_INFO, "NewBufferSize = %d. \n", NewBufferSize));
+    NewBufferSize = sizeof (EFI_AIP_TELEMETRY_VERSION_RECORD) + sizeof (EFI_ACPI_6_5_PHAT_VERSION_ELEMENT) * EntriesToAdd;
     mFviAipBuffer = (EFI_AIP_TELEMETRY_VERSION_RECORD *) AllocateZeroPool (NewBufferSize);
     if (mFviAipBuffer == NULL) {
+      DEBUG ((DEBUG_ERROR, "[%a] Failed to allocate new buffer\n", __FUNCTION__));
       return EFI_OUT_OF_RESOURCES;
     }
     mFviAipBuffer->Revision = 1;
   } else {
     RecordCount = mFviAipBuffer->RecordCount;
     OldBufferSize = sizeof (EFI_AIP_TELEMETRY_VERSION_RECORD) + sizeof (EFI_ACPI_6_5_PHAT_VERSION_ELEMENT) * RecordCount;
-    NewBufferSize = sizeof (EFI_AIP_TELEMETRY_VERSION_RECORD) + sizeof (EFI_ACPI_6_5_PHAT_VERSION_ELEMENT) * (RecordCount + 1);
+    NewBufferSize = sizeof (EFI_AIP_TELEMETRY_VERSION_RECORD) + sizeof (EFI_ACPI_6_5_PHAT_VERSION_ELEMENT) * (RecordCount + EntriesToAdd);
     mFviAipBuffer = (EFI_AIP_TELEMETRY_VERSION_RECORD *) ReallocatePool (OldBufferSize, NewBufferSize, (VOID *) mFviAipBuffer);
     if (mFviAipBuffer == NULL) {
+      DEBUG ((DEBUG_ERROR, "[%a] Failed to reallocate buffer\n", __FUNCTION__));
       return EFI_OUT_OF_RESOURCES;
     }
   }
+  if (CompareGuid (&ComponentId, &gFviFullPartitionTableComponentId)) {
+    if (NumOfModules == 0) {
+      DEBUG ((DEBUG_WARN, "[%a] No partition data received from HECI call\n", __FUNCTION__));
+      return EFI_ABORTED;
+    } else {
 
-  CopyGuid (&mFviAipBuffer->Record[RecordCount].ComponentId, &ComponentId);
-  mFviAipBuffer->Record[RecordCount].VersionValue = Version;
-  mFviAipBuffer->Record[RecordCount].ProducerId   = ProducerId;
-  mFviAipBuffer->RecordCount = RecordCount + 1;
+      //
+      // Process the full partition table using dedicated handler
+      //
+      Status = ProcessFviPartitionTable (PartitionData, NumOfModules, ProducerId, &RecordCount);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_WARN, "[%a] Failed to process FVI partition table: %r\n", __FUNCTION__, Status));
+      }
 
-  //
-  // Rebuild PHAT after loading driver in shell
-  //
+      //
+      // RecordCount is already updated by ProcessFviPartitionTable to include all allocated slots
+      //
+      mFviAipBuffer->RecordCount = RecordCount;
+
+      if (PartitionData != NULL) {
+        FreePool (PartitionData);
+        PartitionData = NULL;
+      }
+    }
+
+  } else {
+    CopyGuid (&mFviAipBuffer->Record[RecordCount].ComponentId, &ComponentId);
+    mFviAipBuffer->Record[RecordCount].VersionValue = Version;
+    mFviAipBuffer->Record[RecordCount].ProducerId   = ProducerId;
+    mFviAipBuffer->RecordCount = RecordCount + 1;
+  }
+
+  // Signal ACPI table rebuild
   gBS->SignalEvent (mAcpiEvent);
 
   return EFI_SUCCESS;
@@ -331,9 +453,7 @@ DxeTelemetryFviLibConstructor (
     DEBUG ((DEBUG_ERROR, "%a: Create callback for protocol notify (%g) failed.\n", __FUNCTION__, mPlatformFviReadyProtocolGuid));
   }
 
-  //
-  // Resgiter Rebuild PHAT event
-  //
+  // Register PHAT rebuild event
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_CALLBACK,
@@ -384,9 +504,7 @@ DxeTelemetryFviLibDestructor (
                     );
   }
 
-  //
-  // Rebuild PHAT table after unloading driver in shell
-  //
+  // Signal PHAT table rebuild and cleanup
   gBS->SignalEvent (mAcpiEvent);
   gBS->CloseEvent (mAcpiEvent);
 
