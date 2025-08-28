@@ -93,7 +93,7 @@ struc SecCarInitParamsFsp24
   .size:
 endstruc
 
-FSP24_FSPT_CFG_TOP_MEMORY_CACHE_SIZE_OFFSET EQU 0B0h ; FsptConfig.TopMemoryCacheSize offset
+FSP24_FSPT_CFG_TOP_MEMORY_CACHE_SIZE_OFFSET EQU 0B8h ; FsptConfig.TopMemoryCacheSize offset
 BOOT_GUARD_CNB_SIZE EQU 1000h
 ;
 ; Save TemporaryRamSize to YMM10[192:255]
