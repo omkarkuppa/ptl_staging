@@ -86,17 +86,41 @@ MrcSetupDdrIoIpInfo (
     switch (IpVersion->Bits.Segment) {
       case IpSegmentMobile:
         Inputs->IsDdrIoUlxUlt = TRUE;
-        switch (IpVersion->Bits.Stepping) {
-          case ipStepB0:
-            StepStr = "B0";
-            Inputs->IsDdrIoB0 = TRUE;
-            break;
+        if (IpVersion->Bits.Derivative == ipDerivativePtl) {
+          switch (IpVersion->Bits.Stepping) {
+            case ipStepB0:
+              StepStr = "B0";
+              Inputs->IsDdrIoB0 = TRUE;
+              break;
 
-          default:
-          case ipStepA0:
-            StepStr = "A0";
-            Inputs->IsDdrIoMbA0 = TRUE;
-            break;
+            case ipStepB1:
+              StepStr = "B0"; // // Printing to B0 is done intentionally
+              Inputs->IsDdrIoB1 = TRUE;
+              break;
+
+            default:
+            // default should fall through case statement to A0
+            case ipStepA0:
+              StepStr = "A0";
+              Inputs->IsDdrIoMbA0 = TRUE;
+              break;
+          }
+        } else {
+          // WCL x64
+          Inputs->IsDdrphyx64 = TRUE;
+          switch (IpVersion->Bits.Stepping) {
+            case ipStepA1x64:
+              StepStr = "A0"; // Printing to A0 is done intentionally
+              Inputs->IsDdrIoA1x64 = TRUE;
+              break;
+
+            default:
+            // default should fall through case statement to A0
+            case ipStepA0:
+              StepStr = "A0";
+              // Do not set Inputs->IsDdrIoA0 for WCL A0. MRC relies only on Inputs->IsDdrphyx64 for WCL A0
+              break;
+          }
         }
         break;
 
@@ -105,11 +129,6 @@ MrcSetupDdrIoIpInfo (
         Status  = mrcFail;
         break;
     }
-  }
-
-  if (IpVersion->Bits.Derivative == ipDerivativePtlx64) {
-    Inputs->IsDdrphyx64 = TRUE;
-    Inputs->IsDdrIoMbA0 = FALSE;
   }
 
   if (Status == mrcSuccess) {

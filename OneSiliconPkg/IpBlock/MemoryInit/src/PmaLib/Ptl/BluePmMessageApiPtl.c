@@ -230,6 +230,8 @@ MrcMcCapabilityPreSpd (
     if (Outputs->IsLpddr5) {
       if (Inputs->IsDdrIoB0) {
         Outputs->FreqMax = MIN (Outputs->FreqMax, f8533); // Default SAGV: 2400, 4800, 6400, 8533 (all G4)
+      } else if (Inputs->IsDdrIoB1) {
+        Outputs->FreqMax = MIN (Outputs->FreqMax, f9600); // Default SAGV: 2400, 4800, 6400, 9600 (all G4)
       } else {
         Outputs->FreqMax = MIN (Outputs->FreqMax, f7467); // Default SAGV: 2400, 4800, 6400, 7467 (all G4)
       }

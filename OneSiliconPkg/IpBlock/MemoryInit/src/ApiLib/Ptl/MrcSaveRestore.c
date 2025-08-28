@@ -636,7 +636,7 @@ SaveRestoreExecution (
       case PtGenFsm:
         for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
           for (Channel = 0; Channel < MAX_CHANNEL_SHARE_REGS; Channel++) {
-            if (!MrcChannelExist (MrcData, Controller, Outputs->IsLpddr ? (Channel * 2) : Channel)) { // Use system-level channel in the population check
+            if (!MrcChannelExist (MrcData, Controller, Outputs->IsLpddr ? (Channel * 2) : Channel)) {  // Use system-level channel in the population check
               continue;
             }
             MRC_DEBUG_MSG (Debug, DebugLevel, "\nMC%u C%u:", Controller, Channel);
@@ -1213,7 +1213,7 @@ MrcRestoreNonTrainingValues (
   Outputs->MaxRanks               = SaveData->MaxRanks;
   Outputs->IsCkdSupported         = SaveData->IsCkdSupported;
   Outputs->HighFrequency          = Outputs->Frequency;
-  Outputs->IsCs2NEnabled          = (SaveData->SagvGeardownMask & (1 << SaGvPoint)) ? TRUE : FALSE;
+  Outputs->IsCs2NEnabled          = (SaveData->SagvGeardownMask & (1 << SaGvPoint)) ? TRUE : FALSE; 
   if (Outputs->GearMode == 1) {
     Outputs->Gear4Ever = 1;
   }

@@ -2346,7 +2346,9 @@ typedef struct {
   BOOLEAN           SenseAtRxDll;                  ///< Boolean variable to enable or disable RxDqsDcc SenseAtRxDll
   BOOLEAN           IbeccInitRangesSkip;           ///< TRUE: Force Skip IbeccInitRanges (CTE param to speed up runs)
   UINT8             LastIbeccOperationMode;        ///< Input from BIOS indicating the last IBECC operation mode. Valid only on warm boot.
-  UINT8             Reserved[3];                   ///< Reserved to ensure config block size is a multiple of DWORDs
+  BOOLEAN           IsDdrIoA1x64;                  ///< Identifies that the current CPU stepping is Mobile A1 x64 (PHY)
+  BOOLEAN           IsDdrIoB1;                     ///< Identifies that the current CPU stepping is Mobile B1 (PHY)
+  UINT8             Reserved[1];                   ///< Reserved to ensure config block size is a multiple of DWORDs
   /**
    Sets the serial debug message level\n
      0x00 = Disabled\n

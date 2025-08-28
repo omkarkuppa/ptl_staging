@@ -45,8 +45,10 @@
 /// Define the CPU stepping number.
 typedef enum {
   ipStepA0 = 0,
+  ipStepA1x64 = 1,
   ipStepB0 = 1,
-  ipStepLast = 1,
+  ipStepB1 = 2,
+  ipStepLast = 2,
 } MrcIpStepping;
 
 typedef enum {

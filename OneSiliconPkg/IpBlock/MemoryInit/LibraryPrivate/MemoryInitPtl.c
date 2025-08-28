@@ -129,6 +129,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED static const SPD_OFFSET_TABLE SpdDdr5Table[] = {
   {   0,               1,           (1 << bmCold),},
   {   2,               3,           (1 << bmCold) | (1 << bmFast),},
   {   4,              47,           (1 << bmCold),},
+  // ARFM Support
+  {  58,              69,           (1 << bmCold),},
   { 126,             127,           (1 << bmCold),},
   { 192,             213,           (1 << bmCold),},
   { 230,             235,           (1 << bmCold),},
