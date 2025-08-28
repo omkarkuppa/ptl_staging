@@ -26,7 +26,7 @@ If (LNotEqual (GBES, 0)) {
     Name (_S0W, 3) // Device can wake itself from D3 in S0
 
     Method (_PRW, 0) {
-      Return (GPRW (GPE1_GBE_PME_B0, 4)) // can wakeup from S4 state
+      Return (GPRW (GPE1_GBE_PME_B0, 5)) // can wakeup from S5 state
     }
 
     Method (_PS3, 0, NotSerialized)
