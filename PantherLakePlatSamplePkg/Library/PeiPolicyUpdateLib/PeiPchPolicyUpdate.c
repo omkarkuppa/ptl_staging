@@ -693,7 +693,6 @@ UpdateUsb2PortEnablePolicy (
   TCSS_PEI_PREMEM_CONFIG     *TcssPeiPreMemConfig;
 #endif
   USB_CONNECTOR_HOB_DATA     *UsbConnectorHobDataPtr;
-  USBC_CONNECTOR_HOB_DATA    *UsbCConnectorHobDataPtr;
   USB_CONNECTOR_BOARD_CONFIG *UsbConnectorBoardConfig;
   UINT8                      PchUsb2PortEnable;
   UINT8                      TcssUsb3Port;
@@ -716,13 +715,11 @@ UpdateUsb2PortEnablePolicy (
 #endif //FSPMode Check
 
   UsbConnectorHobDataPtr  = NULL;
-  UsbCConnectorHobDataPtr = NULL;
   UsbConnectorBoardConfig = NULL;
 
   UsbConnectorHobDataPtr  = GetUsbConnectorHobData ();
-  UsbCConnectorHobDataPtr = GetUsbCConnectorHobData ();
-  if (UsbConnectorHobDataPtr == NULL || UsbCConnectorHobDataPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: UsbConnectorHobDataPtr or UsbCConnectorHobDataPtr is not available!!\n", __FUNCTION__));
+  if (UsbConnectorHobDataPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a: UsbConnectorHobDataPtr is not available!!\n", __FUNCTION__));
     return;
   }
 
@@ -733,7 +730,7 @@ UpdateUsb2PortEnablePolicy (
   }
 
   if (PcdGet8 (VpdPcdUsbCUcmMode)) {
-    for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors; ConnectorIndex++) {
+    for (ConnectorIndex = 0; ConnectorIndex < UsbConnectorHobDataPtr->NumberOfUsbConnectors; ConnectorIndex++) {
       //
       // Check TCSS USBC port map to USB2
       //
@@ -895,7 +892,6 @@ UpdateUsb2PortResetMessageEnablePolicy (
 {
   UINT8                      ConnectorIndex;
   USB_CONNECTOR_HOB_DATA     *UsbConnectorHobDataPtr;
-  USBC_CONNECTOR_HOB_DATA    *UsbCConnectorHobDataPtr;
   USB_CONNECTOR_BOARD_CONFIG *UsbConnectorBoardConfig;
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                       *FspsUpd;
@@ -904,9 +900,8 @@ UpdateUsb2PortResetMessageEnablePolicy (
 #endif
 
   UsbConnectorHobDataPtr  = GetUsbConnectorHobData ();
-  UsbCConnectorHobDataPtr = GetUsbCConnectorHobData ();
-  if (UsbConnectorHobDataPtr == NULL || UsbCConnectorHobDataPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: UsbConnectorHobDataPtr or UsbCConnectorHobDataPtr is not available!!\n", __FUNCTION__));
+  if (UsbConnectorHobDataPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a: UsbConnectorHobDataPtr is not available!!\n", __FUNCTION__));
     return;
   }
 
@@ -917,7 +912,7 @@ UpdateUsb2PortResetMessageEnablePolicy (
   }
 
   if (PcdGet8 (VpdPcdUsbCUcmMode)) {
-    for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors; ConnectorIndex++) {
+    for (ConnectorIndex = 0; ConnectorIndex < UsbConnectorHobDataPtr->NumberOfUsbConnectors; ConnectorIndex++) {
       //
       // Check TCSS USBC port map to USB 2.0
       //

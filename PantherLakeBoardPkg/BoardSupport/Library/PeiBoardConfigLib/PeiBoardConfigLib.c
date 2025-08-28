@@ -850,7 +850,7 @@ SetTcssPortCapPcd (
     return;
   }
 
-  for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors; ConnectorIndex++) {
+  for (ConnectorIndex = 0; ConnectorIndex < UsbConnectorHobDataPtr->NumberOfUsbConnectors; ConnectorIndex++) {
     //
     // Look for TCSS USB3 port and update port capability
     //
@@ -858,28 +858,34 @@ SetTcssPortCapPcd (
         UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum < MAX_TCSS_USB3_PORTS) {
       PortNum = (UINT8) UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum;
       if (UsbConnectorBoardConfig[ConnectorIndex].ConnectorConnectable == CONNECTABLE) {
-        if (UsbCConnectorBoardConfig[ConnectorIndex].Usb4Supported == 1) {
-          TcssPortCap[PortNum] = (UsbCConnectorBoardConfig[ConnectorIndex].PcieSupported == 1) ? FullFunction : NoPcie;
-        } else {
-          TcssPortCap[PortNum] = NoThunderbolt;
-        }
-        if (TcssPortCap[PortNum] == FullFunction) {
-          switch (SaSetup.TcssPortConf[PortNum]) {
-            case NoThunderbolt:
-              UsbCConnectorBoardConfig[ConnectorIndex].Usb4Supported = 0;
-              UsbCConnectorBoardConfig[ConnectorIndex].Tbt3Supported = 0;
-              UsbCConnectorBoardConfig[ConnectorIndex].PcieSupported = 0;
-              break;
-            case NoPcie:
-            case DpOnly:
-              UsbCConnectorBoardConfig[ConnectorIndex].Tbt3Supported = 0;
-              UsbCConnectorBoardConfig[ConnectorIndex].PcieSupported = 0;
-              break;
+        if (ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors) {
+          // USBC connector
+          if (UsbCConnectorBoardConfig[ConnectorIndex].Usb4Supported == 1) {
+            TcssPortCap[PortNum] = (UsbCConnectorBoardConfig[ConnectorIndex].PcieSupported == 1) ? FullFunction : NoPcie;
+          } else {
+            TcssPortCap[PortNum] = NoThunderbolt;
           }
-        }
-        if (SaSetup.TcssPortConf[PortNum] == UsbCDisable) {
-          UsbConnectorBoardConfig[ConnectorIndex].ConnectorConnectable = UNCONNECTABLE;
-          IsUsbConnectorConnectableMapChanged = TRUE;
+          if (TcssPortCap[PortNum] == FullFunction) {
+            switch (SaSetup.TcssPortConf[PortNum]) {
+              case NoThunderbolt:
+                UsbCConnectorBoardConfig[ConnectorIndex].Usb4Supported = 0;
+                UsbCConnectorBoardConfig[ConnectorIndex].Tbt3Supported = 0;
+                UsbCConnectorBoardConfig[ConnectorIndex].PcieSupported = 0;
+                break;
+              case NoPcie:
+              case DpOnly:
+                UsbCConnectorBoardConfig[ConnectorIndex].Tbt3Supported = 0;
+                UsbCConnectorBoardConfig[ConnectorIndex].PcieSupported = 0;
+                break;
+            }
+          }
+          if (SaSetup.TcssPortConf[PortNum] == UsbCDisable) {
+            UsbConnectorBoardConfig[ConnectorIndex].ConnectorConnectable = UNCONNECTABLE;
+            IsUsbConnectorConnectableMapChanged = TRUE;
+          }
+        } else {
+          // Non-USBC connector
+          TcssPortCap[PortNum] = (UsbConnectorBoardConfig[ConnectorIndex].ConnectorType == USB_TYPE_A) ? NoThunderbolt : UsbCDisable;
         }
       } else {
         TcssPortCap[PortNum] = UsbCDisable;
