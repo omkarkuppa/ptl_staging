@@ -177,6 +177,14 @@ FspDebugPrint (
   //
   ASSERT (Format != NULL);
 
+  //
+  // Check driver debug mask value and global mask
+  //
+  if ((ErrorLevel & GetDebugPrintErrorLevel ()) == 0) {
+    return;
+  }
+
+
   FspGlobalData = GetFspGlobalDataPointer ();
 
   if (((UINTN)FspGlobalData != 0x00 && (UINTN)FspGlobalData != 0xFFFFFFFF) && (FspGlobalData->Signature == FSP_GLOBAL_DATA_SIGNATURE)) {

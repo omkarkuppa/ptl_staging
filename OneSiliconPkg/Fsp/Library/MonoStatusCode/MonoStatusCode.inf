@@ -36,6 +36,7 @@
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
 
 [LibraryClasses]
   BaseMemoryLib
@@ -45,9 +46,14 @@
   ReportStatusCodeLib
   SerialPortLib
   TraceHubDebugLib
+  FspCommonLib
 
 [Ppis]
   gEfiPeiStatusCodePpiGuid
+  gFspDebugServicePpiGuid                       ## CONSUMES
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask ## CONSUMES
 
 [Guids]
   gEfiStatusCodeDataTypeStringGuid              ## CONSUMES
