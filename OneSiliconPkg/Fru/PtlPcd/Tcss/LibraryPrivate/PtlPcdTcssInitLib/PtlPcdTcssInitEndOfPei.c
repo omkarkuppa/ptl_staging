@@ -162,7 +162,6 @@ PtlTcssInitEndOfPei (
   IP_WR_REG_INFO     PcieRpRegInfoPciPrim[MAX_ITBT_PCIE_PORT];
   IP_WR_REG_INFO     PcieRpRegInfoPcr[MAX_ITBT_PCIE_PORT];
 
-  IOM_DEVEN_CONFIG   DevEn;
   IP_PCIE_CALLBACKS  PcieCallbacks;
 
   TCSS_DATA_SSID_HOB *TcssSsidHob;
@@ -230,11 +229,6 @@ PtlTcssInitEndOfPei (
   CsiStatus = SsTcssInitEndOfPei (&TcssInst);
   if (CsiStatus != 0) {
     DEBUG ((DEBUG_ERROR, "ERROR: PTL TCSS End of PEI initialization fail!\n"));
-    if (CsiStatus == IpCsiStsNotReady) {
-      DEBUG ((DEBUG_ERROR, "ERROR: TBT or MG FW not loaded to IMR - Disable TCSS devices!\n"));
-      DevEn.TcssDevEn = 0;
-      HostBridgeSetTcssDeven (DevEn.TcssDevEn);
-    }
     Status = EFI_DEVICE_ERROR;
   }
 

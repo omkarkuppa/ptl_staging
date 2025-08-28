@@ -402,17 +402,15 @@ SsTcssInitPostMemory (
 /**
   TCSS initialization procedure executed at the end of PEI phase.
 
-  @param[in]  pInst             TCSS Instance
+  @param[in] pInst  TCSS Instance
 
-  @retval  IP_CSI_STATUS
-    - IpCsiStsSuccess:       programming completed without error
-    - IpCsiStsError:          an error during the programming
-    - IpCsiStsNotReady:       TBT or MG firmware not loaded to IMR
-    - IpCsiStsErrorNullPtr:  null pointer to IP Instance provided
+  @retval IP_CSI_STATUS
+    - IpCsiStsSuccess: Programming completed without error
+    - IpCsiStsError:   Error during the programming
 **/
 IP_CSI_STATUS
 SsTcssInitEndOfPei (
-  TCSS_INST   *pInst
+  TCSS_INST *pInst
   );
 
 /**

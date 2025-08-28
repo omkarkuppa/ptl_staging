@@ -33,32 +33,30 @@
 /**
   Validates if USB4 Host Router is enabled and ready for initialization
 
-  @param[in]  pInst             TCSS Instance
+  @param[in] pInst  TCSS Instance
 
-  @retval  BOOLEAN
-    - TRUE:   USB4 Host Router is enabled
-    - FALSE:  USB4 Host Router is disabled or not ready
+  @retval BOOLEAN
+    - TRUE:  USB4 Host Router is enabled
+    - FALSE: USB4 Host Router is disabled or not ready
 **/
 BOOLEAN
 IsUsb4HrEnabled (
-  TCSS_INST   *pInst
+  TCSS_INST *pInst
   )
 {
-  IP_CSI_STATUS      Status;
-  IOM_MG_IMR_STATUS  Imr;
-  BOOLEAN            Usb4Exist;
-  TCSS_DEVEN_CONFIG  Deven;
-  UINT32             Index;
+  IP_CSI_STATUS     Status;
+  IOM_MG_IMR_STATUS Imr;
+  BOOLEAN           Usb4Exist;
+  TCSS_DEVEN_CONFIG Deven;
+  UINT32            Index;
 
-  Usb4Exist  = FALSE;
+  Usb4Exist = FALSE;
 
+  // Checking MG FW is loaded
   Status = IpIomGetImrMgStatus (pInst->IomInst, &Imr.RegValue);
-
   if (Status != IpCsiStsSuccess) {
     if (Status == IpCsiStsNotReady) {
-      PRINT_ERROR ("%a: ERROR: MG firmware not loaded to IMR! \n\tAbort TCSS initialization!\n", __FUNCTION__);
-      // MG firmware not loaded to IMR.
-      // All TCSS IPs in the SOC DEVEN register should be disabled
+      PRINT_ERROR ("%a: ERROR: MG FW is not loaded to IMR!\n", __FUNCTION__);
     }
   }
 
@@ -76,24 +74,24 @@ IsUsb4HrEnabled (
     }
   }
 
+  // Checking TBT FW is loaded
   Status = IpIomGetImrTbtStatus (pInst->IomInst, &Imr.RegValue);
   if (Status != IpCsiStsSuccess) {
-    PRINT_ERROR ("%a: ERROR: TBT firmware not loaded to IMR! \n\tAbort TCSS initialization!\n", __FUNCTION__);
-    // TBT firmware not loaded to IMR.
-    if (Usb4Exist == TRUE) {
-      PRINT_ERROR ("%a: TBT fatal error!\n", __FUNCTION__);
-      return FALSE;
-    }
-    // All TCSS IPs in the SOC DEVEN register should be disabled
-    Deven.TcssDevEn = pInst->Callbacks->GetTcssDeven();
+    PRINT_ERROR ("%a: ERROR: TBT FW is not loaded to IMR! \n\tAbort USB4HR initialization!\n", __FUNCTION__);
+
+    //
+    // TBT FW is not loaded to IMR.
+    // TCSS USB4HR and PCIe root port in the SoC DEVEN register should be disabled.
+    //
+    Deven.TcssDevEn = pInst->Callbacks->GetTcssDeven ();
     Deven.TcssDevEnBit.TcssPcieRpEn = 0;
     Deven.TcssDevEnBit.Usb4HrEn     = 0;
-    pInst->IomInst->Callback.SetTcssDevenRegisterMchbar(Deven.TcssDevEn);
+    pInst->IomInst->Callback.SetTcssDevenRegisterMchbar (Deven.TcssDevEn);
 
-    return FALSE;
+    Usb4Exist = FALSE;
   }
 
-  return TRUE;
+  return Usb4Exist;
 }
 
 /**
@@ -520,42 +518,20 @@ SsTcssInitPostMemory (
 /**
   TCSS initialization procedure executed at the end of PEI phase.
 
-  @param[in]  pInst             TCSS Instance
+  @param[in] pInst  TCSS Instance
 
-  @retval  IP_CSI_STATUS
-    - IpCsiStsSuccess:        programming completed without error
-    - IpCsiStsError:          an error during the programming
-    - IpCsiStsNotReady:       TBT or MG firmware not loaded to IMR
-    - IpCsiStsErrorNullPtr:   null pointer to IP Instance provided
+  @retval IP_CSI_STATUS
+    - IpCsiStsSuccess: Programming completed without error
+    - IpCsiStsError:   Error during the programming
 **/
 IP_CSI_STATUS
 SsTcssInitEndOfPei (
-  TCSS_INST   *pInst
+  TCSS_INST *pInst
   )
 {
-  IP_CSI_STATUS      Status;
-  IOM_MG_IMR_STATUS  Imr;
+  IP_CSI_STATUS Status;
 
   TCSS_API_ENTRY ();
-
-  Status = IpIomGetImrMgStatus (pInst->IomInst, &Imr.RegValue);
-  if (Status != IpCsiStsSuccess) {
-    if (Status == IpCsiStsNotReady) {
-      PRINT_ERROR ("%a: ERROR: MG firmvare not loaded to IMR! \n\tAbort TCSS initialization!\n", __FUNCTION__);
-    }
-    IpIomConfigurationLock (pInst->IomInst);
-    return Status;
-  }
-  pInst->Info->MgImrStatus.RegValue = Imr.RegValue;
-
-  Status = IpIomGetImrTbtStatus (pInst->IomInst, &Imr.RegValue);
-  if (Status != IpCsiStsSuccess) {
-    PRINT_ERROR ("%a: ERROR: TBT firmware not loaded to IMR! \n\tAbort TCSS initialization!\n", __FUNCTION__);
-    IpIomConfigurationLock (pInst->IomInst);
-    return Status;
-  }
-
-
 
   Status = IpIomConfigurationLock (pInst->IomInst);
   TCSS_RETURN_IF_ERROR (Status);
