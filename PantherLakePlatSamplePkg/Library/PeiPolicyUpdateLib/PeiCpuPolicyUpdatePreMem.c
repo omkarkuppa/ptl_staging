@@ -1357,15 +1357,5 @@ UpdatePeiCpuPolicyPreMem (
       COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.FastPkgCRampDisable[1], CpuPowerMgmtVrConfig->FastPkgCRampDisable[1], 1, 1);
     }
   }
-  switch (CpuDid) {
-    case 0xB003:
-    case 0xB000:
-      if (CpuSetup.IccMax[0] == 0) {
-        COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.IccMax[0],   CpuPowerMgmtVrConfig->IccMax[0],320, 0);
-      }
-      if (CpuSetup.IccLimit[0] == 0) {
-        COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.IccLimit[0], CpuPowerMgmtVrConfig->IccLimit[0],252, 0);
-      }
-  }
   return EFI_SUCCESS;
 }

@@ -106,7 +106,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mPtlPlx[] = {
   // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow  IsysL1Tau  IsysLimitL1  IsysLimitL2  VsysMax  PsysPmax
   // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1            Sec        1/8A         1/8A       mV      1/8W
   {  2500,  5500,  5500,     5500,     5500,     16300,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W40
-  {  2500,  4500,  4500,     4500,     4500,     10500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W20
+  {  2500,  5500,  5500,     5500,     5500,     16300,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W20
   {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W48
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W44
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W28
