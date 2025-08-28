@@ -131,6 +131,9 @@ def set_environ(ProductName, ToolChain = None, Target = None):
         os.mkdir( str( os.path.join( os.environ['WORKSPACE'], u'Conf')))
     if sys.platform == 'win32':
         os.environ['EDK_TOOLS_BIN'] = os.path.join( os.environ['EDK_TOOLS_PATH'], u'Bin', u'Win32')
+    else:
+        os.environ['EDK_TOOLS_BIN'] = os.path.join( os.environ['EDK_TOOLS_PATH'], u'Source', u'C', u'bin')
+
     #
     # print environ. var.
     #
@@ -148,7 +151,7 @@ def set_environ(ProductName, ToolChain = None, Target = None):
     print("TARGET_PLATFORM        = " + os.environ['TARGET_PLATFORM'])
 
 def call_make_edk2basetools():
-    cmd = [ 'make', '-C', 'Edk2/BaseTools']
+    cmd = ['make', '-C', os.path.join( os.environ['EDK_TOOLS_PATH'], 'Source', 'C')]
     print ("cmd : "+str(cmd))
     subprocess.check_call(cmd, stdout=sys.stdout, stderr=sys.stderr)
 
@@ -294,13 +297,22 @@ def set_edk_environ():
                 exit(1)
 
     elif sys.platform == 'linux':
-        call_make_edk2basetools()
-        cmd = ['bash', '-c', '. $WORKSPACE_CORE/edksetup.sh BaseTools']
+        os.environ["PYTHONPATH"] = os.path.join(os.environ["EDK_TOOLS_PATH"], "Source", "Python")
         os.environ['PATH'] += os.pathsep + os.path.join( os.environ['EDK_TOOLS_PATH'], u'BinWrappers', u'PosixLike')
-        if not os.environ.get('TOOL_CHAIN_TAG'):
-            os.environ['TOOL_CHAIN_TAG'] = u'GCC'
+        os.environ['PATH'] += os.pathsep + os.path.join( os.environ['EDK_TOOLS_BIN'])
+        # Add PYTHON_COMMAND environment variable
+        if os.environ.get("PYTHON_COMMAND") is None:
+            os.environ["PYTHON_COMMAND"] = sys.executable
+        call_make_edk2basetools()
+        cmd = ['bash', '-c', '. ' + os.path.join(os.environ["WORKSPACE_CORE"], "edksetup.sh")]
+        # Set TOOL_CHAIN_TAG
         print ("cmd : "+str(cmd))
         subprocess.check_call (cmd, stdout=sys.stdout, stderr=sys.stderr)
+        if os.environ.get('TOOL_CHAIN_TAG') is None:
+            if os.environ.get("CLANG_BIN") is not None:
+                os.environ['TOOL_CHAIN_TAG'] = u'CLANGPDB'
+            else:
+                os.environ['TOOL_CHAIN_TAG'] = u'GCC'
 
     elif sys.platform == 'darwin':
         call_make_edk2basetools()
