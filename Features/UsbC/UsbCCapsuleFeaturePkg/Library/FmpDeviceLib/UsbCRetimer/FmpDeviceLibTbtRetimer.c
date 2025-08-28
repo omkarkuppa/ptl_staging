@@ -925,7 +925,7 @@ FmpDeviceSetImageWithStatus (
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_LOCATE_USBCPROGRESS_PROTOCOL_FAIL, (UINT32) Status, 0);
-    UsbCProgressCodeProtocol->ShowProgressCode = UsbCCapsuleShowProgressCodeDefault;
+    UsbCProgressCodeProtocol = &gUsbCDefaultProgressCodeProtocol;
   }
 
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_START);

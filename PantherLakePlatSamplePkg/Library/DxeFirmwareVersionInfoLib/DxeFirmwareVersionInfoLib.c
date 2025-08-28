@@ -723,7 +723,7 @@ UpdateUsbCRetimerInfoResetCallback (
     Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
-      UsbCProgressCodeProtocol->ShowProgressCode = UsbCCapsuleShowProgressCodeDefault;
+      UsbCProgressCodeProtocol = &gUsbCDefaultProgressCodeProtocol;
     }
     UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_READ_RETIMER_VERSION_START);
 

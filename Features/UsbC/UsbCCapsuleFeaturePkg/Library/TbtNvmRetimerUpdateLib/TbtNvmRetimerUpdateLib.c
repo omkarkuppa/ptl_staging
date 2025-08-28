@@ -31,8 +31,12 @@
 #include <Library/BaseMemoryLib.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
+#include <Protocol/UsbCProgressCodeProtocol.h>
 
 UPDATE_TARGET_TYPE gUpdateTargetType;    // TARGET_TBT_HOST or TARGET_RETIMER
+GLOBAL_REMOVE_IF_UNREFERENCED USBC_PROGRESS_CODE_PROTOCOL gUsbCDefaultProgressCodeProtocol = {
+  UsbCCapsuleShowProgressCodeDefault
+};
 
 /**
   Construct the Host Router instances for sending OFFLINE_MODE.

@@ -349,6 +349,7 @@ InitHW (
   )
 {
   EFI_STATUS                   Status;
+  TBT_STATUS                   TbtStatus;
   RETIMER_THRU_HR              *RetimerPtr;
   USBC_PROGRESS_CODE_PROTOCOL  *UsbCProgressCodeProtocol;
 
@@ -358,7 +359,7 @@ InitHW (
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "InitHW - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
-    UsbCProgressCodeProtocol->ShowProgressCode = UsbCCapsuleShowProgressCodeDefault;
+    UsbCProgressCodeProtocol = &gUsbCDefaultProgressCodeProtocol;
   }
 
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
@@ -366,18 +367,18 @@ InitHW (
   // Enumerate retimer on a path to the target retimer
   CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_SEND_ENUM_CMD, 0, 0);
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_ENUM_CMD);
-  Status = SendEnumCmd (RetimerPtr);
-  if (TBT_STATUS_ERR (Status)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_ENUM_CMD_FAIL, (UINT32) Status, 0);
-    return Status;
+  TbtStatus = SendEnumCmd (RetimerPtr);
+  if (TBT_STATUS_ERR (TbtStatus)) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_ENUM_CMD_FAIL, (UINT32) TbtStatus, 0);
+    return TbtStatus;
   }
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_SEND_LSUP_CMD, 0, 0);
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_LSUP_CMD);
-  Status = SendLsupCmdEn (RetimerPtr);
-  if (TBT_STATUS_ERR (Status)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_LSUP_CMD_FAIL, (UINT32) Status, 0);
-    return Status;
+  TbtStatus = SendLsupCmdEn (RetimerPtr);
+  if (TBT_STATUS_ERR (TbtStatus)) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_LSUP_CMD_FAIL, (UINT32) TbtStatus, 0);
+    return TbtStatus;
   }
 
   return TBT_STATUS_SUCCESS;
@@ -397,7 +398,8 @@ TerminateHW (
   IN TBT_RETIMER      *This
   )
 {
-  TBT_STATUS                   Status;
+  EFI_STATUS                   Status;
+  TBT_STATUS                   TbtStatus;
   RETIMER_THRU_HR              *RetimerPtr;
   USBC_PROGRESS_CODE_PROTOCOL  *UsbCProgressCodeProtocol;
 
@@ -407,16 +409,16 @@ TerminateHW (
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "TerminateHW - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
-    UsbCProgressCodeProtocol->ShowProgressCode = UsbCCapsuleShowProgressCodeDefault;
+    UsbCProgressCodeProtocol = &gUsbCDefaultProgressCodeProtocol;
   }
 
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
   CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_SEND_USUP_CMD, 0, 0);
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_USUP_CMD);
-  Status = SendLsupCmdDis (RetimerPtr);
-  if (TBT_STATUS_ERR (Status)) {
+  TbtStatus = SendLsupCmdDis (RetimerPtr);
+  if (TBT_STATUS_ERR (TbtStatus)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_USUP_CMD_FAIL, 0, 0);
-    return Status;
+    return TbtStatus;
   }
   return TBT_STATUS_SUCCESS;
 }

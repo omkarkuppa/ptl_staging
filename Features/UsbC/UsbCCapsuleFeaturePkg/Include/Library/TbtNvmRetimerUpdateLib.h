@@ -26,10 +26,12 @@
 #include <TbtNvmRetimer.h>
 #include <Protocol/FirmwareManagement.h>
 #include <Protocol/UsbCRetimerProtocol.h>
+#include <Protocol/UsbCProgressCodeProtocol.h>
 
 typedef VOID   *RETIMER_DEV_INSTANCE;
 typedef VOID   *HR_DEV_INSTANCE;
 typedef VOID   *DISCRETE_TBT_DEV_INSTANCE;
+extern USBC_PROGRESS_CODE_PROTOCOL gUsbCDefaultProgressCodeProtocol;
 
 /**
   Construct the Host Router instances for sending OFFLINE_MODE.
