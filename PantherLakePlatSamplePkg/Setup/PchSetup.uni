@@ -273,7 +273,7 @@
 #string STR_PCH_HDA_DISC_BT_OFFLOAD_LINK_HELP   #language en-US " Selects used SSP port for the discrete BT HCI Audio Offload"
 
 #string STR_PCH_HDA_PP_MODULE_TITLE             #language en-US "Audio DSP Pre/Post-Processing Module Support:"
-#string STR_PCH_HDA_PP_MODULE_HELP              #language en-US "Enables/Disables 3rd Party Processing Module Support (identified by GUID).\nWoV must be enabled as a feature first to select relevant WoV IP."
+#string STR_PCH_HDA_PP_MODULE_HELP              #language en-US "Enables/Disables 3rd Party Processing Module Support (identified by GUID).\n"
 #string STR_PCH_HDA_PP_MODULE_2_PROMPT          #language en-US " IntelSST Speech"
 #string STR_PCH_HDA_PP_MODULE_27_PROMPT         #language en-US " AEC for Cirrus"
 #string STR_PCH_HDA_PP_MODULE_28_PROMPT         #language en-US " Waves Full and Reduced for Cirrus"

@@ -1328,6 +1328,8 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[4]|0x0         
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[5]|0x0                            # Intel Test ULS module
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[6]|0x0                            # Intel Test High Load module
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[7]|0x0                            # Intel Test SmartAmp module
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[8]|0x0                            # Realtek Extended Smart-Amp GUID-1
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[9]|0x0                            # Realtek Extended Smart-Amp GUID-2
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[27]|0x0                           # AEC for Cirrus
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[28]|0x0                           # Waves Full and Reduced for Cirrus
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[29]|0x0                           # Custom Module 'Alpha'
