@@ -984,3 +984,87 @@
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 240 - 249
       0, 0, 0, 0, 0, 0                      ///< 250 - 255
   }})}
+
+#####################################################################
+#  PTL UH LP5x AEP MEM 32GB 9600 Speed
+#     Board ID: 0x07
+#     Bom ID: 0x03 (BomIdPtlUHLp5Aep32Gb9600)
+#   Display ID: 0x00
+#       SKU ID: 0x00030007 (SkuIdPtlUHLp5AepBom32Gb9600)
+#####################################################################
+[PcdsDynamicExVpd.common.SkuIdPtlUHLp5AepBom32Gb9600]
+
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData|*|{CODE(
+  {
+    // LPDDR5x 315b 16Gb die, DDP 2Rx16 QDP, 8GB size per package
+    // Hynix H58G66BK7BX067
+    // 7500, ??-??-??-??
+    // 4 Banks, 4 bank groups, 16Gb SDRAM density
+    // 16 Row bits, 11 Column bits
+    // Non-Monolithic DRAM Device, 2 dies, 2 Channels per package
+     1,
+     {0x23,                                 ///< 0   384 SPD bytes used, 512 total
+      0x10,                                 ///< 1   SPD Revision 1.0
+      0x15,                                 ///< 2   DRAM Type: LPDDR5x SDRAM
+      0x0E,                                 ///< 3   Module Type: Not Hybrid (DRAM only) / Non-DIMM Solution (on-board DRAM)
+      0x86,                                 ///< 4   4 Bank Groups, 4 Banks, 16 Gb SDRAM density
+      0x21,                                 ///< 5   16 Rows, 11 Columns
+      0xB5,                                 ///< 6   Non-Monolithic DRAM Device, 2 die, 2 Channels per package, Signal Loading Matrix 1
+      0x08,                                 ///< 7   SDRAM Optional Features: tMAW = 8192 * tREFI, Unlimited MAC
+      0x00,                                 ///< 8   SDRAM Thermal / Refresh options: Reserved
+      0x40,                                 ///< 9   Other SDRAM Optional Features: Post package repair supported, one row per bank group, Soft PPR not supported
+      0x00,                                 ///< 10  Reserved
+      0x00,                                 ///< 11  Module Nominal Voltage: Reserved
+      0x0A,                                 ///< 12  Module Organization: 2 Rank, x16 Device Width per Channel
+      0x01,                                 ///< 13  Module Memory Bus width: 1 Channels, 16 bits channel width, no ECC
+      0x00,                                 ///< 14  Module Thermal Sensor: none
+      0x00,                                 ///< 15  Extended Module Type: Reserved
+      0x00,                                 ///< 16  Signal Loading: Data/Strobe/Mask: 2 loads, CAC: 2 loads, CS: 1 load
+      0x00,                                 ///< 17  MTB = 0.125ns, FTB = 1 ps
+      0x07,                                 ///< 18  tCKAVGmin = 0.937 ns (LPDDR5X-8533 4:1)
+      0xFF,                                 ///< 19  tCKAVGmax = 32.002 ns
+      0x92,                                 ///< 20  CAS Latencies supported (First Byte) : 14, 10, 6
+      0x55,                                 ///< 21  CAS Latencies supported (Second Byte): 28, 24, 20, 16
+      0x05,                                 ///< 22  CAS Latencies supported (Third Byte) : 36, 32
+      0x00,                                 ///< 23  CAS Latencies supported (Fourth Byte):
+      0xAA,                                 ///< 24  Minimum CAS Latency (tAAmin) = 21.25 ns
+      0x00,                                 ///< 25  Read and Write Latency Set options: Write Latency Set A and DBI-Read Disabled
+      0x90,                                 ///< 26  Minimum RAS-to-CAS delay (tRCDmin) = 18 ns
+      0xA8,                                 ///< 27  Row precharge time for all banks (tRPab) = 21 ns
+      0x90,                                 ///< 28  Minimum row precharge time (tRPpb) = 18 ns
+      0xC0,                                 ///< 29  tRFCab = 280 ns (16 Gb)
+      0x08,                                 ///< 30  tRFCab MSB
+      0x60,                                 ///< 31  tRFCpb = 140 ns (16 Gb)
+      0x04,                                 ///< 32  tRFCpb MSB
+      0, 0, 0, 0, 0, 0, 0,                  ///< 33 - 39
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 40 - 49
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 50 - 59
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 60 - 69
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 70 - 79
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 80 - 89
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 90 - 99
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 100 - 109
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 110 - 119
+      0x00,                                 ///< 120 FTB for Row precharge time per bank (tRPpb) = 18 ns
+      0x00,                                 ///< 121 FTB for Row precharge time for all banks (tRPab) = 21 ns
+      0x00,                                 ///< 122 FTB for Minimum RAS-to-CAS delay (tRCDmin) = 18 ns
+      0x00,                                 ///< 123 FTB for tAAmin = 21.25 ns
+      0x7F,                                 ///< 124 FTB for tCKAVGmax = 32.002 ns
+      0xD6,                                 ///< 125 FTB for tCKAVGmin = -58ps
+      0x00,                                 ///< 126 CRC A
+      0x00,                                 ///< 127 CRC B
+      0, 0,                                 ///< 128 - 129
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 130 - 139
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 140 - 149
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 150 - 159
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 160 - 169
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 170 - 179
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 180 - 189
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 190 - 199
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 200 - 209
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 210 - 219
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 220 - 229
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 230 - 239
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 240 - 249
+      0, 0, 0, 0, 0, 0                      ///< 250 - 255
+  }})}
