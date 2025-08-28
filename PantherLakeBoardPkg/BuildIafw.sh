@@ -484,6 +484,12 @@ if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
   export FSP_BUILD_PARAMETER=-r
 fi
 
+if [ "$FSP_SIGNED" = "TRUE" ]; then
+  export FSP_BUILD_PARAMETER=$FSP_BUILD_PARAMETER fspsigned
+else (
+  export FSP_BUILD_PARAMETER=$FSP_BUILD_PARAMETER fspunsigned
+)
+
 echo "BuildIafw.sh $FSP_ARCH $FSP64_BUILD $SYMBOL_PREFIX"
 . $WORKSPACE_COMMON/$PLATFORM_SI_PACKAGE/Fsp/BuildFsp.sh $TARGET_PLATFORM $FspTargetOption $COMPILER $FSP_BUILD_PARAMETER
 if [ $? -ne 0 ]; then

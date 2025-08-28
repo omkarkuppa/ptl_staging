@@ -430,7 +430,7 @@
   gPcAtChipsetPkgTokenSpaceGuid.PcdAcpiPm1TmrOffset|0x08
   gPcAtChipsetPkgTokenSpaceGuid.PcdAcpiIoPortBaseAddressMask|0xFFFC
 
-  gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain|TRUE
+  gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain|FALSE
 
   gClientSmbiosFeaturePkgTokenSpaceGuid.PcdSmbiosFeatureEnable|TRUE
 
@@ -456,7 +456,7 @@
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber|0x04
 
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperFeatureSupport|TRUE
-  gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp|FALSE
+  gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp|TRUE
 
   gPlatformModuleTokenSpaceGuid.PcdMultiPdtUpdateEnable|TRUE
   gPlatformModuleTokenSpaceGuid.PcdPdtSensorControlEnable|TRUE

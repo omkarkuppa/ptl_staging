@@ -71,12 +71,8 @@ set EDK_TOOLS_BIN=%WORKSPACE_CORE%\BaseTools\Bin\Win32
   set PYTHON_COMMAND=py -3
 )
 
-for %%a in (%*) do (
-  if /i "%%a"=="fspsigned" (
-    @set FSP_SIGNED =TRUE
-  ) else (
-    @set FSP_SIGNED=FALSE
-  )
+@if not defined FSP_SIGNED (
+  @set FSP_SIGNED=TRUE
 )
 
 @if not defined FSP_RESET (
@@ -120,6 +116,12 @@ set DEFAULT_TARGET_FILE=CurrentTarget.txt
       set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE ^
                                               --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0 ^
                                               --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0
+    )
+    if /i "%%a"=="fspunsigned" (
+      set FSP_RESET=TRUE
+      set FSP_SIGNED=FALSE
+      set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD% --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=FALSE
+      set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F
     )
     if /i "%%a"=="perf" (
       set PERFORMANCE_BUILD=TRUE
