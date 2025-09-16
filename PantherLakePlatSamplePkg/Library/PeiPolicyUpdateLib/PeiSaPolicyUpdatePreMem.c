@@ -1008,7 +1008,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccOperationMode, MemConfig->ExternalInputs.IbeccOperationMode,      SaSetup.IbeccOperationMode                                );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChHashOverride, MemConfig->ExternalInputs.ChHashOverride,          SaSetup.ChHashOverride                                    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DvfsqEnabled, MemConfig->ExternalInputs.DvfsqEnabled,            SaSetup.DvfsqEnabled                                      );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DvfsqEnabled, MemConfig->ExternalInputs.DvfscEnabled,            SaSetup.DvfscEnabled && PcdGet8 (VpdPcdVdd2lPowerRailPresent));
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DvfscEnabled, MemConfig->ExternalInputs.DvfscEnabled,            SaSetup.DvfscEnabled && PcdGet8 (VpdPcdVdd2lPowerRailPresent));
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VoltageReadout, MemConfig->ExternalInputs.VoltageReadout,          SaSetup.VoltageReadout                                    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CccHalfFrequency, MemConfig->ExternalInputs.CccHalfFrequency,        SaSetup.CccHalfFrequency                                  );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Ddr5AutoPrechargeEnable, MemConfig->ExternalInputs.Ddr5AutoPrechargeEnable, SaSetup.Ddr5AutoPrechargeEnable                           );
@@ -1290,8 +1290,9 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprErrorInjection, MemConfigNoCrc->PprErrorInjection,              SaSetup.PprErrorInjection              );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprForceRepair,    MemConfigNoCrc->PprForceRepair,                 SaSetup.PprForceRepair                 );
 
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardStackUp, MemConfig->ExternalInputs.BoardDetails.BoardStackUp,   PcdGet8(VpdPcdMrcBoardStackUp)                         );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardTopology, MemConfig->ExternalInputs.BoardDetails.BoardTopology,  PcdGet8(VpdPcdMrcBoardTopology)                        );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardStackUp,   MemConfig->ExternalInputs.BoardDetails.BoardStackUp,   PcdGet8(VpdPcdMrcBoardStackUp)                         );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardTopology,  MemConfig->ExternalInputs.BoardDetails.BoardTopology,  PcdGet8(VpdPcdMrcBoardTopology)                        );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SingleVdd2Rail, MemConfig->ExternalInputs.BoardDetails.SingleVdd2Rail, (PcdGet8(VpdPcdVdd2lPowerRailPresent) == 0) ? 1 : 0    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DprLock, MemConfig->ExternalInputs.DprLock,                     SetupData.TestLtDprLock         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashMask, MemConfig->ExternalInputs.SubChHashMask,               SaSetup.SubChHashMask           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashInterleaveBit, MemConfig->ExternalInputs.SubChHashInterleaveBit,      SaSetup.SubChHashInterleaveBit  );

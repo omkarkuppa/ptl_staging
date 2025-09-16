@@ -323,8 +323,10 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfigNoCrc->PprErrorInjection              = FspmUpd->FspmConfig.PprErrorInjection;
   MemConfigNoCrc->PprForceRepair                 = FspmUpd->FspmConfig.PprForceRepair;
 
-  MemConfig->ExternalInputs.BoardDetails.BoardStackUp = FspmUpd->FspmConfig.BoardStackUp;
-  MemConfig->ExternalInputs.BoardDetails.BoardTopology = FspmUpd->FspmConfig.BoardTopology;
+  MemConfig->ExternalInputs.BoardDetails.BoardStackUp   = FspmUpd->FspmConfig.BoardStackUp;
+  MemConfig->ExternalInputs.BoardDetails.BoardTopology  = FspmUpd->FspmConfig.BoardTopology;
+  MemConfig->ExternalInputs.BoardDetails.SingleVdd2Rail = FspmUpd->FspmConfig.SingleVdd2Rail;
+
   MemConfig->ExternalInputs.DprLock                = FspmUpd->FspmConfig.DprLock;
   MemConfig->ExternalInputs.SubChHashMask          = FspmUpd->FspmConfig.SubChHashMask;
   MemConfig->ExternalInputs.DqPinsInterleaved      = FspmUpd->FspmConfig.DqPinsInterleaved;

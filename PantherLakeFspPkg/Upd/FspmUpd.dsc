@@ -3765,8 +3765,13 @@
   # !BSF HELP:{Specify CKD Address table for all DIMMs}
   gPlatformFspPkgTokenSpaceGuid.CkdAddressTable              | * | 0x10 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 
-  # Added reserved space (for SA) UnusedUpdSpace0[36]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x24 | {0x00}
+  # !BSF NAME:{Single VDD2 Rail}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{LP5x VDD2 rail: 0: Dual rail (E-DVFSC is possible), 1: Single rail(No E-DVFSC; VDD2L == VDD2H)}
+  gPlatformFspPkgTokenSpaceGuid.SingleVdd2Rail               | * | 0x01 | 0
+
+  # Added reserved space (for SA) UnusedUpdSpace0[35]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x23 | {0x00}
 
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}
