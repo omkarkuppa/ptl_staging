@@ -171,6 +171,7 @@ HostBridgePreMemPrintConfig (
   DEBUG ((DEBUG_INFO, " RegBar : 0x%x\n", HostBridgePreMemConfig->RegBar));
   DEBUG ((DEBUG_INFO, " CridEnable: %d\n", HostBridgePreMemConfig->CridEnable));
   DEBUG ((DEBUG_INFO, " SafBar : 0x%lx\n", HostBridgePreMemConfig->SafBar));
+  DEBUG ((DEBUG_INFO, " FabricGVDisable : %d\n", HostBridgePreMemConfig->FabricGVDisable));
 }
 
 /**

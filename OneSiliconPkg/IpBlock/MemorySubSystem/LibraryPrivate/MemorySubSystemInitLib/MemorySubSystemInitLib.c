@@ -433,6 +433,7 @@ PeiMemorySubSystemInit (
   // Memory Cache initialization
   //
   PeiMemoryCacheInit (SiPreMemPolicyPpi);
+  IsFabricGvSupported (SiPreMemPolicyPpi);
 
   DEBUG ((DEBUG_INFO, "%a - End...\n", __FUNCTION__));
   return EFI_SUCCESS;

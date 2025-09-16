@@ -23,7 +23,7 @@
 
 #include <ConfigBlock.h>
 
-#define HOST_BRIDGE_PREMEM_CONFIG_REVISION 5
+#define HOST_BRIDGE_PREMEM_CONFIG_REVISION 6
 #define HOST_BRIDGE_PEI_CONFIG_REVISION    1
 
 extern EFI_GUID gHostBridgePeiPreMemConfigGuid;
@@ -45,6 +45,8 @@ extern EFI_GUID gHostBridgePeiConfigGuid;
   - Added CridEnable.
   <b>Revision 5</b>:
   - Resized MchBar, RegBar
+  <b>Revision 6</b>:
+  - Added FabricGVDisable.
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER  Header;               ///< Offset 0-27 Config Block Header
@@ -74,7 +76,8 @@ typedef struct {
   UINT64  SafBar;                            ///< Offset 88 Address of System Agent SafBar:             <b>0x4150000000</b>
   UINT8   EnableAbove4GBMmio;                ///< Offset 96 Enable/disable above 4GB MMIO resource support: 0=Disable, <b>1=Enable</b>
   UINT8   CridEnable;                        ///< Offset 97 For Platforms supporting Intel(R) SIPP, this policy is use control enable/disable Compatibility Revision ID (CRID) feature: <b>0=FALSE</b>, 1=TRUE
-  UINT8   RsvdBytes77[6];                       ///< Offset 98-97 Reserved to ensure config block size is a multiple of DWORDs
+  UINT8   FabricGVDisable;
+  UINT8   RsvdBytes77[5];                       ///< Offset 98-97 Reserved to ensure config block size is a multiple of DWORDs
 } HOST_BRIDGE_PREMEM_CONFIG;
 
 

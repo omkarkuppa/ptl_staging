@@ -20,6 +20,23 @@
 **/
 
 
+#define SAGV_CONFIG_HANDLER_ID                           0x22
+#define NCLK_MAILBOX_SUBCOMMAND_GET_CONFIGURATION_ID     0x10
+#define NCLK_MAILBOX_SUBCOMMAND_SET_CONFIGURATION_ID     0x11
+
+#define D2DCLK_MAILBOX_SUBCOMMAND_GET_CONFIGURATION_ID   0x20
+#define D2DCLK_MAILBOX_SUBCOMMAND_SET_CONFIGURATION_ID   0x21
+
+#define MSCLK_MAILBOX_SUBCOMMAND_GET_CONFIGURATION_ID    0x30
+#define MSCLK_MAILBOX_SUBCOMMAND_SET_CONFIGURATION_ID    0x31
+
+typedef union _FABRIC_GV_CONFIGURATION_DATA {
+  UINT32 Data;
+  struct {
+    UINT32 IsFabricGvEn    : 32;   ///<Fabric GV. 0: is enabled, 0xFFF: is disabled>
+  } Fields;
+} FABRIC_GV_CONFIGURATION_DATA;
+
 /**
   Memory cache initalization.
 
@@ -29,5 +46,10 @@
 **/
 EFI_STATUS
 PeiMemoryCacheInit (
+  IN  SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
+  );
+
+EFI_STATUS
+IsFabricGvSupported(
   IN  SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
   );

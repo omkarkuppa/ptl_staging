@@ -3495,6 +3495,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.WrDqDqsReTraining|0x1                       
 gStructPcdTokenSpaceGuid.PcdSaSetup.CnviDdrRfim|0x1                                                # Global DDR RFI Mitigation Control
 gStructPcdTokenSpaceGuid.PcdSaSetup.PmtStreamTracerMode|0x0                                        # Stream Tracer
 gStructPcdTokenSpaceGuid.PcdSaSetup.PmtStreamTracerSize|0x40                                       # Stream Tracer Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.FabricGVDisable|0x1                                            # Fabric GV Disabled
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
 gStructPcdTokenSpaceGuid.PcdSaSetup.FusaConfigEnable|0x0                                           # Fusa Config Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.Module0Lockstep|0x0                                            # Module0 Lockstep

@@ -2070,6 +2070,13 @@
           prompt = STRING_TOKEN(STR_MIPICAM_OPTIONS_FORM_TITLE),
           help   = STRING_TOKEN(STR_MIPICAM_OPTIONS_FORM_TITLE);
 #endif
+
+    oneof varid   =  SA_SETUP.FabricGVDisable,
+      prompt   = STRING_TOKEN(STR_FABRIC_GV_DISABLE_PROMPT),
+      help     = STRING_TOKEN(STR_FABRIC_GV_DISABLE_HELP),
+      option text = STRING_TOKEN (STR_ENABLED_STRING),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+    endoneof;
     endform;
 
 form formid = AUTO_ID(MEMORY_CONFIG_PPR_FORM_ID),

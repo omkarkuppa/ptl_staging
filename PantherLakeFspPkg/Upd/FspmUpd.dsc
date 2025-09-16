@@ -1868,8 +1868,11 @@
   # !BSF NAME:{Disable and Lock Watch Dog Register} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Set 1 to clear WDT status, then disable and lock WDT registers.}
   gPlatformFspPkgTokenSpaceGuid.WdtDisableAndLock           | * | 0x01 | 0x00
-  # Added reserved space  UnusedUpdSpace13[2]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd13               | * | 0x02 | {0x00}
+  
+  gPlatformFspPkgTokenSpaceGuid.FabricGVDisable             | * | 0x01 | 0x00
+
+  # Added reserved space  UnusedUpdSpace13[1]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd13               | * | 0x01 | {0x00}
 
   ## PCH_WDT_PREMEM_CONFIG End
 

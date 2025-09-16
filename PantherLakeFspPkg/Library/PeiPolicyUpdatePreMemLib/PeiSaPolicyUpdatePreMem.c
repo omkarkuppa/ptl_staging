@@ -582,6 +582,7 @@ FspUpdatePeiSaPolicyPreMem (
     Vtd->VtdDisable          = FspmUpd->FspmConfig.VtdDisable;
     Vtd->PreBootDmaMask      = FspmUpd->FspmConfig.PreBootDmaMask;
     Vtd->DmaBufferSize       = FspmUpd->FspmConfig.DmaBufferSize;
+    Vtd->CapabilityControl   = FspmUpd->FspmConfig.VtdCapabilityControl;
   }
 
   if (TelemetryPreMemConfig != NULL) {
@@ -665,6 +666,7 @@ FspUpdatePeiSaPolicyPreMem (
     HostBridgePreMemConfig->VmdMemBar1Bar        = FspmUpd->FspmConfig.VmdMemBar1Bar;
     HostBridgePreMemConfig->VmdMemBar2Bar        = FspmUpd->FspmConfig.VmdMemBar2Bar;
     HostBridgePreMemConfig->CridEnable           = FspmUpd->FspmConfig.CridEnable;
+    HostBridgePreMemConfig->FabricGVDisable      = FspmUpd->FspmConfig.FabricGVDisable;
   }
 
 #if FixedPcdGetBool(PcdIpuEnable) == 1
