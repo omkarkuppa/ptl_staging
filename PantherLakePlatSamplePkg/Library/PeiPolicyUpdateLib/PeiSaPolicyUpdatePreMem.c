@@ -625,6 +625,10 @@ UpdatePeiSaPolicyPreMem (
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SpdAddressTable[15], MemConfigNoCrc->SpdAddressTable[15], ((VPD_MRC_SPD_ADDRESS_TABLE *) PcdGetPtr (VpdPcdMrcSpdAddressTable))->SpdAddressTable[15]);
   }
 
+  for (Index = 0; Index < MEM_CFG_MAX_SOCKETS; Index++) {
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CkdAddressTable[Index], MemConfigNoCrc->CkdAddressTable[Index], ((VPD_MRC_CKD_ADDRESS_TABLE *) PcdGetPtr (VpdPcdMrcCkdAddressTable))->CkdAddressTable[Index]);
+  }
+
   NullSpdPtr = AllocateZeroPool (SPD_DATA_SIZE);
   ASSERT (NullSpdPtr != NULL);
 

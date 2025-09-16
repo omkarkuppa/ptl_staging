@@ -207,12 +207,12 @@ MrcPrintPolicyPpiPreMem (
   DEBUG((DEBUG_INFO, " SerialDebugLevel: %d\n PlatformMemorySize: 0x%lx\n", MemConfigNoCrc->SerialDebugLevel, MemConfigNoCrc->PlatformMemorySize));
   DEBUG((DEBUG_INFO, " SpdAddressTable[%d] :", MEM_CFG_MAX_SOCKETS));
   for (Index = 0; Index < MEM_CFG_MAX_SOCKETS; Index++) {
-    DEBUG ((DEBUG_INFO, " 0x%x", MemConfigNoCrc->SpdAddressTable[Index]));
+    DEBUG ((DEBUG_INFO, " 0x%02X", MemConfigNoCrc->SpdAddressTable[Index]));
   }
-  // DEBUG((DEBUG_INFO, "\n CkdAddressTable[%d] :", MEM_CFG_MAX_SOCKETS));
-  // for (Index = 0; Index < MEM_CFG_MAX_SOCKETS; Index++) {
-  //   DEBUG ((DEBUG_INFO, " 0x%x", MemConfigNoCrc->CkdAddressTable[Index]));
-  // }
+  DEBUG ((DEBUG_INFO, "\n CkdAddressTable[%d] :", MEM_CFG_MAX_SOCKETS));
+  for (Index = 0; Index < MEM_CFG_MAX_SOCKETS; Index++) {
+    DEBUG ((DEBUG_INFO, " 0x%02X", MemConfigNoCrc->CkdAddressTable[Index]));
+  }
   DEBUG ((DEBUG_INFO, "\n MrcBdatTestType: %d\n", MemConfigNoCrc->MrcBdatTestType));
   DEBUG ((DEBUG_INFO, " MrcBdatEnable: %d\n", MemConfigNoCrc->MrcBdatEnable));
 

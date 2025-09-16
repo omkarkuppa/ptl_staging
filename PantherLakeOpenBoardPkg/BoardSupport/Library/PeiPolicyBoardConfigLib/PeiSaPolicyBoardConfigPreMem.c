@@ -41,6 +41,7 @@ UpdatePeiSaPolicyBoardConfigPreMem (
   )
 {
   EFI_STATUS                         Status;
+  UINT32                             Index;
   BOOLEAN                            ExternalSpdPresent;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
@@ -126,6 +127,10 @@ UpdatePeiSaPolicyBoardConfigPreMem (
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SpdAddressTable[13], MemConfigNoCrc->SpdAddressTable[13], ((VPD_MRC_SPD_ADDRESS_TABLE *) PcdGetPtr (VpdPcdMrcSpdAddressTable))->SpdAddressTable[13]);
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SpdAddressTable[14], MemConfigNoCrc->SpdAddressTable[14], ((VPD_MRC_SPD_ADDRESS_TABLE *) PcdGetPtr (VpdPcdMrcSpdAddressTable))->SpdAddressTable[14]);
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SpdAddressTable[15], MemConfigNoCrc->SpdAddressTable[15], ((VPD_MRC_SPD_ADDRESS_TABLE *) PcdGetPtr (VpdPcdMrcSpdAddressTable))->SpdAddressTable[15]);
+  }
+
+  for (Index = 0; Index < MEM_CFG_MAX_SOCKETS; Index++) {
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CkdAddressTable[Index], MemConfigNoCrc->CkdAddressTable[Index], ((VPD_MRC_CKD_ADDRESS_TABLE *) PcdGetPtr (VpdPcdMrcCkdAddressTable))->CkdAddressTable[Index]);
   }
 
   if (((MRC_DQS *)PcdGetPtr (VpdPcdMrcDqsMapCpu2Dram))->DqsMapCpu2Dram) {

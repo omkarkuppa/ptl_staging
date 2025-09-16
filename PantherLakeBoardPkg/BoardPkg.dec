@@ -923,6 +923,12 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # MRC Ddr Frequency Limit
   gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit       |0x0|UINT16|0x00001131
 
+  # MRC CKD Address Table
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCkdAddressTable   |{0}|VPD_MRC_CKD_ADDRESS_TABLE|0x00001132 {
+  <HeaderFiles>
+    PlatformBoardConfig.h
+  }
+
   # Mrc Spd Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable   |{0}|VPD_MRC_SPD_ADDRESS_TABLE|0x00001133 {
   <HeaderFiles>

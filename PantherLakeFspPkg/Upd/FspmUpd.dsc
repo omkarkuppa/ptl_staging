@@ -3759,11 +3759,14 @@
   # !HDR STRUCT:{UINT8}
   # !BSF HELP:{Specify DDRIO Clock to CKD DIMM for CH0D0/CH0D1/CH1D0&CH1D1}
   gPlatformFspPkgTokenSpaceGuid.PhyClockToCkdDimm            | * | 0x8 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
-  # Added reserved space   UnusedUpdSpace1[4]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd42                | * | 0x4 | {0x00}
 
-  # Added reserved space (for SA) UnusedUpdSpace0[48]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x30 | {0x00}
+  # !BSF NAME:{CKD Address Table} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !HDR STRUCT:{UINT8}
+  # !BSF HELP:{Specify CKD Address table for all DIMMs}
+  gPlatformFspPkgTokenSpaceGuid.CkdAddressTable              | * | 0x10 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
+
+  # Added reserved space (for SA) UnusedUpdSpace0[36]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x24 | {0x00}
 
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}

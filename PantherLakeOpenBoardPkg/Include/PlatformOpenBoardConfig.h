@@ -113,6 +113,12 @@ typedef struct {
   UINT8   SpdAddressTable[16];
 } VPD_MRC_SPD_ADDRESS_TABLE;
 
+//SBC VPD helper structure that's used to updating Mrc CKD Address Table
+typedef struct {
+  UINT8   Size;
+  UINT8   CkdAddressTable[16];
+} VPD_MRC_CKD_ADDRESS_TABLE;
+
 // SBC VPD helper structure that's used to updating Mrc Channel to CKD QCK Mapping
 typedef struct {
   UINT8   Size;

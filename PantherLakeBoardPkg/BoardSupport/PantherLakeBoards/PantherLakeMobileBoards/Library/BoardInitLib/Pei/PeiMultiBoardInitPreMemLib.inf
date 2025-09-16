@@ -230,6 +230,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit                            ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize                            ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCkdAddressTable                        ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcDqByteMap                              ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcRcompResistor                          ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcRcompTarget                            ## CONSUMES

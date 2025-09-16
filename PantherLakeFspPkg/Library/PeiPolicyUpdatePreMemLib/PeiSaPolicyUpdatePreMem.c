@@ -211,6 +211,7 @@ FspUpdatePeiSaPolicyPreMem (
   CopyMem ((VOID *)(UINTN) MemConfigNoCrc->DqDqsMap->DqMapCpu2Dram[1][2][0], &FspmUpd->FspmConfig.DqMapCpu2DramMc1Ch2[0], MEM_CFG_NUM_BYTES_MAPPED * 8);
   CopyMem ((VOID *)(UINTN) MemConfigNoCrc->DqDqsMap->DqMapCpu2Dram[1][3][0], &FspmUpd->FspmConfig.DqMapCpu2DramMc1Ch3[0], MEM_CFG_NUM_BYTES_MAPPED * 8);
 
+  CopyMem ((VOID *) (UINTN) MemConfigNoCrc->CkdAddressTable,        &FspmUpd->FspmConfig.CkdAddressTable,        sizeof(MemConfigNoCrc->CkdAddressTable));
   CopyMem ((VOID *) (UINTN) MemConfigNoCrc->ChannelToCkdQckMapping, &FspmUpd->FspmConfig.ChannelToCkdQckMapping, sizeof(MemConfigNoCrc->ChannelToCkdQckMapping));
   CopyMem ((VOID *) (UINTN) MemConfigNoCrc->PhyClockToCkdDimm,      &FspmUpd->FspmConfig.PhyClockToCkdDimm,      sizeof(MemConfigNoCrc->PhyClockToCkdDimm));
 

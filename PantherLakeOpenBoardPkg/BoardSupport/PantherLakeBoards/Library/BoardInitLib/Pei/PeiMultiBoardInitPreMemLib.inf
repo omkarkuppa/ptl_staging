@@ -110,6 +110,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard              ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdVpdBaseAddress64      ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCkdAddressTable     ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress      ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdSpdPresent                ## CONSUMES
 

@@ -3250,17 +3250,16 @@ DEBUG_CODE_END();
       //
       for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
         DimmIn = &ChannelIn->Dimm[Dimm];
-        // Using 2 instead of MAX_DIMMS_IN_CHANNEL as MEMORY_CONFIG_NO_CRC.SpdAddressTable assumes up to 2DPC regardless of MRC definition of MAX_DIMMS_IN_CHANNEL
+        // Using 2 instead of MAX_DIMMS_IN_CHANNEL as MEMORY_CONFIG_NO_CRC.SpdAddressTable and CkdAddressTable assume up to 2DPC regardless of MRC definition of MAX_DIMMS_IN_CHANNEL
         Index  = (Controller * MAX_CHANNEL * 2) + (Channel * 2) + Dimm;
         DimmIn->SpdAddress = MemConfigNoCrc->SpdAddressTable[Index];
-        //DimmIn->CkdAddress = MemConfigNoCrc->CkdAddressTable[Index];
+        DimmIn->CkdAddress = MemConfigNoCrc->CkdAddressTable[Index];
         MrcCall->MrcCopyMem ((UINT8 *) &DimmIn->Spd.MrcSpdString[0], (UINT8 *) MrcSpdStringConst, sizeof (DimmIn->Spd.MrcSpdString));
         ZeroMem (&DimmIn->Spd.Data, sizeof (MrcSpd));
         DimmIn->Spd.Flag.Bit.DimmNumber    = Dimm;
         DimmIn->Spd.Flag.Bit.ChannelNumber = Channel;
         DimmIn->Spd.Flag.Bit.MdSocket      = (DimmIn->SpdAddress > 0) ? 1 : 0;
-        DEBUG ((DEBUG_INFO, "Spd Address for Mc %d Channel %d Dimm %d: %x\n", Controller, Channel, Dimm, DimmIn->SpdAddress));
-        //DEBUG ((DEBUG_INFO, "Ckd Address for Mc %d Channel %d Dimm %d: %x\n", Controller, Channel, Dimm, DimmIn->CkdAddress));
+        DEBUG ((DEBUG_INFO, "MC%u C%u D%u SPD Address: 0x%02X  CKD Address: 0x%02X\n", Controller, Channel, Dimm, DimmIn->SpdAddress, DimmIn->CkdAddress));
         if ((DIMM_ENABLED == DimmIn->Status) || (DIMM_DISABLED == DimmIn->Status)) {
           IsSpdMatched = FALSE;
           McNum = 0;

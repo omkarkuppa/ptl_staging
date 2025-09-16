@@ -170,6 +170,12 @@ Include
   # Mrc LP5 CCC Configuration
   gBoardModuleTokenSpaceGuid.VpdPcdMrcLp5CccConfig                |0x0|UINT8|0x00001139
 
+  # MRC CKD Address Table
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCkdAddressTable   |{0}|VPD_MRC_CKD_ADDRESS_TABLE|0x00001131 {
+  <HeaderFiles>
+    PlatformBoardConfig.h
+  }
+
   #Mrc Spd Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable|{0}|VPD_MRC_SPD_ADDRESS_TABLE|0x00001133 {
   <HeaderFiles>

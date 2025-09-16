@@ -106,6 +106,7 @@
 
   # SPD Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCkdAddressTable          ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping   ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm        ## CONSUMES
 
