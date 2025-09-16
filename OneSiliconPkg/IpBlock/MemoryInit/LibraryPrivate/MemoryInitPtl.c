@@ -1295,19 +1295,19 @@ DEBUG_CODE_END();
     // Perform simple memory test.
     //
     if (mrcFail == BasicMemoryTest (MrcData)) {
+      PERF_INMODULE_END ("MrcBasicMemoryTest");
+      REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC);
       if (MrcBootMode == bmFast) {
         if (ExtInputs->RetrainOnFastFail) {
           //
           // BasicMemoryTest failed in Fast flow - fall back to Cold boot flow.
           //
           DEBUG ((DEBUG_ERROR, "BasicMemoryTest failed in Fast flow - reset to run MRC in Cold flow !!\n\n\n"));
-          REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC);
           MrcWmRegSetBits (MrcData, SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL);
           IoWrite16 (0x80, 0);  // Clear 16-bit port80
           (*PeiServices)->ResetSystem2 (EfiResetWarm, EFI_SUCCESS, 0, NULL);
         }
       }
-      PERF_INMODULE_END ("MrcBasicMemoryTest");
       //
       // Send DRAM Init Done to ME FW, indicating 'MRC failure'
       //
@@ -1333,6 +1333,7 @@ DEBUG_CODE_END();
 #endif // MDEPKG_NDEBUG
       if (mrcFail == BasicMemoryTestS3 (MrcData)) {
         PERF_INMODULE_END ("MrcBasicMemoryTest");
+        REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC);
         //
         // Send DRAM Init Done to ME FW, indicating 'MRC failure'
         //
