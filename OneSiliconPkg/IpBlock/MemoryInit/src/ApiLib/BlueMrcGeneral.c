@@ -1536,9 +1536,6 @@ MrcSetOverrides (
     ExtInputs->TrainingEnables.ECT       = 0;
     ExtInputs->TrainingEnables2.DQDQSSWZ = 0;
     ExtInputs->TrainingEnables.JWRL      = 0;
-#ifndef HVM_MODE
-    ExtInputs->TrainingEnables3.RXDQSDCC = 0;
-#endif
   }
 
   return Status;

@@ -701,9 +701,6 @@ EncodeWriteRecoveryLpddr5 (
 
   if (MrValue != 0xFF) {
     // Check to see if the time requested matches JEDEC Frequency table
-    // @todo: Spec has conflict with itself
-    //Status = LatencyFreqCheckLpddr5 (MrcData, MrValue);
-    //MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, (Status != mrcSuccess) ? " (WR)\n" : "");
     if (EncVal != NULL) {
       *EncVal = MrValue;
     } else {
@@ -948,6 +945,7 @@ InitMrwLpddr5 (
   CaDrvStrength = Outputs->RcompTarget[WrDSCmd];
   PdDrvStr = IsNnFlexEnabled ? NnFlexInitialSettingsLpddr5[DramTypeDefault].PdDrvStr : 60;
   CsOdtEnc = 0;
+
   if (ExtInputs->DqLoopbackTest) {
 #ifndef HVM_FLAG
     Inputs->NonTargetOdtEn = 1;

@@ -32,11 +32,15 @@
 #define DDR5_NUM_OF_OPTS (7)
 
 typedef enum {
-    Card_240C = 0,
-    Card_256B = 1,
-    Card_269C = 2,
-    Card_276C = 3,
-    Card_default = 4,
+    Card_230C = 0,
+    Card_235A = 1,
+    Card_240C = 2,
+    Card_256B = 3,
+    Card_269C = 4,
+    Card_276C = 5,
+    Card_298C = 6,
+    Card_311B = 7,
+    Card_default = 8,
     Card_Max
 } CardEnum;
 
@@ -47,10 +51,16 @@ typedef enum {
   Card_269C_1R_6400 = 3,
   Card_276C_1R_6400 = 4,
   Card_276C_1R_7200 = 5,
-  Card_default_1R_6400 = 6,
-  Card_default_1R_7200 = 7,
-  Card_default_2R_6400 = 8,
-  Card_default_2R_7200 = 9,
+  Card_298C_1R_6400 = 6,
+  Card_298C_1R_7200 = 7,
+  Card_311B_2R_7200 = 8,
+  Card_311B_2R_6400 = 9,
+  Card_230C_1R_6400 = 10,
+  Card_235A_1R_6400 = 11,
+  Card_default_1R_6400 = 12,
+  Card_default_1R_7200 = 13,
+  Card_default_2R_6400 = 14,
+  Card_default_2R_7200 = 15,
   Card_NotFound
 } Ddr5ParamIndex;
 

@@ -155,7 +155,12 @@ MrcPowerMeteringConfig (
 
   //DDRPHY weights
   MrcGetDdrPhyWeights (MrcData, &ReadPower, &WritePower, &IdlePower, &CkePower);
-  MRC_DEBUG_MSG(Debug, MSG_LEVEL_NOTE, "DDRPHY Read Power = %u, Write Power = %u, Idle Power = %u, CKE power = %u\n", ReadPower, WritePower, IdlePower, CkePower);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDRPHY Read Power = %u, Write Power = %u, Idle Power = %u, CKE power = %u\n", ReadPower, WritePower, IdlePower, CkePower);
+  MRC_DEBUG_ASSERT (ReadPower  <= DDRPHY_MISC_SAUG_CR_DDR_PHY_VDDQ_POWER_ReadpJ_MAX,  Debug, "%sPower is too big!\n", "Read");
+  MRC_DEBUG_ASSERT (WritePower <= DDRPHY_MISC_SAUG_CR_DDR_PHY_VDDQ_POWER_WritepJ_MAX, Debug, "%sPower is too big!\n", "Write");
+  MRC_DEBUG_ASSERT (IdlePower  <= DDRPHY_MISC_SAUG_CR_DDR_PHY_VDDQ_POWER_IdlemW_MAX,  Debug, "%sPower is too big!\n", "Idle");
+  MRC_DEBUG_ASSERT (CkePower   <= DDRPHY_MISC_SAUG_CR_DDR_PHY_VDDQ_POWER_CKEmW_MAX,   Debug, "%sPower is too big!\n", "Cke");
+
   DdrPhyPower.Bits.ReadpJ = ReadPower;
   DdrPhyPower.Bits.WritepJ = WritePower;
   DdrPhyPower.Bits.IdlemW = IdlePower;

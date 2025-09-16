@@ -64,11 +64,15 @@ const TDFEValueDdr5 Ddr5DFETable[MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL] = {
 // AUTO-GENERATED DDR5 TABLES START
 // AUTO-GENERATED CODE
 const char* CardPartNumber[Card_Max] = {
-  "M435R1GB4PB1-CCPSG",     // Card_240C
-  "HMCGY8AKBVB318N",        // Card_256B
-  "M435RZGB4PB1-CCPRC",     // Card_269C
-  "MTC4C1016ZS1VC72BCZKFF", // Card_276C
-  "none",                   // Card_default
+  "HMCG66AHBVA312N",         // Card_230C
+  "HMCG78AHBVA312N",         // Card_235A
+  "M435R1GB4PB1-CCPSG",      // Card_240C
+  "HMCGY8AKBVB318N",         // Card_256B
+  "M435RZGB4PB1-CCPRC",      // Card_269C
+  "MTC4C1016ZS1VC72BCZKFF",  // Card_276C
+  "MTC4C10163S1VC72BHZ KFF", // Card_298C
+  "M435R8JA3MB1-CJRLC",      // Card_311B
+  "none",                    // Card_default
 };
 
 #ifdef MRC_DEBUG_PRINT
@@ -89,6 +93,12 @@ const char* Ddr5CardToName[Card_NotFound] = {
   "269C_1R_6400",
   "276C_1R_6400",
   "276C_1R_7200",
+  "298C_1R_6400",
+  "298C_1R_7200",
+  "311B_2R_7200",
+  "311B_2R_6400",
+  "230C_1R_6400",
+  "235A_1R_6400",
   "DEFAULT_1R_6400",
   "DEFAULT_1R_7200",
   "DEFAULT_2R_6400",
@@ -111,6 +121,12 @@ GetDdr5ParamIndex (
 )
 {
   switch (Card) {
+    case Card_230C:
+      if (NumOfRanks == 1 && Frequency <= 6400) return Card_230C_1R_6400;
+      break;
+    case Card_235A:
+      if (NumOfRanks == 1 && Frequency <= 6400) return Card_235A_1R_6400;
+      break;
     case Card_240C:
       if (NumOfRanks == 1 && Frequency <= 6400) return Card_240C_1R_6400;
       break;
@@ -124,6 +140,14 @@ GetDdr5ParamIndex (
     case Card_276C:
       if (NumOfRanks == 1 && Frequency <= 6400) return Card_276C_1R_6400;
       if (NumOfRanks == 1 && Frequency <= 7200) return Card_276C_1R_7200;
+      break;
+    case Card_298C:
+      if (NumOfRanks == 1 && Frequency <= 6400) return Card_298C_1R_6400;
+      if (NumOfRanks == 1 && Frequency <= 7200) return Card_298C_1R_7200;
+      break;
+    case Card_311B:
+      if (NumOfRanks == 2 && Frequency <= 6400) return Card_311B_2R_6400;
+      if (NumOfRanks == 2 && Frequency <= 7200) return Card_311B_2R_7200;
       break;
     default:
       if (NumOfRanks == 1 && Frequency <= 6400) {
@@ -150,6 +174,12 @@ const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
   { -21,   0, 120,  60,  60,  40,  48 },
   { -33, -15, 120,  60,  60,  34,  40 },
   { -33,  -8,  80,  60,  60,  40,  40 },
+  { -35,   5,  80,  60,  60,  48,  48 },
+  { -35,   5,  80,  60,  60,  48,  48 },
+  { -23,  -5, 120,  80,  80,  40,  40 },
+  { -23,  -5, 120,  80,  80,  40,  40 },
+  { -13,   0, 120,  60,  60,  40,  48 },
+  { -13,   0, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  48,  80,  40,  40 },

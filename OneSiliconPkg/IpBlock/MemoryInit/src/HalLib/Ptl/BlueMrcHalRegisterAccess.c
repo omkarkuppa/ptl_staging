@@ -2499,6 +2499,8 @@ MrcGetSetSideEffect (
   IN      INT64         *const  Value
   )
 {
+  MrcOutput *Outputs;
+  MrcFrequency Frequency;
   GSM_GT    WriteGroup;
   GSM_GT    OffsetGroup;
   GSM_GT    PiGroup;
@@ -2512,15 +2514,23 @@ MrcGetSetSideEffect (
   UINT32    SearchVal;
   UINT32    SearchVal2;
   UINT32    DriftPI;
+  UINT32    JitterPI;
+  UINT32    MinTxDqDqs;
   BOOLEAN   Gear4;
   BOOLEAN   IsLpddr5;
 
-  Gear4  = MrcData->Outputs.GearMode ? 1 : 0;
-  IsLpddr5 = MrcData->Outputs.IsLpddr5;
+  Outputs   = &MrcData->Outputs;
+  Gear4     = Outputs->GearMode ? 1 : 0;
+  IsLpddr5  = Outputs->IsLpddr5;
+  Frequency = Outputs->Frequency;
 
   // Maximum drift due to periodic retraining, assume 70ps for both LP5 and DDR5
   // Convert to PI ticks
-  DriftPI = UDIVIDEROUND (70 * 64, MrcData->Outputs.UIps);
+  DriftPI = UDIVIDEROUND (70 * 64, Outputs->UIps);
+
+  // Maximum PI jitter for RcvEn and TxDqs, assume 50ps
+  // Convert to PI ticks
+  JitterPI = UDIVIDEROUND (50 * 64, Outputs->UIps);
 
   // Read from cache or register based on the write Mode to the group
   LocalModeRead = GSM_READ_ONLY;
@@ -2554,15 +2564,22 @@ MrcGetSetSideEffect (
         }
       }
       if (SearchVal != MRC_UINT32_MAX) {
+        // Account for RcvEn jitter
+        if (SearchVal > JitterPI) {
+          SearchVal -= JitterPI;
+        }
         // Rounded down to QCLK
         SearchVal = SearchVal >> (7 + Gear4);
         GetSetVal = SearchVal;
+        if (IsLpddr5 && (Frequency > f8533) && (GetSetVal > 0)) {
+          GetSetVal -= 1;
+        }
         MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, WriteGroup, LocalModeWrite, &GetSetVal);
       }
 
     } else { // TxDqDelay, TxDqOffset, TxDqsDelay, TxDqsOffset
       // Avoid overwrite R2RDelay after Rank to Rank Training Done
-      if (!MrcData->Outputs.IsR2RDone) {
+      if (!Outputs->IsR2RDone) {
         SearchVal = MRC_UINT32_MAX;
         SearchVal2 = IsLpddr5 ? 0 : MRC_UINT32_MAX;   // Do not look at TxDqs in LP5
         for (LocalRank = 0; LocalRank < MAX_RANK_IN_CHANNEL; LocalRank++) {
@@ -2584,16 +2601,24 @@ MrcGetSetSideEffect (
           if (SearchVal > DriftPI) {
             SearchVal -= DriftPI;
           }
+          // Account for TxDqs jitter
+          if (!IsLpddr5 && (SearchVal2 > JitterPI)) {
+            SearchVal2 -= JitterPI;
+          }
           // Rounded down to QCLK
           SearchVal = SearchVal >> (7 + Gear4); // Min TxDq
           SearchVal2 = SearchVal2 >> (7 + Gear4); // Min TxDqs
-          GetSetVal = IsLpddr5 ? SearchVal : MIN (SearchVal, SearchVal2); // RankMux Delay is the min of the TxDQ/DQS across ranks, rounded down to QClk (DQS is not used in LP5)
+          MinTxDqDqs = MIN (SearchVal, SearchVal2);
+          GetSetVal = IsLpddr5 ? SearchVal : MinTxDqDqs; // RankMux Delay is the min of the TxDQ/DQS across ranks, rounded down to QClk (DQS is not used in LP5)
+          if (IsLpddr5 && (Frequency > f8533) && (GetSetVal > 0)) {
+            GetSetVal -= 1;
+          }
           MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxRankMuxDelay, LocalModeWrite, &GetSetVal);
           if (!IsLpddr5) {
-            GetSetVal2 = SearchVal - GetSetVal; // DQS is earlier, DQ is updated with the difference
+            GetSetVal2 = SearchVal - MinTxDqDqs; // DQS is earlier, DQ is updated with the difference
             MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqPi, LocalModeWrite, &GetSetVal2);
             MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqEq, LocalModeWrite, &GetSetVal2);
-            GetSetVal2 = SearchVal2 - GetSetVal; // DQ is earlier, DQS is updated with the difference
+            GetSetVal2 = SearchVal2 - MinTxDqDqs; // DQ is earlier, DQS is updated with the difference
             MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqsPi, LocalModeWrite, &GetSetVal2);
             MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqsEq, LocalModeWrite, &GetSetVal2);
           }

@@ -743,7 +743,10 @@ typedef struct {
                                   // [0:9] - bitmask corresponding to DcdType enum
                                   // [16:17] - bitmask corresponding to SweepType enum
   INT16   LeftEdgeResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS];
-} LOOPBACK_RESULT;
+  UINT32  PhClkDccMaxDelta;       // PH/DCC Max delta of Phase Clk DCC stage
+                                  // [0:15]  - value corresponding to DCC max delta
+                                  // [16:31] - value corresponding to PH max delta
+} HVM_RESULT;
 #pragma pack (pop)
 
 ///
@@ -4326,14 +4329,14 @@ LoopbackByteCentering1D (
   );
 
 /**
-  Get the loopback result struct base address
+  Get the HVM result struct base address
 
   @param[in]  MrcData - Include all MRC global data
 
-  @retval   LOOPBACK_RESULT address
+  @retval     HVM_RESULT address
 **/
-LOOPBACK_RESULT *
-GetLoopbackResultsBase (
+HVM_RESULT *
+GetHvmResultsBase (
   IN MrcParameters *const MrcData
   );
 

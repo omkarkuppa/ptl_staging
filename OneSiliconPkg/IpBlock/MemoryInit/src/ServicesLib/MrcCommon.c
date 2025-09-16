@@ -3990,6 +3990,8 @@ MrcUpdateVref (
   if (Outputs->IsLpddr && (VrefType == CmdV) && Outputs->EctDone) {
     // Set FSP-OP = 1, set High frequency
     MrcLpddrSwitchToHigh (MrcData, MRC_PRINTS_OFF);
+    // FSP-OP switch above might affect WCK sync in always-on mode, hence re-sync it
+    MrcLp5WckOffAndSync (MrcData);
   }
 }
 

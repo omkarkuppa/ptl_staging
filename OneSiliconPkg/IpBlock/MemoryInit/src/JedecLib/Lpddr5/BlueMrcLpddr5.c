@@ -624,3 +624,17 @@ MrcJedecInitLpddr5 (
 
   return Status;
 }
+
+/**
+  If WCK sync is required (WCK Always On mode and after WCK leveling):
+   - Issue CAS WS_OFF on all channels / ranks, followed by CAS WS_FS
+
+  @param[in] MrcData    - Pointer to MRC global data.
+**/
+VOID
+MrcLp5WckOffAndSync (
+  IN MrcParameters *const MrcData
+  )
+{
+  // Not used in Blue MRC
+}

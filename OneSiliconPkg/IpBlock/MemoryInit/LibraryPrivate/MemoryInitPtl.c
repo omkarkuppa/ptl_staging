@@ -3179,7 +3179,7 @@ DEBUG_CODE_END();
   Inputs->IsKeepUcssPostMrc = 0;
 
   Inputs->FourToggleReadPreamble = TRUE;
-  Inputs->InitPerDeviceNnFlex = FALSE;
+  Inputs->InitPerDeviceNnFlex = TRUE;
   Inputs->LockUiDiv6Flow = FALSE;
 
   Inputs->EnablePda = TRUE;
@@ -3206,7 +3206,6 @@ DEBUG_CODE_END();
     ControllerIn->ChannelCount = 0;
     for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
       ChannelIn = &ControllerIn->Channel[Channel];
-      DEBUG ((DEBUG_ERROR, "!!MC:%d CH:%d DisabledChannel %d!!\n", Controller, Channel, ExtInputs->DisableChannel[Controller][Channel]));
       {
         // Decide which channels are disabled.
         if (ExtInputs->DisableChannel[Controller][Channel]) {
@@ -3603,6 +3602,7 @@ BuildMemoryInfoDataHob (
     MemoryInfo->ErrorCorrectionType = MemoryErrorCorrectionNone;
   }
   MemoryInfo->EccSupport              = Outputs->EccSupport;
+  MemoryInfo->MixedEccDimms           = SaveData->IsMixedEccDimms;
   MemoryInfo->TotalPhysicalMemorySize = Outputs->MemoryMapData.TotalPhysicalMemorySize;
   // Max Rank Capacity comes from MC HAS: 16GB in DDR5 and 8GB in LP5
   MemoryInfo->MaxRankCapacity = Outputs->IsDdr5 ? 16 : 8;
