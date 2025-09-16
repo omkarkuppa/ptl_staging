@@ -590,6 +590,11 @@ IbbRegionNear4GGetDigestList (
 
   CurrPos = (UINT8 *)IbbHashPtr;
   IbbDigestCount = ((HASH_LIST*)CurrPos)->Count;
+  if (IbbDigestCount == 0 || IbbDigestCount > HASH_COUNT) {
+    DEBUG ((DEBUG_ERROR, "Invalid IbbDigestCount: 0x%04x\n", IbbDigestCount));
+    ASSERT (FALSE);
+    return EFI_INVALID_PARAMETER;
+  }
   DEBUG ((DEBUG_INFO, "IbbDigestCount = 0x%04x\n", IbbDigestCount));
 
   //
