@@ -817,6 +817,26 @@
   }}
   )}
 
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEnableDiscreteAudioOffloadPreMem| * |{CODE(
+  {
+    //
+    // CNVi GPP_F4 GPP_F5 to be at High-Z
+    //
+    {GPIOV2_PTL_PCD_XXGPP_F_4, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone,  GpioV2StateLow, GpioV2IntDis, GpioV2ResetHost,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock  }},
+    {GPIOV2_PTL_PCD_XXGPP_F_5, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone,  GpioV2StateLow, GpioV2IntDis, GpioV2ResetHost,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock  }},
+    {0x0}
+  })}
+
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableDisableDiscreteAudioOffloadPreMem| * |{CODE(
+  {
+    //
+    // I2S GPP_S5 GPP_S6 to be at High-Z
+    //
+    {GPIOV2_PTL_PCD_XXGPP_S_5, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone,  GpioV2StateLow, GpioV2IntDis, GpioV2ResetHost,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock  }},
+    {GPIOV2_PTL_PCD_XXGPP_S_6, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone,  GpioV2StateLow, GpioV2IntDis, GpioV2ResetHost,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock  }},
+    {0x0}
+  })}
+
 
 #####################################################################
 #  PTL UH DDR5 T3 - RVP4 Dp
