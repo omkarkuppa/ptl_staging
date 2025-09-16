@@ -43,14 +43,14 @@
     //
     // QuickI2C -> _CRS _DSD equivalent
     //
-    Name(ICRS, Buffer(12){})
+    Name(ICRS, Buffer(11){})
     CreateWordField (ICRS, 0x00, DADR)  // WORD: HIDI2C Device address
     CreateQWordField (ICRS, 0x02, DSPD) // Integer: Requested Connection Speed
     CreateByteField (ICRS, 0xA, DADM)   // BYTE: Addressing Mode
     //
     // I2C SubIP configuration data
     //
-    Name(ISUB, Buffer(177){})
+    Name(ISUB, Buffer(176){})
     CreateQWordField (ISUB, 0x00, SMHX) // Integer: Standard Mode (100 kbit/s) Serial Clock Line HIGH Period
     CreateQWordField (ISUB, 0x08, SMLX) // Integer: Standard Mode (100 kbit/s) Serial Clock Line LOW Period
     CreateQWordField (ISUB, 0x10, SMTD) // Integer: Standard Mode (100 kbit/s) Serial Data Line Transmit Hold Period
