@@ -123,7 +123,9 @@ InitCpuPmConfigBySetupValues (
   //
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableHwpAutoPerCorePstate, CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate, CpuSetup->EnableHwpAutoPerCorePstate);
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableHwpAutoEppGrouping, CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping, CpuSetup->EnableHwpAutoEppGrouping);
-  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableDynamicEfficiencyControl, CpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl, CpuSetup->EnableDynamicEfficiencyControl);
+
+  //
+  // Update Dynamic Efficiency Control
 
   //
   // Power Floor Survivability controls

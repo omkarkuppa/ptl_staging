@@ -304,6 +304,7 @@ LoadCpuPowerMgmtBasicConfigDefault (
   CpuPowerMgmtBasicConfig->HwpInterruptControl            = TRUE;
   CpuPowerMgmtBasicConfig->PowerFloorManagement           = TRUE;
   CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade     = TRUE;
+  CpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl = TRUE;
 
   ///
   /// Hwp misc functions

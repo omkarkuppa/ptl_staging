@@ -342,9 +342,6 @@
 #string STR_CPU_HWP_AUTO_EPP_GROUPING           #language en-US "HwP Autonomous EPP Grouping"
 #string STR_CPU_HWP_AUTO_EPP_GROUPING_HELP      #language en-US "Enable EPP grouping Autonomous will request the same values for all cores with same EPP. Disable EPP grouping autonomous will not necessarily request same values for all cores with same EPP."
 
-#string STR_CPU_DYNAMIC_EFFICIENCY_CONTRO       #language en-US "Dynamic Efficiency Control"
-#string STR_CPU_DYNAMIC_EFFICIENCY_CONTRO_HELP  #language en-US "Enable or Disable SoC to control energy efficiency targets autonomously, regardless of EPP, EPB and other SW inputs."
-
 #string STR_FAST_MSR_HWP_REQ_PROMPT             #language en-US "HwP Fast MSR Support"
 #string STR_FAST_MSR_HWP_REQ_HELP               #language en-US "Enable/Disable HwP Fast MSR Support for IA32_HWP_REQUEST MSR."
 
