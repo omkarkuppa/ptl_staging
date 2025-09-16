@@ -85,33 +85,6 @@ IsHdaControllerReset (
   );
 
 /**
-  Function gets DSP out of reset and confirms that DSP is alive
-
-  @param[out]  HdaBar             Pointer to DSP BAR
-
-  @retval EFI_SUCCESS             DSP is out of reset
-  @retval EFI_UNSUPPORTED         HDA is not enabled
-  @retval EFI_DEVICE_ERROR        Polling CPA bit timed out, DSP is not out of reset
-**/
-EFI_STATUS
-GetDspOutOfReset (
-  OUT UINTN    HdaBar
-  );
-
-/**
-  Function resets DSP and confirms that DSP is in reset state
-
-  @param[out]  HdaBar             DSP BAR
-
-  @retval EFI_SUCCESS             DSP is in reset
-  @retval EFI_DEVICE_ERROR        Polling CPA bit timed out, DSP is still out of reset
-**/
-EFI_STATUS
-ResetDsp (
-  OUT UINTN    HdaBar
-  );
-
-/**
   Function sets HDA BAR (if not set) and enables MMIO access
 
   @param[in, out] HdaBar            Pointer to HDA base address

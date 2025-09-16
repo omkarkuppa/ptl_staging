@@ -369,7 +369,7 @@ SndwControllerInit (
   MmioAnd32 ((UINTN) SndwControllerMmioAddress + R_SNDW_MEM_CONFIG, (UINT32) ~B_SNDW_MEM_CONFIG_OM_NORMAL);
 
   //
-  // Write 0 to MCP_ConfigUpdate to update controller settings
+  // Write 1 to MCP_ConfigUpdate to update controller settings
   //
   MmioWrite32 ((UINTN) SndwControllerMmioAddress + R_SNDW_MEM_CONFIGUPDATE, (UINT32) B_SNDW_MEM_CONFIGUPDATE_UPDATE_DONE);
 
@@ -574,6 +574,44 @@ GetSndwLinkOutOfReset (
   return EFI_SUCCESS;
 }
 
+/**
+  Function put Sndw IP controller in reset state.
+
+  @param[in] SndwLinkIndex        Soundwire link index
+
+  @retval EFI_SUCCESS             The controller was successfully reset.
+  @retval EFI_TIMEOUT             Could not reset the controller, polling CPA bit timed out.
+**/
+EFI_STATUS
+ResetSndwLink (
+  IN UINTN     HdaBar,
+  IN UINTN     SndwLinkIndex
+  )
+{
+  EFI_STATUS   Status;
+
+  DEBUG ((DEBUG_INFO, "Sndw#%d: set SPA to 0, waiting for CPA.\n", SndwLinkIndex));
+  ///
+  /// Set SNDWLCTL.SPA = 0 to get SoundWire Controllet in reset state.
+  ///
+  MmioAnd32 ((UINTN) (HdaBar + R_HDA_MEM2_SNDW_SNDWLCTL), (UINT32)~B_HDA_MEM2_SNDW_SNDWLCTL_SPA (SndwLinkIndex));
+
+  ///
+  /// Wait until SNDWLCTL.CPA = 0 to confirm SoundWire controller reset state.
+  ///
+  Status = StatusPolling (
+             (UINTN) (HdaBar + R_HDA_MEM2_SNDW_SNDWLCTL),
+             (UINT32) B_HDA_MEM2_SNDW_SNDWLCTL_CPA (SndwLinkIndex),
+             (UINT32) 0
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Sndw#%d stalled!\n", SndwLinkIndex));
+    return Status;
+  }
+
+  DEBUG ((DEBUG_INFO, "Sndw#%d: CPA is set to 0, controller in reset state. Status = %r\n", SndwLinkIndex, Status));
+  return EFI_SUCCESS;
+}
 
 /**
   Function allows to define Sndw controller mmio address.
@@ -649,12 +687,6 @@ InitializeSndwControllers (
   EFI_STATUS  Status;
   UINTN       SndwControllerMmioOffset;
   UINT32      SndwLinkIndex;
-
-  Status = GetDspOutOfReset (HdaBar);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "%a () - End. Status = %r\n", __FUNCTION__, Status));
-    return EFI_DEVICE_ERROR;
-  }
 
   ///
   /// Read number of supported links
@@ -1077,6 +1109,9 @@ SndwAccessDisable (
   BOOLEAN                    IsTemporaryBar;
   SNDW_ACCESS_CONTEXT        *SndwAccessContext;
   EFI_STATUS                 Status;
+  UINT32                     SndwLinkIndex;
+  UINT32                     NumberOfSupportedSndwLinks;
+  UINTN                      SndwControllerMmioOffset;
 
   SndwAccessContext = SNDW_ACCESS_CONTEXT_FROM_SNDW_ACCESS_PPI_PROTOCOL (This);
 
@@ -1096,10 +1131,38 @@ SndwAccessDisable (
     return Status;
   }
 
-  ResetDsp (HdaBar);
+  MmioAnd32 ((HdaBar + R_ACE_MEM_PPCTL), (UINT32) ~B_ACE_MEM_PPCTL_GPROCEN);
+  DEBUG ((DEBUG_INFO, "PPCTL.GPROCEN = 0x%x\n", !!(MmioRead32 (HdaBar + R_ACE_MEM_PPCTL) & B_ACE_MEM_PPCTL_GPROCEN)));
+
+  Status = GetNumberOfSupportedSndwLinks (HdaBar, &NumberOfSupportedSndwLinks);
+  DEBUG ((DEBUG_INFO, "Number of Supported Sndw Links %d\n", NumberOfSupportedSndwLinks));
+
+  for (SndwLinkIndex = 0; SndwLinkIndex < NumberOfSupportedSndwLinks; SndwLinkIndex++) {
+    GetLinkControllerMmioAddress (HdaBar, SndwLinkIndex, &SndwControllerMmioOffset);
+    DEBUG ((DEBUG_INFO, "Sndw#%d: Controller mmio address: 0x%X.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
+
+    MmioAnd32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) ~B_SNDW_MEM_CONFIG_OM_NORMAL);
+    MmioOr32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) V_SNDW_MEM_CONFIG_OM_RESET_VALUE);
+
+    // Clear Shim register SNDWxACTMCTL, bit DACTQE=0b
+    MmioAnd16 ((UINTN) (HdaBar + R_HDA_MEM2_SNDW_SNDWxACTMCTL (SndwLinkIndex)), (UINT16) ~B_HDA_MEM2_SNDW_SNDWxACTMCTL_DACTQE);
+    // Clear Shim register SNDWxIOCTL, bit MIF=0b
+    MmioAnd16 ((UINTN) (HdaBar + R_HDA_MEM2_SNDW_SNDWxIOCTL (SndwLinkIndex)), (UINT16) ~B_HDA_MEM2_SNDW_SNDWxIOCTL_MIF);
+
+    //
+    // Write 1 to MCP_ConfigUpdate to update controller settings
+    //
+    MmioWrite32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIGUPDATE, (UINT32) B_SNDW_MEM_CONFIGUPDATE_UPDATE_DONE);
+
+    Status = ResetSndwLink (HdaBar, SndwLinkIndex);
+    if (EFI_ERROR (Status)) {
+      break;
+    }
+  }
+
   DisableHdaDspMmioAccess (SndwAccessContext->PciIo, IsTemporaryBar);
 
-  return EFI_SUCCESS;
+  return Status;
 }
 
 /**

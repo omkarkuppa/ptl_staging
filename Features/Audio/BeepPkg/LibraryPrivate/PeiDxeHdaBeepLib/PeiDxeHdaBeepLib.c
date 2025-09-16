@@ -936,7 +936,6 @@ HdaDisable (
     return Status;
   }
 
-  ResetDsp (HdaBar);
   DisableHdaDspMmioAccess (HdaBeepContext->PciIo, IsTemporaryBar);
 
   DEBUG ((DEBUG_INFO, "%a () - End.\n", __FUNCTION__));

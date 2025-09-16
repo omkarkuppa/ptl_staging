@@ -25,6 +25,7 @@
 #define R_SNDW_MEM_CONFIG                              0x4100
 #define B_SNDW_MEM_CONFIG_MODE_AHB                     BIT3
 #define B_SNDW_MEM_CONFIG_OM_NORMAL                    (BIT2 | BIT1 | BIT0)
+#define V_SNDW_MEM_CONFIG_OM_RESET_VALUE               (BIT2 | BIT0)
 #define R_SNDW_MEM_CTRL                                0x4104
 #define B_SNDW_MEM_CTRL_BLOCKWAKEUP                    BIT0
 #define B_SNDW_MEM_CTRL_CLOCKSTOPCLEAR                 BIT2
