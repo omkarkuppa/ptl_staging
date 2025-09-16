@@ -58,13 +58,8 @@
   gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable            |FALSE
   gSiPkgTokenSpaceGuid.PcdPsmiEnable                   |TRUE
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable               |0x0
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
-  gSiPkgTokenSpaceGuid.PcdTsnSupport                   |0x0
-  gSiPkgTokenSpaceGuid.PcdFusaSupport                  |0x1
-!else
   gSiPkgTokenSpaceGuid.PcdTsnSupport                   |0x0
   gSiPkgTokenSpaceGuid.PcdFusaSupport                  |0x0
-!endif
   gSiPkgTokenSpaceGuid.PcdCanSupport                   |0x0
   gSiPkgTokenSpaceGuid.PcdTccSupport                   |0x0
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
