@@ -264,7 +264,7 @@
   # EC FailSafe Fan Speed Setting
   gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|65
 
-  gBoardModuleTokenSpaceGuid.VpdPcdEcUart|*|TRUE
+  gBoardModuleTokenSpaceGuid.VpdPcdEcUart|*|FALSE
 
   # Touch Panel1 Table
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableTouchPanel0|*|{CODE({
