@@ -4013,6 +4013,153 @@ ConnectDriversToRequiredPciControllers (
   FreePool (HandleBuffer);
 }
 
+#define BT_PCI_ANY_SUBSYSTEM_ID 0xFFFF
+#define BT_PCI_DEVICE(dev, subdev) \
+  .VendorId = INTEL_VENDOR_ID,     \
+  .DeviceId = (UINT16)dev,         \
+  .SubsystemId = (UINT16)subdev
+
+typedef struct {
+  UINT16 VendorId;
+  UINT16 DeviceId;
+  UINT16 SubsystemId;
+} BT_PCI_DEVICE_ID;
+
+BT_PCI_DEVICE_ID mPciBtHciInfo[] = {
+  {BT_PCI_DEVICE (0xE476, BT_PCI_ANY_SUBSYSTEM_ID)}, // ScP [Panther Lake-P]
+  {BT_PCI_DEVICE (0xE376, BT_PCI_ANY_SUBSYSTEM_ID)}, // ScP [Panther Lake-H/Px]
+  {BT_PCI_DEVICE (0x4D76, BT_PCI_ANY_SUBSYSTEM_ID)}, // BlzI [Wildcat Lake )]
+  {BT_PCI_DEVICE (0x0111, BT_PCI_ANY_SUBSYSTEM_ID)}, // Spider Peak
+  {BT_PCI_DEVICE (0x0112, BT_PCI_ANY_SUBSYSTEM_ID)}, // BCamel Peak
+  { 0 }
+};
+
+/**
+@brief Check if the PCI device is a Bluetooth HCI Device.
+
+@param Id Pointer to the Bluetooth PCI device ID.
+@param Config Pointer to the PCI configuration space.
+
+@RetVal TRUE if the device is a Bluetooth HCI Device, FALSE otherwise.
+**/
+static
+BOOLEAN
+MatchBtPciDevice (
+IN const BT_PCI_DEVICE_ID *Id,
+IN const PCI_TYPE00       *Config
+)
+{
+  if (Id->VendorId != Config->Hdr.VendorId) return FALSE;
+  if (Id->DeviceId != Config->Hdr.DeviceId) return FALSE;
+  if (Id->SubsystemId == BT_PCI_ANY_SUBSYSTEM_ID) return TRUE;
+
+  return Id->SubsystemId == Config->Device.SubsystemID;
+}
+
+/**
+Check if the PCI device is a Bluetooth HCI controller.
+
+@param PciIo Pointer to the EFI_PCI_IO_PROTOCOL instance.
+
+@RetVal TRUE If the PCI device is a Bluetooth HCI controller.
+@RetVal FALSE If the PCI device is not a Bluetooth HCI controller.
+**/
+
+BOOLEAN
+IsPciBtHci (
+IN EFI_PCI_IO_PROTOCOL *PciIo
+)
+{
+  PCI_TYPE00 PciConfig;
+  EFI_STATUS Status;
+
+  Status = PciIo->Pci.Read (
+             PciIo,
+             EfiPciIoWidthUint32,
+             0,
+             sizeof(PciConfig) / sizeof(UINT32),
+             &PciConfig
+          );
+
+  if (EFI_ERROR(Status)) {
+    return FALSE;
+  }
+
+  for (UINT64 i = 0; i < ARRAY_SIZE(mPciBtHciInfo); ++i) {
+    const BT_PCI_DEVICE_ID *id = &mPciBtHciInfo[i];
+    if (id->VendorId == 0)
+      break;
+    if (MatchBtPciDevice (id, &PciConfig)) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+/**
+Connect Bluetooth PCI Controller
+*/
+VOID
+ConnectBtPciController (
+VOID
+)
+{
+  EFI_STATUS          Status;
+  EFI_HANDLE          DeviceHandle;
+  EFI_HANDLE          *HandleBuffer;
+  UINTN               HandleCount;
+  UINTN               Index;
+  EFI_PCI_IO_PROTOCOL *PciIo;
+
+  DEBUG ((DEBUG_INFO, "%a \n", __FUNCTION__));
+
+  DeviceHandle = NULL;
+  HandleBuffer = NULL;
+  HandleCount  = 0;
+
+  Status = gBS->LocateHandleBuffer(
+                  ByProtocol,
+                  &gEfiPciIoProtocolGuid,
+                  NULL,
+                  &HandleCount,
+                  &HandleBuffer
+                );
+
+  if (!EFI_ERROR (Status) && HandleBuffer != NULL) {
+    for (Index = 0; Index < HandleCount; Index++) {
+      Status = gBS->HandleProtocol(
+                      HandleBuffer[Index],
+                      &gEfiPciIoProtocolGuid,
+                      (VOID**) &PciIo
+                    );
+      if (!EFI_ERROR (Status)) {
+        if (IsPciBtHci (PciIo)) {
+          DeviceHandle = HandleBuffer[Index];
+          break;
+        }
+      }
+    }
+  }
+
+  if (HandleBuffer != NULL) {
+    FreePool (HandleBuffer);
+  }
+
+  if (DeviceHandle != NULL) {
+    Status = gBS->ConnectController (DeviceHandle, NULL, NULL, TRUE);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "ConnectController BT PCI - %r\n", Status));
+      return;
+    }
+    DEBUG ((DEBUG_ERROR, "ConnectController BT PCI - %r\n", Status));
+    gDS->Dispatch ();
+    return;
+  }
+
+  gDS->Dispatch ();
+  return;
+}
+
 /**
   This function is called from the core after console devices have been
   connected.
@@ -4244,6 +4391,7 @@ PlatformBootManagerAfterConsole (
   AmtPerformOneClickRecoveryBoot ();
 
   PlatformBootManagerAttemptUsbBoot ();
+  ConnectBtPciController();
   FastBootUpdateTimeoutVariable ();
 }
 
