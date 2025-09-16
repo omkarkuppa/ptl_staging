@@ -183,6 +183,7 @@
 #define MRC_PER_DEVICE_UPDATE           (0xDD8B)
 #define MRC_PH_CLK_CHECK                (0xDD8C)
 #define MRC_WRITE_EQ                    (0xDD8D)
-#define MRC_POST_CODE_LAST              (MRC_WRITE_EQ) // IMPORTANT: Keep aligned to the largest post code
+#define MRC_CHECK_LP5_FREQUENCY         (0xDD8E)
+#define MRC_POST_CODE_LAST              (MRC_CHECK_LP5_FREQUENCY) // IMPORTANT: Keep aligned to the largest post code
 
 #endif

@@ -55,8 +55,15 @@ MrcBoardAndSkuFreqCheck (
   IsFreqLimitedBoard = (BoardDetails->BoardStackUp == 1);
   SkuType            = Inputs->SkuType;
 
-  if (IsFreqLimitedBoard && IsLpddr5) { // T3
-    FreqMax = f7467;
+  if (IsLpddr5) {
+    if (IsFreqLimitedBoard) { // Type3
+      // FreqMax = (Inputs->IsLp5SpeedLimited) ? f7467 : f8533; // For possible increase of Type3 to 8533
+      FreqMax = f7467;
+    } else {                  // Type4
+      if (Inputs->IsLp5SpeedLimited) {
+        FreqMax = f8533;
+      }
+    }
   }
 
   if (Inputs->Lpddr5Camm) {

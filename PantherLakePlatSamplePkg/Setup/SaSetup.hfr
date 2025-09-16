@@ -595,6 +595,7 @@
           option text = STRING_TOKEN(STR_DDR3_FREQ_8000_STRING), value = 8000, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_8533_STRING), value = 8533, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_9600_STRING), value = 9600, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DDR3_FREQ_10667_STRING),value = 10667,flags = RESET_REQUIRED;
         endoneof;
       endif;
 
@@ -632,6 +633,14 @@
           option text = STRING_TOKEN(STR_DDR3_FREQ_9600_STRING), value = 9600, flags = RESET_REQUIRED;
         endoneof;
       endif;
+
+      oneof varid  = SA_SETUP.Lp5SafeSpeed,
+        prompt     = STRING_TOKEN (STR_LP5_SAFE_SPEED_PROMPT),
+        help       = STRING_TOKEN (STR_LP5_SAFE_SPEED_HELP),
+        default    = 1, defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN (STR_DISABLED_STRING),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED_STRING),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
 
       oneof varid    = SA_SETUP.HobBufferSize,
         prompt   = STRING_TOKEN(STR_HOB_BUFFER_SIZE_PROMPT),

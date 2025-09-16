@@ -271,7 +271,8 @@ typedef struct {
   UINT32  DisableSwitchDfiToMc      : 1;  ///<            Bit 24     keep the control of the DFI with the PHY/MPTU or switching it to MC (after cold boot) : <b>1=Enable, 0=Disable(Default)
   UINT32  DqLoopbackTest            : 1;  ///<            Bit 25     Control Dq Loopback test: 0: Disable, 1: Enable
   UINT32  DunitTatOptimization      : 1;  ///<            Bit 26     Optimize Dunit TAT Timings
-  UINT32  SvReservedBits            : 5;  ///<            Bit 27-31  Reserved
+  UINT32  Lp5SafeSpeed              : 1;  ///<            Bit 27     LP5 safe speed: 0 = Disabled, 1 = Enabled
+  UINT32  SvReservedBits            : 4;  ///<            Bit 28-31  Reserved
 
   UINT8   RowPressEn;                     ///< Offset 324 Enable/disable ROW PRESS feature
   UINT8   WeaklockEn;                     ///< Offset 325 Weak Lock Enable: <b>0=Auto</b>, 1=Enable, 2=Disable

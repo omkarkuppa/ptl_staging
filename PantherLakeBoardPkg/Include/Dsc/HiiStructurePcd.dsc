@@ -3858,6 +3858,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.SpineAndPhclkGateControl|0x0                
 gStructPcdTokenSpaceGuid.PcdSaSetup.SpineGatePerLpmode|0x7                                         #            Bit 15-18  SPINE Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.PhclkGatePerLpmode|0x0                                         #            Bit 19-23  PHCLK Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisableSwitchDfiToMc|0x0                                       #            Bit 24     Disable Switch DFI to MC after cold boot
+gStructPcdTokenSpaceGuid.PcdSaSetup.Lp5SafeSpeed|0x1                                               #            Bit 27     LP5 safe speed: 0 = Disabled, 1 = Enabled
 gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
 gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 # Offset 325 - DLL Weak Lock Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsDelayCompEn|0x0                                           # Offset 326 - Rx DQS Delay Comp Support

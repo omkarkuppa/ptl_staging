@@ -327,9 +327,6 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.DprLock                = FspmUpd->FspmConfig.DprLock;
   MemConfig->ExternalInputs.SubChHashMask          = FspmUpd->FspmConfig.SubChHashMask;
   MemConfig->ExternalInputs.DqPinsInterleaved      = FspmUpd->FspmConfig.DqPinsInterleaved;
-  //
-  // SA:Begin
-  // //
   MemConfig->ExternalInputs.MimicWcDisaplayInIpq   = FspmUpd->FspmConfig.MimicWcDisaplayInIpq;
   MemConfig->ExternalInputs.FakeSagv               = FspmUpd->FspmConfig.FakeSagv;
   MemConfig->ExternalInputs.DisableZq              = FspmUpd->FspmConfig.DisableZq;
@@ -369,7 +366,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.Trwdr                  = FspmUpd->FspmConfig.tRWDR;
   MemConfig->ExternalInputs.Trwdd                  = FspmUpd->FspmConfig.tRWDD;
   MemConfig->ExternalInputs.Interpreter            = FspmUpd->FspmConfig.Interpreter;
-   MemConfig->ExternalInputs.OCSafeMode            = FspmUpd->FspmConfig.OCSafeMode;
+  MemConfig->ExternalInputs.OCSafeMode             = FspmUpd->FspmConfig.OCSafeMode;
   MemConfig->ExternalInputs.IoOdtMode              = FspmUpd->FspmConfig.IoOdtMode;
   MemConfig->ExternalInputs.CccHalfFrequency       = FspmUpd->FspmConfig.CccHalfFrequency;
   MemConfig->ExternalInputs.Ddr5AutoPrechargeEnable = FspmUpd->FspmConfig.Ddr5AutoPrechargeEnable;
@@ -379,9 +376,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.RowPressEn             = FspmUpd->FspmConfig.RowPressEn;
   MemConfig->ExternalInputs.MrcFailureOnUnsupportedDimm = FspmUpd->FspmConfig.MrcFailureOnUnsupportedDimm;
   MemConfig->ExternalInputs.Use1p5ReadPostamble    = FspmUpd->FspmConfig.Use1p5ReadPostamble;
-  //
-  // SA:End
-  //
+  MemConfig->ExternalInputs.Lp5SafeSpeed           = FspmUpd->FspmConfig.Lp5SafeSpeed;
   //
   // Enabling Probeless Trace will need to enable IED together
   //

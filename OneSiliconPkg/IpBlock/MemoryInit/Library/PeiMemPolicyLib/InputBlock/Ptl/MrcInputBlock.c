@@ -361,6 +361,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_DisableSwitchDfiToMc     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DunitTatOptimization     (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Lp5SafeSpeed             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SvReservedBits           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_RowPressEn                      (0)
@@ -747,6 +748,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_DisableSwitchDfiToMc,
     MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest,
     MRC_EXT_INPUTS_INIT_VAL_DunitTatOptimization,
+    MRC_EXT_INPUTS_INIT_VAL_Lp5SafeSpeed,
     MRC_EXT_INPUTS_INIT_VAL_SvReservedBits,
     MRC_EXT_INPUTS_INIT_VAL_RowPressEn,
     MRC_EXT_INPUTS_INIT_VAL_WeaklockEn,

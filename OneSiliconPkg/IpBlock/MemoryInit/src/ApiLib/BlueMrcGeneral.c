@@ -2155,10 +2155,14 @@ MrcPrintInputParameters (
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tLp5SafeSpeed: %u\n"
+    "\tIsLp5SpeedLimited: %u\n"
     "\tForceCkdBypass: %Xh\n"
     "\tIsDdrphyx64: %Xh\n"
     "\tSenseAtRxDll: %Xh\n"
     "\tWckModeOverride: %u\n",
+    ExtInputs->Lp5SafeSpeed,
+    Inputs->IsLp5SpeedLimited,
     ExtInputs->ForceCkdBypass,
     Inputs->IsDdrphyx64,
     Inputs->SenseAtRxDll,

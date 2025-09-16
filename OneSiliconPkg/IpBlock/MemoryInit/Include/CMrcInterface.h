@@ -689,6 +689,7 @@ typedef enum {
   OemVccLvrInit,            ///< before Vcc Lvr init configuration
   OemReadDqDqsIdle,         ///< before RDTC with Idle stress
   OemPhClkCheck,            ///< before Phase Clk check
+  OemCheckLp5Frequency,     ///< before CheckLp5Frequency
   ///
   ///*********************************************************************************
   ///
@@ -2390,7 +2391,8 @@ typedef struct {
   BOOLEAN PhClkCheck;                    ///< Phase Clock Check
   UINT8   PhClkCheckPerLanePhError;      ///< Min to max tolerance for the per-lane PhClkCheck (phase). 0 - Auto
   UINT8   PhClkCheckPerLanePiLinError;   ///< Min to max tolerance for the per-lane PhClkCheck (PI Linearity). 0 - Auto
-//UINT8   Reserved3[4];                  ///< Reserved to ensure config block size is a multiple of DWORDs
+  BOOLEAN IsLp5SpeedLimited;             ///< Reduce top LP5 speed
+  UINT8   Reserved3[3];                  ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

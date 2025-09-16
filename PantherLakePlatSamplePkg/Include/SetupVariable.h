@@ -1285,9 +1285,10 @@ typedef struct {
   <b>Revision 18</b>: - Add Nest Support and Posted Interrupt Support variables for Vt-d
   <b>Revision 19</b>: - Add TbtPerfBoostEn for TBT Performance Boost Enable/Disable.
   <b>Revision 20</b>: - Add Fabric GV support.
+  <b>Revision 21</b>: - Add Lp5SafeSpeed
 **/
 
-#define SA_SETUP_REVISION   20
+#define SA_SETUP_REVISION   21
 
 typedef struct {
   UINT8   Revision;
@@ -1801,7 +1802,8 @@ typedef struct {
   UINT8   TbtPerfBoostEn;
 
   UINT8   FabricGVDisable;
-  UINT8   Rsvd[16];
+  UINT8   Lp5SafeSpeed;
+  UINT8   Rsvd[15];
 } SA_SETUP;
 
 /**

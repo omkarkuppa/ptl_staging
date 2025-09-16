@@ -1232,6 +1232,19 @@ MrcIsDramEdvfscSupported (
   );
 
 /**
+  Read LP5 Frequency capability from MR8
+
+  @param[in] MrcData - include all the MRC general data.
+
+  @retval mrcDramSafeSpeedUpdate if DRAM frequency capability is higher than the current safe speed
+  @retval mrcSuccess             Otherwise
+**/
+MrcStatus
+MrcCheckLp5Frequency (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   Get tFC delay which depends on DDR data rate.
 
   @param[in] Frequency DDR data rate.

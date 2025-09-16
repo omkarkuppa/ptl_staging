@@ -87,6 +87,7 @@ typedef enum {
   mrcEyeWidthError,
   mrcPPRBankRowUnavailable,
   mrcDramNotSupportEdvfsc,
+  mrcDramSafeSpeedUpdate,
   mrcStatusMax
 } MrcStatus;
 

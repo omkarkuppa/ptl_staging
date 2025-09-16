@@ -1507,11 +1507,16 @@
   # !BSF HELP:{Enables/Disables WCK Idle Exit}
   gPlatformFspPkgTokenSpaceGuid.IsWckIdleExitEnabled        | * | 0x01 | 0x01
 
+  # !BSF NAME:{LP5 Safe Speed}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable / Disable LP5 Safe Speed feature}
+  gPlatformFspPkgTokenSpaceGuid.Lp5SafeSpeed                | * | 0x01 | 0x01
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 17  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 16  | {0x00}
 
   #
   # MRC Block End

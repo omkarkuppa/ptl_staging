@@ -1167,6 +1167,14 @@ DEBUG_CODE_END();
         DEBUG ((DEBUG_ERROR, "Re-run MRC with E-DVFSC disabled\n"));
         break;
 
+      case mrcDramSafeSpeedUpdate:
+        // Clear MrcSave and MrcOutputs as we are going to restart the MRC core with Inputs->IsLp5SpeedLimited = 0
+        ZeroMem (&MrcData->Save, sizeof (MrcSave));
+        ZeroMem (&MrcData->Outputs, sizeof (MrcOutput));
+        MRC_DEBUG_MSG_OPEN (MrcData, Inputs->SerialDebugLevel, Inputs->DebugStream);
+        DEBUG ((DEBUG_ERROR, "Re-run MRC with IsLp5SpeedLimited = 0\n"));
+        break;
+
       case mrcResetFullTrain:
         // Margin Check failed, reset and do full training
         REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_CORRECTABLE);
@@ -1226,7 +1234,7 @@ DEBUG_CODE_END();
         ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
     }
-  } while ((MrcStatus == mrcColdBootRequired) || (MrcStatus == mrcDramNotSupportEdvfsc));
+  } while ((MrcStatus == mrcColdBootRequired) || (MrcStatus == mrcDramNotSupportEdvfsc) || (MrcStatus == mrcDramSafeSpeedUpdate));
 
   DEBUG ((
     DEBUG_INFO,
@@ -3325,7 +3333,6 @@ DEBUG_CODE_END();
       } // for Dimm
     } // for Channel
   } // for Controller
-
   Inputs->Lpddr5Camm = Lpddr5CammPresent;
 
   CheckForTimingOverride (Inputs, MemConfig);

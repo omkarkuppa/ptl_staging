@@ -1375,6 +1375,7 @@ MrcRestoreTrainingValues (
   }
 
   MrcGetSetNoScope (MrcData, GsmIocWrRetrainOvrd, WriteCached, &GetSetSave);
+  ForceRcomp (MrcData, FullComp);
 
   // Clear CR Cache
   InitializeRegisterCache (MrcData);

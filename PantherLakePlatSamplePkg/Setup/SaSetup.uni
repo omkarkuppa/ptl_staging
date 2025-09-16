@@ -1758,6 +1758,10 @@
 #string STR_DDR3_FREQ_8000_STRING               #language en-US "8000"
 #string STR_DDR3_FREQ_8533_STRING               #language en-US "8533"
 #string STR_DDR3_FREQ_9600_STRING               #language en-US "9600"
+#string STR_DDR3_FREQ_10667_STRING              #language en-US "10667"
+
+#string STR_LP5_SAFE_SPEED_PROMPT              #language en-US "LP5 Safe Speed"
+#string STR_LP5_SAFE_SPEED_HELP                #language en-US "Limit RVP3 to 8533 and RVP1 to 7467, when using internal SPD, FreqMax is Auto and DRAM doesn't support higher speed"
 
 #string STR_PEI_DISPLAY                         #language en-US "Intel Graphics Pei Display Peim"
 #string STR_PEI_DISPLAY_HELP                    #language en-US "Enable/Disable Pei (Early) Display"
