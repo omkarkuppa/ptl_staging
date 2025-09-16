@@ -50,6 +50,7 @@
 #define PTL_H_4XE_SA_DEVICE_ID_2C_8A        0xB00B   ///< PantherLake H 4Xe        (2+8+4+4Xe)  SA DID
 #define PTL_H_4XE_SA_DEVICE_ID_2C_4A        0xB00C   ///< PantherLake H 4Xe        (2+4+4+4Xe)  SA DID
 #define PTL_H_4XE_SA_DEVICE_ID_4C           0xB01A   ///< PantherLake H 4Xe        (4+0+4+4Xe)  SA DID
+#define PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A    0xB022   ///< PantherLake H 12Xe (HH)  (2+4+4+12Xe) SA DID
 
 #define PTL_U_NEX_SA_DEVICE_ID_4C           0xB007   ///< PantherLake U      (NEX) (4+0+4)      SA DID
 #define PTL_H_12XE_NEX_SA_DEVICE_ID_4C_8A   0xB008   ///< PantherLake H 12Xe (NEX) (4+8+4+12Xe) SA DID

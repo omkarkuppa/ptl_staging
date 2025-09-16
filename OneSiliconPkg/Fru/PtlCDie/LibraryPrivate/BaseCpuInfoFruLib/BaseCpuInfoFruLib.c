@@ -191,6 +191,7 @@ CPU_SKU_INFO mCpuSkuInfo[] = {
   { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_12XE_SA_DEVICE_ID_4C_8A,     4, 8},  // PTL H 12Xe 4+8
   { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_12XE_SA_DEVICE_ID_4C_4A,     4, 4},  // PTL H 12Xe 4+4
   { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_12XE_SA_DEVICE_ID_2C_8A,     2, 8},  // PTL H 12Xe 2+8
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A,  2, 8},  // PTL H 12Xe 2+8 (HH)
   { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_12XE_SA_DEVICE_ID_2C_4A,     2, 4},  // PTL H 12Xe 2+4
   { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_4XE_SA_DEVICE_ID_4C_8A,      4, 8},  // PTL H 4Xe  4+8
   { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_4XE_SA_DEVICE_ID_4C_4A,      4, 4},  // PTL H 4Xe  4+4
@@ -641,6 +642,15 @@ GetCpuSkuIdentifier (
             CpuIdentifier = EnumPtlH12Xe25Watt28CpuId;
           } else if (PackageTdp == CPU_TDP_25_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+8 25W\n"));
+            CpuIdentifier = EnumPtlH12Xe25Watt28CpuId;
+          }
+          break;
+        case PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A:
+          if (PackageTdp == CPU_TDP_28_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+8 HH 28W\n"));
+            CpuIdentifier = EnumPtlH12Xe25Watt28CpuId;
+          } else if (PackageTdp == CPU_TDP_25_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+8 HH 25W\n"));
             CpuIdentifier = EnumPtlH12Xe25Watt28CpuId;
           }
           break;
