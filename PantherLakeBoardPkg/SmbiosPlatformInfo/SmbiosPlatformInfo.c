@@ -33,6 +33,8 @@
 #include <Library/IGpuInfoLib.h>
 #include <Library/PerformanceLib.h>
 #include <Protocol/PlatformNvsArea.h>
+#include <Library/PeiHostBridgeIpStatusLib.h>
+#include <Defines/HostBridgeDefines.h>
 
 CHAR16   BoardVersionString[SMBIOS_STRING_MAX_LENGTH];
 CHAR16   BiosReleaseDate[SMBIOS_STRING_MAX_LENGTH];
@@ -342,6 +344,10 @@ GetChassisType (
   )
 {
   if (PcdGet8 (PcdPlatformFlavor) == FlavorMobile) {
+    if ((UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData) == PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A) {
+      DEBUG ((DEBUG_INFO, "%a: HH Sku detected\n", __FUNCTION__));
+      return MiscChassisTablet;
+    }
     return MiscChassisTypeLapTop;
   } else if (PcdGet8 (PcdPlatformFlavor) == FlavorDesktop || (PcdGet8 (PcdPlatformFlavor) == FlavorWorkstation)) {
     return MiscChassisTypeDeskTop;
