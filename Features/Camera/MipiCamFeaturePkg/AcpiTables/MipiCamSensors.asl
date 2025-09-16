@@ -4098,7 +4098,7 @@ Scope (\_SB) {
         If (LNotEqual (\_SB.PC0X.VPN3 (_UID), 0)) {
           Store (\_SB.PC0X.VPN3 (_UID), Local1)
         } Else {
-          Store (PINR (F0GP, F0CP, F0GG), Local1)
+          Store (PINR (F0CP, F0GG, F0GP), Local1)
         }
         ConcatenateResTemplate (Local0, Local1, Local2)
         Store (Local2, Local0)
@@ -4217,12 +4217,12 @@ Scope (\_SB) {
         Store (\_SB.PC0X.IICB (F1AB, F1BS), Local0)
       }
 
-      If ( LEqual (F1GT, 1)) {
+      If (LEqual (F1GT, 1)) {
       // Create GPIO resource template using as parameters data provided in the BIOS setup
         If (LNotEqual (\_SB.PC0X.VPN3 (_UID), 0)) {
           Store (\_SB.PC0X.VPN3 (_UID), Local1)
         } Else {
-          Store (PINR (F1GP, F1CP, F1GG), Local1)
+          Store (PINR (F1CP, F1GG, F1GP), Local1)
         }
         ConcatenateResTemplate (Local0, Local1, Local2)
         Store (Local2, Local0)
@@ -4346,7 +4346,7 @@ Scope (\_SB) {
         If (LNotEqual (\_SB.PC0X.VPN3 (_UID), 0)) {
           Store (\_SB.PC0X.VPN3 (_UID), Local1)
         } Else {
-          Store (PINR (F2GP, F2CP, F2GG), Local1)
+          Store (PINR (F2CP, F2GG, F2GP), Local1)
         }
         ConcatenateResTemplate (Local0, Local1, Local2)
         Store (Local2, Local0)
@@ -4470,7 +4470,7 @@ Scope (\_SB) {
         If (LNotEqual (\_SB.PC0X.VPN3 (_UID), 0)) {
           Store (\_SB.PC0X.VPN3 (_UID), Local1)
         } Else {
-          Store (PINR (F3GP, F3CP, F3GG), Local1)
+          Store (PINR (F3CP, F3GG, F3GP), Local1)
         }
         ConcatenateResTemplate (Local0, Local1, Local2)
         Store (Local2, Local0)
@@ -4594,7 +4594,7 @@ Scope (\_SB) {
         If (LNotEqual (\_SB.PC0X.VPN3 (_UID), 0)) {
           Store (\_SB.PC0X.VPN3 (_UID), Local1)
         } Else {
-          Store (PINR (F4GP, F4CP, F4GG), Local1)
+          Store (PINR (F4CP, F4GG, F4GP), Local1)
         }
         ConcatenateResTemplate (Local0, Local1, Local2)
         Store (Local2, Local0)
@@ -4718,7 +4718,7 @@ Scope (\_SB) {
         If (LNotEqual (\_SB.PC0X.VPN3 (_UID), 0)) {
           Store (\_SB.PC0X.VPN3 (_UID), Local1)
         } Else {
-          Store (PINR (F5GP, F5CP, F5GG), Local1)
+          Store (PINR (F5CP, F5GG, F5GP), Local1)
         }
         ConcatenateResTemplate (Local0, Local1, Local2)
         Store (Local2, Local0)
