@@ -51,7 +51,18 @@ PeiMemoryCacheInit (
   return EFI_SUCCESS;
 }
 
+/**
+  Get Fabric GV configuration.
 
+  The function sends a pcode mailbox command to read Fabric GV configuration.
+
+  @param[in]  FabrivGvConfiguration    Pointer to Fabric GV configuration variable where read data will be placed.
+                                     The data variable is only valid when functions returns with EFI_SUCESS status.
+
+  @retval     EFI_UNSUPPORTED        Unsupported
+  @retval     EFI_INVALID_PARAMETER  Invalid parameter
+  @retval     EFI_SUCCES             Fabric GV configuration was read successfully
+**/
 EFI_STATUS
 GetFabricGVConfiguration (
   OUT FABRIC_GV_CONFIGURATION_DATA *FabrivGvConfiguration
@@ -98,14 +109,24 @@ GetFabricGVConfiguration (
     DEBUG ((DEBUG_WARN, "Error on Getting Fabric Gv MSCLK Configuration. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
     return EFI_UNSUPPORTED;
   }
-  DEBUG ((DEBUG_INFO, "MSCLK MAILBOX Data: %x\n", &FabrivGvConfiguration->Data));
   DEBUG ((DEBUG_INFO, "MSCLK MAILBOX Data: %x\n", FabrivGvConfiguration->Data));
   return EFI_SUCCESS;
 }
 
+/**
+  Update Fabric GV configuration.
+
+  The function sends a pcode mailbox command to update Fabric GV configuration.
+
+  @param[in]  FabrivGvConfiguration    Fabric GV configuration which need to be applied
+
+  @retval     EFI_UNSUPPORTED        Unsupported
+  @retval     EFI_INVALID_PARAMETER  Invalid input parameter
+  @retval     EFI_SUCCES             Fabric GV configuration was updated successfully
+**/
 EFI_STATUS
 SetFabricGVConfiguration(
-  OUT FABRIC_GV_CONFIGURATION_DATA *FabrivGvConfiguration
+  IN FABRIC_GV_CONFIGURATION_DATA *FabrivGvConfiguration
 )
 {
   EFI_STATUS              Status;
@@ -123,7 +144,7 @@ SetFabricGVConfiguration(
   MailboxCommand1.Fields.Param1  = NCLK_MAILBOX_SUBCOMMAND_SET_CONFIGURATION_ID;
   Status = MailboxWrite (MailboxCommand1.InterfaceData, FabrivGvConfiguration->Data, &MailboxStatus);
   if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
-    DEBUG ((DEBUG_WARN, "Erorr on Setting Fabric Gv NCLK Policy. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+    DEBUG ((DEBUG_WARN, "Error on Setting Fabric Gv NCLK Policy. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
     return EFI_UNSUPPORTED;
   }
 
@@ -132,23 +153,23 @@ SetFabricGVConfiguration(
   MailboxCommand2.Fields.Param1  = D2DCLK_MAILBOX_SUBCOMMAND_SET_CONFIGURATION_ID;
   Status = MailboxWrite (MailboxCommand2.InterfaceData, FabrivGvConfiguration->Data, &MailboxStatus);
   if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
-    DEBUG ((DEBUG_WARN, "Erorr on Setting Fabric Gv D2DCLK Policy. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+    DEBUG ((DEBUG_WARN, "Error on Setting Fabric Gv D2DCLK Policy. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
     return EFI_UNSUPPORTED;
   }
 
   MailboxCommand3.InterfaceData  = 0;
   MailboxCommand3.Fields.Command = SAGV_CONFIG_HANDLER_ID;
   MailboxCommand3.Fields.Param1  = MSCLK_MAILBOX_SUBCOMMAND_SET_CONFIGURATION_ID;
-  Status = MailboxWrite (MailboxCommand3.InterfaceData, FabrivGvConfiguration->Data, &MailboxStatus);
+  Status = MailboxWrite (MailboxCommand3.InterfaceData, (FabrivGvConfiguration->Data & 0xF), &MailboxStatus);
   if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
-    DEBUG ((DEBUG_WARN, "Erorr on Setting Fabric Gv MSDCLK Policy. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+    DEBUG ((DEBUG_WARN, "Error on Setting Fabric Gv MSCLK Policy. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
     return EFI_UNSUPPORTED;
   }
   return EFI_SUCCESS;
 }
 
 EFI_STATUS
-IsFabricGvSupported(
+PeiFabricGvInit(
   IN  SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
 )
 {

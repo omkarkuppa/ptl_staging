@@ -50,6 +50,6 @@ PeiMemoryCacheInit (
   );
 
 EFI_STATUS
-IsFabricGvSupported(
+PeiFabricGvInit(
   IN  SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
   );
