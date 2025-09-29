@@ -25,10 +25,23 @@ typedef struct {
 
   @return The allocated pointer address, or NULL on failure
 **/
-VOID *
+void *
 SzAlloc (
-  CONST ISzAlloc  *P,
-  size_t          Size
+  ISzAllocPtr  P,
+  SizeT        Size
+  );
+
+/**
+  Free routine used by LZMA decompression.
+
+  @param P                Pointer to the ISzAlloc instance
+  @param Address          The address to free
+
+**/
+void
+SzFree (
+  ISzAllocPtr  P,
+  void         *Address
   );
 
 #define LZMA_HEADER_SIZE  (LZMA_PROPS_SIZE + 8)

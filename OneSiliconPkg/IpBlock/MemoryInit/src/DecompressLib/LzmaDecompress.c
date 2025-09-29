@@ -22,7 +22,7 @@
 VOID *
 SzAlloc (
   CONST ISzAlloc  *P,
-  size_t          Size
+  SizeT           Size
   )
 {
   VOID              *Addr;
@@ -40,7 +40,7 @@ SzAlloc (
   }
 }
 
-#define LZMA_HEADER_SIZE  (LZMA_PROPS_SIZE + 8)
+#define LZMA_HEADER_SIZE  (LZMA_PROPS_SIZE + 8) // 5 bytes props + 8 bytes uncompressed size (LZMA SDK 25.00)
 
 /**
   Get the size of the uncompressed buffer by parsing EncodeData header.
@@ -54,18 +54,43 @@ GetDecodedSizeOfBuf (
   UINT8  *EncodedData
   )
 {
-  UINT32  DecodedSize;
-  INTN    Index;
-
-  /* Parse header */
-  DecodedSize = 0;
-  // 32 bit is plenty, ignore the other 4 bytes of size data
-  for (Index = LZMA_PROPS_SIZE + 3; Index >= LZMA_PROPS_SIZE; Index--) {
-    //DecodedSize = LShiftU64 (DecodedSize, 8) + EncodedData[Index];
-    DecodedSize = (DecodedSize << 8) + EncodedData[Index];
+  UINT32 LowPart = 0;
+  UINT32 HighPart = 0;
+  
+  // LZMA SDK 25.00: uncompressed size is 8 bytes, little-endian, after props
+  // Process all 8 bytes but avoid 64-bit arithmetic to prevent MSVC runtime helpers
+  
+  // Build low 32 bits from bytes 0-3 (little-endian)
+  LowPart = (UINT32)EncodedData[LZMA_PROPS_SIZE] |
+            ((UINT32)EncodedData[LZMA_PROPS_SIZE + 1] << 8) |
+            ((UINT32)EncodedData[LZMA_PROPS_SIZE + 2] << 16) |
+            ((UINT32)EncodedData[LZMA_PROPS_SIZE + 3] << 24);
+  
+  // Build high 32 bits from bytes 4-7 (little-endian)  
+  HighPart = (UINT32)EncodedData[LZMA_PROPS_SIZE + 4] |
+             ((UINT32)EncodedData[LZMA_PROPS_SIZE + 5] << 8) |
+             ((UINT32)EncodedData[LZMA_PROPS_SIZE + 6] << 16) |
+             ((UINT32)EncodedData[LZMA_PROPS_SIZE + 7] << 24);
+  
+  // Check for "unknown size" marker (all bits set to 1)
+  if (LowPart == 0xFFFFFFFF && HighPart == 0xFFFFFFFF) {
+    // Return unknown size marker using union to avoid 64-bit operations
+    union {
+      UINT64 Full;
+      struct {
+        UINT32 Low;
+        UINT32 High;
+      } Parts;
+    } UnknownSize;
+    
+    UnknownSize.Parts.Low = 0xFFFFFFFF;
+    UnknownSize.Parts.High = 0xFFFFFFFF;
+    return UnknownSize.Full;
   }
-
-  return DecodedSize;
+  
+  // For firmware use, sizes > 4GB are unrealistic, return only low part
+  // This avoids 64-bit operations while maintaining compatibility
+  return (UINT64)LowPart;
 }
 
 /**
@@ -111,9 +136,27 @@ MrcDecompress (
   AllocFuncs.Buffer          = Scratch;
   AllocFuncs.BufferSize      = SCRATCH_BUFFER_REQUEST_SIZE;
 
-  DecodedBufSize  = (SizeT)GetDecodedSizeOfBuf ((UINT8 *)Source);
-  if (DecodedBufSize > DestinationSize) {
-    return mrcWrongInputParameter; // Output buffer too small
+  UINT64 HeaderDecodedSize = GetDecodedSizeOfBuf ((UINT8 *)Source);
+  // Check for unknown size using same union approach to avoid 64-bit constants
+  union {
+    UINT64 Full;
+    struct {
+      UINT32 Low;
+      UINT32 High;
+    } Parts;
+  } UnknownSizeCheck;
+  
+  UnknownSizeCheck.Parts.Low = 0xFFFFFFFF;
+  UnknownSizeCheck.Parts.High = 0xFFFFFFFF;
+  
+  if (HeaderDecodedSize == UnknownSizeCheck.Full) {
+    // LZMA header signals unknown size, use caller's expected size
+    DecodedBufSize = (SizeT)DestinationSize;
+  } else {
+    DecodedBufSize = (SizeT)HeaderDecodedSize;
+    if (DecodedBufSize > DestinationSize) {
+      return mrcWrongInputParameter; // Output buffer too small
+    }
   }
   EncodedDataSize = (SizeT)(SourceSize - LZMA_HEADER_SIZE);
 

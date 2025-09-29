@@ -85,23 +85,23 @@ typedef unsigned long long int UInt64;
 
 #endif
 
+/*
+ * LZMA SDK 2025 compatibility fix for UEFI/EDK2 firmware environment:
+ * 
+ * The build error occurs because EDK2 (at /home/jenkins/agent/s/Edk2/MdePkg/) 
+ * defines size_t as 'unsigned long long' on 64-bit systems, but the old 
+ * firmware code was manually redefining it as 'unsigned int'.
+ * 
+ * Solution: Use SizeT as our size type throughout and avoid size_t conflicts entirely.
+ */
+
 typedef unsigned int SizeT;
-#if defined(MRC_MINIBIOS_BUILD) || defined (__GNUC__)
-#ifndef FULL_HEADLESS
-#ifndef HEADLESS
-#ifndef NEW_STUB
-#if !defined(_SIZE_T_DEFINED) && !defined(__SIZE_T__) && !defined(_SIZE_T)
-#ifdef __SIZE_TYPE__
-typedef __SIZE_TYPE__ size_t;
-#else
-typedef unsigned int size_t;
-#endif
-#define _SIZE_T_DEFINED
-#endif
-#endif
-#endif
-#endif
-#endif
+
+/*
+ * In the LZMA interfaces below, we'll use SizeT instead of size_t to avoid
+ * typedef redefinition conflicts with EDK2 system headers.
+ * This maintains compatibility while eliminating the build error.
+ */
 
 typedef int BoolInt;
 
@@ -173,7 +173,7 @@ struct ISeqInStream {
   SRes    (*Read)(
     const ISeqInStream  *p,
     void                *buf,
-    size_t              *size
+    SizeT               *size
     );
 
   /* if (input(*size) != 0 && output(*size) == 0) means end_of_stream.
@@ -187,14 +187,14 @@ SRes
 SeqInStream_Read (
   const ISeqInStream  *stream,
   void                *buf,
-  size_t              size
+  SizeT               size
   );
 
 SRes
 SeqInStream_Read2 (
   const ISeqInStream  *stream,
   void                *buf,
-  size_t              size,
+  SizeT               size,
   SRes                errorType
   );
 
@@ -206,10 +206,10 @@ SeqInStream_ReadByte (
 
 typedef struct ISeqOutStream ISeqOutStream;
 struct ISeqOutStream {
-  size_t    (*Write)(
+  SizeT    (*Write)(
     const ISeqOutStream  *p,
     const void           *buf,
-    size_t               size
+    SizeT                size
     );
 
   /* Returns: result - the number of actually written bytes.
@@ -229,7 +229,7 @@ struct ISeekInStream {
   SRes    (*Read)(
     const ISeekInStream  *p,
     void                 *buf,
-    size_t               *size
+    SizeT                *size
     );                                                            /* same as ISeqInStream::Read */
   SRes    (*Seek)(
     const ISeekInStream  *p,
@@ -246,7 +246,7 @@ struct ILookInStream {
   SRes    (*Look)(
     const ILookInStream  *p,
     const void           **buf,
-    size_t               *size
+    SizeT                *size
     );
 
   /* if (input(*size) != 0 && output(*size) == 0) means end_of_stream.
@@ -254,14 +254,14 @@ struct ILookInStream {
      (output(*size) < input(*size)) is allowed */
   SRes    (*Skip)(
     const ILookInStream  *p,
-    size_t               offset
+    SizeT                offset
     );
   /* offset must be <= output(*size) of Look */
 
   SRes    (*Read)(
     const ILookInStream  *p,
     void                 *buf,
-    size_t               *size
+    SizeT                *size
     );
   /* reads directly (without buffer). It's same as ISeqInStream::Read */
   SRes    (*Seek)(
@@ -280,7 +280,7 @@ SRes
 LookInStream_LookRead (
   const ILookInStream  *stream,
   void                 *buf,
-  size_t               *size
+  SizeT                *size
   );
 
 SRes
@@ -294,7 +294,7 @@ SRes
 LookInStream_Read2 (
   const ILookInStream  *stream,
   void                 *buf,
-  size_t               size,
+  SizeT                size,
   SRes                 errorType
   );
 
@@ -302,19 +302,19 @@ SRes
 LookInStream_Read (
   const ILookInStream  *stream,
   void                 *buf,
-  size_t               size
+  SizeT                size
   );
 
 typedef struct {
   ILookInStream          vt;
   const ISeekInStream    *realStream;
 
-  size_t                 pos;
-  size_t                 size; /* it's data size */
+  SizeT                  pos;
+  SizeT                  size; /* it's data size */
 
   /* the following variables must be set outside */
   Byte                   *buf;
-  size_t                 bufSize;
+  SizeT                  bufSize;
 } CLookToRead2;
 
 void
@@ -366,7 +366,7 @@ typedef const ISzAlloc  *ISzAllocPtr;
 struct ISzAlloc {
   void    *(*Alloc)(
     ISzAllocPtr  p,
-    size_t       size
+    SizeT        size
     );
   void    (*Free)(
     ISzAllocPtr  p,
@@ -389,7 +389,7 @@ struct ISzAlloc {
 #define MY_offsetof(type, m) FIELD_OFFSET(type, m)
 */
   #else
-#define MY_offsetof(type, m)  ((size_t)&(((type *)0)->m))
+#define MY_offsetof(type, m)  ((SizeT)&(((type *)0)->m))
   #endif
 #endif
 
