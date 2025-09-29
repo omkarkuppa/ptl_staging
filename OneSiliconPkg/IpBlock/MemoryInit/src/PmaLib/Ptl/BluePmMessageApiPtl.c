@@ -198,11 +198,11 @@ MrcMcCapabilityPreSpd (
 
   if (PmaMcCap.Bits.MAX_F_QCLK == 0) {
     // 0 means unlimited - Default to largest possible QCLK
-    MaxQclkFreqRatio = 0x48; // 9600, QCLK 2400 at Gear4
+    MaxQclkFreqRatio = 0x50; // 10667, QCLK 2667 at Gear4
   } else {
     MaxQclkFreqRatio = PmaMcCap.Bits.MAX_F_QCLK;
-    if (MaxQclkFreqRatio > 0x48) {
-      MaxQclkFreqRatio = 0x48; // add clipping
+    if (MaxQclkFreqRatio > 0x50) {
+      MaxQclkFreqRatio = 0x50; // add clipping
     }
   }
   MaxQclkFreq = MrcRatioToFrequency (MrcData, (UINT16) MaxQclkFreqRatio);
