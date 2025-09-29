@@ -172,24 +172,57 @@ Method (PINJ, 3, Serialized) { // Create GPIO resource template buffer
     If (LEqual(Arg1,0)) {
     Name (GPIJ, ResourceTemplate () {
       GpioInt (Edge, ActiveLow, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI0", 0, ResourceConsumer, WAK0) { 0xFFFF }
-      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI0", 0x00, ResourceConsumer, GPID,) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI0", 0x00, ResourceConsumer, GPIA,) { 0xFFFF }
     })
     CreateWordField (GPIJ, WAK0._PIN, WAK1)
-    CreateWordField (GPIJ, GPID._PIN, PINF)
+    CreateWordField (GPIJ, GPIA._PIN, PINA)
     Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WAK1)
-    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINF)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINA)
     Return (GPIJ)
     } 
-    ElseIf (LEqual(Arg1,2)) {
+    ElseIf (LEqual(Arg1,1)) {
     Name (GPIK, ResourceTemplate () {
-      GpioInt (Edge, ActiveLow, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI3", 0, ResourceConsumer, WAK2) { 0xFFFF }
-      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI3", 0x00, ResourceConsumer, GPIE,) { 0xFFFF }
+      GpioInt (Edge, ActiveLow, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI1", 0, ResourceConsumer, WAK2) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI1", 0x00, ResourceConsumer, GPIB,) { 0xFFFF }
     })
     CreateWordField (GPIK, WAK2._PIN, WAK3)
-    CreateWordField (GPIK, GPIE._PIN, PING)
+    CreateWordField (GPIK, GPIB._PIN, PINB)
     Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WAK3)
-    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PING)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINB)
     Return (GPIK)
+    }
+    ElseIf (LEqual(Arg1,2)) {
+    Name (GPIL, ResourceTemplate () {
+      GpioInt (Edge, ActiveLow, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI3", 0, ResourceConsumer, WAK4) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI3", 0x00, ResourceConsumer, GPIC,) { 0xFFFF }
+    })
+    CreateWordField (GPIL, WAK4._PIN, WAK5)
+    CreateWordField (GPIL, GPIC._PIN, PINC)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WAK5)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINC)
+    Return (GPIL)
+    }
+    ElseIf (LEqual(Arg1,3)) {
+    Name (GPIM, ResourceTemplate () {
+      GpioInt (Edge, ActiveLow, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI4", 0, ResourceConsumer, WAK6) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI4", 0x00, ResourceConsumer, GPID,) { 0xFFFF }
+    })
+    CreateWordField (GPIM, WAK6._PIN, WAK7)
+    CreateWordField (GPIM, GPID._PIN, PIND)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WAK7)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PIND)
+    Return (GPIM)
+    }
+    ElseIf (LEqual(Arg1,4)) {
+    Name (GPIN, ResourceTemplate () {
+      GpioInt (Edge, ActiveLow, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI5", 0, ResourceConsumer, WAK8) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI5", 0x00, ResourceConsumer, GPIE,) { 0xFFFF }
+    })
+    CreateWordField (GPIN, WAK8._PIN, WAK9)
+    CreateWordField (GPIN, GPIE._PIN, PINE)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WAK9)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINE)
+    Return (GPIN)
     }
     Return (0)
   }
@@ -200,26 +233,59 @@ Method (PINJ, 3, Serialized) { // Create GPIO resource template buffer
     // Arg2 - Group Number
     If(LEqual(Arg1,0)) {
     Name (GPII, ResourceTemplate () {
-      GpioInt (Edge, ActiveBoth, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI0", 0, ResourceConsumer, WAK4) { 0xFFFF }
-      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI0", 0x00, ResourceConsumer, GPID,) { 0xFFFF }
+      GpioInt (Edge, ActiveBoth, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI0", 0, ResourceConsumer, WKP0) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI0", 0x00, ResourceConsumer, GPIA,) { 0xFFFF }
     })
-    CreateWordField (GPII, WAK4._PIN, WAK5)
-    CreateWordField (GPII, GPID._PIN, PINH)
-    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WAK5)
-    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINH)
+    CreateWordField (GPII, WKP0._PIN, WKP1)
+    CreateWordField (GPII, GPIA._PIN, PINF)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WKP1)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINF)
     Return (GPII)
     }
-    ElseIf(LEqual(Arg1,2)) {
-    Name (GPIL, ResourceTemplate () {
-      GpioInt (Edge, ActiveBoth, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI3", 0, ResourceConsumer, WAK6) { 0xFFFF }
-      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI3", 0x00, ResourceConsumer, GPIE,) { 0xFFFF }
+    ElseIf(LEqual(Arg1,1)) {
+    Name (GPIH, ResourceTemplate () {
+      GpioInt (Edge, ActiveBoth, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI1", 0, ResourceConsumer, WKP2) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI1", 0x00, ResourceConsumer, GPIB,) { 0xFFFF }
     })
-    CreateWordField (GPIL, WAK6._PIN, WAK7)
-    CreateWordField (GPIL, GPIE._PIN, PINL)
-    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WAK7)
-    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINL)
-    Return (GPIL)
-  } 
+    CreateWordField (GPIH, WKP2._PIN, WKP3)
+    CreateWordField (GPIH, GPIB._PIN, PING)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WKP3)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PING)
+    Return (GPIH)
+    }
+    ElseIf(LEqual(Arg1,2)) {
+    Name (GPIG, ResourceTemplate () {
+      GpioInt (Edge, ActiveBoth, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI3", 0, ResourceConsumer, WKP4) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI3", 0x00, ResourceConsumer, GPIC,) { 0xFFFF }
+    })
+    CreateWordField (GPIG, WKP4._PIN, WKP5)
+    CreateWordField (GPIG, GPIC._PIN, PINH)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WKP5)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINH)
+    Return (GPIG)
+    }
+    ElseIf(LEqual(Arg1,3)) {
+    Name (GPIF, ResourceTemplate () {
+      GpioInt (Edge, ActiveBoth, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI4", 0, ResourceConsumer, WKP6) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI4", 0x00, ResourceConsumer, GPID,) { 0xFFFF }
+    })
+    CreateWordField (GPIF, WKP6._PIN, WKP7)
+    CreateWordField (GPIF, GPID._PIN, PINI)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WKP7)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINI)
+    Return (GPIF)
+    }
+    ElseIf(LEqual(Arg1,4)) {
+    Name (GPIP, ResourceTemplate () {
+      GpioInt (Edge, ActiveBoth, SharedAndWake, PullDefault, 0x0000, "\\_SB.GPI5", 0, ResourceConsumer, WKP8) { 0xFFFF }
+      GpioIo (Shared, PullDefault, 0x0000, 0x0000, IoRestrictionInputOnly, "\\_SB.GPI5", 0x00, ResourceConsumer, GPIE,) { 0xFFFF }
+    })
+    CreateWordField (GPIP, WKP8._PIN, WKP9)
+    CreateWordField (GPIP, GPIE._PIN, PINK)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), WKP9)
+    Store(Add(GINF(Arg1, Arg2, GPIO_DRIVER_PIN_BASE_NUMBER), Arg0), PINK)
+    Return (GPIP)
+    }
   Return (0)
   }
 
