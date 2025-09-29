@@ -175,6 +175,12 @@ typedef enum {
 } MrcRank;
 
 typedef enum {
+  pPmic0 = 0,
+  pPmic1,
+  pPmic2,
+} MRC_PMIC;
+
+typedef enum {
   ssOne     = 0,
   ssTwo,
   ssThree,
@@ -4476,5 +4482,21 @@ Ddrphyx64CrChecker (
   IN UINT32 Offset
   );
 #endif // MRC_DEBUG_PRINT
+
+/**
+  This function returns first populated DIMM for a given controller and channel based on output data.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+  @param[in] Controller controller index.
+  @param[in] Channel channel index.
+
+  @returns Index of first populated DIMM.
+**/
+UINT8
+MrcGetFirstPopulatedDimm (
+  MrcParameters *const MrcData,
+  UINT8 Controller,
+  UINT8 Channel
+  );
 
 #endif //_MrcCommon_h_

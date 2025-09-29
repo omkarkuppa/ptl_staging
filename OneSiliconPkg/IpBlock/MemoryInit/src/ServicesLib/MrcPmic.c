@@ -1,5 +1,5 @@
 /** @file
-  This file contains DDR5 PMIC programming routines.
+  This file contains DDR5 PMIC programming routines
 
   @copyright
   INTEL CONFIDENTIAL
@@ -16,441 +16,503 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
+@par Specification Reference: PMIC5100 (JEDEC JESD301-2) and PMIC5200 (JEDEC JESD301-2) Specifications
 **/
 #include "MrcCommon.h"
 #include "MrcPmic.h"
-//#include "BlueMrcPmic.h"
+#include "MrcPmicPrivate.h"
+
+#define MAX_PWR_GOOD_OUT_TIME (4 * 14) // 4 (SWA-SWD) * SoftStartTime (14 ms) = 56 ms, Config0-2_Delay assumed as 0.
+
+typedef struct PMIC_RAIL_CONFIG_DATA {
+  MRC_RANGE Range;
+  UINT16 StepSize; // 100 uV units
+} PMIC_RAIL_CONFIG_DATA;
+
+static const PMIC_RAIL_CONFIG_DATA PmicVoltageRange[MaxPmicRails][MaxPmicStepSize] = {
+  [PmicRailSwa] = {
+    [PmicStepSize5mV]   = {.Range = {800, 1435}, .StepSize = 50},
+    [PmicStepSize10mV]  = {.Range = {800, 2070}, .StepSize = 100},
+  },
+  [PmicRailSwb] = {
+    [PmicStepSize5mV]   = {.Range = {200, 835}, .StepSize = 50},
+    [PmicStepSize2p5mV] = {.Range = {200, 515}, .StepSize = 25},
+  },
+  [PmicRailSwc] = {
+    [PmicStepSize5mV]   = {.Range = {1500, 2135}, .StepSize = 50},
+    [PmicStepSize10mV]  = {.Range = {1500, 2770}, .StepSize = 100},
+  },
+  [PmicRailSwd] = {
+    [PmicStepSize5mV]   = {.Range = {800, 1435}, .StepSize = 50},
+    [PmicStepSize10mV]  = {.Range = {800, 2070}, .StepSize = 100},
+  },
+};
 
 /**
-  Perform PMIC Clear Global Status
+  Get PMIC reg field value for encoded voltage.
+  @param[in] Voltage - Voltage to encode.
+  @param[in] Rail - PMIC rail type.
+  @param[in] StepSize - PMIC step size.
 
-  @param[in] MrcCall
-  @param[in] PmicAddress
-
-  @retval VOID
+  @returns Encoded voltage value.
 **/
-
-VOID
-MrcPmicClearGlobalStatus (
-  IN MRC_FUNCTION      *MrcCall,
-  IN UINT8             PmicAddress
+UINT8
+GetPmicVoltageRegValue (
+  UINT16 Voltage,
+  PMIC_RAIL Rail,
+  PMIC_STEP_SIZE StepSize
   )
 {
-  PMIC_REG_14_STRUCT  Reg14;
-  RETURN_STATUS       Status;
+  UINT32 Result;
 
-  Reg14.Data = 0;
-  Reg14.Bits.global_clear_status = 1;
-  MrcCall->MrcSmbusWrite8 (PmicAddress | (PMIC_REG_14 << 8), Reg14.Data, &Status);
+  Result =  RANGE (Voltage,
+                   PmicVoltageRange[Rail][StepSize].Range.Start,
+                   PmicVoltageRange[Rail][StepSize].Range.End);
+  Result = (Result - PmicVoltageRange[Rail][StepSize].Range.Start);
+
+  Result *= 10; // Convert mV to 100 uV units
+  Result /= PmicVoltageRange[Rail][StepSize].StepSize;
+
+  return (UINT8) Result;
 }
 
 /**
-  This function calculates the wait time after VR_ENABLE
+  This function configures PMIC voltages.
 
-  @param[in] MrcCall
-  @param[in] PmicAddress
-
-  @retval UINT32
-**/
-UINT32
-MrcPmicGetPwrGoodOutTime (
-  IN MRC_FUNCTION      *MrcCall,
-  IN UINT8             PmicAddress
-  )
-{
-  UINT32              PmicPwrGoodOutTime;
-  UINT8               R2CSwaDecode;
-  UINT8               R2DSwbDecode;
-  UINT8               R2DSwcDecode;
-  PMIC_REG_2C_STRUCT  Reg2C;
-  PMIC_REG_2D_STRUCT  Reg2D;
-  RETURN_STATUS       Status;
-
-  Reg2C.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (PMIC_REG_2C << 8), &Status);
-  Reg2D.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (PMIC_REG_2D << 8), &Status);
-
-  R2CSwaDecode = (Reg2C.Bits.swa_output_soft_start_time == 0) ? 1 : (2 * Reg2C.Bits.swa_output_soft_start_time);
-  R2DSwbDecode = (Reg2D.Bits.swb_output_soft_start_time == 0) ? 1 : (2 * Reg2D.Bits.swb_output_soft_start_time);
-  R2DSwcDecode = (Reg2D.Bits.swc_output_soft_start_time == 0) ? 1 : (2 * Reg2D.Bits.swc_output_soft_start_time);
-
-  PmicPwrGoodOutTime = MAX (R2CSwaDecode, R2DSwbDecode);
-  PmicPwrGoodOutTime = MAX (PmicPwrGoodOutTime, R2DSwcDecode);
-
-  PmicPwrGoodOutTime += PMIC_POWER_ON_SEQUENCE_CONFIG_IDLE_MS;
-
-  return PmicPwrGoodOutTime;
-}
-
-/**
-  This function enables DDR5 DIMM's PMIC's programmable mode and send VR_ENABLE to PMIC
-
-  @param[in, out] MrcData            - The MRC "global data" area.
-
-  @retval VOID
+  @param[in, out] MrcData - MRC global data.
 **/
 VOID
-MrcEnableDimmPmic (
+MrcPmicVoltageConfiguration (
   IN OUT MrcParameters      *MrcData
   )
 {
-  MrcInput              *Inputs;
-  MrcOutput             *Outputs;
-  MRC_FUNCTION          *MrcCall;
-  MrcDebug              *Debug;
-  MrcControllerIn       *ControllerIn;
-  MrcControllerOut      *ControllerOut;
-  MrcChannelOut         *ChannelOut;
-  MrcChannelIn          *ChannelIn;
-  const MrcDimmIn       *DimmIn;
-  MrcDimmOut            *DimmOut;
-  UINT8                 Controller;
-  UINT8                 Channel;
-  UINT8                 Dimm;
-  UINT8                 SpdAddress;
-  UINT8                 PmicAddress;
-  UINT8                 Value;
-  UINT32                Offset;
-  RETURN_STATUS         Status;
-  UINT32                PwrGoodOutTime;
-  PMIC_REG_2F_STRUCT    Reg2F;
-  PMIC_REG_32_STRUCT    Reg32;
+  switch (MrcData->Outputs.DdrType) {
+    case MRC_DDR_TYPE_LPDDR5:
+      PmicVoltageConfigurationLpddr5 (MrcData);
+      break;
 
-  Inputs  = &MrcData->Inputs;
-  Outputs = &MrcData->Outputs;
-  MrcCall = Inputs->Call.Func;
-  Debug   = &Outputs->Debug;
+    default:
+      break;
+  }
+}
 
-  if ((Outputs->DdrType != MRC_DDR_TYPE_DDR5) ||
-      (Inputs->BootMode == bmS3) ||
-      (Inputs->BootMode == bmWarm)) {
-    // Assume PMIC register configuration survives WarmReset and S3
+/**
+  This function configures PMIC voltages for LPDDR5.
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+PmicVoltageConfigurationLpddr5 (
+  IN OUT MrcParameters *MrcData
+  )
+{
+  MRC_EXT_INPUTS_TYPE *ExtInputs  = MrcData->Inputs.ExtInputs.Ptr;
+  MrcOutput *Outputs = &MrcData->Outputs;
+  MrcDebug *Debug;
+
+  UINT16 PmicVoltageConfig[MaxPmicRails] = {0};
+  MrcStatus Status;
+  SPD_PMIC_DEVICE_TYPE PmicType;
+  Debug = &Outputs->Debug;
+
+  PmicType = GetPmicType (MrcData);
+  if (PmicType != Pmic5200 && PmicType != Pmic5100) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PMIC voltage configuration failed beacuse PMIC type is not supported.\n");
     return;
   }
 
+  Status = EnableProgrammableMode (MrcData);
+  if (Status != mrcSuccess) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Failed to enable PMIC programmable mode.\n");
+    return;
+  }
+
+  MrcEnablePmic (MrcData);
+
+  PmicVoltageConfig[PmicRailSwa] = ExtInputs->Vdd2HVoltage;
+  PmicVoltageConfig[PmicRailSwb] = ExtInputs->VddqVoltage;
+  PmicVoltageConfig[PmicRailSwc] = ExtInputs->Vdd1Voltage;
+  PmicVoltageConfig[PmicRailSwd] = ExtInputs->Vdd2LVoltage;
+  ProgramVoltages (MrcData, PmicVoltageConfig);
+}
+
+/**
+  Get PMIC type from MRC global data structure.
+
+  @param[in] MrcData - MRC global data.
+
+  @return PMIC type.
+**/
+SPD_PMIC_DEVICE_TYPE
+GetPmicType (
+  IN OUT MrcParameters *MrcData
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+
+  UINT8 FirstController = Outputs->FirstPopController;
+  UINT8 FirstChannel = Outputs->Controller[FirstController].FirstPopCh;
+  UINT8 FirstDimm = MrcGetFirstPopulatedDimm (MrcData, FirstController, FirstChannel);
+
+  if (FirstDimm >= MAX_DIMMS_IN_CHANNEL) {
+    MRC_DEBUG_ASSERT (FALSE, &Outputs->Debug, "No populated DIMM found.");
+    return PmicTypeUnknown;
+  }
+
+  return Outputs->Controller[FirstController].Channel[FirstChannel].Dimm[FirstDimm].PmicType;
+}
+
+/**
+  Enable PMIC programmable mode.
+
+  @param[in] MrcData - MRC global data.
+
+  @returns mrcSuccess if at least one PMIC is successfully configured, otherwise mrcFail.
+**/
+MrcStatus
+EnableProgrammableMode (
+  IN OUT MrcParameters *MrcData
+  )
+{
+  MrcInput *Inputs = &MrcData->Inputs;
+  MrcOutput *Outputs = &MrcData->Outputs;
+  MrcDebug *Debug;
+  MrcStatus Status = mrcFail;
+
+  const MrcDimmIn *DimmIn;
+  MrcDimmOut *DimmOut;
+  UINT32 Controller;
+  UINT32 Channel;
+  UINT32 Dimm;
+
+  UINT8  SpdAddressList[MAX_CONTROLLER * MAX_CHANNEL * MAX_DIMMS_IN_CHANNEL];
+  UINT32 SpdAddressCount = 0;
+  UINT32 SpdAddressIndex;
+  BOOLEAN IsAlreadyConfigured;
+
+  UINT32 SpdAddress;
+  UINT32 PmicAddress;
+  PMIC_REG_2F_STRUCT Reg2F;
+  UINT32 SmbusCommand;
+  RETURN_STATUS SmbusStatus;
+
+  Debug = &Outputs->Debug;
+
+
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    ControllerIn  = &Inputs->Controller[Controller];
-    ControllerOut = &Outputs->Controller[Controller];
     for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
       if (!MrcChannelExist (MrcData, Controller, Channel)) {
         continue;
       }
-      ChannelIn   = &ControllerIn->Channel[Channel];
-      ChannelOut  = &ControllerOut->Channel[Channel];
       for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
-        if (ChannelOut->Dimm[Dimm].Status != DIMM_PRESENT) {
-          continue;
-        }
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MC%uC%uD%u:\n", Controller, Channel, Dimm);
-        DimmIn  = &ChannelIn->Dimm[Dimm];
-        DimmOut = &ChannelOut->Dimm[Dimm];
 
-        DimmOut->PmicProgrammable = TRUE;
+        DimmIn = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm];
+        DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm];
+
+        IsAlreadyConfigured = FALSE;
 
         SpdAddress = DimmIn->SpdAddress;
-        if (SpdAddress == 0) {
-          // In case of fixed SPD file
-          continue;
-        }
 
-        PmicAddress = (SpdAddress & 0xE) | (PMIC0_LID_CODE << 4);
-        Offset = PMIC_REG_2F;
-        Reg2F.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " PMIC reg 0x%02X orig value: 0x%02x\n", Offset, Reg2F.Data);
-        if (Reg2F.Bits.secure_mode == 0) {
-          // Need enable Programmable Mode
-          Reg2F.Bits.secure_mode = 1;
-          MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg2F.Data, &Status);
-          Reg2F.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-          MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " PMIC reg 0x%02X new value: 0x%02x\n", Offset, Reg2F.Data);
-          if (Reg2F.Bits.secure_mode != 1) {
-            MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, " Cannot enable Programmable Mode!\n");
-            DimmOut->PmicProgrammable = FALSE;
+        for (SpdAddressIndex = 0; SpdAddressIndex < SpdAddressCount; SpdAddressIndex++) {
+          if (SpdAddressList[SpdAddressIndex] == SpdAddress) {
+            IsAlreadyConfigured = TRUE;
+            break;
           }
         }
 
-        MrcPmicClearGlobalStatus (MrcCall, PmicAddress);
-
-        Offset = PMIC_REG_32;
-        Reg32.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " PMIC reg 0x%02X orig value: 0x%02x\n", Offset, Reg32.Data);
-        if (Reg32.Bits.vr_enable == 0) {
-          // Need send VR_ENABLE command, no matter if Reg2F.Bits.secure_mode is Programmable Mode
-          Reg32.Bits.vr_enable = 1;
-          MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg32.Data, &Status);
-          PwrGoodOutTime = MrcPmicGetPwrGoodOutTime (MrcCall, PmicAddress);
-          MrcWait (MrcData, PwrGoodOutTime * MRC_TIMER_1MS);
-          Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-          MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " PMIC reg 0x%02X new value: 0x%02x\n", Offset, Value);
+        if (DimmOut->Status != DIMM_PRESENT ||
+            SpdAddress == 0                 ||
+            IsAlreadyConfigured) {
+          continue;
         }
-      } // For Dimm
-    } // For Channel
-  } // For Controller
-}
 
-/*
- * Per debug by co-workers, we need dump some PMIC registers.
- */
-UINT32 PmicDumpRegs[] = {
-  0x22,
-  0x26,
-  0x28
-};
+        DimmOut->PmicProgrammable = TRUE;
+
+        PmicAddress = (PMIC0_LID_CODE << 4) | (SpdAddress & 0xE);
+
+        SmbusCommand = (PMIC_REG_2F << 8) | PmicAddress;
+        Reg2F.Data = MrcSmbusRead (MrcData,  SmbusCommand, &SmbusStatus);
+
+        if (Reg2F.Bits.secure_mode == 0) {
+          // Enable Programmable Mode
+          Reg2F.Bits.secure_mode = 1;
+          MrcSmbusWrite (MrcData, SmbusCommand, Reg2F.Data, &SmbusStatus);
+
+          Reg2F.Data = MrcSmbusRead (MrcData, SmbusCommand, &SmbusStatus);
+          if (Reg2F.Bits.secure_mode == 1) {
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "[SPD 0x%02X] PMIC Programmable Mode enabled successfully.\n", SpdAddress);
+            Status = mrcSuccess;
+          } else {
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "[SPD 0x%02X] PMIC Programmable Mode enabling failed.\n", SpdAddress);
+            MrcPmicPrintRegisters (MrcData, (UINT8) SpdAddress);
+            DimmOut->PmicProgrammable = FALSE;
+
+            return mrcFail;
+          }
+        } else {
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "[SPD 0x%02X] PMIC Programmable Mode is already enabled.\n", SpdAddress);
+          Status = mrcSuccess;
+        }
+
+        SpdAddressList[SpdAddressCount++] = (UINT8) SpdAddress;
+      }
+    }
+  }
+
+  return Status;
+}
 
 /**
-  This function changes the DDR5 DIMM Voltages using PMIC.
+  Send VR Enable command to PMIC.
 
-  @param[in, out] MrcData                 - The MRC "global data" area.
-  @param[in]      SpdAddress              - Selects the Dimm by SpdAddress
-  @param[in]      IsPmicSupport10MVStep   - Pmic Supports 10mv step size
-  @param[in]      Vdd                     - New Vdd Voltage
-  @param[in]      Vddq                    - New Vddq Voltage
-  @param[in]      Vpp                     - New Vpp Voltage
-
-  @retval VOID.
+  @param[in] MrcData - MRC global data.
 **/
 VOID
-MrcDefaultSetMemoryPmicVoltage (
-  IN OUT MrcParameters  *MrcData,
-  IN UINT8              SpdAddress,
-  IN BOOLEAN            IsPmicSupport10MVStep,
-  IN UINT32             Vdd,
-  IN UINT32             Vddq,
-  IN UINT32             Vpp
+MrcEnablePmic (
+  IN OUT MrcParameters *MrcData
   )
 {
-  MRC_FUNCTION          *MrcCall;
-  MrcDebug              *Debug;
-  UINT32                Offset;
-  UINT8                 PmicAddress;
-  UINT8                 Value;
-  MrcVddSelect          Data;
-  MrcVddSelect          Current;
-  MrcVddSelect          NewVoltage;
-  RETURN_STATUS         Status;
-  UINT32                SWAStepSize;
-  UINT32                SWBStepSize;
-  UINT32                SWCStepSize;
-  BOOLEAN               SWANeedSwitchStep;
-  BOOLEAN               SWBNeedSwitchStep;
-  BOOLEAN               SWCNeedSwitchStep;
-  UINT32                Delta;
-  PMIC_REG_21_STRUCT    Reg21;
-  PMIC_REG_25_STRUCT    Reg25;
-  PMIC_REG_27_STRUCT    Reg27;
-  PMIC_REG_2B_STRUCT    Reg2B;
-  INT32                 Loop;
+  MrcInput *Inputs = &MrcData->Inputs;
+  MrcOutput *Outputs = &MrcData->Outputs;
+  MrcDebug *Debug;
 
-  MrcCall = MrcData->Inputs.Call.Func;
-  Debug   = &MrcData->Outputs.Debug;
+  UINT32 Controller;
+  UINT32 Channel;
+  UINT32 Dimm;
 
-  /*
-   * Bit0: R/W
-   * Bit1~3: HID
-   * Bit4~7: LID
-   */
-  PmicAddress = (SpdAddress & 0xE) | (PMIC0_LID_CODE << 4);
+  UINT8  SpdAddressList[MAX_CONTROLLER * MAX_CHANNEL * MAX_DIMMS_IN_CHANNEL];
+  UINT32 SpdAddressCount = 0;
+  UINT32 SpdAddressIndex;
+  BOOLEAN IsAlreadyConfigured;
 
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Spd 0x%02x: Begin to update voltages by Pmic\n", SpdAddress);
+  UINT32 SpdAddress;
+  UINT32 PmicAddress;
+  UINT32 SmbusCommand;
+  PMIC_REG_32_STRUCT Reg32;
+  RETURN_STATUS SmbusStatus;
 
-  SWANeedSwitchStep = FALSE;
-  SWBNeedSwitchStep = FALSE;
-  SWCNeedSwitchStep = FALSE;
+  BOOLEAN IsVrEnableCmdSent = FALSE;
 
-  /*
-   * Although XMP profile defines the default step size, we
-   * still access reg 0x2B to get current step size in case
-   * XMP profile data is incorrect. Another consideration is
-   * we might program PMIC multiple times due to SAGV
-   */
-  Offset = PMIC_REG_2B;
-  Reg2B.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
+  Debug = &Outputs->Debug;
 
-  if (!IsPmicSupport10MVStep) {
-    //Double-check step size in case memory spd data is incorrect
-    if ((Reg2B.Bits.SWAStepSize != PMIC_5MVSTEP) ||
-        (Reg2B.Bits.SWBStepSize != PMIC_5MVSTEP) ||
-        (Reg2B.Bits.SWCStepSize != PMIC_5MVSTEP)) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PMIC Step Size is incorrect. Switch Step Size back to 5MV. Old Reg2B 0x%x\n", Reg2B.Data);
-      Reg2B.Bits.SWAStepSize = PMIC_5MVSTEP;
-      Reg2B.Bits.SWBStepSize = PMIC_5MVSTEP;
-      Reg2B.Bits.SWCStepSize = PMIC_5MVSTEP;
-      MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg2B.Data, &Status);
-    }
-
-    SWAStepSize = 5;
-    SWBStepSize = 5;
-    SWCStepSize = 5;
-    if (Vdd != VDD_INVALID) {
-      Vdd = RANGE(Vdd, PMIC_SWA_SWB_LOWEST_VOLTAGE, PMIC_SWA_SWB_5MV_HIGHEST_VOLTAGE);
-    }
-    if (Vddq != VDD_INVALID) {
-      Vddq = RANGE(Vddq, PMIC_SWA_SWB_LOWEST_VOLTAGE, PMIC_SWA_SWB_5MV_HIGHEST_VOLTAGE);
-    }
-    if (Vpp != VDD_INVALID) {
-      Vpp = RANGE(Vpp, PMIC_SWC_LOWEST_VOLTAGE, PMIC_SWC_5MV_HIGHEST_VOLTAGE);
-    }
-  } else {
-    /*
-     * PMIC new spec has no detailed info about step size
-     * switching.
-     * To keep better compatibility and stability for memory modules,
-     * 1) We use 5mv firstly. When 5mv step size can't satisfy
-     * the voltage tuning, switch to 10mv.
-     * 2) Assume step size is only a flag. Real voltage change happens
-     * only when voltage reg is configured, such like 0x21 and so on.
-     */
-    SWAStepSize = (Reg2B.Bits.SWAStepSize == PMIC_5MVSTEP) ? 5 : 10;
-    SWBStepSize = (Reg2B.Bits.SWBStepSize == PMIC_5MVSTEP) ? 5 : 10;
-    SWCStepSize = (Reg2B.Bits.SWCStepSize == PMIC_5MVSTEP) ? 5 : 10;
-    if (Vdd != VDD_INVALID) {
-      Vdd = RANGE(Vdd, PMIC_SWA_SWB_LOWEST_VOLTAGE, PMIC_SWA_SWB_10MV_HIGHEST_VOLTAGE);
-      if ((Reg2B.Bits.SWAStepSize == PMIC_5MVSTEP) && (Vdd > PMIC_SWA_SWB_5MV_HIGHEST_VOLTAGE)) {
-        SWAStepSize = 10;
-        // Just Switch from 5MV to 10MV. We never switch back to 5MV except at reset
-        SWANeedSwitchStep = TRUE;
-        Reg2B.Bits.SWAStepSize = PMIC_10MVSTEP;
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
       }
-    }
-    if (Vddq != VDD_INVALID) {
-      Vddq = RANGE(Vddq, PMIC_SWA_SWB_LOWEST_VOLTAGE, PMIC_SWA_SWB_10MV_HIGHEST_VOLTAGE);
-      if ((Reg2B.Bits.SWBStepSize == PMIC_5MVSTEP) && (Vddq > PMIC_SWA_SWB_5MV_HIGHEST_VOLTAGE)) {
-        SWBStepSize = 10;
-        // Just Switch from 5MV to 10MV. We never switch back to 5MV except at reset
-        SWBNeedSwitchStep = TRUE;
-        Reg2B.Bits.SWBStepSize = PMIC_10MVSTEP;
-      }
-    }
-    if (Vpp != VDD_INVALID) {
-      Vpp = RANGE(Vpp, PMIC_SWC_LOWEST_VOLTAGE, PMIC_SWC_10MV_HIGHEST_VOLTAGE);
-      if ((Reg2B.Bits.SWCStepSize == PMIC_5MVSTEP) && (Vpp > PMIC_SWC_5MV_HIGHEST_VOLTAGE)) {
-        SWCStepSize = 10;
-        // Just Switch from 5MV to 10MV. We never switch back to 5MV except at reset
-        SWCNeedSwitchStep = TRUE;
-        Reg2B.Bits.SWCStepSize = PMIC_10MVSTEP;
-      }
-    }
+      for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+        IsAlreadyConfigured = FALSE;
 
-    if (SWANeedSwitchStep || SWBNeedSwitchStep || SWCNeedSwitchStep) {
-      Offset = PMIC_REG_2B;
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Switch Step Size to 10MV. Reg2B 0x%x\n", Reg2B.Data);
-      MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg2B.Data, &Status);
-      Reg2B.Data = 0;
-      Reg2B.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Reg2B readback value 0x%02x\n", Reg2B.Data);
-    }
-  }
+        SpdAddress = Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].SpdAddress;
 
-  NewVoltage = Vdd;
-  if (NewVoltage != VDD_INVALID) {
-    Offset = PMIC_REG_21;
-    Reg21.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-    if (Status != EFI_SUCCESS) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Failed to read PMIC reg 0x%02X!\n", gErrString, Offset);
-      return;
-    }
-    if (!SWANeedSwitchStep) {
-      Current = Reg21.Bits.swa_voltage_setting;
-    } else {
-      Current = 0;
-    }
-    Data = (NewVoltage - PMIC_SWA_SWB_START_VOLTAGE) / SWAStepSize;
-    if (SWANeedSwitchStep || (Current != Data)) {
-      Reg21.Bits.swa_voltage_setting = (UINT8) Data;
-      Value = MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg21.Data, &Status);
-      Delta = ABS((int)Data - (int)Current);
-      MrcWait (MrcData, Delta * SWAStepSize * MRC_TIMER_1US);
-      Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-      MRC_DEBUG_MSG (
-        Debug,
-        MSG_LEVEL_NOTE,
-        "*** %s update to %u mV, Pmic reg 0x%02x: new value 0x%02x, readback value 0x%02x\n",
-        "VDD",
-        NewVoltage,
-        Offset,
-        Reg21.Data,
-        Value);
-      if (Value != Reg21.Data) {
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Update failed, Pmic doesn't accept the value!\n");
+        for (SpdAddressIndex = 0; SpdAddressIndex < SpdAddressCount; SpdAddressIndex++) {
+          if (SpdAddressList[SpdAddressIndex] == SpdAddress) {
+            IsAlreadyConfigured = TRUE;
+            break;
+          }
+        }
+
+        if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status != DIMM_PRESENT ||
+            SpdAddress == 0                                                                    ||
+            IsAlreadyConfigured) {
+          continue;
+        }
+
+        PmicAddress = (PMIC0_LID_CODE << 4) | (SpdAddress & 0xE);
+
+        SmbusCommand = (PMIC_REG_32 << 8) | PmicAddress;
+        Reg32.Data = MrcSmbusRead (MrcData, SmbusCommand, &SmbusStatus);
+
+        if (Reg32.Bits.vr_enable == 1) {
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "[SPD 0x%02X] PMIC Voltage Regulator (VR) is already enabled.\n", SpdAddress);
+        } else {
+          IsVrEnableCmdSent = TRUE;
+
+          Reg32.Bits.vr_enable = 1;
+          MrcSmbusWrite (MrcData, SmbusCommand, Reg32.Data, &SmbusStatus);
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "[SPD 0x%02X] PMIC Voltage Regulator (VR) Enable command sent.\n", SpdAddress);
+        }
+
+        SpdAddressList[SpdAddressCount++] = (UINT8) SpdAddress;
       }
     }
   }
 
-  NewVoltage = Vddq;
-  if (NewVoltage != VDD_INVALID) {
-    Data = (NewVoltage - PMIC_SWA_SWB_START_VOLTAGE) / SWBStepSize;
-    Offset = PMIC_REG_25;
-    Reg25.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-    if (Status != EFI_SUCCESS) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Failed to read PMIC reg 0x%02X!\n", gErrString, Offset);
-      return;
-    }
-    if (!SWBNeedSwitchStep) {
-      Current = Reg25.Bits.swb_voltage_setting;
-    } else {
-      Current = 0;
-    }
-    if (SWBNeedSwitchStep || (Current != Data)) {
-      Reg25.Bits.swb_voltage_setting = (UINT8) Data;
-      Value = MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg25.Data, &Status);
-      Delta = ABS((int)Data - (int)Current);
-      MrcWait (MrcData, Delta * SWBStepSize * MRC_TIMER_1US);
-      Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-      MRC_DEBUG_MSG (
-        Debug,
-        MSG_LEVEL_NOTE,
-        "*** %s update to %u mV, Pmic reg 0x%02x: new value 0x%02x, readback value 0x%02x\n",
-        "VDDQ",
-        NewVoltage,
-        Offset,
-        Reg25.Data,
-        Value);
-      if (Value != Reg25.Data) {
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Update failed, Pmic doesn't accept the value!\n");
-      }
-    }
-  }
-
-  NewVoltage = Vpp;
-  if (NewVoltage != VDD_INVALID) {
-    Data = (NewVoltage - PMIC_SWC_START_VOLTAGE) / SWCStepSize;
-    Offset = PMIC_REG_27;
-    Reg27.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-    if (Status != EFI_SUCCESS) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Failed to read PMIC reg 0x%02X!\n", gErrString, Offset);
-      return;
-    }
-    if (!SWCNeedSwitchStep) {
-      Current = Reg27.Bits.swc_voltage_setting;
-    } else {
-      Current = 0;
-    }
-    if (SWCNeedSwitchStep || (Current != Data)) {
-      Reg27.Bits.swc_voltage_setting = (UINT8) Data;
-      Value = MrcCall->MrcSmbusWrite8 (PmicAddress | (Offset << 8), Reg27.Data, &Status);
-      Delta = ABS((int)Data - (int)Current);
-      MrcWait (MrcData, Delta * SWCStepSize * MRC_TIMER_1US);
-      Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-      MRC_DEBUG_MSG (
-        Debug,
-        MSG_LEVEL_NOTE,
-        "*** %s update to %u mV, Pmic reg 0x%02x: new value 0x%02x, readback value 0x%02x\n",
-        "VPP",
-        NewVoltage,
-        Offset,
-        Reg27.Data,
-        Value);
-      if (Value != Reg27.Data) {
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Update failed, Pmic doesn't accept the value!\n");
-      }
-    }
-  }
-
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Dump Pmic Reg Value:\n");
-  for (Loop = 0; Loop < ARRAY_COUNT(PmicDumpRegs); Loop++) {
-    Offset = PmicDumpRegs[Loop];
-    Value = MrcCall->MrcSmbusRead8 (PmicAddress | (Offset << 8), &Status);
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\t0x%02x: 0x%02x\n", Offset, Value);
+  if (IsVrEnableCmdSent) {
+    MrcWait (MrcData, MAX_PWR_GOOD_OUT_TIME * MRC_TIMER_1MS);
   }
 }
 
+/**
+  Program PMIC voltages.
+
+  @param[in] MrcData - MRC global data.
+  @param[in] PmicVoltages - PMIC voltages to be programmed.
+**/
+VOID
+ProgramVoltages (
+  IN OUT MrcParameters *MrcData,
+  const UINT16* const PmicVoltages
+  )
+{
+  MrcInput *Inputs = &MrcData->Inputs;
+  MrcOutput *Outputs = &MrcData->Outputs;
+  MrcDebug *Debug;
+
+  UINT8  SpdAddressList[MAX_CONTROLLER * MAX_CHANNEL * MAX_DIMMS_IN_CHANNEL];
+  UINT32 SpdAddressCount = 0;
+  UINT32 SpdAddressIndex;
+  BOOLEAN IsAlreadyConfigured;
+
+  UINT32 Controller;
+  UINT32 Channel;
+  UINT32 Dimm;
+
+  UINT32 SpdAddress;
+  SPD_PMIC_DEVICE_TYPE PmicType;
+  UINT32 PmicAddress;
+
+  PMIC_REG_2B_STRUCT Reg2B;
+  PMIC_REG_21_STRUCT Reg21;
+  PMIC_REG_23_STRUCT Reg23;
+  PMIC_REG_25_STRUCT Reg25;
+  PMIC_REG_27_STRUCT Reg27;
+  UINT8 VoltageEncoding;
+
+  RETURN_STATUS SmbusStatus;
+  UINT32 SmbusCommand;
+
+  Debug = &Outputs->Debug;
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Configuring PMIC voltages:\n");
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tSWA: %d mV\n"
+                                        "\tSWB: %d mV\n"
+                                        "\tSWC: %d mV\n"
+                                        "\tSWD: %d mV\n",
+                                          PmicVoltages[PmicRailSwa],
+                                          PmicVoltages[PmicRailSwb],
+                                          PmicVoltages[PmicRailSwc],
+                                          PmicVoltages[PmicRailSwd]);
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
+      }
+      for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+        IsAlreadyConfigured = FALSE;
+
+        SpdAddress = Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].SpdAddress;
+
+        for (SpdAddressIndex = 0; SpdAddressIndex < SpdAddressCount; SpdAddressIndex++) {
+          if (SpdAddressList[SpdAddressIndex] == SpdAddress) {
+            IsAlreadyConfigured = TRUE;
+            break;
+          }
+        }
+
+        if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status != DIMM_PRESENT ||
+            SpdAddress == 0                                                                    ||
+            IsAlreadyConfigured) {
+          continue;
+        }
+
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "[SPD 0x%02X] PMIC Voltages before configuration:\n", SpdAddress);
+        MrcPmicPrintRegisters (MrcData, (UINT8) SpdAddress);
+
+        PmicType = Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].PmicType;
+
+        PmicAddress = (PMIC0_LID_CODE << 4) | (SpdAddress & 0xE);
+        SmbusCommand = (PMIC_REG_2B << 8) | PmicAddress;
+        Reg2B.Data = MrcSmbusRead (MrcData, SmbusCommand, &SmbusStatus);
+
+        // SWA
+        if (PmicVoltages[PmicRailSwa] != VDD_INVALID) {
+          SmbusCommand = (PMIC_REG_21 << 8) | PmicAddress;
+
+          VoltageEncoding =  GetPmicVoltageRegValue (PmicVoltages[PmicRailSwa], PmicRailSwa, Reg2B.Bits.SWAStepSize);
+
+          Reg21.Data = MrcSmbusRead (MrcData, SmbusCommand, &SmbusStatus);
+          Reg21.Bits.swa_voltage_setting = VoltageEncoding;
+          MrcSmbusWrite (MrcData, SmbusCommand, Reg21.Data, &SmbusStatus);
+        }
+
+        // SWB
+        if (PmicVoltages[PmicRailSwb] != VDD_INVALID) {
+          SmbusCommand = (PMIC_REG_25 << 8) | PmicAddress;
+
+          VoltageEncoding =  GetPmicVoltageRegValue (PmicVoltages[PmicRailSwb], PmicRailSwb, Reg2B.Bits.SWBStepSize);
+
+          Reg25.Data = MrcSmbusRead (MrcData, SmbusCommand, &SmbusStatus);
+          Reg25.Bits.swb_voltage_setting = VoltageEncoding;
+          MrcSmbusWrite (MrcData, SmbusCommand, Reg25.Data, &SmbusStatus);
+        }
+
+        // SWC
+        if (PmicVoltages[PmicRailSwc] != VDD_INVALID) {
+          SmbusCommand = (PMIC_REG_27 << 8) | PmicAddress;
+
+          VoltageEncoding =  GetPmicVoltageRegValue (PmicVoltages[PmicRailSwc], PmicRailSwc, Reg2B.Bits.SWCStepSize);
+
+          Reg27.Data = MrcSmbusRead (MrcData, SmbusCommand, &SmbusStatus);
+
+          Reg27.Bits.swc_voltage_setting = VoltageEncoding;
+          MrcSmbusWrite (MrcData, SmbusCommand, Reg27.Data, &SmbusStatus);
+        }
+
+        // SWD
+        if (PmicVoltages[PmicRailSwd] != VDD_INVALID && PmicType == Pmic5200) {
+          SmbusCommand = (PMIC_REG_23 << 8) | PmicAddress;
+
+          VoltageEncoding =  GetPmicVoltageRegValue (PmicVoltages[PmicRailSwd], PmicRailSwd, Reg2B.Bits.SWDStepSize);
+
+          Reg23.Data = MrcSmbusRead (MrcData, SmbusCommand, &SmbusStatus);
+          Reg23.Bits.swd_voltage_setting = VoltageEncoding;
+          MrcSmbusWrite (MrcData, SmbusCommand, Reg23.Data, &SmbusStatus);
+        }
+
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "[SPD 0x%02X] PMIC Voltages are configured.\nReading regs after configuration:\n", SpdAddress);
+        MrcPmicPrintRegisters (MrcData, (UINT8) SpdAddress);
+
+        SpdAddressList[SpdAddressCount++] = (UINT8) SpdAddress;
+      }
+    }
+  }
+}
+
+/**
+ * Print PMIC registers.
+ *
+ * @param[in] MrcData - MRC global data.
+ * @param[in] SpdAddress - SPD address.
+ */
+VOID
+MrcPmicPrintRegisters (
+  IN OUT MrcParameters *MrcData,
+  UINT8 SpdAddress
+  )
+{
+  MrcDebug *Debug;
+  UINT32 Rail;
+
+  UINT32 PmicAddress;
+  UINT32 PmicRegOffset;
+  UINT32 Value;
+
+  UINT32 SmbusCommand;
+  RETURN_STATUS SmbusStatus;
+
+  Debug = &MrcData->Outputs.Debug;
+
+  for (Rail = 0; Rail < MaxPmicRails; Rail++) {
+    PmicRegOffset = PmicRailToVoltageRegMap[Rail];
+    PmicAddress = (PMIC0_LID_CODE << 4) | (SpdAddress & 0xE);
+    SmbusCommand = (PmicRegOffset << 8) | PmicAddress;
+    Value = MrcSmbusRead (MrcData,  SmbusCommand, &SmbusStatus);
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\t[PMIC Reg Read] SPD: 0x%02x, Reg:0x%02X, Voltage Setting: 0x%02x, PWR GOOD THS: %u\n",
+                   SpdAddress,
+                   PmicRegOffset,
+                   (Value & 0b11111110) >> 1,
+                   Value & 1);
+  }
+}

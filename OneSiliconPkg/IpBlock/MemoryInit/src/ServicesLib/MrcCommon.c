@@ -4316,5 +4316,31 @@ Ddrphyx64CrChecker (
       }
     }
   }
-
 #endif // MRC_DEBUG_PRINT
+
+/**
+  This function returns first populated DIMM for a given controller and channel based on output data.
+
+  @param[in] MrcData is a pointer to MrcData data structure.
+  @param[in] Controller controller index.
+  @param[in] Channel channel index.
+
+  @returns Index of first populated DIMM.
+**/
+UINT8
+MrcGetFirstPopulatedDimm (
+  MrcParameters *const MrcData,
+  UINT8 Controller,
+  UINT8 Channel
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT8 Dimm;
+
+  for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+    if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status == DIMM_PRESENT) {
+      return Dimm;
+    }
+  }
+  return MAX_DIMMS_IN_CHANNEL;
+}

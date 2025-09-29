@@ -27,6 +27,7 @@
 #include "CMrcSpdDataDdr5.h"
 
 #define MAX_XMP3_PROFILES     (5)
+#define MAX_PMIC_COUNT        (3)
 #define SPD5_MANUF_SIZE   (SPD5_MANUF_END - SPD5_MANUF_START + 1)   ///< The size of the SPD manufacturing data.
 #define SPDLP_MANUF_SIZE  (SPDLP_MANUF_END - SPDLP_MANUF_START + 1) ///< The size of the SPD manufacutring data.
 #define SPDLP_JEDEC_SPEC_MANUF_SIZE (SPDLP_JEDEC_SPEC_MANUF_END - SPDLP_JEDEC_SPEC_MANUF_START + 1) ///< The size of the SPD manufacturing data.
@@ -56,6 +57,9 @@
 #define MRC_SPD_LPDDR5_SDRAM_TYPE_NUMBER      (0x13)
 #define MRC_SPD_LPDDR5X_SDRAM_TYPE_NUMBER     (0x15)
 #define CKD_LID                       (0xB)
+#define PMIC0_LID_CODE                (0x9)
+#define PMIC1_LID_CODE                (0x8)
+#define PMIC2_LID_CODE                (0xC)
 #define DIMM_LID_MASK                 (0xF0)
 #define DIMM_HID_MASK                 (0x7)
 
@@ -379,10 +383,24 @@ typedef union {
 } SPD_MEMORY_OC_FEATURE_STRUCT;
 #define REALTIME_MEMORY_FREQ_OVERCLOCK_SUPPORTED   (BIT0)
 #define DYNAMIC_MEMORY_BOOST_SUPPORTED             (BIT1)
+typedef enum PMIC_STEP_SIZE {
+  PmicStepSize5mV = 0,
+  PmicStepSizeDefault = PmicStepSize5mV,
+  PmicStepSize10mV = 1,
+  PmicStepSize2p5mV = 1,
+  MaxPmicStepSize,
+} PMIC_STEP_SIZE;
+
 typedef enum {
-  PMIC_5MVSTEP,
-  PMIC_10MVSTEP
-} PMICStepSize;
+  Pmic5000 = 0b0000,
+  Pmic5010 = 0b0001,
+  Pmic5100 = 0b0010,
+  Pmic5020 = 0b0011,
+  Pmic5120 = 0b0100,
+  Pmic5200 = 0b0101,
+  Pmic5030 = 0b0110,
+  PmicTypeUnknown,
+} SPD_PMIC_DEVICE_TYPE;
 
 typedef union {
   struct {
@@ -1097,21 +1115,21 @@ typedef union {
 /// DDR5 Common SPD Bytes for All Module Types
 ///
 typedef struct {
-  SPD_REVISION_STRUCT                     Revision;                 ///< 192     SPD Revision for SPD bytes 192-447
-  UINT8                                   Reserved0;                ///< 193     Reserved
-  SPD5_DEVICE_INFO                        DeviceInfoSpd;            ///< 194-197 SPD Device Information
-  SPD5_DEVICE_INFO                        DeviceInfoPmic[3];        ///< 198-209 PMIC Device Information
-  SPD5_THERM_DEVICE_INFO                  DeviceInfoThermalSensor;  ///< 210-213 Thermal Sensor Device Information
-  UINT8                                   Reserved1[229 - 214 + 1]; ///< 214-229 Reserved
-  SPD5_MODULE_NOMINAL_HEIGHT              ModuleNominalHeight;      ///< 230     Module Nominal Height
-  SPD5_MODULE_MAXIMUM_THICKNESS           ModuleMaximumThickness;   ///< 231     Module Maximum Thickness
-  SPD5_REFERENCE_RAW_CARD                 ReferenceRawCardUsed;     ///< 232     Reference Raw Card Used
-  SPD5_DIMM_ATTRIBUTES                    DimmAttributes;           ///< 233     DIMM Attributes
-  SPD5_MODULE_ORGANIZATION                ModuleOrganization;       ///< 234     Module Organization
-  SPD5_MODULE_MEMORY_BUS_WIDTH            ModuleMemoryBusWidth;     ///< 235     Memory Channel Bus Width
-  UINT8                                   Reserved2[239 - 236 + 1]; ///< 236-239 Reserved
-  SPD5_MODULE_SPECIFIC                    ModuleSpecific;           ///< 240-445 Module Type Specific Information
-  SPD_CYCLIC_REDUNDANCY_CODE              Crc;                      ///< 446-447 Cyclical Redundancy Code (CRC)
+  SPD_REVISION_STRUCT           Revision;                       ///< 192     SPD Revision for SPD bytes 192-447
+  UINT8                         Reserved0;                      ///< 193     Reserved
+  SPD5_DEVICE_INFO              DeviceInfoSpd;                  ///< 194-197 SPD Device Information
+  SPD5_DEVICE_INFO              DeviceInfoPmic[MAX_PMIC_COUNT]; ///< 198-209 PMIC Device Information
+  SPD5_THERM_DEVICE_INFO        DeviceInfoThermalSensor;        ///< 210-213 Thermal Sensor Device Information
+  UINT8                         Reserved1[229 - 214 + 1];       ///< 214-229 Reserved
+  SPD5_MODULE_NOMINAL_HEIGHT    ModuleNominalHeight;            ///< 230     Module Nominal Height
+  SPD5_MODULE_MAXIMUM_THICKNESS ModuleMaximumThickness;         ///< 231     Module Maximum Thickness
+  SPD5_REFERENCE_RAW_CARD       ReferenceRawCardUsed;           ///< 232     Reference Raw Card Used
+  SPD5_DIMM_ATTRIBUTES          DimmAttributes;                 ///< 233     DIMM Attributes
+  SPD5_MODULE_ORGANIZATION      ModuleOrganization;             ///< 234     Module Organization
+  SPD5_MODULE_MEMORY_BUS_WIDTH  ModuleMemoryBusWidth;           ///< 235     Memory Channel Bus Width
+  UINT8                         Reserved2[239 - 236 + 1];       ///< 236-239 Reserved
+  SPD5_MODULE_SPECIFIC          ModuleSpecific;                 ///< 240-445 Module Type Specific Information
+  SPD_CYCLIC_REDUNDANCY_CODE    Crc;                            ///< 446-447 Cyclical Redundancy Code (CRC)
 } SPD5_MODULE_COMMON;
 
 typedef struct {
@@ -1266,19 +1284,19 @@ typedef union {
 } LP5_JEDEC_SPEC_MODULE_MEMORY_BUS_WIDTH;
 
 typedef struct {
-  SPD_REVISION_STRUCT                          Revision;                 ///< 192     SPD Revision for SPD bytes 192-447
-  LP5_JEDEC_SPEC_HASHING_SEQUENCE              HashingSequence;          ///< 193     Hashing Sequence for device serial numbers
-  SPD5_DEVICE_INFO                             DeviceInfoSpd;            ///< 194-197 SPD Device Information
-  SPD5_DEVICE_INFO                             DeviceInfoPmic[3];        ///< 198-209 PMIC Device Information
-  SPD5_THERM_DEVICE_INFO                       DeviceInfoThermalSensor;  ///< 210-213 Thermal Sensor Device Information
-  UINT8                                        Reserved1[229 - 214 + 1]; ///< 214-229 Reserved
-  SPD5_MODULE_NOMINAL_HEIGHT                   ModuleNominalHeight;      ///< 230     Module Nominal Height
-  SPD5_MODULE_MAXIMUM_THICKNESS                ModuleMaximumThickness;   ///< 231     Module Maximum Thickness
-  SPD5_REFERENCE_RAW_CARD                      ReferenceRawCardUsed;     ///< 232     Reference Raw Card Used
-  LP5_JEDEC_SPEC_DIMM_ATTRIBUTES               DimmAttributes;           ///< 233     DIMM Attributes
-  LP5_JEDEC_SPEC_MODULE_ORGANIZATION           ModuleOrganization;       ///< 234     Module Organization
-  LP5_JEDEC_SPEC_MODULE_MEMORY_BUS_WIDTH       ModuleMemoryBusWidth;     ///< 235     Memory Channel Bus Width
-  UINT8                                        Reserved2[447 - 236 + 1]; ///< 236-447 Reserved
+  SPD_REVISION_STRUCT                    Revision;                       ///< 192     SPD Revision for SPD bytes 192-447
+  LP5_JEDEC_SPEC_HASHING_SEQUENCE        HashingSequence;                ///< 193     Hashing Sequence for device serial numbers
+  SPD5_DEVICE_INFO                       DeviceInfoSpd;                  ///< 194-197 SPD Device Information
+  SPD5_DEVICE_INFO                       DeviceInfoPmic[MAX_PMIC_COUNT]; ///< 198-209 PMIC Device Information
+  SPD5_THERM_DEVICE_INFO                 DeviceInfoThermalSensor;        ///< 210-213 Thermal Sensor Device Information
+  UINT8                                  Reserved1[229 - 214 + 1];       ///< 214-229 Reserved
+  SPD5_MODULE_NOMINAL_HEIGHT             ModuleNominalHeight;            ///< 230     Module Nominal Height
+  SPD5_MODULE_MAXIMUM_THICKNESS          ModuleMaximumThickness;         ///< 231     Module Maximum Thickness
+  SPD5_REFERENCE_RAW_CARD                ReferenceRawCardUsed;           ///< 232     Reference Raw Card Used
+  LP5_JEDEC_SPEC_DIMM_ATTRIBUTES         DimmAttributes;                 ///< 233     DIMM Attributes
+  LP5_JEDEC_SPEC_MODULE_ORGANIZATION     ModuleOrganization;             ///< 234     Module Organization
+  LP5_JEDEC_SPEC_MODULE_MEMORY_BUS_WIDTH ModuleMemoryBusWidth;           ///< 235     Memory Channel Bus Width
+  UINT8                                  Reserved2[447 - 236 + 1];       ///< 236-447 Reserved
 } SPD_LPDDR_JEDEC_SPEC_COMMON;
 
 typedef struct {
@@ -1295,7 +1313,7 @@ typedef struct {
 } SPD_LPDDR_JEDEC_SPEC_MANUFACTURING_INFO;
 
 typedef union {
-  UINT8                                   Reserved0[1023 - 640 + 1]; ///< 640-1023 End User Programmable 
+  UINT8                                   Reserved0[1023 - 640 + 1]; ///< 640-1023 End User Programmable
 } SPD_LPDDR_JEDEC_SPEC_END_USER_SECTION;
 
 typedef struct {

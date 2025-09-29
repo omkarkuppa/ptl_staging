@@ -16,7 +16,7 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference: PMIC5100 Spec Rev 0.99c
+@par Specification Reference: PMIC5100 (JEDEC JESD301-2) and PMIC5200 (JEDEC JESD301-2) Specifications
 **/
 
 #ifndef  _MRC_PMIC_H
@@ -222,6 +222,36 @@ typedef union {
   UINT8 Data;
 } PMIC_REG_21_STRUCT;
 
+#define PMIC_REG_23 0x23
+typedef union {
+  struct {
+    UINT8 swd_power_good_threshold_low_side_voltage_setting : 1;
+    /*
+     * R21 [0]:
+     * SWA_POWER_GOOD_THRESHOLD_LOW_SIDE_VOLTAGE_SETTING
+     * Switch Node A Output Threshold Low Side Voltage For Power Good Status
+     * 0 = -5% from the setting in "Register 0x21," [7:1]
+     * 1 = -7.5% from the setting in "Register 0x21, [7:1]
+     */
+
+    UINT8 swd_voltage_setting : 7;
+    /*
+     * R21 [7:1]: SWD_VOLTAGE_SETTING
+     * Switch Node A Output Regulator Voltage Setting
+     * 000 0000 = 800 mV
+     * 000 0001 = 805 mV
+     * 000 0010 = 810 mV
+     * ...
+     * 011 1100 = 1100 mV
+     * ...
+     * 111 1101 = 1425 mV
+     * 111 1110 = 1430 mV
+     * 111 1111 = 1435 mV
+     */
+  } Bits;
+  UINT8 Data;
+} PMIC_REG_23_STRUCT;
+
 #define PMIC_REG_25 0x25
 typedef union {
   struct {
@@ -284,8 +314,8 @@ typedef union {
 typedef union {
   struct {
 
-    UINT8 Reserved0                   : 1;
-    /* R2B [0]: Reserved */
+    UINT8 SWCStepSize                 : 1;
+    /* R2B [0]: SWC_VOLTAGE_STEP_SIZE */
 
     UINT8 vout_1000mV_voltage_setting : 2;
     /*
@@ -297,9 +327,12 @@ typedef union {
      * 11 = 1.2 V
      */
 
-    UINT8 SWCStepSize                 : 1;
     UINT8 SWBStepSize                 : 1;
+    /* R2B [3]: SWB_VOLTAGE_STEP_SIZE */
+    UINT8 SWDStepSize                 : 1;
+    /* R2B [4]: SWD_VOLTAGE_STEP_SIZE */
     UINT8 SWAStepSize                 : 1;
+    /* R2B [5]: SWA_VOLTAGE_STEP_SIZE */
     /*
      * 0: Step size is 5mv
      * 1: Step size is 10mv
@@ -321,8 +354,23 @@ typedef union {
 #define PMIC_REG_2C 0x2C
 typedef union {
   struct {
-    UINT8 reserved_0 : 5;
-    /* R2C [4:0]: Reserved */
+    UINT8 reserved_0 : 1;
+    /* R2C [0:0]: Reserved */
+
+    UINT8 swd_output_soft_start_time : 3;
+    /*
+     * R2C [3:1]: SWD_OUTPUT_SOFT_START_TIME
+     * SWD Output Regulator Soft Start Time After VR Enable
+     * 000 = 1 ms
+     * 001 = 2 ms
+     * 010 = 4 ms
+     * 011 = 6 ms
+     * ...
+     * 111 = 14 ms
+     */
+
+    UINT8 reserved_4 : 1;
+    /* R2C [4:4]: Reserved */
 
     UINT8 swa_output_soft_start_time : 3;
     /*
@@ -413,8 +461,12 @@ typedef union {
      * 1 = Enable Switch Node B Output Regulator
      */
 
-    UINT8 reserved_5 : 1;
-    /* R2F [5]: Reserved */
+    UINT8 swd_regulator_control : 1;
+    /* R2F [5]: SWD_REGULATOR_CONTROL
+     * Disable SWD Regulator Output
+     * 0 = Disable Switch Node D Output Regulator
+     * 1 = Enable Switch Node D Output Regulator
+     */
 
     UINT8 swa_regulator_control : 1;
     /*
@@ -619,6 +671,16 @@ typedef union {
 **/
 VOID
 MrcEnableDimmPmic (
+  IN OUT MrcParameters      *MrcData
+  );
+
+/**
+  This function configures PMIC voltages.
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+MrcPmicVoltageConfiguration (
   IN OUT MrcParameters      *MrcData
   );
 

@@ -188,6 +188,7 @@ src/ServicesLib/BlueMrcSpecific.c
 src/ServicesLib/MrcTurnAround.c
 src/ServicesLib/BlueMrcPpr.c
 src/ServicesLib/MrcPpr.c
+src/ServicesLib/BlueMrcPmic.c
 src/ServicesLib/MrcPmic.c
 src/ServicesLib/BlueMrcReset.c
 src/ServicesLib/BlueMrcIoTest.c

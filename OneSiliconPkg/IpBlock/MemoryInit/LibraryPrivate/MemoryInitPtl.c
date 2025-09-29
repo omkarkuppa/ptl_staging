@@ -155,6 +155,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED const SPD_OFFSET_TABLE SpdLpddrTable[] = {
   {   2,               3,               (1 << SpdCold) | (1 << SpdFast),},
   {   4,              32,               (1 << SpdCold),},
   { 120,             130,               (1 << SpdCold),},
+  { 192,             213,               (1 << SpdCold),},
   { 230,             232,               (1 << SpdCold),},
   { 234,             235,               (1 << SpdCold),},
   { SPDLP_MANUF_START, SPDLP_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},

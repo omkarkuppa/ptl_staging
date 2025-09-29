@@ -703,7 +703,7 @@ MrcJedecResetDdr5 (
   }
 
   // Override Vdd / Vddq / Vpp using PMIC
-  if (!Outputs->VoltageDone) {
+  if (!Outputs->IsPmicVoltageConfigured) {
     MrcEnableDimmPmic (MrcData);
     MrcDdr5VoltageCheckAndSwitch (MrcData);
   }
@@ -1136,5 +1136,5 @@ MrcDdr5VoltageCheckAndSwitch (
     } // For Channel
   } // For Controller
 
-  Outputs->VoltageDone = TRUE;
+  Outputs->IsPmicVoltageConfigured = TRUE;
 }

@@ -1213,7 +1213,7 @@ MrcRestoreNonTrainingValues (
   Outputs->MaxRanks               = SaveData->MaxRanks;
   Outputs->IsCkdSupported         = SaveData->IsCkdSupported;
   Outputs->HighFrequency          = Outputs->Frequency;
-  Outputs->IsCs2NEnabled          = (SaveData->SagvGeardownMask & (1 << SaGvPoint)) ? TRUE : FALSE; 
+  Outputs->IsCs2NEnabled          = (SaveData->SagvGeardownMask & (1 << SaGvPoint)) ? TRUE : FALSE;
   if (Outputs->GearMode == 1) {
     Outputs->Gear4Ever = 1;
   }

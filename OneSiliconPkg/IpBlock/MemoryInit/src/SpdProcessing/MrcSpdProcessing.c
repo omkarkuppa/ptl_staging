@@ -102,6 +102,16 @@ const char  RrcString[][3]     = {
                                      "AY", "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BJ",
                                      "BK", "BL", "BM", "BN", "BP", "BR", "BT", "BU", "BV", "BW",
                                      "BY", "CA", "CB", "ZZ"};
+
+static const CHAR8 *PmicDeviceTypeString[] = {
+  [Pmic5000] = "5000",
+  [Pmic5010] = "5010",
+  [Pmic5100] = "5100",
+  [Pmic5020] = "5020",
+  [Pmic5120] = "5120",
+  [Pmic5200] = "5200",
+  [Pmic5030] = "5030"
+};
 #endif // MRC_DEBUG_PRINT
 
                                    // Ratio
@@ -637,6 +647,8 @@ ValidDimm (
     case MRC_SPD_DDR5_SDRAM_TYPE_NUMBER:
       DimmOut->DdrType    = MRC_DDR_TYPE_DDR5;
       DimmOut->ModuleType = Spd->Ddr5.Base.ModuleType.Bits.ModuleType;
+      DimmOut->IsPmic     = Spd->Ddr5.ModuleCommon.DeviceInfoPmic[pPmic0].DeviceType.Bits.DevicesInstalled;
+      DimmOut->PmicType   = Spd->Ddr5.ModuleCommon.DeviceInfoPmic[pPmic0].DeviceType.Bits.DeviceType;
       Outputs->Vdd2Mv     = 1100;
       Header5    = &Spd->Ddr5.EndUser.Xmp.Header;
       XmpId = Header5->XmpId;
@@ -658,7 +670,7 @@ ValidDimm (
         }
 
         DimmOut->IsPmicSupport10MVStep = (Header5->PmicCapabilities.Bits.OCCapable == 1);
-        if (DimmOut->IsPmicSupport10MVStep && (Header5->PmicCapabilities.Bits.DefaultStepSize == PMIC_10MVSTEP)) {
+        if (DimmOut->IsPmicSupport10MVStep && (Header5->PmicCapabilities.Bits.DefaultStepSize == PmicStepSize10mV)) {
           DimmOut->PmicDefaultStepSize = 10;
         } else{
           DimmOut->PmicDefaultStepSize = 5;
@@ -710,6 +722,8 @@ ValidDimm (
     case MRC_SPD_LPDDR5X_SDRAM_TYPE_NUMBER:
       DimmOut->DdrType    = MRC_DDR_TYPE_LPDDR5;
       DimmOut->ModuleType = Spd->Lpddr.Base.ModuleType.Bits.ModuleType;
+      DimmOut->IsPmic     = Spd->JedecLpddr5.ModuleCommon.DeviceInfoPmic[pPmic0].DeviceType.Bits.DevicesInstalled;
+      DimmOut->PmicType   = Spd->JedecLpddr5.ModuleCommon.DeviceInfoPmic[pPmic0].DeviceType.Bits.DeviceType;
       IsLpddr             = TRUE;
       Outputs->Vdd2Mv     = 1050;
 
@@ -888,6 +902,14 @@ ValidDimm (
       );
   }
 
+  if (DimmOut->IsPmic) {
+    MRC_DEBUG_MSG (
+      Debug,
+      MSG_LEVEL_NOTE,
+      "  PMIC type: %s\n",
+      DimmOut->PmicType < ARRAY_COUNT(PmicDeviceTypeString) ? PmicDeviceTypeString[DimmOut->PmicType] : "Unknown"
+      );
+  }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  DIMM profile %s selected\n", ProfileStr);
   MRC_DEBUG_MSG (
     Debug,
@@ -2374,7 +2396,9 @@ GetChannelDimmtCK (
                   Calculated = MAX (Outputs->MemoryClockMax, Calculated);
                   break;
                 } else {
-                  // In AUTO mode, so no break.
+                  Calculated = MrcRatioToClock (MrcData, ExtInputs->Ratio);
+                  Calculated = MAX (Outputs->MemoryClockMax, Calculated);
+                  break;
                 }
               }
               /*FALLTHROUGH*/
@@ -7432,6 +7456,9 @@ MrcSpdProcessingCalc (
   UINT8                         Dimm;
   UINT8                         MaxDimm;
   UINT8                         ValidRankBitMask;
+  UINT32                        PhyClockController;
+  UINT32                        PhyClockChannel;
+  UINT32                        PhyClockRank;
   BOOLEAN                       Xmp1DPC;
   BOOLEAN                       IsNonCkd;
   BOOLEAN                       IsAnyEccDimm;
@@ -7610,6 +7637,24 @@ MrcSpdProcessingCalc (
     }
   }
 
+  // Check if for channel configuration for CKD DIMMs is correct. Each populated rank needs to have channel providing its clock populated as well.
+  if (Outputs->IsCkdSupported) {
+    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+      for (Channel = 0; Channel < MaxChannel; Channel++) {
+        for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+          if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
+            MrcGetDdr5ClkIndex (MrcData, Controller, Channel, Rank, &PhyClockController, &PhyClockChannel, &PhyClockRank);
+            if (!MrcChannelExist (MrcData, PhyClockController, PhyClockChannel)) {
+              MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Wrong configuration. Channel providing a clock for one of populated channels is disabled\n");
+              Status = mrcFail;
+              return Status;
+            }
+          }
+        }
+      }
+    }
+  }
+
   ValidRankBitMask = 0;
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < MaxChannel; Channel++) {
@@ -7677,32 +7722,7 @@ MrcUpdateDdr5MintCL (
   }
 }
 
-/**
-  This function returns first populated DIMM for a given controller and channel based on output data.
 
-  @param[in] MrcData is a pointer to MrcData data structure.
-  @param[in] Controller controller index.
-  @param[in] Channel channel index.
-
-  @returns Index of first populated DIMM.
-**/
-UINT8
-MrcGetFirstPopulatedDimm (
-  MrcParameters *const MrcData,
-  UINT8 Controller,
-  UINT8 Channel
-  )
-{
-  MrcOutput *Outputs = &MrcData->Outputs;
-  UINT8 Dimm;
-
-  for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
-    if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status == DIMM_PRESENT) {
-      return Dimm;
-    }
-  }
-  return MAX_DIMMS_IN_CHANNEL;
-}
 
 /**
   This function get physcial DIMM count in MemSS mounted in the first slot on channel and

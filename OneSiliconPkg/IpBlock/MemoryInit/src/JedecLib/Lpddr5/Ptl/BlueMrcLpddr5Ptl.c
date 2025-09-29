@@ -23,6 +23,7 @@
 #include "CMrcApi.h"
 #include "MrcHalRegisterAccess.h"
 #include "MrcLpddr5.h"
+#include "MrcPmic.h"
 
 /**
   This function performs the reset sequence required by JEDEC spec for LPDDR5.
@@ -57,6 +58,11 @@ MrcJedecResetLpddr (
   tInit1 = MRC_LP_tINIT1_US * MRC_TIMER_1US;
   tInit3 = MRC_LP_tINIT3_US * MRC_TIMER_1US;
   tInit5 = MRC_LP_tINIT5_US * MRC_TIMER_1US;
+
+  if (!MrcData->Outputs.IsPmicVoltageConfigured && MrcData->Outputs.IsLP5Camm2) {
+    MrcPmicVoltageConfiguration (MrcData);
+    MrcData->Outputs.IsPmicVoltageConfigured = TRUE;
+  }
 
   // Keep CS Low when DRAM_RESET# is asserted
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOn, WriteCached, &GetSetDis);

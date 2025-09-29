@@ -222,11 +222,12 @@ MrcMcCapabilityPreSpd (
     FreqMax = MaxFreq;
   }
   Outputs->FreqMax = ((Inputs->FreqMax > fNoInit) && (Inputs->FreqMax < fInvalid)) ? Inputs->FreqMax : FreqMax;
-  if (Inputs->FreqMax == fNoInit) {
+  if ((Inputs->FreqMax == fNoInit) && (ExtInputs->MemoryProfile == STD_PROFILE)) {
     Status = MrcBoardAndSkuFreqCheck (MrcData); // Limit Outputs->FreqMax by board layout if needed
     if (Status != mrcSuccess) {
       return Status;
     }
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Auto FreqMax after board/SKU limit: %u\n", Outputs->FreqMax);
     if (Outputs->IsLpddr5) {
       if (Inputs->IsDdrIoB0) {
         Outputs->FreqMax = MIN (Outputs->FreqMax, f8533); // Default SAGV: 2400, 4800, 6400, 8533 (all G4)

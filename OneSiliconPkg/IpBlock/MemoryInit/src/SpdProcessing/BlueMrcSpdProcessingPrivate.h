@@ -865,22 +865,6 @@ MrcSpdProcessingMaxFreqCheck (
   );
 
 /**
-  This function returns first populated DIMM for a given controller and channel based on output data.
-
-  @param[in] MrcData is a pointer to MrcData data structure.
-  @param[in] Controller controller index.
-  @param[in] Channel channel index.
-
-  @returns Index of first populated DIMM.
-**/
-UINT8
-MrcGetFirstPopulatedDimm (
-  MrcParameters *const MrcData,
-  UINT8 Controller,
-  UINT8 Channel
-  );
-
-/**
   This function get physcial DIMM count in MemSS mounted in the first slot on channel and
   checks if DIMMs are swizzled.
 

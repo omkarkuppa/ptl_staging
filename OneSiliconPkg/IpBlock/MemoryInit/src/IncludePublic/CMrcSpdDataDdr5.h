@@ -35,9 +35,6 @@
 #define SPD5_MR0_SPD5_HUB_DEVICE (0x51)
 #define SPD5_MEMREG_REG(Offset)   ((UINT8) ((~BIT7) & (Offset)))
 #define SPD5_MEMREG_NVM(Offset)   ((UINT8) (BIT7 | (Offset)))
-#define PMIC0_LID_CODE                            (0x09)
-#define PMIC1_LID_CODE                            (0x08)
-#define PMIC2_LID_CODE                            (0x0C)
 // Base Configuration and DRAM Parameters
 
 // Byte 0
@@ -429,7 +426,6 @@ typedef struct {
 
 // Byte 198-209
 // PMIC Device Information
-// SPD5_DEVICE_INFO common
 
 // Byte 210-213
 // Thermal Sensor Device Information

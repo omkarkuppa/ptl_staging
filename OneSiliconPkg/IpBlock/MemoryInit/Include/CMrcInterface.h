@@ -1789,6 +1789,8 @@ typedef struct {
   UINT8          XmpProfile2Config;       ///< Indicates the XMP Profile2Config of this DIMM. 0 = 1DimmPerCH, 1 = 2DimmPerCH, 2 = 3DimmPerCH, 3 = 4DimmPerCH.
   UINT8          XmpProfile3Config;       ///< Indicates the XMP Profile3Config of this DIMM. 0 = 1DimmPerCH, 1 = 2DimmPerCH, 2 = 3DimmPerCH, 3 = 4DimmPerCH.
   UINT8          XmpOverClockFeat[MAX_XMP3_PROFILES];     ///< Indicates the XMP Advanced Memory OverCLock Feature. Bit 0: RealTimeMemoryFreqOC is supported. Bit 1: DynamicMemoryBoost is supported.
+  BOOLEAN        IsPmic;                  ///< TRUE if the PMIC is installed.
+  SPD_PMIC_DEVICE_TYPE PmicType;          ///< Indicates the type of PMIC used.
   BOOLEAN        PmicProgrammable;        ///< TRUE if the PMIC Programmable Mode is set on DDR5
   BOOLEAN        IsPmicSupport10MVStep;   ///< TRUE if PMIC supports 10mv step size. PMIC must support 5mv step size.
   UINT8          PmicDefaultStepSize;     ///< Either 5 or 10.
@@ -1913,7 +1915,7 @@ typedef struct {
   MrcSaGvTimingOut SaGvTiming[MAX_SAGV_POINTS];
 } MrcSaGvOutput;
 
-typedef struct {
+typedef struct MrcSaveData {
   MRC_REF_PI_FREQ_SWITCH_DATA RefPiCalHighFreq[MAX_SAGV_POINTS];    ///< Per sagv point Refpi cal training results for high frequency
   MRC_REF_PI_FREQ_SWITCH_DATA RefPiCalLowFreq[MAX_SAGV_POINTS];     ///< Per sagv point Refpi cal training results for low frequency
   MrcLvrSaveRestore LvrSaveRestore[MAX_SAGV_POINTS];        ///< Per sagv point Lvr Autotrim saved values
@@ -2128,7 +2130,7 @@ typedef struct {
   BOOLEAN             CpgcModeLocked;              ///< Used to lock down CPGC Mode until NormalMode is executed in MRC Start flow.
   BOOLEAN             IsGreenCodeLoaded;           ///< Used to check if the Green MRC code is loaded into the UC SRAM
   BOOLEAN             IsInterpreterCommand;        ///< Indicates that Interpreter wants to execute task(s) from Green MRC, using start/stop codes below
-  BOOLEAN             VoltageDone;                 ///< To determine if VoltageDone update has been done already
+  BOOLEAN             IsPmicVoltageConfigured;     ///< To determine if PMIC voltage update has been done already
   BOOLEAN             IsCmdNormalizationEnabled;   ///< TRUE: Enable CMD Normalization
   BOOLEAN             TxtScrubSuccess;             ///< status memory scrubbing due to TXT
   BOOLEAN             IsSkipIoReset;               ///< Skip IoReset in RunIoTest
@@ -2392,8 +2394,9 @@ typedef struct {
   BOOLEAN PhClkCheck;                    ///< Phase Clock Check
   UINT8   PhClkCheckPerLanePhError;      ///< Min to max tolerance for the per-lane PhClkCheck (phase). 0 - Auto
   UINT8   PhClkCheckPerLanePiLinError;   ///< Min to max tolerance for the per-lane PhClkCheck (PI Linearity). 0 - Auto
+  BOOLEAN IsVdd2Margining;               ///< TRUE: Skip Vsense run in LVR AutoTrim
   BOOLEAN IsLp5SpeedLimited;             ///< Reduce top LP5 speed
-  UINT8   Reserved3[3];                  ///< Reserved to ensure config block size is a multiple of DWORDs
+  UINT8   Reserved3[2];                  ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

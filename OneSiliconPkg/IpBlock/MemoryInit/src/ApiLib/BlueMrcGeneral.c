@@ -1319,7 +1319,6 @@ MrcSetOverrides (
   Status      = mrcSuccess;
   RcompTarget = NULL;
   Outputs->EccSupport = ExtInputs->EccSupport != 0;
-  Outputs->VoltageDone = FALSE;
   Outputs->CaDeselectStress = FALSE;
 
   Outputs->IpModel = MrcIpModelGet (MrcData);
@@ -1932,11 +1931,17 @@ MrcPrintInputParameters (
     "\tVdd2Mv: %u mV\n"
     "\tVddVoltage: %u mV\n"
     "\tVddqVoltage: %u mV\n"
-    "\tVppVoltage: %u mV\n",
+    "\tVppVoltage: %u mV\n"
+    "\tVdd2HVoltage: %u mV\n"
+    "\tVdd1Voltage: %u mV\n"
+    "\tVdd2LVoltage: %u mV\n",
     ExtInputs->Vdd2Mv,
     ExtInputs->VddVoltage,
     ExtInputs->VddqVoltage,
-    ExtInputs->VppVoltage
+    ExtInputs->VppVoltage,
+    ExtInputs->Vdd2HVoltage,
+    ExtInputs->Vdd1Voltage,
+    ExtInputs->Vdd2LVoltage
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tEccSupport: %Xh\n"
@@ -2023,10 +2028,12 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tEnhancedInterleave: %Xh\n"
     "\tWeaklockEn: %u\n"
+    "\tIsVdd2Margining: %u\n"
     "\tRmtPerTask: %d\n"
     "\tTrainTrace: %d\n",
     ExtInputs->EnhancedInterleave,
     ExtInputs->WeaklockEn,
+    Inputs->IsVdd2Margining,
     ExtInputs->RmtPerTask,
     ExtInputs->TrainTrace
     );
