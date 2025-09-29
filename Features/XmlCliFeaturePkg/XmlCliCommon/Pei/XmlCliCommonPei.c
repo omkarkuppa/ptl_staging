@@ -75,24 +75,25 @@ PeimXmlCliEntryPoint (
 
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
-
-  if (BootMode != BOOT_ON_S3_RESUME) {
+  
+  if ((BootMode == BOOT_ON_S3_RESUME) || (BootMode == BOOT_ON_S4_RESUME)) {
+    Status = PeiServicesLocatePpi (&gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **) &Variable);
+    ASSERT_EFI_ERROR (Status);
+    DataSize = sizeof(XMLCLI_SETUP);
+    Status = Variable->GetVariable (Variable, XMLCLI_SETUP_NAME, &gXmlCliSetupGuid, NULL, &DataSize, &XmlCliSetup);
+    if (!EFI_ERROR (Status)) {
+      // Restoring Dram Shared mailBox address
+      DramMbAddress = XmlCliSetup.XmlCliDramCmosAddr;
+      DEBUG ((DEBUG_INFO, "XmlCliCommonPei: DRAM mailbox address = 0x%x\n", DramMbAddress));
+      // Restoring the Mailbox address in Cmos so that the tool can read it, this address is reserved area and may change, hence saving in cmos for the tool to read
+      CmosWrite8((UINT8)CMOS_DRAM_SHARED_MB_ADDR_REG, (UINT8)(DramMbAddress >> 16)); // save lower byte of higher UINT16
+      CmosWrite8((UINT8)CMOS_DRAM_SHARED_MB_ADDR_REG + 1, (UINT8)(DramMbAddress >> 24)); // save upper byte of higher UINT16
+      DEBUG ((DEBUG_INFO, "XmlCliCommonPei: DRAM mailbox address restored to CMOS\n"));
+    }
+    return Status;
+  }
+  else {
+    DEBUG ((DEBUG_INFO, "XmlCliCommonPei: Boot mode is not S3/S4 resume, exiting early\n"));
     return EFI_SUCCESS;
   }
-
-  Status = PeiServicesLocatePpi (&gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **) &Variable);
-  ASSERT_EFI_ERROR (Status);
-
-  DataSize = sizeof(XMLCLI_SETUP);
-  Status = Variable->GetVariable (Variable, XMLCLI_SETUP_NAME, &gXmlCliSetupGuid, NULL, &DataSize, &XmlCliSetup);
-  if (!EFI_ERROR (Status)) {
-    //
-    // Restoring Dram Shared mailBox address
-    //
-    DramMbAddress = XmlCliSetup.XmlCliDramCmosAddr;
-    // Restoring the Mailbox address in Cmos so that the tool can read it, this address is reserved area and may change, hence saving in cmos for the tool to read
-    CmosWrite8((UINT8)CMOS_DRAM_SHARED_MB_ADDR_REG, (UINT8)(DramMbAddress >> 16));  // save lower byte of higher UINT16
-    CmosWrite8((UINT8)CMOS_DRAM_SHARED_MB_ADDR_REG + 1, (UINT8)(DramMbAddress >> 24));  // save upper byte of higher UINT16
-  }
-  return Status;
 }
