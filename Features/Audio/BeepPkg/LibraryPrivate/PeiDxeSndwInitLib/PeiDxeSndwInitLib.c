@@ -1141,8 +1141,8 @@ SndwAccessDisable (
     GetLinkControllerMmioAddress (HdaBar, SndwLinkIndex, &SndwControllerMmioOffset);
     DEBUG ((DEBUG_INFO, "Sndw#%d: Controller mmio address: 0x%X.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
-    MmioAnd32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) ~B_SNDW_MEM_CONFIG_OM_NORMAL);
-    MmioOr32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) V_SNDW_MEM_CONFIG_OM_RESET_VALUE);
+    MmioAnd32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) ~B_SNDW_MEM_CONFIG_OM_NORMAL);
+    MmioOr32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) V_SNDW_MEM_CONFIG_OM_RESET_VALUE);
 
     // Clear Shim register SNDWxACTMCTL, bit DACTQE=0b
     MmioAnd16 ((UINTN) (HdaBar + R_HDA_MEM2_SNDW_SNDWxACTMCTL (SndwLinkIndex)), (UINT16) ~B_HDA_MEM2_SNDW_SNDWxACTMCTL_DACTQE);
@@ -1152,7 +1152,7 @@ SndwAccessDisable (
     //
     // Write 1 to MCP_ConfigUpdate to update controller settings
     //
-    MmioWrite32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIGUPDATE, (UINT32) B_SNDW_MEM_CONFIGUPDATE_UPDATE_DONE);
+    MmioWrite32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIGUPDATE, (UINT32) B_SNDW_MEM_CONFIGUPDATE_UPDATE_DONE);
 
     Status = ResetSndwLink (HdaBar, SndwLinkIndex);
     if (EFI_ERROR (Status)) {
