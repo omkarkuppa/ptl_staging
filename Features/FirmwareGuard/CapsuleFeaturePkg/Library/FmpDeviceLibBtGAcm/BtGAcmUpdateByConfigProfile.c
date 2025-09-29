@@ -45,7 +45,7 @@
 #include <Library/ResiliencySupportLib.h>
 #include <Protocol/FirmwareManagement.h>
 
-#include "AcmImageParser.h"
+#include <Library/AcmHelperLib.h>
 
 /**
   Check if the input Image contains expected files used for BIOS update.

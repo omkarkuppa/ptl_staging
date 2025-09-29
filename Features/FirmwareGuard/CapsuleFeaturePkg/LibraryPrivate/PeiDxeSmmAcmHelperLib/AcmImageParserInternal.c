@@ -24,14 +24,13 @@
 // EDK-II Foundation.
 //
 #include <Uefi.h>
-#include <Register/Cpuid.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 //
 // Module Self Foundation.
 //
-#include "AcmImageParser.h"
+#include "AcmImageParserInternal.h"
 
 /**
   Get the ACM information table from input buffer.
@@ -189,7 +188,7 @@ GetProcessorIdList (
   //
   Address         = Address - PROCESSOR_ID_LIST_HEADER_PREPRENDED_SIZE;
   ProcessorIdList = (PROCESSOR_ID_LIST *)Address;
-  if (ProcessorIdList->TableId != ACM_PROCESSOR_ID_LIST_ID) {
+  if (ProcessorIdList->Header.TableId != ACM_PROCESSOR_ID_LIST_ID) {
     DEBUG ((DEBUG_INFO, "AcmProcessorIdList signature is incorrect.\n"));
     return EFI_UNSUPPORTED;
   }
@@ -200,68 +199,81 @@ GetProcessorIdList (
 }
 
 /**
-  Check if the input ACM buffer is supported on current CPU.
+  Get specified list from input buffer.
 
-  @param[in]  Image      Pointer that point to ACM image buffer.
-  @param[in]  ImageSize  Size of ACM image buffer.
+  Assumption:
+    1. AcmInfoTable should start with the Base Table.
+    2. There is no gaps between lists
 
-  @retval  TRUE   Input ACM buffer is supported on current CPU.
-  @retval  FALSE  Input ACM buffer is not supported on current CPU.
+  @param[in]   Image               A pointer to ACM image buffer.
+  @param[in]   ImageSize           Size of ACM image buffer.
+  @param[in]   AcmInfoTable        A pointer to ACM information table.
+  @param[in]   TableId             List ID
+  @param[out]  AcmRequestedIdList  A pointer to the requested ID list.
+
+  @retval  EFI_SUCCESS            Succeed to get the corresponding list.
+  @retval  EFI_INVALID_PARAMETER  Any input parameter is invalid.
+  @retval  EFI_UNSUPPORTED        ACM information table is not supported.
+  @retval  EFI_UNSUPPORTED        Address from ACM info table is invalid.
+  @retval  EFI_NOT_FOUND          TableId is not found in the lists.
 
 **/
-BOOLEAN
-EFIAPI
-IsSAcmImageForCurrentCpu (
-  IN CONST VOID   *Image,
-  IN       UINTN  ImageSize
+EFI_STATUS
+AcmInfoTableGetListById (
+  IN     CONST VOID                       *Image,
+  IN           UINTN                      ImageSize,
+  IN     CONST ACM_INFO_TABLE             *AcmInfoTable,
+  IN           UINT32                     TableId,
+     OUT       ACM_ID_LIST_COMMON_HEADER  **AcmRequestedIdList
   )
 {
-  EFI_STATUS              Status;
-  UINT32                  Index;
-  UINT32                  FmsValue;
-  UINT32                  FmsMaskValue;
-  CPUID_VERSION_INFO_EAX  CpuSignature;
-  ACM_INFO_TABLE          *AcmInfoTable;
-  PROCESSOR_ID_LIST       *AcmProcessorIdList;
+  UINT64                     Address;
+  UINT64                     ImageStart;
+  UINT64                     ImageEnd;
+  ACM_ID_LIST_COMMON_HEADER  *IdListPointer;
 
-  CpuSignature.Uint32 = 0;
-  Index               = 0;
-  FmsValue            = 0;
-  FmsMaskValue        = 0;
-  AcmInfoTable        = NULL;
-  AcmProcessorIdList  = NULL;
+  Address       = 0;
+  ImageStart    = 0;
+  ImageEnd      = 0;
+  IdListPointer = NULL;
 
-  Status = GetAcmInfoTable (Image, ImageSize, (VOID **)&AcmInfoTable);
-  if (EFI_ERROR (Status)) {
-    return FALSE;
+  if ((Image == NULL) || (ImageSize == 0) || (AcmInfoTable == NULL) || (AcmRequestedIdList == NULL)) {
+    return EFI_INVALID_PARAMETER;
   }
 
-  Status = GetProcessorIdList (Image, ImageSize, AcmInfoTable, (VOID **)&AcmProcessorIdList);
-  if (EFI_ERROR (Status)) {
-    return FALSE;
+  if (ImageSize > (MAX_UINT64 - (UINT64)Image)) {
+    return EFI_INVALID_PARAMETER;
   }
 
-  //
-  // Get the current CPU signature.
-  //
-  AsmCpuid (CPUID_VERSION_INFO, &CpuSignature.Uint32, NULL, NULL, NULL);
-  DEBUG ((DEBUG_INFO, "CpuSignature: 0x%x\n", CpuSignature.Uint32));
+  if (!IsAcmInfoTableSupported (AcmInfoTable)) {
+    return EFI_UNSUPPORTED;
+  }
 
-  for (Index = 0; Index < AcmProcessorIdList->Count; Index++) {
-    FmsValue     = AcmProcessorIdList->ProcessorID[Index].Fms;
-    FmsMaskValue = AcmProcessorIdList->ProcessorID[Index].FmsMask;
+  *AcmRequestedIdList = NULL;
+  Address             = (UINT64)AcmInfoTable + AcmInfoTable->AitLength;
+  ImageStart          = (UINT64)Image;
+  ImageEnd            = (UINT64)Image + ImageSize;
 
-    DEBUG ((DEBUG_INFO, "Index         : 0x%X\n", Index));
-    DEBUG ((DEBUG_INFO, "FMS Value     : 0x%X\n", FmsValue));
-    DEBUG ((DEBUG_INFO, "FMS Mask Value: 0x%X\n", FmsMaskValue));
+  while ((Address >= ImageStart) && (Address < ImageEnd)) {
+    IdListPointer = (ACM_ID_LIST_COMMON_HEADER *)Address;
 
-    //
-    // Check if ACM image is supported current platform CPU.
-    //
-    if ((CpuSignature.Uint32 & FmsMaskValue) == FmsValue) {
-      return TRUE;
+    if (IdListPointer->TableId == TableId) {
+      DEBUG ((DEBUG_INFO, "Find a match with ID 0x%x\n", TableId));
+      *AcmRequestedIdList = IdListPointer;
+      return EFI_SUCCESS;
     }
+
+    if (IdListPointer->TableId == ACM_TERMINATOR_LIST_ID) {
+      DEBUG ((DEBUG_INFO, "Reach to the end of lists\n"));
+      break;
+    }
+
+    if (IdListPointer->Length > (ImageEnd - Address)) {
+      return EFI_BAD_BUFFER_SIZE;
+    }
+
+    Address = Address + IdListPointer->Length;
   }
 
-  return FALSE;
+  return EFI_NOT_FOUND;
 }

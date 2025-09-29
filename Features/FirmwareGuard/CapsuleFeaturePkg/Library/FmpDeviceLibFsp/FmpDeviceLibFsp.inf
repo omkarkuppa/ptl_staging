@@ -35,7 +35,6 @@
 
 [Sources]
   FmpDeviceLibFsp.c
-  FspBootManifest.h
   FspUpdateByConfigProfile.c
 
 [Packages]
@@ -52,13 +51,19 @@
   MemoryAllocationLib
   UefiRuntimeServicesTableLib
   PcdLib
+  BpmAccessLib
   PlatformFlashAccessLib
   PlatformFspUpdateHookLib
   SeamlessRecoverySupportLib
   ResiliencySupportLib
   ConfigProfileAccessLib
   CapsuleUpdateResetLib
+  CbntSvnCheckLib
 
 [Guids]
   gCapsuleFspImageFileGuid   ## CONSUMES
   gCapsuleFspConfigFileGuid  ## CONSUMES
+
+[Pcd]
+   gCapsuleFeaturePkgTokenSpaceGuid.PcdCheckArbhSvnBeforeUpdate   ## CONSUMES
+

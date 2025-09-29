@@ -55,6 +55,9 @@
   SpiAccessLib
   SeamlessRecoverySupportLib
   FitHelperLib
+  HobLib
+  BpmAccessLib
+  AcmHelperLib
 
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress                  ## CONSUMES
@@ -62,3 +65,7 @@
   gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosExtenedRegionEnable  ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendSize          ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendOffset        ## CONSUMES
+
+[Guids]
+  gTxtInfoHobGuid                                              ## CONSUMES
+

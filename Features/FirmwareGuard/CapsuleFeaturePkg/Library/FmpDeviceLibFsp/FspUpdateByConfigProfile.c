@@ -43,42 +43,8 @@
 #include <IndustryStandard/FirmwareInterfaceTable.h>
 
 #include <Protocol/FirmwareManagement.h>
-#include "FspBootManifest.h"
-
-/**
-  Parse FIT and get FBM base address.
-
-  @retval FbmBaseAddress  FBM base address.
-
-**/
-UINTN
-GetFbmBase (
-  VOID
-  )
-{
-  UINT64                         FitPointer;
-  FIRMWARE_INTERFACE_TABLE_ENTRY *FitEntry;
-  UINT32                         EntryNum;
-  UINT32                         Index;
-  UINTN                          FbmBaseAddress;
-
-  FitPointer     = *(UINT64 *)(UINTN)FIT_POINTER_ADDRESS;
-  FitEntry       = (FIRMWARE_INTERFACE_TABLE_ENTRY *)(UINTN)FitPointer;
-  EntryNum       = (((UINT32)FitEntry[0].Size[2] << 16) |
-                   ((UINT32)FitEntry[0].Size[1] << 8) |
-                   (UINT32)FitEntry[0].Size[0]) & 0xFFFFFF;
-  FbmBaseAddress = 0;
-
-  for (Index = 0; Index < EntryNum; Index++) {
-    if (FitEntry[Index].Type == FIT_TYPE_0D_FSP_BOOT_MANIFEST) {
-      FbmBaseAddress = (UINTN)(FitEntry[Index].Address & MAX_UINT32);
-      DEBUG ((DEBUG_INFO, "FBM BaseAddress 0x%x\n", FbmBaseAddress));
-      break;
-    }
-  }
-
-  return FbmBaseAddress;
-}
+#include <FbmDef.h>
+#include <Library/BaseBpmAccessLib.h>
 
 /**
   Check if current BIOS supports FSP signed by checking FBM header.
@@ -92,15 +58,15 @@ IsBiosSupportFspSigned (
   VOID
   )
 {
-  FBM_HEADER *FbmHeader;
+  FSP_BOOT_MANIFEST_STRUCTURE  *FbmHeader;
 
-  FbmHeader = (FBM_HEADER *)(GetFbmBase ());
+  FbmHeader = (FSP_BOOT_MANIFEST_STRUCTURE *)(FindFbm ());
 
   if (FbmHeader == NULL) {
     return FALSE;
   }
 
-  if (*(UINT64 *)(FbmHeader->StructureId) != FBM_STRUCTURE_ID) {
+  if (*(UINT64 *)(FbmHeader->StructureId) != FSP_BOOT_MANIFEST_STRUCTURE_ID) {
     return FALSE;
   }
 
@@ -108,22 +74,50 @@ IsBiosSupportFspSigned (
 }
 
 /**
-  Check if this is VerifiedBoot
+  Find out FBM image from FSP image with parsed config data.
 
-  @retval TRUE   This is VerifiedBoot
-  @retval FALSE  This is NOT VerifiedBoot
+  This is an internal function used after invoking ExtractUpdateImageByConfigFile().
+  Do not call this function without properly getting and checking ConfigData.
+
+  @param[in]   FspImage      Pointer to FSP FMP payload image (FMP image header is stripped off)
+  @param[in]   FspImageSize  The size of Image in bytes
+  @param[in]   ConfigData    Pointer to describe FSP FMP payload image.
+  @param[in]   NumOfUpdates  The count of ConfigData array.
+  @param[out]  FbmImage      Pointer to FBM image
+  @param[out]  FbmImageSize  Pointer to FBM image size
+
+  @retval EFI_SUCCESS    FBM image is found in FspImage with ConfigData
+  @retval EFI_NOT_FOUND  FBM image is not found
 
 **/
-BOOLEAN
-IsVerifiedBoot (
-  VOID
+EFI_STATUS
+LocateFbmByConfigData (
+  IN  CONST VOID                *FspImage,
+  IN        UINTN               FspImageSize,
+  IN  CONST UPDATE_CONFIG_DATA  *ConfigData,
+  IN        UINTN               NumOfUpdates,
+  OUT       VOID                **FbmImage,
+  OUT       UINTN               *FbmImageSize
   )
 {
-  if ((AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & B_BOOT_GUARD_SACM_INFO_VERIFIED_BOOT) != 0) {
-    return TRUE;
-  } else {
-    return FALSE;
+  UINTN                        Index;
+  FSP_BOOT_MANIFEST_STRUCTURE  *FbmHeader;
+
+  for (Index = 0; Index < NumOfUpdates; Index++) {
+
+    if (ConfigData[Index].Length < sizeof (FSP_BOOT_MANIFEST_STRUCTURE)) {
+      continue;
+    }
+
+    FbmHeader = (FSP_BOOT_MANIFEST_STRUCTURE *)(VOID *)((UINTN)FspImage + ConfigData[Index].ImageOffset);
+    if (*(UINT64 *)(FbmHeader->StructureId) == FSP_BOOT_MANIFEST_STRUCTURE_ID) {
+      *FbmImage     = (VOID *)FbmHeader;
+      *FbmImageSize = ConfigData[Index].Length;
+      return EFI_SUCCESS;
+    }
   }
+
+  return EFI_NOT_FOUND;
 }
 
 /**
@@ -150,9 +144,19 @@ IsImageForFspUpdate (
   VOID                  *BgupImage;
   UINTN                 BgupImageSize;
   BOOLEAN               BiosGuardEnabled;
+  BOOLEAN               ImageValid;
+  VOID                  *FbmImage;
+  UINTN                 FbmImageSize;
 
-  ConfigData = NULL;
+  DEBUG ((DEBUG_INFO, "%a - start\n", __func__));
+
+  ZeroMem (&ConfigHeader, sizeof (CONFIG_HEADER));
+
+  ConfigData       = NULL;
   BiosGuardEnabled = IsBiosGuardEnabled ();
+  ImageValid       = TRUE;
+  FbmImage         = NULL;
+  FbmImageSize     = 0;
 
   //
   // Check if all needed binaries for Fsp update can be extracted from Image
@@ -169,6 +173,37 @@ IsImageForFspUpdate (
              BiosGuardEnabled ? &BgupImageSize : NULL
              );
 
+  if (EFI_ERROR (Status) || \
+      (!CompareGuid (&(ConfigHeader.FileGuid), &gCapsuleFspImageFileGuid))) {
+    DEBUG ((DEBUG_ERROR, "Failed to extract config file or FSP image\n"));
+    ImageValid = FALSE;
+    goto Exit;
+  }
+
+#if FixedPcdGetBool (PcdCheckArbhSvnBeforeUpdate) == 1
+  Status = LocateFbmByConfigData (
+             FspImage,
+             FspImageSize,
+             ConfigData,
+             ConfigHeader.NumOfUpdates,
+             &FbmImage,
+             &FbmImageSize
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to locate FBM image\n"));
+    ImageValid = FALSE;
+    goto Exit;
+  }
+
+  Status = CheckSvnFromFbmImage ((UINT8 *)FbmImage, FbmImageSize);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "SVN check fail\n"));
+    ImageValid = FALSE;
+    goto Exit;
+  }
+#endif
+
+Exit:
   if (ConfigData != NULL) {
     //
     // No need to use ConfigData in this function anymore.
@@ -176,14 +211,8 @@ IsImageForFspUpdate (
     FreePool (ConfigData);
   }
 
-  if (EFI_ERROR (Status) || \
-      (!CompareGuid (&(ConfigHeader.FileGuid), &gCapsuleFspImageFileGuid))) {
-    DEBUG ((DEBUG_ERROR, "Failed to extract config file or acm image\n"));
-    return FALSE;
-  }
-
-  DEBUG ((DEBUG_INFO, "%a - pass\n", __FUNCTION__));
-  return TRUE;
+  DEBUG ((DEBUG_INFO, "%a - return 0x%x\n", __func__, ImageValid));
+  return ImageValid;
 }
 
 /**
