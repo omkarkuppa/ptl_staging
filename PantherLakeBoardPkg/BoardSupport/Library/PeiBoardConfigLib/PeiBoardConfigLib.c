@@ -79,11 +79,27 @@ static EFI_PEI_NOTIFY_DESCRIPTOR  mPlatformDebugStateChecksNotifyList  = {
 };
 #endif
 
+EFI_STATUS
+EFIAPI
+GetMaxActiveDisplays (
+  OUT UINT8  *MaxActiveDisplays
+  )
+{
+  //
+  // 0 - Default VBT
+  // 1 - 1 display
+  // 2 - 2 displays
+  // Maximum supported is 2 displays only
+  //
+  *MaxActiveDisplays = 0;
+  return EFI_SUCCESS;
+}
 
 PEI_IGPU_PLATFORM_POLICY_PPI PeiIGpuPlatform = {
   PEI_IGPU_PLATFORM_POLICY_REVISION,
   GetPeiPlatformLidStatus,
-  GetVbtData
+  GetVbtData,
+  GetMaxActiveDisplays
 };
 
 EFI_PEI_PPI_DESCRIPTOR  mPeiIGpuPlatformPpi = {

@@ -125,10 +125,37 @@ GetPeiPlatformLidStatus (
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+GetMaxActiveDisplays (
+  OUT UINT8  *MaxActiveDisplays
+  )
+{
+  FSPS_UPD  *FspsUpd;
+
+  *MaxActiveDisplays = 0;
+
+  FspsUpd = GetFspSiliconInitUpdDataPointer ();
+  if (FspsUpd != NULL) {
+    if (FspsUpd->FspsConfig.MaxActiveDisplays > 2) {
+      DEBUG ((DEBUG_ERROR, "Invalid MaxActiveDisplays value in FSPS UPD. Supported values are 0-2\n"));
+      DEBUG ((DEBUG_ERROR, "Resetting to default value 0\n"));
+      return EFI_INVALID_PARAMETER;
+    }
+    *MaxActiveDisplays = FspsUpd->FspsConfig.MaxActiveDisplays;
+  } else {
+    DEBUG ((EFI_D_ERROR, "FspsUpd Data not found\n"));
+    return EFI_NOT_FOUND;
+  }
+  DEBUG ((DEBUG_INFO, "MaxActiveDisplays = %d\n", *MaxActiveDisplays));
+  return EFI_SUCCESS;
+}
+
 PEI_IGPU_PLATFORM_POLICY_PPI PeiIGpuPlatform = {
   PEI_IGPU_PLATFORM_POLICY_REVISION,
   GetPeiPlatformLidStatus,
-  GetVbtData
+  GetVbtData,
+  GetMaxActiveDisplays
 };
 
 EFI_PEI_PPI_DESCRIPTOR  mPeiIGpuPpiDescriptor = {

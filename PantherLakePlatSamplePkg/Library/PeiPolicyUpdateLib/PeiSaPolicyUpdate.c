@@ -67,6 +67,9 @@ PeiGraphicsPlatformPolicyNotifyCallback (
   VOID                              *FspsUpd;
   PEI_IGPU_PLATFORM_POLICY_PPI      *IGpuPlatformPolicyPpi;
   LID_STATUS                        CurrentLidStatus;
+  UINT8                             MaxActiveDisplays;
+
+  MaxActiveDisplays = 0;
 
   DEBUG ((DEBUG_INFO, "PeiGraphicsPlatformPolicyNotifyCallback Entry\n"));
 
@@ -86,6 +89,19 @@ PeiGraphicsPlatformPolicyNotifyCallback (
   ((FSPS_UPD *) FspsUpd)->FspsConfig.LidStatus = (UINT8) CurrentLidStatus;
   DEBUG ((DEBUG_INFO, "LidStatus from GetPlatformLidStatus is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.LidStatus));
   DEBUG ((DEBUG_INFO, "PeiGraphicsPlatformPolicyNotifyCallback Exit\n"));
+
+  Status = IGpuPlatformPolicyPpi->GetMaxActiveDisplays (&MaxActiveDisplays);
+  ASSERT_EFI_ERROR (Status);
+  if (MaxActiveDisplays > 2) {
+    //
+    // Cap to maximum supported value to VBT default
+    //
+    MaxActiveDisplays = 0;
+    DEBUG ((DEBUG_ERROR, "Invalid MaxActiveDisplays value in GetMaxActiveDisplays. Supported values are 0-2\n"));
+    DEBUG ((DEBUG_ERROR, "Resetting to default value 0\n"));
+  }
+  ((FSPS_UPD *) FspsUpd)->FspsConfig.MaxActiveDisplays = MaxActiveDisplays;
+  DEBUG ((DEBUG_INFO, "MaxActiveDisplays from GetMaxActiveDisplays is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.MaxActiveDisplays));
 
   return Status;
 }

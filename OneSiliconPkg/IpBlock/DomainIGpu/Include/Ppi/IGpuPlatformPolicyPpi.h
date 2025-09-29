@@ -30,7 +30,7 @@
   0x4eabcd09, 0x43d3, 0x4b4d, { 0xb7, 0x3d, 0x43, 0xc8, 0xd9, 0x89, 0x99, 0x5 } \
 }
 
-#define PEI_IGPU_PLATFORM_POLICY_REVISION  1
+#define PEI_IGPU_PLATFORM_POLICY_REVISION  2
 
 /**
 Pre-declaration of PEI IGPU platform policy PPI.
@@ -112,6 +112,26 @@ EFI_STATUS
   OUT UINT32               *VbtSize
   );
 
+
+/**
+  This function to get Max active displays support.
+
+  @param[out] MaxActiveDisplays  Output variable to store the max active displays supported.
+
+  0 - default VBT
+  1 - 1 display
+  2 - 2 displays
+  Maximum supported is 2 displays only
+
+  @retval EFI_SUCCESS           Correct max active displays is returned.
+  @retval Other error codes     Platform does not support this feature.
+**/
+typedef
+EFI_STATUS
+(EFIAPI *GET_MAX_ACTIVE_DISPLAYS)(
+  OUT UINT8  *MaxActiveDisplays
+  );
+
 /**
   This defines the PEI Graphics Platform Policy PPI structure.
 **/
@@ -119,6 +139,7 @@ struct _PEI_IGPU_PLATFORM_POLICY_PPI {
   UINT32                     Revision;                  ///< Revision of current implementation.
   GET_PLATFORM_LID_STATUS    GetPlatformLidStatus;      ///< Function Pointer for get platform lid status.
   GET_VBT_DATA               GetVbtData;                ///< Function pointer for get vbt data.
+  GET_MAX_ACTIVE_DISPLAYS    GetMaxActiveDisplays;      ///< Function pointer for get max active displays support.
 };
 
 /**

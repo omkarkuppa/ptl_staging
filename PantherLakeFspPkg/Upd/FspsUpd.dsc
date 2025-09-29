@@ -2772,8 +2772,13 @@
   # !BSF OPTION:{0: LidClosed, 1: LidOpen}
   # !BSF HELP:{LFP Display Lid Status (LID_STATUS enum): 0 (Default): LidClosed, 1: LidOpen.}
   gPlatformFspPkgTokenSpaceGuid.LidStatus                   | * | 0x01 | 0x0
-  # Added reserved space    UnusedUpdSpace26[3]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd26               | * | 0x3 | {0x00}
+
+  # !BSF NAME:{Select MaxActiveDisplays}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x02)}
+  # !BSF HELP:{Max Active Display : 0 - Default VBT, 1 - 1 display, 2 - 2 displays, Maximum supported is 2 displays only}
+  gPlatformFspPkgTokenSpaceGuid.MaxActiveDisplays           | * | 0x01 | 0x00
+  # Added reserved space    UnusedUpdSpace26[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd26               | * | 0x2 | {0x00}
 
   # !BSF NAME:{HorizontalResolution for PEI Logo}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
