@@ -581,9 +581,21 @@ typedef struct {
   //Audio Custom HID Link1
   UINT8    AudioLink1UserHid[9];                    ///< Offset 1135    User defined HID ASCII character 0
                                                     ///< Offset 1143    User defined HID ASCII character 8
+  UINT8    MipiCamLink0DD_PprValue;                 ///< Offset 1144    PPR Value
+  UINT8    MipiCamLink0DD_PprUnit;                  ///< Offset 1145    PPR Unit
+  UINT8    MipiCamLink1DD_PprValue;                 ///< Offset 1146    PPR Value
+  UINT8    MipiCamLink1DD_PprUnit;                  ///< Offset 1147    PPR Unit
+  UINT8    MipiCamLink2DD_PprValue;                 ///< Offset 1148    PPR Value
+  UINT8    MipiCamLink2DD_PprUnit;                  ///< Offset 1149    PPR Unit
+  UINT8    MipiCamLink3DD_PprUnit;                  ///< Offset 1150    PPR Unit
+  UINT8    MipiCamLink3DD_PprValue;                 ///< Offset 1151    PPR Value
+  UINT8    MipiCamLink4DD_PprUnit;                  ///< Offset 1152    PPR Unit
+  UINT8    MipiCamLink4DD_PprValue;                 ///< Offset 1153    PPR Value
+  UINT8    MipiCamLink5DD_PprUnit;                  ///< Offset 1154    PPR Unit
+  UINT8    MipiCamLink5DD_PprValue;                 ///< Offset 1155    PPR Value
   // HD Audio
-  UINT8    I2SE;                                    ///< Offset 1144    HD Audio I2S Enable
-  UINT8    PcdMipiCamSensor;                        ///< Offset 1145    Mipi Camera Sensor
+  UINT8    I2SE;                                    ///< Offset 1156    HD Audio I2S Enable
+  UINT8    PcdMipiCamSensor;                        ///< Offset 1157    Mipi Camera Sensor
 } MIPICAM_NVS_AREA;
 
 #pragma pack(pop)

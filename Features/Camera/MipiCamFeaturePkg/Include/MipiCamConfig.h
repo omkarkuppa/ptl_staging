@@ -22,7 +22,7 @@
 #ifndef _MIPICAM_CONFIG_H_
 #define _MIPICAM_CONFIG_H_
 
-#define MIPICAM_CONFIG_REVISION       2
+#define MIPICAM_CONFIG_REVISION       3
 #define MIPICAM_CONFIG_VARIABLE_NAME  L"MipiCamConfig"
 
 #define MIPICAM_I2C_DEVICES_COUNT         12
@@ -458,6 +458,18 @@ typedef struct {
 
   UINT16  Audio_Link0_UserHid[MIPICAM_HID_LENGTH];
   UINT16  Audio_Link1_UserHid[MIPICAM_HID_LENGTH];
+  UINT8   MipiCam_Link0_DriverData_PprValue;
+  UINT8   MipiCam_Link0_DriverData_PprUnit;
+  UINT8   MipiCam_Link1_DriverData_PprValue;
+  UINT8   MipiCam_Link1_DriverData_PprUnit;
+  UINT8   MipiCam_Link2_DriverData_PprValue;
+  UINT8   MipiCam_Link2_DriverData_PprUnit;
+  UINT8   MipiCam_Link3_DriverData_PprValue;
+  UINT8   MipiCam_Link3_DriverData_PprUnit;
+  UINT8   MipiCam_Link4_DriverData_PprValue;
+  UINT8   MipiCam_Link4_DriverData_PprUnit;
+  UINT8   MipiCam_Link5_DriverData_PprValue;
+  UINT8   MipiCam_Link5_DriverData_PprUnit;
 } MIPICAM_CONFIG;
 #pragma pack ()
 

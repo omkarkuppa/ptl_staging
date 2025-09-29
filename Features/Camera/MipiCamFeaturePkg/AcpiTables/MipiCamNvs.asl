@@ -1027,7 +1027,19 @@
   A1H6, 8,  // Offset(1141),
   A1H7, 8,  // Offset(1142),
   A1H8, 8,  // Offset(1143),  User defined HID ASCII character 8
+  L0PV, 8,  // Offset(1144),  PPR Value
+  L0PU, 8,  // Offset(1145),  PPR Unit
+  L1PV, 8,  // Offset(1146),  PPR Value
+  L1PU, 8,  // Offset(1147),  PPR Unit
+  L2PV, 8,  // Offset(1148),  PPR Value
+  L2PU, 8,  // Offset(1149),  PPR Unit
+  L3PU, 8,  // Offset(1150),  PPR Unit
+  L3PV, 8,  // Offset(1151),  PPR Value
+  L4PU, 8,  // Offset(1152),  PPR Unit
+  L4PV, 8,  // Offset(1153),  PPR Value
+  L5PU, 8,  // Offset(1154),  PPR Unit
+  L5PV, 8,  // Offset(1155),  PPR Value
   // HD Audio
-  I2SE, 8,  // Offset(1144),  HD Audio I2S Enable
-  SCSS, 8,  // Offset(1145),  Mipi Camera Sensor
+  I2SE, 8,  // Offset(1156),  HD Audio I2S Enable
+  SCSS, 8,  // Offset(1157),  Mipi Camera Sensor
   }

@@ -440,6 +440,11 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0_FlashDriverSelection = MipiCamSetupData.MipiCam_Link0_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0DD_FlashID            = MipiCamSetupData.MipiCam_Link0_DriverData_FlashID;
 
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink0DD_PprValue = MipiCamSetupData.MipiCam_Link0_DriverData_PprValue;
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink0DD_PprUnit = MipiCamSetupData.MipiCam_Link0_DriverData_PprUnit;
+#endif
+
   // MipiCam Link1 specific
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1SensorModel = MipiCamSetupData.MipiCam_Link1_SensorModel;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1Pld         = MipiCamSetupData.MipiCam_Link1_CameraPhysicalLocation;
@@ -510,6 +515,11 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1_FlashDriverSelection = MipiCamSetupData.MipiCam_Link1_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1DD_FlashID            = MipiCamSetupData.MipiCam_Link1_DriverData_FlashID;
 
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink1DD_PprValue = MipiCamSetupData.MipiCam_Link1_DriverData_PprValue;
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink1DD_PprUnit = MipiCamSetupData.MipiCam_Link1_DriverData_PprUnit;
+#endif
+
   // MipiCam Link2 specific
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2SensorModel = MipiCamSetupData.MipiCam_Link2_SensorModel;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2Pld         = MipiCamSetupData.MipiCam_Link2_CameraPhysicalLocation;
@@ -565,6 +575,11 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2DD_LaneConfiguration  = MipiCamSetupData.MipiCam_Link2_DriverData_LaneConfiguration;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2_FlashDriverSelection = MipiCamSetupData.MipiCam_Link2_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2DD_FlashID            = MipiCamSetupData.MipiCam_Link2_DriverData_FlashID;
+
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink2DD_PprValue = MipiCamSetupData.MipiCam_Link2_DriverData_PprValue;
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink2DD_PprUnit = MipiCamSetupData.MipiCam_Link2_DriverData_PprUnit;
+#endif
 
   // MipiCam Link3 specific
   mMipiCamNvsAreaProtocol.Area->MipiCamLink3SensorModel = MipiCamSetupData.MipiCam_Link3_SensorModel;
@@ -622,6 +637,11 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink3_FlashDriverSelection = MipiCamSetupData.MipiCam_Link3_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink3DD_FlashID            = MipiCamSetupData.MipiCam_Link3_DriverData_FlashID;
 
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink3DD_PprValue = MipiCamSetupData.MipiCam_Link3_DriverData_PprValue;
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink3DD_PprUnit = MipiCamSetupData.MipiCam_Link3_DriverData_PprUnit;
+#endif
+
   // MipiCam Link4 specific
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4SensorModel = MipiCamSetupData.MipiCam_Link4_SensorModel;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4Pld         = MipiCamSetupData.MipiCam_Link4_CameraPhysicalLocation;
@@ -678,6 +698,11 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4_FlashDriverSelection = MipiCamSetupData.MipiCam_Link4_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4DD_FlashID            = MipiCamSetupData.MipiCam_Link4_DriverData_FlashID;
 
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink4DD_PprValue = MipiCamSetupData.MipiCam_Link4_DriverData_PprValue;
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink4DD_PprUnit = MipiCamSetupData.MipiCam_Link4_DriverData_PprUnit;
+#endif
+
   // MipiCam Link5 specific
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5SensorModel = MipiCamSetupData.MipiCam_Link5_SensorModel;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5Pld         = MipiCamSetupData.MipiCam_Link5_CameraPhysicalLocation;
@@ -733,6 +758,11 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5DD_LaneConfiguration  = MipiCamSetupData.MipiCam_Link5_DriverData_LaneConfiguration;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5_FlashDriverSelection = MipiCamSetupData.MipiCam_Link5_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5DD_FlashID            = MipiCamSetupData.MipiCam_Link5_DriverData_FlashID;
+
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink5DD_PprValue = MipiCamSetupData.MipiCam_Link5_DriverData_PprValue;
+  mMipiCamNvsAreaProtocol.Area->MipiCamLink5DD_PprUnit = MipiCamSetupData.MipiCam_Link5_DriverData_PprUnit;
+#endif
 
   // MipiCam Flash0 specific
   mMipiCamNvsAreaProtocol.Area->MipiCamFlash0Model                = MipiCamSetupData.MipiCam_Flash0_Model;
