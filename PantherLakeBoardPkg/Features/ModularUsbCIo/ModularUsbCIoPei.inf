@@ -52,6 +52,9 @@
   BaseMemoryLib
   PmcLib
   PcdLib
+  GpioV2WrapperLib
+  BoardConfigLib
+  PeiHostBridgeIpStatusLib
 
 [Pcd]
   gBoardModuleTokenSpaceGuid.PcdPlatformModularUsbCIoConfig
@@ -59,6 +62,8 @@
   gBoardModuleTokenSpaceGuid.VpdPcdDisplayDdiConfigTable
 
 [FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdWclSupport
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
 
 [Protocols]
 

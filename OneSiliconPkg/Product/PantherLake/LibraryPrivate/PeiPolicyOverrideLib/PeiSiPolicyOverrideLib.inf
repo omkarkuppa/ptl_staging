@@ -38,9 +38,14 @@
   PeiTraceHubInitLib
   PeiDciSocLib
   CpuPlatformLib
+  SiPolicyLib
+  PeiHostBridgeIpStatusLib
+  PeiServicesTablePointerLib
+  BaseMemoryLib
 
 [Packages]
   MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
 
 [Sources]
@@ -50,6 +55,8 @@
 [Ppis]
   gSiPolicyPpiGuid                              ## CONSUMES
   gSiPreMemPolicyPpiGuid                        ## CONSUMES
+  gEdkiiPeiMigrateTempRamPpiGuid                ## CONSUMES
+
 
 [Guids]
   gSiPreMemConfigGuid                           ## CONSUMES
@@ -61,6 +68,9 @@
   gMeBiosPayloadHobGuid                         ## CONSUMES
   gPchConfigGuid                                ## CONSUMES
   gTcssHobGuid                                  ## CONSUMES
+  gPchGlobalResetGuid                           ## CONSUMES
+  gTcssPeiPreMemConfigGuid                      ## CONSUMES
+  gTcssPeiConfigGuid                            ## CONSUMES
 
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdAmtEnable             ## CONSUMES

@@ -35,6 +35,14 @@
 #include <DciConfig.h>
 #include <ConfigBlock/PchGeneralConfig.h>
 #include <Library/DebugToken.h>
+#include <Library/BaseMemoryLib.h>
+#include <TcssPeiPreMemConfig.h>
+#include <Library/PmcLib.h>
+#include <Library/SiPolicyLib.h>
+#include <Library/PeiServicesTablePointerLib.h>
+#include <MkhiMsgs.h>
+#include <PchResetPlatformSpecific.h>
+#include <Library/PeiHostBridgeIpStatusLib.h>
 
 /*
   Get Debug Token Data and save it in the HOB
@@ -270,6 +278,163 @@ PlatformDebugOptionEnablePreMem (
   DEBUG ((DEBUG_INFO, "PchGeneralPreMemConfig->PmodeClkEn = %x\n", PchGeneralPreMemConfig->PmodeClkEn));
 }
 
+/**
+  Get TCSS Strap Config
+
+  @param[in]  *TcssStrapConfig  TCSS Strap Config Pointer
+
+  @retval     EFI_SUCCESS       The function completed successfully.
+**/
+EFI_STATUS
+GetTcssStrapConfig (
+  IN UINT32  *TcssStrapConfig
+  )
+{
+  EFI_STATUS           Status;
+  UINT32               StrapGroupsNumber;
+  STRAP_OVERRIDE_DATA  StrapData;
+
+  StrapGroupsNumber = 1;
+  Status = PeiHeciGetStrapOverrideConfig (StrapGroupModularIoTypeCConfigStraps, &StrapGroupsNumber, &StrapData);
+  if (!EFI_ERROR (Status)) {
+    *TcssStrapConfig = StrapData.OverrideData.ConfigData;
+  } else {
+    *TcssStrapConfig = INVALID_TYPE_C_CONFIG_DATA;
+    DEBUG ((DEBUG_ERROR, "[TCSS] Failed to get TCSS Strap Config from CSE - %r\n", Status));
+  }
+
+  return Status;
+}
+
+/**
+  Set TCSS Strap Config
+
+  @param[in]  TcssStrapConfig  TCSS Strap Config
+
+  @retval     EFI_SUCCESS      The function completed successfully.
+**/
+EFI_STATUS
+SetTcssStrapConfig (
+  IN UINT32  TcssStrapConfig
+  )
+{
+  EFI_STATUS           Status;
+  STRAP_OVERRIDE_DATA  StrapData;
+  UINT32               Flags;
+  PCH_RESET_DATA       ResetData;
+
+  StrapData.StrapGroupId = StrapGroupModularIoTypeCConfigStraps;
+  StrapData.OverrideData.ConfigData = TcssStrapConfig;
+  Status = PeiHeciSetStrapOverrideConfig (1, &StrapData, &Flags);
+  DEBUG ((DEBUG_INFO, "[TCSS] Strap Config Overrride Status: %r\n", Status));
+
+  if (!EFI_ERROR (Status)) {
+    if (Flags & MODULAR_IO_GLOBAL_RESET_MASK) {
+      DEBUG ((DEBUG_INFO, "Global reset is requested by CSE for Strap Override. Reseting system ...\n"));
+      CopyMem (&ResetData.Guid, &gPchGlobalResetGuid, sizeof (EFI_GUID));
+      StrCpyS (ResetData.Description, PCH_RESET_DATA_STRING_MAX_LENGTH, PCH_PLATFORM_SPECIFIC_RESET_STRING);
+      (*GetPeiServicesTablePointer ())->ResetSystem2 (EfiResetPlatformSpecific, EFI_SUCCESS, sizeof (PCH_RESET_DATA), &ResetData);
+    }
+  }
+
+  return Status;
+}
+
+/**
+  Override TCSS Strap Config after memory discovered.
+  This function is only performed when any of HH SKUs is detected.
+**/
+VOID
+OverrideTcssStrapConfigAfterMemoryDiscovered (
+  VOID
+  )
+{
+  EFI_STATUS              Status;
+  UINT8                   PortIndex;
+  UINT32                  NewTcssStrapConfig;
+  UINT32                  CurrentTcssStrapConfig;
+  SI_PREMEM_POLICY_PPI    *SiPreMemPolicyPpi;
+  TCSS_PEI_PREMEM_CONFIG  *TcssPeiPreMemConfig;
+
+  DEBUG ((DEBUG_INFO, "[TCSS] %a Entry\n", __FUNCTION__));
+
+  Status = PeiServicesLocatePpi (
+             &gSiPreMemPolicyPpiGuid,
+             0,
+             NULL,
+             (VOID **) &SiPreMemPolicyPpi
+             );
+  ASSERT_EFI_ERROR (Status);
+
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTcssPeiPreMemConfigGuid, (VOID *) &TcssPeiPreMemConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  NewTcssStrapConfig = 0;
+  for (PortIndex = 0; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
+    if (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex] != UsbCDisable) {
+      //
+      // Force the starp of TCP0 and TCP1 to USB4 40G if they're enabled.
+      //
+      NewTcssStrapConfig |= ((MODULAR_IO_USB4_40G << CONFIG_DATA_PORT_CONFIG_OFFSET | CONFIG_DATA_PORT_CHANGE) << (PER_PORT_CONFIG_DATA_BIT_SIZE * PortIndex));
+    } else {
+      NewTcssStrapConfig |= ((MODULAR_IO_USBA << CONFIG_DATA_PORT_CONFIG_OFFSET | CONFIG_DATA_PORT_CHANGE) << (PER_PORT_CONFIG_DATA_BIT_SIZE * PortIndex));
+    }
+  }
+
+  Status = GetTcssStrapConfig (&CurrentTcssStrapConfig);
+  if (EFI_ERROR (Status) || (CurrentTcssStrapConfig != NewTcssStrapConfig)) {
+    SetTcssStrapConfig (NewTcssStrapConfig);
+  }
+}
+
+/**
+  This notify function is only registered for HH SKUs.
+
+**/
+EFI_PEI_NOTIFY_DESCRIPTOR  mOverrideTcssStrapConfig = {
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  &gEdkiiPeiMigrateTempRamPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) OverrideTcssStrapConfigAfterMemoryDiscovered
+};
+
+/**
+  This function overrides TCSS pre-mem policies only for HH SKUs.
+
+  @param[in] SiPreMemPolicyPpi  The Silicon PreMem Policy PPI instance
+**/
+VOID
+TcssPolicyOverridePreMem (
+  IN  SI_PREMEM_POLICY_PPI  *SiPreMemPolicyPpi
+  )
+{
+  EFI_STATUS              Status;
+  UINT8                   PortIndex;
+  UINT16                  SaDeviceId;
+  TCSS_PEI_PREMEM_CONFIG  *TcssPeiPreMemConfig;
+
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTcssPeiPreMemConfigGuid, (VOID *) &TcssPeiPreMemConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  SaDeviceId = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+
+  if (SaDeviceId == PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A) {
+    //
+    // Only TCP0 and TCP1 are supported in HH SKUs. Hence force disable rest of the TCSS ports
+    // by setting the CapPolicy to UsbCDisable.
+    //
+    for (PortIndex = 2; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
+      TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex] = UsbCDisable;
+    }
+    //
+    // Register the notify PPI only when booting from G3
+    //
+    if (PmcIsPowerFailureDetected () == TRUE) {
+      Status = PeiServicesNotifyPpi (&mOverrideTcssStrapConfig);
+      ASSERT_EFI_ERROR (Status);
+    }
+  }
+}
+
 /*
   Initialize TraceHub Data HOB
 
@@ -300,4 +465,8 @@ PeiSiPolicyOverridePreMem (
   PlatformDebugOptionEnablePreMem (SiPreMemPolicyPpi);
   PsmiTraceHubPolicyOverride (SiPreMemPolicyPpi);
   BuildTraceHubDataHob (SiPreMemPolicyPpi);
+  //
+  // TcssPolicyOverridePreMem only takes effect on HH SKUs
+  //
+  TcssPolicyOverridePreMem (SiPreMemPolicyPpi);
 }

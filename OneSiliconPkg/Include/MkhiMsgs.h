@@ -1103,15 +1103,22 @@ typedef enum {
 ///
 /// MODULAR_IO_TYPE_C_PORT_CONFIG
 ///
-#define  MODULAR_IO_USB4_40G    0x0
-#define  MODULAR_IO_DP          0x1
-#define  MODULAR_IO_HDMI        0x2
-#define  MODULAR_IO_EDP         0x3
-#define  MODULAR_IO_USBA        0x4
-#define  MODULAR_IO_USB_DP_ALT  0xE
+#define MODULAR_IO_USB4_40G    0x0
+#define MODULAR_IO_DP          0x1
+#define MODULAR_IO_HDMI        0x2
+#define MODULAR_IO_EDP         0x3
+#define MODULAR_IO_USBA        0x4
+#define MODULAR_IO_USB_DP_ALT  0xE
 
 #define MODULAR_IO_DDI_ENABLE 0
 #define MODULAR_IO_EDP_ENABLE 1
+
+#define MODULAR_IO_GLOBAL_RESET_MASK    BIT0
+
+#define PER_PORT_CONFIG_DATA_BIT_SIZE   5     // PortXChange + PortXConfig
+#define CONFIG_DATA_PORT_CHANGE         BIT0
+#define CONFIG_DATA_PORT_CONFIG_OFFSET  1
+#define INVALID_TYPE_C_CONFIG_DATA      0xFFFFFFFF
 
 typedef struct {
   UINT32 Port1Change : 1;  ///< 0: no change required, 1: change required for port 1

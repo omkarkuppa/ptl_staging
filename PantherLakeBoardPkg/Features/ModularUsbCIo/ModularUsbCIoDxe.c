@@ -20,6 +20,7 @@
 **/
 
 #include <Uefi.h>
+#include <MkhiMsgs.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
@@ -42,22 +43,43 @@ ModularUsbCIoDxeEntryPoint (
   ) {
   EFI_STATUS            Status;
   VOID                  *Hob;
+  UINT32                OldTcssStrapConfig;
   UINT32                CurrentTcssStrapConfig;
+  UINTN                 VariableSize;
 
   Status = EFI_SUCCESS;
   Hob    = GetFirstGuidHob (&gTcssStrapDataHobGuid);
+  OldTcssStrapConfig = INVALID_TYPE_C_CONFIG_DATA;
 
   if (Hob != NULL) {
-    CurrentTcssStrapConfig = *(UINT32 *) GET_GUID_HOB_DATA (Hob);
-    Status = gRT->SetVariable (
+    VariableSize = sizeof (UINT32);
+    Status = gRT->GetVariable (
                     L"TcssStrapData",
                     &gTcssStrapDataVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                    sizeof (UINT32),
-                    &CurrentTcssStrapConfig
+                    NULL,
+                    &VariableSize,
+                    &OldTcssStrapConfig
                     );
-    ASSERT_EFI_ERROR (Status);
-    DEBUG ((DEBUG_INFO, "[TCSS] Update CurrentTcssStrapConfig to 0x%08x\n", CurrentTcssStrapConfig));
+    if (EFI_ERROR (Status) && Status != EFI_NOT_FOUND) {
+      DEBUG ((DEBUG_ERROR, "[TCSS] Failed to get TcssStrapData variable - %r\n", Status));
+      return Status;
+    }
+
+    CurrentTcssStrapConfig = *(UINT32 *) GET_GUID_HOB_DATA (Hob);
+
+    if (CurrentTcssStrapConfig != OldTcssStrapConfig) {
+      Status = gRT->SetVariable (
+                      L"TcssStrapData",
+                      &gTcssStrapDataVariableGuid,
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                      VariableSize,
+                      &CurrentTcssStrapConfig
+                      );
+      ASSERT_EFI_ERROR (Status);
+      DEBUG ((DEBUG_INFO, "[TCSS] Update CurrentTcssStrapConfig to 0x%08x\n", CurrentTcssStrapConfig));
+    }
+  } else {
+    DEBUG ((DEBUG_ERROR, "[TCSS] Failed to get TcssStrapData HOB!\n"));
   }
 
   return Status;

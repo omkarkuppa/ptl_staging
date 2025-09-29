@@ -1537,7 +1537,8 @@ UpdatePeiSaPolicyPreMem (
     }
 
     for (Index = 0; Index < UsbConnectorHobDataPtr->NumberOfUsbConnectors; Index++) {
-      if (UsbConnectorBoardConfig[Index].Usb3Controller == TCSS_USB3 &&
+      if (UsbConnectorBoardConfig[Index].ConnectorConnectable == CONNECTABLE &&
+          UsbConnectorBoardConfig[Index].Usb3Controller == TCSS_USB3 &&
           UsbConnectorBoardConfig[Index].Usb3PortNum < MAX_TCSS_USB3_PORTS &&
           UsbCConnectorBoardConfig[Index].RetimerCount > 0) {
         TcssPlatConfig |= 0x01 << (UsbConnectorBoardConfig[Index].Usb3PortNum * 2);

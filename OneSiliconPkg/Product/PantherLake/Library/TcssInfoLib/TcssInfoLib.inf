@@ -32,6 +32,8 @@ LIBRARY_CLASS = TcssInfoLib
 HobLib
 P2SbSocLib
 P2sbPrivateLib
+PeiHostBridgeIpStatusLib
+DebugLib
 
 [Packages]
 MdePkg/MdePkg.dec

@@ -34,6 +34,7 @@
 #include <Library/PeiMeLib.h>
 #include <Library/ChipsetInitLib.h>
 #include <Library/MeUtilsLib.h>
+#include <Library/TcssInfoLib.h>
 #include <Ppi/HeciControlPpi.h>
 #include <Register/HeciRegs.h>
 
@@ -597,6 +598,10 @@ PeiHeciSetStrapOverrideConfig (
   }
 
   if (MeIsAfterEndOfPost ()) {
+    return EFI_UNSUPPORTED;
+  }
+
+  if (IsStrapConfigDataSupported (StrapOverrideData) == FALSE) {
     return EFI_UNSUPPORTED;
   }
 

@@ -33,6 +33,8 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/PmcLib.h>
 #include <Library/PcdLib.h>
+#include <Library/GpioV2WrapperLib.h>
+#include <Library/PeiHostBridgeIpStatusLib.h>
 #include <MkhiMsgs.h>
 #include <PlatformBoardConfig.h>
 #include <PchResetPlatformSpecific.h>
@@ -40,8 +42,6 @@
 #include <Ppi/ReadOnlyVariable2.h>
 #include <IGpuConfig.h>
 #include <BoardSaConfigPreMem.h>
-
-#define MODULAR_IO_GLOBAL_RESET_MASK      BIT0
 
 #define MODULAR_IO_PORT1                  0
 #define MODULAR_IO_PORT2                  1

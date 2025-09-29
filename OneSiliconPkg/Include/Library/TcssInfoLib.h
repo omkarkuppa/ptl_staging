@@ -23,6 +23,7 @@
 #define __TCSS_INFO_LIB_H__
 
 #include <Uefi.h>
+#include <MkhiMsgs.h>
 
 /**
   GetTbtDmaBusNumber: Get TbtDma Bus Number
@@ -202,6 +203,18 @@ UINT64
 EFIAPI
 TcssGetIomPcrMmioBase (
   VOID
+  );
+
+/**
+  Check if the strap config data is supported
+
+  @retval TRUE   The strap config data is supported.
+  @retval FALSE  The strap config data is NOT supported.
+**/
+BOOLEAN
+EFIAPI
+IsStrapConfigDataSupported (
+  IN  STRAP_OVERRIDE_DATA  *StrapOverrideData
   );
 
 #endif // __TCSS_INFO_LIB_H__

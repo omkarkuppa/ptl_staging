@@ -268,5 +268,6 @@ UpdateNumOfConnectableUsbCConnectorsAndMap (
     }
   }
   UsbCConnectorHobDataPtr->NumberOfConnectableUsbCConnectors = NumOfConnectableUsbCConnectors;
+  DEBUG((DEBUG_INFO, "Updated number of USBC connectors: %d\n", NumOfConnectableUsbCConnectors));
   return EFI_SUCCESS;
 }

@@ -43,6 +43,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
 
 [Sources]

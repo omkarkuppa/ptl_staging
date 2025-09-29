@@ -45,6 +45,7 @@ MemoryAllocationLib
 MeUtilsLib
 MeInfoLib
 MeFruInitLib
+TcssInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec

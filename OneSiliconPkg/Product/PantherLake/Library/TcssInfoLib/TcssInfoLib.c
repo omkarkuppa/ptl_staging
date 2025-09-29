@@ -28,6 +28,9 @@
 #include <PcdSbPortIds.h>
 #include <Library/P2SbSocLib.h>
 #include <Library/P2sbPrivateLib.h>
+#include <Library/PeiHostBridgeIpStatusLib.h>
+#include <Library/DebugLib.h>
+#include <Defines/HostBridgeDefines.h>
 
 /**
   GetTbtDmaBusNumber: Get TbtDma Bus Number
@@ -246,4 +249,45 @@ TcssGetIomPcrMmioBase (
   IomPcrBase = P2sbGetMmioBase (&P2sbController, P2sbPid.PortId.LocalPid);
 
   return IomPcrBase;
+}
+
+/**
+  Check if the strap config data is supported
+
+  @retval TRUE   The strap config data is supported.
+  @retval FALSE  The strap config data is NOT supported.
+**/
+BOOLEAN
+EFIAPI
+IsStrapConfigDataSupported (
+  IN  STRAP_OVERRIDE_DATA  *StrapOverrideData
+  )
+{
+  UINT8   PortIndex;
+  UINT16  SaDeviceId;
+  UINT32  PortConfig;
+
+  SaDeviceId = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+  if (SaDeviceId == PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A) {
+    //
+    // Force TCP2 and TCP3 disabled by changing the strap to MODULAR_IO_USBA for HH SKUs
+    //
+    StrapOverrideData->OverrideData.ModularIOTypeCConfigData.Port3Change = 1;
+    StrapOverrideData->OverrideData.ModularIOTypeCConfigData.Port3Config = MODULAR_IO_USBA;
+    StrapOverrideData->OverrideData.ModularIOTypeCConfigData.Port4Change = 1;
+    StrapOverrideData->OverrideData.ModularIOTypeCConfigData.Port4Config = MODULAR_IO_USBA;
+    for (PortIndex = 0; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
+      if (PortIndex < 2) {
+        //
+        // Check if PortConfig is set to native display which is unsupported in HH SKUs
+        //
+        PortConfig = (StrapOverrideData->OverrideData.ConfigData >> ((PER_PORT_CONFIG_DATA_BIT_SIZE * PortIndex) + CONFIG_DATA_PORT_CONFIG_OFFSET)) & 0x0F;
+        if (PortConfig >= MODULAR_IO_DP && PortConfig <= MODULAR_IO_EDP) {
+          DEBUG ((DEBUG_WARN, "[TCSS] Native display(%d) over TCP%d is not supported in HH SKUs.\n", PortConfig, PortIndex));
+          return FALSE;
+        }
+      }
+    }
+  }
+  return TRUE;
 }

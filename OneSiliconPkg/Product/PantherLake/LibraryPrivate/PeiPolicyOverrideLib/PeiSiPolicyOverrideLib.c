@@ -34,6 +34,7 @@
 #include <AmtConfig.h>
 #include <CnviConfig.h>
 #include <TcssDataHob.h>
+#include <Library/PeiHostBridgeIpStatusLib.h>
 
 /**
   Override CNVi policies by checking function capability.
@@ -179,6 +180,44 @@ DebugTokenPolicyOverride (
 }
 
 /**
+  This function overrides TCSS post-mem policies only for HH SKUs
+
+  @param[in] SiPolicyPpi  The Silicon PostMem Policy PPI instance
+**/
+VOID
+TcssPolicyOverridePostMem (
+  IN  SI_POLICY_PPI  *SiPolicyPpi
+  )
+{
+  EFI_STATUS       Status;
+  UINT8            PortIndex;
+  UINT16           SaDeviceId;
+  TCSS_PEI_CONFIG  *TcssPeiConfig;
+
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gTcssPeiConfigGuid, (VOID *) &TcssPeiConfig);
+  ASSERT_EFI_ERROR(Status);
+
+  SaDeviceId = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+  if (SaDeviceId == PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A) {
+    DEBUG ((DEBUG_INFO, "[TCSS] HH SKU is detected. Disabled TcssConvUsbA for all TCSS ports.\n"));
+
+    for (PortIndex = 0; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
+      //
+      // Only TCP0 and TCP1 are supported in HH SKUs. Hence force disable rest of TCSS USB3 ports.
+      //
+      if (PortIndex > 1) {
+        TcssPeiConfig->UsbConfig.PortUsb30[PortIndex].Enable = 0;
+      }
+      //
+      // TCSS converted USBA is not supported in HH SKUs. Disable the feature for all ports.
+      //
+      TcssPeiConfig->MiscConfig.TcssConvUsbA[PortIndex].Field.Enable = 0;
+      TcssPeiConfig->MiscConfig.TcssConvUsbA[PortIndex].Field.MappingPchXhciUsb2 = 0;
+    }
+  }
+}
+
+/**
   Policy override in PostMem phase
 
   @param[in] SiPreMemPolicyPpi         The Silicon PreMem Policy PPI instance
@@ -194,4 +233,8 @@ PeiSiPolicyOverride (
   CnviPolicyOverride (SiPolicyPpi);
   DebugTokenPolicyOverride (SiPolicyPpi);
   AmtPolicyOverride (SiPolicyPpi);
+  //
+  // TcssPolicyOverridePostMem only takes effect on HH SKUs
+  //
+  TcssPolicyOverridePostMem (SiPolicyPpi);
 }

@@ -247,11 +247,14 @@ UpdateUsbCProperties (
   UINT8                          ConnectorType;
   GOP_CONFIG_DRIVER_HOB          *GopConfigDriverHob;
   EFI_HOB_GUID_TYPE              *GuidHob;
+  UINT16                         SaDeviceId;
+  EFI_STATUS                     Status;
 
   ModularIoSupported  = FALSE;
   UsbConnectorHobPtr  = GetUsbConnectorHobData ();
   UsbCConnectorHobPtr = GetUsbCConnectorHobData ();
   GopConfigDriverHob  = NULL;
+  SaDeviceId          = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
 
   GuidHob = GetFirstGuidHob (&gGopConfigDriverHobGuid);
   if (GuidHob != NULL) {
@@ -266,6 +269,11 @@ UpdateUsbCProperties (
   if (UsbConnectorHobPtr != NULL && UsbCConnectorHobPtr != NULL) {
     for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobPtr->NumberOfUsbCConnectors; ConnectorIndex++) {
       if (UsbConnectorHobPtr->UsbConnectorBoardConfig[ConnectorIndex].Usb3Controller == TCSS_USB3) {
+        if (SaDeviceId == PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A &&
+            UsbConnectorHobPtr->UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum > 1) {
+          UsbCConnectorHobPtr->UsbCConnectorBoardConfig[ConnectorIndex].ModularIoSupported = 0;
+          UPDATE_USB_CONNECTOR_HOB (UNCONNECTABLE, 0xFF);
+        }
         if (UsbCConnectorHobPtr->UsbCConnectorBoardConfig[ConnectorIndex].ModularIoSupported == 1) {
           ModularIoSupported = TRUE;
           PortIndex = (UINT8) UsbConnectorHobPtr->UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum;
@@ -351,6 +359,10 @@ UpdateUsbCProperties (
     }
   }
 
+  // Update the number of connectable USBC connectors and map
+  Status = UpdateNumOfConnectableUsbCConnectorsAndMap ();
+  ASSERT_EFI_ERROR (Status);
+
   if (ModularIoSupported == FALSE) {
     return EFI_UNSUPPORTED;
   } else {
@@ -408,6 +420,7 @@ GetCurrentTcssStrapConfig (
   if (!EFI_ERROR (Status)) {
     *CseModularUsbCIoConfig = StrapData.OverrideData.ConfigData;
   } else {
+    *CseModularUsbCIoConfig = INVALID_TYPE_C_CONFIG_DATA;
     DEBUG ((DEBUG_ERROR, "[TCSS] Failed to get modular USBC IO Config from CSE - %r\n", Status));
   }
 
@@ -448,7 +461,16 @@ ModularUsbCIoBoardDetectedCallback (
   //
   // Get Platform Modular USBC IO Config from EC
   //
-  Status = GetModularUsbCIoConfig (&PlatformModularUsbCIoConfig, sizeof (UINT64));
+#if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
+  if (PcdGetBool(PcdEcEnable) == TRUE) {
+    Status = GetModularUsbCIoConfig (&PlatformModularUsbCIoConfig, sizeof(UINT64));
+  } else {
+    Status = GetModularUsbCIoConfigEcLess (&PlatformModularUsbCIoConfig, sizeof(UINT64));
+  }
+#else
+  Status = GetModularUsbCIoConfig (&PlatformModularUsbCIoConfig, sizeof(UINT64));
+#endif
+
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "[TCSS] Failed to get modular USBC IO config from EC - %r\n", Status));
     return Status;
@@ -463,10 +485,6 @@ ModularUsbCIoBoardDetectedCallback (
     DEBUG ((DEBUG_ERROR, "%a: Modular IO is unsupported!!\n", __FUNCTION__));
     return Status;
   }
-
-  // Update the number of connectable USBC connectors and map
-  Status = UpdateNumOfConnectableUsbCConnectorsAndMap ();
-  ASSERT_EFI_ERROR (Status);
 
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
@@ -601,7 +619,6 @@ ModularUsbCIoPostMemCallback (
       }
     }
   } else {
-    CurrentTcssStrapConfig = CseModularUsbCIoConfig;
     if (CurrentTcssStrapConfigPtr != NULL) {
       if (*CurrentTcssStrapConfigPtr != CseModularUsbCIoConfig) {
         Status = GetCurrentTcssStrapConfig (&CurrentTcssStrapConfig);
