@@ -179,10 +179,10 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
     IsEnabled = true
 
     [Firmware.Ucode.Offset.Normal.Debug.Default]
-      Fv = { Offset = '0x008D0000', Size = '0x00080000' }
+      Fv = { Offset = '0x008D0000', Size = '0x00090000' }
 
     [Firmware.Ucode.Offset.Normal.Release.Default]
-      Fv = { Offset = '0x00AA0000', Size = '0x00080000' }
+      Fv = { Offset = '0x00AA0000', Size = '0x00090000' }
 
     [Firmware.Ucode.Offset.Resiliency.Debug.Default]
       Fv = { Offset = '0x00CA0000', Size = '0x00040000' }

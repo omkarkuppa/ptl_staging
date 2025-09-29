@@ -96,15 +96,15 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000D00
 # The size should be fixed.
 #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset           = 0x008D0000  # Flash addr (0xFFAD0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00080000  #
-SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x00080000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00090000  #
+SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x00090000  #
 #
 # FIT Payload Region - End
 #
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00950000  # Flash addr (0xFFB50000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00960000  # Flash addr (0xFFB60000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00020000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00970000  # Flash addr (0xFFB70000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x000F0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00980000  # Flash addr (0xFFB80000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x000E0000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00A60000  # Flash addr (0xFFC60000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x000A0000  #
 #
@@ -205,15 +205,15 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A00
 # The size should be fixed.
 #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset           = 0x00AA0000  # Flash addr (0xFFCA0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00080000  #
-SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x00080000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00090000  #
+SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x00090000  #
 #
 # FIT Payload Region - End
 #
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00B20000  # Flash addr (0xFFD20000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00B30000  # Flash addr (0xFFD30000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00010000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00B30000  # Flash addr (0xFFD30000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00040000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00B40000  # Flash addr (0xFFD40000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00030000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00B70000  # Flash addr (0xFFD70000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00BD0000  # Flash addr (0xFFDD0000)
