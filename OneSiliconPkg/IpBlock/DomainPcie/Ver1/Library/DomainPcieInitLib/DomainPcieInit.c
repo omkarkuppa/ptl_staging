@@ -1007,64 +1007,6 @@ DomainPcieInstSingleInit (
 }
 
 /**
-  This function checks whether HotPlug is enabled in any of the root ports in the controllers.
-  If yes, it updates the Root Port's pInst->PrivateConfig.EnableHotPlugInController accordingly.
-
-  @param[in]  MaxRootPortNum  Maximum number PCIe Rootports
-**/
-VOID
-UpdateEnableHotPlugInController (
-  UINT8  MaxRootPortNum
- )
-{
-  SI_POLICY_PPI     *SiPolicy;
-  PCH_PCIE_CONFIG   *PcieConfig;
-  EFI_STATUS        Status;
-  UINT8             RpIndex;
-  UINT8             ControllerIndex;
-  BOOLEAN           EnableHotPlugInController[PCH_MAX_PCIE_CONTROLLERS] = {0};
-  IP_PCIE_INST      *pInst;
-  EFI_HOB_GUID_TYPE *GuidHob;
-
-  Status = PeiServicesLocatePpi (
-             &gSiPolicyPpiGuid,
-             0,
-             NULL,
-             (VOID **) &SiPolicy
-             );
-  if (EFI_ERROR (Status)) {
-    return;
-  }
-
-  Status = GetConfigBlock ((VOID *) SiPolicy, &gPchPcieConfigGuid, (VOID *) &PcieConfig);
-  if (EFI_ERROR (Status)) {
-    return;
-  }
-
-  for (RpIndex = 0; RpIndex < MaxRootPortNum; RpIndex++) {
-    ControllerIndex = (UINT8)RpIndexToControllerIndex (RpIndex);
-    if (PcieConfig->RootPort[RpIndex].PcieRpCommonConfig.HotPlug && ControllerIndex < PCH_MAX_PCIE_CONTROLLERS) {
-      EnableHotPlugInController[ControllerIndex] = 1;
-    }
-  }
-
-  RpIndex = 0;
-  GuidHob = GetFirstGuidHob (&gIpPcieInstHobGuid);
-  while (GuidHob != NULL) {
-    pInst = (IP_PCIE_INST *) GET_GUID_HOB_DATA (GuidHob);
-    ZeroMem (&(pInst->PrivateConfig), sizeof (pInst->PrivateConfig));
-
-    ControllerIndex = (UINT8)RpIndexToControllerIndex (RpIndex);
-    if (ControllerIndex < PCH_MAX_PCIE_CONTROLLERS) {
-      pInst->PrivateConfig.EnableHotPlugInController = EnableHotPlugInController [ControllerIndex];
-      DEBUG ((DEBUG_INFO, "RootPort: %d EnableHotPlugInController: %d\n", RpIndex, pInst->PrivateConfig.EnableHotPlugInController));
-    }
-    RpIndex++;
-    GuidHob = GetNextGuidHob (&gIpPcieInstHobGuid, GET_NEXT_HOB(GuidHob));
-  }
-}
-
-/**
   DomainInit for Initilizing IP Instances
 
   @param[in] MaxRootPortNum       Pcie Max RootPort number
@@ -1098,11 +1040,6 @@ DomainPcieInit (
     ASSERT (FALSE);
     return EFI_OUT_OF_RESOURCES;
   }
-
-  //
-  // Check whether HotPlug enabled root ports and update pInst->PrivateConfig.EnableHotPlugInController
-  //
-  UpdateEnableHotPlugInController ((UINT8)MaxRootPortNum);
 
   GuidHob = GetFirstGuidHob (&gIpPcieInstHobGuid);
   while (GuidHob != NULL) {

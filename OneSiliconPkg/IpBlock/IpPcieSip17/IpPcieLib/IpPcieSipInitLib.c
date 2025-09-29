@@ -1019,7 +1019,6 @@ SipConfigureControllerBasePowerManagement (
   IOSFSBCS_PCIE_CFG_STRUCT      IosfSbcs;
   PCIEPMECTL2_PCIE_CFG_STRUCT   PciePmeCtl2;
   PCIEPMECTL3_PCIE_CFG_STRUCT   PciePmeCtl3;
-  FCTL2_PCIE_MEM_RCRB_STRUCT    Fctl2;
 
   PRINT_LEVEL1 ("%s(%d) Start \n", __FUNCTION__, pInst->RpIndex);
 
@@ -1197,18 +1196,6 @@ SipConfigureControllerBasePowerManagement (
     Hwsnr.Bits.bepw = V_HWSNR_BEPW;
     IpWrRegWrite (pInst->RegCntxt_Cfg_Sb, HWSNR_PCIE_CFG_REG, Hwsnr.Data, IpWrRegFlagSize32Bits);
 
-  //
-  // Program Feature Control 2 register 0x1330
-  // Set 0x1330[10] FCTL2.HPICTL         - 1b
-  //
-  Fctl2.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
-  if (pInst->PrivateConfig.EnableHotPlugInController) {
-    Fctl2.Bits.hpictl = 0;
-  } else {
-    Fctl2.Bits.hpictl = 1;
-  }
-  IpWrRegWrite (pInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, Fctl2.Data, IpWrRegFlagSize32Bits);
-
   PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
 }
 
@@ -1380,10 +1367,16 @@ SipConfigurePortBasePowerManagement (
 
   //
   // Program Feature Control 2 register 0x1330
+  // Set 0x1330[10] FCTL2.HPICTL         - 1b
   // Set 0x1330[27] FCTL2.RXCPPREALLOCEN - 1b
   //
   Fctl2.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
   Fctl2.Bits.rxcppreallocen = 1;
+  if (pInst->PcieRpCommonConfig.HotPlug) {
+    Fctl2.Bits.hpictl = 0;
+  } else {
+    Fctl2.Bits.hpictl = 1;
+  }
   IpWrRegWrite (pInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, Fctl2.Data, IpWrRegFlagSize32Bits);
 
   PcieAlc.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCIEALC_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
@@ -2641,14 +2634,25 @@ SipInitRootPort (
     /// Program the following bits in Slot Control register at offset 18h
     /// of PCI Express* Capability structure:
     /// Presence Detect Changed Enable (bit3) = 1b
+    /// Hot Plug Interrupt Enable (bit5) = 0b
     ///
     Slstl.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, SLCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+    Slstl.Bits.hpe = 0;
     Slstl.Bits.pde = 1;
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, SLCTL_PCIE_CFG_REG, Slstl.Data, IpWrRegFlagSize16Bits);
-
+    ///
+    /// Step 3
+    /// Program Misc Port Config (MPC) register at PCI config space offset
+    /// D8h as follows:
+    /// Hot Plug SCI Enable (HPCE, bit30) = 0b
+    /// Use byte access to avoid premature locking BIT23, SRL
+    ///
     Mpc.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, MPC_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
     PRINT_LEVEL1 ("HpSci in Port %x is :%x \n", pInst->RpIndex, pInst->PcieRpCommonConfig.HpSci);
-    if (pInst->PcieRpCommonConfig.HpSci == 1) {
+    if (pInst->PcieRpCommonConfig.HpSci == 0) {
+      Mpc.Bits.hpce = 0;
+      Mpc.Bits.hpme = 1;
+    } else {
       Mpc.Bits.hpce = 1;
       Mpc.Bits.hpme = 0;
     }

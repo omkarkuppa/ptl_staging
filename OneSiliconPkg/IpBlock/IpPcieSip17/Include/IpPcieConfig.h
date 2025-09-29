@@ -273,8 +273,7 @@ typedef struct {
   BOOLEAN                    ApmsL0sSupported;
   UINT8                      DefaultVc0Mapping;
   UINT8                      Pxpsuldcgen;
-  BOOLEAN                    EnableHotPlugInController;
-  UINT8                      Reserved[6];               ///< Reserved space for future use
+  UINT8                      Reserved[7];               ///< Reserved space for future use
 } IP_PCIE_ROOT_PORT_PRIVATE_CONFIG;
 
 /**
