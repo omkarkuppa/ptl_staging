@@ -286,6 +286,14 @@ BIOS_INFO_GUID="4A4CA1C6-871C-45bb-8801-6910A7AA5807"
 STARTUP_AC_MODULE_GUID="26FDAA3D-B7ED-4714-8509-EECF1593800D"
 MICROCODE_ARRAY_FFS_GUID="197DB236-F856-4924-90F8-CDF12FB875F3"
 
+if [ -z "${SLOT_SIZE}" ]; then
+  if [ "$WCL_BUILD" = "TRUE" ]; then
+    export SLOT_SIZE=0x37000
+  else
+    export SLOT_SIZE=0x43000
+  fi
+fi
+
 STARTUP_ACM_FOUND=0
 
 grep $STARTUP_AC_MODULE_GUID $BUILD_DIR/FV/FVFWBINARIES.inf > /dev/null
@@ -687,8 +695,6 @@ export STARTUP_AC_PARA="$STARTUP_AC_PARA $STARTUP_ACM_PARA"
     #   -NA No 0x800 aligned Microcode requirement. No -NA means Microcode is 0x800 aligned.
     #   -O RecordType <RecordDataAddress RecordDataSize>|<RESERVE RecordDataSize>
     #   -P RecordType <IndexPort DataPort Width Bit Index>
-    #
-    # For slot mode, the SLOT_SIZE environment variable already defined in PriBuild.sh script
     #
 
 # Generate Bsis binary for both FSP Signing and non FSP Signing cases.

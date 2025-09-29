@@ -26,25 +26,6 @@
 @set PLATFORM_BOARD_PACKAGE=PantherLakeBoardPkg
 @set PLATFORM_BIN_PACKAGE=PantherLakeBinPkg
 @set PLATFORM_FULL_PACKAGE=PantherLakePlatSamplePkg
-@REM
-@REM The following environment variables is used for Micorocode update.
-@REM The Microcode region layout as the following format:
-@REM We will use FW_VERSION, LSV and FW_VERSION_STRING to generate Version.ffs
-@REM Use SLOT_SIZE to add padding data for each Microcode patch.
-@rem Caution: DO NOT set SLOT_SIZE to 0, otherwise it will build fail.
-@REM
-@REM --------------------
-@REM |   Fv Header      |
-@REM --------------------
-@REM |   Version.ffs    |
-@REM --------------------
-@REM |MicrocodeArray.ffs|
-@REM --------------------
-@REM
-@set SLOT_SIZE=0x37000
-@set FW_VERSION=0x0001
-@set LSV=0x0001
-@set FW_VERSION_STRING="Version 0.0.0.1"
 
 @REM Run SetEdk2Env.bat
 call SetEdk2Env.bat

@@ -31,48 +31,11 @@ function BuildFail {
 }
 
 #
-# MicroCodeUpdate
-#
-# The following 4 envir vairable is used for Micorocode update.
-# The Microcode region layout as the following format:
-# We will use FW_VERSION, LSV and FW_VERSION_STRING to generate Version.ffs
-# Use SLOT_SIZE to add padding data for each Microcode patch.
-# Caution: DO NOT set SLOT_SIZE to 0, otherwise it will build fail.
-#
-# --------------------
-# |   Fv Header      |
-# --------------------
-# |   Version.ffs    |
-# --------------------
-# |MicrocodeArray.ffs|
-# --------------------
-#
-export SLOT_SIZE=0x37000
-export FW_VERSION=0x0001
-export LSV=0x0001
-export FW_VERSION_STRING="Version 0.0.0.1"
-export MICROCODE_FV_FDF=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Include/Fdf/FvMicrocode.fdf
-
-#
 # Definition for BtGACM Support.
 #
 export BTG_ACM_BASE_PATH=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Binaries/BootGuard
 export BTG_ACM_OUTPUT_PATH=$WORKSPACE/$BUILD_DIR/BootGuard
 export BTG_ACM_SLOT_SIZE=0x48000
-
-python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/microcode_padding.py \
-  --opt padding \
-  --fw-version $FW_VERSION \
-  --lsv $LSV \
-  --fw-version-string "$FW_VERSION_STRING" \
-  --slotsize $SLOT_SIZE \
-  --fdf $MICROCODE_FV_FDF
-
-if [ $ret -ne 0 ]; then
-  echo "!!! ERROR: microcode_padding.py execute failure !!!"
-  echo "microcode_padding.py --opt padding --fw-version $FW_VERSION --lsv $LSV --fw-version-string $FW_VERSION_STRING --slotsize $SLOT_SIZE"
-  BuildFail $ret
-fi
 
 python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BtgAcmMisc/BtgAcmMiscScript.py \
   Padding \
@@ -202,5 +165,3 @@ echo "SPI Images location:  $WORKSPACE/RomImages"
 echo
 echo "The EDKII BIOS build has successfully completed!"
 echo
-
-python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/microcode_padding.py --opt revert --fdf $MICROCODE_FV_FDF

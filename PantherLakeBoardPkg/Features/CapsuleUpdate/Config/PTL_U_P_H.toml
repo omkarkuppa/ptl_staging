@@ -191,7 +191,7 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
       Fv = { Offset = '0x00CA0000', Size = '0x00090000' }
 
     [Firmware.Ucode.SlotSize]
-      Default = '0x37000'
+      Default = '0x43000'
 
   [Firmware.Foxville]
     Version   = 1
