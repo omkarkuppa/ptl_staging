@@ -646,6 +646,8 @@ RemoveDevice (
       TmpDev->Next = Dev->Next;
       break;
     }
+
+    TmpDev = TmpDev->Next;
   }
 }
 
