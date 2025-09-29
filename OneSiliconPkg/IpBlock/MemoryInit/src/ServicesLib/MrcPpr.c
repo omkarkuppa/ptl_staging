@@ -1878,6 +1878,8 @@ MrcRunPprTargeted (
   UINT8 BytesNumInDevice;
   UINT8 Byte;
 
+  BOOLEAN IsErrorInjected = FALSE;
+
   for (Entry = 0; Entry < ARRAY_COUNT (Inputs->PprEntryInfo); Entry++) {
     if (Inputs->PprEntryInfo[Entry].PprValid) {
 
@@ -1896,6 +1898,8 @@ MrcRunPprTargeted (
 
       if (!MrcIsPprEntryAddressExists (MrcData, Inputs->PprEntryAddress[Entry])) {
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "PPR Entry %d: Invalid address was requested.\n", Entry);
+        Outputs->PprRepairFails++;
+        Outputs->PprTargetedStatus[Entry] = pprFail;
         continue;
       }
 
@@ -1910,11 +1914,20 @@ MrcRunPprTargeted (
       }
 
       Outputs->PprNumDetectedErrors++;
-      Status = MrcPostPackageRepair (MrcData, Controller, Channel, Rank, BankGroup, BankAddress, Row, ByteMask);
+      if (Inputs->PprErrorInjection && !IsErrorInjected) {
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "PPR Entry %d: Error injected.\n", Entry);
+        Status = mrcFail;
+        IsErrorInjected = TRUE;
+      } else {
+        Status = MrcPostPackageRepair (MrcData, Controller, Channel, Rank, BankGroup, BankAddress, Row, ByteMask);
+      }
+
       if (Status == mrcSuccess) {
         Outputs->PprNumSuccessfulRepairs++;
+        Outputs->PprTargetedStatus[Entry] = pprSuccess;
       } else {
         Outputs->PprRepairFails++;
+        Outputs->PprTargetedStatus[Entry] = pprFail;
       }
     }
   }

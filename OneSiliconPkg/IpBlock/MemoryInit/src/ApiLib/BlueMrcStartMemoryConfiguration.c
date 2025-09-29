@@ -267,6 +267,7 @@ MrcPrepareNextMrcIteration (
   MrcSaGvPoint            PrevSagvLast;
   MrcSaGvPoint            PrevSagvPpr;
   UINT8                   PrevPprRunningState;
+  BOOLEAN                 PrevPprTargetedStatus[PPR_REQUEST_MAX];
 
   Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
@@ -287,6 +288,7 @@ MrcPrepareNextMrcIteration (
   PrevCmosConfig1 = Outputs->CmosConfig1;
   PrevCmosConfig2 = Outputs->CmosConfig2;
   PrevPprRunningState = Outputs->PprRunningState;
+  MrcCall->MrcCopyMem ((UINT8 *) &PrevPprTargetedStatus, (UINT8 *) &Outputs->PprTargetedStatus, sizeof (Outputs->PprTargetedStatus));
 
   MrcCall->MrcSetMem ((UINT8 *) Outputs, sizeof (MrcOutput), 0);
   Outputs->Size = sizeof (MrcOutput);
@@ -301,6 +303,7 @@ MrcPrepareNextMrcIteration (
   Outputs->CmosConfig1 = PrevCmosConfig1;
   Outputs->CmosConfig2 = PrevCmosConfig2;
   Outputs->PprRunningState = PrevPprRunningState;
+  MrcCall->MrcCopyMem ((UINT8 *) &Outputs->PprTargetedStatus, (UINT8 *) &PrevPprTargetedStatus, sizeof (Outputs->PprTargetedStatus));
 
   MrcRestoreStaticSpdData (MrcData, &StaticSpdData);
   MrcCall->MrcCopyMem ((UINT8 *) &Outputs->LowFreqCsCmd2DSweepDone, (UINT8 *) &LowFreqCsCmd2dDone, sizeof (Outputs->LowFreqCsCmd2DSweepDone));

@@ -29,6 +29,11 @@
 
 #define PPR_MAX_DETECTED_ERRORS       (0xF000)
 
+typedef enum PPR_STATUS {
+  pprSuccess = 0,
+  pprFail = 1,
+} PPR_STATUS;
+
 typedef struct {
   INT64 SaveVal0;
   INT64 SaveVal1;

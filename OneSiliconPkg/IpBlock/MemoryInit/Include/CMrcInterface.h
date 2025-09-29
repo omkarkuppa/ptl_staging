@@ -2200,7 +2200,8 @@ typedef struct {
   UINT16              DivCode3;
   BOOLEAN             ApplyWckIdleMrsFsm126;
   INT8                BwselTemp;
-  UINT8               ReservedBytesForAlignment[2]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  BOOLEAN             PprTargetedStatus[PPR_REQUEST_MAX]; ///< PPR status of each Targeted PPR request (0 = Targeted PPR was successful, 1 = PPR failed)
+  UINT8               ReservedBytesForAlignment[4]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;
@@ -2379,7 +2380,7 @@ typedef struct {
   UINT32  DebugValue;             ///< Used for general debug
   UINT16  Vout;
   MRC_PPR_ENTRY_INFO    PprEntryInfo[PPR_REQUEST_MAX];
-  MRC_PPR_ENTRY_ADDRESS	PprEntryAddress[PPR_REQUEST_MAX];
+  MRC_PPR_ENTRY_ADDRESS PprEntryAddress[PPR_REQUEST_MAX];
   MRC_PPR_TEST_TYPE     PprTestType;
   MRC_PPR_REPAIR_TYPE   PprRepairType;
   UINT8 PprRunOnce;

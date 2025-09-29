@@ -3553,6 +3553,7 @@ BuildMemoryInfoDataHob (
   UINT8                Rank;
   BOOLEAN              PprDoneFillingErrorInfo;
   AMT_PPR_ENABLE       AmtPprRanInLastBoot;
+  UINT8                Index;
 
   SaveData = &MrcData->Save.Data;
   Outputs  = &MrcData->Outputs;
@@ -3682,6 +3683,10 @@ BuildMemoryInfoDataHob (
         }
       } // Channel
     } // Controller
+  }
+
+  for (Index = 0; Index < PPR_REQUEST_MAX; Index++) {
+    MemoryInfo->PprTargetedStatus[Index] = Outputs->PprTargetedStatus[Index];
   }
 
   PartNumberOffset = sizeof (SPD_MANUFACTURER_ID_CODE) + sizeof (SPD_MANUFACTURING_LOCATION) + sizeof (SPD_MANUFACTURING_DATE) + sizeof (SPD_MANUFACTURER_SERIAL_NUMBER);
