@@ -727,6 +727,7 @@ PtlPcdInitPrePolicy (
   //
   SpiEspiDisableEiss ();
 
+
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREPOLICY_DONE);
   DEBUG ((DEBUG_INFO, "PchInitPrePolicy() - End\n"));
 }
