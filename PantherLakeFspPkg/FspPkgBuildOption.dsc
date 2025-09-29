@@ -22,14 +22,6 @@
 [BuildOptions]
 # Define Build Options both for EDK and EDKII drivers.
 
-!if gPantherLakeFspPkgTokenSpaceGuid.PcdSymbolInReleaseEnable == TRUE
-  DEFINE DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS = /Zi
-  DEFINE DSC_SYMBOL_IN_RELEASE_LINK_BUILD_OPTIONS = /DEBUG
-!else
-  DEFINE DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS =
-  DEFINE DSC_SYMBOL_IN_RELEASE_LINK_BUILD_OPTIONS =
-!endif
-
 ##################
 # Rsa2048Sha256Sign tool definitions
 #
@@ -58,17 +50,18 @@
 
 [BuildOptions.Common.EDKII]
 !if gPantherLakeFspPkgTokenSpaceGuid.PcdSymbolInReleaseEnable == TRUE
-MSFT:  RELEASE_*_*_CC_FLAGS    = $(DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS)
-MSFT:  RELEASE_*_*_ASM_FLAGS   = $(DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS)
-MSFT:  RELEASE_*_*_DLINK_FLAGS = $(DSC_SYMBOL_IN_RELEASE_LINK_BUILD_OPTIONS)
+  !if ("MSFT" in $(FAMILY))
+    DEFINE DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS = /Zi
+  !else
+    !if ($(TOOL_CHAIN_TAG) == "CLANGPDB")
+      DEFINE DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS = -gcodeview
+    !else
+      DEFINE DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS = -g
+    !endif
+  !endif
+  RELEASE_*_*_CC_FLAGS    = $(DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS)
+  RELEASE_*_*_ASM_FLAGS   = $(DSC_SYMBOL_IN_RELEASE_BUILD_OPTIONS)
+
+  MSFT:     RELEASE_*_*_DLINK_FLAGS = /DEBUG
+  CLANGPDB: RELEASE_*_*_DLINK_FLAGS = /DEBUG
 !endif
-
-
-
-
-
-
-
-
-
-

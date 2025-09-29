@@ -51,6 +51,7 @@ export FSPM_COMPRESSED=TRUE
 export MULTI_IBB_BUILD=FALSE
 export RESILIENCY_BUILD=FALSE
 export SILENT_MODE=FALSE
+export FSP_PDB_RELEASE=FALSE
 export COMPILER=GCC
 export TARGET_PLATFORM=PantherLake
 export FspTargetOption=PantherLake
@@ -106,11 +107,12 @@ export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.P
 function PrintUsage {
   echo "Client BIOS build script"
   echo
-  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [s] [gcc] [clang] [xcode] [fspapi] [fsp64] [fspsigned] [fspunsigned] [res] [cln]"
+  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [rp] [s] [gcc] [clang] [xcode] [fspapi] [fsp64] [fspsigned] [fspunsigned] [res] [cln]"
   echo
   echo "  Default build flags: build in Debug Mode; 32-bit PEI for FSP; FSP Dispatch Mode"
   echo
   echo "  r        Build in Release mode."
+  echo "  rp       Release build with Symbols - For source level debugging. See note 1"
   echo "  s        Build in Silent mode."
   echo "  gcc      Build whole source with GCC. See note 1"
   echo "  clang    Build whole source with CLANG. See note 1"
@@ -236,7 +238,11 @@ cd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE
 numargs=$#
 for ((i=1 ; i <= numargs ; i++)); do
   if [ "$1" = "r" ]; then
-    PrepRelease=RELEASE
+    export PrepRelease=RELEASE
+  elif [ "$1" = "rp" ]; then
+    export PrepRelease=RELEASE
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPlatformModuleTokenSpaceGuid.PcdSymbolInReleaseEnable=TRUE"
+    export FSP_PDB_RELEASE=TRUE
   elif [ "$1" = "s" ]; then
     export SILENT_MODE=TRUE
   elif [ "$1" = "gcc" ]; then
@@ -491,6 +497,9 @@ export FSP_TARGET=$TARGET
 if [ "$RESILIENCY_BUILD" = "TRUE" ]; then
   export FSP_TARGET=RELEASE
   export FSP_BUILD_PARAMETER=-r
+fi
+if [ "$FSP_PDB_RELEASE" = "TRUE" ]; then
+  export FSP_BUILD_PARAMETER=-rp
 fi
 
 if [ "$FSP_SIGNED" = "TRUE" ]; then

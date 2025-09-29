@@ -30,7 +30,7 @@ ErrorCode=0
 function USAGE()
 {
   echo
-  echo  "$0 \[PantherLake\(Optional\)\| WildcatLake\(Optional\)\] \[GCC \| CLANG\] \[-h \| -? \| -r \| -tr \| -d \| -clean\] \[/header\]"
+  echo  "$0 \[PantherLake\(Optional\)\| WildcatLake\(Optional\)\] \[GCC \| CLANG\] \[-h \| -? \| -r \| -rp \| -tr \| -d \| -clean\] \[/header\]"
   echo
   return 1
 }
@@ -442,9 +442,30 @@ function ReleaseTypeTest(){
   BD_TARGET=RELEASE
   BD_MACRO="-D TARGET="$BD_TARGET" -D CFG_OUTDIR="$OUT_DIR" "$EXT_BUILD_FLAGS
   DSCFILE="-p "$FSP_PKG_NAME/$FSP_PKG_NAME.dsc #" -y ReleaseTestBuild.log"
-  BD_ARGS=$DSCFILE" -b RELEASE "$BD_MACRO" -a $FSP_ARCH -a X64 -n 1 -t "$TOOL_CHAIN" -y ReportRelease.log -Y PCD -Y LIBRARY"
+  if [ -n "${MAX_CONCURRENT_THREADS}" ] && [ "${MAX_CONCURRENT_THREADS}" -gt 0 ]; then
+    THREAD_COUNT=$MAX_CONCURRENT_THREADS
+  else
+    THREAD_COUNT=1
+  fi
+  BD_ARGS=$DSCFILE" -b RELEASE "$BD_MACRO" -a $FSP_ARCH -a X64 -n $THREAD_COUNT -t "$TOOL_CHAIN" -y ReportRelease.log -Y PCD -Y LIBRARY"
   FSP_BUILD_TYPE=0x0001
   FSP_RELEASE_TYPE=0x0000
+  Build $*
+}
+
+function ReleaseBuildPdb(){
+  export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gPantherLakeFspPkgTokenSpaceGuid.PcdSymbolInReleaseEnable=TRUE"
+  BD_TARGET=RELEASE
+  BD_MACRO="-D TARGET="$BD_TARGET" -D CFG_OUTDIR="$OUT_DIR" "$EXT_BUILD_FLAGS
+  DSCFILE="-p "$FSP_PKG_NAME/$FSP_PKG_NAME.dsc #" -y ReleaseBuildPdb.log"
+  if [ -n "${MAX_CONCURRENT_THREADS}" ] && [ "${MAX_CONCURRENT_THREADS}" -gt 0 ]; then
+    THREAD_COUNT=$MAX_CONCURRENT_THREADS
+  else
+    THREAD_COUNT=1
+  fi
+  BD_ARGS=$DSCFILE" -b RELEASE "$BD_MACRO" -a $FSP_ARCH -a X64 -n $THREAD_COUNT -t "$TOOL_CHAIN" -y ReportRelease.log -Y PCD -Y LIBRARY"
+  FSP_BUILD_TYPE=0x0001
+  FSP_RELEASE_TYPE=0x0002
   Build $*
 }
 
@@ -452,7 +473,12 @@ function ReleaseBuild(){
   BD_TARGET=RELEASE
   BD_MACRO="-D TARGET="$BD_TARGET" -D CFG_OUTDIR="$OUT_DIR" "$EXT_BUILD_FLAGS
   DSCFILE="-p "$FSP_PKG_NAME/$FSP_PKG_NAME.dsc #" -y ReleaseBuild.log"
-  BD_ARGS=$DSCFILE" -b RELEASE "$BD_MACRO" -a $FSP_ARCH -a X64 -n 1 -t "$TOOL_CHAIN" -y ReportRelease.log -Y PCD -Y LIBRARY"
+  if [ -n "${MAX_CONCURRENT_THREADS}" ] && [ "${MAX_CONCURRENT_THREADS}" -gt 0 ]; then
+    THREAD_COUNT=$MAX_CONCURRENT_THREADS
+  else
+    THREAD_COUNT=1
+  fi
+  BD_ARGS=$DSCFILE" -b RELEASE "$BD_MACRO" -a $FSP_ARCH -a X64 -n $THREAD_COUNT -t "$TOOL_CHAIN" -y ReportRelease.log -Y PCD -Y LIBRARY"
   FSP_BUILD_TYPE=0x0001
   FSP_RELEASE_TYPE=0x0002
   Build $*
@@ -462,8 +488,12 @@ function DebugBuild(){
   BD_TARGET=DEBUG
   BD_MACRO="-D TARGET="$BD_TARGET" -D CFG_DEBUG=1 -D DEBUG_BIOS_ENABLE=TRUE -D CFG_OUTDIR="$OUT_DIR" "$EXT_BUILD_FLAGS
   DSCFILE="-p "$FSP_PKG_NAME/$FSP_PKG_NAME.dsc   #" -y DebugBuild.log"
-  #echo $DSCFILE
-  BD_ARGS=$DSCFILE" -b DEBUG "$BD_MACRO" -a $FSP_ARCH -a X64 -n 1 -t "$TOOL_CHAIN" -y ReportDebug.log -Y PCD -Y LIBRARY"
+  if [ -n "${MAX_CONCURRENT_THREADS}" ] && [ "${MAX_CONCURRENT_THREADS}" -gt 0 ]; then
+    THREAD_COUNT=$MAX_CONCURRENT_THREADS
+  else
+    THREAD_COUNT=1
+  fi
+  BD_ARGS=$DSCFILE" -b DEBUG "$BD_MACRO" -a $FSP_ARCH -a X64 -n $THREAD_COUNT -t "$TOOL_CHAIN" -y ReportDebug.log -Y PCD -Y LIBRARY"
   FSP_BUILD_TYPE=0x0000
   FSP_RELEASE_TYPE=0x0000
   Build $*
@@ -635,6 +665,9 @@ fi
 if [ "$2" = "-r" ] || [ "$2" = "-r32" ]
  then
   ReleaseBuild
+elif [ "$2" = "-rp" ]
+ then
+  ReleaseBuildPdb
 elif [ "$2" = "-tr" ] || [ "$2" = "-tr32" ]
  then
   ReleaseTypeTest
