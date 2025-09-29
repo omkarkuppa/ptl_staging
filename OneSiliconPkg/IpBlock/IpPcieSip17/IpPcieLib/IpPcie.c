@@ -269,11 +269,6 @@ PcieLoadDefaultConfig (
   pInst->PcieRpCommonConfig.AutoPowerGating               = TRUE;
   pInst->Integration                                      = IpPchPcie;
   pInst->PcieRpCommonConfig.PresetToCoeffConfig           = FALSE;
-  //
-  // Initialize PrivateConfig members of pInst.
-  //
-IpWrMemset (pInst->MemCntxt, &(pInst->PrivateConfig), 0, sizeof (pInst->PrivateConfig));
-
 }
 
 /**
@@ -369,6 +364,7 @@ IpPciePreLinkActiveProgramming (
   UINT32                             DetectTimeoutUs;
   UINT32                             DetectTimer;
   MPHYCAPCFG_PCIE_MEM_RCRB_STRUCT    MPhyCapCfg;
+  MPC_PCIE_CFG_STRUCT                Mpc;
 
   if (pInst == NULL) {
     PRINT_ERROR_NO_CNTXT ("ERROR: %s: Invalid pInst\n", __FUNCTION__);
@@ -463,6 +459,19 @@ IpPciePreLinkActiveProgramming (
       &pInst->PrivateConfig.L1p2Config,
       &pInst->PrivateConfig.LtrSubL11Npg
     );
+  }
+
+  ///
+  /// Program Misc Port Config (MPC) register at PCI config space offset
+  /// D8h as follows:
+  /// Hot Plug SCI Enable (HPCE, bit30) = 0b
+  /// Use byte access to avoid premature locking BIT23, SRL
+  ///
+  if (pInst->PrivateConfig.EnableHotPlugInController && pInst->PcieRpCommonConfig.HpSci == 0) {
+    Mpc.Data      = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, MPC_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+    Mpc.Bits.hpce = 0;
+    Mpc.Bits.hpme = 1;
+    IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, MPC_PCIE_CFG_REG, Mpc.Data, IpWrRegFlagSize32Bits);
   }
 
   PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
