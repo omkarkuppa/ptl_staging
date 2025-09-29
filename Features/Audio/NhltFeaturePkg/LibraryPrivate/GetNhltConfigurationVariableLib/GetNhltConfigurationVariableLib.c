@@ -53,10 +53,12 @@ NhltEndpointTableLoadPcdConfiguration (
   NhltConfigurationVariable->NhltI2sAlc274Enabled    = PcdGet8 (NhltI2sAlc274Enabled);
   NhltConfigurationVariable->NhltBluetoothEnabled    = PcdGet8 (NhltBluetoothEnabled);
   NhltConfigurationVariable->NhltI2sAk4604Enabled    = PcdGet8 (NhltI2sAk4604Enabled);
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   NhltConfigurationVariable->NhltI2sAlc5682IVDEnabled  = PcdGetBool (NhltI2sAlc5682IVDEnabled)
   NhltConfigurationVariable->NhltI2sAlc5682IVSEnabled  = PcdGetBool (NhltI2sAlc5682IVSEnabled)
   NhltConfigurationVariable->NhltI2sEverest8316I2s1  = PcdGetBool (NhltI2sEverest8316I2s1)
+#endif
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
   NhltConfigurationVariable->NhltI2sLontiumI2s0  = PcdGetBool (NhltI2sLontiumI2s0)
   NhltConfigurationVariable->NhltI2sLontiumI2s2  = PcdGetBool (NhltI2sLontiumI2s2)
 #endif
@@ -194,7 +196,6 @@ GetNhltConfiguration (
     default:
       break;
   }
-
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   if (NhltConfigurationVariable.NhltI2sAlc5682IVDEnabled) {
     NhltConfiguration->NhltConfigurationEnabled[NhltI2sAlc5682ivd] = TRUE;

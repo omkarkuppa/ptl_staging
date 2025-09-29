@@ -476,7 +476,7 @@
         option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ), value = 2, flags = RESET_REQUIRED;
       endoneof;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
       oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sAlc5682IVDEnabled,
             prompt      = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VD_PROMPT),
             help        = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC5682I_VD_HELP),
@@ -497,7 +497,8 @@
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
-
+#endif
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
       oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sLontiumI2s0,
         prompt      = STRING_TOKEN(STR_PCH_HDA_I2S0_CODEC_LONTIUM),
         help        = STRING_TOKEN(STR_PCH_HDA_I2S0_CODEC_LONTIUM_HELP),
@@ -518,7 +519,7 @@
         help     = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_SELECT_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC274), value = 1, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8316), value = 3, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8326), value = 4, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_EVEREST8336), value = 5, flags = RESET_REQUIRED;

@@ -920,11 +920,8 @@ Status = gRT->GetVariable(
 );
 if (!EFI_ERROR(Status))
 {
-    if ((0 == NhltConfigurationEfiVariable.NhltI2sLontiumI2s0) ||
-        (0 == NhltConfigurationEfiVariable.NhltI2sLontiumI2s2) ||
-        ((0 == NhltConfigurationEfiVariable.NhltI2sEverest8316I2s1) ||
-        (0 == NhltConfigurationEfiVariable.NhltI2sAlc5682IVDEnabled) ||
-        (0 == NhltConfigurationEfiVariable.NhltI2sAlc5682IVSEnabled)))
+    if ((0 == NhltConfigurationEfiVariable.NhltI2sLontiumI2s0) &&
+        (0 == NhltConfigurationEfiVariable.NhltI2sLontiumI2s2))
     {
         mMipiCamNvsAreaProtocol.Area->I2SE = 0;
     }

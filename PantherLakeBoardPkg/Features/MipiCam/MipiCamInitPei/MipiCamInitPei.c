@@ -196,7 +196,7 @@ MipiI2SGpioInit (
 }
 #endif
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
 VOID
 EverestGpioInit (
   VOID
@@ -354,7 +354,7 @@ RealtekGpioInit (
 
   DEBUG ((DEBUG_INFO, "%a ends.\n", __FUNCTION__));
 }
-#endif  // #if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#endif  // #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
 
 VOID
 MipiCamGpioInit (
@@ -625,6 +625,8 @@ MipiCamInitEntryPoint (
 #if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
   MipiCamGpioInit ();
   MipiI2SGpioInit();
+#endif
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   EverestGpioInit ();
   RealtekGpioInit ();
 #endif
