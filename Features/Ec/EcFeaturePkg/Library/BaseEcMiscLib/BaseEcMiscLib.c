@@ -1730,6 +1730,8 @@ SetSkinThermalControlConfig (
   UINT8           DataSize;
   EFI_STATUS      Status;
 
+  ZeroMem (&StcConfigData, sizeof (StcConfigData));
+
   StcConfigData.SensorId      = SensorId;
   StcConfigData.TargetTemp    = TargetTemp;
   StcConfigData.ControlEnable = (ControlEnable == TRUE) ? 1 : 0;
