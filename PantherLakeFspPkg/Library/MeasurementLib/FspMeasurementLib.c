@@ -1078,8 +1078,6 @@ VerifiedComponentSaveHashEvent (
   VOID
   )
 {
-  UINT32                         Index;
-  REGION_SEGMENT                 *IbbSegmentPtr;
   FSP_BUILD_MEASUREMENT_INFO     *FspMeasurementData;
   EFI_STATUS                     Status;
   FSP_BOOT_MANIFEST_STRUCTURE    *Fbm;
@@ -1161,20 +1159,14 @@ VerifiedComponentSaveHashEvent (
   if (FspMeasurementData->Bits.BspPreMemStatus == EFI_SUCCESS) {
     ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
     BspRegionGetDigestList (Bspm, &TpmDigestValues, TpmActivePcrBanks);
-    IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bspm);
-    for (Index = 0; Index < Bspm->BspSegmentCount; Index ++) {
-      if (IbbSegmentPtr[Index].Size != 0 && (IbbSegmentPtr[Index].Flags & BIT_HASHED_IBB) == 0) {
-        Status = SaveHashEvent (&TpmDigestValues,
-                              TpmActivePcrBanks,
-                              (UINT8 *) L"BSPM",
-                              sizeof (L"BSPM"),
-                              EV_POST_CODE
-                              );
-        if (Status == EFI_SUCCESS) {
-          DEBUG ((DEBUG_INFO, "Hash event log saved successfully for BSP Pre-Mem\n"));
-        }
-      }
-      IbbSegmentPtr ++;
+    Status = SaveHashEvent (&TpmDigestValues,
+                           TpmActivePcrBanks,
+                           (UINT8 *) L"BSPM",
+                           sizeof (L"BSPM"),
+                           EV_POST_CODE
+                           );
+    if (Status == EFI_SUCCESS) {
+      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for BSP Pre-Mem\n"));
     }
   }
 
