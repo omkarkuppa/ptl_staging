@@ -182,7 +182,7 @@
   gSiPkgTokenSpaceGuid.PcdAcpiDebugEnableFlag|TRUE   # Acpi debug enable flag
   gPlatformModuleTokenSpaceGuid.PcdTerminalOverDebugEnable|TRUE
   gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable|TRUE
-  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable|TRUE
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdLpcIoDecodeRange|0x0010
   gSiPkgTokenSpaceGuid.PcdLpcIoEnableDecoding|0x7C03
   gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable|FALSE

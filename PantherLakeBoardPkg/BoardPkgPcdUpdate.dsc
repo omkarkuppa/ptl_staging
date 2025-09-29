@@ -323,6 +323,9 @@
   gSiPkgTokenSpaceGuid.PcdTccSupport  |FALSE
 !endif
 
+!if ((gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1))
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable  |TRUE
+!endif
 #
 # FV Copy Free Space Skip Feature Enable
 #

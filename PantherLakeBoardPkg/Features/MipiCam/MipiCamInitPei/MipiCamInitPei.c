@@ -52,7 +52,7 @@ MipiCamConfigureGpio (
 {
   ZeroMem (GpioConfig, sizeof (GPIOV2_CONFIG));
 
-#if (FixedPcdGet8 (PcdEmbeddedEnable) == 0x0)
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x0
   GpioConfig->PadMode           = GpioV2PadModeGpio;
   GpioConfig->HostOwn           = GpioV2HostOwnGpio;
   GpioConfig->Direction         = GpioV2DirOut;
@@ -136,7 +136,67 @@ DumpGpioConfig (
   return;
 }
 
-#if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+VOID
+MipiI2SGpioInit (
+  VOID
+  )
+{
+  GPIOV2_CONFIG                   GpioConfig;
+  EFI_STATUS                      Status;
+  UINTN                           VarSize;
+  PCH_SETUP                       PchSetup;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
+
+  DEBUG ((DEBUG_INFO, "%a starts.\n", __FUNCTION__));
+
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID **) &VariableServices
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "EverestGpioInit: PeiServicesLocatePpi failed\n"));
+    return;
+  }
+  VarSize = sizeof (PCH_SETUP);
+  Status  = VariableServices->GetVariable (
+                                VariableServices,
+                                L"PchSetup",
+                                &gPchSetupVariableGuid,
+                                NULL,
+                                &VarSize,
+                                &PchSetup
+                                );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "EverestGpioInit: GetVariable (PchSetup) failed\n"));
+    return;
+  }
+
+  /// <summary>
+  ///  Program, GPIOV2_PTL_PCD_XXGPP_S_7 pin input mode and disable interrupt
+
+  GpioConfig.PadMode           = GpioV2PadModeNative6;
+  GpioConfig.HostOwn           = GpioV2HostOwnGpio;
+  GpioConfig.Direction         = GpioV2DirDefault;
+  GpioConfig.OutputState       = GpioV2StateDefault;
+  GpioConfig.InterruptConfig   = GpioV2IntDis;
+  GpioConfig.ResetConfig       = GpioV2ResetHost;
+  GpioConfig.TerminationConfig = GpioV2TermDefault;
+  GpioConfig.LockConfig        = GpioV2Unlock;
+  GpioConfig.LockTx            = GpioV2Unlock;
+  Status = GpioV2SetLock (GPIOV2_PTL_PCD_XXGPP_S_7, GpioV2Unlock);
+  DEBUG ((DEBUG_INFO, "Lontium I2S GpioInit SetLock GpioPad %r\n", Status));
+  Status = GpioV2ConfigurePad (GPIOV2_PTL_PCD_XXGPP_S_7, &GpioConfig);
+  DEBUG ((DEBUG_INFO, "Lontium I2S ConfigurePad GpioPad %r\n", Status));
+  DumpGpioConfig (GPIOV2_PTL_PCD_XXGPP_S_7);
+
+  DEBUG ((DEBUG_INFO, "%a ends.\n", __FUNCTION__));
+}
+#endif
+
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
 VOID
 EverestGpioInit (
   VOID
@@ -294,7 +354,7 @@ RealtekGpioInit (
 
   DEBUG ((DEBUG_INFO, "%a ends.\n", __FUNCTION__));
 }
-#endif  // FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
+#endif  // #if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
 
 VOID
 MipiCamGpioInit (
@@ -397,7 +457,7 @@ MipiCamGpioInit (
       if ((MipiCamConfig.MipiCam_ControlLogic0_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGet8(PcdEmbeddedEnable) == 1
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -432,7 +492,7 @@ MipiCamGpioInit (
       if ((MipiCamConfig.MipiCam_ControlLogic1_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGet8(PcdEmbeddedEnable) == 1
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -467,7 +527,7 @@ MipiCamGpioInit (
       if ((MipiCamConfig.MipiCam_ControlLogic2_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGet8(PcdEmbeddedEnable) == 1
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -502,7 +562,7 @@ MipiCamGpioInit (
       if((MipiCamConfig.MipiCam_ControlLogic3_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGet8 (PcdEmbeddedEnable) == 1
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -562,11 +622,9 @@ MipiCamInitEntryPoint (
 {
   DEBUG ((DEBUG_INFO, "MipiCamInitEntryPoint() Start\n"));
   InstallMipiConfigHob ();
-  #if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
-    MipiCamGpioInit ();
-  #endif
-
-#if FixedPcdGet8 (PcdEmbeddedEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+  MipiCamGpioInit ();
+  MipiI2SGpioInit();
   EverestGpioInit ();
   RealtekGpioInit ();
 #endif

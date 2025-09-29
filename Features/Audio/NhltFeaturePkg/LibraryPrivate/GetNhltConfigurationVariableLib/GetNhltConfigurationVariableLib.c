@@ -53,7 +53,7 @@ NhltEndpointTableLoadPcdConfiguration (
   NhltConfigurationVariable->NhltI2sAlc274Enabled    = PcdGet8 (NhltI2sAlc274Enabled);
   NhltConfigurationVariable->NhltBluetoothEnabled    = PcdGet8 (NhltBluetoothEnabled);
   NhltConfigurationVariable->NhltI2sAk4604Enabled    = PcdGet8 (NhltI2sAk4604Enabled);
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
   NhltConfigurationVariable->NhltI2sAlc5682IVDEnabled  = PcdGetBool (NhltI2sAlc5682IVDEnabled)
   NhltConfigurationVariable->NhltI2sAlc5682IVSEnabled  = PcdGetBool (NhltI2sAlc5682IVSEnabled)
   NhltConfigurationVariable->NhltI2sEverest8316I2s1  = PcdGetBool (NhltI2sEverest8316I2s1)
@@ -208,6 +208,8 @@ GetNhltConfiguration (
     NhltConfiguration->NhltConfigurationEnabled[NhltI2sEverest8316] = TRUE;
     DEBUG ((DEBUG_INFO, "Nhlt for I2s Everest 8316 I2S1 enabled.\n"));
   }
+#endif
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
   if (NhltConfigurationVariable.NhltI2sLontiumI2s0) {
     NhltConfiguration->NhltConfigurationEnabled[NhltI2sLontiumSSP0] = TRUE;
     DEBUG ((DEBUG_INFO, "Nhlt for I2s Lontium I2s0 enabled.\n"));

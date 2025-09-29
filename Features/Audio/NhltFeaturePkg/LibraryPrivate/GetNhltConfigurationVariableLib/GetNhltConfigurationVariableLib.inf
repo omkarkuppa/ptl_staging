@@ -45,6 +45,7 @@ LIBRARY_CLASS = GetNhltConfigurationLib
   MdeModulePkg/MdeModulePkg.dec
   NhltFeaturePkg/NhltFeaturePkg.dec
   OneSiliconPkg/SiPkg.dec
+  MipiCamFeaturePkg/MipiCamFeaturePkg.dec
 
 [Sources]
   GetNhltConfigurationVariableLib.c
@@ -62,6 +63,7 @@ LIBRARY_CLASS = GetNhltConfigurationLib
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc274Enabled            ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAk4604Enabled            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                        ## CONSUMES
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVDEnabled        ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVSEnabled        ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sEverest8316I2s1          ## CONSUMES

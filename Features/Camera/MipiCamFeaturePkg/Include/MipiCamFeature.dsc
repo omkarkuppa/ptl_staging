@@ -21,7 +21,7 @@
 ##
 
 [Components.X64]
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+!if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == 0x1
   MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTablesEmbedded.inf
 !else
   MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTables.inf
