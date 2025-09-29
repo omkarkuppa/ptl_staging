@@ -21,7 +21,7 @@
 ##
 
 INF MipiCamFeaturePkg/MipiCamInstallTableDxe/MipiCamDxe.inf
-!if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == 0x1
+!if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiLontiumEnable == 0x1
   INF RuleOverride = ACPITABLE MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTablesEmbedded.inf
 !else
   INF RuleOverride = ACPITABLE MipiCamFeaturePkg/AcpiTables/MipiCamAcpiTables.inf

@@ -5380,14 +5380,14 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_OG0VA1B), value = 2,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_IMX688),  value = 3,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_OV08X40), value = 4,   flags = DEFAULT | RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
         option text = STRING_TOKEN(STR_MIPICAM_LONTIUM),       value = 24,  flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_CUSTOM_DISPLAY_BRIDGE), value = 254, flags = RESET_REQUIRED;
 #endif
         option text = STRING_TOKEN(STR_MIPICAM_USER),    value = 255, flags = RESET_REQUIRED;
       endoneof;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // Customer user id for Audio Codec Link 0
       suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_Link0_SensorModel == 254 255;
         string varid = MIPICAM_CONFIG.Audio_Link0_UserHid,
@@ -5514,7 +5514,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link0_DriverData_PprValue,
         prompt   = STRING_TOKEN(STR_MIPICAM_LINK_PPR_VALUE),
@@ -6147,7 +6147,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_OG0VA1B), value = 2,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_IMX688),  value = 3,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_OV08X40), value = 4,   flags = DEFAULT | RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
         option text = STRING_TOKEN(STR_MIPICAM_LONTIUM),       value = 24,  flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_CUSTOM_DISPLAY_BRIDGE), value = 254, flags = RESET_REQUIRED;
 #endif
@@ -6155,7 +6155,7 @@ endform;
       endoneof;
 
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // Customer user id for Audio Codec Link 0
       suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_Link1_SensorModel == 254 255;
         string varid = MIPICAM_CONFIG.Audio_Link1_UserHid,
@@ -6281,7 +6281,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link1_DriverData_PprValue,
         prompt   = STRING_TOKEN(STR_MIPICAM_LINK_PPR_VALUE),
@@ -6912,7 +6912,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_OG0VA1B), value = 2,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_IMX688),  value = 3,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_OV08X40), value = 4,   flags = DEFAULT | RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
         option text = STRING_TOKEN(STR_MIPICAM_LONTIUM),       value = 24,  flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_CUSTOM_DISPLAY_BRIDGE), value = 254, flags = RESET_REQUIRED;
 #endif
@@ -7033,7 +7033,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link2_DriverData_PprValue,
         prompt   = STRING_TOKEN(STR_MIPICAM_LINK_PPR_VALUE),
@@ -7666,7 +7666,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_OG0VA1B), value = 2,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_IMX688),  value = 3,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_OV08X40), value = 4,   flags = DEFAULT | RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
         option text = STRING_TOKEN(STR_MIPICAM_LONTIUM),       value = 24,  flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_CUSTOM_DISPLAY_BRIDGE), value = 254, flags = RESET_REQUIRED;
 #endif
@@ -7787,7 +7787,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link3_DriverData_PprValue,
         prompt   = STRING_TOKEN(STR_MIPICAM_LINK_PPR_VALUE),
@@ -8409,7 +8409,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_OG0VA1B), value = 2,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_IMX688),  value = 3,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_OV08X40), value = 4,   flags = DEFAULT | RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
         option text = STRING_TOKEN(STR_MIPICAM_LONTIUM),       value = 24,  flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_CUSTOM_DISPLAY_BRIDGE), value = 254, flags = RESET_REQUIRED;
 #endif
@@ -8530,7 +8530,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link4_DriverData_PprValue,
         prompt   = STRING_TOKEN(STR_MIPICAM_LINK_PPR_VALUE),
@@ -9153,7 +9153,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_OG0VA1B), value = 2,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_IMX688),  value = 3,   flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_OV08X40), value = 4,   flags = DEFAULT | RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
         option text = STRING_TOKEN(STR_MIPICAM_LONTIUM),       value = 24,  flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_CUSTOM_DISPLAY_BRIDGE), value = 254, flags = RESET_REQUIRED;
 #endif
@@ -9871,9 +9871,7 @@ endform;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
-#endif
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;  
 endoneof;
 
       // Version of CRD
@@ -10060,7 +10058,7 @@ endif;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10141,7 +10139,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10223,7 +10221,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10305,7 +10303,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10387,7 +10385,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10469,7 +10467,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10522,9 +10520,7 @@ endif;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
         option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
-#endif
 endoneof;
 
       // Version of CRD
@@ -10711,7 +10707,7 @@ endoneof;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10792,7 +10788,7 @@ endoneof;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10874,7 +10870,7 @@ endoneof;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -10956,7 +10952,7 @@ endoneof;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11038,7 +11034,7 @@ endoneof;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11120,7 +11116,7 @@ endoneof;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11173,9 +11169,7 @@ endoneof;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
-#endif
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;      
 endoneof;
 
       // Version of CRD
@@ -11362,7 +11356,7 @@ endif;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11443,7 +11437,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11525,7 +11519,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11607,7 +11601,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11689,7 +11683,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11771,7 +11765,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -11824,9 +11818,7 @@ endif;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
-#endif
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED; 
 endoneof;
 
       // Version of CRD
@@ -12013,7 +12005,7 @@ endif;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12094,7 +12086,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12176,7 +12168,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12258,7 +12250,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12340,7 +12332,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12422,7 +12414,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12475,9 +12467,7 @@ endif;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
         option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
-#endif
 endoneof;
 
       // Version of CRD
@@ -12665,7 +12655,7 @@ endif;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12745,7 +12735,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12827,7 +12817,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12909,7 +12899,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -12991,7 +12981,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -13073,7 +13063,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -13126,9 +13116,7 @@ endif;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
-#endif
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;    
 endoneof;
 
       // Version of CRD
@@ -13315,7 +13303,7 @@ endif;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -13396,7 +13384,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -13478,7 +13466,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -13560,7 +13548,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -13642,7 +13630,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif
@@ -13724,7 +13712,7 @@ endif;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_PLED_EN),      value = 0x0D, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_STROBE_EN),    value = 0x02, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN), value = 0x12, flags = RESET_REQUIRED;
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_READY_STATUS), value = 0x13, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_MIPICAM_GPIO_FUNCTION_HDMI_DETECT),  value = 0x14, flags = RESET_REQUIRED;
 #endif

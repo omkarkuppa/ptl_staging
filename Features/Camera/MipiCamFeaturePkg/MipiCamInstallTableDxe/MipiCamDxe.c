@@ -29,7 +29,7 @@
 #include <Guid/MipiCamConfigHob.h>
 
 #include <Library/PcdLib.h>
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
     #include <NhltEndpointsConfigurationVariable.h>
 #endif
 
@@ -59,9 +59,9 @@ InitializeMipiCam (
   UINTN                  VariableSize;
   UINT16                 MipiModuleName[MIPICAM_MODULE_NAME_LENGTH];
   UINT16                 MipiHidName[MIPICAM_HID_LENGTH];
-  #if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
-  UINT16                        AudioHidName[MIPICAM_HID_LENGTH];
-  UINT16                        InvalidHidName[MIPICAM_HID_LENGTH] = { 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x0 };
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
+  UINT16                 AudioHidName[MIPICAM_HID_LENGTH];
+  UINT16                 InvalidHidName[MIPICAM_HID_LENGTH] = { 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x0 };
   NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE  NhltConfigurationEfiVariable;
 #endif
   MIPICAM_CONFIG         MipiCamSetupData;
@@ -382,7 +382,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0I2cDevicesEnabled = MipiCamSetupData.MipiCam_Link0_I2cDevicesEnabled;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0I2cBus            = MipiCamSetupData.MipiCam_Link0_I2cChannel;
 
-  #if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+  #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   //
   // Audio Dynamic HID Link 0
   //
@@ -440,7 +440,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0_FlashDriverSelection = MipiCamSetupData.MipiCam_Link0_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0DD_FlashID            = MipiCamSetupData.MipiCam_Link0_DriverData_FlashID;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0DD_PprValue = MipiCamSetupData.MipiCam_Link0_DriverData_PprValue;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink0DD_PprUnit = MipiCamSetupData.MipiCam_Link0_DriverData_PprUnit;
 #endif
@@ -458,7 +458,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1I2cDevicesEnabled = MipiCamSetupData.MipiCam_Link1_I2cDevicesEnabled;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1I2cBus = MipiCamSetupData.MipiCam_Link1_I2cChannel;
 
-  #if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+  #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   //
   // Audio Dynamic HID Link 0
   //
@@ -515,7 +515,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1_FlashDriverSelection = MipiCamSetupData.MipiCam_Link1_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1DD_FlashID            = MipiCamSetupData.MipiCam_Link1_DriverData_FlashID;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1DD_PprValue = MipiCamSetupData.MipiCam_Link1_DriverData_PprValue;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink1DD_PprUnit = MipiCamSetupData.MipiCam_Link1_DriverData_PprUnit;
 #endif
@@ -576,7 +576,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2_FlashDriverSelection = MipiCamSetupData.MipiCam_Link2_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2DD_FlashID            = MipiCamSetupData.MipiCam_Link2_DriverData_FlashID;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2DD_PprValue = MipiCamSetupData.MipiCam_Link2_DriverData_PprValue;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink2DD_PprUnit = MipiCamSetupData.MipiCam_Link2_DriverData_PprUnit;
 #endif
@@ -637,7 +637,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink3_FlashDriverSelection = MipiCamSetupData.MipiCam_Link3_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink3DD_FlashID            = MipiCamSetupData.MipiCam_Link3_DriverData_FlashID;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   mMipiCamNvsAreaProtocol.Area->MipiCamLink3DD_PprValue = MipiCamSetupData.MipiCam_Link3_DriverData_PprValue;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink3DD_PprUnit = MipiCamSetupData.MipiCam_Link3_DriverData_PprUnit;
 #endif
@@ -698,7 +698,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4_FlashDriverSelection = MipiCamSetupData.MipiCam_Link4_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4DD_FlashID            = MipiCamSetupData.MipiCam_Link4_DriverData_FlashID;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4DD_PprValue = MipiCamSetupData.MipiCam_Link4_DriverData_PprValue;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink4DD_PprUnit = MipiCamSetupData.MipiCam_Link4_DriverData_PprUnit;
 #endif
@@ -759,7 +759,7 @@ InitializeMipiCam (
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5_FlashDriverSelection = MipiCamSetupData.MipiCam_Link5_FlashDriverSelection;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5DD_FlashID            = MipiCamSetupData.MipiCam_Link5_DriverData_FlashID;
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5DD_PprValue = MipiCamSetupData.MipiCam_Link5_DriverData_PprValue;
   mMipiCamNvsAreaProtocol.Area->MipiCamLink5DD_PprUnit = MipiCamSetupData.MipiCam_Link5_DriverData_PprUnit;
 #endif
@@ -900,7 +900,7 @@ InitializeMipiCam (
   //
       // HDAudio Configuration
       //
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
 mMipiCamNvsAreaProtocol.Area->I2SE = MipiCamSetupData.MipiCam_ControlLogic0 || \
 MipiCamSetupData.MipiCam_ControlLogic1 || \
 MipiCamSetupData.MipiCam_ControlLogic2 || \

@@ -53,5 +53,6 @@ PACKAGE_GUID      = 32F7C363-A82C-4AD4-BCBF-CDF099C7DB76
 [PcdsDynamic]
 
 [PcdsFixedAtBuild]
-  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable|FALSE|BOOLEAN|0xE0000010
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable|TRUE|BOOLEAN|0xE0000010
   gMipiCamFeaturePkgTokenSpaceGuid.PcdIpuDriverPlatformId|0xFF|UINT8|0xE0000000
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiLontiumEnable|FALSE|BOOLEAN|0xE0000011

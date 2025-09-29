@@ -64,6 +64,7 @@ LIBRARY_CLASS = GetNhltConfigurationLib
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAk4604Enabled            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                        ## CONSUMES
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiLontiumEnable
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVDEnabled        ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sAlc5682IVSEnabled        ## CONSUMES
   gNhltFeaturePkgTokenSpaceGuid.NhltI2sEverest8316I2s1          ## CONSUMES

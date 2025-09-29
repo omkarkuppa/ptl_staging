@@ -70,6 +70,8 @@
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength                   ## CONSUMES
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable         ## CONSUMES
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiLontiumEnable
+  
 
 [Sources]
   BoardInitAdvancedDxe.c

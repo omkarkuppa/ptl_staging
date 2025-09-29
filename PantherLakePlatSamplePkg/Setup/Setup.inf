@@ -380,6 +380,7 @@
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber        ## CONSUMES
 
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable              ## CONSUMES
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiLontiumEnable
   gPlatformModuleTokenSpaceGuid.PcdCnviCrfBtUsbOnly                     ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdCnviBtInterfaceUpdate                ## CONSUMES
   gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyBtSndwSupported ##CONSUMES

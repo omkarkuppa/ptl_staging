@@ -71,6 +71,7 @@
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiLontiumEnable
 
 [Protocols]
   gEfiFirmwareVolume2ProtocolGuid        ## CONSUMES

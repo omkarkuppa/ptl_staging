@@ -60,6 +60,7 @@
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable           ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdMipiCamGpioEnable  ## CONSUMES
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiLontiumEnable
 
 [FixedPcd]
   gMipiCamFeaturePkgTokenSpaceGuid.PcdIpuDriverPlatformId  ## CONSUMES

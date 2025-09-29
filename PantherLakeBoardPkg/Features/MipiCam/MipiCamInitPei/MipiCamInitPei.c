@@ -52,7 +52,7 @@ MipiCamConfigureGpio (
 {
   ZeroMem (GpioConfig, sizeof (GPIOV2_CONFIG));
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x0
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x0
   GpioConfig->PadMode           = GpioV2PadModeGpio;
   GpioConfig->HostOwn           = GpioV2HostOwnGpio;
   GpioConfig->Direction         = GpioV2DirOut;
@@ -136,7 +136,7 @@ DumpGpioConfig (
   return;
 }
 
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
 VOID
 MipiI2SGpioInit (
   VOID
@@ -457,7 +457,7 @@ MipiCamGpioInit (
       if ((MipiCamConfig.MipiCam_ControlLogic0_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -492,7 +492,7 @@ MipiCamGpioInit (
       if ((MipiCamConfig.MipiCam_ControlLogic1_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -527,7 +527,7 @@ MipiCamGpioInit (
       if ((MipiCamConfig.MipiCam_ControlLogic2_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -562,7 +562,7 @@ MipiCamGpioInit (
       if((MipiCamConfig.MipiCam_ControlLogic3_Type == 2)) {
         GpioConfig.OutputState = GpioV2StateHigh;
       }
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
       Status = GpioV2SetLock (GpioPad, GpioV2Unlock);
       DEBUG ((DEBUG_INFO, "MipiCamGpioInit SetLock GpioPad %r\n", Status));
 #endif
@@ -622,7 +622,7 @@ MipiCamInitEntryPoint (
 {
   DEBUG ((DEBUG_INFO, "MipiCamInitEntryPoint() Start\n"));
   InstallMipiConfigHob ();
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
   MipiCamGpioInit ();
   MipiI2SGpioInit();
 #endif
