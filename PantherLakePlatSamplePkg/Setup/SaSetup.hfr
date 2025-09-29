@@ -5514,6 +5514,18 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
+    #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0
+      // Lane Configuration
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link0_DriverData_LaneConfiguration,
+        prompt      = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        help        = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum     = 0,
+        maximum     = 15,
+        step        = 1,
+      endnumeric;
+    #endif
+
 #if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link0_DriverData_PprValue,
@@ -6281,6 +6293,18 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
+    #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0
+      // Lane Configuration
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link1_DriverData_LaneConfiguration,
+        prompt      = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        help        = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum     = 0,
+        maximum     = 15,
+        step        = 1,
+      endnumeric;
+    #endif
+
 #if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link1_DriverData_PprValue,
@@ -7032,6 +7056,18 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_0), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
+    
+    #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0
+      // Lane Configuration
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link2_DriverData_LaneConfiguration,
+        prompt      = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        help        = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum     = 0,
+        maximum     = 15,
+        step        = 1,
+      endnumeric;
+    #endif
 
 #if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
@@ -7787,6 +7823,18 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
+    #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0
+      // Lane Configuration
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link3_DriverData_LaneConfiguration,
+        prompt      = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        help        = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum     = 0,
+        maximum     = 15,
+        step        = 1,
+      endnumeric;
+    #endif
+
 #if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
       numeric varid = MIPICAM_CONFIG.MipiCam_Link3_DriverData_PprValue,
@@ -8529,6 +8577,18 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_0), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
+
+    #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0
+      // Lane Configuration
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link4_DriverData_LaneConfiguration,
+        prompt      = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        help        = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum     = 0,
+        maximum     = 15,
+        step        = 1,
+      endnumeric;
+    #endif
 
 #if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
       // PPR Value
@@ -9273,6 +9333,41 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_0), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
+
+    #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0
+      // Lane Configuration
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link5_DriverData_LaneConfiguration,
+        prompt      = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        help        = STRING_TOKEN(STR_MIPICAM_LANE_CONFIG),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum     = 0,
+        maximum     = 15,
+        step        = 1,
+      endnumeric;
+    #endif
+
+    #if FixedPcdGetBool (PcdMipiLontiumEnable) == 1
+      // PPR Value
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link5_DriverData_PprValue,
+        prompt   = STRING_TOKEN(STR_MIPICAM_LINK_PPR_VALUE),
+        help     = STRING_TOKEN(STR_MIPICAM_PPR_VALUE_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 255,
+        step     = 1,
+        default  = 16,
+      endnumeric;
+      // PPR Unit
+      numeric varid = MIPICAM_CONFIG.MipiCam_Link5_DriverData_PprUnit,
+        prompt   = STRING_TOKEN(STR_MIPICAM_LINK_PPR_UNIT),
+        help     = STRING_TOKEN(STR_MIPICAM_PPR_UNIT_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 15,
+        step     = 1,
+        default  = 10,
+      endnumeric;
+    #endif
 
       // Camera Module Name
       string varid  = MIPICAM_CONFIG.MipiCam_Link5_ModuleName,
