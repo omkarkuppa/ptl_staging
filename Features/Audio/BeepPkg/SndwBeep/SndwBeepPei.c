@@ -30,7 +30,8 @@
 #include <Ppi/SndwAccessPpi.h>
 
 #include "SndwBeepPrivateData.h"
-#include "SndwBeepCodecs.h"
+#include "SndwBeepAlc1308.h"
+#include "SndwBeepAlc722.h"
 
 EFI_STATUS
 EFIAPI
@@ -193,6 +194,11 @@ PeiSndwBeepEntryPoint (
       SndwBeepContext->BeepApi.BeepOn  = SndwBeepOnAlc1308;
       SndwBeepContext->BeepApi.BeepOff = SndwBeepOffAlc1308;
       SndwBeepContext->BeepApi.Beep    = SndwBeepAlc1308;
+      break;
+    case RltkAlc722PartId:
+      SndwBeepContext->BeepApi.BeepOn  = SndwBeepOnAlc722;
+      SndwBeepContext->BeepApi.BeepOff = SndwBeepOffAlc722;
+      SndwBeepContext->BeepApi.Beep    = SndwBeepAlc722;
       break;
     case SndwCodecPartIdInvalid:
     default:

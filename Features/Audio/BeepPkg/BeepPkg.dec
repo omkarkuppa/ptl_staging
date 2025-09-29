@@ -49,4 +49,4 @@ PACKAGE_GUID = 5C083F41-E5A2-4C9D-AB6D-3C25A7470135
   gBeepModuleTokenSpaceGuid.PcdHdaInterfaceEnable          |FALSE|BOOLEAN|0x20000015
 
 [PcdsFixedAtBuild]
-  gBeepModuleTokenSpaceGuid.PcdSndwBeepCodecId             |{0x20, 0x02, 0x5D, 0x13, 0x08, 0x00}|VOID*|0x20000017
+  gBeepModuleTokenSpaceGuid.PcdSndwBeepCodecId             |{0x30, 0x02, 0x5D, 0x07, 0x22, 0x01}|VOID*|0x20000017

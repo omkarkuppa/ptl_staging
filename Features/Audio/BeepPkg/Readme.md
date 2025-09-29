@@ -170,8 +170,8 @@ In case of using the Beep on a audio codec from the supported list, only the PCD
   * 0x00 - class.
 
 If you wish to add a new SoundWire codec to the supported list, you need to:
-1. Create a source file with function definitions, similarly as for Alc1308, refer to ```Features/Audio/BeepPkg/SndwBeep/SndwBeepRltkAlc1308.c``` file.
-1. Expose these function declarations in ```Features/Audio/BeepPkg/SndwBeep/SndwBeepCodecs.h```.
+1. Create a source file with function definitions SndwBeep[CodecName].c, similarly as for Alc1308, refer to ```Features/Audio/BeepPkg/SndwBeep/SndwBeepRltkAlc1308.c``` file. Add it to SndwBeep[Dxe/Pei].inf file.
+1. Expose these function declarations in ```Features/Audio/BeepPkg/SndwBeep/SndwBeep[CodecName].h```.
 1. Add ```PartId``` of your codec to the ```SNDW_BEEP_CODEC_PART_ID``` structure in ```Features/Audio/BeepPkg/SndwBeep/SndwBeepPrivateData.h```.
 1. Set your newly functions as callbacks in the ```BeepApi``` in either ```SndwBeepDxe.c``` or ```SndwBeepPei.c```. </br>
 Example:
