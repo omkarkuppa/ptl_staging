@@ -25,6 +25,7 @@
 #include <GpioV2Pad.h>
 #include <GpioV2Config.h>
 #include <GpioV2Services.h>
+#include <GpioV2Pwm.h>
 
 /**
   Get Gpio Services instance for PCH
@@ -57,6 +58,24 @@ EFI_STATUS
 GpioV2GetAllServices (
   OUT GPIOV2_SERVICES  **GpioServices,
   OUT UINT32           *GpioServicesCount
+  );
+
+/**
+  Get Gpio PWM Services instance
+
+  @param[in]   Hid                  ACPI Hardware ID of the GPIO Controller, please refer to GpioV2PinsXXX.h (XXX - name of the SoC)
+  @param[in]   Uid                  Unique Identifier for of GPIO particular type (please refer to GpioReadMeYYY.md (YYY- name of the Product)
+  @param[out]  Pwm                  Pointer to pointer for GPIO PWM structure
+
+  @retval     EFI_SUCCESS           - Completed successfully
+              EFI_NOT_FOUND         - PWM access not found
+              EFI_INVALID_PARAMETER - Pwm or Hid is NULL
+**/
+EFI_STATUS
+GpioV2GetPwmAccess (
+  IN  CHAR8              *Hid,
+  IN  UINT32             Uid,
+  OUT GPIOV2_PWM         **Pwm
   );
 
 #endif // _GPIOV2_CONTROLLER_H_

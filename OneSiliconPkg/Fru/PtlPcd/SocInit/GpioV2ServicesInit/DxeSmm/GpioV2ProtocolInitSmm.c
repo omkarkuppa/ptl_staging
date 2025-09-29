@@ -71,7 +71,7 @@ GpioV2ProtocolSmmInitEntryPoint (
 {
   EFI_STATUS                    Status;
   EFI_HANDLE                    Handle;
-  GPIOV2_PWM                    *Pwm;
+  //GPIOV2_PWM                    *Pwm;
   VOID                          *Registration;
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][SMM]: InstallGpioV2SmmProtocol Start\n"));
@@ -92,7 +92,7 @@ GpioV2ProtocolSmmInitEntryPoint (
   //
   // Allocate Memory for GPIO PWM in SMRAM
   //
-  Status = gSmst->SmmAllocatePool (EfiRuntimeServicesData,
+  /**Status = gSmst->SmmAllocatePool (EfiRuntimeServicesData,
                                    sizeof (GPIOV2_PWM),
                                    (VOID **) &Pwm);
   if (EFI_ERROR (Status)) {
@@ -101,7 +101,7 @@ GpioV2ProtocolSmmInitEntryPoint (
   } else {
     ZeroMem (Pwm, sizeof (GPIOV2_PWM));
   }
-  mGpioInterface->Pwm = Pwm;
+  mGpioInterface->Pwm = Pwm;**/
 
   //
   // Construct Gpio Protocol for SMM
@@ -109,9 +109,9 @@ GpioV2ProtocolSmmInitEntryPoint (
   Status = InternalGpioInterfaceConstructor (mGpioInterface);
   if (EFI_ERROR (Status)) {
     gSmst->SmmFreePool ((VOID*) mGpioInterface);
-    if (Pwm != NULL) {
+    /**if (Pwm != NULL) {
       gSmst->SmmFreePool ((VOID*) Pwm);
-    }
+    }**/
     return Status;
   }
 
@@ -128,27 +128,30 @@ GpioV2ProtocolSmmInitEntryPoint (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "[GPIOV2][SMM]: Install GpioV2 protocol failed (%r)!\n", Status));
     gSmst->SmmFreePool ((VOID*) mGpioInterface);
-    if (Pwm != NULL) {
+    /**if (Pwm != NULL) {
       gSmst->SmmFreePool ((VOID*) Pwm);
-    }
+    }**/
     return Status;
   }
 
   //
   // Install GpioV2SmmPwmProtocol
   //
-  if (Pwm != NULL) {
-    Status = gSmst->SmmInstallProtocolInterface (
+  //if (Pwm != NULL) {
+  Status = gSmst->SmmInstallProtocolInterface (
                     &Handle,
                     &gGpioV2SmmPwmProtocolGuid,
                     EFI_NATIVE_INTERFACE,
-                    Pwm
+                    &(mGpioInterface->Pwm)
                     );
-    if (EFI_ERROR (Status)) {
+    /**if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "[GPIOV2][SMM]: Install GpioV2 PWM protocol failed (%r)!\n", Status));
       gSmst->SmmFreePool ((VOID*) Pwm);
       return Status;
-    }
+    }**/
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[GPIOV2][SMM]: Install GpioV2 PWM protocol failed (%r)!\n", Status));
+    return Status;
   }
 
   //

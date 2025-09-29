@@ -52,7 +52,7 @@ GpioV2ProtocolDxeInitEntryPoint (
   EFI_STATUS          Status;
   EFI_HANDLE          Handle;
   GPIOV2_INTERFACE    *GpioInterface;
-  GPIOV2_PWM          *Pwm;
+  //GPIOV2_PWM          *Pwm;
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][DXE]: InstallGpioV2Protocol Start\n"));
 
@@ -62,18 +62,18 @@ GpioV2ProtocolDxeInitEntryPoint (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Pwm = (GPIOV2_PWM *) AllocateZeroPool (sizeof (GPIOV2_PWM));
+  /**Pwm = (GPIOV2_PWM *) AllocateZeroPool (sizeof (GPIOV2_PWM));
   if (NULL == Pwm) {
     DEBUG ((DEBUG_ERROR, "[GPIOV2]: Allocating memory for Pwm failed\n"));
   }
-  GpioInterface->Pwm = Pwm;
+  GpioInterface->Pwm = Pwm;**/
 
   Status = InternalGpioInterfaceConstructor (GpioInterface);
   if (EFI_ERROR (Status)) {
     FreePool (GpioInterface);
-    if (Pwm != NULL) {
+    /**if (Pwm != NULL) {
       FreePool (Pwm);
-    }
+    }**/
     return Status;
   }
 
@@ -89,23 +89,23 @@ GpioV2ProtocolDxeInitEntryPoint (
                   );
   if (EFI_ERROR (Status)) {
     FreePool (GpioInterface);
-    if (Pwm != NULL) {
+    /**if (Pwm != NULL) {
       FreePool (Pwm);
-    }
+    }**/
     return Status;
   }
 
-  if (NULL != Pwm) {
-    Status = gBS->InstallProtocolInterface (
+  //if (NULL != Pwm) {
+  Status = gBS->InstallProtocolInterface (
                     &Handle,
                     &gGpioV2PwmProtocolGuid,
                     EFI_NATIVE_INTERFACE,
-                    GpioInterface->Pwm
+                    &(GpioInterface->Pwm)
                     );
-    if (EFI_ERROR (Status)) {
+    /**if (EFI_ERROR (Status)) {
       FreePool (Pwm);
     }
-  }
+  }**/
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][DXE]: InstallGpioV2Protocol End\n"));
 

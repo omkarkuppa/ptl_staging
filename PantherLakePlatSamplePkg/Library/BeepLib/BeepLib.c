@@ -20,12 +20,15 @@
 **/
 
 #include <Base.h>
+#include <PlatformBoardConfig.h>
 #include <Library/BeepLib.h>
 #include <Library/IoLib.h>
 #include <Library/TimerLib.h>
 #include <Library/GpioV2AccessLib.h>
-#include <PlatformBoardConfig.h>
 #include <GpioV2Pwm.h>
+#include <Library/DebugLib.h>
+#include <Register/GpioAcpiDefines.h>
+#include <GpioV2Pad.h>
 
 #define NOTE(x) ((119318200 + (x) / 2) / (x))
 
@@ -60,17 +63,17 @@ BeepOn (
   UINT16           Frequency;
   GPIOV2_PWM       *Pwm;
   GPIOV2_SERVICES  *GpioServices;
-  GPIOV2_PAD       GpioPad;
   VPD_GPIO_PAD     *GpioVpd;
 
   GpioVpd = NULL;
-
   GpioVpd = PcdGetPtr (VpdPcdPwmBlinkEnable);
 
-  If (GpioVpd != NULL) {
-    Status = GpioServices->SetPadMode (GpioServices, GpioVpd, 3);
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0,&GpioServices);
+
+  if (GpioVpd->GpioPad != 0x0) {
+    Status = GpioServices->SetPadMode (GpioServices, GpioVpd->GpioPad, GpioV2PadModeNative2);
     if (EFI_ERROR (Status)) {
-      return Status;
+      return;
     }
   }
 
@@ -86,10 +89,14 @@ BeepOn (
   // set frequency for pwm
   // set duty cycle for pwm
   //
-  GpioV2GetPwmAccess (GPIO_HID_PTL_PCD_P, 0,&Pwm);
-  PwmSetFreq (&Pwm, Frequency);
-  PwmSetDuty (&Pwm, 50);
-  PwmOn (&Pwm);
+  Status = GpioV2GetPwmAccess (GPIO_HID_PTL_PCD_P, 0,&Pwm);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to get PWM access: %r\n", Status));
+    return;
+  }
+  Pwm->PwmSetFreq (Pwm, Frequency);
+  Pwm->PwmSetDuty (Pwm, 50);
+  Pwm->PwmOn (Pwm);
 }
 
 
@@ -101,12 +108,19 @@ VOID
 BeepOff (
   VOID
   )
-  GPIOV2_PWM         *Pwm;
 {
   //
   // Turn off the pwm pin
   //
-  PwmOff (&Pwm);
+  GPIOV2_PWM         *Pwm;
+  EFI_STATUS       Status;
+
+  Status = GpioV2GetPwmAccess (GPIO_HID_PTL_PCD_P, 0,&Pwm);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to get PWM access: %r\n", Status));
+    return;
+  }
+  Pwm->PwmOff (Pwm);
 }
 
 
