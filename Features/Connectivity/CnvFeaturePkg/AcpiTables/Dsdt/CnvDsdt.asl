@@ -39,6 +39,30 @@ Include ("WifiDynamicSar.asl")
 Scope (\_SB)
 {
   //
+  // Set BT_EN
+  //
+  Method(SBTE, 0x1, Serialized)
+  {
+    //
+    // Arg0 - Value to BT_EN
+    //
+    Store(GBTP, Local0)
+    \_SB.SGOV (Local0, Arg0)
+  }
+
+  //
+  // Set CNV_BT_IF_SELECT
+  //
+  Method (SBTI, 0x1, Serialized)
+  {
+    //
+    // Arg0 - Value of BT_IF_SELECT
+    //
+    Store (BTIF, Local0)
+    \_SB.SGOV (Local0, Arg0)
+  }
+
+  //
   // Set M.2 BT RF-Kill (W_DISABLE2#) pin
   //
   Method (BTRK, 0x1, Serialized)

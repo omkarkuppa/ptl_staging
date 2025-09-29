@@ -28,6 +28,7 @@
 #include <PcrDefine.h>
 #include <Library/PcdInfoLib.h>
 #include <PcdSbPortIds.h>
+#include <Pins/GpioPinsVer2H.h>
 
 /**
   Update ASL definitions for CNVi device.
@@ -57,6 +58,8 @@ UpdateCnviAcpiData (
     mPchNvsAreaProtocol.Area->CnviDdrRfim                 = (UINT8) CnviConfigHob->DdrRfim;
     mPchNvsAreaProtocol.Area->CnviCrfPresent              = (UINT8) CnviCrfModuleIsPresent ();
     mPchNvsAreaProtocol.Area->CnviBtInterface             = (UINT8) CnviConfigHob->BtInterface;
+    mPchNvsAreaProtocol.Area->CnviBtEnableGpio            = (UINT32) GPIO_VER2_H_VGPIO0;
+    mPchNvsAreaProtocol.Area->CnviBtIfSelect              = (UINT32) GPIO_VER2_H_VGPIO5;
   }
 
   MbpHob = GetFirstGuidHob (&gMeBiosPayloadHobGuid);

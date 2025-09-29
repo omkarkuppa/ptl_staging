@@ -26,6 +26,8 @@ External (CBTC, IntObj)
 External (CBTI, IntObj)
 External (RDLY, IntObj)
 External (WIST, MethodObj)
+External (\_SB.SBTE, MethodObj)
+External (\_SB.SBTI, MethodObj)
 External (WIFI_EP_PATH (01).BTIE, FieldUnitObj)
 External (WIFI_EP_PATH (02).BTIE, FieldUnitObj)
 External (WIFI_EP_PATH (03).BTIE, FieldUnitObj)
@@ -269,11 +271,17 @@ PowerResource (BTRT, 5, 0)
     Store (Acquire (\CNMT, 1000), Local0)
     ADBG ("BT CNMT Mutex:Acquired Try Done")
     If (LEqual (Local0, Zero)) {
-      \_SB.BTRK (0)
+      \_SB.SBTE (0x00) // de-assert BT_EN
+      ADBG ("de-assert BT_EN")
+      \_SB.SBTI (0x00) // de-assert BT_IF_SELECT
+      ADBG ("de-assert BT_IF_SELECT")
       If (CondRefOf (RDLY)) {
         Sleep (RDLY)
       }
-      \_SB.BTRK (1)
+      \_SB.SBTI (0x01) // Assert BT_IF_SELECT
+      ADBG ("de-assert BT_IF_SELECT")
+      \_SB.SBTE (0x01) // Assert BT_EN
+      ADBG ("assert BT_EN")
       If (CondRefOf (RDLY)) {
         Sleep (RDLY)
       }
@@ -321,8 +329,10 @@ PowerResource (DBTR, 5, 0)
     ADBG ("BT CNMT Mutex:Acquired Try Done")
     If (LEqual (Local0, Zero)) {
       If (LAnd (CondRefOf (BRMT), LEqual (BRMT, 0))) {
-        ADBG ("BT RF Kill ON")
-        \_SB.BTRK (0)
+        \_SB.SBTE (0x00) // de-assert BT_EN
+        ADBG ("de-assert BT_EN")
+        \_SB.SBTI (0x00) // de-assert BT_IF_SELECT
+        ADBG ("de-assert BT_IF_SELECT")
       } Else {
         If (LNotEqual (WVHO, 0)) {
           BTIV (0)
@@ -333,8 +343,9 @@ PowerResource (DBTR, 5, 0)
         Sleep (RDLY)
       }
       If (LAnd (CondRefOf (BRMT), LEqual (BRMT, 0))) {
-        ADBG ("BT RF Kill OFF")
-        \_SB.BTRK (1)
+        ADBG ("de-assert BT_IF_SELECT")
+        \_SB.SBTE (0x01) // Assert BT_EN
+        ADBG ("assert BT_EN")
       } Else {
         If (LNotEqual (WVHO, 0)) {
           BTIV (1)

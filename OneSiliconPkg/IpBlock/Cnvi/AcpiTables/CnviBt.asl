@@ -84,6 +84,18 @@
       {
         // BT FLR
         CFLR ()
+        if (LNotEqual (CBTI, 2)) {
+          \_SB.SBTE (0x00) // de-assert BT_EN
+          ADBG ("BT: de-assert BT_EN")
+          \_SB.SBTI (0x00) // de-assert BT_IF_SELECT
+          ADBG ("BT: de-assert BT_IF_SELECT")
+          Sleep (160)
+          \_SB.SBTI (0x01) // Assert BT_IF_SELECT
+          ADBG ("BT: assert BT_IF_SELECT")
+          \_SB.SBTE (0x01) // Assert BT_EN
+          ADBG ("BT: assert BT_EN")
+          Sleep (160)
+        }
 
         // Perform BT PLDR if RSTT = 1
         If (LAnd (CondRefOf (RSTT), LEqual (RSTT, 1))) {

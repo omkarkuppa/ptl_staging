@@ -536,4 +536,6 @@
   SSF2, 8,  // Offset(1405),  SoundWire Supported Frequency Pool Link #2
   SSF3, 8,  // Offset(1406),  SoundWire Supported Frequency Pool Link #3
   SSF4, 8,  // Offset(1407),  SoundWire Supported Frequency Pool Link #4
+  BTIF, 32, // Offset(1408),  CNVi BT IF SELECT (CNV_BT_IF_SELECT) pin
+  GBTP, 32, // Offset(1412),  CNVi BT Enable (CNV_BTEN) pin
   }

@@ -467,6 +467,8 @@ typedef struct {
   UINT8    SSF2;                                    ///< Offset 1405    SoundWire Supported Frequency Pool Link #2
   UINT8    SSF3;                                    ///< Offset 1406    SoundWire Supported Frequency Pool Link #3
   UINT8    SSF4;                                    ///< Offset 1407    SoundWire Supported Frequency Pool Link #4
+  UINT32   CnviBtIfSelect;                          ///< Offset 1408    CNVi BT IF SELECT (CNV_BT_IF_SELECT) pin
+  UINT32   CnviBtEnableGpio;                        ///< Offset 1412    CNVi BT Enable (CNV_BTEN) pin
 } PCH_NVS_AREA;
 
 #pragma pack(pop)

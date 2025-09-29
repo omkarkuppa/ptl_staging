@@ -90,7 +90,10 @@
               if (LNotEqual (CBTI, 2)) {
                 // If BT RF-Kill deasserted, assert BT RF-Kill and wait for 160 ms
                 If (LEqual (\_SB.GBTR (), 1)) {
-                  \_SB.BTRK (0x00) // assert W_DISABLE2#
+                \_SB.SBTE (0x00) // de-assert BT_EN
+                ADBG ("WiFi: de-assert BT_EN")
+                \_SB.SBTI (0x00) // de-assert BT_IF_SELECT
+                ADBG ("WiFi: de-assert BT_IF_SELECT")
                   Sleep (160)
                   Store (1, Local2)
                 }
@@ -112,7 +115,10 @@
                 if (LNotEqual (CBTI, 2)) {
                   // Deassert BT RF-Kill and wait for 160 ms
                   If (LEqual (Local2, 1)) {
-                    \_SB.BTRK (0x01) // deassert W_DISABLE2#
+                  \_SB.SBTI (0x01) // Assert BT_IF_SELECT
+                  ADBG ("WiFi: assert BT_IF_SELECT")
+                  \_SB.SBTE (0x01) // Assert BT_EN
+                  ADBG ("WiFi: assert BT_EN")
                     Sleep (160)
                   }
                 }
@@ -120,7 +126,11 @@
                 // PLDR timeout
                 Store (4, PRRS) // Set Product PLDR timeout
                 if (LNotEqual (CBTI, 2)) {
-                  \_SB.BTRK (0x01) // deassert W_DISABLE2#
+                  \_SB.SBTI (0x01) // Assert BT_IF_SELECT
+                  ADBG ("WiFi: assert BT_IF_SELECT")
+                  \_SB.SBTE (0x01) // Assert BT_EN
+                  ADBG ("WiFi: assert BT_EN")
+                  Sleep (160)
                 }
               }
             } Else {
