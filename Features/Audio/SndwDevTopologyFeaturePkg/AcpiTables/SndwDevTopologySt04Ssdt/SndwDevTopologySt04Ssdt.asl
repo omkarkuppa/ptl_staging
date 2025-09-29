@@ -35,7 +35,7 @@ DefinitionBlock ("SndwDevTopologySt04Ssdt.aml", "SSDT", 2, "INTEL", "St04Ssdt", 
   Scope (\_SB.PC00.HDAS.IDA.SNDW)
   {
     // SoundWire Device (SWD0) on Link #3 (Realtek ALC722 : UID_00)
-    // _ADR: Link_3 Bit[51:48]=3 | ALC722_ID Bit[47:0]=30025d072201 | UID_00 Bit[43:40]=0//
+    // _ADR: Link_3 Bit[51:48]=3 | ALC722_ID Bit[47:0]=30025d072201 | UID_00 Bit[43:40]=0
     Device (SWD0)
     {
       Name (_ADR, 0x000330025d072201)
