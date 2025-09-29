@@ -58,22 +58,4 @@ CheckSvnFromBiosImage (
   IN  UINTN         BiosImageSize
   );
 
-/**
-  Check if FSP SVN from input FBM image buffer is greater than or equal to ARBH SVN
-
-  @param[in] FbmImage                 Pointer to FBM image buffer.
-  @param[in] FbmImageSize             The size of FbmImage
-
-  @retval EFI_SUCCESS                 FSP SVN from FbmImage is greater than or equal to ARBH SVN
-  @retval EFI_INCOMPATIBLE_VERSION    FSP SVN from FbmImage is smaller than ARBH SVN
-  @retval Others                      Fail to check FSP SVN from FbmImage
-
-**/
-EFI_STATUS
-EFIAPI
-CheckSvnFromFbmImage (
-  IN UINT8  *FbmImage,
-  IN UINTN  FbmImageSize
-  );
-
 #endif

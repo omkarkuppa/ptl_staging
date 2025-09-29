@@ -39,7 +39,6 @@
   UefiDriverEntryPoint
   UefiBootServicesTableLib
   UefiRuntimeServicesTableLib
-  PeiDxeSndwInitLib
 
 [Pcd]
   gBeepModuleTokenSpaceGuid.PcdSndwBeepCodecId            ## CONSUMES
@@ -56,7 +55,6 @@
 [Sources]
   SndwBeepDxe.c
   SndwBeepRltkAlc1308.c
-  SndwBeepRltkAlc722.c
 
 [Depex]
   gSndwAccessProtocolGuid

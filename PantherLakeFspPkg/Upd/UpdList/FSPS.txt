@@ -371,5 +371,3 @@ VmdMemBar1Base
 VmdMemBar2Base
 VmdGlobalMapping
 PchHdaMicPrivacyMode
-MaxActiveDisplays
-UfsInlineEncryption

@@ -35,7 +35,6 @@
   MemoryAllocationLib
   PeimEntryPoint
   PeiServicesLib
-  PeiDxeSndwInitLib
 
 [Pcd]
   gBeepModuleTokenSpaceGuid.PcdSndwBeepCodecId            ## CONSUMES
@@ -53,7 +52,6 @@
 [Sources]
   SndwBeepPei.c
   SndwBeepRltkAlc1308.c
-  SndwBeepRltkAlc722.c
 
 [Depex]
   gSndwAccessPpiGuid

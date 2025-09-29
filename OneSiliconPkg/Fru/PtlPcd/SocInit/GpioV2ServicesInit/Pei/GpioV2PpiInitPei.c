@@ -242,16 +242,13 @@ InternalGpioInterfaceConstructor (
   GpioInterface->Public.SetGroupToGpeMapping = PtlPcdSetGpeMapping;
 
   // GpioV2 PWM init
-  /**if (GpioInterface->Pwm != NULL) {
+  if (GpioInterface->Pwm != NULL) {
     CopyMem (GpioInterface->Pwm->Hid, GpioInterface->Public.Hid, GPIOV2_CONTROLLER_HID_LENGTH);
     GpioInterface->Pwm->Uid = GpioInterface->Public.Uid;
     GpioV2PwmInit (GpioInterface->Pwm);
   } else {
     DEBUG ((DEBUG_INFO, "[%a] Memory not allocated for PWM protocol, skipping PWM init.\n", __FUNCTION__));
-  }**/
-  CopyMem (GpioInterface->Pwm.Hid, GpioInterface->Public.Hid, GPIOV2_CONTROLLER_HID_LENGTH);
-  GpioInterface->Pwm.Uid = GpioInterface->Public.Uid;
-  GpioV2PwmInit (&(GpioInterface->Pwm));
+  }
 
   return EFI_SUCCESS;
 }
@@ -310,9 +307,9 @@ GpioV2PpiPeiEntryPoint (
   EFI_PEI_PPI_DESCRIPTOR  *GpioPwmPpiDescriptor;
   GPIOV2_INTERFACE        *GpioInterface;
   GPIOV2_SERVICES         *GpioServices;
-  //GPIOV2_PWM              *Pwm;
+  GPIOV2_PWM              *Pwm;
 
-  //Pwm = NULL;
+  Pwm = NULL;
 
   DEBUG ((DEBUG_INFO, "[GPIOV2][PEI]: Install PPI (HID: %a) Start\n", GPIO_HID_PTL_PCD_P));
 
@@ -343,13 +340,13 @@ GpioV2PpiPeiEntryPoint (
   GpioPwmPpiDescriptor = (EFI_PEI_PPI_DESCRIPTOR *) AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
   if (GpioPwmPpiDescriptor == NULL) {
     DEBUG ((DEBUG_ERROR, "[GPIOV2]: Allocating memory for GpioPwmPpiDescriptor failed\n"));
-  /**} else {
+  } else {
     Pwm = (GPIOV2_PWM *)AllocateZeroPool (sizeof (GPIOV2_PWM));
     if (Pwm == NULL) {
       DEBUG ((DEBUG_ERROR, "[GPIOV2]: Allocating memory for Pwm failed\n"));
-    }**/
+    }
   }
-  //GpioInterface->Pwm = Pwm;
+  GpioInterface->Pwm = Pwm;
 
   Status = InternalGpioInterfaceConstructor (GpioInterface);
   if (EFI_ERROR (Status)) {
@@ -358,9 +355,9 @@ GpioV2PpiPeiEntryPoint (
     if (GpioPwmPpiDescriptor != NULL) {
       FreePool (GpioPwmPpiDescriptor);
     }
-    /**if (Pwm != NULL) {
+    if (Pwm != NULL) {
       FreePool (Pwm);
-    }**/
+    }
     return Status;
   }
 
@@ -379,9 +376,9 @@ GpioV2PpiPeiEntryPoint (
     if (GpioPwmPpiDescriptor != NULL) {
       FreePool (GpioPwmPpiDescriptor);
     }
-    /**if (Pwm != NULL) {
+    if (Pwm != NULL) {
       FreePool (Pwm);
-    }**/
+    }
     ASSERT (FALSE);
     return EFI_UNSUPPORTED;
   }
@@ -389,18 +386,18 @@ GpioV2PpiPeiEntryPoint (
   if (GpioPwmPpiDescriptor != NULL) {
     GpioPwmPpiDescriptor->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
     GpioPwmPpiDescriptor->Guid  = &gGpioV2PwmPpiGuid;
-    GpioPwmPpiDescriptor->Ppi   = &GpioInterface->Pwm;
+    GpioPwmPpiDescriptor->Ppi   = GpioInterface->Pwm;
 
     //
     // Install the GPIO PWM PPI
     //
-    //if (Pwm != NULL) {
-    Status = PeiServicesInstallPpi (GpioPwmPpiDescriptor);
-    if (EFI_ERROR (Status)) {
-      FreePool (GpioPwmPpiDescriptor);
-      DEBUG ((DEBUG_ERROR, "[GPIOV2]: Install PWM PPI failed (%r)!\n", Status));
+    if (Pwm != NULL) {
+      Status = PeiServicesInstallPpi (GpioPwmPpiDescriptor);
+      if (EFI_ERROR (Status)) {
+        FreePool (GpioPwmPpiDescriptor);
+        DEBUG ((DEBUG_ERROR, "[GPIOV2]: Install PWM PPI failed (%r)!\n", Status));
+      }
     }
-    //}
   }
 
   Status = PeiServicesNotifyPpi (&mReinitializeGpioPpiNotifyList);

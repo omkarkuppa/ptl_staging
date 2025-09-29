@@ -386,10 +386,8 @@ SetSerialDebugLevel (
   Check Status of RetrainToWorkingChannel and disable failing channel
 
   @param[in out]  MrcData - All the MRC global data.
-  @param[in out]  MemConfig - MEMORY_CONFIGURATION structure.
-  @param[in out]  MemConfigNoCrc - MEMORY_CONFIGURATION_NO_CRC structure.
-  @param[in]      SskpdSaveRestore - Enum command to Reads/Write to ScratchPad or
-                                     Read/Write to SaveData struct.
+  @param[in]      SskpdSaveRestore - If set to TRUE, saves disabled channel status to scratchpad register.
+                                     If set to FALSE, restores disabled channel status from scratchpad register.
 
   @retval         TRUE if All Channels are passing,
                   FALSE if all Channels are not passing and MRC needs reset after disabling failing channels
@@ -397,12 +395,11 @@ SetSerialDebugLevel (
 BOOLEAN
 MrcDisableFailingChannels (
   IN OUT  MrcParameters        *const MrcData,
-  IN OUT  MEMORY_CONFIGURATION *const MemConfig,
-  IN OUT  MEMORY_CONFIG_NO_CRC *const MemConfigNoCrc,
-  IN      LIMP_MODE_COMMANDS   SskpdSaveRestore
+  IN      BOOLEAN              SskpdSaveRestore
   )
 {
   MrcOutput  *Outputs;
+  MrcInput   *Inputs;
   BOOLEAN    RetrainToWorkingChannelDone;
   UINT8      McChIndex;
   UINT8      NumOfFailingCh;
@@ -412,58 +409,26 @@ MrcDisableFailingChannels (
   UINT8      Dimm;
   UINT8      DisableChannelWrite;
   UINT8      DisableChannelRead;
-  MrcSaveData   *SaveData;
-  MrcSaveHeader *SaveHeader;
-  MRC_FUNCTION  *MrcCall;
 
   M_PCU_CR_SSKPD_PCU_STRUCT SskpdData64;
+  MRC_EXT_INPUTS_TYPE       *ExtInputs;
 
   Outputs                     = &MrcData->Outputs;
-  SaveData                    = &MrcData->Save.Data;
-  SaveHeader                  = &MrcData->Save.Header;
-  MrcCall                     = MrcData->Inputs.Call.Func;
+  Inputs                      = &MrcData->Inputs;
+  ExtInputs                   = Inputs->ExtInputs.Ptr;
   RetrainToWorkingChannelDone = TRUE;
   NumOfFailingCh              = 0;
   DisableChannelRead          = 0;
   DisableChannelWrite         = 0;
 
-  if (!MemConfigNoCrc->RetrainToWorkingChannel) {
+  if (!ExtInputs->RetrainToWorkingChannel) {
     return RetrainToWorkingChannelDone;
-  }
-
-  //
-  // Store DisableChannel Value to SaveData
-  //
-  if(SskpdSaveRestore == WriteChannelStatusToSaveData) {
-    DEBUG ((DEBUG_INFO, "Saving current channel status to Save Data\n"));
-
-    // Copy Channel status to save data to be available on non-cold boot flows
-    MrcCall->MrcCopyMem ((UINT8 *) SaveData->DisableChannel, (UINT8 *) MemConfig->ExternalInputs.DisableChannel, sizeof (SaveData->DisableChannel));
-
-    // Since we are writing to save data, update the header crc
-    SaveHeader->Crc = MrcCalculateCrc32 ((UINT8 *) SaveData, sizeof (MrcSaveData));
-    DEBUG ((DEBUG_INFO, "Updated Saved Data CRC = 0x%x\n", SaveHeader->Crc));
-  }
-
-  //
-  // Read DisableChannel Value from SaveData
-  //
-  if(SskpdSaveRestore == ReadChannelStatusFromSaveData) {
-    DEBUG ((DEBUG_INFO, "Reading channel status from Save Data\n"));
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      for (Channel= 0;  Channel < MAX_CHANNEL; Channel++) {
-        MemConfig->ExternalInputs.DisableChannel[Controller][Channel] = SaveData->DisableChannel[Controller][Channel];
-        if (MemConfig->ExternalInputs.DisableChannel[Controller][Channel]) {
-          RetrainToWorkingChannelDone = FALSE;
-        }
-      } // Channel
-    } // Controller
   }
 
   //
   // Read DisableChannel Value from ScratchPad Register
   //
-  if (SskpdSaveRestore == ReadRestoreFromScratchPad) {
+  if (SskpdSaveRestore == READ_RESTORE_FROM_SCRATCHPAD) {
     DEBUG ((DEBUG_INFO, "Reading ScratchPad Register\n"));
     SskpdData64.Data = MrcWmRegGet (MrcData);
     DisableChannelRead = (UINT8) SskpdData64.Bits.MrcDisableChannel;
@@ -472,7 +437,7 @@ MrcDisableFailingChannels (
       for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
         for (Channel= 0;  Channel < MAX_CHANNEL; Channel++) {
           if ((DisableChannelRead >> (Controller * MAX_CHANNEL + Channel)) & MRC_DIMM_STATUS_ERROR) {
-            MemConfig->ExternalInputs.DisableChannel[Controller][Channel] = CHANNEL_DISABLED;
+            ExtInputs->DisableChannel[Controller][Channel] = CHANNEL_DISABLED;
             DEBUG ((DEBUG_INFO, "!! MC:%d CH:%d DISABLE !!\n", Controller, Channel));
           }
         } // Channel
@@ -484,7 +449,7 @@ MrcDisableFailingChannels (
   //
   // Store FailingChannelBitMask to DisableChannel and Write to ScratchPad Register
   //
-  if (SskpdSaveRestore == WriteSaveToScratchPad) {
+  if (SskpdSaveRestore == WRITE_SAVE_TO_SCRATCHPAD) {
     DEBUG ((DEBUG_INFO, "Outputs->FailingChannelBitMask.Data16:0x%x\n", Outputs->FailingChannelBitMask.Data16));
     // Iterate through Failing Channel bitmask and update ExtInputs Setup option
     // Detect Failing channel and Disable them
@@ -584,6 +549,7 @@ PeimMemoryInit (
   MrcSave                      *SaveSys;
   MrcSave                      *Save;
   MrcSaveData                  *SaveData;
+  MrcSaveHeader                *SaveHeader;
   MRC_FUNCTION                 CallTable;
   MRC_FUNCTION                 *MrcCall;
   EFI_STATUS                   Status;
@@ -638,6 +604,7 @@ PeimMemoryInit (
   MrcData->Save.Size                       = sizeof (MrcSave);
   Outputs->Size                            = sizeof (MrcOutput);
   SaveData                                 = &MrcData->Save.Data;
+  SaveHeader                               = &MrcData->Save.Header;
   *((UINT32 *) &MrcData->MrcDataString[0]) = *((UINT32 *) MrcDataStringConst);
   InterpeterTrainingDone                   = FALSE;
   IsLastBasicMemoryTestPass                = TRUE;
@@ -1162,9 +1129,12 @@ DEBUG_CODE_END();
         SaveData->PostCodesDone = 0;
         SaveData->PostCodesTotal = 0;
 
-        if (MemConfigNoCrc->RetrainToWorkingChannel && (Inputs->BootMode == bmCold)){
-          DEBUG ((DEBUG_INFO, "Mrc Passed with RetrainToWorkingChannel Enabled, saving channel status\n"));
-          MrcDisableFailingChannels (MrcData, MemConfig, MemConfigNoCrc, WriteChannelStatusToSaveData);
+        if (ExtInputs->RetrainToWorkingChannel && (Inputs->BootMode == bmCold)) {
+          SaveData->SaMemCfgCrc = MrcCalculateCrc32((UINT8 *)MemConfig, sizeof (MEMORY_CONFIGURATION));
+          SaveHeader->Crc       = MrcCalculateCrc32 ((UINT8 *) SaveData, sizeof (MrcSaveData));
+          MrcData->Save.Size    = sizeof (MrcSave);
+          DEBUG ((DEBUG_INFO, "Updated Mem Cfg CRC = 0x%x\n", SaveData->SaMemCfgCrc));
+          DEBUG ((DEBUG_INFO, "Updated Saved Data CRC = 0x%x\n", SaveHeader->Crc));
         }
         break;
 
@@ -1227,9 +1197,9 @@ DEBUG_CODE_END();
         // no break;
 
       default:
-        if ((MemConfigNoCrc->RetrainToWorkingChannel) && (MrcStatus != mrcDimmNotExist) && (MrcStatus != mrcUnsupportedTechnology)) {
+        if ((ExtInputs->RetrainToWorkingChannel) && (MrcStatus != mrcDimmNotExist) && (MrcStatus != mrcUnsupportedTechnology)) {
           DEBUG ((DEBUG_INFO, "MRC ReTrain to Working Channel Enabled\n"));
-          if (MrcDisableFailingChannels (MrcData, MemConfig, MemConfigNoCrc, WriteSaveToScratchPad) != TRUE) {
+          if (MrcDisableFailingChannels (MrcData, WRITE_SAVE_TO_SCRATCHPAD) != TRUE) {
             IoWrite16 (0x80, 0);  // Clear 16-bit port80
             (*PeiServices)->ResetSystem2 (EfiResetWarm, EFI_SUCCESS, 0, NULL);
             break;
@@ -3045,7 +3015,6 @@ MrcSetupMrcData (
   SIMICS_MEMFLOW_STRUCT               Memflows1;
   SIMICS_MEMFLOW2_STRUCT              Memflows2;
   CPU_MEMORY_INIT_CONFIG              CpuMemoryInitConfig;
-  LIMP_MODE_COMMANDS                  LimpModeCommand;
 
   Inputs  = &MrcData->Inputs;
   MrcCall = Inputs->Call.Func;
@@ -3054,7 +3023,12 @@ MrcSetupMrcData (
   Ddr5DoubleSize1Dpc = FALSE;
   Ddr5DoubleSize2Dpc = FALSE;
   Lpddr5CammPresent  = FALSE;
-  LimpModeCommand    = ReadRestoreFromScratchPad;
+
+  if (ExtInputs->RetrainToWorkingChannel && (BootMode == bmCold)) {
+    if (MrcDisableFailingChannels (MrcData, READ_RESTORE_FROM_SCRATCHPAD)) {
+      DEBUG ((DEBUG_INFO, "All Channels are Enabled\n"));
+    }
+  }
 
   // ASSERT if the Config block is not DWORD Aligned.
   ASSERT (sizeof(MEMORY_CONFIGURATION) % sizeof(UINT32) == 0);
@@ -3066,24 +3040,6 @@ MrcSetupMrcData (
   ASSERT ((OFFSET_OF(MrcOutput, RcompTarget) % sizeof(UINT16)) == 0);
 
   Inputs->MaxVrefSamplesOvrd  = 0;
-
-  //
-  // RetrainToWorkingChannel Policy
-  //
-  ExtInputs->RetrainToWorkingChannel = MemConfigNoCrc->RetrainToWorkingChannel;
-  if (MemConfigNoCrc->RetrainToWorkingChannel) {
-    if (BootMode == bmCold) {
-      LimpModeCommand    = ReadRestoreFromScratchPad;
-    } else {
-      LimpModeCommand    = ReadChannelStatusFromSaveData;
-    }
-
-    // Before reading from either SaveData or Scratchpad, zero out the memconfig disable channels
-    ZeroMem (&MemConfig->ExternalInputs.DisableChannel, sizeof (MemConfig->ExternalInputs.DisableChannel));
-    if (MrcDisableFailingChannels (MrcData, MemConfig, MemConfigNoCrc, LimpModeCommand)) {
-      DEBUG ((DEBUG_INFO, "All Channels are Enabled\n"));
-    }
-  }
 
   //
   // Force standard profile when system boot mode indicates. Usually means some has cleared CMOS.

@@ -51,5 +51,9 @@ LIBRARY_CLASS                  = NULL
   BaseMemoryLib
   BootGuardLib
   DebugLib
+  HobLib
   IoLib
+  PeimEntryPoint
+  PeiServicesLib
+  PeiServicesTablePointerLib
   MemoryAllocationLib

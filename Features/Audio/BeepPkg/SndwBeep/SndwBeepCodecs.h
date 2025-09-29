@@ -1,5 +1,5 @@
 /** @file
-  Header file that contains function declarations of beeping operations for Alc1308
+  Header file that contains function declarations of beeping operations for multiple codecs
 
   @copyright
   INTEL CONFIDENTIAL
@@ -19,8 +19,10 @@
  @par specification reference:
 **/
 
-#ifndef __SNDW_BEEP_ALC1308__
-#define __SNDW_BEEP_ALC1308__
+#ifndef __SNDW_BEEP_CODECS__
+#define __SNDW_BEEP_CODECS__
+
+#include "SndwBeepPrivateData.h"
 
 /**
   This function turns on tone generator located in Alc1308 codec
@@ -81,4 +83,4 @@ SndwBeepOffAlc1308 (
   IN CONST BEEP                 *This
   );
 
-#endif /** __SNDW_BEEP_ALC1308__ **/
+#endif /** __SNDW_BEEP_CODECS__ **/

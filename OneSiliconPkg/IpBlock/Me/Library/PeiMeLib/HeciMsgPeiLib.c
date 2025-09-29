@@ -1322,7 +1322,8 @@ PeiHeciGetBiosSeed (
 **/
 EFI_STATUS
 PeiHeciLoadBinaryMsg (
-  IN UINT32          BinaryId
+  IN UINT32          IdsCount,
+  IN UINT32          *BinaryIdsList
   )
 {
   EFI_STATUS         Status;
@@ -1336,26 +1337,29 @@ PeiHeciLoadBinaryMsg (
     return EFI_UNSUPPORTED;
   }
 
-  LoadBinary = AllocateZeroPool (sizeof (LOAD_BINARY_BUFFER));
+  if (BinaryIdsList == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  LoadBinary = AllocateZeroPool (IdsCount * sizeof (UINT32) + sizeof (LOAD_BINARY_BUFFER));
   if (LoadBinary == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   LoadBinary->Request.MkhiHeader.Fields.GroupId = BUP_COMMON_GROUP_ID;
   LoadBinary->Request.MkhiHeader.Fields.Command = LOAD_BINARY_CMD;
-  LoadBinary->Request.BinaryId = BinaryId;
+  LoadBinary->Request.IdsCount                  = IdsCount;
+  CopyMem (&LoadBinary->Request.BinaryIds, BinaryIdsList, IdsCount * sizeof (UINT32));
 
-  DEBUG ((DEBUG_INFO, "%a(): Sending Request.BinaryId = 0x%08X\n", __FUNCTION__, LoadBinary->Request.BinaryId));
-
-  Length                                        = sizeof (LOAD_BINARY_REQUEST);
+  Length                                        = IdsCount * sizeof (UINT32) + sizeof (LOAD_BINARY_REQUEST);
   RespLength                                    = sizeof (LOAD_BINARY_RESPONSE);
 
   Status = HeciWrapperSendWithAck (
              BIOS_FIXED_HOST_ADDR,
              HECI_MKHI_MESSAGE_ADDR,
-             (UINT32 *) &LoadBinary->Request,
+             (UINT32 *) LoadBinary,
              Length,
-             (UINT32 *) &LoadBinary->Response,
+             (UINT32 *) LoadBinary,
              &RespLength
              );
 

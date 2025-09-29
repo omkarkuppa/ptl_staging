@@ -1942,9 +1942,7 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServi
 
 !if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable == TRUE
   INF  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCRetimerSupport/UsbCRetimerSupport.inf
-  !if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbPdBridgeSupport == TRUE
-    INF  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
-  !endif
+  INF  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
   !include UsbCCapsuleFeaturePkg/Include/PostMemory.fdf
 !endif
 

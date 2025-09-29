@@ -50,12 +50,11 @@ EFI_HTTP_BOOT_CALLBACK_PROTOCOL  mHttpBootCallback = {
 //
 //  Global variables for OCR HTTP boot
 //
-BOOLEAN       mHttpBootCallbackInvoked   = FALSE;
-BOOLEAN       mHttpBootDownloadComplete  = FALSE;
-EFI_HANDLE    mHttpBootCallbackHandle    = NULL;
-EFI_HANDLE    mHttpCallbackHandle        = NULL;
-CHAR8         *mAuthValue                = NULL;
-STATIC UINT64 mHttpFileSize              = 0;
+BOOLEAN      mHttpBootCallbackInvoked   = FALSE;
+BOOLEAN      mHttpBootDownloadComplete  = FALSE;
+EFI_HANDLE   mHttpBootCallbackHandle    = NULL;
+EFI_HANDLE   mHttpCallbackHandle        = NULL;
+CHAR8        *mAuthValue                = NULL;
 
 /**
   Update the Authentication info to be sent to the HTTP Boot driver in HttpBootCallback()
@@ -198,6 +197,7 @@ HttpBootCallback (
   EFI_HTTP_MESSAGE        *HttpMessage;
   EFI_HTTP_HEADER         *HttpHeader;
   UINT32                  Percentage;
+  STATIC UINT64           mHttpFileSize;
   STATIC UINT64           mHttpReceivedSize;
   STATIC UINT32           mHttpPercentage;
 
@@ -228,6 +228,7 @@ HttpBootCallback (
 
     case HttpBootHttpResponse:
       if (Data != NULL) {
+        mHttpFileSize = 0;
         mHttpPercentage = 0;
         HttpMessage = (EFI_HTTP_MESSAGE *) Data;
 

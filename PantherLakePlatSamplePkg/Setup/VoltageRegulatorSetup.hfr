@@ -153,7 +153,7 @@
       minimum       = 0,
       maximum       = 512,
       step          = 1,
-      default       = 60,
+      default       = 80,
     endnumeric;
 
     numeric varid   = CPU_SETUP.Ps2Threshold[VR_INDEX],

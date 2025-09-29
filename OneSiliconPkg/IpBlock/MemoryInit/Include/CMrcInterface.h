@@ -284,12 +284,8 @@ typedef enum {
 #define MRC_DIMM_STATUS_DISABLE       (1)
 #define MRC_DIMM_STATUS_ENABLE        (0)
 
-typedef enum {
-  ReadRestoreFromScratchPad,
-  WriteSaveToScratchPad,
-  ReadChannelStatusFromSaveData,
-  WriteChannelStatusToSaveData
-} LIMP_MODE_COMMANDS;
+#define READ_RESTORE_FROM_SCRATCHPAD  (FALSE)
+#define WRITE_SAVE_TO_SCRATCHPAD      (TRUE)
 
 #define MRC_DIMM_STATUS_MAX_DIMMS_CONTROLLER (8)
 #define MRC_DIMM_STATUS_MAX_DIMMS_CHANNEL (2)
@@ -1997,7 +1993,6 @@ typedef struct MrcSaveData {
   UINT8             SagvGeardownMask;             ///< SaGv points mask at which Geardown should be enabled
   MrcMptuChannelConfig MptuChannelMap[MAX_CONTROLLER][MAX_CHANNEL]; ///< System to MPTU channel map
   INT32             RxDqsBaseOffset;              ///< Base value of DataOffsetTrain.RxDqsOffset
-  UINT8             DisableChannel[MAX_CONTROLLER][MAX_CHANNEL]; ///< Keeps track if a channel was disabled on the previous boot
   UINT8             ReservedBytesAlign[4];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back

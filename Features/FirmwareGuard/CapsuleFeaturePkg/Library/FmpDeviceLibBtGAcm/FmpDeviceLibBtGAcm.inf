@@ -36,6 +36,8 @@
 [Sources]
   FmpDeviceLibBtGAcm.c
   BtGAcmUpdateByConfigProfile.c
+  AcmImageParser.h
+  AcmImageParser.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -61,7 +63,6 @@
   TopSwapSupportLib
   ResiliencySupportLib
   PlatformBiosUpdateHookLib
-  AcmHelperLib
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress  ## CONSUMES
@@ -73,5 +74,6 @@
 
 [Guids]
   gTxtInfoHobGuid               ## CONSUMES
+  gTxtAcmInfoTableGuid          ## CONSUMES
   gCapsuleBtGAcmConfigFileGuid  ## CONSUMES  ## UpdateConfig.ini / Capsule image file Guid
   gCapsuleBtGAcmImageFileGuid   ## CONSUMES

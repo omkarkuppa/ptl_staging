@@ -120,7 +120,7 @@
 #string STR_SSE_FW_REV_VALUE                          #language en-US  "N/A" //dynamically updated
 
 #string STR_TCG2_DEVICE_LOC_PROMPT                    #language en-US  "Current TPM Location"
-#string STR_TCG2_DEVICE_LOC_HELP                      #language en-US  "Current TPM Location: PTT, dTPM, No TPM Detected"
+#string STR_TCG2_DEVICE_LOC_HELP                      #language en-US  "Current TPM Location: PTT, dTPM, PSE, No TPM Detected"
 #string STR_TCG2_DEVICE_LOC_CONTENT                   #language en-US  "N/A"
 
 #string STR_PMC_FW_REV_HELP                           #language en-US  "PMC Firmware Version"

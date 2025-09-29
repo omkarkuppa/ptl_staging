@@ -21,13 +21,16 @@
 
 #include <Library/BaseBpmAccessLib.h>
 
+#include <PiPei.h>
 #include <IndustryStandard/FirmwareInterfaceTable.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/BaseCryptLib.h>
 #include <Library/DebugLib.h>
+#include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PeiServicesLib.h>
 #include <Library/BootGuardLib.h>
 
 /**

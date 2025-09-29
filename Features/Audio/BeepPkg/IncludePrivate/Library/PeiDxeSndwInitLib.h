@@ -180,41 +180,4 @@ SndwGetNextCodec (
   OUT  SNDW_CODEC_INFO            **NextSndwCodecInfo
   );
 
-/**
-  SndwAccess function prepares and sends address page information to a SoundWire codec
-  device. It configures two address page registers (page 1 and page 2) by:
-  1. Setting the device address based on the codec's peripheral index
-  2. Breaking down the provided address parameter into appropriate bit fields
-  3. Sending the configured registers to the SoundWire device with acknowledgment
-
-  @param[in] Stream      Pointer to the SoundWire stream structure
-  @param[in] CodecIndex  Index of the codec in the stream's codec information array
-  @param[in] Address     The 32-bit address to be configured in the page registers
- **/
-VOID
-SetAddrPageRegisters (
-  IN CONST SNDW_ACCESS  *SndwAccess,
-  IN SNDW_CODEC_INFO    SndwCodecInfo,
-  IN UINT32             LinearAddress
-  );
-
-/**
-  Sends a sequence of initialization commands to the audio codec using the provided SNDW_STREAM.
-  The function iterates through the PowerOn array, configuring the codec registers as specified.
-  For register addresses above 0x7FFF, it sets the appropriate address pages before sending the command.
-  Each command is sent using the SendWithAck method of the SndwAccess interface.
-
-  @param[in] Stream                 Pointer to the SNDW_STREAM structure containing codec access and information.
-
-  @retval EFI_SUCCESS               The initialization commands were sent successfully.
-  @retval EFI_INVALID_PARAMETER     One or more input parameters are invalid.
-**/
-EFI_STATUS
-SendSdcaCommand (
-  IN CONST SNDW_ACCESS  *SndwAccess,
-  IN SDCA_COMMAND       *SdcaCommand,
-  IN UINTN              NumOfCommands,
-  IN SNDW_CODEC_INFO    SndwCodecInfo
-  );
-
 #endif

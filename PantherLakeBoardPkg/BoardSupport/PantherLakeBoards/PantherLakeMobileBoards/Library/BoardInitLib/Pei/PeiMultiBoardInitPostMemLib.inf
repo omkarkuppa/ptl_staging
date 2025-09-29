@@ -247,6 +247,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamGpioEnable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdTcssWaitRetimerDeviceReady
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable

@@ -1,9 +1,9 @@
 /** @file
-  Include the MRC version
+  Definition of FSP Boot Manifest.
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2023 Intel Corporation.
+  Copyright (C) 2024 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -16,15 +16,21 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
+  @par Specification Reference:
+
 **/
 
-// The following text is also used for automatic filename creation. Ensure that there are no
-// other characters, including whitespace, before, after, and between the numbers and commas.
-// Ensure that the comment text follows the build number with no other characters between
-// the build number and the //.
-//  Major Minor Rev Build
-//  ----- ----- --- -----
-{
-0,0,110,1//PTL version
-}
+#ifndef __FSP_BOOT_MANIFEST__
+#define __FSP_BOOT_MANIFEST__
+
+#define FBM_STRUCTURE_ID  (*(UINT64 *)"__FBMS__")
+
+typedef struct {
+  UINT8     StructureId[8];
+  UINT8     StructVersion;
+  UINT8     Reserved1[3];
+  UINT16    KeySignatureOffset;
+  UINT8     FspVersion[6];
+} FBM_HEADER;
+
+#endif

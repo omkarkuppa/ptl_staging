@@ -33,7 +33,6 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
 
 [LibraryClasses]
@@ -46,21 +45,12 @@
   DebugLib
   UefiLib
   HobLib
-  PcdLib
 
 [Guids]
   gTprInfoHobGuid                               ## CONSUMES
-  gEfiAcpiTableGuid                             ## CONSUMES
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## CONSUMES
-
-[Pcd]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId               ## SOMETIMES_CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId          ## SOMETIMES_CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision         ## SOMETIMES_CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId           ## SOMETIMES_CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision     ## SOMETIMES_CONSUMES
 
 [Depex]
   gEfiAcpiTableProtocolGuid

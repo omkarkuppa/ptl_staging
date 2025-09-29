@@ -267,7 +267,7 @@
 
   # GPIO Blink enable and PWM Control.
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_B_7 } //ISH_GP_3_SNSR_HDR has rework SOC_PCBEEP
+   { 0x0 } //ISH_GP_3_SNSR_HDR has rework SOC_PCBEEP
   )}
 
   # VPD PCD Ratio
@@ -403,6 +403,9 @@
 
   # UsbC Retimer Capsule Debug Progress Code Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
+
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
 
   #
   # *** IMPORTANT ***
@@ -790,7 +793,6 @@
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[0]|0x51                                     # Extra Bus Reserved
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[0]|0x100                                         # Reserved Memory
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[0]|0x30000                                      # Reserved PMemory
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[3]|0x0
 
 #####################################################################
 #  PTL UH CAMM dTbT T3 - RVP2 BOM

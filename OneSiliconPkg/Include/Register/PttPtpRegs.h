@@ -51,6 +51,10 @@
 ///
 #define V_FTIF_SPI_DTPM_PRESENT            0x00050000
 ///
+/// FTIF PSE present value
+///
+#define V_FTIF_PSE_PRESENT                 0x00040000
+///
 /// FTIF TPM Location Mask
 ///
 #define FTIF_FT_LOC_MASK                   (BIT18 | BIT17 | BIT16)

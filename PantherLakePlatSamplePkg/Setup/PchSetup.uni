@@ -304,9 +304,9 @@
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_CIRRUS_PTL           #language en-US "Cirrus 6-speaker Configuration v6.23.0"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_GCS_ADK              #language en-US "Configuration GCS/ADK ALC712-VB, ALC1320"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_CIRRUS_PTL_AEP       #language en-US "Cirrus AEP Configuration v6.23.0"
-#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_5STAR_WCL            #language en-US "ALC722-CG, 5-Star Configuration (30.07.25)"
-#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_3STAR_1_WCL          #language en-US "ALC712-VB, 3-Star(1) Configuration (07.07.25)"
-#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_CIRRUS_WCL           #language en-US "Cirrus Cohen Only Configuration v6.23.0"
+#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_5STAR_WCL            #language en-US "ALC722-CG, 5-Star Configuration (02.12.24)"
+#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_3STAR_1_WCL          #language en-US "ALC712-VB, 3-Star(1) Configuration (02.12.24)"
+#string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_CIRRUS_WCL           #language en-US "Cirrus Cohen Only Configuration v6.4.0"
 #string STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_DISABLED             #language en-US "Disable topology exposure in ACPI"
 
 #string STR_HDAUDIO_MIC_PRIVACY_FORM_TITLE                #language en-US "Microphone Privacy Settings"

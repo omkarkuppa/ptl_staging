@@ -74,9 +74,4 @@ typedef union {
   } Rx;
 } SNDW_COMMAND;
 
-typedef struct {
-  UINT32    LinearAddress;  // 32-bits linear address
-  UINT8     Data;           // 8-bits data
-} SDCA_COMMAND;
-
 #endif

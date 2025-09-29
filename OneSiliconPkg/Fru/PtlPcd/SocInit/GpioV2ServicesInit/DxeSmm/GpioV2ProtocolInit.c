@@ -118,16 +118,13 @@ InternalGpioInterfaceConstructor (
   GpioV2ServicesInit (&GpioInterface->Public);
 
   // GpioV2 PWM init
-  /**if (GpioInterface->Pwm != NULL) {
+  if (GpioInterface->Pwm != NULL) {
     CopyMem (GpioInterface->Pwm->Hid, GpioInterface->Public.Hid, GPIOV2_CONTROLLER_HID_LENGTH);
     GpioInterface->Pwm->Uid = GpioInterface->Public.Uid;
     GpioV2PwmInit (GpioInterface->Pwm);
   } else {
     DEBUG ((DEBUG_INFO, "[%a] Memory not allocated for PWM protocol, skipping PWM init.\n", __FUNCTION__));
-  }**/
-  CopyMem (GpioInterface->Pwm.Hid, GpioInterface->Public.Hid, GPIOV2_CONTROLLER_HID_LENGTH);
-  GpioInterface->Pwm.Uid = GpioInterface->Public.Uid;
-  GpioV2PwmInit (&(GpioInterface->Pwm));
+  }
 
   return EFI_SUCCESS;
 }

@@ -19,73 +19,25 @@
 @par Specification Reference:
 **/
 
+#include "CbntSvnCheckLibInternal.h"
+
 #include <IndustryStandard/FirmwareInterfaceTable.h>
 #include <Register/Cpuid.h>
+#include <Library/CbntSvnCheckLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
-#include <Library/HobLib.h>
-
 #include <Library/DxeMeLib.h>
 #include <Library/PreSiliconEnvDetectLib.h>
 #include <Library/BootGuardLib.h>
 #include <Library/SpiAccessLib.h>
-#include <Library/BaseBpmAccessLib.h>
-#include <TxtInfoHob.h>
-#include <FbmDef.h>
-
 #include <Library/SeamlessRecoverySupportLib.h>
 #include <Library/FitHelperLib.h>
-#include <Library/AcmHelperLib.h>
-#include <Library/CbntSvnCheckLib.h>
-#include "CbntSvnCheckLibInternal.h"
 
 //
 // Use to display progress of sending ME FW
 //
 ARB_SVN_INFO_ENTRY         mArbSvnInfoTable[MFT_KEY_USAGE_INDEX_UNDEFINED_MANIFEST] = {0};
 UINT32                     mNumOfArbSvnEntries = 0;
-
-/**
-  Check if input FBM image has FBM signature
-
-  @retval TRUE   FSP Boot Manifest signature is found.
-  @retval FALSE  FSP Boot Manifest signature is not found.
-
-**/
-BOOLEAN
-IsFbmValid (
-  IN CONST VOID  *FbmImage
-  )
-{
-  CONST FSP_BOOT_MANIFEST_STRUCTURE  *FbmHeader;
-
-  FbmHeader = (FSP_BOOT_MANIFEST_STRUCTURE *)FbmImage;
-
-  if (FbmHeader == NULL) {
-    return FALSE;
-  }
-
-  if (*(UINT64 *)(FbmHeader->StructureId) != FSP_BOOT_MANIFEST_STRUCTURE_ID) {
-    return FALSE;
-  }
-
-  return TRUE;
-}
-
-/**
-  Check if current BIOS supports FSP Boot Manifest for signed FSP.
-
-  @retval TRUE   BIOS supports FSP Boot Manifest.
-  @retval FALSE  BIOS doesn't FSP Boot Manifest.
-
-**/
-BOOLEAN
-IsBiosSupportFbm (
-  VOID
-  )
-{
-  return IsFbmValid (FindFbm ());
-}
 
 /**
   Check if need to bypass the hardware anti-replay SVN check.
@@ -405,119 +357,6 @@ FindFitEntryFromBiosImage (
 }
 
 /**
-  Check if FSP SVN in input ACM/FBM image meets platform requirement.
-  If the input image is NULL, get SVN from current BIOS ROM.
-
-  FSP SVN rule:
-
-    FspSvn in FBM >= MinFbmSvn in ACM >= MinFbmSvn in fuse
-
-    1. FSP SVN     in FBM must be larger than or equal to MIN FBM SVN in ACM.
-    2. MIN FBM SVN in ACM must be larger than or equal to MIN FBM SVN in fuse.
-
-  @param[in] SAcmImage                Pointer to S-ACM image buffer. Null means to check the ACM
-                                      in current BIOS ROM.
-  @param[in] SAcmImageSize            The size of SAcmImageSize
-  @param[in] FbmImage                 Pointer to S-ACM image buffer. Null means to check the FBM
-                                      in current BIOS ROM.
-
-  @retval EFI_SUCCESS                 FSP SVN in ACM and/or FBM image meets platform requirement
-  @retval EFI_INCOMPATIBLE_VERSION    FSP SVN in ACM and/or FBM image does not meet platform requirement
-  @retval Others                      Fail to check FSP SVN
-
-**/
-EFI_STATUS
-EFIAPI
-CheckFspSvn (
-  IN VOID   *SAcmImage,
-  IN UINTN  SAcmImageSize,
-  IN VOID   *FbmImage
-  )
-{
-  EFI_STATUS                   Status;
-  VOID                         *SAcmHeader;
-  UINTN                        SAcmSize;
-  FSP_BOOT_MANIFEST_STRUCTURE  *FbmHeader;
-  TXT_INFO_HOB                 *TxtInfoHob;
-  UINT8                        FspSvnInFbm;
-  UINT8                        MinFbmSvnInAcm;
-
-  DEBUG ((DEBUG_INFO, "%a - start\n", __func__));
-
-  Status         = EFI_SUCCESS;
-  SAcmHeader     = SAcmImage;
-  SAcmSize       = SAcmImageSize;
-  FbmHeader      = (FSP_BOOT_MANIFEST_STRUCTURE *)FbmImage;
-
-  TxtInfoHob     = NULL;
-  FspSvnInFbm    = 0;
-  MinFbmSvnInAcm = 0;
-
-  if (SAcmHeader == NULL) {
-    //
-    // Get ACM from BIOS ROM
-    //
-    DEBUG ((DEBUG_INFO, "Get ACM from BIOS ROM\n"));
-    TxtInfoHob = (TXT_INFO_HOB *)GetFirstGuidHob (&gTxtInfoHobGuid);
-    if (TxtInfoHob == NULL) {
-      DEBUG ((DEBUG_ERROR, "Failed to locate TxtInfoHob\n"));
-      Status = EFI_UNSUPPORTED;
-      goto Exit;
-    }
-
-    SAcmHeader = (VOID *) TxtInfoHob->Data.BiosAcmBase;
-    SAcmSize   = TxtInfoHob->Data.BiosAcmSize;
-  }
-
-  if (FbmHeader == NULL) {
-    //
-    // Get FBM from BIOS ROM
-    //
-    DEBUG ((DEBUG_INFO, "Get FBM from BIOS ROM\n"));
-    FbmHeader = FindFbm ();
-  }
-
-  //
-  // Check FBM validity
-  //
-  if (!IsFbmValid (FbmHeader)) {
-    DEBUG ((DEBUG_ERROR, "Invalid FBM\n"));
-    Status = EFI_UNSUPPORTED;
-    goto Exit;
-  }
-
-  //
-  // Get MIN FBM SVN from ACM
-  //
-  MinFbmSvnInAcm = GetFbmMinSvnFromAcm (SAcmHeader, SAcmSize);
-  DEBUG ((DEBUG_INFO, "MinFbmSvnInAcm is %d\n", MinFbmSvnInAcm));
-
-  //
-  // Get FSP SVN from FBM
-  //
-  FspSvnInFbm = FbmHeader->FspSvn;
-  DEBUG ((DEBUG_INFO, "FspSvnInFbm is %d\n", FspSvnInFbm));
-
-  //
-  // Compare SVN between ACM and FBM
-  //
-  if (FspSvnInFbm < MinFbmSvnInAcm) {
-    DEBUG ((DEBUG_ERROR, "FSP SVN in FBM must >= Min FBM SVN in ACM\n"));
-    Status = EFI_INCOMPATIBLE_VERSION;
-    goto Exit;
-  }
-
-  //
-  // Compare MinFbmSvn between ACM and fuse
-  //
-  Status = VerifySvn (MFT_KEY_USAGE_INDEX_FSP_BOOT_MANIFEST, MinFbmSvnInAcm);
-
-Exit:
-  DEBUG ((DEBUG_INFO, "%a - End (%r)\n", __func__, Status));
-  return Status;
-}
-
-/**
   Check if S-ACM SVN from input S-ACM image buffer is greater than or equal to ARBH SVN
 
   @param[in] SAcmImage                Pointer to S-ACM image buffer.
@@ -535,21 +374,8 @@ CheckSvnFromSAcmImage (
   IN  UINTN         SAcmImageSize
   )
 {
-  EFI_STATUS  Status;
-
-  DEBUG ((DEBUG_INFO, "%a - start\n", __func__));
-  Status = VerifySvn (MFT_KEY_USAGE_INDEX_OEM_ACM_MANIFEST, ((ACM_HEADER *)SAcmImage)->AcmSvn);
-  if (EFI_ERROR (Status)) {
-    goto Exit;
-  }
-
-  if (IsBiosSupportFbm ()) {
-    Status = CheckFspSvn (SAcmImage, SAcmImageSize, NULL);
-  }
-
-Exit:
-  DEBUG ((DEBUG_INFO, "%a - End (%r)\n", __func__, Status));
-  return Status;
+  DEBUG ((DEBUG_INFO, "%a - start\n", __FUNCTION__));
+  return VerifySvn (MFT_KEY_USAGE_INDEX_OEM_ACM_MANIFEST, ((ACM_HEADER *)SAcmImage)->AcmSvn);
 }
 
 /**
@@ -574,14 +400,12 @@ CheckSvnFromBiosImage (
   ACM_HEADER                          *SAcmHeader;
   BOOT_POLICY_MANIFEST_HEADER         *BpmHeader;
   KEY_MANIFEST_STRUCTURE              *KmHeader;
-  FSP_BOOT_MANIFEST_STRUCTURE         *FbmHeader;
 
-  DEBUG ((DEBUG_INFO, "%a - start\n", __func__));
+  DEBUG ((DEBUG_INFO, "%a - start\n", __FUNCTION__));
 
   SAcmHeader = (ACM_HEADER *) FindFitEntryFromBiosImage (FIT_TYPE_02_STARTUP_ACM, BiosImage, BiosImageSize);
   BpmHeader  = (BOOT_POLICY_MANIFEST_HEADER *) FindFitEntryFromBiosImage (FIT_TYPE_0C_BOOT_POLICY_MANIFEST, BiosImage, BiosImageSize);
   KmHeader   = (KEY_MANIFEST_STRUCTURE *) FindFitEntryFromBiosImage (FIT_TYPE_0B_KEY_MANIFEST, BiosImage, BiosImageSize);
-  FbmHeader  = NULL; // Deal with FBM later
 
   if ((SAcmHeader == NULL) || \
       (BpmHeader  == NULL) || \
@@ -624,68 +448,7 @@ CheckSvnFromBiosImage (
   Status = VerifySvn (MFT_KEY_USAGE_INDEX_OEM_BTG_KEY_MANIFEST, KmHeader->KmSvn);
   DEBUG ((DEBUG_INFO, "Check KM SVN: %r\n", Status));
 
-  if (EFI_ERROR (Status)) {
-    goto Exit;
-  }
-
-  //
-  // Check FBM SVN
-  //
-  if (IsBiosSupportFbm ()) {
-    FbmHeader   = (FSP_BOOT_MANIFEST_STRUCTURE *)FindFitEntryFromBiosImage (FIT_TYPE_0D_FSP_BOOT_MANIFEST, BiosImage, BiosImageSize);
-    if (!IsFbmValid (FbmHeader)) {
-      DEBUG ((DEBUG_ERROR, "FBM header not found in given BiosImage\n"));
-      Status = EFI_NOT_FOUND;
-      goto Exit;
-    }
-
-    Status = CheckFspSvn (
-               SAcmHeader,
-               (SAcmHeader->Size * 4),
-               FbmHeader
-               );
-    DEBUG ((DEBUG_INFO, "Check FSP SVN: %r\n", Status));
-    if (EFI_ERROR (Status)) {
-      goto Exit;
-    }
-  }
-
 Exit:
-  DEBUG ((DEBUG_INFO, "%a - End (%r)\n", __func__, Status));
+  DEBUG ((DEBUG_INFO, "%a - End (%r)\n", __FUNCTION__, Status));
   return Status;
 }
-
-/**
-  Check if FSP SVN from input FBM image buffer is greater than or equal to ARBH SVN
-
-  @param[in] FbmImage                 Pointer to FBM image buffer.
-  @param[in] FbmImageSize             The size of FbmImage
-
-  @retval EFI_SUCCESS                 FSP SVN from FbmImage is greater than or equal to ARBH SVN
-  @retval EFI_INCOMPATIBLE_VERSION    FSP SVN from FbmImage is smaller than ARBH SVN
-  @retval Others                      Fail to check FSP SVN from FbmImage
-
-**/
-EFI_STATUS
-EFIAPI
-CheckSvnFromFbmImage (
-  IN UINT8  *FbmImage,
-  IN UINTN  FbmImageSize
-  )
-{
-  EFI_STATUS  Status;
-
-  DEBUG ((DEBUG_INFO, "%a - start\n", __func__));
-
-  if (FbmImageSize < sizeof (FSP_BOOT_MANIFEST_STRUCTURE)) {
-    Status = EFI_INVALID_PARAMETER;
-    goto Exit;
-  }
-
-  Status = CheckFspSvn (NULL, 0, FbmImage);
-
-Exit:
-  DEBUG ((DEBUG_INFO, "%a - End (%r)\n", __func__, Status));
-  return Status;
-}
-
