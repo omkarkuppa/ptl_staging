@@ -357,6 +357,14 @@ HiddenPciBusConfigRead (
 
   PrivateData = (HIDDEN_PCI_DEVICE_PRIVATE_DATA*) This;
 
+  if (This == NULL || Buffer == NULL) { 
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Width == -1 || Width >= EfiPciIoWidthMaximum) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   //
   // Check offset alignment
   //
@@ -432,6 +440,14 @@ HiddenPciBusConfigWrite (
   UINTN                    Index;
 
   PrivateData = (HIDDEN_PCI_DEVICE_PRIVATE_DATA*) This;
+
+  if (This == NULL || Buffer == NULL) { 
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Width == -1 || Width >= EfiPciIoWidthMaximum) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Check offset alignment
@@ -539,7 +555,7 @@ HiddenPciBusAttributes (
   if ((Operation == EfiPciIoAttributeOperationGet || Operation == EfiPciIoAttributeOperationSupported) && Result == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-  if (Operation >= EfiPciIoAttributeOperationMaximum) {
+  if (Operation == -1 || Operation >= EfiPciIoAttributeOperationMaximum) {
     return EFI_INVALID_PARAMETER;
   }
 
