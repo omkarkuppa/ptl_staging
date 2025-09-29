@@ -20,7 +20,11 @@
 **/
 #include <EcCommands.h>
 
+External (\_SB.TTEF, FieldUnitObj)
+
+
 External (\_SB.IETM.BAT1.GPDE, MethodObj)
+
 
 //
 // Define the Real Battery 1 Control Method.
@@ -127,15 +131,19 @@ Device (BAT1) {
       // Fix up the Battery Status.
       Store (And (ECRD (RefOf (B1ST)), 0x07), Index (PKG1, 0))
       If (And (ECRD (RefOf (B1ST)), 0x01)) {
-        // Get discharge rate
-        If (CondRefOf (\_SB.IETM.BAT1)) {
-          Store(\_SB.IETM.BAT1.GPDE(), Local1)
-        } Else {
-          Store(0, Local1)
+        Store(0, Local1)  // Initialize Local1 to 0
+        If (LEqual (\_SB.TTEF,0x01)) { // Check for Time to Empty feature enable
+          // Get discharge rate
+          If (CondRefOf (\_SB.IETM.BAT1)) {
+            Store(\_SB.IETM.BAT1.GPDE(), Local1)
+          } Else {
+            Store(0, Local1)
+          }
         }
-        If (LAnd (LGreater(Local1, 0), LLess(Local1, 0x7FFFFFF))) { // If Processed data is available
+        If (LAnd (LEqual (\_SB.TTEF,0x01),LAnd (LGreater(Local1, 0), LLess(Local1, 0x7FFFFFF)))) { // If TTE feature is enabled and Processed data is available
           Store (Local1, Index (PKG1, 1))
-        } Else {  //Processed data is not available. Sending raw data
+        }
+        Else {  //Processed data is not available. Sending raw data
           // Calculate discharge rate
           // Return Rate in mW since we report _BIF data in mW
           Store (Multiply (ECRD (RefOf (B1DI)), ECRD (RefOf (B1FV))), Local0)
@@ -149,15 +157,19 @@ Device (BAT1) {
         Store (Divide (Local0, 1000), Local0)
         Store (Local0, Index (PKG1, 1))
       }
+
       // Calculate Remaining Capacity in mWh =
       // Remaining Capacity (mAh) * Design Voltage (V)
       // Use Remaining Capacity in mAh multiply with a fixed Design Voltage
       // for Remaining Capacity in mWh
       Store (Divide (Multiply (ECRD (RefOf (B1RC)), ECRD (RefOf (B1DV))), 1000), Index (PKG1, 2))
+    
       // Report Battery Present Voltage (mV)
       Store (ECRD (RefOf (B1FV)), Index (PKG1, 3))
-    } // If (ECAV)
-    Return (PKG1)
+
+      } // If (ECAV)
+
+      Return (PKG1)
   }
 
   Method (_BLT, 3) {
