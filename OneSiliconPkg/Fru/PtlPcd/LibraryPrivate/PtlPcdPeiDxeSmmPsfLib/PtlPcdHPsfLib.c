@@ -3257,6 +3257,13 @@ PtlPcdHPsfConfigureClkreqHys (
 {
   P2SB_CONTROLLER                P2SbController;
   P2SB_SIDEBAND_REGISTER_ACCESS  RegisterAccess;
+  UINT32                         ClkReqHysValue;
+
+#if (FixedPcdGet8 (PcdEmbeddedEnable) == 0x1)
+  ClkReqHysValue = 0x2710;
+#else
+  ClkReqHysValue = 0x9c4;
+#endif
 
   BuildPsfP2SbAccess (
     6,
@@ -3267,6 +3274,6 @@ PtlPcdHPsfConfigureClkreqHys (
   RegisterAccess.Access.Write32 (
     &RegisterAccess.Access,
     R_PSF_PCR_PSF_X_PSF_CLKREQ_HYS,
-    0x9c4
+    ClkReqHysValue
     );
 }
