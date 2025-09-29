@@ -497,6 +497,20 @@
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
 
 
+  # PTL-H AEP Telemetry table
+  gBoardModuleTokenSpaceGuid.VpdPcdTelemetry|*|{CODE(
+  { 5,    // DeviceSize
+    '3',  // I2C_Scope
+    {
+     //BaseAddress, {RailName, ResistorValue}
+     {    0x10,     {{"SNS_V1P8A",          5}, {" ",                     0}, {"VBATA_VCCGT_SENSE",    2}, {"SNS_VBATA",          2}}},
+     {    0x11,     {{"SNS_V3P3A_WLAN",     5}, {"VBATA_VCCCORE_SENSE",   2}, {"VBATA_VDD2H_SENSE",    5}, {"V3P3A_MEM_SNS",      5}}},
+     {    0x12,     {{"V3P3A_KBC_EC",      50}, {"SNS_V3P3A_EDP",         2}, {"SNS_V3P3X_SSD",        5}, {"SNS_V5P0A",          2}}},
+     {    0x13,     {{"VBATA_VCCSA_SENSE",  2}, {"VBATA_VCCIO_SENSE",     5}, {"VBATA_LP_ECORE_SENSE", 2}, {"VBATA_VNNAON_SENSE", 2}}},
+     {    0x14,     {{"SNS_V_BATT_OUT_FET", 5}, {"SNS_V_CHGR_EMI_VIN",   10}, {"SNS_VBAT_IN_ELPMIC",  50}, {"SNS_V3P3A",          2}}},
+    }
+  })}
+
   # PCIE CLOCK USGAGE for PTL H
   gBoardModuleTokenSpaceGuid.VpdPcdPcieClkUsageMap|*|{CODE(
   {{
@@ -900,6 +914,8 @@
   gStructPcdTokenSpaceGuid.PcdSetup.PseudoG3State|0x1                                                # Pseudo G3
   gStructPcdTokenSpaceGuid.PcdPchSetup.ThcDsyncPad[1]|0x1                                            # DYSNC input
   gStructPcdTokenSpaceGuid.PcdPchSetup.PcieRootPortHPE[2]|0x1                                        # Hot Plug
+  gStructPcdTokenSpaceGuid.PcdSetup.PowermeterDeviceEnable|0x1                                       # Enable PowerMeter
+  gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x1                                        # Enable Telemetry
 
 #####################################################################
 #  PTL UH LP5x AEP MEM 32GB
