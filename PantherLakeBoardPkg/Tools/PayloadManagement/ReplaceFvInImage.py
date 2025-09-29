@@ -375,6 +375,10 @@ def _GetPatchedFd (
         if not IsGuidMatched (Struct2Stream (GuidFv.FvName), TargetFvName):
             continue
 
+        if GuidFv.FvLength != FvInfo.FvLength:
+            print (f'Patching FV size {hex (FvInfo.FvLength)} is not equal to FV size {hex (GuidFv.FvLength)} in input FD image')
+            return None
+
         if TargetFd is None:
             TargetFd = copy.deepcopy (SourceFdBuffer)
 

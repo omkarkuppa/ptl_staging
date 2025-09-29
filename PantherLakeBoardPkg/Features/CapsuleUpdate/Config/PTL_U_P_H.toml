@@ -157,15 +157,15 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
       FBM   = { Offset = '0x00DE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Debug.Default]
-      FspS  = { Offset = '0x00D40000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00DA0000', Size = '0x000F0000' }
+      FspS  = { Offset = '0x00D50000', Size = '0x00060000' }
+      FspM  = { Offset = '0x00DB0000', Size = '0x000E0000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
       FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Release.Default]
-      FspS  = { Offset = '0x00D80000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00DE0000', Size = '0x00100000' }
+      FspS  = { Offset = '0x00D90000', Size = '0x00060000' }
+      FspM  = { Offset = '0x00DF0000', Size = '0x000F0000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
       FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
@@ -185,10 +185,10 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
       Fv = { Offset = '0x00AA0000', Size = '0x00090000' }
 
     [Firmware.Ucode.Offset.Resiliency.Debug.Default]
-      Fv = { Offset = '0x00CA0000', Size = '0x00040000' }
+      Fv = { Offset = '0x00CA0000', Size = '0x00050000' }
 
     [Firmware.Ucode.Offset.Resiliency.Release.Default]
-      Fv = { Offset = '0x00CA0000', Size = '0x00080000' }
+      Fv = { Offset = '0x00CA0000', Size = '0x00090000' }
 
     [Firmware.Ucode.SlotSize]
       Default = '0x37000'
