@@ -1310,7 +1310,8 @@ SndwGetNextCodec (
     CurrentCodecListEntry = CODEC_LIST_ENTRY_FROM_LIST_ENTRY (CurrentListEntry);
 
     if ((CurrentCodecListEntry->CodecInfo.SndwLinkIndex == SndwCodecInfo->SndwLinkIndex) &&
-       (CompareMem (CurrentCodecListEntry->CodecInfo.CodecId.Data, SndwCodecInfo->CodecId.Data, sizeof (SNDW_CODEC_ID)) == 0)) {
+        (CurrentCodecListEntry->CodecInfo.PeripheralIndex == SndwCodecInfo->PeripheralIndex) &&
+        (CompareMem (CurrentCodecListEntry->CodecInfo.CodecId.Data, SndwCodecInfo->CodecId.Data, sizeof (SNDW_CODEC_ID)) == 0)) {
       CurrentListEntry = GetNextNode (ListHead, CurrentListEntry);
       if (CurrentListEntry == ListHead) {
         *NextSndwCodecInfo = NULL;
