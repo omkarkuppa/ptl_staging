@@ -272,18 +272,14 @@
 #define PTL_SID_F3_PID_TC_PCIE0                 0xF392  // Slice 0
 #define PTL_SID_F3_PID_TC_PCIE1                 0xF393  // Slice 0
 #define PTL_SID_F3_PID_TC_PGA0A                 0xF394  // Slice 0
-#define PTL_SID_F3_PID_TC_PGA0P                 0xF395  // Slice 0
 #define PTL_SID_F3_PID_TC_PGA1A                 0xF396  // Slice 0
-#define PTL_SID_F3_PID_TC_PGA1P                 0xF397  // Slice 0
 #define PTL_SID_F3_PID_TC_SRM1                  0xF389  // Slice 1
 #define PTL_SID_F3_PID_TC_FIA1                  0xF398  // Slice 1
 #define PTL_SID_F3_PID_TC_TBT1                  0xF399  // Slice 1
 #define PTL_SID_F3_PID_TC_PCIE2                 0xF39A  // Slice 1
 #define PTL_SID_F3_PID_TC_PCIE3                 0xF39B  // Slice 1
 #define PTL_SID_F3_PID_TC_PGA2A                 0xF39C  // Slice 1
-#define PTL_SID_F3_PID_TC_PGA2P                 0xF39D  // Slice 1
 #define PTL_SID_F3_PID_TC_PGA3A                 0xF39E  // Slice 1
-#define PTL_SID_F3_PID_TC_PGA3P                 0xF39F  // Slice 1
 
 //
 // IP: UFS

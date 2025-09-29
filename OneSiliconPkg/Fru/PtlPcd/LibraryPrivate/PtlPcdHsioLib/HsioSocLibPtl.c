@@ -145,13 +145,9 @@ PtlPcdPhyBeforeSaiPostBoot (
                        { .Pid16bit = PTL_P_H_SID_F2_PID_G5FPW1A },
                        { .Pid16bit = PTL_SID_F2_PID_U3FPW1A },
                        { .Pid16bit = PTL_SID_F3_PID_TC_PGA0A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA0P },
                        { .Pid16bit = PTL_SID_F3_PID_TC_PGA1A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA1P },
                        { .Pid16bit = PTL_SID_F3_PID_TC_PGA2A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA2P },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA3A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA3P }
+                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA3A }
                      };
   P2SB_PORT_16_ID    PidsAicSocH [] = {
                        { .Pid16bit = PTL_SID_F2_PID_MPFPW1A },
@@ -160,13 +156,9 @@ PtlPcdPhyBeforeSaiPostBoot (
                        { .Pid16bit = PTL_H_SID_F2_PID_G5FPW2A },
                        { .Pid16bit = PTL_SID_F2_PID_U3FPW1A },
                        { .Pid16bit = PTL_SID_F3_PID_TC_PGA0A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA0P },
                        { .Pid16bit = PTL_SID_F3_PID_TC_PGA1A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA1P },
                        { .Pid16bit = PTL_SID_F3_PID_TC_PGA2A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA2P },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA3A },
-                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA3P }
+                       { .Pid16bit = PTL_SID_F3_PID_TC_PGA3A }
                      };
 
 
