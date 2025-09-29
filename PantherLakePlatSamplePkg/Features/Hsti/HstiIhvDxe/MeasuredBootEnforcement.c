@@ -127,12 +127,11 @@ CheckTpmChipsetSupport (
   }
 
   TpmVerFtifFtLocMask =  MmioRead32 (TXT_PUBLIC_BASE + 0x800) & TPM_VER_FTIF_FT_LOC_MASK;
-  DEBUG ((DEBUG_INFO, "        TPM Location configured (expected values: dTPM = 0x5 or fTPM = 0x7 or PSE = 0x4) = 0x%x\n", (TpmVerFtifFtLocMask >> 16)));
+  DEBUG ((DEBUG_INFO, "        TPM Location configured (expected values: dTPM = 0x5 or fTPM = 0x7) = 0x%x\n", (TpmVerFtifFtLocMask >> 16)));
   DEBUG ((DEBUG_INFO, "        Value at TPM Base Address (0x%x) = 0x%x\n", TpmBaseAddress, ValueAtTpmBaseAddress));
 
   if ((((TpmVerFtifFtLocMask & DTPM_LOC) != DTPM_LOC) &&
-      ((TpmVerFtifFtLocMask & FTPM_LOC)  != FTPM_LOC) &&
-      ((TpmVerFtifFtLocMask & PSE_LOC)   != PSE_LOC)) ||
+      ((TpmVerFtifFtLocMask & FTPM_LOC)  != FTPM_LOC)) ||
       (ValueAtTpmBaseAddress == 0xFF)) {
     return FALSE;
   }

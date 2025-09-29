@@ -136,15 +136,6 @@ InitTcgStrings (
       );
     break;
 
-  case V_FTIF_PSE_PRESENT:
-    HiiSetString (
-      HiiHandle,
-      STRING_TOKEN (STR_TCG2_DEVICE_LOC_CONTENT),
-      L"PSE",
-      NULL
-      );
-    break;
-
   default:
     HiiSetString (
       HiiHandle,

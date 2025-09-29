@@ -87,8 +87,6 @@ TriggerTpmClear (
     DEBUG ((DEBUG_INFO, "PS: dTPM 2.0 Present\n"));
   } else if (TpmStsFtif == V_FTIF_FTPM_PRESENT) {
     DEBUG ((DEBUG_INFO, "PS: PTT Present\n"));
-  } else if (TpmStsFtif == V_FTIF_PSE_PRESENT) {
-    DEBUG ((DEBUG_INFO, "PS: PSE Present\n"));
   } else {
     DEBUG ((DEBUG_INFO, "PS: No TPM detected\n"));
     return EFI_DEVICE_ERROR;
