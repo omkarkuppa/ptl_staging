@@ -188,18 +188,6 @@
                                                                /* TSCU Frequency Register
                                                                 */
 
-#define R_TRACE_HUB_MEM_GTHSTAT               0x000000d4U      ///< GTH Status Register
-                                                               /* GTH Status Register
-                                                                */
-#define B_TRACE_HUB_MEM_GTHSTAT_IBE4          BIT12
-                                                               /* Input Buffer Empty, Trace Source
-                                                                * 4 (STH). See IBE0 for details.
-                                                                */
-#define B_TRACE_HUB_MEM_GTHSTAT_IBE5          BIT13
-                                                               /* Input Buffer Empty, Trace Source
-                                                                * 5 (DTF Input). See IBE0 for details.
-                                                                */
-
 #define R_TRACE_HUB_MEM_SCRPD0                0x000000e0U      ///< ScratchPad[0] Register
                                                                /* ScratchPad[0] Register
                                                                 */
@@ -246,17 +234,6 @@
 #define V_TRACE_HUB_MEM_SCRPD2_TRACE_INFO     2                // Errors, Warnings and Info only
 #define V_TRACE_HUB_MEM_SCRPD2_TRACE_ALL      3                // Errors, Warnings, Info and Verbose (all debug messages)
 
-#define R_TRACE_HUB_MEM_NDB_CTRL              0x000000f0U      ///< NPK DTF Control Register
-                                                               /* NPK DTF Control Register
-                                                                */
-#define B_TRACE_HUB_MEM_NDB_CTRL_NDB_WAITEMPTY 0x0000ffffU
-                                                               /* NDB Wait for Empty. Specifies the
-                                                                * number of npclk periods the NDB
-                                                                * will wait after a storeEn deassertion
-                                                                * before it considers the DTF to be
-                                                                * empty, and forcibly deassert its
-                                                                * valid and sourceActive outputs.
-                                                                */
 #define V_TRACE_HUB_MEM_STHCAP0_STHMSTR       0x00000100U
 #define V_TRACE_HUB_MEM_STHCAP1_FW_MSTR       0x00000010U
 #define V_TRACE_HUB_MEM_STHCAP1_CHLCNT        0x00000080U

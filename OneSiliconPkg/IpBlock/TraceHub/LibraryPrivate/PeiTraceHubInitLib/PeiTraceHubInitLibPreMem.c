@@ -29,39 +29,6 @@
 #include <InterruptConfig.h>
 
 /**
-  Wait trace source input buffer empty
-
-  @param[in]  TraceHubSbAccessMmio    Pointer to TraceHub mmio sideband interface
-  @param[in]  BitCheck                Specify bit check
-
-  @retval EFI_SUCCESS                 Successfully completed.
-  @retval EFI_TIMEOUT                 timeout while waiting for input buffer empty
-**/
-STATIC
-EFI_STATUS
-WaitEmpty (
-  IN REGISTER_ACCESS                 *TraceHubSbAccessMmio,
-  IN UINT32                           BitCheck
-  )
-{
-  UINTN                            Timeout;
-
-  Timeout = 100;
-  while (Timeout > 0) {
-    if ((TraceHubSbAccessMmio->Read32 (TraceHubSbAccessMmio, R_TRACE_HUB_MEM_GTHSTAT) & BitCheck) == 0) {
-      break;
-    } else {
-      Timeout--;
-    }
-  }
-  if (Timeout > 0) {
-    return EFI_SUCCESS;
-  }
-  DEBUG ((DEBUG_ERROR, "Wait empty timeout 0x08%x for bit 0x%08x\n", TraceHubSbAccessMmio->Read32 (TraceHubSbAccessMmio, R_TRACE_HUB_MEM_GTHSTAT), BitCheck));
-  return EFI_TIMEOUT;
-}
-
-/**
   Disable early trace
 
   Trace is activated by HW default.
@@ -77,17 +44,6 @@ DisableTrace (
   IN UINT64                          TraceHubPciBase
   )
 {
-  // Clear wait-empty
-  TraceHubSbAccessMmio->And32 (TraceHubSbAccessMmio, R_TRACE_HUB_MEM_NDB_CTRL, (UINT32)~(B_TRACE_HUB_MEM_NDB_CTRL_NDB_WAITEMPTY));
-  // Stop STH trace storage
-  TraceHubSbAccessMmio->And32 (TraceHubSbAccessMmio, R_TRACE_HUB_MEM_SCR, (UINT32)~(B_TRACE_HUB_MEM_SCR_STOREENOVRD4));
-  // Wait for trace source input buffer empty
-  WaitEmpty (TraceHubSbAccessMmio, (UINT32) B_TRACE_HUB_MEM_GTHSTAT_IBE4);
-  // Stop DTF trace storage
-  TraceHubSbAccessMmio->And32 (TraceHubSbAccessMmio, R_TRACE_HUB_MEM_SCR, (UINT32)~(B_TRACE_HUB_MEM_SCR_STOREENOVRD5));
-  // Wait for trace source buffer empty
-  WaitEmpty (TraceHubSbAccessMmio, (UINT32) B_TRACE_HUB_MEM_GTHSTAT_IBE5);
-
   PciSegmentOr8 (TraceHubPciBase + R_TRACE_HUB_CFG_NPKDSC, B_TRACE_HUB_CFG_NPKDSC_FLR);
 
   DEBUG ((DEBUG_INFO, "Disable early trace complete\n"));
