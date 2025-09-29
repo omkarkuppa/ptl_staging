@@ -88,7 +88,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED PCH_DEVICE_INTERRUPT_CONFIG mPcdDevIntConfig [] = 
   // {22, 7, PchNoInt, 0},  // CSME: WLAN
   { 21, 0, PchIntA, 27}, // SerialIo I2C Controller #0
   { 21, 1, PchIntB, 28}, // SerialIo I2C Controller #1
-  { 21, 2, PchIntC, 29}, // SerialIo I2C Controller #2
+  { 21, 2, PchIntC, 33}, // SerialIo I2C Controller #2
   { 21, 3, PchIntD, 30}, // SerialIo I2C Controller #3
   { 20, 0, PchIntA, 16}, // USB 3.0 xHCI Controller
   { 20, 1, PchIntB, 17}, // USB Device Controller (OTG)

@@ -54,7 +54,7 @@ Scope (\_SB) {
     // D21
     Package () {0x0015FFFF, 0, 0, 27},
     Package () {0x0015FFFF, 1, 0, 28},
-    Package () {0x0015FFFF, 2, 0, 29},
+    Package () {0x0015FFFF, 2, 0, 33},
     Package () {0x0015FFFF, 3, 0, 30},
     // D20
     Package () {0x0014FFFF, 0, 0, 16},
@@ -111,7 +111,7 @@ Scope (\_SB) {
     // D21
     Package () {0x0015FFFF, 0, 0, 27},
     Package () {0x0015FFFF, 1, 0, 28},
-    Package () {0x0015FFFF, 2, 0, 29},
+    Package () {0x0015FFFF, 2, 0, 33},
     Package () {0x0015FFFF, 3, 0, 30},
     // D20
     Package () {0x0014FFFF, 0, 0, 16},
