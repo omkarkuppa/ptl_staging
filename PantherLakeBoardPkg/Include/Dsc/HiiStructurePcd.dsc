@@ -274,10 +274,6 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerLimit4|0x0                            
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerLimit4Boost|0x0                                          # Power Limit 4 Boost
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerLimit4Lock|0x0                                           # Power Limit 4 Lock
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerLimit4Override|0x0                                       # Power Limit 4 Override
-!if $(TARGET) == "DEBUG"
-gStructPcdTokenSpaceGuid.PcdCpuSetup.PpinEnableMode|0x0                                            # PPIN Enable Mode
-gStructPcdTokenSpaceGuid.PcdCpuSetup.PpinSupport|0x0                                               # PPIN Feature Support
-!endif
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ForcePrDemotion|0x1                                           # FORCEPR Demotion
 gStructPcdTokenSpaceGuid.PcdCpuSetup.VrAlertDemotion|0x1                                           # VrAlert Demotion
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceBspOnly|0x0                                     # Processor Trace Core
