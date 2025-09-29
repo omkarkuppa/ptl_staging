@@ -265,8 +265,8 @@ Name(E001, Package()
   Package ()
   {
     Package (2) {"mipi-sdca-entity-type", 0x31},
-    //Package (2) {"mipi-sdca-control-list", Package() {0x10, 0x11, 0x12, 0x13} },
-    Package (2) {"mipi-sdca-control-list", 0x000D0000},  // Bitmap: 0x10, 0x11, 0x12, 0x13
+    Package (2) {"mipi-sdca-entity-label", "HIDE 101"},
+    Package (2) {"mipi-sdca-control-list", 0x000D0000},  // Bitmap: 0x10, 0x12, 0x13
     Package (2) {"mipi-sdca-hide-related-audio-function-list", Package() {0x1} },   // sending/receiving the messages in this HIDE to/from AF01(UAJ)
     Package (2) {"mipi-sdca-HIDTx-supported-report-ids", Package() {0x11} },   // HIDE 1 TX Routing Table
   },
