@@ -603,7 +603,7 @@
 // Type C retimer TX Compliance Mode
 //
 #string STR_TCSS_RETIMER_TX_COMPLIANCE_PROMPT          #language en-US "Type C retimer TX Compliance Mode"
-#string STR_TCSS_RETIMER_TX_COMPLIANCE_HELP            #language en-US "Default is disable Compliance Mode. Change to enabled for Type C retimer Tx Compliance Mode testing."
+#string STR_TCSS_RETIMER_TX_COMPLIANCE_HELP            #language en-US "Default is disabled. Change to enabled for Type C Retimer Tx Compliance Mode testing. After enabled, it may have impact to device enumeration."
 #string STR_TCSS_RETIMER_PD_0_PROMPT                   #language en-US "Type C Port 0"
 #string STR_TCSS_RETIMER_PD_0_HELP                     #language en-US "Enable/Disable Compliance Mode on Type C Port 0"
 #string STR_TCSS_RETIMER_PD_1_PROMPT                   #language en-US "Type C Port 1"
@@ -612,6 +612,7 @@
 #string STR_TCSS_RETIMER_PD_2_HELP                     #language en-US "Enable/Disable Compliance Mode on Type C Port 2"
 #string STR_TCSS_RETIMER_PD_3_PROMPT                   #language en-US "Type C Port 3"
 #string STR_TCSS_RETIMER_PD_3_HELP                     #language en-US "Enable/Disable Compliance Mode on Type C Port 3"
+#string STR_TCSS_RETIMER_TX_COMPLIANCE_ENABLE          #language en-US "Enabled for EV compliance"
 //
 // USBC: PD Information
 //
