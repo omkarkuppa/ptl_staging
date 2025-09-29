@@ -138,7 +138,7 @@ BuildPchInfoHob (
 
   LpssUartDbg2ControllerIndex = 0;
   for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
-    if ((LpssUartConfig->UartDeviceConfig[Index].Mode == LpssUartCom) && (LpssUartConfig->UartDeviceConfig[Index].DBG2 == TRUE)) {
+    if ((LpssUartConfig->UartDeviceConfig[Index].Mode == LpssUartHidden) && (LpssUartConfig->UartDeviceConfig[Index].DBG2 == TRUE)) {
       LpssUartDbg2ControllerIndex = Index + 1;
       PchInfoHob->LpssDebugUartPg = LpssUartConfig->UartDeviceConfig[Index].DebugPowerGating != 0;
       break;

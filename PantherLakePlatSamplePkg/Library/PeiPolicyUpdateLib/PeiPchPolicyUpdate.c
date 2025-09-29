@@ -638,7 +638,7 @@ UpdateLpssUartConfig (
     //
     // This UART controller will be used as OS debug port
     //
-    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoUartMode[SetupVariables->OsDebugPort - 1], LpssUartConfig->UartDeviceConfig[SetupVariables->OsDebugPort - 1].Mode, LpssUartCom);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoUartMode[SetupVariables->OsDebugPort - 1], LpssUartConfig->UartDeviceConfig[SetupVariables->OsDebugPort - 1].Mode, LpssUartHidden);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoUartDbg2[SetupVariables->OsDebugPort - 1], LpssUartConfig->UartDeviceConfig[SetupVariables->OsDebugPort - 1].DBG2, TRUE);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoUartPgDbg2[SetupVariables->OsDebugPort - 1], LpssUartConfig->UartDeviceConfig[SetupVariables->OsDebugPort - 1].DebugPowerGating, PchSetup->SerialIoDebugUartPowerGating);
   }

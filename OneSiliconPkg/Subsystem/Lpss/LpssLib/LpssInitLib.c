@@ -152,11 +152,10 @@ LpssComModeEnable (
 {
   DEBUG ((DEBUG_INFO, "%a\n", __FUNCTION__));
 
-  if (LpssDev->Mode != ModeCom) {
+  if (LpssDev->Mode != ModeCom && LpssDev->Mode != ModeAcpi) {
     DEBUG ((DEBUG_ERROR, "ERROR: Invalid COM Mode for %a device!\n", LpssDev->Name));
     return;
   }
-
   PcrAccess->Or32 (PcrAccess, R_LPSS_PCR_GEN_PVT_HIGH_REGRW3, (V_LPSS_PCR_GEN_PVT_HIGH_REGRW3_UART_BYTE_ADDR_EN << LpssDev->InterfaceIndex));
 }
 
@@ -315,11 +314,6 @@ LpssInit (
         LpssInterruptSet (LpssSubsystem->PcrAccess, Dev);
         break;
       case ModeAcpi:
-        LpssEnablePowerAndClockGating (LpssSubsystem->PcrAccess);
-        LpssBar1Enable (LpssSubsystem->PcrAccess, Dev);
-        LpssAcpiModeEnable (LpssSubsystem->PcrAccess, Dev);
-        LpssInterruptSet (LpssSubsystem->PcrAccess, Dev);
-        break;
       case ModeCom:
         LpssEnablePowerAndClockGating (LpssSubsystem->PcrAccess);
         LpssBar1Enable (LpssSubsystem->PcrAccess, Dev);
@@ -370,42 +364,42 @@ LpssFabricFunctionDisable (
   }
 
   //
-  // Step 1: Disable or Hide all requested functions except function zero
+  // Step 1: Hide all requested functions
   //
   Dev = LpssSubsystem->Devices;
   while (Dev != NULL) {
-    if (Dev->Mode == ModeDisabled || Dev->Mode == ModeAcpi) {
-      if (Dev->PciFun == 0) {
-        Dev = Dev->Next;
-        continue;
-      }
-      if (Dev->PsfDisable != NULL && Dev->Mode == ModeDisabled) {
-        DEBUG ((DEBUG_INFO, "Disable LPSS %a Device in PSF\n", Dev->Name));
-        Dev->PsfDisable (Dev->InterfaceIndex);
-      }
-      if (Dev->PsfPciCfgHide != NULL && Dev->Mode == ModeAcpi) {
+    if (Dev->Mode == ModeAcpi || Dev->Mode == ModeCom) {
+      if (Dev->PsfPciCfgHide != NULL) {
         DEBUG ((DEBUG_INFO, "Hide PCI CFG LPSS %a Device in PSF\n", Dev->Name));
         Dev->PsfPciCfgHide (Dev->InterfaceIndex);
       }
     }
+  //
+  // Step 2: Disable all requested functions except function zero
+  //
+    if (Dev->Mode == ModeDisabled) {
+      if (Dev->PciFun == 0) {
+        Dev = Dev->Next;
+        continue;
+      }
+      if (Dev->PsfDisable != NULL ) {
+        DEBUG ((DEBUG_INFO, "Disable LPSS %a Device in PSF\n", Dev->Name));
+        Dev->PsfDisable (Dev->InterfaceIndex);
+      }
+    }
     Dev = Dev->Next;
   }
-
   //
-  // Step 2: Disable or Hide all requested functions zero
+  // Step 3: Disable function zero
   //
   Dev = LpssSubsystem->Devices;
   while (Dev != NULL) {
-    if (Dev->Mode == ModeDisabled || Dev->Mode == ModeAcpi) {
+    if (Dev->Mode == ModeDisabled) {
       if (Dev->PciFun == 0) {
         if (LpssHigherFunctionsEnabled (PciSegment, PciBus, Dev->PciDev) == FALSE) {
-          if (Dev->PsfDisable != NULL && Dev->Mode == ModeDisabled) {
+          if (Dev->PsfDisable != NULL) {
             DEBUG ((DEBUG_INFO, "Disable LPSS %a Device in PSF\n", Dev->Name));
             Dev->PsfDisable (Dev->InterfaceIndex);
-          }
-          if (Dev->PsfPciCfgHide != NULL && Dev->Mode == ModeAcpi) {
-            DEBUG ((DEBUG_INFO, "Hide PCI CFG LPSS %a Device in PSF\n", Dev->Name));
-            Dev->PsfPciCfgHide (Dev->InterfaceIndex);
           }
         } else {
           // Don't disable the device in PSF if thare are other devices in multi-function PCIe device
