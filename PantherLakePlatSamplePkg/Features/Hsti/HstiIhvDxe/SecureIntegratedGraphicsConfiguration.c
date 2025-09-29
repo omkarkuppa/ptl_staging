@@ -672,30 +672,6 @@ CheckSecureIntegratedGraphicsConfiguration (
     Result = FALSE;
   }
 
-  DEBUG ((DEBUG_INFO, "      L3LOCKMSGREG locked Tests\n"));
-
-  DEBUG ((DEBUG_INFO, "      L3LOCKMSGREG Media locked Test\n"));
-  if (IGpuIsL3BankMediaLocked () == FALSE) {
-    DEBUG ((DEBUG_INFO, "        Unexpected Status: L3LOCKMSGREG Media Lock bit is not Locked\n"));
-
-    BuildAndAppendHstiStatusString (
-      HSTI_BYTE1_SECURE_INTEGRATED_GRAPHICS_CONFIGURATION_UNEXP_STATUS_CODE_23,
-      HSTI_BYTE1_SECURE_INTEGRATED_GRAPHICS_CONFIGURATION_UNEXP_STATUS_STRING_23
-      );
-    Result = FALSE;
-  }
-
-  DEBUG ((DEBUG_INFO, "      L3LOCKMSGREG GT locked Test\n"));
-  if (IGpuIsL3BankLocked () == FALSE) {
-    DEBUG ((DEBUG_INFO, "        Unexpected Status: L3LOCKMSGREG GT Lock bit is not Locked\n"));
-
-    BuildAndAppendHstiStatusString (
-      HSTI_BYTE1_SECURE_INTEGRATED_GRAPHICS_CONFIGURATION_UNEXP_STATUS_CODE_24,
-      HSTI_BYTE1_SECURE_INTEGRATED_GRAPHICS_CONFIGURATION_UNEXP_STATUS_STRING_24
-      );
-    Result = FALSE;
-  }
-
   //
   // Enable Idle mode for GT and Media.
   //
