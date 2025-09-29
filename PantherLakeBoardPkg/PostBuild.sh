@@ -302,28 +302,16 @@ if [ ! -d "$WORKSPACE/RomImages" ]; then
 fi
 
 echo --- Analyze ASL runtime behavior using acpiexec ---
-cd $BUILD_X64
+cd $WORKSPACE/$BUILD_X64
 if [ ! -d AslAnalyze ]; then
   mkdir -p AslAnalyze
-fi
-if [ ! -d AslAnalyze/TglU  ]; then
-  mkdir -p AslAnalyze/TglU
-fi
-if [ ! -d AslAnalyze/TglY ]; then
-  mkdir -p AslAnalyze/TglY
 fi
 
 cd AslAnalyze
 find ../ -name '*.aml' -exec cp -f '{}' . \;
-cd TglU
-mv -f ../*TglU*.aml .
-mv -f ../Dptf.aml .
-cd ../TglY
-mv -f ../*TglY*.aml .
 cd ..
 if [ "$COMPILER" != "XCODE" ]; then
-echo q | acpiexec -di -l *.aml TglU/*.aml > $WORKSPACE/$BUILD_DIR/AslAnalyzeTglURvp.log
-echo q | acpiexec -di -l *.aml TglY/*.aml > $WORKSPACE/$BUILD_DIR/AslAnalyzeTglYRvp.log
+echo q | acpiexec -di -l *.aml > $WORKSPACE/$BUILD_DIR/AslAnalyze.log
 
 echo --- ASL analysis completed ---
 fi
