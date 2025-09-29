@@ -454,6 +454,7 @@
   gUsb4FeaturePkgTokenSpaceGuid.PcdPchDTbtRpSupport|0x00000000
 
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable|FALSE
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbPdBridgeSupport|FALSE
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber|0x04
 
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperFeatureSupport|TRUE

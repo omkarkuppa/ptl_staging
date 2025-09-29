@@ -380,9 +380,6 @@
   # UsbC Retimer Capsule Debug Progress Code Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
 
-  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
-  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
-
   #
   # *** IMPORTANT ***
   #   For all of the USB ports or native display connector over TCSS lanes on platform.

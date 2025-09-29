@@ -1529,7 +1529,9 @@ $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
 
 !if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable == TRUE
   $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCRetimerSupport/UsbCRetimerSupport.inf
-  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
+  !if (gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbPdBridgeSupport == TRUE)
+    $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
+  !endif
 !endif
 
 #
