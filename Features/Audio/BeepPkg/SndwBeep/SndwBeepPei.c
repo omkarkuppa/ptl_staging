@@ -32,6 +32,62 @@
 #include "SndwBeepPrivateData.h"
 #include "SndwBeepCodecs.h"
 
+EFI_STATUS
+EFIAPI
+UpdateSndwBeepOnMemoryDiscovered (
+  IN EFI_PEI_SERVICES            **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR   *NotifyDescriptor,
+  IN VOID                        *Ppi
+  );
+
+EFI_PEI_NOTIFY_DESCRIPTOR  mSndwBeepOnMemoryDiscoveredCallback = {
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gEfiPeiMemoryDiscoveredPpiGuid,
+  UpdateSndwBeepOnMemoryDiscovered
+};
+
+/**
+  This function is called via PEI notification when memory is discovered. It locates the BeepPpi
+  and SoundWire Access PPI, then updates the SoundWire Beep context with the new SoundWire Access pointer.
+
+  @param[in] PeiServices          Pointer to the PEI services table
+  @param[in] NotifyDescriptor     Pointer to the notification descriptor
+  @param[in] Ppi                  Pointer to the PPI that was installed
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_NOT_FOUND           Required PPIs could not be located
+**/
+EFI_STATUS
+EFIAPI
+UpdateSndwBeepOnMemoryDiscovered (
+  IN EFI_PEI_SERVICES            **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR   *NotifyDescriptor,
+  IN VOID                        *Ppi
+  )
+{
+  EFI_STATUS          Status;
+  SNDW_BEEP_CONTEXT   *SndwBeepContext;
+  BEEP_PPI            *BeepPpi;
+
+  DEBUG ((DEBUG_INFO, "%a () Start.\n", __FUNCTION__));
+
+  Status = PeiServicesLocatePpi (&gBeepPpiGuid, 0, NULL, (VOID **) &BeepPpi);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a (): Failed to locate PPI - %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  SndwBeepContext = SNDW_BEEP_CONTEXT_FROM_SNDW_BEEP_PPI_PROTOCOL (BeepPpi);
+
+  Status = PeiServicesLocatePpi (&gSndwAccessPpiGuid, 0, NULL, (VOID **) &SndwBeepContext->SndwAccessApi);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a (): Failed to locate PPI - %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  return EFI_SUCCESS;
+}
+
 /**
   This function enables Sndw interface.
 
@@ -165,6 +221,12 @@ PeiSndwBeepEntryPoint (
     FreePool (SndwBeepContext);
     FreePool (SndwBeepPpi);
     return EFI_OUT_OF_RESOURCES;
+  }
+
+  Status = PeiServicesNotifyPpi (&mSndwBeepOnMemoryDiscoveredCallback);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a(): Failed to install notification - %r\n", __FUNCTION__, Status));
+    return Status;
   }
 
   DEBUG ((DEBUG_INFO, "%a () - End. Status = %r.\n", __FUNCTION__, Status));

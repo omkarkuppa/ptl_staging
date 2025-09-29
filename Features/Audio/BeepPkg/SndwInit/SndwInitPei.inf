@@ -46,6 +46,7 @@
 [Ppis]
   gSndwAccessPpiGuid               ## PRODUCES
   gEdkiiPeiPciDevicePpiGuid        ## CONSUMES
+  gEfiPeiMemoryDiscoveredPpiGuid   ## CONSUMES
 
 [Sources]
   SndwInitPei.c

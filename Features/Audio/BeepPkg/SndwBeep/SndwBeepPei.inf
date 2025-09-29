@@ -42,6 +42,7 @@
 [Ppis]
   gSndwAccessPpiGuid                                      ## CONSUMES
   gBeepPpiGuid                                            ## PRODUCES
+  gEfiPeiMemoryDiscoveredPpiGuid                          ## CONSUMES
 
 [Packages]
   MdePkg/MdePkg.dec

@@ -40,11 +40,75 @@ HdaPciDevicePpiInstallationCallback (
   IN VOID                        *Ppi
   );
 
+EFI_STATUS
+EFIAPI
+UpdateSndwAccessOnMemoryDiscovered (
+  IN EFI_PEI_SERVICES            **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR   *NotifyDescriptor,
+  IN VOID                        *Ppi
+  );
+
 EFI_PEI_NOTIFY_DESCRIPTOR  mPciDevicePpiNotify = {
   (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEdkiiPeiPciDevicePpiGuid,
   HdaPciDevicePpiInstallationCallback
 };
+
+EFI_PEI_NOTIFY_DESCRIPTOR  mSndwAccessOnMemoryDiscoveredCallback = {
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gEfiPeiMemoryDiscoveredPpiGuid,
+  UpdateSndwAccessOnMemoryDiscovered
+};
+
+/**
+  This function is triggered as a PEI notification callback when memory is discovered.
+  It locates the SndW Access PPI, then searches for compatible HDA PCI devices.
+  When a compatible HDA device is found, it updates the SndW Access Context with the new
+  ACE PCI IO PPI pointer.
+
+  @param[in] PeiServices          Pointer to the PEI Services Table.
+  @param[in] NotifyDescriptor     Pointer to the notification descriptor.
+  @param[in] Ppi                  Pointer to the PPI that was installed.
+
+  @retval EFI_SUCCESS             ACE PCI IO PPI was found and SndW access context updated.
+  @retval EFI_NOT_FOUND           The SndW Access PPI could not be located.
+  @retval Others                  Error status from PEI Services or device access.
+**/
+EFI_STATUS
+EFIAPI
+UpdateSndwAccessOnMemoryDiscovered (
+  IN EFI_PEI_SERVICES            **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR   *NotifyDescriptor,
+  IN VOID                        *Ppi
+  )
+{
+  EFI_STATUS              Status;
+  EDKII_PCI_DEVICE_PPI    *PciDevice;
+  SNDW_ACCESS_CONTEXT     *SndwAccessContext;
+  SNDW_ACCESS             *SndwAccess;
+  UINTN                   Index = 0;
+
+  DEBUG ((DEBUG_INFO, "%a () Start\n", __FUNCTION__));
+
+  Status = PeiServicesLocatePpi (&gSndwAccessPpiGuid, 0, NULL, (VOID **) &SndwAccess);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a(): Failed to locate PPI - %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+  SndwAccessContext = SNDW_ACCESS_CONTEXT_FROM_SNDW_ACCESS_PPI_PROTOCOL (SndwAccess);
+
+  Status = PeiServicesLocatePpi (&gEdkiiPeiPciDevicePpiGuid, Index++, NULL, (VOID **) &PciDevice);
+  while (Status == EFI_SUCCESS) {
+    if (IsHdaDeviceSupported (&PciDevice->PciIo)) {
+      DEBUG ((DEBUG_INFO, "HDA PCI Device found\n"));
+      SndwAccessContext->PciIo = &PciDevice->PciIo;
+      return EFI_SUCCESS;
+    }
+    Status = PeiServicesLocatePpi (&gEdkiiPeiPciDevicePpiGuid, Index++, NULL, (VOID **) &PciDevice);
+  }
+
+  return Status;
+}
 
 /**
   Checks if a newly installed PPI points to a valid HDA device and installs a HDA_PPI for it.
@@ -139,6 +203,7 @@ PeiSndwInitEntryPoint (
   DEBUG ((DEBUG_INFO, "%a - Start ()\n", __FUNCTION__));
 
   PeiServicesNotifyPpi (&mPciDevicePpiNotify);
+  PeiServicesNotifyPpi (&mSndwAccessOnMemoryDiscoveredCallback);
 
   DEBUG ((DEBUG_INFO, "%a - End ()\n", __FUNCTION__));
 
