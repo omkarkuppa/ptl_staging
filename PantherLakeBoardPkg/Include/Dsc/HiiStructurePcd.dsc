@@ -281,10 +281,10 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceEnable|0x0                   
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceMemSize|0xff                                    # Processor trace memory allocation
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceOutputScheme|0x0                                # Processor Trace OutPut Scheme
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceTimingPacket|0x0                                # Processor Trace Timing Packet
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[0]|0x50                                          # PS1 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[1]|0x50                                          # PS1 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[2]|0x50                                          # PS1 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[3]|0x50                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[0]|0x3C                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[1]|0x3C                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[2]|0x3C                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[3]|0x3C                                          # PS1 Current Threshold
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[0]|0x14                                          # PS2 Current Threshold
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[1]|0x14                                          # PS2 Current Threshold
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[2]|0x14                                          # PS2 Current Threshold
