@@ -128,7 +128,7 @@ Device (BAT1) {
       Store (And (ECRD (RefOf (B1ST)), 0x07), Index (PKG1, 0))
       If (And (ECRD (RefOf (B1ST)), 0x01)) {
         // Get discharge rate
-        If (CondRefOf (_SB.IETM.BAT1)) {
+        If (CondRefOf (\_SB.IETM.BAT1)) {
           Store(\_SB.IETM.BAT1.GPDE(), Local1)
         } Else {
           Store(0, Local1)
