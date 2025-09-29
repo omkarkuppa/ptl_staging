@@ -29,27 +29,7 @@
 #endif
 
 #include <ITbtInfoHob.h>
-#include <Library/P2SbSocLib.h>
-#include <PcdSbPortIds.h>
-
-/**
-  Get IOM Reg Bar Base
-
-  @retval          UINT64        IOM Reg Bar Base
-**/
-UINT64
-GetIomRegBase (
-  VOID
-  )
-{
-  P2SB_PORT_16_ID                 P2SBPid;
-  P2SB_CONTROLLER                 P2SbController;
-
-  P2SBPid.Pid16bit = PTL_SID_F3_PID_TC_IOM;
-  PtlPcdGetP2SbController (&P2SbController, P2SBPid);
-
-  return (P2SbController.Mmio | (P2SBPid.PortId.LocalPid << 16));
-}
+#include <Library/TcssInfoLib.h>
 
 VOID
 PtlTcssCreateTbtHob (
@@ -269,7 +249,7 @@ PtlTcssInitEndOfPei (
   TcssHob->TcssData.MgImrStatus.RegValue        = TcssInst.Info->MgImrStatus.RegValue;
   TcssHob->TcssData.TcssIomVccSt                = (UINT8)TcssInst.IomInst->IomConfig.VccSt;
   TcssHob->TcssData.DeepstTcState               = (UINT8)TcssInst.Info->DeepStTcState;
-  TcssHob->TcssData.IomBase                     = GetIomRegBase ();
+  TcssHob->TcssData.IomBase                     = TcssGetIomPcrMmioBase ();
 
   for (Index = 0; Index < MAX_TCSS_USB3_PORTS; Index++) {
     //

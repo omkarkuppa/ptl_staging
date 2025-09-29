@@ -52,6 +52,7 @@ PtlPcdTcssPmcLib
 RngLib
 PeiServicesLib
 PtlPcdMinimalGpioNativeLib
+TcssInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec

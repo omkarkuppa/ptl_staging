@@ -1,5 +1,5 @@
 /** @file
-  Source file for Tcss Info Lib.
+  TCSS info helper services.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -25,6 +25,9 @@
 #include <Register/HostDmaRegs.h>
 #include <Register/CpuUsbRegs.h>
 #include <Register/ItbtPcieRegs.h>
+#include <PcdSbPortIds.h>
+#include <Library/P2SbSocLib.h>
+#include <Library/P2sbPrivateLib.h>
 
 /**
   GetTbtDmaBusNumber: Get TbtDma Bus Number
@@ -32,6 +35,7 @@
   @retval PCI bus number for TbtDma
 **/
 UINT64
+EFIAPI
 GetTbtDmaBusNumber (
   VOID
   )
@@ -45,6 +49,7 @@ GetTbtDmaBusNumber (
   @retval PCI dev number for TbtDma
 **/
 UINT64
+EFIAPI
 GetTbtDmaDevNumber (
   VOID
   )
@@ -58,6 +63,7 @@ GetTbtDmaDevNumber (
   @retval PCI fun number for TbtDma0
 **/
 UINT64
+EFIAPI
 GetTbtDma0FuncNumber (
   VOID
   )
@@ -71,6 +77,7 @@ GetTbtDma0FuncNumber (
   @retval PCI fun number for TbtDma1
 **/
 UINT64
+EFIAPI
 GetTbtDma1FuncNumber (
   VOID
   )
@@ -84,6 +91,7 @@ GetTbtDma1FuncNumber (
   @retval PCI bus number for TcssXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciBusNumber (
   VOID
   )
@@ -97,6 +105,7 @@ GetTcssXhciBusNumber (
   @retval PCI dev number for TcssXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciDevNumber (
   VOID
   )
@@ -110,6 +119,7 @@ GetTcssXhciDevNumber (
   @retval PCI fun number for TcssXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciFuncNumber (
   VOID
   )
@@ -123,6 +133,7 @@ GetTcssXhciFuncNumber (
   @retval ITbt dev number for TcssXhci
 **/
 UINT64
+EFIAPI
 GetITbtPcieDevNumber (
   VOID
   )
@@ -137,11 +148,12 @@ GetITbtPcieDevNumber (
   @retval FALSE  IOM_TYPEC_SW_CONFIGURATION_1 is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCSwCfg1Locked (
   VOID
   )
 {
-  TCSS_DATA_HOB                    *TcssHob;
+  TCSS_DATA_HOB *TcssHob;
 
   TcssHob = (TCSS_DATA_HOB *) GetFirstGuidHob (&gTcssHobGuid);
   if (TcssHob == NULL) {
@@ -157,11 +169,12 @@ IsTcssTypeCSwCfg1Locked (
   @retval FALSE  IOM_TYPEC_SW_CONFIGURATION_3 is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCSwCfg3Locked (
   VOID
   )
 {
-  TCSS_DATA_HOB                    *TcssHob;
+  TCSS_DATA_HOB *TcssHob;
 
   TcssHob = (TCSS_DATA_HOB *) GetFirstGuidHob (&gTcssHobGuid);
   if (TcssHob == NULL) {
@@ -177,11 +190,12 @@ IsTcssTypeCSwCfg3Locked (
   @retval FALSE  IOM_TYPEC_SW_CONFIGURATION_4 is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCSwCfg4Locked (
   VOID
   )
 {
-  TCSS_DATA_HOB                    *TcssHob;
+  TCSS_DATA_HOB *TcssHob;
 
   TcssHob = (TCSS_DATA_HOB *) GetFirstGuidHob (&gTcssHobGuid);
   if (TcssHob == NULL) {
@@ -197,15 +211,39 @@ IsTcssTypeCSwCfg4Locked (
   @retval FALSE  IOM_PCR_IOM_USB4HR_MISC_CONFIG_LOCK is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCMiscCfgLocked (
   VOID
   )
 {
-  TCSS_DATA_HOB                    *TcssHob;
+  TCSS_DATA_HOB *TcssHob;
 
   TcssHob = (TCSS_DATA_HOB *) GetFirstGuidHob (&gTcssHobGuid);
   if (TcssHob == NULL) {
     return FALSE;
   }
   return !!(TcssHob->TcssData.MiscConfigurationLock);
+}
+
+/**
+  The function returns TCSS IOM PCR MMIO base
+
+  @retval IOM PCR MMIO base
+**/
+UINT64
+EFIAPI
+TcssGetIomPcrMmioBase (
+  VOID
+  )
+{
+  P2SB_PORT_16_ID P2sbPid;
+  P2SB_CONTROLLER P2sbController;
+  UINTN           IomPcrBase;
+
+  // WCL_SID_F3_PID_TC_IOM is same as PTL_SID_F3_PID_TC_IOM(0xF380)
+  P2sbPid.Pid16bit = PTL_SID_F3_PID_TC_IOM;
+  PtlPcdGetP2SbController (&P2sbController, P2sbPid);
+  IomPcrBase = P2sbGetMmioBase (&P2sbController, P2sbPid.PortId.LocalPid);
+
+  return IomPcrBase;
 }

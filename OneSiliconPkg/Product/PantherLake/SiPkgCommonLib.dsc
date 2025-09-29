@@ -92,7 +92,7 @@ SecCpuLib|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/SecCpuLib/SecCpuLib.inf
 #
  ItbtPcieRpLib|$(PLATFORM_SI_PACKAGE)/Subsystem/Tcss/PeiDxeSmmItbtPcieRpLib/PeiDxeSmmItbtPcieRpLib.inf
  CpuRegbarAccessLib|$(PLATFORM_SI_PACKAGE)/IpBlock/P2sb/Library/PeiDxeSmmCpuRegbarAccessLib/PeiDxeSmmCpuRegbarAccessLib.inf
- TcssInfoLib|$(PLATFORM_SI_PACKAGE)/Subsystem/Tcss/TcssInfoLib/TcssInfoLib.inf
+ TcssInfoLib|$(SILICON_PRODUCT_PATH)/Library/TcssInfoLib/TcssInfoLib.inf
 
  SecHostBridgeLib|$(PLATFORM_SI_PACKAGE)/IpBlock/HostBridge/Library/SecHostBridgeLib/SecHostBridgeLib.inf
  HostBridgeDataLib|$(PLATFORM_SI_PACKAGE)/IpBlock/HostBridge/Library/HostBridgeDataLib/HostBridgeDataLib.inf

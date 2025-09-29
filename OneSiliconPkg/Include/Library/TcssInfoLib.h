@@ -1,5 +1,5 @@
 /** @file
-  Header file for SmmTcss Private Info Lib implementation.
+  TCSS info helper services.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -19,13 +19,10 @@
 @par Specification Reference:
 **/
 
-#ifndef _SMM_TCSS_INFO_LIB_H_
-#define _SMM_TCSS_INFO_LIB_H_
+#ifndef __TCSS_INFO_LIB_H__
+#define __TCSS_INFO_LIB_H__
 
 #include <Uefi.h>
-#include <Library/BaseLib.h>
-#include <Library/DebugLib.h>
-#include <Library/IoLib.h>
 
 /**
   GetTbtDmaBusNumber: Get TbtDma Bus Number
@@ -33,6 +30,7 @@
   @retval PCI bus number for TbtDma
 **/
 UINT64
+EFIAPI
 GetTbtDmaBusNumber (
   VOID
   );
@@ -43,6 +41,7 @@ GetTbtDmaBusNumber (
   @retval PCI dev number for TbtDma
 **/
 UINT64
+EFIAPI
 GetTbtDmaDevNumber (
   VOID
   );
@@ -53,6 +52,7 @@ GetTbtDmaDevNumber (
   @retval PCI fun number for TbtDma0
 **/
 UINT64
+EFIAPI
 GetTbtDma0FuncNumber (
   VOID
   );
@@ -63,6 +63,7 @@ GetTbtDma0FuncNumber (
   @retval PCI fun number for TbtDma1
 **/
 UINT64
+EFIAPI
 GetTbtDma1FuncNumber (
   VOID
   );
@@ -73,6 +74,7 @@ GetTbtDma1FuncNumber (
   @retval PCI bus number for CpuXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciBusNumber (
   VOID
   );
@@ -83,6 +85,7 @@ GetTcssXhciBusNumber (
   @retval PCI dev number for CpuXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciDevNumber (
   VOID
   );
@@ -93,6 +96,7 @@ GetTcssXhciDevNumber (
   @retval PCI fun number for CpuXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciFuncNumber (
   VOID
   );
@@ -103,6 +107,7 @@ GetTcssXhciFuncNumber (
   @retval ITbt PCIe dev number for ITbt PCIe
 **/
 UINT64
+EFIAPI
 GetITbtPcieDevNumber (
   VOID
   );
@@ -114,6 +119,7 @@ GetITbtPcieDevNumber (
   @retval FALSE  IOM_TYPEC_SW_CONFIGURATION_1 is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCSwCfg1Locked (
   VOID
   );
@@ -125,6 +131,7 @@ IsTcssTypeCSwCfg1Locked (
   @retval FALSE  IOM_TYPEC_SW_CONFIGURATION_3 is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCSwCfg3Locked (
   VOID
   );
@@ -136,6 +143,7 @@ IsTcssTypeCSwCfg3Locked (
   @retval FALSE  IOM_TYPEC_SW_CONFIGURATION_4 is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCSwCfg4Locked (
   VOID
   );
@@ -147,6 +155,7 @@ IsTcssTypeCSwCfg4Locked (
   @retval FALSE  IOM_PCR_IOM_USB4HR_MISC_CONFIG_LOCK is not locked
 **/
 BOOLEAN
+EFIAPI
 IsTcssTypeCMiscCfgLocked (
   VOID
   );
@@ -157,6 +166,7 @@ IsTcssTypeCMiscCfgLocked (
   @retval PCI bus number for TcssXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciBusNumber (
   VOID
   );
@@ -167,6 +177,7 @@ GetTcssXhciBusNumber (
   @retval PCI dev number for TcssXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciDevNumber (
   VOID
   );
@@ -177,8 +188,20 @@ GetTcssXhciDevNumber (
   @retval PCI fun number for TcssXhci
 **/
 UINT64
+EFIAPI
 GetTcssXhciFuncNumber (
   VOID
   );
 
-#endif
+/**
+  The function returns TCSS IOM PCR MMIO base
+
+  @retval IOM PCR MMIO base
+**/
+UINT64
+EFIAPI
+TcssGetIomPcrMmioBase (
+  VOID
+  );
+
+#endif // __TCSS_INFO_LIB_H__

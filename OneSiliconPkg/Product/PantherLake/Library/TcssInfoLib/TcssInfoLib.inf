@@ -1,8 +1,5 @@
 ## @file
-# Tcss information library.
-#
-# All function in this library is available for PEI, DXE, and SMM,
-# But do not support UEFI RUNTIME environment call.
+#  TCSS information library class.
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -23,7 +20,6 @@
 #
 ##
 
-
 [Defines]
 INF_VERSION = 0x00010017
 BASE_NAME = TcssInfoLib
@@ -33,12 +29,9 @@ MODULE_TYPE = BASE
 LIBRARY_CLASS = TcssInfoLib
 
 [LibraryClasses]
-BaseLib
-IoLib
-DebugLib
-BaseMemoryLib
-PciSegmentLib
 HobLib
+P2SbSocLib
+P2sbPrivateLib
 
 [Packages]
 MdePkg/MdePkg.dec
