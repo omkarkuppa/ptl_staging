@@ -1044,6 +1044,8 @@ TraceHubDebugLib|Include/Library/TraceHubDebugLib.h
 BootMediaLib|Include/Library/BootMediaLib.h
 PeiSiSsidLib|IncludePrivate/Library/PeiSiSsidLib.h
 CacheAsRamLib|Include/Library/CacheAsRamLib.h
+GpioPwmLib|Include/Library/GpioPwmLib.h
+GpioV2AccessLib|Include/Library/GpioV2AccessLib.h
 MmRuntimeUpdateLib|Include/Library/MmRuntimeUpdateLib.h
 SystemTopologyLib|Include/Library/SystemTopologyLib.h
 RegisterAddressTranslationLib|Include/Library/RegisterAddressTranslationLib.h
