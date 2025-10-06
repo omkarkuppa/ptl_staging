@@ -80,6 +80,7 @@
   MeInfoLib|OneSiliconPkg/IpBlock/Me/Library/MeInfoLibNull/MeInfoLibNull.inf
   MeUtilsLib|OneSiliconPkg/IpBlock/Me/Library/PeiDxeSmmMeUtilsLib/DxeSmmMeUtilsLib.inf
   MeFwStsLib|OneSiliconPkg/IpBlock/Me/Library/BaseMeFwStsLib/BaseMeFwStsLib.inf
+  BpmAccessLib|OneSiliconPkg/Library/BaseBpmAccessLib/BaseBpmAccessLib.inf
 
 [LibraryClasses.common]
   RegisterFilterLib|MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf

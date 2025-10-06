@@ -30,6 +30,33 @@
 #include <Library/PmcPrivateLib.h>
 #include <Library/SiScheduleResetLib.h>
 #include <Library/PcdInfoLib.h>
+#include <Library/PeiMeLib.h>
+#include <BupMsgs.h>
+
+/**
+Send the HECI command to CSE for UFS PHY binary loading.
+This function can be easily extended to load multiple binary IDs
+by adding them to the BinaryIdsList array.
+**/
+VOID
+ScsUfsLoadUfsPhyBinary (
+  VOID
+  )
+{
+  EFI_STATUS Status;
+  UINT32     BinaryIdsList[] = {UfsPhyBinaryId};
+
+  DEBUG ((DEBUG_INFO, "%a(): Start\n", __FUNCTION__));
+
+  Status = PeiHeciLoadBinaryMsg(BinaryIdsList[0]);
+  if (EFI_ERROR(Status)) {
+    DEBUG ((DEBUG_ERROR, "%a(): PeiHeciLoadBinaryMsg failed, Status = %r\n", __FUNCTION__, Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "%a(): PeiHeciLoadBinaryMsg succeeded for Binary ID 0x%X\n", __FUNCTION__, BinaryIdsList[0]));
+  }
+
+  DEBUG ((DEBUG_INFO, "%a(): End\n", __FUNCTION__));
+}
 
 /**
   This function checks if SCS UFS device is Fuse disabled or not.

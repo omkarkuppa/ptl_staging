@@ -178,6 +178,8 @@ FspUpdatePcieRpPreMemPolicy (
     PcieRpPreMemConfig->PcieClock[Index].Usage = FspmUpd->FspmConfig.PcieClkSrcUsage[Index];
     PcieRpPreMemConfig->PcieClock[Index].ClkReq = FspmUpd->FspmConfig.PcieClkSrcClkReq[Index];
   }
+
+  PcieRpPreMemConfig->SkipExtGfxScan = FspmUpd->FspmConfig.SkipExtGfxScan;
   PcieRpPreMemConfig->PcieResizableBarSupport = FspmUpd->FspmConfig.PcieResizableBarSupport;
 }
 

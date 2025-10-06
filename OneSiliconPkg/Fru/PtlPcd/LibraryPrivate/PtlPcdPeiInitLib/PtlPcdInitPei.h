@@ -240,6 +240,13 @@ PtlPcdUsbInit (
   IN  SI_POLICY_PPI  *SiPolicy
   );
 
+/**
+Send the HECI command to CSE for UFS PHY binary loading
+**/
+VOID
+ScsUfsLoadUfsPhyBinary (
+  VOID
+  );
 
 /**
   Intialize SCS subsystem.

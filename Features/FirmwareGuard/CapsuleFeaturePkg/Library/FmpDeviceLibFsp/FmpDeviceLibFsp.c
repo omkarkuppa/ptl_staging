@@ -34,6 +34,7 @@
 #include <Library/ResiliencySupportLib.h>
 #include <Library/CapsuleUpdateResetLib.h>
 #include <Library/PlatformFspUpdateHookLib.h>
+#include <Library/BaseBpmAccessLib.h>
 
 /**
   Check if current BIOS supports Fsp signed by checking FBM header.
@@ -44,18 +45,6 @@
 **/
 BOOLEAN
 IsBiosSupportFspSigned (
-  VOID
-  );
-
-/**
-  Check if this is VerifiedBoot
-
-  @retval TRUE   This is VerifiedBoot
-  @retval FALSE  This is NOT VerifiedBoot
-
-**/
-BOOLEAN
-IsVerifiedBoot (
   VOID
   );
 

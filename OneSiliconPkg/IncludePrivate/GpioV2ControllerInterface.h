@@ -121,7 +121,7 @@ struct _GPIOV2_SERVICES_PRIVATE {
 typedef struct {
   UINT32                        Signature;
   GPIOV2_SERVICES               Public;
-  GPIOV2_PWM                    *Pwm;
+  GPIOV2_PWM                    Pwm;
   GPIOV2_SERVICES_PRIVATE       Private;
 } GPIOV2_INTERFACE;
 

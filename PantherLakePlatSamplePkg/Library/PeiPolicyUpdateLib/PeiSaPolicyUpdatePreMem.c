@@ -701,6 +701,7 @@ UpdatePeiSaPolicyPreMem (
     }
   }
 
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RetrainToWorkingChannel, MemConfigNoCrc->RetrainToWorkingChannel, SaSetup.RetrainToWorkingChannel);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMc0Ch0, MemConfig->ExternalInputs.DisableChannel[0][0], SaSetup.DisableMc0Ch0);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMc0Ch1, MemConfig->ExternalInputs.DisableChannel[0][1], SaSetup.DisableMc0Ch1);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMc0Ch2, MemConfig->ExternalInputs.DisableChannel[0][2], SaSetup.DisableMc0Ch2);
@@ -1013,7 +1014,6 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CccHalfFrequency, MemConfig->ExternalInputs.CccHalfFrequency,        SaSetup.CccHalfFrequency                                  );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Ddr5AutoPrechargeEnable, MemConfig->ExternalInputs.Ddr5AutoPrechargeEnable, SaSetup.Ddr5AutoPrechargeEnable                           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Lp5SplitACTEnable, MemConfig->ExternalInputs.Lp5SplitACTEnable,       SaSetup.Lp5SplitACTEnable                                 );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RetrainToWorkingChannel, MemConfig->ExternalInputs.RetrainToWorkingChannel, SaSetup.RetrainToWorkingChannel                           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashOverride, MemConfig->ExternalInputs.SubChHashOverride,       SaSetup.SubChHashOverride                                 );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ProbelessTrace, MemConfig->ExternalInputs.ProbelessTrace,          SaSetup.ProbelessTrace                                    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChHashInterleaveBit, MemConfig->ExternalInputs.ChHashInterleaveBit,     SaSetup.ChHashInterleaveBit                               );

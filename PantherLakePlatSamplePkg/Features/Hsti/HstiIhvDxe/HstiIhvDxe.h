@@ -53,7 +53,6 @@
 #define DTPM_LOC                         (BIT18 | BIT16)
 #define FTPM_LOC                         (BIT18 | BIT17 | BIT16)
 #define TPM_VER_FTIF_FT_LOC_MASK         (BIT18 | BIT17 | BIT16)
-#define PSE_LOC                          (BIT18)
 
 //
 // Silicon

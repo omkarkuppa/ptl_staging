@@ -38,6 +38,7 @@ typedef struct {
 
 typedef enum {
   RltkAlc1308PartId = 0x1308,
+  RltkAlc722PartId  = 0x722,
   SndwCodecPartIdInvalid
 } SNDW_BEEP_CODEC_PART_ID;
 

@@ -28,18 +28,18 @@ DefinitionBlock ("SndwDevTopologySt07Ssdt.aml", "SSDT", 2, "INTEL", "St07Ssdt", 
     Device (AUDC)
     {
       Name (_HID, "ACPI0018")
-      Include ("AudioComposition.asl")
+      Include ("AudioComposition_712VB.asl")
     } //End AUDC
   }
 
   Scope (\_SB.PC00.HDAS.IDA.SNDW)
   {
-    // SoundWire Device (SWDA) on Link #3 (Realtek ALC712VB : UID_00)
-    // _ADR: Link_3 Bit[51:48]=3 | ALC1320_ID Bit[47:0]=30025D071201 | UID_00 Bit[43:40]=0
-    Device (SWDA)
+    // SoundWire Device (B712) on Link #3 (Realtek ALC712VB : UID_00)
+    // _ADR: Link_0 Bit[51:48]=3 | ALC712_ID Bit[47:0]=30025d071201 | UID_00 Bit[43:40]=0
+    Device(B712)
     {
       Name (_ADR, 0x000330025D071201)
-      Include ("Peripheral_712VB.asl")
+      Include ("Peripheral_712VB_MultiLane.asl")
     }
   }
 }

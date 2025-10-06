@@ -27,7 +27,7 @@ Name(_DSD, Package()
     Package (2) {"mipi-sdw-sw-interface-revision", 0x00020001}, // Integer: v 2.1
 
         // Peripheral Device configuration
-    Package (2) {"mipi-sdw-sdca-interface-revision", 0x0801}, // Integer: SDCA 0.8r01
+    Package (2) {"mipi-sdw-sdca-interface-revision", 0x1000}, // Integer: SDCA 1.0r00
 
         Package(2) {"mipi-sdw-sdca-interrupt-register-list", 0xF},            // Bitmap
         Package(2) {"mipi-sdw-commit-register-supported", 1},                 // Boolean
@@ -57,7 +57,7 @@ Name(_DSD, Package()
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-        //Package (2) {"mipi-sdw-dp-0-subproperties", "DP0S"},
+        Package (2) {"mipi-sdw-dp-0-subproperties", "DP0S"},
         Package (2) {"mipi-sdw-dp-1-sink-subproperties", "DP1S"},
     Package (2) {"mipi-sdw-dp-2-source-subproperties", "DP2S"},
     Package (2) {"mipi-sdw-dp-3-sink-subproperties", "DP3S"},
@@ -70,6 +70,40 @@ Name(_DSD, Package()
     Package (2) {"mipi-sdw-dp-12-source-subproperties", "DP12"},
   },
 })  // End _DSD
+
+Name(DP0S, Package()
+{
+  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+   Package ()
+   {
+     Package (2) {"mipi-sdw-port-max-wordlength",64},
+     Package (2) {"mipi-sdw-port-min-wordlength",8},
+    Package (2) {"mipi-sdw-port-bra-mode-list",0x1},
+    Package (2) {"mipi-sdw-bra-flow-controlled",1},
+    Package (2) {"mipi-sdw-bra-imp-def-response-supported",1},
+     Package (2) {"mipi-sdw-bra-role-supported",0}, // only support BRA target state machine
+    Package (2) {"mipi-sdw-simplified-channelprepare-sm",1},
+    Package (2) {"mipi-sdw-lane-list", Package() {0}},
+   },
+   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"), // Hierarchical Extension
+   Package ()
+   {
+     Package (2) {"mipi-sdw-port-bra-mode-0","BRA0"},
+   }
+}) // End DP0S
+
+Name(BRA0, Package()
+{
+   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+   Package ()
+   {
+     Package (2)
+     {
+       "mipi-sdw-bra-mode-bus-frequency-configs",
+       Package() {2400000, 4800000, 6000000, 6144000, 9600000, 12000000, 12288000}
+     },
+   }
+}) // End BRA0
 
 Name(DP1S, Package()
 {
@@ -87,7 +121,7 @@ Name(DP1S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP1S
@@ -108,7 +142,7 @@ Name(DP2S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3, 0xF}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP2S
@@ -129,7 +163,7 @@ Name(DP3S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP3S
@@ -150,7 +184,7 @@ Name(DP4S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3, 0xF}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP4S
@@ -171,7 +205,7 @@ Name(DP5S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP5S
@@ -192,7 +226,7 @@ Name(DP6S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP6S
@@ -213,7 +247,7 @@ Name(DP7S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP7S
@@ -234,7 +268,7 @@ Name(DP8S, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3, 0xF}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {1, 2, 0}},
   }
 }) // End DP8S
@@ -255,7 +289,7 @@ Name(DP10, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {1, 2, 0}},
   }
 }) // End DP10
@@ -276,7 +310,7 @@ Name(DP12, Package()
     Package (2) {"mipi-sdw-channel-combination-list", Package() {0x3}},
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
-    Package (2) {"mipi-sdw-port-encoding-type", 0x02},
+    Package (2) {"mipi-sdw-port-encoding-type", 0x01},
     Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP12
@@ -290,7 +324,7 @@ Device(AF01)
 Device(AF02)
 {
   Name (_ADR, 0x2)
-  Include ("AudioFunction_712VB_MIC.asl")
+  Include ("AudioFunction_712VB_MIC_2CH_VAD.asl") // 2ch RAW + VAD
 }
 
 Device(AF03)

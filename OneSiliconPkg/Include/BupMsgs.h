@@ -442,8 +442,7 @@ typedef enum {
 
 typedef struct {
   MKHI_MESSAGE_HEADER  MkhiHeader;
-  UINT32               IdsCount;
-  UINT32               BinaryIds[0];
+  UINT32               BinaryId;
 } LOAD_BINARY_REQUEST;
 
 typedef struct {

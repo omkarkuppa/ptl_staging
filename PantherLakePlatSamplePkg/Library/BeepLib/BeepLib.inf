@@ -41,6 +41,8 @@
   MdePkg/MdePkg.dec
   BeepDebugFeaturePkg/BeepDebugFeaturePkg.dec
   OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
 
 [Sources]
   BeepLib.c

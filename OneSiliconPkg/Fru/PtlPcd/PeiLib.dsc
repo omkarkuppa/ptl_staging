@@ -73,7 +73,11 @@
   PeiSmbusLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/LibraryPrivate/PeiSmbusLib/PeiSmbusLib.inf
   PeiSmbusPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/LibraryPrivate/PeiSmbusPolicyLib/PeiSmbusPolicyLib.inf
   PeiSpiLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Library/PeiSpiLib/PeiSpiLib.inf
-  PeiSpiDmaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/LibraryPrivate/PeiSpiDmaLib/PeiSpiDmaLib.inf
+  !if gSiPkgTokenSpaceGuid.PcdSpiDmaEnable == TRUE
+    PeiSpiDmaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/LibraryPrivate/PeiSpiDmaLib/PeiSpiDmaLib.inf
+  !else
+    PeiSpiDmaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/LibraryPrivate/PeiSpiDmaLibNull/PeiSpiDmaLibNull.inf
+  !endif
   PeiItssPolicyCommonLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Itss/LibraryPrivate/PeiItssPolicyLib/PeiItssPolicyCommonLib.inf
   PeiItssPolicyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdPeiItssPolicyLib/PtlPcdPeiItssPolicyLib.inf
   PeiItssLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Itss/LibraryPrivate/PeiItssLib/PeiItssLib.inf

@@ -126,7 +126,7 @@
 
   gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported|TRUE
 
-  gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable|FALSE
+  gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable|TRUE
   gPlatformModuleTokenSpaceGuid.PcdPostCodeStatusCodeEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdSourceDebugEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdBiosGuardEnable|TRUE

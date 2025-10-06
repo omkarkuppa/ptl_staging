@@ -6804,7 +6804,13 @@ SpdDimmRecognition (
 
   if (DIMM_DISABLED == DimmIn->Status) {
     DimmOut->Status = DIMM_DISABLED;
-    DimmOut->Crc    = 0;
+    // The CRC for disabled DIMMs is needed when the RetrainToWorkingChannel feature is enabled
+    // so that MRC can detect when a previously failed and disabled DIMM is replaced with a new device.
+    // This CRC value per DIMM will eventually get copied over to saveData where it will be
+    // used in fastbootpermitted.
+    if (MrcData->Inputs.ExtInputs.Ptr->RetrainToWorkingChannel == FALSE) {
+      DimmOut->Crc = 0;
+    }
   }
 
   return mrcSuccess;

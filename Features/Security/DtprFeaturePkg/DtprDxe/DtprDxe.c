@@ -22,6 +22,8 @@
 **/
 
 #include "DtprDxe.h"
+#include <Library/PcdLib.h>
+#include <Protocol/AcpiTable.h>
 
 /**
   Main entry for this driver.
@@ -67,6 +69,16 @@ DtprDxeEntryPoint (
   DtprTable.Header.Revision = 1;
 
   DtprTable.Flags = 0;
+
+  CopyMem (
+    DtprTable.Header.OemId,
+    PcdGetPtr (PcdAcpiDefaultOemId),
+    sizeof (DtprTable.Header.OemId));
+
+  DtprTable.Header.OemTableId      = PcdGet64 (PcdAcpiDefaultOemTableId);
+  DtprTable.Header.OemRevision     = PcdGet32 (PcdAcpiDefaultOemRevision);
+  DtprTable.Header.CreatorId       = PcdGet32 (PcdAcpiDefaultCreatorId);
+  DtprTable.Header.CreatorRevision = PcdGet32 (PcdAcpiDefaultCreatorRevision);  
 
   if (TprInfoHob->InstanceCount > MAX_INS_COUNT) {
     DEBUG ((DEBUG_ERROR, "DtprDxe: Tpr Instance count is greater than MAX_INS_COUNT. Found = %d\n", \

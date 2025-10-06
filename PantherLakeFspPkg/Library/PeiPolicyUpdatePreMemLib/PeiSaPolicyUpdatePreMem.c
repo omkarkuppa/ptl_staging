@@ -251,6 +251,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfigNoCrc->VrefOffset                  = FspmUpd->FspmConfig.VrefOffset;
   MemConfigNoCrc->CntrlrMask                  = FspmUpd->FspmConfig.CntrlrMask;
   MemConfigNoCrc->ChMask                      = FspmUpd->FspmConfig.ChMask;
+  MemConfigNoCrc->RetrainToWorkingChannel     = FspmUpd->FspmConfig.RetrainToWorkingChannel;
 
   //
   // Update ConfigBlock: MemConfig
@@ -375,7 +376,6 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.Ddr5AutoPrechargeEnable = FspmUpd->FspmConfig.Ddr5AutoPrechargeEnable;
   MemConfig->ExternalInputs.Lp5SplitACTEnable = FspmUpd->FspmConfig.Lp5SplitACTEnable;
   MemConfig->ExternalInputs.SubChHashOverride = FspmUpd->FspmConfig.SubChHashOverride;
-  MemConfig->ExternalInputs.RetrainToWorkingChannel = FspmUpd->FspmConfig.RetrainToWorkingChannel;
   MemConfig->ExternalInputs.RowPressEn             = FspmUpd->FspmConfig.RowPressEn;
   MemConfig->ExternalInputs.MrcFailureOnUnsupportedDimm = FspmUpd->FspmConfig.MrcFailureOnUnsupportedDimm;
   MemConfig->ExternalInputs.Use1p5ReadPostamble    = FspmUpd->FspmConfig.Use1p5ReadPostamble;

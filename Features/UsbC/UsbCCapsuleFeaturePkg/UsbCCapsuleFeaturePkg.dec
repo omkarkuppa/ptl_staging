@@ -52,6 +52,7 @@
 [PcdsFixedAtBuild]
   # Main feature PCD to support UsbC Capsule update feature
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable|FALSE|BOOLEAN|0xCC000001
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbPdBridgeSupport      |FALSE|BOOLEAN|0xCC000002
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber         |0x04 |UINT8  |0xCC000010
 
 [PcdsDynamic]

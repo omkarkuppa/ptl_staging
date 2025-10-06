@@ -26,4 +26,6 @@ INF UsbCCapsuleFeaturePkg/UsbCRetimerDxe/UsbCRetimerDxe.inf
 #
 INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_TBT_RETIMER)    FmpDevicePkg/FmpDxe/FmpDxe.inf
 INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_DISCRETE_TBT)   FmpDevicePkg/FmpDxe/FmpDxe.inf
-INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_PD_BRIDGE)      FmpDevicePkg/FmpDxe/FmpDxe.inf
+!if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbPdBridgeSupport == TRUE
+  INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_PD_BRIDGE)      FmpDevicePkg/FmpDxe/FmpDxe.inf
+!endif

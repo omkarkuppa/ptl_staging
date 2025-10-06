@@ -468,7 +468,6 @@ PeiHeciGetBiosSeed (
 /**
   The function sends a request to load a binary using HECI and waits for an acknowledgment.
 
-  @param[in] IdsCount             The number of binary IDs in the list.
   @param[in] BinaryIdsList        Pointer to the list of binary IDs.
 
   @retval EFI_SUCCESS             Command succeeded.
@@ -479,8 +478,7 @@ PeiHeciGetBiosSeed (
 **/
 EFI_STATUS
 PeiHeciLoadBinaryMsg (
-  IN UINT32             IdsCount,
-  IN UINT32             *BinaryIdsList
+  IN UINT32             BinaryId
   );
 
 //

@@ -32,7 +32,7 @@
 // MEMORY_CONFIGURATION_REVISION:
 // Keep in sync with MRC_EXT_INPUTS_REVISION in MrcExtInputs.h
 #define MEMORY_CONFIGURATION_REVISION 1
-#define MEMORY_CONFIG_NO_CRC_REVISION 5
+#define MEMORY_CONFIG_NO_CRC_REVISION 6
 
 ///
 /// Memory SubSystem Definitions
@@ -280,7 +280,8 @@ typedef struct {
      15 - Controller 1 Channel 3 Dimm 1 ------------------
   **/
   UINT8  CkdAddressTable[MEM_CFG_MAX_SOCKETS];
-  UINT8                 Reserved[6];       ///< Offset 186 Reserved bytes for struct alignment
+  UINT8  RetrainToWorkingChannel;          ///< Offset 327 Disable Failing Channel during Cold Boot and Retrain To Working Channel
+  UINT8  Reserved[5];                      ///< Offset 186 Reserved bytes for struct alignment
 } MEMORY_CONFIG_NO_CRC;
 #pragma pack(pop)
 

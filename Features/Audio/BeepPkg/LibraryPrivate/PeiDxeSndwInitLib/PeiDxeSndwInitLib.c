@@ -1141,8 +1141,8 @@ SndwAccessDisable (
     GetLinkControllerMmioAddress (HdaBar, SndwLinkIndex, &SndwControllerMmioOffset);
     DEBUG ((DEBUG_INFO, "Sndw#%d: Controller mmio address: 0x%X.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
-    MmioAnd32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) ~B_SNDW_MEM_CONFIG_OM_NORMAL);
-    MmioOr32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) V_SNDW_MEM_CONFIG_OM_RESET_VALUE);
+    MmioAnd32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) ~B_SNDW_MEM_CONFIG_OM_NORMAL);
+    MmioOr32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) V_SNDW_MEM_CONFIG_OM_RESET_VALUE);
 
     // Clear Shim register SNDWxACTMCTL, bit DACTQE=0b
     MmioAnd16 ((UINTN) (HdaBar + R_HDA_MEM2_SNDW_SNDWxACTMCTL (SndwLinkIndex)), (UINT16) ~B_HDA_MEM2_SNDW_SNDWxACTMCTL_DACTQE);
@@ -1152,7 +1152,7 @@ SndwAccessDisable (
     //
     // Write 1 to MCP_ConfigUpdate to update controller settings
     //
-    MmioWrite32 ((UINTN) SndwControllerMmioOffset + R_SNDW_MEM_CONFIGUPDATE, (UINT32) B_SNDW_MEM_CONFIGUPDATE_UPDATE_DONE);
+    MmioWrite32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIGUPDATE, (UINT32) B_SNDW_MEM_CONFIGUPDATE_UPDATE_DONE);
 
     Status = ResetSndwLink (HdaBar, SndwLinkIndex);
     if (EFI_ERROR (Status)) {
@@ -1337,6 +1337,94 @@ SndwGetNextCodec (
       *NextSndwCodecInfo = NULL;
       return EFI_NOT_FOUND;
     }
+  }
+
+  return EFI_SUCCESS;
+}
+
+/**
+  SndwAccess function prepares and sends address page information to a SoundWire codec
+  device. It configures two address page registers (page 1 and page 2) by:
+  1. Setting the device address based on the codec's peripheral index
+  2. Breaking down the provided address parameter into appropriate bit fields
+  3. Sending the configured registers to the SoundWire device with acknowledgment
+
+  @param[in] Stream      Pointer to the SoundWire stream structure
+  @param[in] CodecIndex  Index of the codec in the stream's codec information array
+  @param[in] Address     The 32-bit address to be configured in the page registers
+ **/
+VOID
+SetAddrPageRegisters (
+  IN CONST SNDW_ACCESS  *SndwAccess,
+  IN SNDW_CODEC_INFO    SndwCodecInfo,
+  IN UINT32             LinearAddress
+  )
+{
+  SNDW_COMMAND SetAddrPage1 = {
+    .TxWrite = {
+      .OpCode  = SndwCmdWrite,
+      .RegAddr = 0x48,
+      .RegData = 0x0,
+      .SspTag  = 0x0
+    }
+  };
+
+  SNDW_COMMAND SetAddrPage2 = {
+    .TxWrite = {
+      .OpCode  = SndwCmdWrite,
+      .RegAddr = 0x49,
+      .RegData = 0x0,
+      .SspTag  = 0x0
+    }
+  };
+  SetAddrPage1.TxWrite.DeviceAddress = SndwCodecInfo.PeripheralIndex;
+  SetAddrPage2.TxWrite.DeviceAddress = SndwCodecInfo.PeripheralIndex;
+
+  SetAddrPage1.TxWrite.RegData = (UINT8) ((LinearAddress & 0x7F800000) >> 23);
+  SetAddrPage2.TxWrite.RegData = (UINT8) ((LinearAddress & 0x7F8000) >> 15);
+
+  SndwAccess->SendWithAck (SndwAccess, SndwCodecInfo, SetAddrPage1, NULL);
+  SndwAccess->SendWithAck (SndwAccess, SndwCodecInfo, SetAddrPage2, NULL);
+}
+
+/**
+  Sends a sequence of initialization commands to the audio codec using the provided SNDW_STREAM.
+  The function iterates through the PowerOn array, configuring the codec registers as specified.
+  For register addresses above 0x7FFF, it sets the appropriate address pages before sending the command.
+  Each command is sent using the SendWithAck method of the SndwAccess interface.
+
+  @param[in] Stream                 Pointer to the SNDW_STREAM structure containing codec access and information.
+
+  @retval EFI_SUCCESS               The initialization commands were sent successfully.
+  @retval EFI_INVALID_PARAMETER     One or more input parameters are invalid.
+**/
+EFI_STATUS
+SendSdcaCommand (
+  IN CONST SNDW_ACCESS  *SndwAccess,
+  IN SDCA_COMMAND       *SdcaCommand,
+  IN UINTN              NumOfCommands,
+  IN SNDW_CODEC_INFO    SndwCodecInfo
+  )
+{
+  SNDW_COMMAND    Command;
+  UINT32          RegAddress;
+  UINTN           CommandIndex;
+
+  for (CommandIndex = 0; CommandIndex < NumOfCommands; CommandIndex++) {
+    Command.TxWrite.DeviceAddress = SndwCodecInfo.PeripheralIndex;
+    Command.TxWrite.OpCode        = SndwCmdWrite;
+    Command.TxWrite.SspTag        = 0;
+
+    RegAddress              = SdcaCommand[CommandIndex].LinearAddress;
+    Command.TxWrite.RegAddr = (UINT16) (RegAddress & 0xFFFF);
+    Command.TxWrite.RegData = (UINT8) SdcaCommand[CommandIndex].Data;
+
+    if (RegAddress > 0x7FFF) { // Source of Addr[30:23] = AddrPage1, Source of Addr[22:15] = AddrPage2
+      Command.TxWrite.RegAddr |= BIT15;
+      SetAddrPageRegisters (SndwAccess, SndwCodecInfo, RegAddress);
+    }
+
+    SndwAccess->SendWithAck (SndwAccess, SndwCodecInfo, Command, NULL);
   }
 
   return EFI_SUCCESS;
