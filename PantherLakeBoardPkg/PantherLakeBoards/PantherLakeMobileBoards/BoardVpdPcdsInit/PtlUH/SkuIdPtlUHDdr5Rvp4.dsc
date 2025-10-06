@@ -758,7 +758,7 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshSpiEnable[0]|0x1                                        # SPI_0
   gStructPcdTokenSpaceGuid.PcdSetup.TcssUcmDevice|0x0                                                # USBC connector manager selection
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[3]|0x0
-
+    
 #####################################################################
 #  PTL UH DDR5 T3 - RVP4 BOM
 #     Board ID: 0x04 (BomIdPtlUHDdr5Rvp4)
