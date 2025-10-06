@@ -459,6 +459,7 @@ DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibA
 [LibraryClasses.common]
   PlatformHookLib|$(PLATFORM_BOARD_PACKAGE)/Library/BasePlatformHookLib/BasePlatformHookLib.inf
   BpmAccessLib|$(PLATFORM_SI_PACKAGE)/Library/BaseBpmAccessLib/BaseBpmAccessLib.inf
+  GpioPwmLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/GpioPwmLib/GpioPwmLib.inf
   FitAccessLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseFitAccessLib/BaseFitAccessLib.inf
   SiliconPolicyInitLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyInitLibNull/SiliconPolicyInitLibNull.inf
   SiliconPolicyUpdateLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyUpdateLibNull/SiliconPolicyUpdateLibNull.inf
