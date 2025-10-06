@@ -610,7 +610,8 @@ CnvVfrSetupMenuFormExtractConfig (
   @param[out] Progress       On return, points to end of Configuration string.
 
   @return EFI_SUCCESS        - The function completed successfully.
-
+  @retval  EFI_INVALID_PARAMETER  Configuration is NULL.
+  @retval  EFI_NOT_FOUND          Routing data doesn't match any storage in this driver.
 **/
 EFI_STATUS
 EFIAPI
@@ -620,7 +621,15 @@ CnvVfrSetupMenuFormRouteConfig (
   OUT EFI_STRING                           *Progress
   )
 {
+  
+  if (Configuration == NULL || Progress == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   *Progress = Configuration + StrLen (Configuration);
+  if (!HiiIsConfigHdrMatch (Configuration, &gCnvFeatureSetupGuid, CNV_SETUP_VARIABLE_NAME)) {
+    return EFI_NOT_FOUND;
+  }
 
   return EFI_SUCCESS;
 }
