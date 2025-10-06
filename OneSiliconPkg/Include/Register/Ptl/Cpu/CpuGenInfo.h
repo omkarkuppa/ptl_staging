@@ -59,6 +59,7 @@ typedef enum {
   EnumPtlHA0  = 0,
   EnumPtlUA0  = 1,
   EnumPtlUHB0 = 2,
+  EnumPtlUA1  = 3,
   ///
   /// WildCatLake Mobile Steppings
   ///
