@@ -21,7 +21,9 @@
 #ifndef _TXT_CONFIG_H_
 #define _TXT_CONFIG_H_
 
-#define TXT_PREMEM_CONFIG_REVISION 1
+#include <ConfigBlock.h>
+
+#define TXT_PREMEM_CONFIG_REVISION 2
 extern EFI_GUID gTxtPreMemConfigGuid;
 
 #pragma pack (push,1)
@@ -47,7 +49,8 @@ typedef struct {
   UINT32                TgaSize;                  ///< Size of Trusted Graphics Aperture if supported by chipset.
   UINT32                IsTPMPresence;
   UINT8                 TxtImplemented;           ///< This field currently is used to tell MRC if it should run after TXT initializatoin completed: <b>0=Run without waiting for TXT</b>, 1=Run after TXT initialization by callback
-  UINT8                 Reserved[3];              ///< Reserved bytes
+  UINT8                 CmosTxtOffset;            ///< CMOS offset for TXT policy data
+  UINT8                 Reserved[2];              ///< Reserved bytes for alignment
 } TXT_PREMEM_CONFIG;
 
 #pragma pack (pop)

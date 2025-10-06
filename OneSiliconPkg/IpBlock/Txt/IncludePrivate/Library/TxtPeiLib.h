@@ -38,6 +38,7 @@
 #include <Ppi/TpmInitialized.h>
 #include <Library/PchCycleDecodingLib.h>
 #include <DprInfoHob.h>
+#include <TxtConfig.h>
 
 #define APIC_SPURIOUS_VECTOR_REGISTER 0xF0       ///< Offset of local APIC register
 #define BASE_ADDR_MASK                0xFFFFF000 ///< Local APIC base address mask
@@ -644,19 +645,22 @@ GetFitAPtr (
 
 /**
   This routine will check the TxtStatus in CMOS
+  @param[in] TxtPreMemPolicy Pointer to TXT_PREMEM_CONFIG policy structure
   @retval TRUE - If Txt is enabled, otherwise FALSE
 **/
 BOOLEAN
 IsTxtEnabledCmos (
-  VOID
+  IN TXT_PREMEM_CONFIG *TxtPreMemPolicy
   );
 
 /**
   UpdateTxtStatusCmos to write TXT Status to CMOS.
   @param[in] TxtStatus To Enable/Disable TXT
+  @param[in] TxtPreMemPolicy Pointer to TXT_PREMEM_CONFIG policy structure
 **/
 VOID
 UpdateTxtStatusCmos (
-  BOOLEAN
+  IN BOOLEAN           TxtStatus,
+  IN TXT_PREMEM_CONFIG *TxtPreMemPolicy
   );
 #endif

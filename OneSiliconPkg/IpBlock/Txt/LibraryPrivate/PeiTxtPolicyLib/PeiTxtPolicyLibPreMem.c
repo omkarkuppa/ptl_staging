@@ -26,6 +26,7 @@
 #include <Library/MsrFruLib.h>
 #include <Library/CpuInfoFruLib.h>
 #include "TxtConfig.h"
+#include <Txt.h>
 
 /**
   Load Config block default
@@ -60,6 +61,12 @@ LoadTxtConfigDefaultPreMem (
      TxtPreMemConfig->TxtLcpPdBase       = TXT_LCP_PD_BASE;
      TxtPreMemConfig->TxtLcpPdSize       = TXT_LCP_PD_SIZE;
   }
+
+  //
+  // Initialize CMOS TXT Offset field
+  //
+  TxtPreMemConfig->CmosTxtOffset    = FIT_REC_TXT_POLICY_TYPE_A;
+
 #if FixedPcdGetBool(PcdTxtEnable) == 1
   TxtPreMemConfig->TxtImplemented = 0;
 #endif
@@ -119,6 +126,7 @@ TxtConfigPrintPreMem (
   )
 {
   DEBUG ((DEBUG_INFO, "------------------ TXT PreMem Config ------------------\n"));
+  DEBUG ((DEBUG_INFO, "TXT_PREMEM_CONFIG : CmosTxtOffset = 0x%x\n", TxtPreMemConfig->CmosTxtOffset));
   DEBUG ((DEBUG_INFO, "TXT_PREMEM_CONFIG : SinitMemorySize = 0x%x\n", TxtPreMemConfig->SinitMemorySize));
   DEBUG ((DEBUG_INFO, "TXT_PREMEM_CONFIG : TxtHeapMemorySize = 0x%x\n", TxtPreMemConfig->TxtHeapMemorySize));
   DEBUG ((DEBUG_INFO, "TXT_PREMEM_CONFIG : TgaSize = 0x%x\n", TxtPreMemConfig->TgaSize));

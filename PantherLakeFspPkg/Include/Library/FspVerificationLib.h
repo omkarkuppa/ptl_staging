@@ -183,22 +183,16 @@ VerifyBsp (
   );
 
 /**
-  UpdateTxtStatusCmos to write TXT Status to CMOS.
-  @param[in] TxtStatus To Enable/Disable TXT
-**/
-VOID
-UpdateTxtStatusCmos (
-  IN BOOLEAN TxtStatus
-  );
-
-/**
   Verify CRTM Status and disable Txt Cmos
   Disable TXT when verification fail in BTG 0T/3T.
-  
+
+  @param[in]   Bspm  BSPM element containing the CMOS offset.
+
 **/
 VOID
+EFIAPI
 VerifyCrtmStatusAndDisableTxtCmos (
-  VOID
+  IN BSPM_ELEMENT     *Bspm
   );
 
 //

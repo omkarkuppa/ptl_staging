@@ -28,37 +28,38 @@
 #include <Library/BaseCryptLib.h>
 #include <Library/FspVerificationLib.h>
 #include <Library/FspMeasurementLib.h>
+#include <Library/FspFbmSupportLib.h>
 #include <Pi/PiFirmwareVolume.h>
 #include <Library/IoLib.h>
 #include <Txt.h>
 
 /**
-  UpdateTxtStatusCmos to write TXT Status to CMOS.
-  @param[in] TxtStatus To Enable/Disable TXT
+  DisableTxtCmos to clear the TXT enable bit in CMOS
+
+  @param[in]   Bspm  BSPM element containing the CMOS offset.
+
 **/
 VOID
-UpdateTxtStatusCmos (
-  IN BOOLEAN TxtStatus
+EFIAPI
+DisableTxtCmos (
+  IN BSPM_ELEMENT *Bspm
   )
 {
-  UINT8    CmosStatus;
+  UINT8   CmosStatus;
+  UINT8   CmosTxtOffset;
 
-  CmosStatus = 0;
-  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+  CmosTxtOffset = Bspm->CmosOffset;
+
+  DEBUG ((DEBUG_INFO, "CmosTxtOffset=0x%x\n", CmosTxtOffset));
+
+  if (CmosTxtOffset == 0) {
+    CmosTxtOffset = FIT_REC_TXT_POLICY_TYPE_A;
+  }
+  IoWrite8 (CMOS_IO_ADDRESS, CmosTxtOffset);
   CmosStatus = IoRead8 (CMOS_IO_DATA);
 
-  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus = %d\n", CmosStatus));
-
-  if (TxtStatus == TRUE) {
-    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
-    IoWrite8 (CMOS_IO_DATA, CmosStatus | BIT4);
-  } else {
-    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
-    IoWrite8 (CMOS_IO_DATA, CmosStatus & ~BIT4);
-  }
-
-  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
-  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus Post Write = %d\n", IoRead8 (CMOS_IO_DATA)));
+  IoWrite8 (CMOS_IO_ADDRESS, CmosTxtOffset);
+  IoWrite8 (CMOS_IO_DATA, CmosStatus & ~BIT4);  // Clear BIT4
 }
 
 BOOLEAN
@@ -122,10 +123,13 @@ DetectBootGuardProfile (
   Verify CRTM Status and disable Txt Cmos
   Disable TXT when verification fail in BTG 0T/3T.
 
+  @param[in]   Bspm  BSPM element containing the CMOS offset.
+
 **/
 VOID
+EFIAPI
 VerifyCrtmStatusAndDisableTxtCmos (
-  VOID
+  IN BSPM_ELEMENT     *Bspm
   )
 {
   UINT64            AcmPolicyStatus;
@@ -135,7 +139,7 @@ VerifyCrtmStatusAndDisableTxtCmos (
   BootGuardProfile = DetectBootGuardProfile ();
 
   if ((BootGuardProfile < BOOT_GUARD_PROFILE_4) && (AcmPolicyStatus & (B_SCRTM_STATUS))) {
-      UpdateTxtStatusCmos (FALSE);
+      DisableTxtCmos (Bspm);
       DEBUG ((DEBUG_INFO, "TXT disabled due to verification failure in BTG 0T/3T\n"));
   } else {
     CpuDeadLoop ();
@@ -413,9 +417,12 @@ VerifyAndLogEventFsps (
   FSP_REGION_STRUCTURE    *FspRegion;
   UINT8                   Index;
   VOID                    *HashCtx;
+  BSPM_ELEMENT            *Bspm;
 
   DEBUG ((DEBUG_INFO, "FSP-S Verification Start ...\n"));
-  if (Fbm == NULL || Buffer == NULL) {
+  Bspm = LocateBspm ();
+
+  if (Fbm == NULL || Buffer == NULL || Bspm == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -453,7 +460,7 @@ VerifyAndLogEventFsps (
   }
 
   DEBUG ((DEBUG_ERROR, "FSP-S Verification Fail!\n"));
-  VerifyCrtmStatusAndDisableTxtCmos ();
+  VerifyCrtmStatusAndDisableTxtCmos (Bspm);
 
   return EFI_SUCCESS;
 }

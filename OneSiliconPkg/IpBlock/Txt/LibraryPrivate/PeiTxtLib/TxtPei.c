@@ -36,6 +36,10 @@
 #include <Library/SpiAccessLib.h>
 #include <Library/PmcLib.h>
 #include <Library/PreSiliconEnvDetectLib.h>
+#include <Library/PeiServicesLib.h>
+#include <Library/ConfigBlockLib.h>
+#include <TxtConfig.h>
+#include <Ppi/SiPolicy.h>
 
 EFI_STATUS
 EFIAPI
@@ -85,13 +89,33 @@ TxtInit (
   VOID
   )
 {
-  EFI_STATUS          Status;
-  TXT_INFO_HOB        *TxtInfoHob;
-  BOOLEAN             TxtEnvInitFail;
-  UINT32              Data32;
-  EFI_BOOT_MODE       BootMode;
+  EFI_STATUS            Status;
+  TXT_INFO_HOB          *TxtInfoHob;
+  BOOLEAN               TxtEnvInitFail;
+  UINT32                Data32;
+  EFI_BOOT_MODE         BootMode;
+  SI_PREMEM_POLICY_PPI  *SiPreMemPolicy;
+  TXT_PREMEM_CONFIG     *TxtPreMemConfig;
+
   Data32         = 0;
   TxtEnvInitFail = FALSE;
+  SiPreMemPolicy = NULL;
+  TxtPreMemConfig = NULL;
+
+  ///
+  /// Locate TXT policy ppi
+  ///
+  Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicy);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "TXTPEI: Failed to locate SiPreMemPolicy PPI\n"));
+    return Status;
+  }
+
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gTxtPreMemConfigGuid, (VOID *) &TxtPreMemConfig);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "TXTPEI: Failed to get TXT PreMem config block\n"));
+    return Status;
+  }
 
   ///
   /// Initialize the TXT PEI Lib functions
@@ -112,10 +136,10 @@ TxtInit (
   **/
   if (!IsSimicsEnvironment ()) {
     if (!PmcIsRtcBatteryGood ()) {
-      if (IsTxtSecretsSet () && !IsTxtEnabledCmos()) {
+      if (IsTxtSecretsSet () && !IsTxtEnabledCmos(TxtPreMemConfig)) {
         if (TxtInfoHob->Data.TxtMode == 1) {
           DEBUG ((DEBUG_INFO, "TXTPEI::RTC Failure Detected, Restoring FIT A Content\n"));
-          UpdateTxtStatusCmos(TRUE);
+          UpdateTxtStatusCmos(TRUE, TxtPreMemConfig);
         }
         DEBUG ((DEBUG_INFO, "TXTPEI::RTC Failure Detected & Secrets is set, Executing ClearSecretsBit\n"));
         ClearSecretsBit ();

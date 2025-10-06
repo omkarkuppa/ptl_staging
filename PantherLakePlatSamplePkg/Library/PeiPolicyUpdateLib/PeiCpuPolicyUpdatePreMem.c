@@ -45,6 +45,7 @@
 #include <Library/PeiVrDomainLib.h>
 #include <Library/Tpm2CommandLib.h>
 #include <Register/PmcRegs.h>
+#include <Txt.h>
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #endif
@@ -907,6 +908,10 @@ UpdatePeiCpuPolicyPreMem (
 
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TxtDprMemorySize, TxtPreMemConfig->TxtDprMemorySize, (UINTN)(CpuSetup.DprSize * 0x100000));
   UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TxtDprMemorySize, TxtPreMemConfig->TxtDprMemorySize, CpuSetup.DprSize * 0x100000);
+  //
+  // Update TXT Platform Policy for CMOS TXT Offset
+  //
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CmosTxtOffset, TxtPreMemConfig->CmosTxtOffset, FIT_REC_TXT_POLICY_TYPE_A);
 
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   TxtPreMemConfig->TxtImplemented = 0;

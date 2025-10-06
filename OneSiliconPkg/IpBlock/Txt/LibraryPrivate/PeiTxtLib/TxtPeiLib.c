@@ -1387,18 +1387,26 @@ IsTxtACheckRequested (
 
 /**
   This routine will check the TxtStatus in CMOS
+  @param[in] TxtPreMemPolicy Pointer to the TXT PreMem Policy
   @retval TRUE - If Txt is enabled, otherwise FALSE
 **/
 BOOLEAN
 IsTxtEnabledCmos (
-  VOID
+  IN TXT_PREMEM_CONFIG *TxtPreMemPolicy
   )
 {
   UINT8 TxtStatus;
+  UINT8 CmosTxtOffset;
 
   TxtStatus = 0;
 
-  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+  if (TxtPreMemPolicy == NULL) {
+    CmosTxtOffset = FIT_REC_TXT_POLICY_TYPE_A;
+  } else {
+    CmosTxtOffset = TxtPreMemPolicy->CmosTxtOffset;
+  }
+
+  IoWrite8 (CMOS_IO_ADDRESS, CmosTxtOffset);
   TxtStatus = IoRead8(CMOS_IO_DATA);
 
   DEBUG ((DEBUG_INFO, "TXTPEI: CmosTxtStatus = %d\n", TxtStatus));
@@ -1409,27 +1417,37 @@ IsTxtEnabledCmos (
 /**
   UpdateTxtStatusCmos to write TXT Status to CMOS.
   @param[in] TxtStatus To Enable/Disable TXT
+  @param[in] TxtPreMemPolicy Pointer to the TXT PreMem Policy
 **/
 VOID
 UpdateTxtStatusCmos (
-  BOOLEAN TxtStatus
+  IN BOOLEAN           TxtStatus,
+  IN TXT_PREMEM_CONFIG *TxtPreMemPolicy
   )
 {
-  UINT8               CmosStatus  = 0;
+  UINT8    CmosStatus;
+  UINT8    CmosTxtOffset;
 
-  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
-  CmosStatus = IoRead8(CMOS_IO_DATA);
+  CmosStatus = 0;
+
+  if (TxtPreMemPolicy == NULL) {
+    CmosTxtOffset  = FIT_REC_TXT_POLICY_TYPE_A;
+  } else {
+    CmosTxtOffset  = TxtPreMemPolicy->CmosTxtOffset;
+  }
+
+  IoWrite8 (CMOS_IO_ADDRESS, CmosTxtOffset);
+  CmosStatus = IoRead8 (CMOS_IO_DATA);
 
   DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus = %d\n", CmosStatus));
 
+  IoWrite8 (CMOS_IO_ADDRESS, CmosTxtOffset);
   if (TxtStatus == TRUE) {
-    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
     IoWrite8 (CMOS_IO_DATA, CmosStatus | BIT4);
   } else {
-    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
     IoWrite8 (CMOS_IO_DATA, CmosStatus & ~BIT4);
   }
 
-  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
-  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus Post Write = %d\n", IoRead8(CMOS_IO_DATA)));
+  IoWrite8 (CMOS_IO_ADDRESS, CmosTxtOffset);
+  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus Post Write = %d\n", IoRead8 (CMOS_IO_DATA)));
 }

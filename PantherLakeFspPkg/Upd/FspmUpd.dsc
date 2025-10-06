@@ -3184,9 +3184,13 @@
 
   ## SI_PREMEM_CONFIG End
 
+  # !BSF NAME:{TXT CMOS Offset} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{CMOS Offset for TXT policy data. Default 0x2A}
+  gPlatformFspPkgTokenSpaceGuid.CmosTxtOffset                       | * | 0x01 | 0x2A
+
   # !BSF NAME:{SiPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for SI Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.SiPreMemRsvd                        | * | 0x0E | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.SiPreMemRsvd                        | * | 0x0D | {0x00}
 
   #
   # SI Pre-Mem Block End

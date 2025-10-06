@@ -38,6 +38,7 @@ BSIS_VERSION       = 0x20
 BSSS_VERSION       = 0x10
 BSIS_MAX_LENGTH    = 512
 TPM_BASE_ADDRESS   = 0xFED40000
+CMOS_OFFSET        = 0x2A
 FSPT_UPD_SIGNATURE = "PTLUPD_T"
 BSIS_ID            = "__BSIS__"
 BSSS_ID            = "__BSPM__"
@@ -260,7 +261,8 @@ class BspConfigHead(Structure):
         ('FspmBaseAddress',        c_uint32),
         ('TpmBaseAddress',         c_uint64),
         ('BspSegmentCount',        c_uint32),
-        ('Reserved1',              ARRAY(20, c_uint8))
+        ('CmosOffset',             c_uint8),
+        ('Reserved1',              ARRAY(19, c_uint8))
         ]
 
     def dumpInfo(self):
@@ -281,6 +283,7 @@ class BspConfigHead(Structure):
         print("FspmLoadingPolicy:", hex(self.FspmLoadingPolicy))
         print("FspmBaseAddress:", hex(self.FspmBaseAddress))
         print("BspSegmentCount:", self.BspSegmentCount)
+        print("CmosOffset:", hex(self.CmosOffset))
         print("TpmBaseAddress:", hex(self.TpmBaseAddress))
 
     #
@@ -384,6 +387,7 @@ class BspConfig():
         self.BspConfigHead.TpmBaseAddress = TPM_BASE_ADDRESS
         self.BspConfigHead.FspmBaseAddress = ConvertTo4GSpaceAddr(flashMap.FvFspmOffset, flashMap.BiosFlashBaseAddr)
         self.BspConfigHead.FspmLoadingPolicy = int(fspmLP, 16)
+        self.BspConfigHead.CmosOffset = CMOS_OFFSET
         print("FspmLoadingPolicy", self.BspConfigHead.FspmLoadingPolicy)
 
         self.BspBaseAddress = ConvertTo4GSpaceAddr(flashMap.FvPreMemoryOffset, flashMap.BiosFlashBaseAddr)
@@ -419,6 +423,7 @@ class BspConfig():
             BspConfigData.BspEntryPoint = ConvertTo4GSpaceAddr(BspSecCoreEntryAddr, flashMap.BiosFlashBaseAddr)
             print("Bsp Sec Core Entry Address is:", hex(BspConfigData.BspEntryPoint))
 
+        BspConfigData.CmosOffset = CMOS_OFFSET
         BspConfigData.getFspTUpd(fdDir, flashMap.FvPreMemoryOffset, flashMap.FvPreMemorySize, flashMap.BiosFlashBaseAddr)
 
         bsssBin = bytes(BsssHeader) + bytes(BspConfigData)

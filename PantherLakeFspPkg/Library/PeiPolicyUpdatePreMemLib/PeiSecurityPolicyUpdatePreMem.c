@@ -79,6 +79,8 @@ FspUpdatePeiSecurityPolicyPreMem (
   TxtPreMemConfig->ApStartupBase     = FspmUpd->FspmConfig.ApStartupBase;
   TxtPreMemConfig->IsTPMPresence     = FspmUpd->FspmConfig.IsTPMPresence;
   TxtPreMemConfig->TxtImplemented    = 0; // Currently TXT is not ready for FSP Wrapper. TxtPreMemConfig->TxtImplemented = FspmUpd->TxtImplemented;
+  TxtPreMemConfig->CmosTxtOffset     = FspmUpd->FspmConfig.CmosTxtOffset; // Update CMOS TXT Offset configuration 
+
   CpuSecurityPreMemConfig->TdxSeamldrSvn = FspmUpd->FspmConfig.TdxSeamldrSvn;
   CpuSecurityPreMemConfig->TmeExcludeBase = FspmUpd->FspmConfig.TmeExcludeBase;
   CpuSecurityPreMemConfig->TmeExcludeSize = FspmUpd->FspmConfig.TmeExcludeSize;

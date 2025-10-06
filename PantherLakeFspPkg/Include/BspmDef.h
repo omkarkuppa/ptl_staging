@@ -101,7 +101,12 @@ typedef struct {
   //
   UINT32                      BspSegmentCount;
 
-  UINT8                       Reserved1[20];
+  //
+  // CMOS offset will be used to disable TXT if verification fails in BTG 0T and 3T case.
+  //
+  UINT8                       CmosOffset;
+
+  UINT8                       Reserved1[19];
 
   /* REGION_SEGMENT and SHAX_HASH_STRUCTURE is presnt in the BSPM binary after this (BSPM_ELEMENT)
      structure in the consecutive oerder. Size of REGION_SEGMENT depends on BspSegmentCount as
