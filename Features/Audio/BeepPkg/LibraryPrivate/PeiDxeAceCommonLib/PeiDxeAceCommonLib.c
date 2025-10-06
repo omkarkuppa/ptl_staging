@@ -261,6 +261,7 @@ EnableHdaMmioAccess (
   DEBUG ((DEBUG_INFO, "%a () - Start\n", __FUNCTION__));
 
   *IsTemporaryBar = FALSE;
+  *HdaBar         = 0;
 
   PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, PCI_DEVICE_ID_OFFSET, 1, &Reg16);
   if (Reg16 == 0xFFFF) {

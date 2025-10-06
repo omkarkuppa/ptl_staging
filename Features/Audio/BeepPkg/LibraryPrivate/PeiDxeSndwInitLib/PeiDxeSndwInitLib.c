@@ -707,7 +707,7 @@ InitializeSndwControllers (
     /// Read address of SndwX controller
     ///
     GetLinkControllerMmioAddress (HdaBar, SndwLinkIndex, &SndwControllerMmioOffset);
-    DEBUG ((DEBUG_INFO, "Sndw#%d: Controller mmio address: 0x%X.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
+    DEBUG ((DEBUG_INFO, "Sndw#%d: Controller mmio address: 0x%lx.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
     ///
     /// Check access to SndwX controller
@@ -1013,7 +1013,7 @@ SndwSendWithAck (
   }
 
   DEBUG ((DEBUG_INFO, "PeripheralIndex: %d\n", PeripheralIndex));
-  DEBUG ((DEBUG_INFO, "Sndw%d: Controller mmio address: 0x%X.\n", SndwCodecInfo.SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
+  DEBUG ((DEBUG_INFO, "Sndw%d: Controller mmio address: 0x%lx.\n", SndwCodecInfo.SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
   //
   // Update DeviceAddress in case of a write to one peripheral
@@ -1139,7 +1139,7 @@ SndwAccessDisable (
 
   for (SndwLinkIndex = 0; SndwLinkIndex < NumberOfSupportedSndwLinks; SndwLinkIndex++) {
     GetLinkControllerMmioAddress (HdaBar, SndwLinkIndex, &SndwControllerMmioOffset);
-    DEBUG ((DEBUG_INFO, "Sndw#%d: Controller mmio address: 0x%X.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
+    DEBUG ((DEBUG_INFO, "Sndw#%d: Controller mmio address: 0x%lx.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
     MmioAnd32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) ~B_SNDW_MEM_CONFIG_OM_NORMAL);
     MmioOr32 ((UINTN) HdaBar + SndwControllerMmioOffset + R_SNDW_MEM_CONFIG, (UINT32) V_SNDW_MEM_CONFIG_OM_RESET_VALUE);
