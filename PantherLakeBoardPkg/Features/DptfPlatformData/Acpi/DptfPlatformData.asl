@@ -145,7 +145,7 @@ Scope(\_SB)
       ADBG (Concatenate ("Platform Board ID: ", PBID))
       // ADBG (Concatenate ("Platform Board Revesion: ", BREV))
       Switch (ToInteger (PBID)) {
-        Case (Package () {BoardIdPtlHLp5Gcs1, BoardIdPtlHLp5Gcs2}) {
+        Case (Package () {BoardIdPtlHLp5Gcs1, BoardIdPtlHLp5Gcs2, BoardIdPtlUHLp5Gcs9600}) {
           ADBG ("Use platform GCS data vault")
           Return (Package () {
             Buffer () {
@@ -161,7 +161,7 @@ Scope(\_SB)
             }
           })
         }
-        Case (Package () {BoardIdPtlUHLp5Adk1, BoardIdPtlUHLp5Adk2}) {
+        Case (Package () {BoardIdPtlUHLp5Adk1, BoardIdPtlUHLp5Adk2, BoardIdPtlUHLp5Adk9600}) {
           ADBG ("Use platform ADK data vault")
           Return (Package () {
             Buffer () {

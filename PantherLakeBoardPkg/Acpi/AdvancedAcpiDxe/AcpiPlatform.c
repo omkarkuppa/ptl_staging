@@ -3275,6 +3275,7 @@ InstallAcpiPlatform (
     case BoardIdPtlUHLp5Aep:
     case BoardIdPtlHLp5Gcs1:
     case BoardIdPtlHLp5Gcs2:
+    case BoardIdPtlUHLp5Gcs9600:
       mPlatformNvsAreaProtocol.Area->M2Ssd1Gen4_5Dlrm              = 0;
       mPlatformNvsAreaProtocol.Area->M2Ssd2Gen4_5Dlrm              = mSystemConfiguration.StorageDynamicLinkManagement;
       break;

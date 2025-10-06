@@ -102,6 +102,8 @@ Defines Platform BoardIds
 #define BoardIdPtlHLp5Gcs2                 0x12
 #define BoardIdPtlUHLp5Adk1                0x15
 #define BoardIdPtlUHLp5Adk2                0x16
+#define BoardIdPtlUHLp5Adk9600             0x17
+#define BoardIdPtlUHLp5Gcs9600             0x18
 #define BoardIdPtlUHCammBep                0x08
 #define BoardIdPtlUHLp5DerCore             0x0B
 
@@ -191,6 +193,8 @@ Defines Platform BoardIds
 #define SkuIdPtlHLp5Gcs2                  0x00000012
 #define SkuIdPtlUHLp5Adk1                 0x00000015
 #define SkuIdPtlUHLp5Adk2                 0x00000016
+#define SkuIdPtlUHLp5Adk9600              0x00000017
+#define SkuIdPtlUHLp5Gcs9600              0x00000018
 
 #define SkuIdPtlUHLp5Aep                  0x00000007
 #define SkuIdPtlUHLp5AepBom               0x00010007

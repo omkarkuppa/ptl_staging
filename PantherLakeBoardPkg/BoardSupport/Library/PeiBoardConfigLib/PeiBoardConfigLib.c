@@ -275,10 +275,12 @@ InternalUpdateRvpBoardConfig (
     case BoardIdPtlUHCammBep:
     case BoardIdPtlHLp5Gcs1:
     case BoardIdPtlHLp5Gcs2:
+    case BoardIdPtlUHLp5Gcs9600:
     case BoardIdPtlUHLp5Aep:
     case BoardIdPtlUHLp5MemSktmRvp:
     case BoardIdPtlUHLp5Adk1:
     case BoardIdPtlUHLp5Adk2:
+    case BoardIdPtlUHLp5Adk9600:
     case BoardIdPtlUHLp5DerCore:
       BoardType = BoardTypeRvp;
       PlatformType = TypeUltUlx;
