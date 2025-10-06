@@ -117,7 +117,6 @@ PtlPcdGpioNativeLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioNativeLi
 	GpioTopologyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdGpioTopology.inf
 PtlPcdMinGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopology/PtlPcdMinGpioTopology.inf
 PtlPcdMinimalGpioNativeLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdMinimalGpioNativeLib/PtlPcdMinimalGpioNativeLib.inf
-GpioPwmLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/GpioPwmLib/GpioPwmLib.inf
 #
 # ME
 #

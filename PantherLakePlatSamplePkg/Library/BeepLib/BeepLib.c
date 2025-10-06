@@ -16,20 +16,19 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
-
+  @par Specification Reference:
 **/
 
 #include <Base.h>
+#include <PlatformBoardConfig.h>
 #include <Library/BeepLib.h>
 #include <Library/IoLib.h>
 #include <Library/TimerLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
-#include <Library/GpioPwmLib.h>
 #include <Library/GpioV2AccessLib.h>
-#include <PlatformBoardConfig.h>
-#include <Register/GpioV2PcdPins.h>
+#include <GpioV2Pwm.h>
+#include <Library/DebugLib.h>
+#include <Register/GpioAcpiDefines.h>
+#include <GpioV2Pad.h>
 
 #define NOTE(x) ((119318200 + (x) / 2) / (x))
 
@@ -62,6 +61,21 @@ BeepOn (
 {
   EFI_STATUS       Status;
   UINT16           Frequency;
+  GPIOV2_PWM       *Pwm;
+  GPIOV2_SERVICES  *GpioServices;
+  VPD_GPIO_PAD     *GpioVpd;
+
+  GpioVpd = NULL;
+  GpioVpd = PcdGetPtr (VpdPcdPwmBlinkEnable);
+
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0,&GpioServices);
+
+  if (GpioVpd->GpioPad != 0x0) {
+    Status = GpioServices->SetPadMode (GpioServices, GpioVpd->GpioPad, GpioV2PadModeNative2);
+    if (EFI_ERROR (Status)) {
+      return;
+    }
+  }
 
   Frequency = mBeepTones[(Note % 8)];
 
@@ -70,12 +84,19 @@ BeepOn (
   } else {
     Frequency <<= 1 - Octave;
   }
-
-  Status = GpioSetPwmControl (50, Frequency, GPIO_PWM_STATE_ON);
+  //
+  // Pwm get access
+  // set frequency for pwm
+  // set duty cycle for pwm
+  //
+  Status = GpioV2GetPwmAccess (GPIO_HID_PTL_PCD_P, 0,&Pwm);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to set PWM control: %r\n", __FUNCTION__, Status));
+    DEBUG ((DEBUG_ERROR, "Failed to get PWM access: %r\n", Status));
     return;
   }
+  Pwm->PwmSetFreq (Pwm, Frequency);
+  Pwm->PwmSetDuty (Pwm, 50);
+  Pwm->PwmOn (Pwm);
 }
 
 
@@ -88,13 +109,18 @@ BeepOff (
   VOID
   )
 {
-  EFI_STATUS    Status;
-  
-  Status = GpioSetPwmControl (0, 0, GPIO_PWM_STATE_OFF);
+  //
+  // Turn off the pwm pin
+  //
+  GPIOV2_PWM         *Pwm;
+  EFI_STATUS       Status;
+
+  Status = GpioV2GetPwmAccess (GPIO_HID_PTL_PCD_P, 0,&Pwm);
   if (EFI_ERROR (Status)) {
-   DEBUG ((DEBUG_ERROR, "%a: Failed to turn off PWM control: %r\n", __FUNCTION__, Status));
+    DEBUG ((DEBUG_ERROR, "Failed to get PWM access: %r\n", Status));
     return;
   }
+  Pwm->PwmOff (Pwm);
 }
 
 
@@ -139,36 +165,12 @@ Beep (
   IN UINT32  Value
   )
 {
-  UINTN            Index;
-  EFI_STATUS       Status;
-  VPD_GPIO_PAD     *GpioVpd;
-  GPIOV2_SERVICES  *GpioServices;
-
-  GpioVpd = PcdGetPtr (VpdPcdPwmBlinkEnable);
-  if (GpioVpd == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to get VPD PCD for PWM GPIO pad\n", __FUNCTION__));
-    return;
-  }
-  
-  // Get GPIO V2 services to configure pad mode
-  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to get GPIO V2 access: %r\n", __FUNCTION__, Status));
-    return;
-  }
-
-  // Configure GPIO pad mode to Native2 for PWM functionality if pad is configured
-  if (GpioVpd->GpioPad != 0x0) {
-    Status = GpioServices->SetPadMode (GpioServices, GpioVpd->GpioPad, GpioV2PadModeNative2);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: Failed to set GPIO pad mode to Native2: %r\n", __FUNCTION__, Status));
-      return;
-    }
-  }
+  UINTN  Index;
 
   for (Index = 0; Index < Value; Index++) {
     SendBeep (1, 2, 400000);
     MicroSecondDelay (100000);
   }
-  return;
+
+  return ;
 }

@@ -35,9 +35,6 @@
 [LibraryClasses]
   IoLib
   TimerLib
-  DebugLib
-  PcdLib
-  GpioPwmLib
   GpioV2AccessLib
 
 [Packages]
