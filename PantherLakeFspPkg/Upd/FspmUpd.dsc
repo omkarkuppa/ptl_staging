@@ -1873,7 +1873,7 @@
   # !BSF NAME:{Disable and Lock Watch Dog Register} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Set 1 to clear WDT status, then disable and lock WDT registers.}
   gPlatformFspPkgTokenSpaceGuid.WdtDisableAndLock           | * | 0x01 | 0x00
-  
+
   gPlatformFspPkgTokenSpaceGuid.FabricGVDisable             | * | 0x01 | 0x00
 
   # Added reserved space  UnusedUpdSpace13[1]
@@ -3770,8 +3770,28 @@
   # !BSF HELP:{LP5x VDD2 rail: 0: Dual rail (E-DVFSC is possible), 1: Single rail(No E-DVFSC; VDD2L == VDD2H)}
   gPlatformFspPkgTokenSpaceGuid.SingleVdd2Rail               | * | 0x01 | 0
 
+  # !BSF NAME:{VDD2 Voltage}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
+  # !BSF HELP:{Voltage is multiple of 5mV where 0 means Auto.}
+  gPlatformFspPkgTokenSpaceGuid.Vdd2HVoltage         | * | 0x02 | 0x00
+
+  # !BSF NAME:{VDD1 Voltage}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
+  # !BSF HELP:{Voltage is multiple of 5mV where 0 means Auto.}
+  gPlatformFspPkgTokenSpaceGuid.Vdd1Voltage          | * | 0x02 | 0x00
+
+  # !BSF NAME:{VDD2L Voltage Override}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
+  # !BSF HELP:{Voltage is multiple of 5mV where 0 means Auto.}
+  gPlatformFspPkgTokenSpaceGuid.Vdd2LVoltage         | * | 0x02 | 0x00
+
+  # !BSF NAME:{VDDQ Voltage Override}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
+  # !BSF HELP:{Voltage is multiple of 5mV where 0 means Auto.}
+  gPlatformFspPkgTokenSpaceGuid.VddqVoltage          | * | 0x02 | 0x00
+
   # Added reserved space (for SA) UnusedUpdSpace0[35]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x23 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x1B | {0x00}
 
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}

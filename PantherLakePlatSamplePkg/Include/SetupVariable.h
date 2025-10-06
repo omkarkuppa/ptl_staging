@@ -1286,9 +1286,10 @@ typedef struct {
   <b>Revision 19</b>: - Add TbtPerfBoostEn for TBT Performance Boost Enable/Disable.
   <b>Revision 20</b>: - Add Fabric GV support.
   <b>Revision 21</b>: - Add Lp5SafeSpeed
+  <b>Revision 22</b>: - Add Vdd2HVoltage, Vdd1Voltage, Vdd2LVoltage, VddqVoltage
 **/
 
-#define SA_SETUP_REVISION   21
+#define SA_SETUP_REVISION   22
 
 typedef struct {
   UINT8   Revision;
@@ -1803,7 +1804,11 @@ typedef struct {
 
   UINT8   FabricGVDisable;
   UINT8   Lp5SafeSpeed;
-  UINT8   Rsvd[15];
+  UINT16  Vdd2HVoltage;
+  UINT16  Vdd1Voltage;
+  UINT16  Vdd2LVoltage;
+  UINT16  VddqVoltage;
+  UINT8   Rsvd[7];
 } SA_SETUP;
 
 /**

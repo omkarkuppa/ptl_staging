@@ -450,3 +450,7 @@ PprRetryLimit
 PhyClockToCkdDimm
 ChannelToCkdQckMapping
 TdcCurrentLimit
+Vdd2HVoltage
+Vdd1Voltage
+Vdd2LVoltage
+VddqVoltage

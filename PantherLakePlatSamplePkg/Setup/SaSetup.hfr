@@ -2001,6 +2001,46 @@
       default     = 0, // Auto
     endnumeric;
 
+    numeric varid = SA_SETUP.Vdd2HVoltage,
+      prompt      = STRING_TOKEN(STR_VDD2H_VOLTAGE_PROMPT),
+      help        = STRING_TOKEN(STR_LP5_VDD_VOLTAGE_HELP),
+      flags       = RESET_REQUIRED,
+      minimum     = 0,
+      maximum     = 0xFFFF,
+      step        = 5,
+      default     = 0, // Auto
+    endnumeric;
+
+    numeric varid = SA_SETUP.Vdd1Voltage,
+      prompt      = STRING_TOKEN(STR_VDD1_VOLTAGE_PROMPT),
+      help        = STRING_TOKEN(STR_LP5_VDD_VOLTAGE_HELP),
+      flags       = RESET_REQUIRED,
+      minimum     = 0,
+      maximum     = 0xFFFF,
+      step        = 5,
+      default     = 0, // Auto
+    endnumeric;
+
+    numeric varid = SA_SETUP.Vdd2LVoltage,
+      prompt      = STRING_TOKEN(STR_VDD2L_VOLTAGE_PROMPT),
+      help        = STRING_TOKEN(STR_LP5_VDD_VOLTAGE_HELP),
+      flags       = RESET_REQUIRED,
+      minimum     = 0,
+      maximum     = 0xFFFF,
+      step        = 5,
+      default     = 0, // Auto
+    endnumeric;
+
+    numeric varid = SA_SETUP.VddqVoltage,
+      prompt      = STRING_TOKEN(STR_VDDQ_VOLTAGE_PROMPT),
+      help        = STRING_TOKEN(STR_LP5_VDD_VOLTAGE_HELP),
+      flags       = RESET_REQUIRED,
+      minimum     = 0,
+      maximum     = 0xFFFF,
+      step        = 5,
+      default     = 0, // Auto
+    endnumeric;
+
     goto MEMORY_CONFIG_PPR_FORM_ID,
       prompt  = STRING_TOKEN(STR_MEMORY_PPR_CONFIGURATION),
       help    = STRING_TOKEN(STR_MEMORY_PPR_CONFIGURATION_HELP);
@@ -9970,7 +10010,7 @@ endform;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;  
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
 endoneof;
 
       // Version of CRD
@@ -11268,7 +11308,7 @@ endoneof;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;      
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
 endoneof;
 
       // Version of CRD
@@ -11917,7 +11957,7 @@ endif;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED; 
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
 endoneof;
 
       // Version of CRD
@@ -13215,7 +13255,7 @@ endif;
         help        = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_TYPE),
         option text = STRING_TOKEN(STR_MIPICAM_CONTROL_LOGIC_DISCRETE), value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PMIC_TPS68470),          value = 2, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;    
+        option text = STRING_TOKEN(STR_MIPICAM_DISCRETE_HDMI2MIPI), value = 5, flags = RESET_REQUIRED;
 endoneof;
 
       // Version of CRD

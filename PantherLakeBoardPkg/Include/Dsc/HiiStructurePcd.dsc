@@ -3799,6 +3799,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDR|0                                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDD|0                                                        # Offset 266 tRWDD Delta
 gStructPcdTokenSpaceGuid.PcdSaSetup.Interpreter|0x0                                                # Offset 267 MRC Interpreter
 
+gStructPcdTokenSpaceGuid.PcdSaSetup.VddqVoltage|0x0                                                # Offset 270 DRAM voltage (Vddq) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc
+
 gStructPcdTokenSpaceGuid.PcdSaSetup.RcompResistor|0                                                # Offset 274 Reference RCOMP resistor on motherboard
 gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[0]|0                                               # Offset 276 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
 gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[1]|0                                               # Offset 278 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
@@ -3864,6 +3866,10 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccEccInjControl|0x0                      
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccEccInjAddrBase|0x0                                        # Offset 331 Address to match against for ECC error injection
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccEccInjCount|0x1                                           # Offset 335 Number of memory transactions between ECC error injection
 gStructPcdTokenSpaceGuid.PcdSaSetup.IsWckIdleExitEnabled|0x1                                       # Offset 336 Enable/disable WCK Idle Exit: 0 = Disable, 1 = Enable
+
+gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2HVoltage|0x0                                               # Offset 338 LP5 DRAM voltage (VDD2H) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
+gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd1Voltage|0x0                                                # Offset 340 LP5 DRAM voltage (VDD1) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
+gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2LVoltage|0x0                                               # Offset 342 LP5 DRAM voltage (VDD2L) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
 
 ##############################
 # MRC - ExtInputs end

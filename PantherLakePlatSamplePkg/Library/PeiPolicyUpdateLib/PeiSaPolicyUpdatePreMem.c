@@ -1290,6 +1290,11 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprErrorInjection, MemConfigNoCrc->PprErrorInjection,              SaSetup.PprErrorInjection              );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprForceRepair,    MemConfigNoCrc->PprForceRepair,                 SaSetup.PprForceRepair                 );
 
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Vdd2HVoltage,      MemConfig->ExternalInputs.Vdd2HVoltage,         SaSetup.Vdd2HVoltage                   );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Vdd1Voltage,       MemConfig->ExternalInputs.Vdd1Voltage,          SaSetup.Vdd1Voltage                    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Vdd2LVoltage,      MemConfig->ExternalInputs.Vdd2LVoltage,         SaSetup.Vdd2LVoltage                   );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VddqVoltage,       MemConfig->ExternalInputs.VddqVoltage,          SaSetup.VddqVoltage                    );
+
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardStackUp,   MemConfig->ExternalInputs.BoardDetails.BoardStackUp,   PcdGet8(VpdPcdMrcBoardStackUp)                         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BoardTopology,  MemConfig->ExternalInputs.BoardDetails.BoardTopology,  PcdGet8(VpdPcdMrcBoardTopology)                        );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SingleVdd2Rail, MemConfig->ExternalInputs.BoardDetails.SingleVdd2Rail, (PcdGet8(VpdPcdVdd2lPowerRailPresent) == 0) ? 1 : 0    );

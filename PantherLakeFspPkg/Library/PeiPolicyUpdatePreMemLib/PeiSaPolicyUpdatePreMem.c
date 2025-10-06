@@ -328,6 +328,11 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.BoardDetails.BoardTopology  = FspmUpd->FspmConfig.BoardTopology;
   MemConfig->ExternalInputs.BoardDetails.SingleVdd2Rail = FspmUpd->FspmConfig.SingleVdd2Rail;
 
+  MemConfig->ExternalInputs.Vdd2HVoltage = FspmUpd->FspmConfig.Vdd2HVoltage;
+  MemConfig->ExternalInputs.Vdd1Voltage  = FspmUpd->FspmConfig.Vdd1Voltage;
+  MemConfig->ExternalInputs.Vdd2LVoltage = FspmUpd->FspmConfig.Vdd2LVoltage;
+  MemConfig->ExternalInputs.VddqVoltage  = FspmUpd->FspmConfig.VddqVoltage;
+
   MemConfig->ExternalInputs.DprLock                = FspmUpd->FspmConfig.DprLock;
   MemConfig->ExternalInputs.SubChHashMask          = FspmUpd->FspmConfig.SubChHashMask;
   MemConfig->ExternalInputs.DqPinsInterleaved      = FspmUpd->FspmConfig.DqPinsInterleaved;

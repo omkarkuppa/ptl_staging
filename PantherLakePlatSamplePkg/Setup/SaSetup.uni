@@ -313,6 +313,12 @@
 #string STR_VCCCLK_VOLTAGE_PROMPT               #language en-US "VccClk Voltage Override"
 #string STR_VDDQ_VOLTAGE_HELP                   #language en-US "# is multiple of 1mV where 0 means Auto."
 
+#string STR_VDD2H_VOLTAGE_PROMPT                 #language en-US "LP5 VDD2H Voltage"
+#string STR_VDD1_VOLTAGE_PROMPT                  #language en-US "LP5 VDD1 Voltage"
+#string STR_VDD2L_VOLTAGE_PROMPT                 #language en-US "LP5 VDD2L Voltage"
+#string STR_VDDQ_VOLTAGE_PROMPT                  #language en-US "LP5 VDDQ Voltage"
+#string STR_LP5_VDD_VOLTAGE_HELP                 #language en-US "Voltage is multiple of 5mV where 0 means Auto."
+
 #string STR_MRC_DDR5_MR7_WICA_SUPPORT_PROMPT    #language en-US "DDR5 MR7 WICA support"
 #string STR_MRC_DDR5_MR7_WICA_SUPPORT_HELP      #language en-US "Enable if DDR5 DRAM Device supports MR7 WICA 0.5 tCK offset alignment"
 
