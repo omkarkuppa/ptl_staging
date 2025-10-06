@@ -40,7 +40,8 @@ typedef enum {
     Card_276C = 5,
     Card_298C = 6,
     Card_311B = 7,
-    Card_default = 8,
+    Card_75B = 8,
+    Card_default = 9,
     Card_Max
 } CardEnum;
 
@@ -57,10 +58,11 @@ typedef enum {
   Card_311B_2R_6400 = 9,
   Card_230C_1R_6400 = 10,
   Card_235A_1R_6400 = 11,
-  Card_default_1R_6400 = 12,
-  Card_default_1R_7200 = 13,
-  Card_default_2R_6400 = 14,
-  Card_default_2R_7200 = 15,
+  Card_75B_2R_6400 = 12,
+  Card_default_1R_6400 = 13,
+  Card_default_1R_7200 = 14,
+  Card_default_2R_6400 = 15,
+  Card_default_2R_7200 = 16,
   Card_NotFound
 } Ddr5ParamIndex;
 

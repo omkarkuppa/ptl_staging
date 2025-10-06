@@ -373,7 +373,9 @@ MrcFastBootPermitted (
       for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
         DimmIn   = &ChannelIn->Dimm[Dimm];
         DimmSave = &ChannelSave->Dimm[Dimm];
-        if (DimmIn->Status == DIMM_DISABLED) {
+        // Changing the disabled DIMM will trigger an MRC cold boot
+        // flow when the RetrainToWorkingChannel feature is enabled
+        if (DimmIn->Status == DIMM_DISABLED && Inputs->ExtInputs.Ptr->RetrainToWorkingChannel == FALSE) {
           DimmCrc = 0;
         } else {
           CrcStart = MrcSpdCrcArea (MrcData, Controller, Channel, Dimm, &CrcSize);

@@ -1230,7 +1230,7 @@
   # !BSF NAME:{Write Equalization Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disables Write Equalization Training}
-  gPlatformFspPkgTokenSpaceGuid.WREQT                       | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.WREQT                       | * | 0x01 | 0x01
 
   # !BSF NAME:{Ch Hash Mask}
   # !BSF TYPE:{EditNum, HEX, (0x0000, 0x3FFF)}

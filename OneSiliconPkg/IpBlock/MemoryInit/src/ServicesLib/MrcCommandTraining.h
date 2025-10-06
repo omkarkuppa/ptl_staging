@@ -54,6 +54,8 @@
 #define MRC_120PERCENT_TOLERANCE   (120)
 #define MRC_80PERCENT_TOLERANCE    (80)
 
+#define MRC_ROUNDING_TOLERANCE     (2)
+
 typedef enum {
   MrcCaTrainingDisabled,
   MrcCaTrainingEnabled

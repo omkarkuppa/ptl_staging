@@ -70,8 +70,8 @@ MrcFrequency Ddr5SupportedFrequencies[] = {
   f3200
 };
 
-UINT8 Ddr5SupportedFrequenciesSize = sizeof (Ddr5SupportedFrequencies);
-UINT8 Lp5SupportedFrequenciesSize   = sizeof (Lp5SupportedFrequencies);
+UINT8 Ddr5SupportedFrequenciesSize = ARRAY_COUNT (Ddr5SupportedFrequencies);
+UINT8 Lp5SupportedFrequenciesSize  = ARRAY_COUNT  (Lp5SupportedFrequencies);
 
 /**
   Returns the frequency point POR type for the input SaGvPoint and the current

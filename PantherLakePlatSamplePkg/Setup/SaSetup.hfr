@@ -4135,8 +4135,8 @@ endform;
       oneof varid   = SA_SETUP.WREQT,
         prompt      = STRING_TOKEN(STR_WREQT_TRNG_NAME),
         help        = STRING_TOKEN(STR_WREQT_TRNG_HELP),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.DQSRF,
@@ -7100,7 +7100,7 @@ endform;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_0), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_MIPICAM_PHY_CONFIG_1), value = 1, flags = RESET_REQUIRED;
       endoneof;
-    
+
     #if FixedPcdGetBool (PcdMipiLontiumEnable) == 0
       // Lane Configuration
       numeric varid = MIPICAM_CONFIG.MipiCam_Link2_DriverData_LaneConfiguration,

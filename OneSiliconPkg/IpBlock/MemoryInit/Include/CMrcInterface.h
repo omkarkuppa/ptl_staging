@@ -1026,6 +1026,12 @@ typedef enum {
 #define f14800      (14800)
 #define f14933      (14933)
 #define f15067      (15067)
+#define f15200      (15200)
+#define f15333      (15333)
+#define f15467      (15467)
+#define f15600      (15600)
+#define f15733      (15733)
+#define f15867      (15867)
 #define f16000      (16000)
 #define fInvalid    (0xFFFFFFFF)
 typedef UINT32 MrcFrequency;
@@ -1196,6 +1202,12 @@ typedef UINT32 MrcFrequency;
 #define MRC_DDR_14800_TCK_MIN    135135
 #define MRC_DDR_14933_TCK_MIN    133929
 #define MRC_DDR_15067_TCK_MIN    132743
+#define MRC_DDR_15200_TCK_MIN    131579
+#define MRC_DDR_15333_TCK_MIN    130435
+#define MRC_DDR_15467_TCK_MIN    129310
+#define MRC_DDR_15600_TCK_MIN    128205
+#define MRC_DDR_15733_TCK_MIN    127119
+#define MRC_DDR_15867_TCK_MIN    126050
 #define MRC_DDR_16000_TCK_MIN    125000
 
 /// Define the memory nominal voltage (VDD).
@@ -2396,12 +2408,13 @@ typedef struct {
   UINT8 PprRetryLimit;
   McRegOffsets OffsetKnobs;       ///< Options for MC Register Offset settings
   BOOLEAN InitPerDeviceNnFlex;
+  BOOLEAN PerDeviceDdr5ReadDca;
   BOOLEAN PhClkCheck;                    ///< Phase Clock Check
   UINT8   PhClkCheckPerLanePhError;      ///< Min to max tolerance for the per-lane PhClkCheck (phase). 0 - Auto
   UINT8   PhClkCheckPerLanePiLinError;   ///< Min to max tolerance for the per-lane PhClkCheck (PI Linearity). 0 - Auto
   BOOLEAN IsVdd2Margining;               ///< TRUE: Skip Vsense run in LVR AutoTrim
   BOOLEAN IsLp5SpeedLimited;             ///< Reduce top LP5 speed
-  UINT8   Reserved3[2];                  ///< Reserved to ensure config block size is a multiple of DWORDs
+  UINT8   Reserved3[1];                  ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

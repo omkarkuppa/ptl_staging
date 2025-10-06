@@ -180,7 +180,7 @@ MrcLp5GetVrefDq (
   // Making it a function of SoC Vddq instead, plus additional offset for better initial centering
 
   DqVrefMv = Outputs->VccddqVoltage / 4;
-  DqVrefMv += ((Outputs->Frequency == f9600) ? 5 : (Outputs->Frequency >= f6400) ? 30 : 10);
+  DqVrefMv += ((Outputs->Frequency == f9600) ? 45 : (Outputs->Frequency >= f6400) ? 60 : 30);
 
   if (Outputs->IsDvfscEnabled) {
     // DQ ODT is disabled when in E-DVFSC mode, and we need a higher DqVref

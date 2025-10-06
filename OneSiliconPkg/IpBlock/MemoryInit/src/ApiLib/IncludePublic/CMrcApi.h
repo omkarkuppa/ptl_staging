@@ -115,7 +115,7 @@
 #define TWTRLMINPOSSIBLE       4           ///< tWTR_L possible range, in number of tCK cycles.
 #define TWTRLMAXPOSSIBLE       11
 #define TRTPMINPOSSIBLE        12          ///< tRTPmin possible range, in number of tCK cycles.
-#define TRTPMAXPOSSIBLE        33
+#define TRTPMAXPOSSIBLE        35
 #define TFAWMINPOSSIBLE        10          ///< tFAWmin possible range, in number of tCK cycles.
 #define TFAWMAXPOSSIBLE        54
 #define TCWLMINPOSSIBLE        5           ///< tCWLmin possible range, in number of tCK cycles.
@@ -126,7 +126,7 @@
 #define NMODEMAXPOSSIBLE       3
 
 #define DDR5_TWRMINPOSSIBLE    48          ///< tWRmin possible range, in number of tCK cycles.
-#define DDR5_TWRMAXPOSSIBLE    132         ///< tWRmin values for DDR5 are in 6 CK step size.
+#define DDR5_TWRMAXPOSSIBLE    138         ///< tWRmin values for DDR5 are in 6 CK step size.
 
 #define LPDDR5_TCWLMINPOSSIBLE  3           ///< tCWLmin possible range, in number of tCK cycles.
 #define LPDDR_TWRMINPOSSIBLE    4           ///< tWRminpossible range, in number of tCK cycles.

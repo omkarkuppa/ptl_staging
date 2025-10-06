@@ -107,6 +107,28 @@ MrcIsArfmRequested (
   );
 
 /**
+  Check if Adaptive Refresh Management (ARFM) is supported on a DIMM.
+
+   @param[in]  MrcData              - Pointer to global MRC data
+   @param[in]  Controller           - MC number
+   @param[in]  Channel              - Channel number
+   @param[in]  Dimm                 - DIMM number
+   @param[out] ArfmLevelToConfigure - Maximum supported ARFM Level lower than requested,
+                                      only valid if function returns TRUE. Applies to DDR5 only.
+
+   @retval - TRUE if ARFM is supported
+   @retval - FALSE if ARFM is not supported
+**/
+BOOLEAN
+MrcIsArfmSupported (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Dimm,
+  OUT MrcDramRfmModeType  *ArfmLevelToConfigure
+  );
+
+/**
   If RFM is required: The RFM threshold values (used in operations on Rolling
   Accumulated ACT (RAA) counter) for that DIMM for RFM will be configured.
 

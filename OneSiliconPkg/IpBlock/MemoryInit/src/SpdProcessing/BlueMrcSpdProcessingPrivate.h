@@ -766,6 +766,17 @@ GetChannelDimmtCCD_L (
   IN OUT MrcParameters *const MrcData
   );
 
+/**
+  Calculate the tCCD_L_WR timing value for the given memory frequency.
+
+  @param[in, out] MrcData - Pointer to MrcData data structure.
+
+  @retval TRUE if there are DIMMs present, otherwise FALSE.
+**/
+BOOLEAN
+GetChannelDimmtCCD_L_WR (
+  IN OUT MrcParameters *const MrcData
+  );
 
 /**
   Calculate the minimum command rate mode value for the given channel.

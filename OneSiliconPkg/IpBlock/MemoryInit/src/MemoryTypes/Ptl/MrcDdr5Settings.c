@@ -72,6 +72,7 @@ const char* CardPartNumber[Card_Max] = {
   "MTC4C1016ZS1VC72BCZKFF",  // Card_276C
   "MTC4C10163S1VC72BHZ KFF", // Card_298C
   "M435R8JA3MB1-CJRLC",      // Card_311B
+  "HMCG88AGBSA092N",         // Card_75B
   "none",                    // Card_default
 };
 
@@ -99,6 +100,7 @@ const char* Ddr5CardToName[Card_NotFound] = {
   "311B_2R_6400",
   "230C_1R_6400",
   "235A_1R_6400",
+  "75B_2R_6400",
   "DEFAULT_1R_6400",
   "DEFAULT_1R_7200",
   "DEFAULT_2R_6400",
@@ -149,6 +151,9 @@ GetDdr5ParamIndex (
       if (NumOfRanks == 2 && Frequency <= 6400) return Card_311B_2R_6400;
       if (NumOfRanks == 2 && Frequency <= 7200) return Card_311B_2R_7200;
       break;
+    case Card_75B:
+      if (NumOfRanks == 2 && Frequency <= 6400) return Card_75B_2R_6400;
+      break;
     default:
       if (NumOfRanks == 1 && Frequency <= 6400) {
         return Card_default_1R_6400;
@@ -180,6 +185,7 @@ const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
   { -23,  -5, 120,  80,  80,  40,  40 },
   { -13,   0, 120,  60,  60,  40,  48 },
   { -13,   0, 120,  60,  60,  40,  48 },
+  { -23,  -5, 120,  48,  80,  40,  40 },
   { -23,  -5, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  48,  80,  40,  40 },

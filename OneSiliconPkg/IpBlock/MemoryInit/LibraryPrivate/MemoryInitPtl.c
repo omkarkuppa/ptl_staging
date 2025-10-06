@@ -430,7 +430,6 @@ MrcDisableFailingChannels (
   if (!MemConfigNoCrc->RetrainToWorkingChannel) {
     return RetrainToWorkingChannelDone;
   }
-
   //
   // Store DisableChannel Value to SaveData
   //

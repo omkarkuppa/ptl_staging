@@ -737,8 +737,8 @@ PicoSecondsToClocks (
   UINT32 MathTemp;
   UINT32 tCKps;
 
-  // Convert tCK from Femtoseconds to Picoseconds
-  tCKps = UDIVIDEROUND (tCKmin, 1000);
+  // Convert tCK from Femtoseconds to Picoseconds and round down
+  tCKps = tCKmin / 1000;
 
   if (tCKps == 0) {
     Clocks = 0;

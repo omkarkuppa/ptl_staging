@@ -264,6 +264,13 @@ const TRangeTable FreqTable[] = { //Gear 1   Gear 2       Gear 4
   { MRC_DDR_14800_TCK_MIN, f14800 }, // 444                 111
   { MRC_DDR_14933_TCK_MIN, f14933 }, // 448                 112
   { MRC_DDR_15067_TCK_MIN, f15067 }, // 452                 113
+  { MRC_DDR_15200_TCK_MIN, f15200 }, // 456                 114
+  { MRC_DDR_15333_TCK_MIN, f15333 }, // 460                 115
+  { MRC_DDR_15467_TCK_MIN, f15467 }, // 464                 116
+  { MRC_DDR_15600_TCK_MIN, f15600 }, // 468                 117
+  { MRC_DDR_15733_TCK_MIN, f15733 }, // 472                 118
+  { MRC_DDR_15867_TCK_MIN, f15867 }, // 476                 119
+  { MRC_DDR_16000_TCK_MIN, f16000 }, // 480                 120
   { 0,                  fNoInit }
 };
 
@@ -3061,8 +3068,6 @@ GetChannelDimmtFAW (
   UINT16                PageSize;
   MRC_LP5_BANKORG       Lp5BGOrg;
   UINT32                Index;
-  UINT32                tFAWNs;
-  UINT32                tFAWNCk;
 
   const SPD_EXTREME_MEMORY_PROFILE_HEADER_3_0 *Header5;
   Inputs  = &MrcData->Inputs;
@@ -3124,80 +3129,17 @@ GetChannelDimmtFAW (
                             DimmOut->ColumnSize,
                             DimmOut->SdramWidth
                             );
-                if (PageSize < 2048) {
-                  tFAWNCk = 32;
-                  if (Outputs->Frequency <= f3200) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_3200_MIN;
-                  } else if (Outputs->Frequency <= f3600) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_3600_MIN;
-                  } else if (Outputs->Frequency <= f4000) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_4000_MIN;
-                  } else if (Outputs->Frequency <= f4400) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_4400_MIN;
-                  } else if (Outputs->Frequency <= f4800) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_4800_MIN;
-                  } else if (Outputs->Frequency <= f5200) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_5200_MIN;
-                  } else if (Outputs->Frequency <= f5600) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_5600_MIN;
-                  } else if (Outputs->Frequency <= f6000) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_6000_MIN;
-                  } else if (Outputs->Frequency <= f6400) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_6400_MIN;
-                  } else if (Outputs->Frequency <= f6800) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_6800_MIN;
-                  } else if (Outputs->Frequency <= f7200) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_7200_MIN;
-                  } else if (Outputs->Frequency <= f7600) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_7600_MIN;
-                  } else if (Outputs->Frequency <= f8000) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_8000_MIN;
-                  } else if (Outputs->Frequency <= f8400) {
-                    tFAWNs = MRC_DDR5_TFAW_1K_8400_MIN;
-                  } else {
-                    tFAWNs = MRC_DDR5_TFAW_1K_8800_MIN;
-                  }
-                } else {
-                  tFAWNCk = 40;
-                  if (Outputs->Frequency <= f3200) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_3200_MIN;
-                  } else if (Outputs->Frequency <= f3600) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_3600_MIN;
-                  } else if (Outputs->Frequency <= f4000) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_4000_MIN;
-                  } else if (Outputs->Frequency <= f4400) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_4400_MIN;
-                  } else if (Outputs->Frequency <= f4800) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_4800_MIN;
-                  } else if (Outputs->Frequency <= f5200) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_5200_MIN;
-                  } else if (Outputs->Frequency <= f5600) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_5600_MIN;
-                  } else if (Outputs->Frequency <= f6000) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_6000_MIN;
-                  } else if (Outputs->Frequency <= f6400) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_6400_MIN;
-                  } else if (Outputs->Frequency <= f6800) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_6800_MIN;
-                  } else if (Outputs->Frequency <= f7200) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_7200_MIN;
-                  } else if (Outputs->Frequency <= f7600) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_7600_MIN;
-                  } else if (Outputs->Frequency <= f8000) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_8000_MIN;
-                  } else if (Outputs->Frequency <= f8400) {
-                    tFAWNs = MRC_DDR5_TFAW_2K_8400_MIN;
-                  } else {
-                    tFAWNs = MRC_DDR5_TFAW_2K_8800_MIN;
-                  }
-                }
-                Calculated = PicoSecondsToClocks (tFAWNs, tCKmin);
-                Calculated = MAX (tFAWNCk, Calculated);
+                  // DDR5 tFAW is defined in the spec
+                  Calculated = (PageSize >= 2048) ? MRC_DDR5_TFAW_2K_NCK : MRC_DDR5_TFAW_1K_NCK;
               } else if (tCKmin > 0) {
                 Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
                 if ((DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) && Lp5BGOrg != MrcLp58Bank) {
                     if (Outputs->LpX) {
-                      Calculated = DIVIDECEIL ((15000000 - (tCKmin / 100)), tCKmin); // 15ns
+                      if (Outputs->Frequency < f9600) {
+                        Calculated = DIVIDECEIL ((15000000 - (tCKmin / 100)), tCKmin); // 15ns
+                      } else {
+                        Calculated = DIVIDECEIL ((13320000 - (tCKmin / 100)), tCKmin); // 13.32ns
+                      }
                     } else {
                       Calculated = DIVIDECEIL ((20000000 - (tCKmin / 100)), tCKmin); // 20ns
                     }
@@ -4682,7 +4624,11 @@ GetChannelDimmtRRD (
                   Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
                   if (Lp5BGOrg != MrcLp58Bank) {
                     if (Outputs->LpX) {
-                      Calculated = DIVIDECEIL ((3750000 - (tCKmin / 100)), tCKmin); // 3.75ns
+                      if (Outputs->Frequency < f9600) {
+                        Calculated = DIVIDECEIL ((3750000 - (tCKmin / 100)), tCKmin); // 3.75ns
+                      } else {
+                        Calculated = DIVIDECEIL ((3330000 - (tCKmin / 100)), tCKmin); // 3.33ns
+                      }
                     } else {
                       Calculated = DIVIDECEIL ((5000000 - (tCKmin / 100)), tCKmin); // 5ns
                     }
@@ -4833,8 +4779,10 @@ GetChannelDimmtRRD_L (
                   tRDRD_LNs = MRC_DDR5_TRRD_L_7600_MIN;
                 } else if (Outputs->Frequency <= f8400) {
                   tRDRD_LNs = MRC_DDR5_TRRD_L_8000_8400_MIN;
-                } else {
+                } else if (Outputs->Frequency <= f8800) {
                   tRDRD_LNs = MRC_DDR5_TRRD_L_8800_MIN;
+                }  else {
+                  tRDRD_LNs = MRC_DDR5_TRRD_L_9200_MIN;
                 }
                 Calculated = PicoSecondsToClocks (tRDRD_LNs, tCKmin);
                 Calculated = MAX (8, Calculated);
@@ -5986,7 +5934,8 @@ GetChannelDimmtCCD_L (
               if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
                 // DDR5 tCCD_L = MAX (8nCK, 5ns)
                 Calculated = PicoSecondsToClocks (5000, tCKmin);
-                Calculated = MAX (8, Calculated);
+                // Max value for tCCD_L is 23
+                Calculated = RANGE (Calculated, 8, 23);
               }
               break;
           } //switch
@@ -6024,12 +5973,11 @@ GetChannelDimmtCCD_L (
 /**
   Calculate the tCCD_L_WR timing value for the given memory frequency.
 
-    @param[in, out] MrcData - Pointer to MrcData data structure.
+  @param[in, out] MrcData - Pointer to MrcData data structure.
 
-    @retval TRUE Function completed.  This would be a void function but
-    it appears in a table of functions that must return a BOOLEAN.
+  @retval TRUE Function completed.  This would be a void function but
+  it appears in a table of functions that must return a BOOLEAN.
 **/
-static
 BOOLEAN
 GetChannelDimmtCCD_L_WR (
   IN OUT MrcParameters *const MrcData
@@ -6115,7 +6063,8 @@ GetChannelDimmtCCD_L_WR (
             default:
               if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
                 Calculated = PicoSecondsToClocks (20000, tCKmin);
-                Calculated = MAX (32, Calculated);
+                // Max value for tCCD_L_WR is 92
+                Calculated = RANGE (Calculated, 32, 92);
               }
               break;
           } //switch

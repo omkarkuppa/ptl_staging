@@ -742,7 +742,6 @@ MrcRhPrevention (
   INT64                PanicWm;
   INT64                HpWm;
   MRC_RFM_SETUP_CONFIG RfmSetupConfig;
-  BOOLEAN              IsMcSubChannel;
 
   const MRC_EXT_INPUTS_TYPE *ExtInputs;
 
@@ -777,8 +776,7 @@ MrcRhPrevention (
         continue;
       }
 
-      IsMcSubChannel = IS_MC_SUB_CH (IsLpddr, Channel);
-      if (!IsMcSubChannel) {
+      if (!IS_MC_SUB_CH (IsLpddr, Channel)) {
         PopulatedDimmMask    = 0;
         DrfmDimmSupportedMap = 0;
         MrcRfmSetupConfigInit (&RfmSetupConfig);
@@ -846,7 +844,7 @@ MrcRhPrevention (
         }
       } // for Dimm
 
-      if ((PopulatedDimmMask == 0) || !IsMcSubChannel) {
+      if ((PopulatedDimmMask == 0) || (IsLpddr && ((Channel % 2) == 0))) {
         //  MC registers are per big ch0/1 only
         //  As for LPDDR, we need check sub channel both 0 and 1,
         //  or both 2 and 3, before going ahead to configure RHCTL or PTRR.

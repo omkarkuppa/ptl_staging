@@ -88,6 +88,7 @@ typedef enum {
   Ddr5Wr_120,
   Ddr5Wr_126,
   Ddr5Wr_132,
+  Ddr5Wr_138,
   Ddr5WrMax
 } DDR5_MR6_WR;
 

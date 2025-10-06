@@ -473,7 +473,7 @@ CalcUpDnVref (
 
   switch (Param) {
     case RdOdt:
-      DnVal = (INT16) (MRC_RCOMP_VREF_CALCULATION_VALUE * R_targ) / (DqRon + R_targ);
+      DnVal = (INT16) ((MRC_RCOMP_VREF_CALCULATION_VALUE * R_targ) / (DqRon + R_targ));
       break;
 
     case WrDS:

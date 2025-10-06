@@ -3618,7 +3618,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5WCKDCA|0x1                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXUNMATCHEDCAL|0x1                                             #           BIT26 - Unmatched Rx Calibaration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x1                                                 #           BIT27 - DIMM DFE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x1                                             #           BIT29 - DRAM DCC for DDR5 READ DCA
-gStructPcdTokenSpaceGuid.PcdSaSetup.WREQT|0x0                                                      #           BIT30 - Write Equalization Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.WREQT|0x1                                                      #           BIT30 - Write Equalization Training
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                                   # Offset 56 BIT0 - RXDQS Duty Cycle Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
