@@ -32,9 +32,11 @@ typedef struct {
   UINT8                   PprRecoveryStatusEnable;
   UINT8                   TsegReallocateEnableCount;
   UINT8                   RetryCount           : 3;
-  UINT8                   MrcPprStatus         : 1;
+  UINT8                   Reserved1            : 1;
   UINT8                   TsegMemoryTestStatus : 1;
   UINT8                   Reserved             : 3;
+  EFI_PHYSICAL_ADDRESS    BiosPeiMemoryBaseAddress;
+  UINT64                  BiosPeiMemoryLength;
 } TISH_CONFIG_HOB;
 
 #pragma pack()

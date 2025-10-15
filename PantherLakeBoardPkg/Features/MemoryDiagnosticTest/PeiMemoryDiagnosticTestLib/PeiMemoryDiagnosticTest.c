@@ -292,7 +292,7 @@ PerformTsegRegionMemoryTest (
 
     if (TishDataHob->TsegReallocateEnableCount >= 1) {
       if (((!EFI_ERROR (Status)) && (TishDataHob->RetryCount <= 3) && (TishDataHob->TsegReallocateEnableCount == TishDataHob->RetryCount)) ||
-          ((TishDataHob->MrcPprStatus == PASS) && (!EFI_ERROR (Status))))
+          (!EFI_ERROR (Status)))
       {
         DEBUG ((DEBUG_INFO, "TishDataHob->TsegReallocateEnableCount[%d]\n", TishDataHob->TsegReallocateEnableCount));
         goto MemTestPass;
@@ -303,7 +303,7 @@ PerformTsegRegionMemoryTest (
 
 MemTestPass:
     if (((!EFI_ERROR (Status)) && (TishDataHob->RetryCount <= 3)) ||
-        ((TishDataHob->MrcPprStatus == PASS) && (!EFI_ERROR (Status))))
+        (!EFI_ERROR (Status)))
     {
       DEBUG ((DEBUG_INFO, "Memory Diagnostic Test for TSEG Memory Region  at 0x%x - Passed\n", TsegBaseAddress));
       DEBUG ((DEBUG_INFO, "TSEG RetryCount[%d]\n", TishDataHob->RetryCount));
@@ -441,7 +441,6 @@ InstallTishHob (
   TishDataHob->TsegMemFailureAddress      = 0;
   TishDataHob->SafeLoadingBiosEnableState = 1;
   TishDataHob->TsegSize                   = PcdGet32 (PcdTsegSize);
-  TishDataHob->MrcPprStatus               = FAIL;
   TishDataHob->RetryCount                 = 0;
   TishDataHob->TsegMemoryTestStatus       = FAIL;
   TishDataHob->PprRecoveryStatusEnable    = 0;
@@ -468,14 +467,12 @@ PeiMemoryDiagnosticTestLibContructor (
   EFI_STATUS       Status;
   TISH_CONFIG_HOB  *TishDataHob;
   UINT8            RetryCount;
-  UINT8            MrcPprStatus;
   SETUP_DATA       SetupData;
   UINT8            MemoryTestInfo;
   UINT8            TsegMemoryTestStatus;
 
   TishDataHob          = NULL;
   RetryCount           = 0;
-  MrcPprStatus         = 0;
   MemoryTestInfo       = 0;
   TsegMemoryTestStatus = 0;
 
@@ -538,7 +535,6 @@ PeiMemoryDiagnosticTestLibContructor (
         //  Update the RetryCount and PPR Status to TISH Hob from CMOS Memory
         //
         RetryCount           = CmosRead8 (CMOS_MEM_TEST_INFO_OFFSET) & 0x7;
-        MrcPprStatus         = (((CmosRead8 (CMOS_MEM_TEST_INFO_OFFSET) & BIT3) >> 3) == 1) ? 1 : 0;
         TsegMemoryTestStatus = (((CmosRead8 (CMOS_MEM_TEST_INFO_OFFSET) & BIT4) >> 4) == 1) ? 1 : 0;
         if ((TsegMemoryTestStatus == PASS) && (RetryCount != 4)) {
           TishDataHob->SafeLoadingBiosEnableState = 0;
@@ -546,9 +542,7 @@ PeiMemoryDiagnosticTestLibContructor (
 
         TishDataHob->RetryCount           = RetryCount;
         TishDataHob->TsegMemoryTestStatus = TsegMemoryTestStatus;
-        TishDataHob->MrcPprStatus         = MrcPprStatus;
         DEBUG ((DEBUG_INFO, "Updated RetryCount: %x\n", TishDataHob->RetryCount));
-        DEBUG ((DEBUG_INFO, "MRC PPR Status: %x\n", TishDataHob->MrcPprStatus));
         DEBUG ((DEBUG_INFO, "TSEG Memory Status: %x\n", TishDataHob->TsegMemoryTestStatus));
       }
     }

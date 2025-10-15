@@ -369,6 +369,7 @@ gFspmArchConfigPpiGuid                  ## CONSUMES
 gMrcColdBootRequiredPpiGuid             ## PRODUCES
 gEfiPeiMasterBootModePpiGuid            ## CONSUMES
 gEfiPeiTsegMemoryTestPpiGuid            ## PRODUCES
+gEfiPeiBiosMemoryTestPpiGuid            ## PRODUCES
 
 [Guids]
 gEfiMemoryTypeInformationGuid

@@ -696,7 +696,6 @@ UpdatePeiSaPolicyPreMem (
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SafeLoadingBiosEnableState, MemConfigNoCrc->SafeLoadingBiosEnableState, TishDataHob->SafeLoadingBiosEnableState);
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRecoveryStatusEnable, MemConfigNoCrc->PprRecoveryStatusEnable, TishDataHob->PprRecoveryStatusEnable);
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TsegMemoryTestStatus, MemConfigNoCrc->TsegMemoryTestStatus, TishDataHob->TsegMemoryTestStatus);
-      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MrcPprStatus, MemConfigNoCrc->MrcPprStatus, TishDataHob->MrcPprStatus);
       COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RetryCount, MemConfigNoCrc->RetryCount, TishDataHob->RetryCount);
     }
   }

@@ -198,6 +198,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mTsegMemoryTestInitPpi = {
     NULL
 };
 
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mBiosPeiMemoryTestInitPpi = {
+    (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    &gEfiPeiBiosMemoryTestPpiGuid,
+    NULL
+};
+
 /**
   Entry point of MemoryInit library
   This function will invoke main memory detection code after the following dependencies
@@ -1285,7 +1291,7 @@ DEBUG_CODE_END();
   SavedTsegSize = Inputs->TsegSize;
   if ((Inputs->TsegSize > 0) && (MemConfigNoCrc != NULL)) {
     if ((MemConfigNoCrc->SafeLoadingBiosEnableState == 1) || (MemConfigNoCrc->TsegMemoryTestStatus == mrcSuccess)) {
-      if ((MemConfigNoCrc->RetryCount >= 1) && (MemConfigNoCrc->RetryCount <= 3) && (Outputs->MrcPprStatus != mrcSuccess)) {
+      if ((MemConfigNoCrc->RetryCount >= 1) && (MemConfigNoCrc->RetryCount <= 3)) {
         // Reserve Failed Tesg in Tesg region
         Inputs->TsegSize = SavedTsegSize * (MemConfigNoCrc->RetryCount + 1);
         DEBUG ((DEBUG_INFO, "Reserving Failed Tseg in Tseg region, Inputs->TsegSize = 0x%X\n", Inputs->TsegSize));
@@ -1659,16 +1665,22 @@ InstallEfiMemory (
     }
   }
 
-  Status = BaseMemoryTest (
-             MrcData,
-             PeiMemoryBaseAddress,
-             PeiMemoryLength,
-             MemoryTestLevel,
-             &BadMemoryAddress
-             );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Memory test failure at %lXh.\n", BadMemoryAddress));
-    REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC);
+  if ((MemConfigNoCrc != NULL) && (MemConfigNoCrc->SafeLoadingBiosEnableState == 1)) {
+    Status = PeiServicesInstallPpi(&mBiosPeiMemoryTestInitPpi);
+    ASSERT_EFI_ERROR(Status);
+  }
+  else {
+    Status = BaseMemoryTest (
+               MrcData,
+               PeiMemoryBaseAddress,
+               PeiMemoryLength,
+               MemoryTestLevel,
+               &BadMemoryAddress
+               );
+   if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Memory test failure at %lXh.\n", BadMemoryAddress));
+      REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC);
+    }
   }
 
   ASSERT_EFI_ERROR (Status);
@@ -2455,7 +2467,7 @@ GetMemoryMap (
   TsegFailedBase = 0;
   if ((Inputs->TsegSize > 0) && (MemConfigNoCrc != NULL)) {
     if ((MemConfigNoCrc->SafeLoadingBiosEnableState == 1) || (MemConfigNoCrc->TsegMemoryTestStatus == mrcSuccess)) {
-      if ((MemConfigNoCrc->RetryCount >= 1) && (MemConfigNoCrc->RetryCount <= 3) && (MrcData->Outputs.MrcPprStatus!= mrcSuccess)) {
+      if ((MemConfigNoCrc->RetryCount >= 1) && (MemConfigNoCrc->RetryCount <= 3)) {
         TsegFailedBase = MemoryMapData->TsegBase + Inputs->TsegSize;
         TsegFailedSize = Inputs->TsegSize * MemConfigNoCrc->RetryCount;
         DEBUG ((DEBUG_INFO, "Reserving Tseg Failed BaseAddress = 0x%x Size = 0x%x\n", TsegFailedBase, TsegFailedSize));
