@@ -454,3 +454,10 @@ Vdd2HVoltage
 Vdd1Voltage
 Vdd2LVoltage
 VddqVoltage
+IccMax
+TdcMode
+Ps1Threshold
+Ps2Threshold
+Ps3Threshold
+PcoreHysteresisWindow
+EcoreHysteresisWindow
