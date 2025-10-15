@@ -385,7 +385,7 @@ InstallSmbiosType17 (
               break;
 
             case DDR_MTYPE_CSODIMM:
-              SmbiosTableType17Data.FormFactor = MemoryFormFactorSodimm;
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorCsoDimm;
               break;
 
             case DDR_MTYPE_MEM_DOWN:
@@ -396,9 +396,12 @@ InstallSmbiosType17 (
               SmbiosTableType17Data.FormFactor = MemoryFormFactorCamm;
               break;
 
+            case DDR_MTYPE_CUDIMM:
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorCuDimm;
+              break;
+
             case DDR_MTYPE_UDIMM:
             case DDR_MTYPE_LR_DIMM:
-            case DDR_MTYPE_CUDIMM:
             case DDR_MTYPE_MRDIMM:
             case DDR_MTYPE_DDIMM:
             default:
