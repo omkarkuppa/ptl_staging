@@ -2660,9 +2660,6 @@ BifurcationToGrantCount (
     { .Bifurcation = 2, .RpCount = 2, .LaneNum =  4, .GcArray = {  2, 2, 0, 0 } },
     { .Bifurcation = 3, .RpCount = 2, .LaneNum =  4, .GcArray = {  4, 0, 0, 0 } },
 
-    { .Bifurcation = 3, .RpCount = 2, .LaneNum =  8, .GcArray = {  4, 4, 0, 0 } },
-    { .Bifurcation = 5, .RpCount = 2, .LaneNum =  8, .GcArray = {  8, 0, 0, 0 } },
-
     { .Bifurcation = 3, .RpCount = 1, .LaneNum =  4, .GcArray = {  4, 0, 0, 0 } },
 
     { .Bifurcation = 5, .RpCount = 1, .LaneNum =  8, .GcArray = {  8, 0, 0, 0 } }
@@ -2685,6 +2682,16 @@ BifurcationToGrantCount (
     ));
 }
 
+#define PTL_PCD_P_H_PXPC_CONTROLLER_INDEX 2
+#define PTL_PCD_H_PXPD_CONTROLLER_INDEX 3
+#define PTL_PCD_H_PXPE_CONTROLLER_INDEX 4
+
+#define PTL_PCD_H_PXPD_RP_0_INDEX 10
+#define PTL_PCD_H_PXPE_RP_0_INDEX 11
+
+#define PTL_PCD_H_PXPD_PXPE_1_X_8_FORCEL_VALUE 0
+#define PTL_PCD_H_PXPD_PXPE_2_X_4_FORCEL_VALUE 3
+
 /**
   Program Grant Counts for PCIE controllers on PTL-PCD-H
 
@@ -2694,6 +2701,7 @@ BifurcationToGrantCount (
   @param[in] ArraySize                       Number of PCIe contollers
   @param[in] PcieRpEnableArray               Array of Root Port enable state
   @param[in] PcieRpArraySize                 Number of Root Ports and size of PcieRpEnableArray
+  @param[in] Forcel                          PXPD/PXPE Force Link Width value
 **/
 VOID
 PtlPcdHPsfGrantCountProgramming (
@@ -2702,7 +2710,8 @@ PtlPcdHPsfGrantCountProgramming (
   UINT8                  *PcieCtrlNumOfRootPortsArray,
   UINT32                 ArraySize,
   BOOLEAN                *PcieRpEnableArray,
-  UINT32                 PcieRpArraySize
+  UINT32                 PcieRpArraySize,
+  UINT32                 Forcel
   )
 {
   P2SB_SIDEBAND_REGISTER_ACCESS  SbAccessSegment[PTL_PCD_H_NUM_ENTRIES_PSF_DEV_TABLE];
@@ -2809,6 +2818,25 @@ PtlPcdHPsfGrantCountProgramming (
   };
 
   //
+  // IOC Egress Port Arbiter Target Grant Count Reload Registers:
+  //
+  REG_WITH_VALUE Psf_0_Pg_1_Chan0 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN0}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan1 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN1}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan2 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN2}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan3 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN3}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan4 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN4}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan5 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN5}, 0};
+
+  REG_WITH_VALUE *IocPortArbiterArray[] = {
+    &Psf_0_Pg_1_Chan0,
+    &Psf_0_Pg_1_Chan1,
+    &Psf_0_Pg_1_Chan2,
+    &Psf_0_Pg_1_Chan3,
+    &Psf_0_Pg_1_Chan4,
+    &Psf_0_Pg_1_Chan5
+  };
+
+  //
   // GcRegsForRp is array of structures that contains REG_WITH_VALUE pointers that corresponds to
   // proper Device, Target Upstream and Targed Downstream Grant Count resiter for every Root Port.
   // If there is no proper Grant Count register of particular type for given Root Port, pointer
@@ -2877,7 +2905,6 @@ PtlPcdHPsfGrantCountProgramming (
     }
   };
 
-
   UINT8 GcArray[12];
 
   ZeroMem (GcArray, ARRAY_SIZE (GcArray));
@@ -2889,6 +2916,27 @@ PtlPcdHPsfGrantCountProgramming (
     P2SbController,
     SbAccessSegment
     );
+
+  //
+  // Override Controller Configuration (Bifurcation, Number of Root Ports and Number of Lanes)
+  // for PXPD/PXPE controllers, since it depends on FORCEL bit from STRPFUSEREG2 register for PXPD
+  //
+  if (Forcel == PTL_PCD_H_PXPD_PXPE_1_X_8_FORCEL_VALUE) {
+    PcieCtrlBifurcationArray[PTL_PCD_H_PXPD_CONTROLLER_INDEX] = 5; // For 1x8 bifurcation
+    PcieCtrlNumOfRootPortsArray[PTL_PCD_H_PXPD_CONTROLLER_INDEX] = 1;
+    PcieCtrlNumOfLanesArray[PTL_PCD_H_PXPD_CONTROLLER_INDEX] = 8;
+  } else if (Forcel == PTL_PCD_H_PXPD_PXPE_2_X_4_FORCEL_VALUE) {
+    PcieCtrlBifurcationArray[PTL_PCD_H_PXPD_CONTROLLER_INDEX] = 3; // For 1x4 bifurcation
+    PcieCtrlNumOfRootPortsArray[PTL_PCD_H_PXPD_CONTROLLER_INDEX] = 1;
+    PcieCtrlNumOfLanesArray[PTL_PCD_H_PXPD_CONTROLLER_INDEX] = 4;
+  }
+
+  //
+  // If PXPD is configured as 1x4, then PXPE is 1x4. If PXPD is 1x8, then PXPE is static disabled and these settings will be ignored
+  //
+  PcieCtrlBifurcationArray[PTL_PCD_H_PXPE_CONTROLLER_INDEX] = 3; // For 1x4 bifurcation
+  PcieCtrlNumOfRootPortsArray[PTL_PCD_H_PXPE_CONTROLLER_INDEX] = 1;
+  PcieCtrlNumOfLanesArray[PTL_PCD_H_PXPE_CONTROLLER_INDEX] = 4;
 
   //
   // Fill GcArray with proper GC values according to
@@ -2924,6 +2972,37 @@ PtlPcdHPsfGrantCountProgramming (
   );
 
   //
+  // Override GC for target GC reload registers for PCIe Controllers
+  //
+  Psf_0_Pg_1_Chan0.Value = 2;
+  Psf_0_Pg_1_Chan1.Value = 2;
+  if (PcieCtrlBifurcationArray[PTL_PCD_P_H_PXPC_CONTROLLER_INDEX] == 3) {
+    Psf_0_Pg_1_Chan2.Value = 2;
+  } else if (PcieCtrlBifurcationArray[PTL_PCD_P_H_PXPC_CONTROLLER_INDEX] == 2) {
+    Psf_0_Pg_1_Chan2.Value = 1;
+  }
+  Psf_0_Pg_1_Chan3.Value = 1;
+  if (Forcel == PTL_PCD_H_PXPD_PXPE_1_X_8_FORCEL_VALUE) {
+    Psf_0_Pg_1_Chan4.Value = 4;
+  } else if (Forcel == PTL_PCD_H_PXPD_PXPE_2_X_4_FORCEL_VALUE) {
+    Psf_0_Pg_1_Chan4.Value = 2;
+  }
+  Psf_0_Pg_1_Chan5.Value = 2;
+
+  Psf_0_Pg_0_Tgt_1.Value = Psf_0_Pg_1_Chan1.Value;
+  Psf_0_Pg_0_Tgt_2.Value = Psf_0_Pg_1_Chan2.Value;
+  Psf_0_Pg_0_Tgt_3.Value = Psf_0_Pg_1_Chan3.Value;
+  Psf_0_Pg_0_Tgt_4.Value = Psf_0_Pg_1_Chan4.Value;
+  Psf_0_Pg_0_Tgt_5.Value = Psf_0_Pg_1_Chan5.Value;
+
+  Psf_0_Pg_1_Tgt_22.Value = 1;
+  Psf_0_Pg_1_Tgt_7.Value = 1;
+  Psf_0_Pg_1_Tgt_8.Value = Psf_0_Pg_1_Chan2.Value;
+  Psf_0_Pg_1_Tgt_9.Value = Psf_0_Pg_1_Chan3.Value;
+  Psf_0_Pg_1_Tgt_0.Value = Psf_0_Pg_1_Chan4.Value;
+  Psf_0_Pg_1_Tgt_1.Value = Psf_0_Pg_1_Chan5.Value;
+
+  //
   // PsfSetGrantCountForRegs sets Grant Count values only virtually - proper
   // register programming is done by PsfProgramGrantCountRegisters
   //
@@ -2931,6 +3010,12 @@ PtlPcdHPsfGrantCountProgramming (
     &PsfTable,
     (REG_WITH_VALUE **)RegWithValueArray,
     ARRAY_SIZE (RegWithValueArray)
+    );
+
+  PsfProgramGrantCountRegisters (
+    &PsfTable,
+    (REG_WITH_VALUE **)IocPortArbiterArray,
+    ARRAY_SIZE (IocPortArbiterArray)
     );
 }
 

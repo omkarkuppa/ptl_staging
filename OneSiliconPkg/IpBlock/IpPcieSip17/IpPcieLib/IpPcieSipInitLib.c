@@ -553,6 +553,23 @@ UINT32 SipGetMaxLinkSpeed (
 }
 
 /**
+  Get forced limit width.
+
+  @param[in]  pInst  *pInst
+
+  @retval Limit width
+**/
+UINT32 SipGetForcedLimitWidth (
+  IP_PCIE_INST      *pInst
+  )
+{
+  STRPFUSECFG2_PCIE_CFG_STRUCT        Strpfusecfg2;
+
+  Strpfusecfg2.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri,  STRPFUSECFG2_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+  return Strpfusecfg2.Bits.forcel;
+}
+
+/**
   Determines whether PCIe link is active
 
   @param[in] pInst  *pInst

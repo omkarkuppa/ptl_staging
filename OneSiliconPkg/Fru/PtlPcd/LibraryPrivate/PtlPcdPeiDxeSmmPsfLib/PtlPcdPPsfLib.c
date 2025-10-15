@@ -2674,8 +2674,9 @@ BifurcationToGrantCount (
     ));
 }
 
+#define PTL_PCD_P_H_PXPC_CONTROLLER_INDEX 2
 /**
-  Program Grant Counts for PCIE controllers on PTL-PCD-S
+  Program Grant Counts for PCIE controllers on PTL-PCD-P
 
   @param[in] PcieCtrlBifurcationArray        Array of PCIe controllers bifurcation config
   @param[in] PcieCtrlNumOfLanesArray         Array of lanes per PCIe controller
@@ -2779,6 +2780,21 @@ PtlPcdPPsfGrantCountProgramming (
     &Psf_0_Pg_0_Tgt_3,
     &Psf_0_Pg_1_Tgt_9,
     &Psf_0_Pg_1_Tgt_22
+  };
+
+    //
+  // IOC Egress Port Arbiter Target Grant Count Reload Registers:
+  //
+  REG_WITH_VALUE Psf_0_Pg_1_Chan0 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN0}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan1 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN1}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan2 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN2}, 0};
+  REG_WITH_VALUE Psf_0_Pg_1_Chan3 = {{0, R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN3}, 0};
+
+  REG_WITH_VALUE *IocPortArbiterArray[] = {
+    &Psf_0_Pg_1_Chan0,
+    &Psf_0_Pg_1_Chan1,
+    &Psf_0_Pg_1_Chan2,
+    &Psf_0_Pg_1_Chan3
   };
 
   //
@@ -2886,6 +2902,26 @@ PtlPcdPPsfGrantCountProgramming (
   );
 
   //
+  // Override GC for target GC reload registers for PCIe Controllers
+  //
+  Psf_0_Pg_1_Chan0.Value = 2;
+  Psf_0_Pg_1_Chan1.Value = 2;
+  if (PcieCtrlBifurcationArray[PTL_PCD_P_H_PXPC_CONTROLLER_INDEX] == 3) {
+    Psf_0_Pg_1_Chan2.Value = 2;
+  } else if (PcieCtrlBifurcationArray[PTL_PCD_P_H_PXPC_CONTROLLER_INDEX] == 2) {
+    Psf_0_Pg_1_Chan2.Value = 1;
+  }
+
+  Psf_0_Pg_0_Tgt_1.Value = Psf_0_Pg_1_Chan1.Value;
+  Psf_0_Pg_0_Tgt_2.Value = Psf_0_Pg_1_Chan2.Value;
+  Psf_0_Pg_0_Tgt_3.Value = Psf_0_Pg_1_Chan3.Value;
+
+  Psf_0_Pg_1_Tgt_22.Value = 1;
+  Psf_0_Pg_1_Tgt_7.Value = 1;
+  Psf_0_Pg_1_Tgt_8.Value = Psf_0_Pg_1_Chan2.Value;
+  Psf_0_Pg_1_Tgt_9.Value = Psf_0_Pg_1_Chan3.Value;
+
+  //
   // PsfSetGrantCountForRegs sets Grant Count values only virtually - proper
   // register programming is done by PsfProgramGrantCountRegisters
   //
@@ -2893,6 +2929,12 @@ PtlPcdPPsfGrantCountProgramming (
     &PsfTable,
     (REG_WITH_VALUE **)RegWithValueArray,
     ARRAY_SIZE (RegWithValueArray)
+    );
+
+  PsfProgramGrantCountRegisters (
+    &PsfTable,
+    (REG_WITH_VALUE **)IocPortArbiterArray,
+    ARRAY_SIZE (IocPortArbiterArray)
     );
 }
 

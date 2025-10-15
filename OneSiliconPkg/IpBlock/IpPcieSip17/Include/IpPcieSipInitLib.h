@@ -69,6 +69,17 @@ SipGetMaxLinkWidth (
   );
 
 /**
+  Get forced limit width.
+
+  @param[in]  pInst  *pInst
+
+  @retval Limit width
+**/
+UINT32 SipGetForcedLimitWidth (
+  IP_PCIE_INST      *pInst
+  );
+
+/**
   Checks if lane reversal is enabled on a given Root Port
 
   @param[in] pInst  *pInst

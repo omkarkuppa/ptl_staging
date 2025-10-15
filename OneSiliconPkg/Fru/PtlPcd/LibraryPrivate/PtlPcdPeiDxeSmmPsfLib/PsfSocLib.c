@@ -898,7 +898,7 @@ PtlPcdPsfProgramDWB (
 }
 
 /**
-  Program Grant Counts for PCIE controllers
+  Program Grant Counts for PCIE controllers on WCL-PCD
 
   @param[in] PcieCtrlBifurcationArray        Array of PCIe controllers bifurcation config
   @param[in] PcieCtrlNumOfLanesArray         Array of lanes per PCIe controller
@@ -906,6 +906,7 @@ PtlPcdPsfProgramDWB (
   @param[in] ArraySize                       Number of PCIe contollers
   @param[in] PcieRpEnableArray               Array of Root Port enable state
   @param[in] PcieRpArraySize                 Number of Root Ports and size of PcieRpEnableArray
+  @param[in] Forcel                          Force Link Width
 **/
 VOID
 PtlPcdPsfGrantCountProgramming (
@@ -914,7 +915,8 @@ PtlPcdPsfGrantCountProgramming (
   UINT8                  *PcieCtrlNumOfRootPortsArray,
   UINT32                 ArraySize,
   BOOLEAN                *PcieRpEnableArray,
-  UINT32                 PcieRpArraySize
+  UINT32                 PcieRpArraySize,
+  UINT32                 Forcel
   )
 {
   if (PtlIsPcdP ()) {
@@ -933,7 +935,8 @@ PtlPcdPsfGrantCountProgramming (
       PcieCtrlNumOfRootPortsArray,
       ArraySize,
       PcieRpEnableArray,
-      PcieRpArraySize
+      PcieRpArraySize,
+      Forcel
       );
   }
 }

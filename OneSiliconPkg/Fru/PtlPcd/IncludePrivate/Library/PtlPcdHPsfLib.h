@@ -516,6 +516,7 @@ PtlPcdHPsfProgramDWB (
   @param[in] ArraySize                       Number of PCIe contollers
   @param[in] PcieRpEnableArray               Array of Root Port enable state
   @param[in] PcieRpArraySize                 Number of Root Ports and size of PcieRpEnableArray
+  @param[in] Forcel                          PXPD/PXPE Force Link Width value
 **/
 VOID
 PtlPcdHPsfGrantCountProgramming (
@@ -524,7 +525,8 @@ PtlPcdHPsfGrantCountProgramming (
   UINT8                  *PcieCtrlNumOfRootPortsArray,
   UINT32                 ArraySize,
   BOOLEAN                *PcieRpEnableArray,
-  UINT32                 PcieRpArraySize
+  UINT32                 PcieRpArraySize,
+  UINT32                 Forcel
   );
 
 /**

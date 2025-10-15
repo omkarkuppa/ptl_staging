@@ -231,6 +231,14 @@
 #define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT0                               0x4574     // Offset 4574h: Grant Count Reload Register
 #define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG0_TGT5                               0x4568     // Offset 4568h: Grant Count Reload Register
 #define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT1                               0x4578     // Offset 4578h: Grant Count Reload Register
+
+#define R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN0  0x47A4
+#define R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN1  0x47A8
+#define R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN2  0x47AC
+#define R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN3  0x47B0
+#define R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN4  0x47B4
+#define R_PTL_PCD_P_H_PSF_0_LINK_GNTCNT_RELOAD_PG1_GRP0_PORT0_CHAN5  0x47B8
+
 // Relaxed ordering registers:
 #define R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT0 0x0000402cU      ///< Offset 402Ch: PSF Port Configuration Register
 #define R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT1 0x00004030U      ///< Offset 4030h: PSF Port Configuration Register

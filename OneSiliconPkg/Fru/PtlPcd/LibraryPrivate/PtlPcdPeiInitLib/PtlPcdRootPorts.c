@@ -50,6 +50,7 @@
 
 #include "PtlPcdInitPei.h"
 #include <Library/PciExpressHelpersLib.h>
+#include <IpPcieSipInitLib.h>
 
 #define BUS_NUMBER_FOR_IMR 0x00
 
@@ -1427,6 +1428,23 @@ PtlPcdPcieRpConfigureGrantCounts (
   UINT8                       PcieCtrlNumOfRootPorts[PCH_MAX_PCIE_CONTROLLERS];
   BOOLEAN                     PcieRpEnable[PCH_MAX_PCIE_ROOT_PORTS];
   PCIE_ROOT_PORT_DEV_PRIVATE  *RpDevPrivate;
+  IP_PCIE_INST                *pInst;
+  EFI_HOB_GUID_TYPE           *GuidHob;
+  UINT32                      Forcel;
+  UINT32                      Index;
+
+  Index = 0;
+  Forcel = 0;
+  GuidHob = GetFirstGuidHob (&gIpPcieInstHobGuid);
+  while (GuidHob != NULL) {
+    if (Index == 10) {
+      pInst = (IP_PCIE_INST *) GET_GUID_HOB_DATA (GuidHob);
+      Forcel = SipGetForcedLimitWidth (pInst);
+      break;
+    }
+    Index++;
+    GuidHob = GetNextGuidHob (&gIpPcieInstHobGuid, GET_NEXT_HOB (GuidHob));
+  }
 
   DEBUG ((DEBUG_ERROR, "%a Start()\n", __FUNCTION__));
 
@@ -1459,7 +1477,8 @@ PtlPcdPcieRpConfigureGrantCounts (
       PcieCtrlNumOfRootPorts,
       ControllerIndex,
       PcieRpEnable,
-      RpIndex
+      RpIndex,
+      Forcel
       );
   }
 }
