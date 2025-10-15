@@ -442,16 +442,22 @@ RefreshDeviceInformation (
   // ID matches but BD might not match. So update it.
   //
   CopyMem (&Dev->AdvAddr, &ScanInfo->BDAddr.Address, sizeof(BLUETOOTH_LE_ADDRESS));
-
+  // First check for Complete Local Name
   Data = BluetoothFindTypeFromAdvData (ScanInfo->AdvertisementData, ScanInfo->AdvertisementDataSize, BluetoothGapTypeCompleteLocalName, &Len);
-  //
-  // Check for Short Name Devices
-  //
-  if (Data == NULL) {
-    Data = BluetoothFindTypeFromAdvData (ScanInfo->AdvertisementData, ScanInfo->AdvertisementDataSize, BluetoothGapTypeShortenedLocalName, &Len);  
-  } else {
+  if (Data != NULL) {
     ZeroMem(Dev->LocalName, sizeof(Dev->LocalName));
-    CopyMem (Dev->LocalName, Data, MIN (Len, sizeof (Dev->LocalName) - 1));
+    CopyMem (Dev->LocalName, Data, MIN (Len, sizeof(Dev->LocalName) - 1));
+  } 
+  else {
+    // Check for Shortened Local Name
+    Data = BluetoothFindTypeFromAdvData (ScanInfo->AdvertisementData, ScanInfo->AdvertisementDataSize, BluetoothGapTypeShortenedLocalName, &Len);
+    if (Data != NULL) {
+      ZeroMem(Dev->LocalName, sizeof(Dev->LocalName));
+      CopyMem (Dev->LocalName, Data, MIN (Len, sizeof(Dev->LocalName) - 1));
+    }
+    else {
+      DEBUG ((DEBUG_INFO, "BtCfgDxe :: No device name found in advertisement\n"));
+    }
   }
 
   Data = BluetoothFindTypeFromAdvData (ScanInfo->AdvertisementData, ScanInfo->AdvertisementDataSize, BluetoothGapTypeAppearance, &Len);
