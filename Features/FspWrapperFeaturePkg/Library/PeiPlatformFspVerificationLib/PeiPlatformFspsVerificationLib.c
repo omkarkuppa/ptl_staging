@@ -62,6 +62,13 @@ PlatformVerifyFsps (
 
   ASSERT (FspLoaderPpi != NULL);
   Status = FspLoaderPpi->FspVerifyFsps (FspsImageBase);
+
+  if (Status == EFI_SUCCESS) {
+    DEBUG ((DEBUG_INFO, "FSP-S verification pass...\n"));
+  } else {
+    DEBUG ((DEBUG_INFO, "FSP-S verification fails...\n"));
+  }
+
   if (EFI_ERROR (Status)) {
     if (Status == EFI_UNSUPPORTED) {
       //
