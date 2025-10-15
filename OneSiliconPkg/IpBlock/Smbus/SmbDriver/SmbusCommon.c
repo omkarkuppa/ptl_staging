@@ -1691,7 +1691,7 @@ SmbusEnableHc (
     PciIo,
     EfiPciIoWidthUint32,
     R_SMBUS_CFG_HTIM,
-    sizeof (HostTiming),
+    sizeof (HostTiming) / sizeof (UINT32),
     &HostTiming
   );
 
