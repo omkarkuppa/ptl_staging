@@ -54,6 +54,7 @@ HostBridgeLoadPeiConfigPreMemDefault (
   HostBridgePreMemConfig->VmdCfgBarBar        = 0xA0000000;
   HostBridgePreMemConfig->VmdMemBar1Bar       = 0xA2000000;
   HostBridgePreMemConfig->VmdMemBar2Bar       = 0xA4000000;
+  HostBridgePreMemConfig->FabricGVDisable     = 0x1;
 }
 
 /**

@@ -723,7 +723,7 @@ UpdatePeiSaPolicyPreMem (
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MmioSizeAdjustment, HostBridgePreMemConfig->MmioSizeAdjustment, PcdGet16 (PcdSaMiscMmioSizeAdjustment));
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableAbove4GBMmio, HostBridgePreMemConfig->EnableAbove4GBMmio, 1);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CridEnable, HostBridgePreMemConfig->CridEnable, SaSetup.CridEnable);
-    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.FabricGVDisable, HostBridgePreMemConfig->FabricGVDisable, SaSetup.FabricGVDisable);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.FabricGVDisable, HostBridgePreMemConfig->FabricGVDisable, SaSetup.FabricGVDisable);
 
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ApicLocalAddress, HostBridgePreMemConfig->ApicLocalAddress, PcdGet32 (PcdApicLocalAddress));
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NvmeHcPeiMmioBase, HostBridgePreMemConfig->NvmeHcPeiMmioBase, PcdGet32 (PcdNvmeHcPeiMmioBase));
