@@ -91,9 +91,13 @@ LoadFspm (
   }
   DEBUG ((DEBUG_INFO, "FSP verifies FSPM\n"));
   Status = mFspVerifyApiWrapper.VerifyFspmApiWrapper (Bspm, Fbm, AvailableMemoryBuffer);
+
   if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "FSP-M verification fails...\n"));
     VerifyCrtmStatusAndDisableTxtCmos (Bspm);
     return EFI_UNSUPPORTED;
+  } else {
+    DEBUG ((DEBUG_INFO, "FSP-M verification pass...\n"));
   }
 
   if (!(Bspm->FspmLoadingPolicy & FSPM_COMPRESSED)) {
@@ -136,9 +140,13 @@ LoadBspPreMem (
 
   DEBUG ((DEBUG_INFO, "FSP verifies BSP\n"));
   Status = mFspVerifyApiWrapper.VerifyBspApiWrapper (Bspm, AvailableMemoryBuffer);
+
   if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "BSP verification fails...\n"));
     VerifyCrtmStatusAndDisableTxtCmos (Bspm);
     return EFI_UNSUPPORTED;
+  } else  {
+    DEBUG ((DEBUG_INFO, "BSP verification pass...\n"));
   }
 
   return EFI_SUCCESS;

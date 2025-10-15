@@ -62,7 +62,10 @@ PlatformVerifyFsps (
 
   ASSERT (FspLoaderPpi != NULL);
   Status = FspLoaderPpi->FspVerifyFsps (FspsImageBase);
-  if (EFI_ERROR (Status)) {
+
+  if (Status == EFI_SUCCESS) {
+    DEBUG ((DEBUG_INFO, "FSP-S verification pass...\n"));
+  } else if (EFI_ERROR (Status)) {
     if (Status == EFI_UNSUPPORTED) {
       //
       // No valid FBM is found for below cases, both should skip FSP-S verification:

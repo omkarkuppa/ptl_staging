@@ -471,7 +471,7 @@ VerifyAndLogEventFsps (
   DEBUG ((DEBUG_ERROR, "FSP-S Verification Fail!\n"));
   VerifyCrtmStatusAndDisableTxtCmos (Bspm);
 
-  return EFI_SUCCESS;
+  return EFI_ACCESS_DENIED;
 }
 
 /**
