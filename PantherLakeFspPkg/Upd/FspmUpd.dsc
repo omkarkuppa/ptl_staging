@@ -2908,10 +2908,12 @@
   # !BSF HELP:{Enable/Disable DLVR RFI frequency hopping. 0: Disable; <b>1: Enable</b>.}
   gPlatformFspPkgTokenSpaceGuid.DlvrRfiEnable                | * | 0x1 | 0x1
 
-  # !BSF NAME:{Pcore VR Hysteresis time window} TYPE:{EditNum, HEX, (0x00,0x32)} 0 is default . Range of PcoreHysteresisWindow from 1ms to 50ms.}
+  # !BSF NAME:{Pcore VR Hysteresis time window} TYPE:{EditNum, HEX, (0x00,0x32)}
+  # !BSF HELP:{0 is default. Range of PcoreHysteresisWindow from 1ms to 50ms.}
   gPlatformFspPkgTokenSpaceGuid.PcoreHysteresisWindow               | * | 0x1| 0x00
 
-  # !BSF NAME:{Ecore VR Hysteresis time window} TYPE:{EditNum, HEX, (0x00,0x32)} 0 is default . Range of EcoreHysteresisWindow from 1ms to 50ms.}
+  # !BSF NAME:{Ecore VR Hysteresis time window} TYPE:{EditNum, HEX, (0x00,0x32)}
+  # !BSF HELP:{0 is default. Range of EcoreHysteresisWindow from 1ms to 50ms.}
   gPlatformFspPkgTokenSpaceGuid.EcoreHysteresisWindow               | * | 0x1| 0x00
   # Added reserved space  UnusedUpdSpace30
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd30                 | * | 0x1 | 0x00
