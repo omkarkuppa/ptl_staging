@@ -184,6 +184,7 @@ cd ..\..\
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0
 ) else if /i "fspapi" == "%1" (
+  @rem Fsp signing support is not enabled
   set FSP_MODE=API
   set FSP_SIGNED=FALSE
   set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD%

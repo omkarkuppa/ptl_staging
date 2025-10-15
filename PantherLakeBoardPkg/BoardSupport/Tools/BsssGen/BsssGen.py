@@ -409,7 +409,7 @@ class BspConfig():
 
     def genBsssBin(self, flashMap, fdDir, output):
         BsssHeader = BSSSHeader()
-        BspConfigData = BspConfigHead()
+        BspConfigData = self.BspConfigHead
         BsssHeader.genBSSSHeader(sizeof(BSSSHeader) + sizeof(BspConfigHead))
         #
         # Get the Sec Core Entry address of BSP
