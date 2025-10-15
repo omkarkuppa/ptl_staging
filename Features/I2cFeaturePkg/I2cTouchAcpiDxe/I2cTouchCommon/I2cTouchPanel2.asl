@@ -135,7 +135,7 @@
 
     Name (_S0W, 4)
     Method (_DSM, 0x4, Serialized) {
-      If (LEqual (Arg0,HIDG)) { Return (HIDD (Arg0,Arg1,Arg2,Arg3,HID2)) }
+      If (LEqual (Arg0,HIDG)) { Return (HOID (Arg0,Arg1,Arg2,Arg3,HID2)) }
       If (LEqual (Arg0,TP7G)) { Return(TP7D (Arg0,Arg1,Arg2,Arg3,SBFB, G_IN (DeRefOf(Index(TPDI,2)), GPIO_INT_MOD_LEVEL, GPIO_INT_POL_ACTIVE_LOW, GPIO_INT_EXCLUSIVE, GPIO_PPI_PULL_DEFAULT, 0))) }
       Return (Buffer (1) {0})
     }

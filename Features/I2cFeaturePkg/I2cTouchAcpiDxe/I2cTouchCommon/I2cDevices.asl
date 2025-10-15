@@ -151,7 +151,7 @@ Scope (\_SB.PC00) {
   Name (HIDG, ToUUID ("3CDFF6F7-4267-4555-AD05-B30A3D8938DE")) //GUID for HID-over-I2C
   Name (TP7G, ToUUID ("EF87EB82-F951-46DA-84EC-14871AC6F84B")) //GUID for Touch device support in Windows7
 
-  Method (HIDD, 5, Serialized) {
+  Method (HOID, 5, Serialized) {
     // Common _DSM method for HID I2C devices
     // Arg0..3 - original arguments to _DSM method, as passed by OS
     // Arg4 - HID descriptor address to be returned from Function1
