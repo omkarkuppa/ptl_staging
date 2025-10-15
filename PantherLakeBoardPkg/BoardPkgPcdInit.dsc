@@ -556,7 +556,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLangCodes|"en-US"
 
 [PcdsPatchableInModule]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0308
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0309
 
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000046
 

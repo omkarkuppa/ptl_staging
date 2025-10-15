@@ -287,7 +287,7 @@ gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable|TRUE
   ######################################
   # Edk2 Configuration
   ######################################
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0308
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0309
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000046
 
 [PcdsDynamicDefault]
