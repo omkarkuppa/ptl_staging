@@ -892,7 +892,6 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[1]|0x0                                        # I2C1
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshSpiEnable[0]|0x1                                        # SPI_0
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[3]|0x0
 
 
 #####################################################################

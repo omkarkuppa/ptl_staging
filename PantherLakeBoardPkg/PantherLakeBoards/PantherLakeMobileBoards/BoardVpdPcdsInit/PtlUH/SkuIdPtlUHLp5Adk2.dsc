@@ -271,10 +271,10 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSmbusAlertEnable|*|FALSE
 
   # EC FailSafe Cpu Temp
-  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionCpuTemp|*|85
+  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionCpuTemp|*|100
 
   # EC FailSafe Fan Speed Setting
-  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|65
+  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|100
 
   gBoardModuleTokenSpaceGuid.VpdPcdEcUart|*|FALSE
 

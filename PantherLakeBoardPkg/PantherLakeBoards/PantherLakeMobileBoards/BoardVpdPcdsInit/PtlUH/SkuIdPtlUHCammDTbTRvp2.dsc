@@ -790,7 +790,6 @@
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[0]|0x51                                     # Extra Bus Reserved
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[0]|0x100                                         # Reserved Memory
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[0]|0x30000                                      # Reserved PMemory
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[3]|0x0
 
 #####################################################################
 #  PTL UH CAMM dTbT T3 - RVP2 BOM
