@@ -577,9 +577,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   #
   $(FSP_PACKAGE)/FspLoaderPeim/FspLoaderPeim.inf {
     <LibraryClasses>
-!if $(TARGET) == DEBUG
-      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-!endif
+      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
   }

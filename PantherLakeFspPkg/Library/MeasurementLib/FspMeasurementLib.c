@@ -27,7 +27,6 @@
 #include <Library/Tpm2DeviceLib.h>
 #include <Library/DebugLib.h>
 #include <Pi/PiFirmwareVolume.h>
-#include <Library/PrintLib.h>
 #include <Library/HobLib.h>
 #include <Library/FspVerificationLib.h>
 #include <Library/IoLib.h>
@@ -1031,6 +1030,9 @@ GetFspVersionString (
   UINT8                   ByteCounter;
   UINT8                   UnicodeCounter;
   CHAR16                  ConvertBuffer[3] = {'\0'};
+  UINT8                   Version;
+  UINT8                   High;
+  UINT8                   Low;
 
   CHAR16                  *UnicodeCharIterator = ScrtmUtf16String;
 
@@ -1040,12 +1042,12 @@ GetFspVersionString (
     //
     // Fill convertion buffer with hex strings (with leading zeroes) per byte input.
     //
-    UnicodeSPrint (
-      ConvertBuffer,
-      sizeof (CHAR16) * 3,
-      L"%02X",
-      FspVersion[ByteCounter]
-      );
+    Version = FspVersion[ByteCounter];
+    High = (Version >> 4) & 0xF;
+    Low = Version & 0xF;
+    ConvertBuffer[0] = (CHAR16)((High < 10) ? (L'0' + High) : (L'A' + High - 10));
+    ConvertBuffer[1] = (CHAR16)((Low < 10) ? (L'0' + Low) : (L'A' + Low - 10));
+    ConvertBuffer[2] = L'\0';
 
     if (UnicodeCharIterator >= (ScrtmUtf16String + SCRTM_VERSION_UTF16_LENGTH)) {
       DEBUG ((DEBUG_ERROR, "ERROR parsing FSP version string! %s\n", ScrtmUtf16String));
