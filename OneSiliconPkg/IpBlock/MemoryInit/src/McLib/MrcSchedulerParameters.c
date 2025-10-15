@@ -121,8 +121,6 @@ MrcSchedulerParametersConfig (
   UINT32          tCWL;
   UINT32          NMode;
   UINT32          Data32;
-  UINT32          tRDWRdg;
-  UINT32          tRDRDdg;
   INT64           tCSLCK;
   INT64           tWckStop;
   INT64           tWckOff;
@@ -146,6 +144,10 @@ MrcSchedulerParametersConfig (
   BOOLEAN         IsFirstSagv;
   const MRC_EXT_INPUTS_TYPE               *ExtInputs;
   MC0_CH0_CR_SC_WPQ_THRESHOLD_STRUCT      ScWpqThreshold;
+  MC0_CH0_CR_SC_PH_THROTTLING_0_STRUCT    ScPhThrottling0;
+  MC0_CH0_CR_SC_PH_THROTTLING_1_STRUCT    ScPhThrottling1;
+  MC0_CH0_CR_SC_PH_THROTTLING_2_STRUCT    ScPhThrottling2;
+  MC0_CH0_CR_SC_BLOCKING_RULES_CFG_STRUCT ScBlockingRulesCfg;
   MC0_CH0_CR_WMM_READ_CONFIG_STRUCT       WmmReadConfig;
   MC0_CH0_CR_ZQCAL_CONTROL_UARCH_STRUCT   ZQcalControl;
 
@@ -357,22 +359,56 @@ MrcSchedulerParametersConfig (
       WmmReadConfig.Data = MrcReadCR (MrcData, Offset);
       MrcWriteCR (MrcData, Offset, WmmReadConfig.Data);
 
+      // #1 SC_WPQ_THRESHOLD
       Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_WPQ_THRESHOLD_REG, MC1_CH0_CR_SC_WPQ_THRESHOLD_REG, Controller, MC0_CH1_CR_SC_WPQ_THRESHOLD_REG, IpChannel);
       ScWpqThreshold.Data = MrcReadCR (MrcData, Offset);
-
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDWRdg, ReadFromCache | PrintValue, &GetSetVal);
-      tRDWRdg = (UINT32) GetSetVal;
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, ReadFromCache | PrintValue, &GetSetVal);
-      tRDRDdg = (UINT32) GetSetVal;
-
-      ScWpqThreshold.Bits.phs_allowed_under_high_wm = DIVIDECEIL (tRDWRdg, tRDRDdg);
-
-      if (IsLpddr5) {
-        tRDRDdg = ((UINT32) tRDRDdg) / 4; // Convert from WCK to tCK
-      }
-      ScWpqThreshold.Bits.read_ph_weight = UDIVIDEROUND (Timing->tRCDtRP, tRDRDdg);
-
+      ScWpqThreshold.Bits.phs_allowed_under_high_wm = 0x6;
+      ScWpqThreshold.Bits.phs_allowed_under_med_wm  = 0x3;
+      ScWpqThreshold.Bits.phs_allowed_under_low_wm  = 0x1;
+      ScWpqThreshold.Bits.read_ph_weight = 0x3;
+      ScWpqThreshold.Bits.high_wm = 0x22;
+      ScWpqThreshold.Bits.med_wm  = 0x1a;
+      ScWpqThreshold.Bits.low_wm  = 0x5;
       MrcWriteCR (MrcData, Offset, ScWpqThreshold.Data);
+
+      // #2 SC_PH_THROTTLING 0-3
+      Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_PH_THROTTLING_0_REG, MC1_CH0_CR_SC_PH_THROTTLING_0_REG, Controller, MC0_CH1_CR_SC_PH_THROTTLING_0_REG, IpChannel);
+      ScPhThrottling0.Data = MrcReadCR (MrcData, Offset);
+      ScPhThrottling0.Bits.unloaded_same_rank      = 0xa;
+      ScPhThrottling0.Bits.unloaded_different_rank = 0x14;
+      ScPhThrottling0.Bits.loaded_same_rank        = 0x0;
+      ScPhThrottling0.Bits.loaded_different_rank   = 0x18;
+      MrcWriteCR (MrcData, Offset, ScPhThrottling0.Data);
+
+      Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_PH_THROTTLING_1_REG, MC1_CH0_CR_SC_PH_THROTTLING_1_REG, Controller, MC0_CH1_CR_SC_PH_THROTTLING_1_REG, IpChannel);
+      ScPhThrottling1.Data = MrcReadCR (MrcData, Offset);
+      ScPhThrottling1.Bits.unloaded_same_rank      = 0x2;
+      ScPhThrottling1.Bits.unloaded_different_rank = 0x10;
+      ScPhThrottling1.Bits.loaded_same_rank        = 0xc;
+      ScPhThrottling1.Bits.loaded_different_rank   = 0x14;
+      MrcWriteCR (MrcData, Offset, ScPhThrottling1.Data);
+
+      Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_PH_THROTTLING_2_REG, MC1_CH0_CR_SC_PH_THROTTLING_2_REG, Controller, MC0_CH1_CR_SC_PH_THROTTLING_2_REG, IpChannel);
+      ScPhThrottling2.Data = MrcReadCR (MrcData, Offset);
+      ScPhThrottling2.Bits.unloaded_same_rank      = 0x6;
+      ScPhThrottling2.Bits.unloaded_different_rank = 0x2;
+      ScPhThrottling2.Bits.loaded_same_rank        = 0x8;
+      ScPhThrottling2.Bits.loaded_different_rank   = 0x6;
+      MrcWriteCR (MrcData, Offset, ScPhThrottling2.Data);
+
+      Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_PH_THROTTLING_3_REG, MC1_CH0_CR_SC_PH_THROTTLING_3_REG, Controller, MC0_CH1_CR_SC_PH_THROTTLING_3_REG, IpChannel);
+      MrcWriteCR (MrcData, Offset, 0);
+
+      // #3 SC_BLOCKING_RULES
+      Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_BLOCKING_RULES_CFG_REG, MC1_CH0_CR_SC_BLOCKING_RULES_CFG_REG, Controller, MC0_CH1_CR_SC_BLOCKING_RULES_CFG_REG, IpChannel);
+      ScBlockingRulesCfg.Data = MrcReadCR64 (MrcData, Offset);
+      ScBlockingRulesCfg.Bits.loaded_read_threshold  = 0x4;
+      ScBlockingRulesCfg.Bits.ph_block_pe            = 0x1;
+      ScBlockingRulesCfg.Bits.blkr_effect_major_mode = 0x0;
+      ScBlockingRulesCfg.Bits.high_wm_allowed_preempt_priorities = 0x0;
+      ScBlockingRulesCfg.Bits.med_wm_allowed_preempt_priorities  = 0x6;
+      ScBlockingRulesCfg.Bits.low_wm_allowed_preempt_priorities  = 0x6;
+      MrcWriteCR64 (MrcData, Offset, ScBlockingRulesCfg.Data);
 
       // Only for debug purposes we want to disable ZQ CAL
       Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_ZQCAL_CONTROL_UARCH_REG, MC1_CH0_CR_ZQCAL_CONTROL_UARCH_REG, Controller, MC0_CH1_CR_ZQCAL_CONTROL_UARCH_REG, IpChannel);
