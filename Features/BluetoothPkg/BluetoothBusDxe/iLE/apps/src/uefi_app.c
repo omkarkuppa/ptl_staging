@@ -407,6 +407,26 @@ uefi_app_send_bonding_info (
     return;
   }
 
+  // After G3 or Warm or Cold Restart BLE-Keyboard removed in UEFI mode when Microsoft Designer Compact Keyboard is connected.
+	if(!is_valid_ble_address(&dev_info->IDAddr))
+	{
+		// Prefer Direct_BD_ADDR as it is more likely the peer identity used for direct connections
+		if (is_valid_ble_address(&dev_info->Direct_BD_ADDR))
+		{
+			CopyMem(dev_info->IDAddr.Address, dev_info->Direct_BD_ADDR.Address, sizeof(dev_info->IDAddr.Address));
+			dev_info->IDAddr.Type = dev_info->Direct_BD_ADDR.Type;
+		}
+		else if (is_valid_ble_address(&dev_info->BDAddr))
+		{
+			CopyMem(dev_info->IDAddr.Address, dev_info->BDAddr.Address, sizeof(dev_info->IDAddr.Address));
+			dev_info->IDAddr.Type = dev_info->BDAddr.Type;
+		}
+		else
+		{
+			logd("No valid fallback address available to seed IDAddr\n");
+		}
+	}
+
   if (cur_bonding_info.keys.keys_distributed && uefi_app_data.BtHcDev->LeSmpSetDataCallBack) {
     uefi_app_data.BtHcDev->LeSmpSetDataCallBack (&uefi_app_data.BtHcDev->BluetoothLeConfig, uefi_app_data.BtHcDev->LeSmpSetDataCallBackContext, &dev_info->IDAddr, EfiBluetoothSmpKeysDistributed, sizeof (cur_bonding_info.keys.keys_distributed), &cur_bonding_info.keys.keys_distributed);
   }
