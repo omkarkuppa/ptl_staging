@@ -1182,9 +1182,10 @@ ConnectUsbShortFormDevicePath (
       // Check whether the Pci device is the wanted usb host controller
       //
       Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x09, 3, &Class);
-      if (!EFI_ERROR (Status) &&
-          ((PCI_CLASS_SERIAL == Class[2]) && (PCI_CLASS_SERIAL_USB == Class[1]))
-         ) {
+      if (EFI_ERROR (Status)) {
+        continue;
+      }
+      if ((PCI_CLASS_SERIAL == Class[2]) && (PCI_CLASS_SERIAL_USB == Class[1])) {
         Status = gBS->ConnectController (
                         Handles[Index],
                         NULL,
@@ -1454,7 +1455,9 @@ ConnectTrustedStorage (
                             ClassCode
                             );
       ASSERT_EFI_ERROR (Status);
-
+      if (EFI_ERROR (Status)) {
+        continue;
+      }
       //
       // Examine Nvm Express controller PCI Configuration table fields
       //
@@ -3956,6 +3959,9 @@ IsPciDeviceRequiredForBoot (
                         sizeof (PciConfig),
                         &PciConfig
                         );
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
   //
   // Every mass storage device is a potential boot medium,
   // connect them all.

@@ -64,8 +64,8 @@ Uint32ToEfiStatus (
   EFI_STATUS Status;
 
   Status = (EFI_STATUS) (((UINTN) Status32) & 0x3FFFFFFF);
-  Status |= (Status & BIT31) ? MAX_BIT : 0;
-  Status |= (Status & BIT30) ? (MAX_BIT >> 1) : 0; // BIT30 indicates that an API is requesting that a reset is required.
+  Status |= (Status32 & BIT31) ? MAX_BIT : 0;
+  Status |= (Status32 & BIT30) ? (MAX_BIT >> 1) : 0; // BIT30 indicates that an API is requesting that a reset is required.
 
   return Status;
 }

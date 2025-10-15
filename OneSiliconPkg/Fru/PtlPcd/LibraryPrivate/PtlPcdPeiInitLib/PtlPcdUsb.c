@@ -651,6 +651,10 @@ PtlPcdUsbDeviceControllerInit (
   UsbHandle.DeviceController = &DeviceController;
 
   XdciConfigure (&UsbHandle);
+  if (UsbHandle.UsbConfig == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a - couldn't locate config block, aborting.\n", __FUNCTION__));
+    return;
+  }
   if (UsbHandle.UsbConfig->XdciConfig.Enable) {
     // Configure xDCI interrupt
     ItssGetDevIntConfig (

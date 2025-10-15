@@ -688,22 +688,19 @@ DebugArrayDmp (
   switch (Type)
   {
     case UINT_TYPE_8bit:
-    for (UINT16 i = 0; i < Length; i++)
-    {
-      DEBUG ((DEBUG_INFO, "%016llx ", ((UINT8 *)ArrPtr)[i]));
-    }
+      for (UINT16 i = 0; i < Length; i++) {
+        DEBUG ((DEBUG_INFO, "%016llx ", ((UINT8 *)ArrPtr)[i]));
+      }
       break;
     case UINT_TYPE_16bit:
-    for (UINT16 i = 0; i < Length; i++)
-    {
-      DEBUG ((DEBUG_INFO, "%016llx ", ((UINT16 *)ArrPtr)[i]));
-    }
+      for (UINT16 i = 0; i < Length; i++) {
+        DEBUG ((DEBUG_INFO, "%016llx ", ((UINT16 *)ArrPtr)[i]));
+      }
       break;
     case UINT_TYPE_64bit:
-    for (UINT16 i = 0; i < Length; i++)
-    {
-      DEBUG ((DEBUG_INFO, "%016llx ", ((UINT64 *)ArrPtr)[i]));
-    }
+      for (UINT16 i = 0; i < Length; i++) {
+        DEBUG ((DEBUG_INFO, "%016llx ", ((UINT64 *)ArrPtr)[i]));
+      }
       break;
     default:
       DEBUG ((DEBUG_ERROR, "Data Type Not Supported"));

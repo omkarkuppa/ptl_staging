@@ -2125,6 +2125,10 @@ UpdateOemType133 (
 
   Instance = 0;
   Type133String = mDefaultSmbiosPlatformInfo[OemType133].Strings;
+  if (Type133String == NULL) {
+    DEBUG ((DEBUG_WARN, "Type133String: Type 133 String Info is not available!!\n"));
+    return EFI_NOT_FOUND;
+  }
   FCCLockStr = Type133String[Instance].FccLock;
 
   if (StrCmp(FCCLockStr, L"FFFFFFFFFFFFFF") == 0) {

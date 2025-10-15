@@ -73,7 +73,7 @@ GetImrGsmBaseOffset (
   IMR1M2BASE_IMPH_IOC_MCHBAR_STRUCT GsmBaseStruct;
 
   GsmBaseStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M2BASE_IMPH_IOC_MCHBAR_REG))));
-  ImrGsmBase = (GsmBaseStruct.Bits.imr_base_rw << IMR1M2BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
+  ImrGsmBase = LShiftU64 ((UINT64)GsmBaseStruct.Bits.imr_base_rw, IMR1M2BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
 
   return ImrGsmBase;
 }
@@ -93,7 +93,7 @@ GetImrDsmBaseOffset (
   IMR1M3BASE_IMPH_IOC_MCHBAR_STRUCT DsmBaseStruct;
 
   DsmBaseStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M3BASE_IMPH_IOC_MCHBAR_REG))));
-  ImrDsmBase = (DsmBaseStruct.Bits.imr_base_rw << IMR1M3BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
+  ImrDsmBase = LShiftU64 ((UINT64)DsmBaseStruct.Bits.imr_base_rw, IMR1M3BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
 
   return ImrDsmBase;
 }
@@ -113,7 +113,7 @@ GetImrTsegBaseOffset (
   IMR1M10BASE_IMPH_IOC_MCHBAR_STRUCT TsegBaseStruct;
 
   TsegBaseStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M10BASE_IMPH_IOC_MCHBAR_REG))));
-  ImrTsegBase = (TsegBaseStruct.Bits.imr_base_rw << IMR1M10BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
+  ImrTsegBase = LShiftU64 ((UINT64)TsegBaseStruct.Bits.imr_base_rw, IMR1M10BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
 
   return ImrTsegBase;
 }
@@ -180,7 +180,7 @@ GetImrGsmMask (
   IMR1M2LIMIT_IMPH_IOC_MCHBAR_STRUCT  GsmLimitStruct;
 
   GsmLimitStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M2LIMIT_IMPH_IOC_MCHBAR_REG))));
-  ImrGsmMask = (GsmLimitStruct.Bits.imr_limit_rw << IMR1M2LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
+  ImrGsmMask = LShiftU64 ((UINT64)GsmLimitStruct.Bits.imr_limit_rw, IMR1M2LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
 
   return ImrGsmMask;
 }
@@ -200,7 +200,7 @@ GetImrDsmMask (
   IMR1M3LIMIT_IMPH_IOC_MCHBAR_STRUCT  DsmLimitStruct;
 
   DsmLimitStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M3LIMIT_IMPH_IOC_MCHBAR_REG))));
-  ImrDsmMask = (DsmLimitStruct.Bits.imr_limit_rw << IMR1M3LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
+  ImrDsmMask = LShiftU64 ((UINT64)DsmLimitStruct.Bits.imr_limit_rw, IMR1M3LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
 
   return ImrDsmMask;
 }
@@ -220,7 +220,7 @@ GetImrTsegMask (
   IMR1M10LIMIT_IMPH_IOC_MCHBAR_STRUCT  TsegLimitStruct;
 
   TsegLimitStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M10LIMIT_IMPH_IOC_MCHBAR_REG))));
-  ImrTsegMask = (TsegLimitStruct.Bits.imr_limit_rw << IMR1M10LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
+  ImrTsegMask = LShiftU64 ((UINT64)TsegLimitStruct.Bits.imr_limit_rw, IMR1M10LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
 
   return ImrTsegMask;
 }
@@ -240,7 +240,7 @@ GetImrCcsMask (
   IMR1M6LIMIT_IMPH_IOC_MCHBAR_STRUCT CcsLimitStruct;
 
   CcsLimitStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M6LIMIT_IMPH_IOC_MCHBAR_REG))));
-  ImrCcsMask = (CcsLimitStruct.Bits.imr_limit_rw << IMR1M6LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
+  ImrCcsMask = LShiftU64 ((UINT64)CcsLimitStruct.Bits.imr_limit_rw, IMR1M6LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
 
   return ImrCcsMask;
 }
@@ -260,7 +260,7 @@ GetImrDprBase (
   IMR1M9BASE_IMPH_IOC_MCHBAR_STRUCT  DprBaseStruct;
 
   DprBaseStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M9BASE_IMPH_IOC_MCHBAR_REG))));
-  ImrDprBase = (DprBaseStruct.Bits.imr_base_rw << IMR1M9BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
+  ImrDprBase = LShiftU64 ((UINT64)DprBaseStruct.Bits.imr_base_rw, IMR1M9BASE_IMPH_IOC_MCHBAR_IMR_BASE_RW_LSB);
 
   return ImrDprBase;
 }
@@ -280,7 +280,7 @@ GetImrDprMask (
   IMR1M9LIMIT_IMPH_IOC_MCHBAR_STRUCT  DprLimitStruct;
 
   DprLimitStruct.Data = (MmioRead64 ((UINTN) (GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + (UINT32) GET_NOC_EFFECTIVE_ADDRESS(IMR1M9LIMIT_IMPH_IOC_MCHBAR_REG))));
-  ImrDprMask = (DprLimitStruct.Bits.imr_limit_rw << IMR1M9LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
+  ImrDprMask = LShiftU64 ((UINT64)DprLimitStruct.Bits.imr_limit_rw, IMR1M9LIMIT_IMPH_IOC_MCHBAR_IMR_LIMIT_RW_LSB);
 
   return ImrDprMask;
 }
