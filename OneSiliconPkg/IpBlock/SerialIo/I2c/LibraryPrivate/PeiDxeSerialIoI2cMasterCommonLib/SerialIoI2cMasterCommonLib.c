@@ -471,10 +471,6 @@ WriteFifo (
     }
     if (IsFirstFromOperation (Context)) {
       I2cDataCommandRegister.Fields.Restart = 1;
-      if (Context->Request->Operation[Context->WriteOp].Flags & I2C_FLAG_READ) {
-        MmioWrite32 ((UINTN) Context->MmioAddress + R_SERIAL_IO_I2C_MEM_IC_DATA_CMD, (UINT32) I2cDataCommandRegister.Data32);
-        I2cDataCommandRegister.Fields.Restart = 0;
-      }
     }
     MmioWrite32 ((UINTN) Context->MmioAddress + R_SERIAL_IO_I2C_MEM_IC_DATA_CMD, I2cDataCommandRegister.Data32);
     UpdateWritePosition (Context);
