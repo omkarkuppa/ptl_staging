@@ -61,12 +61,13 @@ GetFormFactor (
     case DDR_MTYPE_RDIMM:
       return (UINT8) MemoryFormFactorRimm;
     case DDR_MTYPE_CSODIMM:
-      return MemoryFormFactorSodimm;
+      return (UINT8) MemoryFormFactorCsoDimm;
     case DDR_MTYPE_MEM_DOWN:
       return (UINT8) MemoryFormFactorRowOfChips;
+    case DDR_MTYPE_CUDIMM:
+      return (UINT8) MemoryFormFactorCuDimm;
     case DDR_MTYPE_UDIMM:
     case DDR_MTYPE_LR_DIMM:
-    case DDR_MTYPE_CUDIMM:
     case DDR_MTYPE_MRDIMM:
     case DDR_MTYPE_DDIMM:
     default:
