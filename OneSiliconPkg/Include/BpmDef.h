@@ -250,6 +250,7 @@ typedef struct {
 //
 #define IBB_FLAG_SRTM_AC               0x80 //Bit 7
 #define SRTM_AC_MASK                   0x20FFF
+#define IBB_FLAG_BOOT_COMPONENT_BIT    0x400 // Bit 10, if set then FSP Signed else Non-Signed
 
 typedef struct {
   UINT8               StructureId[8];

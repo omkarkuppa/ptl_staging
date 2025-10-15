@@ -30,6 +30,11 @@ FindFbm (
   VOID
   );
 
+VOID *
+FindBpmIbb (
+  IN BOOT_POLICY_MANIFEST_HEADER              *Bpm
+  );
+
 /**
  Locate FBM from FIT.
 
@@ -90,6 +95,43 @@ SearchBspmNear4G (
   DEBUG ((DEBUG_ERROR, "BSPM not Found!\n"));
   return NULL;
 }
+
+
+/**
+  Locate BpmIBB Element
+
+  @retval IBB_ELEMENT structure location or NULL if not found.
+
+ **/
+IBB_ELEMENT *
+EFIAPI
+LocateBpmIbbElement (
+  VOID
+  )
+{
+  FIRMWARE_INTERFACE_TABLE_ENTRY  *FitEntry;
+  BOOT_POLICY_MANIFEST_HEADER     *Bpm;
+  IBB_ELEMENT                     *BpmIbb;
+
+  FitEntry = (FIRMWARE_INTERFACE_TABLE_ENTRY *) FindBpmFitEntry ();
+  if (FitEntry == NULL) {
+    DEBUG ((DEBUG_ERROR, "BPM entry was not found inside the FIT!\n"));
+    return NULL;
+  }
+
+  Bpm = (BOOT_POLICY_MANIFEST_HEADER *)(UINTN) FitEntry->Address;
+
+  DEBUG ((DEBUG_INFO, "Bpm is found: 0x%x!\n", (UINTN) (VOID *) Bpm));
+
+  BpmIbb = FindBpmIbb (Bpm); // Find the IBB Element in BPM to read BpmIbb Flags
+  if (BpmIbb == NULL) {
+    DEBUG ((DEBUG_ERROR, "IBB Element not found!\n"));
+    ASSERT (BpmIbb != NULL);
+    return NULL;
+  }
+  return BpmIbb;
+}
+
 
 /**
  Locate BSSS-BSPM structure from BPM. BSPM is one kind of BSSS format defined for FSP use.

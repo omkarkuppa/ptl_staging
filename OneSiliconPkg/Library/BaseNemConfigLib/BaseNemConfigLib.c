@@ -32,6 +32,7 @@
 #include <Library/IoLib.h>
 #include <Library/BootGuardLib.h>
 #include <Library/NemConfigLib.h>
+#include <Library/PcdLib.h>
 
 typedef struct {
   UINTN    Cr4;
@@ -277,6 +278,7 @@ NemSizeCalculate (
   UINTN                   NemSize;
   UINTN                   RestOfNemSize;
   UINT32                  EffWayCacheSize;
+  UINTN                   SecondaryDataStackSize;
 
   EffCacheSize = 0;
   AvailableCacheSize = 0;
@@ -294,9 +296,17 @@ NemSizeCalculate (
   GetGbSize (EffWayCacheSize, &GbSize);
   DEBUG ((DEBUG_INFO, "EffCacheSize: 0x%x and GbSize: 0x%x\n", EffCacheSize, GbSize));
 
-  // Code cache size = Total NEM size - DataStack size - Guard band size
+  // Code cache size = Total NEM size - DataStack size - Guard band size - Secondary DataStack size
   AvailableCacheSize = EffCacheSize - GbSize;
   NemSize = AvailableCacheSize - DataStackSize;
+
+  // Account for secondary data stack if configured
+  if (PcdGet32 (PcdSecondaryDataStackSize) != 0) {
+    SecondaryDataStackSize = PcdGet32 (PcdSecondaryDataStackSize);
+    NemSize -= SecondaryDataStackSize;
+    DEBUG ((DEBUG_INFO, "Secondary data stack size: 0x%x\n", SecondaryDataStackSize));
+  }
+
   RestOfNemSize = NemSize - *SizeOfNewRange - IbbSize;
 
   if (*SizeOfNewRange == 0) {
@@ -438,6 +448,8 @@ ConvertFlashRegionToNemBuffer (
   UINT32                  LastNemBufferSize;
   UINT32                  LastNemBufferType;
   UINT64                  LastNemBufferTop;   /// LastNemBufferTop may reach top address 4G, need a UINT64 value
+  UINT32                  SecondaryDataStackBase;
+  UINT32                  SecondaryDataStackSize;
 
   GetEffCacheSize (&EffCacheSize, &EffWayCacheSize);
   if (EffWayCacheSize == 0) {
@@ -465,6 +477,28 @@ ConvertFlashRegionToNemBuffer (
   NemBufferList->NemBufferList[0].NemBufferType = CacheWriteBack;
   NemBufferList->NemBufferList[0].NemBufferBase = DataStackBase;
   NemBufferList->NemBufferList[0].NemBufferSize = DataStackSize;
+
+  //
+  // Add secondary data stack for FSP-M decompression if configured
+  //
+  if (PcdGet32 (PcdSecondaryDataStackSize) != 0) {
+    SecondaryDataStackBase = PcdGet32 (PcdSecondaryDataStackBase);
+    SecondaryDataStackSize = PcdGet32 (PcdSecondaryDataStackSize);
+
+    // Validate alignment
+    if (SecondaryDataStackBase % EffWayCacheSize != 0 || SecondaryDataStackSize % EffWayCacheSize != 0) {
+      DEBUG ((DEBUG_ERROR, "Secondary data stack not aligned to EffWayCacheSize: Base=0x%x, Size=0x%x, EffWayCacheSize=0x%x\n",
+              SecondaryDataStackBase, SecondaryDataStackSize, EffWayCacheSize));
+      return EFI_INVALID_PARAMETER;
+    }
+
+    NemBufferList->NemBufferList[NemBufferList->Count].NemBufferType = CacheWriteBack;
+    NemBufferList->NemBufferList[NemBufferList->Count].NemBufferBase = SecondaryDataStackBase;
+    NemBufferList->NemBufferList[NemBufferList->Count].NemBufferSize = SecondaryDataStackSize;
+    NemBufferList->Count++;
+
+    DEBUG ((DEBUG_INFO, "Secondary data stack added: Base=0x%x, Size=0x%x\n", SecondaryDataStackBase, SecondaryDataStackSize));
+  }
 
   for (Index = 0; Index < FlashRegionList->Count; Index ++) {
 
@@ -666,6 +700,9 @@ AllocateNemForFlashRegion (
   UINT32                    MtrrBaseLimit;
   UINT64                    MtrrTopLimit;
   FLASH_REGION_LIST         FlashRegionsOnNemTemp;
+  UINT32                    SecondaryDataStackBase;
+  UINT32                    SecondaryDataStackSize;
+  UINT32                    SecondaryDataStackTop;
 
   if (FlashRegionsOnNem->Count == FLASH_REGION_COUNT_MAX) {
     return EFI_INVALID_PARAMETER;
@@ -712,6 +749,19 @@ AllocateNemForFlashRegion (
   }
 
   MtrrBaseLimit = DataStackBase + DataStackSize;
+
+  // Consider secondary data stack if configured
+  if (PcdGet32 (PcdSecondaryDataStackSize) != 0) {
+    SecondaryDataStackBase = PcdGet32 (PcdSecondaryDataStackBase);
+    SecondaryDataStackSize = PcdGet32 (PcdSecondaryDataStackSize);
+    SecondaryDataStackTop = SecondaryDataStackBase + SecondaryDataStackSize;
+
+    // Update MtrrBaseLimit to account for both data stacks
+    if (SecondaryDataStackTop > MtrrBaseLimit) {
+      MtrrBaseLimit = SecondaryDataStackTop;
+    }
+  }
+
   MtrrTopLimit  = BASE_4GB;
 
   for (Index = 0; Index < NemBufferList.Count; Index ++) {

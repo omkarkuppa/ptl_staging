@@ -34,3 +34,23 @@ FspLoadComponents (
   )
 {
 }
+
+/**
+  Initialize NEM allocation for pre-memory components.
+  This is a null implementation for unsigned FSP builds.
+
+  @param[in]  BsssBaseAddress  Base address of the BSSS structure
+  @param[in]  TopOfCar         Top of Cache-as-RAM
+
+  @retval  EFI_SUCCESS   Always returns success in null implementation.
+
+**/
+EFI_STATUS
+EFIAPI
+InitializeNemForPreMemComponents (
+  IN UINTN BsssBaseAddress,
+  IN UINTN TopOfCar
+  )
+{
+  return EFI_SUCCESS;
+}

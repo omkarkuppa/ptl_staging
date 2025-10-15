@@ -26,7 +26,6 @@
 #include <Library/FspVerificationLib.h>
 #include <Library/BootGuardLib.h>
 #include <Library/FspMeasurementLib.h>
-#include <Library/BaseMemoryLib.h>
 #include <Library/FspLoadComponentsLib.h>
 
 volatile FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
@@ -46,6 +45,7 @@ volatile FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   @param[in, out]  BspSize            BSP Size value
 
 **/
+STATIC
 VOID
 GetBspInfo (
   IN      BSPM_ELEMENT    *Bspm,
@@ -56,21 +56,16 @@ GetBspInfo (
 {
   REGION_SEGMENT    *BspSegment;
 
-  ASSERT (Bspm != NULL);
-
   BspSegment = ((REGION_SEGMENT *) (Bspm + 1)) + Index;
-
   *BspBaseAddress = BspSegment->Base;
   *BspSize        = BspSegment->Size;
 }
 
 /**
-  Load FSP-M onto Write Back NEM and verify FSP-M via FBM.
+  Load FSP-M and verify FSP-M via FBM.
 
   @param[in]       Bspm               BPM/Bspm structure for FSP Element
   @param[in]       Fbm                FSP Boot Manifest structure
-  @param[in, out]  FlashRegionsOnNem  The flash regions already loaded to NEM. This region list will be updated
-                                      if FSPM is successfully loaded.
 
   @retval EFI_INVALID_PARAMETER       One or more parameters are invalid.
   @retval EFI_DEVICE_ERROR            System error in verifying FSPM.
@@ -81,43 +76,20 @@ GetBspInfo (
 EFI_STATUS
 LoadFspm (
   IN      BSPM_ELEMENT                   *Bspm,
-  IN      FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
-  IN OUT  FLASH_REGION_LIST              *FlashRegionsOnNem,
-  IN      UINT32                         DataStackBase,
-  IN      UINT32                         DataStackSize
+  IN      FSP_BOOT_MANIFEST_STRUCTURE    *Fbm
   )
 {
   EFI_STATUS            Status;
   UINT8                 AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
-  FLASH_REGION_SEGMENT  FlashRegionFspm;
 
-  if (Bspm == NULL || FlashRegionsOnNem == NULL) {
+  if (Bspm == NULL) {
     return EFI_INVALID_PARAMETER;
-  }
-
-  FlashRegionFspm.FlashRegionBase     = Bspm->FspmBaseAddress;
-  FlashRegionFspm.FlashRegionSize     = FixedPcdGet32 (PcdFlashFvFspmSize);
-  FlashRegionFspm.TargetNemBufferType = CacheWriteBack;
-  DEBUG ((DEBUG_INFO, "FSP loads new region Base: %x Size: %x\n", Bspm->FspmBaseAddress, FixedPcdGet32 (PcdFlashFvFspmSize)));
-
-  //
-  // Allocate NEM for FSPM.
-  // When NEM has no enough size or MTRRs has no enough pairs, system should halt directly.
-  //
-  Status = AllocateNemForFlashRegion (
-             FlashRegionsOnNem,
-             &FlashRegionFspm,
-             DataStackBase,
-             DataStackSize
-             );
-  if (Status == EFI_OUT_OF_RESOURCES) {
-    CpuDeadLoop ();
   }
 
   if (mFspVerifyApiWrapper.VerifyFspmApiWrapper == NULL) {
     return EFI_DEVICE_ERROR;
   }
-  DEBUG ((DEBUG_INFO, "FSP verifies FSPM region ...\n"));
+  DEBUG ((DEBUG_INFO, "FSP verifies FSPM\n"));
   Status = mFspVerifyApiWrapper.VerifyFspmApiWrapper (Bspm, Fbm, AvailableMemoryBuffer);
   if (EFI_ERROR (Status)) {
     VerifyCrtmStatusAndDisableTxtCmos (Bspm);
@@ -136,11 +108,9 @@ LoadFspm (
 }
 
 /**
-  Load BSP-PreMem onto Write Protected NEM and verify BSP-PreMem.
+  Load BSP-PreMem and verify BSP-PreMem.
 
   @param[in]       Bspm               BPM/BSPM structure for FSP Element
-  @param[in, out]  FlashRegionsOnNem  The flash regions already loaded to NEM. This region list will be updated
-                                      if BspPreMem is successfully loaded.
 
   @retval EFI_INVALID_PARAMETER       One or more parameters are invalid.
   @retval EFI_DEVICE_ERROR            System error in verifying BSP.
@@ -150,53 +120,21 @@ LoadFspm (
 **/
 EFI_STATUS
 LoadBspPreMem (
-  IN      BSPM_ELEMENT           *Bspm,
-  IN OUT  FLASH_REGION_LIST      *FlashRegionsOnNem,
-  IN      UINT32                 DataStackBase,
-  IN      UINT32                 DataStackSize
+  IN      BSPM_ELEMENT           *Bspm
   )
 {
   EFI_STATUS            Status;
   UINT8                 AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
-  UINT32                BspBaseAddress;
-  UINT32                BspSize;
-  FLASH_REGION_SEGMENT  FlashRegionBspPreMem;
-  UINT32                Index;
 
-  if (Bspm == NULL || FlashRegionsOnNem == NULL) {
+  if (Bspm == NULL) {
     return EFI_INVALID_PARAMETER;
-  }
-
-  for (Index = 0; Index < Bspm->BspSegmentCount; Index ++) {
-
-    GetBspInfo (Bspm, Index, &BspBaseAddress, &BspSize);
-
-    FlashRegionBspPreMem.FlashRegionBase     = BspBaseAddress;
-    FlashRegionBspPreMem.FlashRegionSize     = BspSize;
-    FlashRegionBspPreMem.TargetNemBufferType = CacheWriteProtected;
-
-    DEBUG ((DEBUG_INFO, "FSP loads new region Base: %x Size: %x\n", BspBaseAddress, BspSize));
-
-    //
-    // Allocate NEM forBspPreMem.
-    // When NEM has no enough size or MTRRs has no enough pairs, system should halt directly.
-    //
-    Status = AllocateNemForFlashRegion (
-               FlashRegionsOnNem,
-               &FlashRegionBspPreMem,
-               DataStackBase,
-               DataStackSize
-               );
-    if (Status == EFI_OUT_OF_RESOURCES) {
-      CpuDeadLoop ();
-    }
   }
 
   if (mFspVerifyApiWrapper.VerifyBspApiWrapper == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  DEBUG ((DEBUG_INFO, "FSP verifies Bsp region ...\n"));
+  DEBUG ((DEBUG_INFO, "FSP verifies BSP\n"));
   Status = mFspVerifyApiWrapper.VerifyBspApiWrapper (Bspm, AvailableMemoryBuffer);
   if (EFI_ERROR (Status)) {
     VerifyCrtmStatusAndDisableTxtCmos (Bspm);
@@ -266,7 +204,124 @@ InitializeFlashRegionList (
   FlashRegionList->Count = 1;
   FlashRegionList->FlashRegionList[0].FlashRegionBase     = (UINT32) (BASE_4GB - TopIbbSize);
   FlashRegionList->FlashRegionList[0].FlashRegionSize     = TopIbbSize;
-  FlashRegionList->FlashRegionList[0].TargetNemBufferType = CacheWriteProtected;
+  FlashRegionList->FlashRegionList[0].TargetNemBufferType = CacheWriteBack;
+}
+
+/**
+  Initialize NEM for FSP-M and BSP Pre-Mem.
+  This function allocates NEM space for FSP-M before decompression and sets up
+  the necessary NEM configuration for subsequent component loading.
+
+  @param[in]    BsssBaseAddress    Base address of BSSS structure
+  @param[in]    TopOfCar           Top of Cache-as-RAM address
+
+  @retval  EFI_SUCCESS             NEM allocation successful.
+  @retval  EFI_OUT_OF_RESOURCES    Insufficient NEM resources available.
+  @retval  EFI_INVALID_PARAMETER   Invalid parameters provided.
+  @retval  EFI_NOT_FOUND           Required structures not found.
+
+**/
+EFI_STATUS
+EFIAPI
+InitializeNemForPreMemComponents (
+  IN UINTN BsssBaseAddress,
+  IN UINTN TopOfCar
+  )
+{
+  EFI_STATUS                     Status;
+  BSPM_ELEMENT                   *Bspm;
+  IBB_ELEMENT                    *BpmIbb;
+  UINT32                         DataStackBase;
+  UINT32                         DataStackSize;
+  FLASH_REGION_LIST              FlashRegionList;
+  FLASH_REGION_SEGMENT           FlashRegionFspm;
+  UINT32                         BspBaseAddress;
+  UINT32                         BspSize;
+  FLASH_REGION_SEGMENT           FlashRegionBspPreMem;
+  UINT32                         Index;
+
+  //
+  // Locate BSPM structure from the provided BSSS base address
+  //
+  Bspm = (BSPM_ELEMENT *) BsssBaseAddress;
+  if (Bspm == NULL) {
+    DEBUG ((DEBUG_ERROR, "Invalid BSSS, NEM allocation failed\n"));
+    return EFI_INVALID_PARAMETER;
+  }
+
+  BpmIbb = LocateBpmIbbElement (); // Locate Bpm IBB Element
+  if (BpmIbb == NULL) {
+    return EFI_NOT_FOUND;
+  }
+
+  //
+  // Check boot component bit - if not set, no NEM allocation needed here
+  //
+  if (!((BpmIbb->Flags) & IBB_FLAG_BOOT_COMPONENT_BIT)) {
+    return EFI_SUCCESS;
+  }
+
+  //
+  // Get aligned data stack base and size
+  //
+  DataStackAlign ((UINT32) TopOfCar, &DataStackBase, &DataStackSize);
+
+  //
+  // Initialize the flash region list with FSP-O and FSP-T regions
+  //
+  InitializeFlashRegionList (&FlashRegionList);
+
+  //
+  // Allocate NEM for FSP-M
+  //
+  FlashRegionFspm.FlashRegionBase     = Bspm->FspmBaseAddress;
+  FlashRegionFspm.FlashRegionSize     = FixedPcdGet32 (PcdFlashFvFspmSize);
+  FlashRegionFspm.TargetNemBufferType = CacheWriteBack;
+
+  //
+  // Allocate NEM for FSPM.
+  // When NEM has no enough size or MTRRs has no enough pairs, system should halt directly.
+  //
+  Status = AllocateNemForFlashRegion (
+             &FlashRegionList,
+             &FlashRegionFspm,
+             DataStackBase,
+             DataStackSize
+             );
+  if (Status == EFI_OUT_OF_RESOURCES) {
+    DEBUG ((DEBUG_ERROR, "Insufficient NEM resources for FSP-M allocation\n"));
+    CpuDeadLoop ();
+  }
+
+  //
+  // Allocate NEM for BSP PreMem regions if they exist
+  //
+  if (Bspm->BspSegmentCount != 0) {
+    for (Index = 0; Index < Bspm->BspSegmentCount; Index++) {
+      GetBspInfo (Bspm, Index, &BspBaseAddress, &BspSize);
+
+      FlashRegionBspPreMem.FlashRegionBase     = BspBaseAddress;
+      FlashRegionBspPreMem.FlashRegionSize     = BspSize;
+      FlashRegionBspPreMem.TargetNemBufferType = CacheWriteBack;
+
+      //
+      // Allocate NEM for BspPreMem.
+      // When NEM has no enough size or MTRRs has no enough pairs, system should halt directly.
+      //
+      Status = AllocateNemForFlashRegion (
+                 &FlashRegionList,
+                 &FlashRegionBspPreMem,
+                 DataStackBase,
+                 DataStackSize
+                 );
+      if (Status == EFI_OUT_OF_RESOURCES) {
+        DEBUG ((DEBUG_ERROR, "Insufficient NEM resources for BSP PreMem allocation (Index: %d)\n", Index));
+        CpuDeadLoop ();
+      }
+    }
+  }
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -285,9 +340,6 @@ FspLoadComponents (
   EFI_STATUS                     Status;
   FSP_BOOT_MANIFEST_STRUCTURE    *Fbm;
   BSPM_ELEMENT                   *Bspm;
-  UINT32                         DataStackBase;
-  UINT32                         DataStackSize;
-  FLASH_REGION_LIST              FlashRegionList;
   FSP_BUILD_MEASUREMENT_INFO     FspMeasurementInfo;
   UINT32                         TpmActivePcrBanks;
 
@@ -325,30 +377,20 @@ FspLoadComponents (
   }
 
   //
-  // Get aligned data stack base and size
-  //
-  DataStackAlign ((UINT32) TopOfCar, &DataStackBase, &DataStackSize);
-
-  //
-  // Before loading FSP-M or BspPreMem to NEM, initialize the flash region list
-  //
-  InitializeFlashRegionList (&FlashRegionList);
-
-  //
-  // Load FSP-M
+  // Load FSP-M (NEM allocation already done by InitializeNemForPreMemComponents)
   //
   if ((Bspm->FspmLoadingPolicy & BIT0) == LOADING_FSPM) {
-    Status = LoadFspm (Bspm, Fbm, &FlashRegionList, DataStackBase, DataStackSize);
+    Status = LoadFspm (Bspm, Fbm);
     if (Status == EFI_SUCCESS) {
       ExtendFspmRegion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
     }
   }
 
   //
-  // Load BspPreMem regions
+  // Load BspPreMem regions (NEM allocation already done by InitializeNemForPreMemComponents)
   //
   if (Bspm->BspSegmentCount != 0) {
-    Status = LoadBspPreMem (Bspm, &FlashRegionList, DataStackBase, DataStackSize);
+    Status = LoadBspPreMem (Bspm);
     if (Status == EFI_SUCCESS) {
       ExtendBspRegion (&FspMeasurementInfo, Bspm, TpmActivePcrBanks);
     }

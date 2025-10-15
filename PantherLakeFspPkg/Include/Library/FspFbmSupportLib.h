@@ -105,4 +105,16 @@ LocateBspm (
   VOID
   );
 
+/**
+ Locate BpmIBB Element
+
+  @retval BpmIbb structure location or NULL if not found.
+
+**/
+IBB_ELEMENT *
+EFIAPI
+LocateBpmIbbElement (
+    VOID
+    );
+
 #endif

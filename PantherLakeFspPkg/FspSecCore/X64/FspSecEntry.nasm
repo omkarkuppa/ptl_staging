@@ -33,6 +33,7 @@ SECTION .text
 
 extern   ASM_PFX(FspLoadComponents)
 extern   ASM_PFX(ExtractFspm)
+extern   ASM_PFX(InitializeNemForPreMemComponents)
 extern   ASM_PFX(RebaseFspmImageBase)
 extern   ASM_PFX(PcdGet32 (PcdFlashFvFsptBase))
 
@@ -390,6 +391,21 @@ TempRamInitDone:
   mov     rax, rsp
   and     rax, 0fh
   sub     rsp, rax
+
+  ;
+  ; Initialize NEM for FSP components before decompression
+  ;
+  PUSHA_64
+  xor     rcx, rcx
+  mov     ecx, esi                      ; Pass BSSS base address
+  mov     rdx, rsp                      ; Pass current stack pointer as TopOfCar
+  add     rdx, 20h                      ; Account for shadow space
+  sub     rsp, 20h
+  call    ASM_PFX(InitializeNemForPreMemComponents)
+  test    rax, rax                      ; Check return status
+  jnz     FspApiFailed
+  add     rsp, 20h
+  POPA_64
 
   ;
   ; Decompress FSPM region

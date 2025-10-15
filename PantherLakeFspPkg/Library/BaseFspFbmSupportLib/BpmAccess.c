@@ -251,3 +251,18 @@ FindFbm (
 {
   return FindFitEntryData (FIT_TYPE_0D_FSP_BOOT_MANIFEST);
 }
+
+/**
+  Find BPM IBB element
+
+  @param[in] Bpm           BPM address
+
+  @return BPM IBB element
+**/
+VOID *
+FindBpmIbb (
+  IN BOOT_POLICY_MANIFEST_HEADER              *Bpm
+  )
+{
+  return FindBpmElement (Bpm, BOOT_POLICY_MANIFEST_IBB_ELEMENT_STRUCTURE_ID);
+}

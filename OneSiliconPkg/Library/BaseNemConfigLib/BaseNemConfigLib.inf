@@ -44,3 +44,8 @@
   MtrrLib
   IoLib
   BootGuardLib
+  PcdLib
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize    ## CONSUMES

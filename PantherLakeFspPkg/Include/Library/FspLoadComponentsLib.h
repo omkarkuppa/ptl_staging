@@ -41,7 +41,27 @@ RebasePeiCoreFfs (
   IN UINTN FvHandle
   );
 
-  /**
+/**
+  Initialize NEM allocation for pre-memory components.
+  This function consolidates all NEM allocation calls for pre-memory components
+  including FSP-M and BspPreMem regions.
+
+  @param[in]  BsssBaseAddress  Base address of the BSSS structure
+  @param[in]  TopOfCar         Top of Cache-as-RAM
+
+  @retval  EFI_SUCCESS             NEM allocation successful.
+  @retval  EFI_OUT_OF_RESOURCES    Insufficient NEM resources available.
+  @retval  EFI_INVALID_PARAMETER   Invalid parameters provided.
+
+**/
+EFI_STATUS
+EFIAPI
+InitializeNemForPreMemComponents (
+  IN UINTN BsssBaseAddress,
+  IN UINTN TopOfCar
+  );
+
+/**
   Fsp Load Components. When FSP Signing is supported, FBM should be verified as valid
   by ACM only in ACM verified boot flow, Bios should perform below tasks:
   1. Load and verify FSP-M as optional, and halt the system if any error occurs.

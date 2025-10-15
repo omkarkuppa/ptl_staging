@@ -52,7 +52,6 @@
   DebugLib
   CpuLib
   PcdLib
-  BaseMemoryLib
   NemConfigLib
   FspFbmSupportLib
   FspVerificationLib

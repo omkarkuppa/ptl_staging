@@ -366,7 +366,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
 
 
 [LibraryClasses.IA32.SEC, LibraryClasses.X64.SEC]
-  NemConfigLib|$(PLATFORM_SI_PACKAGE)/Library/BaseNemConfigLibNull/BaseNemConfigLibNull.inf
+  NemConfigLib|$(PLATFORM_SI_PACKAGE)/Library/BaseNemConfigLib/BaseNemConfigLib.inf
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/SecCryptLib.inf
   MmPciLib|$(SILICON_FSP_PATH)/Library/MmPciCf8Lib/MmPciCf8Lib.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf

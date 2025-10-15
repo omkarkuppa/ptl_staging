@@ -160,8 +160,17 @@ IsSigningSupported (
   IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm
   )
 {
-  UINT64  AcmPolicyStatus;
-  UINT8   BootGuardProfile;
+  UINT64         AcmPolicyStatus;
+  UINT8          BootGuardProfile;
+  IBB_ELEMENT    *BpmIbb;
+
+  BpmIbb = LocateBpmIbbElement (); // Locate Bpm IBB Element
+  if (BpmIbb == NULL) {
+    return FALSE;
+  }
+  if (!(BpmIbb->Flags & IBB_FLAG_BOOT_COMPONENT_BIT)) {
+    return FALSE;
+  }
 
   AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
   BootGuardProfile = DetectBootGuardProfile ();
