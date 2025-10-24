@@ -99,9 +99,10 @@ SecLpssSpiConfiguration (
   UINT64                       PciCfgBase;
   UINT16                       VendorId;
 
-  if (SpiNumber >= GetMaxSpiInterfacesNum()) {
+  if (SpiNumber >= GetMaxSpiInterfacesNum () || (LpssSpiMmioBase == 0)) {
     return;
   }
+
   PciCfgBase      = LpssSpiPciCfgBase (SpiNumber);
   VendorId        = PciSegmentRead16 ((UINTN)(PciCfgBase + PCI_VENDOR_ID_OFFSET));
   if (VendorId == 0xFFFF) {
@@ -113,7 +114,7 @@ SecLpssSpiConfiguration (
   LpssSpiEnableMse (PciCfgBase);
   LpssSpiGetOutOfReset (LpssSpiMmioBase);
   LpssSpiChipSelectConfig (
-      PciCfgBase,
+      LpssSpiMmioBase,
       SpiDeviceConfig->DefaultCsOutput,
       SpiDeviceConfig->CsMode,
       SpiDeviceConfig->CsState,

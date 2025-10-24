@@ -97,7 +97,7 @@ SecLpssI2cConfiguration (
 {
   UINT64                           LpssI2cPciBase;
   UINT16                           VendorId;
-  if (I2cNumber >= GetMaxI2cInterfacesNum()) {
+  if (I2cNumber >= GetMaxI2cInterfacesNum () || (LpssI2cMmioBase == 0)) {
     return;
   }
 
