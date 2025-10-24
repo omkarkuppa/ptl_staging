@@ -104,11 +104,13 @@ AcmSetNemCheck (
   // Read Boot Guard S-ACM Info MSR
   MsrValue = (UINT32) AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO);
   // Check Bit 0 of BOOT_GUARD_SACM_INFO MSR if system is in Boot Guard boot mode
+  // Bit 0 of BOOT_GUARD_SACM_INFO (B_BOOT_GUARD_SACM_INFO_NEM_ENABLED):
+  //   - 0 : NEM was NOT initiated by the Boot Guard S-ACM. The
+  //         platform Firmware/BIOS initialized NEM.
+  //   - 1 : NEM was initiated by the Boot Guard S-ACM (ACM configured NEM).
   if ((MsrValue & B_BOOT_GUARD_SACM_INFO_NEM_ENABLED) == 0) {
-    DEBUG ((DEBUG_INFO, "NEM is initiated by BIOS.\n"));
     *AcmEnable = FALSE;
   } else {
-    DEBUG ((DEBUG_INFO, "NEM is initiated by Boot Guard ACM.\n"));
     *AcmEnable = TRUE;
   }
 
@@ -153,8 +155,6 @@ GetEffCacheSize (
   *EffWayCacheSize = 0;
   CacheLevel = 0;
 
-  DEBUG ((DEBUG_INFO, "========================================\n"));
-
   AcmSetNemCheck (&AcmEnable);
 
   // Dynamically search for LLC.
@@ -167,8 +167,6 @@ GetEffCacheSize (
   ASSERT (CacheLevel > 0);
 
   AsmCpuidEx (CPUID_CACHE_PARAMS, CacheLevel, &Eax.Uint32, &Ebx.Uint32, &Ecx, NULL);
-  DEBUG ((DEBUG_INFO, "CPUID_CACHE_PARAMS [EAX:%08x  EBX:%08x  ECX:%08x]\n", Eax.Uint32, Ebx.Uint32, Ecx));
-  DEBUG ((DEBUG_INFO, "L%d cache is in use.\n", CacheLevel));
 
   // Get Cache parameters
   //
@@ -178,7 +176,6 @@ GetEffCacheSize (
 
   WayCnt = Ebx.Bits.Ways + 1;
   WayCacheSize = CacheSize / WayCnt;
-  DEBUG ((DEBUG_INFO, "CacheSize: %x\nHave to align with WayCacheSize %x\n", CacheSize, WayCacheSize));
   SetCnt = (Ecx + 1);
 
   // ACM is in L2. If NEM is allocated from L3: ACMways = 0.
@@ -194,8 +191,6 @@ GetEffCacheSize (
   *EffCacheSize = CacheSize / SetCnt * EffSetCnt;
   *EffWayCacheSize = WayCacheSize / SetCnt * EffSetCnt;
 
-  DEBUG ((DEBUG_INFO, "EffCacheSize: %x\nEffWayCacheSize %x\nEffSetCnt %x\n", *EffCacheSize, *EffWayCacheSize, EffSetCnt));
-  DEBUG ((DEBUG_INFO, "========================================\n"));
   return ACMWay;
 }
 
@@ -294,7 +289,6 @@ NemSizeCalculate (
   }
   GetEffCacheSize (&EffCacheSize, &EffWayCacheSize);
   GetGbSize (EffWayCacheSize, &GbSize);
-  DEBUG ((DEBUG_INFO, "EffCacheSize: 0x%x and GbSize: 0x%x\n", EffCacheSize, GbSize));
 
   // Code cache size = Total NEM size - DataStack size - Guard band size - Secondary DataStack size
   AvailableCacheSize = EffCacheSize - GbSize;
@@ -304,7 +298,6 @@ NemSizeCalculate (
   if (PcdGet32 (PcdSecondaryDataStackSize) != 0) {
     SecondaryDataStackSize = PcdGet32 (PcdSecondaryDataStackSize);
     NemSize -= SecondaryDataStackSize;
-    DEBUG ((DEBUG_INFO, "Secondary data stack size: 0x%x\n", SecondaryDataStackSize));
   }
 
   RestOfNemSize = NemSize - *SizeOfNewRange - IbbSize;
@@ -365,7 +358,6 @@ SetVariableMtrrForNemRange (
   AsmWriteCr4 (MtrrContext.Cr4);
   SetInterruptState (MtrrContext.InterruptState);
 
-  DEBUG ((DEBUG_INFO, "%a is executed.\n", __FUNCTION__));
 }
 
 /**
@@ -462,14 +454,6 @@ ConvertFlashRegionToNemBuffer (
 
   ZeroMem (NemBufferList, sizeof (NEM_BUFFER_LIST));
 
-  DEBUG ((DEBUG_INFO, "========================================\n"));
-  DEBUG ((DEBUG_INFO, "Reorganize NEM Buffers for FlashRegions:\n"));
-  for (Index = 0; Index < FlashRegionList->Count; Index ++) {
-    DEBUG ((DEBUG_INFO, "FlashRegion[%d] Base: 0x%x\n", Index, FlashRegionList->FlashRegionList[Index].FlashRegionBase));
-    DEBUG ((DEBUG_INFO, "FlashRegion[%d] Size: 0x%x\n", Index, FlashRegionList->FlashRegionList[Index].FlashRegionSize));
-  }
-  DEBUG ((DEBUG_INFO, "\n"));
-
   //
   // The first NEM Buffer should be set to DataStack
   //
@@ -497,7 +481,6 @@ ConvertFlashRegionToNemBuffer (
     NemBufferList->NemBufferList[NemBufferList->Count].NemBufferSize = SecondaryDataStackSize;
     NemBufferList->Count++;
 
-    DEBUG ((DEBUG_INFO, "Secondary data stack added: Base=0x%x, Size=0x%x\n", SecondaryDataStackBase, SecondaryDataStackSize));
   }
 
   for (Index = 0; Index < FlashRegionList->Count; Index ++) {
@@ -566,13 +549,6 @@ ConvertFlashRegionToNemBuffer (
     }
   }
 
-  DEBUG ((DEBUG_INFO, "NEM Buffers are reorganized as:\n"));
-  for (Index = 0; Index < NemBufferList->Count; Index ++) {
-    DEBUG ((DEBUG_INFO, "NEM[%d] Base: 0x%x\n", Index, NemBufferList->NemBufferList[Index].NemBufferBase));
-    DEBUG ((DEBUG_INFO, "NEM[%d] Size: 0x%x\n", Index, NemBufferList->NemBufferList[Index].NemBufferSize));
-  }
-  DEBUG ((DEBUG_INFO, "========================================\n"));
-
   return EFI_SUCCESS;
 }
 
@@ -634,7 +610,6 @@ NemMtrrConfig (
 
     MtrrSize = (UINT32) (MtrrTop - MtrrBase);
     Index    = Index * 2;
-    DEBUG ((DEBUG_INFO, "Align Mtrrs to MtrrBase: 0x%x, MtrrSize: 0x%x\n", MtrrBase, MtrrSize));
     //
     // Calling MtrrSetMemoryAttributeInMtrrSettings() to config MTRRs.
     // EFI_OUT_OF_RESOURCES error may return, which indicates system may not have enough MTRR pairs to do this
@@ -650,7 +625,6 @@ NemMtrrConfig (
     if (!EFI_ERROR (Status)) {
       SetVariableMtrrForNemRange (&MtrrSetting.Variables);
     }
-    DEBUG ((DEBUG_INFO, "Config Mtrrs to %d for MtrrBase: 0x%x, MtrrSize: 0x%x. Status: %r\n", MtrrType, MtrrBase, MtrrSize, Status));
   } while (Status == EFI_OUT_OF_RESOURCES);
 
   return Status;

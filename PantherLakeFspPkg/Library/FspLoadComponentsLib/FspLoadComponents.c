@@ -188,7 +188,6 @@ DataStackAlign (
   } else {
     *DataStackSize = DataStackTop - *DataStackBase;
   }
-  DEBUG ((DEBUG_INFO, "Aligned DataStackBase: %x DataStackSize: %x\n", *DataStackBase, *DataStackSize));
 }
 
 /**
