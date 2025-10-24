@@ -431,13 +431,13 @@ InitIpInstance (
   pInst->Usb3LanesCount       = 2;
   pInst->FabricPllAdvanceWake = 0x19;
 
-  pInst->LtrEnable                      = FALSE;
-  pInst->NdeSbEnable                    = TRUE;
+  pInst->LtrEnable                      = TRUE;
+  pInst->NdeSbEnable                    = FALSE;
   pInst->HsiiEnable                     = FALSE;
-  pInst->LtrHighIdleTime                = 0x00050002;
-  pInst->LtrMedIdleTime                 = 0x00050002;
-  pInst->LtrLowIdleTime                 = 0x00050002;
-  pInst->LtvLimit                       = 0x17FF;
+  pInst->LtrHighIdleTime                = pInst->LtrEnable ? 0x02000400 : 0x00050002;
+  pInst->LtrMedIdleTime                 = pInst->LtrEnable ? 0x01320132 : 0x00050002;
+  pInst->LtrLowIdleTime                 = pInst->LtrEnable ? 0x00320032 : 0x00050002;
+  pInst->LtvLimit                       = 0xBD0;
   pInst->InterruptPin                   = ItssGetDevIntPin (SiPolicy, PchXhciDevNumber (), PchXhciFuncNumber ());
   pInst->MaxPayloadSize                 = 0x7;
   pInst->RequestBoundaryCrossingControl = 0x1;
