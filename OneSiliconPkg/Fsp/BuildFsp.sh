@@ -104,6 +104,10 @@ for ((i=2 ; i <= $# ; i++)); do
     export PERFORMANCE_ENABLE=TRUE
   elif [ "${!i}" = "skipsmbiosgen" ]; then
     export SMBIOS_ENABLE=FALSE
+  elif [ "${!i}" = "fspunsigned" ]; then
+    export FSP_SIGNED=FALSE
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F"
+    export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=FALSE"
   else
     BUILD_ARGS="$BUILD_ARGS ${!i}"
   fi
