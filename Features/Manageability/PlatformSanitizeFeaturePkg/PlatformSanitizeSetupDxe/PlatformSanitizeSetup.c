@@ -939,7 +939,7 @@ RouteConfig (
   } else {
     return EFI_NOT_FOUND;
   }
-
+  *Progress = Configuration + StrLen (Configuration);
   return EFI_SUCCESS;
 }
 
