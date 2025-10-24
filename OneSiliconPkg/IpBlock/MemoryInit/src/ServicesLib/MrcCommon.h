@@ -4407,6 +4407,16 @@ MrcRxDqsVocCentering1D (
   );
 
 /**
+  Match CTLE replica fields to DQ CTLE
+
+  @param[in] MrcData   - Include all MRC global data.
+**/
+VOID
+UpdateCtleReplica (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   This function is a helper function for ChangeMargin.
   This function forms the correct Channel Mask based on the Margin Parameter, Channel, and Multicast settings.
 
