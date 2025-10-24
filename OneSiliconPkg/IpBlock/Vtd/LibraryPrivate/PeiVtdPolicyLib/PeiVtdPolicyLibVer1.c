@@ -135,15 +135,15 @@ VtdPrintPolicyPpi (
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Revision:%d\n", Vtd->Header.Revision));
-  DEBUG ((DEBUG_INFO, "VtdDisable: 0x%x\n", Vtd->VtdDisable));
-  DEBUG ((DEBUG_INFO, "DmaControlGuarantee: 0x%x\n", Vtd->DmaControlGuarantee));
+  DEBUG ((DEBUG_INFO, "Revision : %d\n", Vtd->Header.Revision));
+  DEBUG ((DEBUG_INFO, "VtdDisable : 0x%x\n", Vtd->VtdDisable));
+  DEBUG ((DEBUG_INFO, "DmaControlGuarantee : 0x%x\n", Vtd->DmaControlGuarantee));
   for (Index = 0; Index < GetMaxVtdEngineNumber (); Index++) {
-    DEBUG ((DEBUG_INFO, "VtdBaseAddress[%d]: 0x%x\n", Index, Vtd->BaseAddress[Index]));
+    DEBUG ((DEBUG_INFO, "VtdBaseAddress[%d] : 0x%x\n", Index, Vtd->BaseAddress[Index]));
   }
-  DEBUG ((DEBUG_INFO, "PreBootDmaMask:0x%x\n", Vtd->PreBootDmaMask));
-  DEBUG ((DEBUG_INFO, "DmaBufferSize:0x%x\n", Vtd->DmaBufferSize));
-  DEBUG ((DEBUG_INFO, "CapabilityControl:0x%x\n", Vtd->CapabilityControl));
+  DEBUG ((DEBUG_INFO, "PreBootDmaMask : 0x%x\n", Vtd->PreBootDmaMask));
+  DEBUG ((DEBUG_INFO, "DmaBufferSize : 0x%x\n", Vtd->DmaBufferSize));
+  DEBUG ((DEBUG_INFO, "CapabilityControl : 0x%x\n", Vtd->CapabilityControl));
   DEBUG_CODE_END ();
   return;
 }

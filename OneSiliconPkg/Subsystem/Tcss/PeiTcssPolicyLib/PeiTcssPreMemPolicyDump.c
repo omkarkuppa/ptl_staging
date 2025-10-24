@@ -45,7 +45,7 @@ TcssPreMemConfigDump (
   }
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Revision:%d\n", TcssPeiPreMemConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "Revision : %d\n", TcssPeiPreMemConfig->Header.Revision));
   DEBUG ((DEBUG_INFO, "IomAuxPortPad\n"));
   for (Index = 0; Index < MAX_IOM_AUX_BIAS_COUNT; Index++) {
     DEBUG ((DEBUG_INFO, "[%x].ReceptacleSbu2BiasCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].ReceptacleSbu2BiasCtrl));
@@ -60,8 +60,8 @@ TcssPreMemConfigDump (
     DEBUG ((DEBUG_INFO, "IomUsbCDpConfig[%d] 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[Index]));
   }
 
-  DEBUG ((DEBUG_INFO, "TcssEnable:%01x\n", TcssPeiPreMemConfig->TcssEnable));
-  DEBUG ((DEBUG_INFO, "TPortEnData32:%01x\n", TcssPeiPreMemConfig->UsbTcConfig.PortEnData32));
+  DEBUG ((DEBUG_INFO, "TcssEnable : %01x\n", TcssPeiPreMemConfig->TcssEnable));
+  DEBUG ((DEBUG_INFO, "TPortEnData32 : %01x\n", TcssPeiPreMemConfig->UsbTcConfig.PortEnData32));
 
   for (Index = 0; Index < MaxTcssPortNumber; Index++) {
     PortPolicyData8 = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[Index];
