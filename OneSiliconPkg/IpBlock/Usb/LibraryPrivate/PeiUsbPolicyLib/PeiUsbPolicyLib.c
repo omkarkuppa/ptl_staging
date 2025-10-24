@@ -50,6 +50,7 @@ UsbConfPrintConfig (
   DEBUG ((DEBUG_INFO, " XhciOcLock            = %x\n", UsbConfig->XhciOcLock));
   DEBUG ((DEBUG_INFO, " UaolEnable            = %x\n", UsbConfig->UaolEnable));
   DEBUG ((DEBUG_INFO, " HsiiEnable            = %x\n", UsbConfig->HsiiEnable));
+  DEBUG ((DEBUG_INFO, " DwbEnable             = %x\n", UsbConfig->DwbEnable));
 
   for (Index = 0; Index < MAX_USB2_PORTS; Index++) {
     DEBUG ((DEBUG_INFO, " PortUsb20[%d].Enabled                = %x\n", Index, UsbConfig->PortUsb20[Index].Enable));
@@ -210,7 +211,7 @@ UsbConfLoadConfigDefault (
   UsbConfig->XhciOcLock = TRUE;
   UsbConfig->UaolEnable = TRUE;
   UsbConfig->HsiiEnable = TRUE;
-  UsbConfig->DwbEnable  = TRUE;
+  UsbConfig->DwbEnable  = FALSE;
 
   //
   // xDCI configuration

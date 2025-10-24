@@ -483,7 +483,6 @@ IpUsb3SetControl (
     case IpUsb3FeatIdDwbEnable:
       if (FeatureVal == IpUsb3FeatValDwbEnable) {
         Data32Or = (UINT32) (B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_HS |
-                            B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS |
                             B_XHCI_MEM_TRB_PRF_CTRL_REG4_PRFTCHHOLDEN |
                             (V_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT << N_XHCI_MEM_TRB_PRF_CTRL_REG4_DWBFLUSHT));
       } else if (FeatureVal == IpUsb3FeatValDwbDisable) {
