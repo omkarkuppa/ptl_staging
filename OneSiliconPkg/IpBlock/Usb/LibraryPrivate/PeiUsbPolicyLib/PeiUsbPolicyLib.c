@@ -22,6 +22,7 @@
 #include <Library/SiConfigBlockLib.h>
 #include <Library/ConfigBlockLib.h>
 #include <Library/PchInfoLib.h>
+#include <Library/PcdInfoLib.h>
 #include <Ppi/SiPolicy.h>
 #include <Usb2PhyConfig.h>
 #include <Usb3HsioConfig.h>
@@ -211,7 +212,7 @@ UsbConfLoadConfigDefault (
   UsbConfig->XhciOcLock = TRUE;
   UsbConfig->UaolEnable = TRUE;
   UsbConfig->HsiiEnable = TRUE;
-  UsbConfig->DwbEnable  = FALSE;
+    UsbConfig->DwbEnable = FALSE;
 
   //
   // xDCI configuration

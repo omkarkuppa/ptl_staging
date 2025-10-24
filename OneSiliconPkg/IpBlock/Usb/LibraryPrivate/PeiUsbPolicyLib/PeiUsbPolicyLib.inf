@@ -34,6 +34,7 @@ DebugLib
 ConfigBlockLib
 SiConfigBlockLib
 PchInfoLib
+PtlPcdInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -50,3 +51,4 @@ gUsb3HsioConfigGuid                ## CONSUMES
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                        ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdWclSupport
