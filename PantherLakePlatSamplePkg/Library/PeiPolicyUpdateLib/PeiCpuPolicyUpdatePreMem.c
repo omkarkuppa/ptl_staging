@@ -929,7 +929,10 @@ UpdatePeiCpuPolicyPreMem (
   // when there is reset happened prior to the G3 detection in ModularUsbCIoPei driver
   // during pre-mem.
   //
-  if (((PcdGet64 (PcdPlatformModularUsbCIoConfig) == 0) || (BootMode == BOOT_ON_S3_RESUME)) && PmcIsPowerFailureDetected ()) {
+  CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+  if (((PcdGet64 (PcdPlatformModularUsbCIoConfig) == 0) || (BootMode == BOOT_ON_S3_RESUME)) &&
+      PmcIsPowerFailureDetected () &&
+      (CpuDid != PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A)) {
     PmcClearPowerFailureStatus ();
   }
 
@@ -1096,7 +1099,7 @@ UpdatePeiCpuPolicyPreMem (
   /// Define Maximum Number of Voltage Regulator Domains.
   ///
   MaxNumVrs = GetMaxNumVrs ();
-  
+
   for (Index = 0; Index < MaxNumVrs; Index++) {
     //
     // Only update if the user wants to override VR settings
@@ -1336,12 +1339,11 @@ UpdatePeiCpuPolicyPreMem (
     FixedPcdGet32 (PcdFlashFvMicrocodeSize) - FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
 #endif
-      
+
   //
   // Update PTL H 4Xe and PTL U based on Cpu DID
   // When Auto is selected, override with these values
   //
-  CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
   switch (CpuDid) {
     case 0xB000:
     case 0xB002:

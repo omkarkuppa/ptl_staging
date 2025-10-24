@@ -447,6 +447,7 @@ ModularUsbCIoBoardDetectedCallback (
   EFI_STATUS                       Status;
   UINT64                           PlatformModularUsbCIoConfig;
   EFI_BOOT_MODE                    BootMode;
+  UINT16                           SaDeviceId;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
 
@@ -489,7 +490,9 @@ ModularUsbCIoBoardDetectedCallback (
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
 
-  if (PlatformModularUsbCIoConfig != 0 && BootMode != BOOT_ON_S3_RESUME) {
+  SaDeviceId = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+  if ((PlatformModularUsbCIoConfig != 0 && BootMode != BOOT_ON_S3_RESUME) ||
+      (SaDeviceId == PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A)) {
     //
     // Install ME reset call back function.
     //
@@ -530,11 +533,13 @@ ModularUsbCIoPostMemCallback (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI    *VariableServices;
   UINT32                             *CurrentTcssStrapConfigPtr;
   UINT32                             CurrentTcssStrapConfig;
+  UINT32                             OldTcssStrapConfig;
   UINTN                              VarSize;
   BOOLEAN                            IsFirstBoot;
   BOOLEAN                            VariableUpdateIsNeeded;
   VOID                               *Hob;
   UINT16                             DataSize;
+  UINT16                             SaDeviceId;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
 
@@ -544,9 +549,10 @@ ModularUsbCIoPostMemCallback (
   CurrentTcssStrapConfigPtr = NULL;
   VariableUpdateIsNeeded    = FALSE;
   CurrentTcssStrapConfig    = 0xFFFFFFFF;
+  OldTcssStrapConfig        = 0xFFFFFFFF;
   PlatformModularUsbCIoConfig = PcdGet64 (PcdPlatformModularUsbCIoConfig);
   CseModularUsbCIoConfig = ConvertModularUsbIoConfig ((EC_MODULAR_IO_CONFIG *) &PlatformModularUsbCIoConfig);
-  DEBUG ((DEBUG_INFO, "[TCSS] Expected ModularIoConfig = 0x%08x\n", CseModularUsbCIoConfig));
+  SaDeviceId = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
 
   //
   // Check PWR FLR and clear it if it's set.
@@ -583,19 +589,20 @@ ModularUsbCIoPostMemCallback (
   //
   // If booting from G3, send HECI CMD 0x26 to override CSE modular USBC IO config.
   //
-  if (IsBootingFromG3 () == TRUE) {
+  if (IsBootingFromG3 () == TRUE && SaDeviceId != PTL_H_12XE_HH_SA_DEVICE_ID_2C_8A) {
     if (IsFirstBoot == TRUE) {
       VariableUpdateIsNeeded = TRUE;
     } else {
       if (CurrentTcssStrapConfigPtr != NULL) {
         if (*CurrentTcssStrapConfigPtr != CseModularUsbCIoConfig) {
+          OldTcssStrapConfig = *CurrentTcssStrapConfigPtr;
           VariableUpdateIsNeeded = TRUE;
         }
       } else {
         VariableUpdateIsNeeded = TRUE;
       }
     }
-
+    DEBUG ((DEBUG_INFO, "[TCSS] Expected ModularIoConfig = 0x%08x\n", CseModularUsbCIoConfig));
     StrapData.StrapGroupId = StrapGroupModularIoTypeCConfigStraps;
     StrapData.OverrideData.ConfigData = CseModularUsbCIoConfig;
     Status = PeiHeciSetStrapOverrideConfig (1, &StrapData, &Flags);
@@ -619,22 +626,18 @@ ModularUsbCIoPostMemCallback (
       }
     }
   } else {
-    if (CurrentTcssStrapConfigPtr != NULL) {
-      if (*CurrentTcssStrapConfigPtr != CseModularUsbCIoConfig) {
-        Status = GetCurrentTcssStrapConfig (&CurrentTcssStrapConfig);
-        if (!EFI_ERROR (Status)) {
-          VariableUpdateIsNeeded = TRUE;
-        }
-      }
-    } else {
-      Status = GetCurrentTcssStrapConfig (&CurrentTcssStrapConfig);
-      if (!EFI_ERROR (Status)) {
+    OldTcssStrapConfig = CurrentTcssStrapConfig;
+    Status = GetCurrentTcssStrapConfig (&CurrentTcssStrapConfig);
+    if (!EFI_ERROR (Status)) {
+      if (CurrentTcssStrapConfigPtr != NULL) {
+        VariableUpdateIsNeeded = (*CurrentTcssStrapConfigPtr != OldTcssStrapConfig) ? TRUE : FALSE;
+      } else {
         VariableUpdateIsNeeded = TRUE;
       }
     }
   }
 
-  DEBUG ((DEBUG_INFO, "[TCSS] Actual ModularIoConfig = 0x%08x\n", CurrentTcssStrapConfig));
+  DEBUG ((DEBUG_INFO, "[TCSS] Current ModularIoConfig = 0x%08x\n", CurrentTcssStrapConfig));
 
   if (VariableUpdateIsNeeded) {
     DataSize = sizeof (MODULAR_IO_TYPE_C_CONFIG_DATA);
