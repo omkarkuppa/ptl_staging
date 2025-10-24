@@ -270,6 +270,7 @@ MrcPrepareNextMrcIteration (
   BOOLEAN                 PrevPprTargetedStatus[PPR_REQUEST_MAX];
   BOOLEAN                 PrevIsPmicVoltageConfigured;
   UINT16                  PrevChannelStatus;
+  UINT8                   PrevFailingChannelMask;
 
   Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
@@ -293,6 +294,7 @@ MrcPrepareNextMrcIteration (
   MrcCall->MrcCopyMem ((UINT8 *) &PrevPprTargetedStatus, (UINT8 *) &Outputs->PprTargetedStatus, sizeof (Outputs->PprTargetedStatus));
   PrevIsPmicVoltageConfigured = Outputs->IsPmicVoltageConfigured;
   PrevChannelStatus = Outputs->FailingChannelBitMask.Data16;
+  PrevFailingChannelMask = Outputs->FailingChannelMask;
 
   MrcCall->MrcSetMem ((UINT8 *) Outputs, sizeof (MrcOutput), 0);
   Outputs->Size = sizeof (MrcOutput);
@@ -310,6 +312,7 @@ MrcPrepareNextMrcIteration (
   MrcCall->MrcCopyMem ((UINT8 *) &Outputs->PprTargetedStatus, (UINT8 *) &PrevPprTargetedStatus, sizeof (Outputs->PprTargetedStatus));
   Outputs->IsPmicVoltageConfigured = PrevIsPmicVoltageConfigured;
   Outputs->FailingChannelBitMask.Data16 = PrevChannelStatus;
+  Outputs->FailingChannelMask = PrevFailingChannelMask;
 
   MrcRestoreStaticSpdData (MrcData, &StaticSpdData);
   MrcCall->MrcCopyMem ((UINT8 *) &Outputs->LowFreqCsCmd2DSweepDone, (UINT8 *) &LowFreqCsCmd2dDone, sizeof (Outputs->LowFreqCsCmd2DSweepDone));

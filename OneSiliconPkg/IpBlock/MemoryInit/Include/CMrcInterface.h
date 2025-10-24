@@ -2029,6 +2029,8 @@ typedef struct MrcSaveData {
   BOOLEAN         BwSelLowSaved[MAX_SAGV_POINTS];           ///< TRUE if Low Frequency BwSel cal training results have been calculated
   UINT32          PostCodesDone;                            ///< Used for updating the MRC progress bar. Contains the number of call table steps completed since the beginning of MRC execution.
   UINT32          PostCodesTotal;                           ///< Used for updating the MRC progress bar. Contains the total number of post codes.
+  UINT8           FailingChannelMask;                       ///< Per MC/CH Bitmask showing failing channels disabled due to Limp Home mode feature during previous boot
+  UINT8           ReservedBytesForAlignment[3];             ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
 } MrcSaveData;
 
 // MrcOutputs needs to be DWORD aligned
@@ -2100,7 +2102,7 @@ typedef struct {
   UINT16              PprFailingChannelBitMask;    ///< PPR failing channel mask
   UINT16              RcompTarget[MAX_RCOMP_TARGETS]; ///< RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
   MrcClockRatio       Ratio;                       ///< Request for this memory controller to use this clock ratio.
-  MrcDimmStatus       FailingChannelBitMask;       ///< BitMask to detect failing Channels and disable them
+  MrcDimmStatus       FailingChannelBitMask;       ///< Per MC/CH/DIMM BitMask to detect failing Channels and disable them
                                                    ///< -------------- Items below should be single-byte only --------------
   BOOLEAN             IsCaOdtStrapRead;            ///< Set to TRUE once CA ODT Strap has been read for DDR5
   BOOLEAN             BitByteSwizzleFound;         ///< Indicates if the Bit/Byte level swizzling from CPU to DRAM have been identified.
@@ -2220,7 +2222,8 @@ typedef struct {
   BOOLEAN             ApplyWckIdleMrsFsm126;
   INT8                BwselTemp;
   BOOLEAN             PprTargetedStatus[PPR_REQUEST_MAX]; ///< PPR status of each Targeted PPR request (0 = Targeted PPR was successful, 1 = PPR failed)
-  UINT8               ReservedBytesForAlignment[4]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  UINT8               FailingChannelMask;           ///< Per MC/CH Bitmask showing failing channels disabled due to Limp Home mode feature during previous boot
+  UINT8               ReservedBytesForAlignment[3]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;

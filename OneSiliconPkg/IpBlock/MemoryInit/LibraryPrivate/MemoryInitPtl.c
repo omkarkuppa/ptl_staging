@@ -444,6 +444,7 @@ MrcDisableFailingChannels (
 
     // Copy Channel status to save data to be available on non-cold boot flows
     MrcCall->MrcCopyMem ((UINT8 *) SaveData->DisableChannel, (UINT8 *) MemConfig->ExternalInputs.DisableChannel, sizeof (SaveData->DisableChannel));
+    SaveData->FailingChannelMask = Outputs->FailingChannelMask;
 
     // Since we are writing to save data, update the header crc
     SaveHeader->Crc = MrcCalculateCrc32 ((UINT8 *) SaveData, sizeof (MrcSaveData));
@@ -455,6 +456,7 @@ MrcDisableFailingChannels (
   //
   if(SskpdSaveRestore == ReadChannelStatusFromSaveData) {
     DEBUG ((DEBUG_INFO, "Reading channel status from Save Data\n"));
+    Outputs->FailingChannelMask = SaveData->FailingChannelMask;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       for (Channel= 0;  Channel < MAX_CHANNEL; Channel++) {
         MemConfig->ExternalInputs.DisableChannel[Controller][Channel] = SaveData->DisableChannel[Controller][Channel];
@@ -472,6 +474,7 @@ MrcDisableFailingChannels (
     DEBUG ((DEBUG_INFO, "Reading ScratchPad Register\n"));
     SskpdData64.Data = MrcWmRegGet (MrcData);
     DisableChannelRead = (UINT8) SskpdData64.Bits.MrcDisableChannel;
+    Outputs->FailingChannelMask = DisableChannelRead;
     DEBUG ((DEBUG_INFO, "DisableChannelRead 0x%x\n", DisableChannelRead));
     if (DisableChannelRead != 0x0) {
       for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -3637,7 +3640,7 @@ BuildMemoryInfoDataHob (
   ZeroMem ((VOID *) MemoryInfo, sizeof (MEMORY_INFO_DATA_HOB));
 
   MrcVersionGet (MrcData, (MrcVersion *) &MemoryInfo->Version);
-  MemoryInfo->Revision = 0x03;
+  MemoryInfo->Revision = 0x04;
   OdtDimmMask = 0;
   switch (Outputs->DdrType) {
     case MRC_DDR_TYPE_DDR5:
@@ -3744,6 +3747,8 @@ BuildMemoryInfoDataHob (
   for (Index = 0; Index < PPR_REQUEST_MAX; Index++) {
     MemoryInfo->PprTargetedStatus[Index] = Outputs->PprTargetedStatus[Index];
   }
+
+  MemoryInfo->FailingChannelMask = Outputs->FailingChannelMask;
 
   PartNumberOffset = sizeof (SPD_MANUFACTURER_ID_CODE) + sizeof (SPD_MANUFACTURING_LOCATION) + sizeof (SPD_MANUFACTURING_DATE) + sizeof (SPD_MANUFACTURER_SERIAL_NUMBER);
 
