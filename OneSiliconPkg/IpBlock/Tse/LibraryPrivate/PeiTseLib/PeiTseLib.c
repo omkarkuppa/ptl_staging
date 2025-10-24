@@ -225,7 +225,7 @@ TseInit (
   BOOLEAN                     TseSupported            = FALSE;
   BOOLEAN                     TseEnabled              = FALSE;
 
-  DEBUG ((DEBUG_INFO, "Total Storage Encryption (TSE) Initialization\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
   TseDataHobPtr = (TSE_DATA_HOB *) GetFirstGuidHob (&gTseDataHobGuid);
 
@@ -237,26 +237,26 @@ TseInit (
   }
 
   if (IsTseCapabilityPresent () == FALSE) {
-    DEBUG ((DEBUG_INFO, "[TSE] IA32_TSE_CAPABILITY MSR not present\n"));
+    DEBUG ((DEBUG_INFO, "IA32_TSE_CAPABILITY MSR not present\n"));
   } else {
     TseCapabilityMsrPresent = TRUE;
   }
 
   if (IsTsePconfigSupported () == FALSE) {
-    DEBUG ((DEBUG_INFO, "[TSE] PCONFIG ISA support not present\n"));
+    DEBUG ((DEBUG_INFO, "PCONFIG ISA support not present\n"));
   } else {
     TsePconfigPresent = TRUE;
   }
 
   TseEnabled = CpuSecurityPreMemConfig->TseEnable == 1 ? TRUE : FALSE;
-  DEBUG ((DEBUG_INFO, "[TSE] CpuSecurityPreMemConfig->TseEnable: %s\n", (TseEnabled == TRUE) ? (L"TRUE") : (L"FALSE")));
+  DEBUG ((DEBUG_INFO, "CpuSecurityPreMemConfig->TseEnable: %s\n", (TseEnabled == TRUE) ? (L"TRUE") : (L"FALSE")));
 
   Status = TseHobInit (
              &TseDataHobPtr
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[TSE] Error creating TSE HOB, status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Error creating TSE HOB, status = %r\n", Status));
     return Status;
   }
 
@@ -266,22 +266,22 @@ TseInit (
   if ((TseCapabilityMsrPresent == TRUE) &&
       (TsePconfigPresent == TRUE)) {
     TseCapabilityMsr = AsmReadMsr64 (MSR_TSE_CAPABILITY);
-    DEBUG ((DEBUG_INFO, "[TSE] MSR_TSE_CAPABILITY: 0x%016llx\n", TseCapabilityMsr));
+    DEBUG ((DEBUG_INFO, "MSR_TSE_CAPABILITY: 0x%016llx\n", TseCapabilityMsr));
 
     if (IsAesXts256Supported () == TRUE) {
       TseSupported = TRUE;
     } else {
-      DEBUG ((DEBUG_INFO, "[TSE] AES-XTS not supported. Skipping TSE flows!\n"));
+      DEBUG ((DEBUG_INFO, "AES-XTS not supported. Skipping TSE flows!\n"));
     }
   } else {
-    DEBUG ((DEBUG_WARN, "[TSE] Not supported by HW. Forcing TSE to be disabled!\n"));
+    DEBUG ((DEBUG_WARN, "Not supported by HW. Forcing TSE to be disabled!\n"));
   }
 
   //
   // Check TSE self test result, if failure is reported force disable TSE.
   //
   if (TseSelfTestFailed () == TRUE) {
-    DEBUG ((DEBUG_ERROR, "[TSE] Self Test failure reported. Forcing TSE to be disabled!\n"));
+    DEBUG ((DEBUG_ERROR, "Self Test failure reported. Forcing TSE to be disabled!\n"));
     TseEnabled = FALSE;
   }
 
@@ -291,8 +291,8 @@ TseInit (
   TseDataHobPtr->TseSupported = TseSupported;
   TseDataHobPtr->TseEnabled = TseEnabled;
 
-  DEBUG ((DEBUG_INFO, " TSE_DATA_HOB: TseSupported: 0x%X\n", TseDataHobPtr->TseSupported));
-  DEBUG ((DEBUG_INFO, " TSE_DATA_HOB: TseEnabled: 0x%X\n", TseDataHobPtr->TseEnabled));
+  DEBUG ((DEBUG_INFO, "TseSupported: 0x%X\n", TseDataHobPtr->TseSupported));
+  DEBUG ((DEBUG_INFO, "TseEnabled: 0x%X\n", TseDataHobPtr->TseEnabled));
 
   //
   // Install callback to program TSE DRAM table on Memory Discovered event

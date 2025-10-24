@@ -106,11 +106,11 @@ SetCpuStrapAndEarlyPowerOnConfig (
   CpuStrapSet2High   = 0;
   CpuStrapSet3Low    = 0;
 
-  DEBUG((DEBUG_INFO, "SetCpuStrapAndEarlyPowerOnConfig Start \n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_SET_CPUSTRAP_AND_EARLYPOWERONCONFIG_START); //PostCode (0xC13)
 
   Status = PeiServicesGetBootMode (&BootMode);
-  DEBUG ((DEBUG_INFO, "SetCpuStrapAndEarlyPowerOnConfig: BootMode = %X\n", BootMode));
+  DEBUG ((DEBUG_INFO, "BootMode = %X\n", BootMode));
   if ((Status == EFI_SUCCESS) && (BootMode == BOOT_ON_S3_RESUME)) {
     PmcLockSetStrapMsgInterface ();
     return;
@@ -169,7 +169,7 @@ SetCpuStrapAndEarlyPowerOnConfig (
 
   if (ColdResetFlag || WarmResetFlag) {
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_SET_CPUSTRAP_AND_EARLYPOWERONCONFIG_RESET); //PostCode (0xC14)
-    DEBUG ((DEBUG_INFO, "SetCpuStrapAndEarlyPowerOnConfig Reset\n"));
+    DEBUG ((DEBUG_INFO, "%a Reset\n", __FUNCTION__));
     if (ColdResetFlag) {
       DEBUG ((DEBUG_INFO, "Cpu straps changed, performing cold reset\n"));
       (*GetPeiServicesTablePointer ())->ResetSystem2 (EfiResetCold, EFI_SUCCESS, 0, NULL);
@@ -178,7 +178,7 @@ SetCpuStrapAndEarlyPowerOnConfig (
       (*GetPeiServicesTablePointer ())->ResetSystem2 (EfiResetWarm, EFI_SUCCESS, 0, NULL);
     }
   }
-  DEBUG ((DEBUG_INFO, "SetCpuStrapAndEarlyPowerOnConfig Done \n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_SET_CPUSTRAP_AND_EARLYPOWERONCONFIG_DONE); //PostCode (0xC14)
 }
 

@@ -96,7 +96,7 @@ SiAddConfigBlocksPreMem (
   // Add SiPreMemBlock
   //
   DEBUG ((DEBUG_INFO, "gSiPreMemConfigGuid = %g\n", &gSiPreMemConfigGuid));
-  DEBUG ((DEBUG_INFO, "SiPreMemBlock->Header.GuidHob.Name = %g\n", &(SiPreMemBlock.GuidHob.Name)));
+  DEBUG ((DEBUG_INFO, "SiPreMemBlock Name = %g\n", &(SiPreMemBlock.GuidHob.Name)));
   Status = AddConfigBlock (ConfigBlockTableAddress, (VOID *) &ConfigBlockPointer);
   ASSERT_EFI_ERROR (Status);
 
@@ -293,11 +293,11 @@ SiPreMemPrintPolicyPpi (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "---------------------- Si Pre-Mem Config Block Print Begin -----------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n"));
   DEBUG ((DEBUG_INFO, "PlatformDebugOption = %x\n", SiPreMemConfig->PlatformDebugOption));
   DEBUG ((DEBUG_INFO, "SkipOverrideBootModeWhenFwUpdate = %x\n", SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate));
   DEBUG ((DEBUG_INFO, "StaticContentSizeAt4Gb = %x\n", SiPreMemConfig->StaticContentSizeAt4Gb));
-  DEBUG ((DEBUG_INFO, "---------------------- Si Pre-Mem Config Block Print End -------------------\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n"));
   DEBUG_CODE_END ();
 }
 

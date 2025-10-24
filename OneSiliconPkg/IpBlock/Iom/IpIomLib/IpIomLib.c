@@ -359,7 +359,7 @@ IpIomAuxHslOriInit (
   UINT8                          Bits;
   UINT8                          VwIndex;
 
-  IOM_PRINT_INFO ("%a: Enter\n", __FUNCTION__);
+  IOM_PRINT_INFO ("%a Start\n", __FUNCTION__);
   IOM_API_ENTRY ();
 
   Bits    = 0;
@@ -451,7 +451,7 @@ IpIomAuxHslOriInit (
   IOM_PRINT_INFO ("IomConfig->IomOverrides.HslOri: 0x%08X\n", (UINT32)pInst->IomConfig.HslOriOverride);
   IpWrRegWrite (pInst->RegCntxtIomSb, R_IOM_PCR_IOM_TYPEC_SW_CONFIGURATION_4, (UINT32)pInst->IomConfig.HslOriOverride, IpWrRegFlagSize32Bits);
   IOM_PRINT_INFO ("Update HslOri: 0x%08X\n", IpWrRegRead (pInst->RegCntxtIomSb, R_IOM_PCR_IOM_TYPEC_SW_CONFIGURATION_4, IpWrRegFlagSize32Bits));
-  IOM_PRINT_INFO ("[TCSS] IpIomAuxHslOriInit () - End\n");
+  IOM_PRINT_INFO ("%a End\n", __FUNCTION__);
 
   return IpCsiStsSuccess;
 }

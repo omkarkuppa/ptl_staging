@@ -36,20 +36,20 @@ CpuSecurityPreMemConfigPrint (
   IN CONST CPU_SECURITY_PREMEM_CONFIG        *CpuSecurityPreMemConfig
   )
 {
-  DEBUG ((DEBUG_INFO, "------------------ CPU_SECURITY_PREMEM_CONFIG Begin ------------------\n"));
-  DEBUG ((DEBUG_INFO, " BiosSize = 0x%x\n", CpuSecurityPreMemConfig->BiosSize));
-  DEBUG ((DEBUG_INFO, " BiosGuard = 0x%x\n", CpuSecurityPreMemConfig->BiosGuard));
-  DEBUG ((DEBUG_INFO, " BiosGuardToolsInterface = 0x%x\n", CpuSecurityPreMemConfig->BiosGuardToolsInterface));
-  DEBUG ((DEBUG_INFO, " Txt = 0x%x\n", CpuSecurityPreMemConfig->Txt));
-  DEBUG ((DEBUG_INFO, " SkipStopPbet = 0x%x\n", CpuSecurityPreMemConfig->SkipStopPbet));
-  DEBUG ((DEBUG_INFO, " ResetAux = 0x%x\n", CpuSecurityPreMemConfig->ResetAux));
-  DEBUG ((DEBUG_INFO, " TxtAcheckRequest = 0x%x\n", CpuSecurityPreMemConfig->TxtAcheckRequest));
-  DEBUG ((DEBUG_INFO, " TxtPowerdownRequest = 0x%x\n", CpuSecurityPreMemConfig->TxtPowerdownRequest));
-  DEBUG ((DEBUG_INFO, " TseEnable = 0x%x\n", CpuSecurityPreMemConfig->TseEnable));
-  DEBUG ((DEBUG_INFO, " TdxActmModuleAddr = 0x%x\n", CpuSecurityPreMemConfig->TdxActmModuleAddr));
-  DEBUG ((DEBUG_INFO, " TdxActmModuleSize = 0x%x\n", CpuSecurityPreMemConfig->TdxActmModuleSize));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "BiosSize = 0x%x\n", CpuSecurityPreMemConfig->BiosSize));
+  DEBUG ((DEBUG_INFO, "BiosGuard = 0x%x\n", CpuSecurityPreMemConfig->BiosGuard));
+  DEBUG ((DEBUG_INFO, "BiosGuardToolsInterface = 0x%x\n", CpuSecurityPreMemConfig->BiosGuardToolsInterface));
+  DEBUG ((DEBUG_INFO, "Txt = 0x%x\n", CpuSecurityPreMemConfig->Txt));
+  DEBUG ((DEBUG_INFO, "SkipStopPbet = 0x%x\n", CpuSecurityPreMemConfig->SkipStopPbet));
+  DEBUG ((DEBUG_INFO, "ResetAux = 0x%x\n", CpuSecurityPreMemConfig->ResetAux));
+  DEBUG ((DEBUG_INFO, "TxtAcheckRequest = 0x%x\n", CpuSecurityPreMemConfig->TxtAcheckRequest));
+  DEBUG ((DEBUG_INFO, "TxtPowerdownRequest = 0x%x\n", CpuSecurityPreMemConfig->TxtPowerdownRequest));
+  DEBUG ((DEBUG_INFO, "TseEnable = 0x%x\n", CpuSecurityPreMemConfig->TseEnable));
+  DEBUG ((DEBUG_INFO, "TdxActmModuleAddr = 0x%x\n", CpuSecurityPreMemConfig->TdxActmModuleAddr));
+  DEBUG ((DEBUG_INFO, "TdxActmModuleSize = 0x%x\n", CpuSecurityPreMemConfig->TdxActmModuleSize));
 
-  DEBUG ((DEBUG_INFO, "------------------ CPU_SECURITY_PREMEM_CONFIG End ------------------\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 }
 
 /**
@@ -67,15 +67,15 @@ DEBUG_CODE_BEGIN();
   EFI_STATUS                    Status;
   CPU_SECURITY_PREMEM_CONFIG    *CpuSecurityPreMemConfig;
 
-  DEBUG ((DEBUG_INFO, "\n------------------------ BootGuard Print Begin in PreMem -----------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
-  DEBUG ((DEBUG_INFO, " Revision= %x\n", SiPreMemPolicyPpi->TableHeader.Header.Revision));
+  DEBUG ((DEBUG_INFO, "Revision= %x\n", SiPreMemPolicyPpi->TableHeader.Header.Revision));
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &CpuSecurityPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
   CpuSecurityPreMemConfigPrint(CpuSecurityPreMemConfig);
 
-  DEBUG ((DEBUG_INFO, "\n------------------------ BootGuard Print End -----------------\n\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 DEBUG_CODE_END();
 }
 
@@ -143,9 +143,9 @@ BootGuardAddConfigBlocks (
   )
 {
   EFI_STATUS Status;
-  DEBUG ((DEBUG_INFO, "PeiBootGuardPolicy Pre-Mem Entry \n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   Status = AddComponentConfigBlocks (ConfigBlockTableAddress, &mBootGuardIpBlocksPreMem[0], sizeof (mBootGuardIpBlocksPreMem) / sizeof (COMPONENT_BLOCK_ENTRY));
-  DEBUG ((DEBUG_INFO, "PeiBootGuardPolicy Done \n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 
   return Status;
 }

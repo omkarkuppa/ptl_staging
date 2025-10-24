@@ -398,7 +398,7 @@ PtlPcdOnPolicyInstalled (
   UINTN                       HpetMmio;
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREMEM_START);
-  DEBUG ((DEBUG_INFO, "PchOnPolicyInstalled() - Start\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPchGeneralPreMemConfigGuid, (VOID *) &PchGeneralPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
@@ -467,7 +467,7 @@ PtlPcdOnPolicyInstalled (
   PtlPcdAcePreMemInit (SiPreMemPolicyPpi);
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREMEM_DONE);
-  DEBUG ((DEBUG_INFO, "PchOnPolicyInstalled() - End\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 }
 
 /**
@@ -483,7 +483,7 @@ PtlPcdEarlyDisabledDeviceHandling (
 {
   UINT8                           Index;
 
-  DEBUG ((DEBUG_INFO, "PchEarlyDisabledDeviceHandling() - Start\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
   ///
   /// BWG 5.3.1 Fuse Disabled, Static Disabled, non-Static function disable Device Handling
@@ -542,7 +542,7 @@ PtlPcdEarlyDisabledDeviceHandling (
     PtlPcdPsfDisableCnviBt ();
   }
 
-  DEBUG ((DEBUG_INFO, "PchEarlyDisabledDeviceHandling() - End\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 }
 
 /**
@@ -611,7 +611,7 @@ PtlPcdInitPrePolicy (
   DEBUG_CODE_END ();
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREPOLICY_START);
-  DEBUG ((DEBUG_INFO, "%a() - Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
   //
   // Check if Pch is supported
@@ -729,7 +729,7 @@ PtlPcdInitPrePolicy (
 
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREPOLICY_DONE);
-  DEBUG ((DEBUG_INFO, "PchInitPrePolicy() - End\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 }
 
 /**

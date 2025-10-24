@@ -35,8 +35,7 @@ IpuLoadPreMemDefault (
   IPU_PREMEM_CONFIG      *IpuPreMemPolicy;
 
   IpuPreMemPolicy = ConfigBlockPointer;
-  DEBUG ((DEBUG_INFO, "IpuPreMemPolicy->Header.GuidHob.Name = %g\n", &IpuPreMemPolicy->Header.GuidHob.Name));
-  DEBUG ((DEBUG_INFO, "IpuPreMemPolicy->Header.GuidHob.Header.HobLength = 0x%x\n", IpuPreMemPolicy->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "%a Name = %g HobLength = 0x%x\n", __FUNCTION__, &IpuPreMemPolicy->Header.GuidHob.Name, IpuPreMemPolicy->Header.GuidHob.Header.HobLength));
   //
   // IPU Policy default load.
   //

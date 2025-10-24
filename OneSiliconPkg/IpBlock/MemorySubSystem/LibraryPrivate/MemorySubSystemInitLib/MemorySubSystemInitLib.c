@@ -487,7 +487,7 @@ PollPathToMemAvailable (
   MAILBOX_DATA_MISC_CONFIG_STATUS MailboxData;
   PCODE_MAILBOX_INTERFACE         MailboxCommand;
 
-  DEBUG ((DEBUG_INFO, "PollPathToMemAvailable - Start\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
   MailboxCommand.InterfaceData  = 0;
   MailboxData.Data32            = 0;
@@ -501,7 +501,7 @@ PollPathToMemAvailable (
     }
   } while (MailboxData.Fields.PatchToMemAvailable == 0);
 
-  DEBUG ((DEBUG_INFO, "PollPathToMemAvailable - End\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 
   return EFI_SUCCESS;
 }
