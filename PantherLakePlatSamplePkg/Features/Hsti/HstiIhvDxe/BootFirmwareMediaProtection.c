@@ -142,7 +142,7 @@ CheckBootFirmwareMediaProtection (
         );
       Result = FALSE;
     }
-    
+
     DEBUG ((DEBUG_INFO, "      Component Property Parameter Table Valid, Secondary Flash Part Test\n"));
 
     //
@@ -322,26 +322,29 @@ CheckBootFirmwareMediaProtection (
     Result = FALSE;
   }
 
-  DEBUG ((DEBUG_INFO, "        Extended BIOS Decode Region Limit Locked Test\n"));
-  if (IocIsExtendedBiosRegionLimitLocked () == FALSE) {
-    DEBUG ((DEBUG_ERROR, "        Unexpected Status: Extended BIOS Decode Region limit is unlocked\n"));
-    BuildAndAppendHstiStatusString(
-      HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_CODE_11,
-      HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_STRING_11
-      );
-    Result = FALSE;
-  }
+  if (SpiIsExtendedBiosRegionEnabled () == TRUE) {
+    DEBUG ((DEBUG_INFO, "        Extended BIOS Decode Region Limit Locked Test\n"));
+    if (IocIsExtendedBiosRegionLimitLocked () == FALSE) {
+      DEBUG ((DEBUG_ERROR, "        Unexpected Status: Extended BIOS Decode Region limit is unlocked\n"));
+      BuildAndAppendHstiStatusString(
+        HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_CODE_11,
+        HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_STRING_11
+        );
+      Result = FALSE;
+    }
 
-  DEBUG ((DEBUG_INFO, "        Extended BIOS Decode Region Base Locked Test\n"));
-  if (SpiIsExtendedBiosRegionBaseLocked () == FALSE) {
-    DEBUG ((DEBUG_ERROR, "        Unexpected Status: Extended BIOS Decode Region base is unlocked\n"));
-    BuildAndAppendHstiStatusString(
-      HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_CODE_12,
-      HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_STRING_12
-      );
-    Result = FALSE;
+    DEBUG ((DEBUG_INFO, "        Extended BIOS Decode Region Base Locked Test\n"));
+    if (SpiIsExtendedBiosRegionBaseLocked () == FALSE) {
+      DEBUG ((DEBUG_ERROR, "        Unexpected Status: Extended BIOS Decode Region base is unlocked\n"));
+      BuildAndAppendHstiStatusString(
+        HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_CODE_12,
+        HSTI_BYTE0_BOOT_FIRMWARE_MEDIA_PROTECTION_UNEXP_STATUS_STRING_12
+        );
+      Result = FALSE;
+    }
+  } else {
+    DEBUG ((DEBUG_INFO, "        Skipping Extended BIOS Decode Region Tests\n"));
   }
-
 
   //
   // ALL PASS
