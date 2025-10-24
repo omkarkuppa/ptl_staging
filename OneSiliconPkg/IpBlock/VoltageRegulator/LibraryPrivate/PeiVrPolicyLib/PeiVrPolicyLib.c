@@ -50,58 +50,58 @@ CpuPowerMgmtVrConfigPrint (
   MaxNumVrs = GetMaxNumVrs ();
 
   UINT32 Index = 0;
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ CPU Power Mgmt VR Config ------------------\n"));
 
   for (Index = 0; Index < MaxNumVrs && Index < MAX_NUM_VRS; Index++) {
-    DEBUG ((DEBUG_INFO, "VrConfigEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VrConfigEnable[Index]));
+    DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VrConfigEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VrConfigEnable[Index]));
     if (CpuPowerMgmtVrConfig->VrConfigEnable[Index] == 1) {
-      DEBUG ((DEBUG_INFO, "TdcCurrentLimit[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcCurrentLimit[Index]));
-      DEBUG ((DEBUG_INFO, "AcLoadline[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->AcLoadline[Index]));
-      DEBUG ((DEBUG_INFO, "DcLoadline[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->DcLoadline[Index]));
-      DEBUG ((DEBUG_INFO, "Ps1Threshold[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps1Threshold[Index]));
-      DEBUG ((DEBUG_INFO, "Ps2Threshold[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps2Threshold[Index]));
-      DEBUG ((DEBUG_INFO, "Ps3Threshold[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps3Threshold[Index]));
-      DEBUG ((DEBUG_INFO, "Ps3Enable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps3Enable[Index]));
-      DEBUG ((DEBUG_INFO, "Ps4Enable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps4Enable[Index]));
-      DEBUG ((DEBUG_INFO, "ImonSlope[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->ImonSlope[Index]));
-      DEBUG ((DEBUG_INFO, "ImonOffset[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->ImonOffset[Index]));
-      DEBUG ((DEBUG_INFO, "IccMax[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->IccMax[Index]));
-      DEBUG ((DEBUG_INFO, "EnableFastVmode[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->EnableFastVmode[Index]));
-      DEBUG ((DEBUG_INFO, "IccLimit[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->IccLimit[Index]));
-      DEBUG ((DEBUG_INFO, "VrVoltageLimit[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VrVoltageLimit[Index]));
-      DEBUG ((DEBUG_INFO, "TdcEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcEnable[Index]));
-      DEBUG ((DEBUG_INFO, "TdcTimeWindow[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcTimeWindow[Index]));
-      DEBUG ((DEBUG_INFO, "TdcLock[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcLock[Index]));
-      DEBUG ((DEBUG_INFO, "CepEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->CepEnable[Index]));
-      DEBUG ((DEBUG_INFO, "FastPkgCRampDisable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index]));
-      DEBUG ((DEBUG_INFO, "SlowSlewRate[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->SlowSlewRate[Index]));
-      DEBUG ((DEBUG_INFO, "TdcMode[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcMode[Index]));
-      DEBUG ((DEBUG_INFO, "VccInDemotionEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VccInDemotionEnable[Index]));
-      DEBUG ((DEBUG_INFO, "VccInDemotionCapacitanceInUf[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VccInDemotionCapacitanceInUf[Index]));
-      DEBUG ((DEBUG_INFO, "VccInDemotionQuiescentPowerInMw[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VccInDemotionQuiescentPowerInMw[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcCurrentLimit[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcCurrentLimit[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : AcLoadline[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->AcLoadline[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DcLoadline[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->DcLoadline[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : Ps1Threshold[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps1Threshold[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : Ps2Threshold[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps2Threshold[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : Ps3Threshold[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps3Threshold[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : Ps3Enable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps3Enable[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : Ps4Enable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->Ps4Enable[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : ImonSlope[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->ImonSlope[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : ImonOffset[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->ImonOffset[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : IccMax[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->IccMax[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : EnableFastVmode[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->EnableFastVmode[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : IccLimit[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->IccLimit[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VrVoltageLimit[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VrVoltageLimit[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcEnable[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcTimeWindow[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcTimeWindow[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcLock[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcLock[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : CepEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->CepEnable[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG:: FastPkgCRampDisable for Index = %d : 0x%X\n", Index, CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG:: SlowSlewRate for Index = %d : 0x%X\n", Index, CpuPowerMgmtVrConfig->SlowSlewRate[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcMode[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcMode[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VccInDemotionEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VccInDemotionEnable[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VccInDemotionCapacitanceInUf[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VccInDemotionCapacitanceInUf[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VccInDemotionQuiescentPowerInMw[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->VccInDemotionQuiescentPowerInMw[Index]));
     }
   }
-  DEBUG ((DEBUG_INFO, "PsysSlope : 0x%X\n", CpuPowerMgmtVrConfig->PsysSlope));
-  DEBUG ((DEBUG_INFO, "PsysOffset : 0x%X\n", CpuPowerMgmtVrConfig->PsysOffset));
-  DEBUG ((DEBUG_INFO, "PsysPmax : 0x%X\n", CpuPowerMgmtVrConfig->PsysPmax));
-  DEBUG ((DEBUG_INFO, "AcousticNoiseMitigation : 0x%X\n", CpuPowerMgmtVrConfig->AcousticNoiseMitigation));
-  DEBUG ((DEBUG_INFO, "PcoreHysteresisWindow : 0x%X\n", CpuPowerMgmtVrConfig->PcoreHysteresisWindow));
-  DEBUG ((DEBUG_INFO, "EcoreHysteresisWindow : 0x%X\n", CpuPowerMgmtVrConfig->EcoreHysteresisWindow));
-  DEBUG ((DEBUG_INFO, "DlvrSpreadSpectrumPercentage : 0x%X\n", CpuPowerMgmtVrConfig->DlvrSpreadSpectrumPercentage));
-  DEBUG ((DEBUG_INFO, "DlvrRfiFrequency : 0x%X\n", CpuPowerMgmtVrConfig->DlvrRfiFrequency));
-  DEBUG ((DEBUG_INFO, "DlvrPhaseSsc : 0x%X\n", CpuPowerMgmtVrConfig->DlvrPhaseSsc));
-  DEBUG ((DEBUG_INFO, "DlvrRfiEnable : 0x%X\n", CpuPowerMgmtVrConfig->DlvrRfiEnable));
-  DEBUG ((DEBUG_INFO, "RfiMitigation : 0x%X\n", CpuPowerMgmtVrConfig->RfiMitigation));
-  DEBUG ((DEBUG_INFO, "VrPowerDeliveryDesign : 0x%X\n", CpuPowerMgmtVrConfig->VrPowerDeliveryDesign));
-  DEBUG ((DEBUG_INFO, "EnableVsysCritical= 0x%X\n", CpuPowerMgmtVrConfig->EnableVsysCritical));
-  DEBUG ((DEBUG_INFO, "PsysFullScale= 0x%X\n", CpuPowerMgmtVrConfig->PsysFullScale));
-  DEBUG ((DEBUG_INFO, "PsysCriticalThreshold= 0x%X\n", CpuPowerMgmtVrConfig->PsysCriticalThreshold));
-  DEBUG ((DEBUG_INFO, "VsysFullScale= 0x%X\n", CpuPowerMgmtVrConfig->VsysFullScale));
-  DEBUG ((DEBUG_INFO, "VsysCriticalThreshold= 0x%X\n", CpuPowerMgmtVrConfig->VsysCriticalThreshold));
-  DEBUG ((DEBUG_INFO, "VsysAssertionDeglitchMantissa= 0x%X\n", CpuPowerMgmtVrConfig->VsysAssertionDeglitchMantissa));
-  DEBUG ((DEBUG_INFO, "VsysAssertionDeglitchExponent= 0x%X\n", CpuPowerMgmtVrConfig->VsysAssertionDeglitchExponent));
-  DEBUG ((DEBUG_INFO, "VsysDeassertionDeglitchMantissa= 0x%X\n", CpuPowerMgmtVrConfig->VsysDeassertionDeglitchMantissa));
-  DEBUG ((DEBUG_INFO, "VsysDeassertionDeglitchExponent= 0x%X\n", CpuPowerMgmtVrConfig->VsysDeassertionDeglitchExponent));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PsysSlope : 0x%X\n", CpuPowerMgmtVrConfig->PsysSlope));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PsysOffset : 0x%X\n", CpuPowerMgmtVrConfig->PsysOffset));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PsysPmax : 0x%X\n", CpuPowerMgmtVrConfig->PsysPmax));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : AcousticNoiseMitigation : 0x%X\n", CpuPowerMgmtVrConfig->AcousticNoiseMitigation));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PcoreHysteresisWindow : 0x%X\n", CpuPowerMgmtVrConfig->PcoreHysteresisWindow));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : EcoreHysteresisWindow : 0x%X\n", CpuPowerMgmtVrConfig->EcoreHysteresisWindow));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DlvrSpreadSpectrumPercentage : 0x%X\n", CpuPowerMgmtVrConfig->DlvrSpreadSpectrumPercentage));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DlvrRfiFrequency : 0x%X\n", CpuPowerMgmtVrConfig->DlvrRfiFrequency));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DlvrPhaseSsc : 0x%X\n", CpuPowerMgmtVrConfig->DlvrPhaseSsc));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DlvrRfiEnable : 0x%X\n", CpuPowerMgmtVrConfig->DlvrRfiEnable));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : RfiMitigation : 0x%X\n", CpuPowerMgmtVrConfig->RfiMitigation));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VrPowerDeliveryDesign : 0x%X\n", CpuPowerMgmtVrConfig->VrPowerDeliveryDesign));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : EnableVsysCritical= 0x%X\n", CpuPowerMgmtVrConfig->EnableVsysCritical));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PsysFullScale= 0x%X\n", CpuPowerMgmtVrConfig->PsysFullScale));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PsysCriticalThreshold= 0x%X\n", CpuPowerMgmtVrConfig->PsysCriticalThreshold));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VsysFullScale= 0x%X\n", CpuPowerMgmtVrConfig->VsysFullScale));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VsysCriticalThreshold= 0x%X\n", CpuPowerMgmtVrConfig->VsysCriticalThreshold));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VsysAssertionDeglitchMantissa= 0x%X\n", CpuPowerMgmtVrConfig->VsysAssertionDeglitchMantissa));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VsysAssertionDeglitchExponent= 0x%X\n", CpuPowerMgmtVrConfig->VsysAssertionDeglitchExponent));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VsysDeassertionDeglitchMantissa= 0x%X\n", CpuPowerMgmtVrConfig->VsysDeassertionDeglitchMantissa));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : VsysDeassertionDeglitchExponent= 0x%X\n", CpuPowerMgmtVrConfig->VsysDeassertionDeglitchExponent));
 }
 /**
   Load Config block default
@@ -121,7 +121,8 @@ LoadCpuPowerMgmtVrConfigDefault (
   CpuPowerMgmtVrConfig = ConfigBlockPointer;
   Index                = 0;
 
-  DEBUG ((DEBUG_INFO, "CpuPowerMgmtVrConfig Name = %g HobLength = 0x%x\n", &CpuPowerMgmtVrConfig->Header.GuidHob.Name, CpuPowerMgmtVrConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "CpuPowerMgmtVrConfig->Header.GuidHob.Name = %g\n", &CpuPowerMgmtVrConfig->Header.GuidHob.Name));
+  DEBUG ((DEBUG_INFO, "CpuPowerMgmtVrConfig->Header.GuidHob.Header.HobLength = 0x%x\n", CpuPowerMgmtVrConfig->Header.GuidHob.Header.HobLength));
   ///
   /// Define Maximum Number of Voltage Regulator Domains.
   ///

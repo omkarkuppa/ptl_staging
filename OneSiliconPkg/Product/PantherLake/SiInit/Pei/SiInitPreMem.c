@@ -365,7 +365,7 @@ SiInitPreMemOnPolicy (
   CPU_SECURITY_PREMEM_CONFIG    *CpuSecurityPreMemConfig;
   PCH_PCIE_RP_PREMEM_CONFIG     *PcieRpPreMemConfig;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "SiInitPreMemOnPolicy() Start\n"));
 
   SiPolicyPpi = NULL;
   Status = PeiServicesLocatePpi (
@@ -670,7 +670,7 @@ SiInitPreMemOnPolicy (
   PtlPcdOnMemoryDiscovered();
   PERF_INMODULE_END ("PtlPcdOnMemoryDiscovered");
 
-  DEBUG ((DEBUG_INFO, "%a - End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "SiInitPreMemOnPolicy() - End\n"));
   return EFI_SUCCESS;
 }
 
@@ -902,7 +902,7 @@ SiInitPrePolicy (
 {
   EFI_STATUS                            Status;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "SiInitPrePolicy() Start\n"));
 
   //MemoryInit Phase Postcode set
   SetPhaseStatusCode(FSP_STATUS_CODE_MEMORY_INIT);
@@ -960,7 +960,7 @@ SiInitPrePolicy (
   Status = PeiServicesInstallPpi (&mPeiPreMemSiPolicyPrintPpiList);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a - End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "SiInitPrePolicy() - End\n"));
   return EFI_SUCCESS;
 }
 

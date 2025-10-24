@@ -407,7 +407,7 @@ SetSeamrrMsr (
   MSR_SEAMRR_MASK_REGISTER        MsrSeamrrMask;
   MSR_SEAMRR_BASE_REGISTER        MsrSeamrrBase;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[TDX] Inside programming SEAMRR BASE and MASK\n"));
   if (IsSeamModeSupported () == FALSE) {
     return RETURN_UNSUPPORTED;
   }
@@ -415,7 +415,7 @@ SetSeamrrMsr (
   MsrSeamrrMask.Uint64 = AsmReadMsr64 (MSR_SEAMRR_MASK);
   ASSERT (MsrSeamrrMask.Bits.L == 0);
   if (MsrSeamrrMask.Bits.L != 0) {
-    DEBUG ((DEBUG_ERROR, "SEAMRR region is already locked\n"));
+    DEBUG ((DEBUG_ERROR, "[TDX] SEAMRR region is already locked and cannot be changed!\n"));
     return RETURN_ACCESS_DENIED;
   }
 
@@ -426,7 +426,7 @@ SetSeamrrMsr (
     //
     // Need to lock mask MSRs even if SEAMRR size is zeros
     //
-    DEBUG ((DEBUG_INFO, "SEAMRR size is zero, not configuring the BASE and Locking MASK MSR\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] SEAMRR size is zero, not configuring the SEAMRR BASE and Locking SEAMRR MASK MSR\n"));
     MsrSeamrrBase.Bits.Configured = 0;
     MsrSeamrrMask.Bits.L = 1;
     AsmWriteMsr64 (MSR_SEAMRR_MASK, MsrSeamrrMask.Uint64);
@@ -460,7 +460,8 @@ SetSeamrrMsr (
     MsrSeamrrMask.Uint64 = AsmReadMsr64 (MSR_SEAMRR_MASK);
     MsrSeamrrBase.Uint64 = AsmReadMsr64 (MSR_SEAMRR_BASE);
 
-    DEBUG ((DEBUG_INFO, "MSR Read Seamrr Base %lX Mask %lX\n", MsrSeamrrBase.Uint64, MsrSeamrrMask.Uint64));
+    DEBUG ((DEBUG_INFO, "[TDX] MSR Read Seamrr Base %lX \n", MsrSeamrrBase.Uint64));
+    DEBUG ((DEBUG_INFO, "[TDX] MSR Read Seamrr Mask %lX \n", MsrSeamrrMask.Uint64));
   }
   return RETURN_SUCCESS;
 }
@@ -485,7 +486,7 @@ LockSeamrrMsr (
   MsrSeamrrMask.Uint64 = AsmReadMsr64 (MSR_SEAMRR_MASK);
   ASSERT (MsrSeamrrMask.Bits.L == 0);
   if (MsrSeamrrMask.Bits.L != 0) {
-    DEBUG ((DEBUG_ERROR, "SEAMRR region is already locked\n"));
+    DEBUG ((DEBUG_ERROR, "SEAMRR region is already locked \n"));
     return RETURN_ACCESS_DENIED;
   }
 
@@ -519,14 +520,14 @@ SetBiosSeSvnMsr (
 
   // Checking now is only for SeamldrSvn
   if ((MsrSeSvnToProgram.Bits.SeamldrSeSvn != 0xFF) && (MsrSeSvn.Bits.SeamldrSeSvn < MsrSeSvnToProgram.Bits.SeamldrSeSvn)) {
-    DEBUG ((DEBUG_ERROR, "SeamldrSeSvn in msr %x is bigger than value to program %x Aborting\n", MsrSeSvnToProgram.Bits.SeamldrSeSvn, MsrSeSvn.Bits.SeamldrSeSvn));
+    DEBUG ((DEBUG_ERROR, "SeamldrSeSvn in msr (%x) is bigger than value to program (%x) Aborting!\n", MsrSeSvnToProgram.Bits.SeamldrSeSvn, MsrSeSvn.Bits.SeamldrSeSvn));
     return RETURN_SECURITY_VIOLATION;
   }
 
   MsrSeSvnToProgram.Bits.SeamldrSeSvn = MsrSeSvn.Bits.SeamldrSeSvn;
   AsmWriteMsr64 (MSR_BIOS_SE_SVN, MsrSeSvnToProgram.Uint64);
 
-  DEBUG ((DEBUG_INFO, "MsrSeSvn = %llx\n", MsrSeSvnToProgram.Uint64));
+  DEBUG ((DEBUG_INFO, "MsrSeSvn = %llx \n", MsrSeSvnToProgram.Uint64));
 
   return RETURN_SUCCESS;
 }
@@ -614,7 +615,7 @@ GetCpuStrapDataBySet (
   MailboxData = 0;
   Status = MailboxRead (MailboxCommand.InterfaceData, (UINT32*) &MailboxData, &MailboxStatus);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to read CPU Soft Strap data. EFI_STATUS = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "PMC: Failed to read CPU Soft Strap data. EFI_STATUS = %r\n", Status));
     ASSERT_EFI_ERROR (Status);
     return Status;
   }
@@ -652,7 +653,7 @@ GetCpuStrapData (
 {
   EFI_STATUS              Status;
 
-  DEBUG ((DEBUG_INFO, "GetCpuStrapData\n"));
+  DEBUG ((DEBUG_INFO, "GetCpuStrapData ...\n"));
 
   if (CpuStrapSet1High == NULL && CpuStrapSet2Low == NULL && CpuStrapSet2High == NULL
         && CpuStrapSet3Low == NULL && CpuStrapSet3High == NULL) {
@@ -711,7 +712,7 @@ SetCpuStrapData (
   EFI_STATUS              Status;
   PMC_IPC_COMMAND_BUFFER  Wbuf;
 
-  DEBUG ((DEBUG_INFO, "SetCpuStrapData\n"));
+  DEBUG ((DEBUG_INFO, "SetCpuStrapData ...\n"));
 
   if ((CpuStrapSet1High != NULL || CpuStrapSet2Low != NULL || CpuStrapSet2High != NULL || CpuStrapSet3Low != NULL) &&
       (CpuStrapSet1High == NULL || CpuStrapSet2Low == NULL || CpuStrapSet2High == NULL || CpuStrapSet3Low == NULL)) {

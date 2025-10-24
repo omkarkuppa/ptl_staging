@@ -52,7 +52,7 @@ TcssSocPmcSendCommand (
 {
   EFI_STATUS  Status;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[TCSS] TcssSocPmcSendCommand Start\n"));
 
   Status = PmcSendCommand (
              PmcGetPwrmBase (),
@@ -63,7 +63,7 @@ TcssSocPmcSendCommand (
              ReadBufPtr
              );
 
-  DEBUG ((DEBUG_INFO, "%a End, Status = %r\n", __FUNCTION__, Status));
+  DEBUG ((DEBUG_INFO, "[TCSS] TcssSocPmcSendCommand End, Status = %r\n", Status));
 
   return Status;
 }
@@ -134,7 +134,7 @@ PmcTcssConvUsbA (
   EFI_STATUS              Status;
   PMC_IPC_COMMAND_BUFFER  Wbuf;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[TCSS] PmcTcssConvUsbA Start\n"));
 
   ZeroMem (&Wbuf, sizeof (PMC_IPC_COMMAND_BUFFER));
   Wbuf.Buf0 = (((TcssUsbcPort & 0xF) << 4) | ((PchXhciUsbPort & 0xF) << 8));
@@ -147,7 +147,7 @@ PmcTcssConvUsbA (
                                   &Wbuf,
                                   NULL);
 
-  DEBUG ((DEBUG_INFO, "%a End, Status = %r\n", __FUNCTION__, Status));
+  DEBUG ((DEBUG_INFO, "[TCSS] PmcTcssConvUsbA End, Status = %r\n", Status));
 
   return Status;
 }

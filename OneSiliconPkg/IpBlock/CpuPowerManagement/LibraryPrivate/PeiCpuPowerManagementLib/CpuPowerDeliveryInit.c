@@ -42,7 +42,7 @@ InitRatl (
   MSR_PLATFORM_INFO_REGISTER       PlatformInfoMsr;
   BOOLEAN                          IsTccActivationOffsetProgrammable;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "InitRatl Start\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_INITRATL_START); //PostCode (0xC31)
 
   ///
@@ -87,7 +87,7 @@ InitRatl (
     AsmWriteMsr64 (MSR_TEMPERATURE_TARGET, TempMsr.Uint64);
   }
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "InitRatl Done\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_INITRATL_DONE); //PostCode (0xC32)
 
   return;
@@ -151,7 +151,7 @@ InitEarlyPpm (
   UINT8                     ConfigTdpBootModeIndex;
   BOOLEAN                   ApplyConfigTdp;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "InitEarlyPpm Start\n"));
 
   ///
   /// Initialize thermal features
@@ -181,7 +181,7 @@ InitEarlyPpm (
   ///
   InitCpuCtdpNvsDataHob (ApplyConfigTdp, PowerLimit1, PowerLimit2, PowerLimitWindow, Tar, ConfigTdpBootModeIndex, CpuPowerDeliveryConfig);
 
-  DEBUG ((DEBUG_INFO, "%a Done\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "InitEarlyPpm Done\n"));
 
   return;
 }
@@ -202,7 +202,7 @@ CpuPowerDeliveryInit (
   IN CPU_POWER_DELIVERY_CONFIG *CpuPowerDeliveryConfig
   )
 {
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "CpuPowerDeliveryInit Start \n"));
 
   ///
   /// Create CPU power management private Data Hob
@@ -224,7 +224,7 @@ CpuPowerDeliveryInit (
   ///
   InitEarlyPpm (CpuPowerDeliveryConfig);
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "CpuPowerDeliveryInit Done \n"));
 
   return;
 }

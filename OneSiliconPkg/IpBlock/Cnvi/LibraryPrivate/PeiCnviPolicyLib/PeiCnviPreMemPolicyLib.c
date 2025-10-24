@@ -40,7 +40,7 @@ CnviPreMemPrintConfig (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCnviPreMemConfigGuid, (VOID *) &CnviPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ CNVi PreMem Config ------------------\n"));
   DEBUG ((DEBUG_INFO, "DDR RFI Mitigation = %x\n", CnviPreMemConfig->DdrRfim));
 }
 

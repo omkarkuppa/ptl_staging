@@ -1374,7 +1374,7 @@ IsTxtACheckRequested (
 
   TxtInfoHob = GetFirstGuidHob (&gTxtInfoHobGuid);
   if (TxtInfoHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "TxtInfoHob not found\n"));
+    DEBUG ((DEBUG_ERROR, "IsTxtACheckRequested::TxtInfoHob not found\n"));
     return FALSE;
   }
 

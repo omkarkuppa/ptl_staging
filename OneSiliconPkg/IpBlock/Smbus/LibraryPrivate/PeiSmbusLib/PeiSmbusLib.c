@@ -476,7 +476,7 @@ SmbusPreMemInit (
   EFI_STATUS                  Status;
   SMBUS_INSTANCE              *Private;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "SmbusPreMemInit () Start\n"));
 
   if (SmbusHandle == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: NULL pointer detected!\n", __FUNCTION__));
@@ -546,7 +546,7 @@ SmbusPreMemInit (
     }
   }
 
-  DEBUG((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG((DEBUG_INFO, "SmbusPreMemInit () End\n"));
   return EFI_SUCCESS;
 }
 /**
@@ -706,7 +706,7 @@ SmbusNotify (
 {
   SMBUS_INSTANCE          *Private;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusNotify() Start\n"));
 
   Private = SMBUS_PRIVATE_DATA_FROM_PPI_THIS (This);
 
@@ -736,7 +736,7 @@ SmbusNotify (
   ///
   CheckNotification (Private);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusNotify() End\n"));
 
   return EFI_SUCCESS;
 }

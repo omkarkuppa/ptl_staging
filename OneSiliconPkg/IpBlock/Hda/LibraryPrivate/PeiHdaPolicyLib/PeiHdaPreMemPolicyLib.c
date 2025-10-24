@@ -42,35 +42,35 @@ HdaPreMemPrintConfig (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gHdAudioPreMemConfigGuid, (VOID *) &HdaPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Enable = %x\n", HdaPreMemConfig->Enable));
-  DEBUG ((DEBUG_INFO, "DSP Enable = %x\n", HdaPreMemConfig->DspEnable));
-  DEBUG ((DEBUG_INFO, "DSP UAA Compliance = %x\n", HdaPreMemConfig->DspUaaCompliance));
-  DEBUG ((DEBUG_INFO, "Audio Link: HDA Link = %x\n", HdaPreMemConfig->AudioLinkHda.Enable));
+  DEBUG ((DEBUG_INFO, "------------------ HD Audio PreMem Config ------------------\n"));
+  DEBUG ((DEBUG_INFO, " Enable                                         = %x\n", HdaPreMemConfig->Enable));
+  DEBUG ((DEBUG_INFO, " DSP Enable                                     = %x\n", HdaPreMemConfig->DspEnable));
+  DEBUG ((DEBUG_INFO, " DSP UAA Compliance                             = %x\n", HdaPreMemConfig->DspUaaCompliance));
+  DEBUG ((DEBUG_INFO, " Audio Link: HDA Link                           = %x\n", HdaPreMemConfig->AudioLinkHda.Enable));
   for (Index = 0; Index < PCH_MAX_HDA_SDI; Index++) {
-    DEBUG ((DEBUG_INFO, "Hda Sdi%d Enable = %x\n", Index, HdaPreMemConfig->AudioLinkHda.SdiEnable[Index]));
+    DEBUG ((DEBUG_INFO, " Hda Sdi%d Enable                              = %x\n", Index, HdaPreMemConfig->AudioLinkHda.SdiEnable[Index]));
   }
   for (Index = 0; Index < GetPchHdaMaxDmicLinkNum (); Index++) {
-    DEBUG ((DEBUG_INFO, "Audio Link: DMIC#%d = %x\n", Index, HdaPreMemConfig->AudioLinkDmic[Index].Enable));
-    DEBUG ((DEBUG_INFO, "DMIC#%d Clock Select = %x\n", Index, HdaPreMemConfig->AudioLinkDmic[Index].DmicClockSelect));
+    DEBUG ((DEBUG_INFO, " Audio Link: DMIC#%d                            = %x\n", Index, HdaPreMemConfig->AudioLinkDmic[Index].Enable));
+    DEBUG ((DEBUG_INFO, " DMIC#%d Clock Select                           = %x\n", Index, HdaPreMemConfig->AudioLinkDmic[Index].DmicClockSelect));
   }
   for (Index = 0; Index < GetPchHdaMaxSspLinkNum (); Index++) {
-    DEBUG ((DEBUG_INFO, "Audio Link: SSP#%d = %x\n", Index, HdaPreMemConfig->AudioLinkSsp[Index].Enable));
+    DEBUG ((DEBUG_INFO, " Audio Link: SSP#%d                             = %x\n", Index, HdaPreMemConfig->AudioLinkSsp[Index].Enable));
   }
   for (Index = 0; Index < GetPchHdaMaxSndwLinkNum (); Index++) {
-    DEBUG ((DEBUG_INFO, "Audio Link: SoundWire#%d = %x\n", Index, HdaPreMemConfig->AudioLinkSndw[Index].Enable));
+    DEBUG ((DEBUG_INFO, " Audio Link: SoundWire#%d                       = %x\n", Index, HdaPreMemConfig->AudioLinkSndw[Index].Enable));
   }
   for (Index = 0; Index < GetPchHdaMaxSndwMultilaneNum (); Index++) {
-    DEBUG ((DEBUG_INFO, "Audio Link: SoundWire Multilane#%d = %x\n", Index, HdaPreMemConfig->SndwMultilane[Index].Enable));
+    DEBUG ((DEBUG_INFO, " Audio Link: SoundWire Multilane#%d             = %x\n", Index, HdaPreMemConfig->SndwMultilane[Index].Enable));
   }
-  DEBUG ((DEBUG_INFO, "iDisp Codec Disconnect = %x\n", HdaPreMemConfig->IDispCodecDisconnect));
-  DEBUG ((DEBUG_INFO, "iDisp Link Frequency = %x\n", HdaPreMemConfig->IDispLinkFrequency));
-  DEBUG ((DEBUG_INFO, "iDisp Link T-Mode = %x\n", HdaPreMemConfig->IDispLinkTmode));
-  DEBUG ((DEBUG_INFO, "ResetWaitTimer = %x\n", HdaPreMemConfig->ResetWaitTimer));
-  DEBUG ((DEBUG_INFO, "SubSystemIds = %x\n", HdaPreMemConfig->SubSystemIds));
-  DEBUG ((DEBUG_INFO, "Power/Clock Gating = %x\n", HdaPreMemConfig->PowerClockGating));
-  DEBUG ((DEBUG_INFO, "Low Frequency Clock = %x\n", HdaPreMemConfig->LowFreqLinkClkSrc));
-  DEBUG ((DEBUG_INFO, "SoundWire Clock Source Select = %x\n", HdaPreMemConfig->SoundWireClockSelect));
+  DEBUG ((DEBUG_INFO, " iDisp Codec Disconnect                         = %x\n", HdaPreMemConfig->IDispCodecDisconnect));
+  DEBUG ((DEBUG_INFO, " iDisp Link Frequency                           = %x\n", HdaPreMemConfig->IDispLinkFrequency));
+  DEBUG ((DEBUG_INFO, " iDisp Link T-Mode                              = %x\n", HdaPreMemConfig->IDispLinkTmode));
+  DEBUG ((DEBUG_INFO, " ResetWaitTimer                                 = %x\n", HdaPreMemConfig->ResetWaitTimer));
+  DEBUG ((DEBUG_INFO, " SubSystemIds                                   = %x\n", HdaPreMemConfig->SubSystemIds));
+  DEBUG ((DEBUG_INFO, " Power/Clock Gating                             = %x\n", HdaPreMemConfig->PowerClockGating));
+  DEBUG ((DEBUG_INFO, " Low Frequency Clock                            = %x\n", HdaPreMemConfig->LowFreqLinkClkSrc));
+  DEBUG ((DEBUG_INFO, " SoundWire Clock Source Select                  = %x\n", HdaPreMemConfig->SoundWireClockSelect));
 }
 
 /**

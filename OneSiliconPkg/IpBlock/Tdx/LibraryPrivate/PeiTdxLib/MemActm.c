@@ -54,7 +54,7 @@ PrintByteBuffer (
 /**
   Return highest bit position for given Bitmap
 
-  @param[in] Bitmap Bitmap from which bit count is calculated
+  @param[in] Bitmap Bitmap from which bit count is calculated 
 
   @retval    UINT8  Highest bit position
 **/
@@ -103,7 +103,7 @@ PublishActmDimmManifest (
   UINT64                  Data;
   UINT32                  Offset;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "Inside %a %d  \n", __FUNCTION__, __LINE__));
 
   TdxDataHob = (TDX_DATA_HOB *) GetFirstGuidHob (&gTdxDataHobGuid);
   if (TdxDataHob == NULL) {
@@ -114,13 +114,13 @@ PublishActmDimmManifest (
   TdxDataHob->ActmDimmManifest.Header = Header;
   Status = ActmPopulateDimmManifest (MrcData, &TdxDataHob->ActmDimmManifest);
   if (EFI_ERROR(Status)) {
-    DEBUG ((DEBUG_INFO, "Failed to Populate the Dimm Manifest Status = %r\n", Status));
+    DEBUG ((DEBUG_INFO, "[TDX] Failed to Populate the Dimm Manifest Status = %r\n", Status));
   } else {
-    DEBUG ((DEBUG_INFO, "Populating the Dimm Manifest is successful\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Populating the Dimm Manifest is successful\n"));
   }
 
   if (WarmReset) {
-    DEBUG ((DEBUG_INFO, "Warm reset detected! Restore ACTM MAC.\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Warm reset detected! Restore ACTM MAC.\n"));
 
     Data = (UINT64)PcdGet64 (PcdTdxActmMac0);
     Offset = TdxDataHob->ActmDimmManifest.Header.Size - SIZE_OF_MANIFEST_MAC;
@@ -138,7 +138,7 @@ PublishActmDimmManifest (
     Offset += sizeof (Data);
     CopyMem ((VOID*) &TdxDataHob->ActmDimmManifest.ManifestBlob[Offset], &Data, sizeof (Data));
 
-    DEBUG ((DEBUG_INFO, "Recovered ACTM MAC = "));
+    DEBUG ((DEBUG_INFO, "[TDX] Recovered ACTM MAC = "));
     PrintByteBuffer (&TdxDataHob->ActmDimmManifest.ManifestBlob[TdxDataHob->ActmDimmManifest.Header.Size - SIZE_OF_MANIFEST_MAC], SIZE_OF_MANIFEST_MAC);
   }
 
@@ -173,7 +173,7 @@ ActmPopulateDimmManifest (
   UINT8                   Index = 0;
   DIMM_DESCRIPTION *      ActmDimmDescription = NULL;
 
-  DEBUG ((DEBUG_INFO, "Building dimm manifest..\n"));
+  DEBUG ((DEBUG_INFO, "[TDX] Building dimm manifest..\n"));
   Outputs = &MrcData->Outputs;
 
   ActmDimmDescription = (DIMM_DESCRIPTION *)ActmDimmManifest->ManifestBlob;
@@ -192,7 +192,7 @@ ActmPopulateDimmManifest (
         if (DimmOut->Status != DIMM_PRESENT)
           continue;
         for (Rank = 0; Rank < DimmOut->RankInDimm; Rank++) {
-          DEBUG ((DEBUG_INFO, "ActmDimmDescription[%d] - MC = %d CH = %d Dimm = %d Rank = %d\n", Index, Controller, Channel, Dimm, Rank));
+          DEBUG ((DEBUG_INFO, "[TDX] ActmDimmDescription[%d] - MC = %d CH = %d Dimm = %d Rank = %d\n", Index, Controller, Channel, Dimm, Rank));
           ActmDimmDescription[Index].MemoryController   = Controller;
           ActmDimmDescription[Index].Channel            = Channel;
           ActmDimmDescription[Index].Dimm               = Dimm;
@@ -229,6 +229,6 @@ ActmPopulateDimmManifest (
   } // for Controller
 
   ActmDimmManifest->Header.Size = (Index * sizeof(DIMM_DESCRIPTION)) + SIZE_OF_MANIFEST_MAC;
-  DEBUG ((DEBUG_INFO, "Total Byte Size Manifest   : 0x%X\n", ActmDimmManifest->Header.Size ));
+  DEBUG ((DEBUG_INFO, "[TDX] Total Byte Size Manifest   : 0x%X\n", ActmDimmManifest->Header.Size ));
   return EFI_SUCCESS;
 }

@@ -90,7 +90,7 @@ InitializeCpuPowerMgmtPrivateDataHob (
 
   CpuPowerMgmtPrivateDataHob = NULL;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "InitializeCpuPowerMgmtPrivateDataHob Start\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_PWRMGMT_PVTDATAHOB_START); //PostCode (0xC72)
 
   CpuPowerMgmtPrivateDataHob = BuildGuidHob (
@@ -101,7 +101,7 @@ InitializeCpuPowerMgmtPrivateDataHob (
 
   ZeroMem (CpuPowerMgmtPrivateDataHob, sizeof (CPU_POWER_MANAGEMENT_PRIVATE_DATA_HOB));
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "InitializeCpuPowerMgmtPrivateDataHob Done\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_PWRMGMT_PVTDATAHOB_DONE); //PostCode (0xC73)
 
   return ;

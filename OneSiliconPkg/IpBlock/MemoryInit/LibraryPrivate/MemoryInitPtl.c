@@ -2008,19 +2008,19 @@ InstallEfiMemory (
         Touud -= StaticContentSize;
       }
     }
-    DEBUG((DEBUG_INFO, "[Static Memory Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post Static Memory Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // Memory Allocation for Prmrr
     //
     PeiPrmrrMemoryAllocation(&TopUseableMemAddr, &Touud);
-    DEBUG((DEBUG_INFO, "[Prmrr Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post Prmrr Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // Memory Allocation for Trace Hub
     //
     PeiTraceHubMemoryAllocation(&TopUseableMemAddr, &Touud);
-    DEBUG((DEBUG_INFO, "[Trace Hub Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post Trace Hub Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // Memory Allocation for Telemetry
@@ -2033,7 +2033,7 @@ InstallEfiMemory (
                                               &StreamTracerBaseAddr);
     MemoryMapData->StreamTracerBase = (UINT32)StreamTracerBaseAddr;
     MemoryMapData->StreamTracerSize = StreamTracerMemSize;
-    DEBUG((DEBUG_INFO, "[Telemetry Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post Telemetry Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     if (MemoryMapData->TotalPhysicalMemorySize > 0x1000) {
       //
@@ -2044,7 +2044,7 @@ InstallEfiMemory (
                                             ResourceAttributeTested,
                                             &SeamRrBaseAddress);
       MemoryMapData->SeamrrBase = SeamRrBaseAddress;
-      DEBUG((DEBUG_INFO, "[Tdx Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+      DEBUG((DEBUG_INFO, "[Post Tdx Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
     }
 
     NocImrExclusionLimit = TopUseableMemAddr;
@@ -2091,25 +2091,25 @@ InstallEfiMemory (
     // Memory Allocation for FlatCcs
     //
     IGpuMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
-    DEBUG((DEBUG_INFO, "[FlatCcs Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post FlatCcs Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // Memory Allocation for psmi
     //
     PeiPsmiMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
-    DEBUG((DEBUG_INFO, "[Psmi Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post Psmi Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // GSM2 allocation
     //
     IGpuGsm2Allocation(SiPreMemPolicy, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
-    DEBUG((DEBUG_INFO, "[GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // VMD allocation
     //
     VmdMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
-    DEBUG((DEBUG_INFO, "[Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+    DEBUG((DEBUG_INFO, "[Post Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // This is above PSMI memory space, give it to EFI.

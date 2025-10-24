@@ -823,25 +823,25 @@ SerialIoI2cDumpTxAbort (
 {
   SERIAL_IO_I2C_MEM_TX_ABRT_SOURCE  TxAbortSource;
   TxAbortSource.Data32 = MmioRead32 (MmioBase + R_SERIAL_IO_I2C_MEM_IC_TX_ABRT_SOURCE);
-  DEBUG ((DEBUG_WARN, "TxAbortSource\n"));
-  DEBUG ((DEBUG_WARN, "Abrt7bAddrNoAck %d\n", TxAbortSource.Fields.Abrt7bAddrNoAck));
-  DEBUG ((DEBUG_WARN, "Abrt10bAddr1NoAck %d\n", TxAbortSource.Fields.Abrt10bAddr1NoAck));
-  DEBUG ((DEBUG_WARN, "Abrt10bAddr2NoAck %d\n", TxAbortSource.Fields.Abrt10bAddr2NoAck));
-  DEBUG ((DEBUG_WARN, "AbrtTxDataNoAck %d\n", TxAbortSource.Fields.AbrtTxDataNoAck));
-  DEBUG ((DEBUG_WARN, "AbrtGCallNoAck %d\n", TxAbortSource.Fields.AbrtGCallNoAck));
-  DEBUG ((DEBUG_WARN, "AbrtGCallRead %d\n", TxAbortSource.Fields.AbrtGCallRead));
-  DEBUG ((DEBUG_WARN, "AbrtHsAckDet %d\n", TxAbortSource.Fields.AbrtHsAckDet));
-  DEBUG ((DEBUG_WARN, "AbrtSbAckDet %d\n", TxAbortSource.Fields.AbrtSbAckDet));
-  DEBUG ((DEBUG_WARN, "AbrtHsNoRst %d\n", TxAbortSource.Fields.AbrtHsNoRst));
-  DEBUG ((DEBUG_WARN, "AbrtSbNoRst %d\n", TxAbortSource.Fields.AbrtSbNoRst));
-  DEBUG ((DEBUG_WARN, "Abrt10bRdNoRst %d\n", TxAbortSource.Fields.Abrt10bRdNoRst));
-  DEBUG ((DEBUG_WARN, "AbrtHostDis %d\n", TxAbortSource.Fields.AbrtHostDis));
-  DEBUG ((DEBUG_WARN, "ArbLost %d\n", TxAbortSource.Fields.ArbLost));
-  DEBUG ((DEBUG_WARN, "AbrtSlFlushTxFifo %d\n", TxAbortSource.Fields.AbrtSlFlushTxFifo));
-  DEBUG ((DEBUG_WARN, "AbrtSlvArbLost %d\n", TxAbortSource.Fields.AbrtSlvArbLost));
-  DEBUG ((DEBUG_WARN, "AbrtSlvRdIntx %d\n", TxAbortSource.Fields.AbrtSlvRdIntx));
-  DEBUG ((DEBUG_WARN, "AbrtUserAbrt %d\n", TxAbortSource.Fields.AbrtUserAbrt));
-  DEBUG ((DEBUG_WARN, "TxFlushCnt %d\n", TxAbortSource.Fields.TxFlushCnt));
+
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.Abrt7bAddrNoAck %d\n", TxAbortSource.Fields.Abrt7bAddrNoAck));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.Abrt10bAddr1NoAck %d\n", TxAbortSource.Fields.Abrt10bAddr1NoAck));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.Abrt10bAddr2NoAck %d\n", TxAbortSource.Fields.Abrt10bAddr2NoAck));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtTxDataNoAck %d\n", TxAbortSource.Fields.AbrtTxDataNoAck));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtGCallNoAck %d\n", TxAbortSource.Fields.AbrtGCallNoAck));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtGCallRead %d\n", TxAbortSource.Fields.AbrtGCallRead));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtHsAckDet %d\n", TxAbortSource.Fields.AbrtHsAckDet));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtSbAckDet %d\n", TxAbortSource.Fields.AbrtSbAckDet));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtHsNoRst %d\n", TxAbortSource.Fields.AbrtHsNoRst));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtSbNoRst %d\n", TxAbortSource.Fields.AbrtSbNoRst));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.Abrt10bRdNoRst %d\n", TxAbortSource.Fields.Abrt10bRdNoRst));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtHostDis %d\n", TxAbortSource.Fields.AbrtHostDis));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.ArbLost %d\n", TxAbortSource.Fields.ArbLost));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtSlFlushTxFifo %d\n", TxAbortSource.Fields.AbrtSlFlushTxFifo));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtSlvArbLost %d\n", TxAbortSource.Fields.AbrtSlvArbLost));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtSlvRdIntx %d\n", TxAbortSource.Fields.AbrtSlvRdIntx));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.AbrtUserAbrt %d\n", TxAbortSource.Fields.AbrtUserAbrt));
+  DEBUG ((DEBUG_WARN, "TxAbortSource.Fields.TxFlushCnt %d\n", TxAbortSource.Fields.TxFlushCnt));
 }
 
 /**

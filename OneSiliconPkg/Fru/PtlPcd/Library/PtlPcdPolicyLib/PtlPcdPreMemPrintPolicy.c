@@ -44,7 +44,7 @@ PchPrintGeneralPreMemConfig (
   IN CONST PCH_GENERAL_PREMEM_CONFIG    *PchGeneralPreMemConfig
   )
 {
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ PCH General PreMem Config ------------------\n"));
   DEBUG ((DEBUG_INFO, " Port80Route= %x\n", PchGeneralPreMemConfig->Port80Route));
   DEBUG ((DEBUG_INFO, " GpioOverride= %x\n", PchGeneralPreMemConfig->GpioOverride));
   DEBUG ((DEBUG_INFO, " IoeDebugEn= %x\n", PchGeneralPreMemConfig->IoeDebugEn));
@@ -64,7 +64,7 @@ PchPrintLpcPreMemConfig (
   IN CONST PCH_LPC_PREMEM_CONFIG              *LpcPreMemConfig
   )
 {
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ PCH LPC PreMem Config ------------------\n"));
   DEBUG ((DEBUG_INFO, "EnhancePort8xhDecoding= %x\n", LpcPreMemConfig->EnhancePort8xhDecoding));
 }
 
@@ -81,7 +81,7 @@ PchPrintHsioPciePreMemConfig (
 {
   UINT32 Index;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ HSIO PCIE PreMem Config ------------------\n"));
   for (Index = 0; Index < GetPchMaxPciePortNum (); Index++) {
     DEBUG ((DEBUG_INFO, " RootPort[%d] HsioRxSetCtleEnable= %x\n", Index, HsioPciePreMemConfig->Lane[Index].HsioRxSetCtleEnable));
     DEBUG ((DEBUG_INFO, " RootPort[%d] HsioRxSetCtle= %x\n", Index, HsioPciePreMemConfig->Lane[Index].HsioRxSetCtle));
@@ -112,16 +112,16 @@ PchPrintPcieRpPreMemConfig (
   )
 {
   UINT32 Index;
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ PCH PCIe RP PreMem Config ------------------\n"));
 
   for (Index = 0; Index < GetPchMaxPciePortNum (); Index++) {
-    DEBUG ((DEBUG_INFO, "Port[%d] RpEnabled= %x\n", Index, (PcieRpPreMemConfig->RpEnabledMask & (UINT32) (1 << Index)) != 0 ));
+    DEBUG ((DEBUG_INFO, " Port[%d] RpEnabled= %x\n", Index, (PcieRpPreMemConfig->RpEnabledMask & (UINT32) (1 << Index)) != 0 ));
   }
   for (Index = 0; Index < GetPchMaxPcieClockNum (); Index++) {
-    DEBUG ((DEBUG_INFO, "Clock[%d] Usage= %x\n", Index, PcieRpPreMemConfig->PcieClock[Index].Usage));
-    DEBUG ((DEBUG_INFO, "Clock[%d] ClkReq= %x\n", Index, PcieRpPreMemConfig->PcieClock[Index].ClkReq));
+    DEBUG ((DEBUG_INFO, " Clock[%d] Usage= %x\n", Index, PcieRpPreMemConfig->PcieClock[Index].Usage));
+    DEBUG ((DEBUG_INFO, " Clock[%d] ClkReq= %x\n", Index, PcieRpPreMemConfig->PcieClock[Index].ClkReq));
   }
-  DEBUG ((DEBUG_INFO, "SkipExtGfxScan: %d\n", PcieRpPreMemConfig->SkipExtGfxScan));
+  DEBUG ((DEBUG_INFO, " SkipExtGfxScan: %d\n", PcieRpPreMemConfig->SkipExtGfxScan));
 }
 
 /**
@@ -152,7 +152,7 @@ PtlPcdPreMemPrintPolicyPpi (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPcieRpPreMemConfigGuid, (VOID *) &PcieRpPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------------ PCH Print PreMemPolicy Start ------------------------\n"));
   DEBUG ((DEBUG_INFO, " Revision= %x\n", SiPreMemPolicyPpi->TableHeader.Header.Revision));
 
   PchPrintGeneralPreMemConfig (PchGeneralPreMemConfig);
@@ -160,6 +160,6 @@ PtlPcdPreMemPrintPolicyPpi (
   PchPrintHsioPciePreMemConfig (HsioPciePreMemConfig);
   PchPrintPcieRpPreMemConfig (PcieRpPreMemConfig);
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------------ PCH Print PreMemPolicy End --------------------------\n"));
   DEBUG_CODE_END ();
 }

@@ -41,7 +41,7 @@ WdtPreMemPrintConfig (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gWatchDogPreMemConfigGuid, (VOID *) &WdtPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ WDT PreMem Config ------------------\n"));
   DEBUG ((DEBUG_INFO, "DisableAndLock= %x\n", WdtPreMemConfig->DisableAndLock));
 }
 

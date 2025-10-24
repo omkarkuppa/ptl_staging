@@ -83,7 +83,7 @@ TraceHubInitialize (
   PrivateConfig = TraceHubHandle->PrivateConfig;
   TraceHubSbAccessMmio = TraceHubHandle->TraceHubSbAccessMmio;
 
-  DEBUG ((DEBUG_INFO, "%a B%d:D%d:F%d start\n", __FUNCTION__, TraceHubHandle->Controller->Bus, TraceHubHandle->Controller->Device, TraceHubHandle->Controller->Function));
+  DEBUG ((DEBUG_INFO, "TraceHubInitialize() B%d:D%d:F%d start\n", TraceHubHandle->Controller->Bus, TraceHubHandle->Controller->Device, TraceHubHandle->Controller->Function));
 
   if (PciSegmentRead16 (TraceHubPciBase) == 0xFFFF) {
     if (TraceHubConfig->EnableMode == TraceHubModeDisabled) {
@@ -93,7 +93,7 @@ TraceHubInitialize (
       if (TraceHubConfig->BiosTraceSink) {
         UpdateTraceHubDataHob (0, (UINT32)PrivateConfig->FwBar);
       }
-      DEBUG ((DEBUG_INFO, "End. TraceHub device is not present due to TH mode is disabled\n"));
+      DEBUG ((DEBUG_INFO, "TraceHubInitialize() - End. TraceHub device is not present due to TH mode is disabled\n"));
       *TraceHubDisable = FALSE;
       return;
     }
@@ -102,7 +102,7 @@ TraceHubInitialize (
     // Noted: Trace hub PG state preserves until G3 / global reset.
     // No need to check tool ownership via SCRPD0[24], for it can only be set when TH is active (un-gated).
     //
-    DEBUG ((DEBUG_INFO, "un-gate trace hub due to user opt-in TraceHub mode from disabled to enabled.\n"));
+    DEBUG ((DEBUG_INFO, "TraceHubInitialize - un-gate trace hub due to user opt-in TraceHub mode from disabled to enabled.\n"));
     TraceHubHandle->Callback->TraceHubEnable (TraceHubHandle->Controller);
   }
 
@@ -124,7 +124,7 @@ TraceHubInitialize (
     /// Clear MSE
     ///
     PciSegmentWrite8 (TraceHubPciBase + PCI_COMMAND_OFFSET, 0);
-    DEBUG ((DEBUG_INFO, "End. STT disconnected and Trace Hub requested to be disable\n"));
+    DEBUG ((DEBUG_INFO, "TraceHubInitialize() - End. STT disconnected and Trace Hub requested to be disable\n"));
     *TraceHubDisable = TRUE;
     ///
     /// Clear verbosity to disable BIOS trace
@@ -223,14 +223,14 @@ TraceHubInitialize (
   } else {
     PciSegmentOr8 (TraceHubPciBase + PCI_COMMAND_OFFSET, EFI_PCI_COMMAND_MEMORY_SPACE | EFI_PCI_COMMAND_BUS_MASTER);
   }
-  DEBUG ((DEBUG_INFO, "Assigned BARs:\n"));
-  DEBUG ((DEBUG_INFO, "MTB_LBAR = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_MTB_LBAR) & B_TRACE_HUB_CFG_MTB_LBAR_ADDR));
-  DEBUG ((DEBUG_INFO, "SW_LBAR  = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_SW_LBAR) & B_TRACE_HUB_CFG_SW_LBAR_ADDR));
+  DEBUG ((DEBUG_INFO, "TraceHubInitialize () Assigned BARs:\n"));
+  DEBUG ((DEBUG_INFO, "TraceHubInitialize () MTB_LBAR = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_MTB_LBAR) & B_TRACE_HUB_CFG_MTB_LBAR_ADDR));
+  DEBUG ((DEBUG_INFO, "TraceHubInitialize () SW_LBAR  = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_SW_LBAR) & B_TRACE_HUB_CFG_SW_LBAR_ADDR));
   if (PrivateConfig->RtitBar > 0) {
-    DEBUG ((DEBUG_INFO, "RTIT_LBAR  = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_RTIT_LBAR) & B_TRACE_HUB_CFG_RTIT_LBAR_ADDR));
+    DEBUG ((DEBUG_INFO, "TraceHubInitialize () RTIT_LBAR  = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_RTIT_LBAR) & B_TRACE_HUB_CFG_RTIT_LBAR_ADDR));
   }
-  DEBUG ((DEBUG_INFO, "FW_LBAR  = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_FW_LBAR) & B_TRACE_HUB_CFG_FW_LBAR_ADDR));
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "TraceHubInitialize () FW_LBAR  = 0x%08x\n", PciSegmentRead32 (TraceHubPciBase + R_TRACE_HUB_CFG_FW_LBAR) & B_TRACE_HUB_CFG_FW_LBAR_ADDR));
+  DEBUG ((DEBUG_INFO, "TraceHubInitialize () - End\n"));
   *TraceHubDisable = FALSE;
 }
 

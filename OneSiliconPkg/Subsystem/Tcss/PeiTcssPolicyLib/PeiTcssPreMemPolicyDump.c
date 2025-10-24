@@ -44,28 +44,28 @@ TcssPreMemConfigDump (
     return;
   }
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Revision : %d\n", TcssPeiPreMemConfig->Header.Revision));
-  DEBUG ((DEBUG_INFO, "IomAuxPortPad\n"));
+  DEBUG ((DEBUG_INFO, "----------------------- TCSS_PEI_PREMEM_CONFIG -----------------\n"));
+  DEBUG ((DEBUG_INFO, " Revision : %d\n", TcssPeiPreMemConfig->Header.Revision));
+
   for (Index = 0; Index < MAX_IOM_AUX_BIAS_COUNT; Index++) {
-    DEBUG ((DEBUG_INFO, "[%x].ReceptacleSbu2BiasCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].ReceptacleSbu2BiasCtrl));
-    DEBUG ((DEBUG_INFO, "[%x].ReceptacleSbu1BiasCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].ReceptacleSbu1BiasCtrl));
-    DEBUG ((DEBUG_INFO, "[%x].AuxIsoCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].AuxIsoCtrl));
+    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomAuxPortPad[%x].ReceptacleSbu2BiasCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].ReceptacleSbu2BiasCtrl));
+    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomAuxPortPad[%x].ReceptacleSbu1BiasCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].ReceptacleSbu1BiasCtrl));
+    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomAuxPortPad[%x].AuxIsoCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].AuxIsoCtrl));
   }
 
-  DEBUG ((DEBUG_INFO, "AuxOri 0x%04X\n", TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri));
-  DEBUG ((DEBUG_INFO, "HslOri 0x%04X\n", TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri));
+  DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri 0x%04X\n", TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri));
+  DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri 0x%04X\n", TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri));
 
   for (Index = 0; Index < MAX_TCSS_USB3_PORTS; Index++) {
-    DEBUG ((DEBUG_INFO, "IomUsbCDpConfig[%d] 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[Index]));
+    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[%d] 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[Index]));
   }
 
-  DEBUG ((DEBUG_INFO, "TcssEnable : %01x\n", TcssPeiPreMemConfig->TcssEnable));
-  DEBUG ((DEBUG_INFO, "TPortEnData32 : %01x\n", TcssPeiPreMemConfig->UsbTcConfig.PortEnData32));
+  DEBUG ((DEBUG_INFO, " TCSS Feature Support Enabled Policy : %01x\n", TcssPeiPreMemConfig->TcssEnable));
+  DEBUG ((DEBUG_INFO, " TCSS Port Enabled Policy : %01x\n", TcssPeiPreMemConfig->UsbTcConfig.PortEnData32));
 
   for (Index = 0; Index < MaxTcssPortNumber; Index++) {
     PortPolicyData8 = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[Index];
-    DEBUG ((DEBUG_INFO, "TCSS Port[%d] Policy Configuration : ", Index));
+    DEBUG ((DEBUG_INFO, " TCSS Port[%d] Policy Configuration : ", Index));
     switch (PortPolicyData8) {
       case UsbCDisable:
         DEBUG ((DEBUG_INFO, "No Function\n"));

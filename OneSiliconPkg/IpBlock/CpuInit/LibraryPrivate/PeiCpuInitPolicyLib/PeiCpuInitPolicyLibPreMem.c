@@ -39,28 +39,28 @@ CpuInitPreMemConfigPrint (
   IN CONST CPU_INIT_PREMEM_CONFIG        *CpuInitPreMemConfig
   )
 {
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "BootMaxFrequency = 0x%x\n", CpuInitPreMemConfig->BootMaxFrequency));
-  DEBUG ((DEBUG_INFO, "BistOnReset = 0x%x\n", CpuInitPreMemConfig->BistOnReset));
-  DEBUG ((DEBUG_INFO, "VmxEnable = 0x%x\n", CpuInitPreMemConfig->VmxEnable));
-  DEBUG ((DEBUG_INFO, "CrashLogEnable = 0x%x\n", CpuInitPreMemConfig->CrashLogEnable));
-  DEBUG ((DEBUG_INFO, "TmeEnable = 0x%x\n", CpuInitPreMemConfig->TmeEnable));
-  DEBUG ((DEBUG_INFO, "Tme By_pass Capability = 0x%x\n", CpuInitPreMemConfig->TmeBypassCapability));
-  DEBUG ((DEBUG_INFO, "DebugInterfaceEnable = 0x%X\n", CpuInitPreMemConfig->DebugInterfaceEnable));
-  DEBUG ((DEBUG_INFO, "DebugInterfaceLockEnable = 0x%X\n", CpuInitPreMemConfig->DebugInterfaceLockEnable));
-  DEBUG ((DEBUG_INFO, "ActiveCoreCount = 0x%x\n", CpuInitPreMemConfig->ActiveCoreCount));
-  DEBUG ((DEBUG_INFO, "PeciSxReset = 0x%x\n", CpuInitPreMemConfig->PeciSxReset));
-  DEBUG ((DEBUG_INFO, "ActiveSmallCoreCount = 0x%x\n", CpuInitPreMemConfig->ActiveSmallCoreCount));
-  DEBUG ((DEBUG_INFO, "CrashLogGprs = 0x%x\n", CpuInitPreMemConfig->CrashLogGprs));
-  DEBUG ((DEBUG_INFO, "CpuRatio = 0x%x\n", CpuInitPreMemConfig->CpuRatio));
-  DEBUG ((DEBUG_INFO, "ActiveLpAtomCoreCount = 0x%x\n", CpuInitPreMemConfig->ActiveLpAtomCoreCount));
-  DEBUG ((DEBUG_INFO, "DfdEnable = 0x%x\n", CpuInitPreMemConfig->DfdEnable));
-  DEBUG ((DEBUG_INFO, "PrmrrSize = 0x%x\n", CpuInitPreMemConfig->PrmrrSize));
-  DEBUG ((DEBUG_INFO, "OcLock = 0x%x\n", CpuInitPreMemConfig->OcLock));
-  DEBUG ((DEBUG_INFO, "TsegSize: 0x%x\n", CpuInitPreMemConfig->TsegSize));
-  DEBUG ((DEBUG_INFO, "SmmRelocationEnable: 0x%x\n", CpuInitPreMemConfig->SmmRelocationEnable));
-  DEBUG ((DEBUG_INFO, "ReduceXecores: 0x%x\n", CpuInitPreMemConfig->ReduceXecores));
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "------------------ CPU_INIT_PREMEM_CONFIG Begin ------------------\n"));
+  DEBUG ((DEBUG_INFO, " BootMaxFrequency = 0x%x\n", CpuInitPreMemConfig->BootMaxFrequency));
+  DEBUG ((DEBUG_INFO, " BistOnReset = 0x%x\n", CpuInitPreMemConfig->BistOnReset));
+  DEBUG ((DEBUG_INFO, " VmxEnable = 0x%x\n", CpuInitPreMemConfig->VmxEnable));
+  DEBUG ((DEBUG_INFO, " CrashLogEnable = 0x%x\n", CpuInitPreMemConfig->CrashLogEnable));
+  DEBUG ((DEBUG_INFO, " TmeEnable = 0x%x\n", CpuInitPreMemConfig->TmeEnable));
+  DEBUG ((DEBUG_INFO, " Tme By_pass Capability = 0x%x\n", CpuInitPreMemConfig->TmeBypassCapability));
+  DEBUG ((DEBUG_INFO, " DebugInterfaceEnable = 0x%X\n", CpuInitPreMemConfig->DebugInterfaceEnable));
+  DEBUG ((DEBUG_INFO, " DebugInterfaceLockEnable = 0x%X\n", CpuInitPreMemConfig->DebugInterfaceLockEnable));
+  DEBUG ((DEBUG_INFO, " ActiveCoreCount = 0x%x\n", CpuInitPreMemConfig->ActiveCoreCount));
+  DEBUG ((DEBUG_INFO, " PeciSxReset = 0x%x\n", CpuInitPreMemConfig->PeciSxReset));
+  DEBUG ((DEBUG_INFO, " ActiveSmallCoreCount = 0x%x\n", CpuInitPreMemConfig->ActiveSmallCoreCount));
+  DEBUG ((DEBUG_INFO, " CrashLogGprs = 0x%x\n", CpuInitPreMemConfig->CrashLogGprs));
+  DEBUG ((DEBUG_INFO, " CpuRatio = 0x%x\n", CpuInitPreMemConfig->CpuRatio));
+  DEBUG ((DEBUG_INFO, " ActiveLpAtomCoreCount = 0x%x\n", CpuInitPreMemConfig->ActiveLpAtomCoreCount));
+  DEBUG ((DEBUG_INFO, " DfdEnable = 0x%x\n", CpuInitPreMemConfig->DfdEnable));
+  DEBUG ((DEBUG_INFO, " PrmrrSize = 0x%x\n", CpuInitPreMemConfig->PrmrrSize));
+  DEBUG ((DEBUG_INFO, " OcLock = 0x%x\n", CpuInitPreMemConfig->OcLock));
+  DEBUG ((DEBUG_INFO, " TsegSize: 0x%x\n", CpuInitPreMemConfig->TsegSize));
+  DEBUG ((DEBUG_INFO, " SmmRelocationEnable: 0x%x\n", CpuInitPreMemConfig->SmmRelocationEnable));
+  DEBUG ((DEBUG_INFO, " ReduceXecores: 0x%x\n", CpuInitPreMemConfig->ReduceXecores));
+  DEBUG ((DEBUG_INFO, "------------------ CPU_INIT_PREMEM_CONFIG End ------------------\n"));
 }
 
 
@@ -79,15 +79,15 @@ DEBUG_CODE_BEGIN();
   EFI_STATUS                    Status;
   CPU_INIT_PREMEM_CONFIG        *CpuInitPreMemConfig;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "\n------------------------ CPU - SiPreMemPolicyPpi Print Begin in PreMem -----------------\n"));
 
-  DEBUG ((DEBUG_INFO, "Revision= %x\n", SiPreMemPolicyPpi->TableHeader.Header.Revision));
+  DEBUG ((DEBUG_INFO, " Revision= %x\n", SiPreMemPolicyPpi->TableHeader.Header.Revision));
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuInitPreMemConfigGuid, (VOID *) &CpuInitPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
   CpuInitPreMemConfigPrint(CpuInitPreMemConfig);
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "\n------------------------ CPU - SiPreMemPolicyPpi Print End -----------------\n\n"));
 DEBUG_CODE_END();
 }
 
@@ -108,7 +108,8 @@ LoadCpuInitPreMemConfigDefault (
   CpuInitPreMemConfig = ConfigBlockPointer;
   CpuSku              = GetCpuSku ();
 
-  DEBUG ((DEBUG_INFO, "CpuInitPreMemConfig Name = %g HobLength = 0x%x\n", &CpuInitPreMemConfig->Header.GuidHob.Name, CpuInitPreMemConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "CpuInitPreMemConfig->Header.GuidHob.Name = %g\n", &CpuInitPreMemConfig->Header.GuidHob.Name));
+  DEBUG ((DEBUG_INFO, "CpuInitPreMemConfig->Header.GuidHob.Header.HobLength = 0x%x\n", CpuInitPreMemConfig->Header.GuidHob.Header.HobLength));
 
   /********************************
     CPU Config Lib PreMem configuration
@@ -175,10 +176,11 @@ CpuInitPreMemAddConfigBlocks (
   )
 {
   EFI_STATUS Status;
-  DEBUG ((DEBUG_INFO, "CPU Pre-Mem Entry\n"));
+  DEBUG ((DEBUG_INFO, "CPU Pre-Mem Entry \n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_PRE_MEM_ENTRY); //PostCode (0xC00)
 
   Status = AddComponentConfigBlocks (ConfigBlockTableAddress, &mCpuIpBlocksPreMem[0], sizeof (mCpuIpBlocksPreMem) / sizeof (COMPONENT_BLOCK_ENTRY));
+  DEBUG ((DEBUG_INFO, "CpuAddPreMemConfigBlocks Done \n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_ADD_PREMEM_CONFIGBLOCKS_DONE); //PostCode (0xC0F)
 
   return Status;
