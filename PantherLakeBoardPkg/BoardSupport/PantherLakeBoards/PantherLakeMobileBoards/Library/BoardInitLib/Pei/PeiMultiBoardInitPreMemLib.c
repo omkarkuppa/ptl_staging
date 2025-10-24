@@ -39,6 +39,7 @@
 #include <Ppi/ReadOnlyVariable2.h>
 #include <SetupVariable.h>
 #include <Library/HobLib.h>
+#include <Library/TcoLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -428,6 +429,11 @@ PtlMultiBoardDetect (
   UINTN VpdBaseAddress;
 
   DEBUG ((DEBUG_INFO, " In PtlMultiBoardDetect \n"));
+
+  //
+  // Halt the TCO timer as early as possible
+  //
+  TcoHaltTimer (PcdGet16 (PcdTcoBaseAddress));
 
   PtlBoardDetect ();
 
