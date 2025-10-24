@@ -792,6 +792,7 @@ MrcRunLvrRmt (
   @retval mrcSuccess if DCC converges
   @retval mrcFail otherwise
 **/
+MRC_IRAM0_FUNCTION
 MrcStatus
 MrcRxDqsDcc (
   IN OUT MrcParameters *const MrcData
