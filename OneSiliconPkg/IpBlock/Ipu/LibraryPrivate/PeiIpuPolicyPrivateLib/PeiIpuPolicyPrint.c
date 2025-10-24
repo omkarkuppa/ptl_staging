@@ -49,14 +49,14 @@ IpuPrintPolicyPpiPreMem (
   if (IpuPreMemPolicy != NULL) {
     DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
     if (IpuPreMemPolicy->Header.Revision == IPU_PREMEM_CONFIG_REVISION) {
-      DEBUG ((DEBUG_INFO, "Revision : %d\n", IpuPreMemPolicy->Header.Revision));
-      DEBUG ((DEBUG_INFO, "IpuEnable : 0x%x\n", IpuPreMemPolicy->IpuEnable));
+      DEBUG ((DEBUG_INFO, "Revision:%d\n", IpuPreMemPolicy->Header.Revision));
+      DEBUG ((DEBUG_INFO, "IpuEnable:0x%x\n", IpuPreMemPolicy->IpuEnable));
       for (Index = 0; Index < GPIO_IMGUCLK_NUMBER_OF_PINS; Index ++) {
-        DEBUG ((DEBUG_INFO, "ImguClkOutEn[%x] : %x\n", Index, IpuPreMemPolicy->ImguClkOutEn[Index]));
+        DEBUG ((DEBUG_INFO, "ImguClkOutEn[%x]:%x\n", Index, IpuPreMemPolicy->ImguClkOutEn[Index]));
       }
     } else {
-      DEBUG ((DEBUG_INFO, "IPU Config Block Revision = %d \n", IpuPreMemPolicy->Header.Revision));
-      DEBUG ((DEBUG_INFO, "IPU_PREMEM_CONFIG_REVISION = %d \n", IPU_PREMEM_CONFIG_REVISION));
+      DEBUG ((DEBUG_INFO, "IPU Config Block Revision=%d \n", IpuPreMemPolicy->Header.Revision));
+      DEBUG ((DEBUG_INFO, "IPU_PREMEM_CONFIG_REVISION=%d \n", IPU_PREMEM_CONFIG_REVISION));
       DEBUG ((DEBUG_INFO, "IPU Config Block Version doesn't match.\n"));
     }
     DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));

@@ -181,8 +181,8 @@ TelemetryPrintPeiPolicyPpi (
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Revision : %d\n", TelemetryPeiConfig->Header.Revision));
-  DEBUG ((DEBUG_INFO, "CpuCrashLogEnable : %01d\n", TelemetryPeiConfig->CpuCrashLogEnable));
+  DEBUG ((DEBUG_INFO, "Revision:%d\n", TelemetryPeiConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "CpuCrashLogEnable:%01d\n", TelemetryPeiConfig->CpuCrashLogEnable));
   DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
   return;
 }
