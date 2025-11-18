@@ -89,7 +89,7 @@ SpiServiceInit (
              );
 
   if (Status != EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "SpiServiceInit() Start\n"));
+    DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
     //
     // PCI Enumeration is not done till later in DXE
@@ -117,7 +117,7 @@ SpiServiceInit (
     Status = PeiServicesInstallPpi (&PeiSpiInstance->PpiDescriptor);
     ASSERT_EFI_ERROR (Status);
 
-    DEBUG ((DEBUG_INFO, "SpiServiceInit() End\n"));
+    DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
   } else {
     DEBUG ((DEBUG_INFO, "SPI PPI already installed\n"));
   }

@@ -353,18 +353,18 @@ FreeSpaceSkipEntryPoint (
                         (VOID **) &FvShadowPpi
                         );
   if (EFI_ERROR (OldFvShadowStatus)) {
-    DEBUG ((DEBUG_INFO, "FreeSpaceSkip: Installing FvShadow\n"));
+    DEBUG ((DEBUG_INFO, "Installing FvShadow\n"));
     Status = PeiServicesInstallPpi (&mFirmwareVolumeShadowPpiList);
     if (EFI_ERROR(Status)) {
-      DEBUG ((DEBUG_INFO, "FreeSpaceSkip: Couldn't install FvShadow"));
+      DEBUG ((DEBUG_INFO, "Couldn't install FvShadow"));
       ASSERT_EFI_ERROR (Status);
       return Status;
     }
   } else {
-    DEBUG ((DEBUG_INFO, "FreeSpaceSkip: FvShadow already installed by SPI DMA, Replace with FreeSpaceSkip\n"));
+    DEBUG ((DEBUG_INFO, "FvShadow already installed by SPI DMA, Replace with FreeSpaceSkip\n"));
     Status = PeiServicesReInstallPpi(OldFvShadowPpiDesc, &mFirmwareVolumeShadowPpiList);
     if (EFI_ERROR(Status)) {
-      DEBUG ((DEBUG_INFO, "FreeSpaceSkip: Couldn't replace SPIDMA's FvShadow with it's own"));
+      DEBUG ((DEBUG_INFO, "Couldn't replace SPIDMA's FvShadow with it's own"));
       ASSERT_EFI_ERROR (Status);
       return Status;
     }

@@ -38,8 +38,7 @@ LoadMemorySubSystemDefault (
 
   MemorySubSystemConfig = ConfigBlockPointer;
 
-  DEBUG ((DEBUG_INFO, "MemorySubSystemConfig->Header.GuidHob.Name = %g\n", &MemorySubSystemConfig->Header.GuidHob.Name));
-  DEBUG ((DEBUG_INFO, "MemorySubSystemConfig->Header.GuidHob.Header.HobLength = 0x%x\n", MemorySubSystemConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "MemorySubSystemConfig Name = %g HobLength = 0x%x\n", &MemorySubSystemConfig->Header.GuidHob.Name, MemorySubSystemConfig->Header.GuidHob.Header.HobLength));
 }
 
 static COMPONENT_BLOCK_ENTRY  mMemorySubSystemIpBlock = {
@@ -100,11 +99,11 @@ MemorySubSystemPrintPolicyPpi (
   Status = GetConfigBlock ((VOID *)SiPolicyPreMemPpi, &gMemorySubSystemConfigGuid, (VOID *) &MemorySubSystemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "------------------------ MEMORY_SUB_SYSTEM_CONFIG -----------------\n"));
-  DEBUG ((DEBUG_INFO, " Revision : %d\n", MemorySubSystemConfig->Header.Revision));
-  DEBUG ((DEBUG_INFO, " AcpiReservedMemoryBase: 0x%x\n", MemorySubSystemConfig->AcpiReservedMemoryBase));
-  DEBUG ((DEBUG_INFO, " AcpiReservedMemorySize: 0x%x\n", MemorySubSystemConfig->AcpiReservedMemorySize));
-  DEBUG ((DEBUG_INFO, " MemMapOverlapCheckSupport: 0x%x\n", MemorySubSystemConfig->MemMapOverlapCheckSupport));
-  DEBUG ((DEBUG_INFO, "\n------------------------ MEMORY_SUB_SYSTEM_CONFIG Print END -----------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "Revision : %d\n", MemorySubSystemConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "AcpiReservedMemoryBase: 0x%x\n", MemorySubSystemConfig->AcpiReservedMemoryBase));
+  DEBUG ((DEBUG_INFO, "AcpiReservedMemorySize: 0x%x\n", MemorySubSystemConfig->AcpiReservedMemorySize));
+  DEBUG ((DEBUG_INFO, "MemMapOverlapCheckSupport: 0x%x\n", MemorySubSystemConfig->MemMapOverlapCheckSupport));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
   DEBUG_CODE_END ();
 }

@@ -67,7 +67,7 @@ PsmiInit (
   UINT64                     TotalTraceRegionWb = 0;
 
   PsmiDataHob = NULL;
-  DEBUG ((DEBUG_INFO, "PsmiInit () - Start\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   //
   // Read SCRPD1 register to get PSMI handler, trace memory sizes , Trace Region Cache Type
   //
@@ -186,7 +186,7 @@ PsmiInit (
   DEBUG ((DEBUG_INFO, "PSMI Total Dont care Size requested 0x%lx \n", PsmiDataHob->PsmiConfig.PsmiMrcParam[0].TotalSize));
   DEBUG ((DEBUG_INFO, "PSMI Total WriteBack Size requested 0x%lx \n", PsmiDataHob->PsmiConfig.PsmiMrcParam[1].TotalSize));
 
-  DEBUG ((DEBUG_INFO, "PsmiInit () - End\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 
   return EFI_SUCCESS;
 }

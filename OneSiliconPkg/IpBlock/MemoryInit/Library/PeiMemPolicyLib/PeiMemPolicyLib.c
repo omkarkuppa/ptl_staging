@@ -196,13 +196,13 @@ MrcPrintPolicyPpiPreMem (
   Status = GetConfigBlock ((VOID *) SiPolicyPreMemPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
   ASSERT_EFI_ERROR(Status);
 
-  DEBUG((DEBUG_INFO, "------------------------ MEMORY_CONFIGURATION -----------------\n"));
+  DEBUG((DEBUG_INFO, "MEMORY_CONFIGURATION\n"));
   DEBUG((DEBUG_INFO, " SpdProfileSelected: %d\n tCL: %d\n tRCDtRP: %d\n", MemConfig->ExternalInputs.MemoryProfile, MemConfig->ExternalInputs.tCL, MemConfig->ExternalInputs.tRCDtRP));
   DEBUG((DEBUG_INFO, " tRAS: %d\n tWR: %d\n tRFC: %d\n tRRD: %d\n", MemConfig->ExternalInputs.tRAS, MemConfig->ExternalInputs.tWR, MemConfig->ExternalInputs.tRFC, MemConfig->ExternalInputs.tRRD));
   DEBUG((DEBUG_INFO, " tWTR: %d\n tRTP: %d\n tFAW: %d\n tCWL: %d\n", MemConfig->ExternalInputs.tWTR, MemConfig->ExternalInputs.tRTP, MemConfig->ExternalInputs.tFAW, MemConfig->ExternalInputs.tCWL));
   DEBUG((DEBUG_INFO, " VddVoltage: %d\n VddqVoltage: %d\n VppVoltage: %d\n", MemConfig->ExternalInputs.VddVoltage, MemConfig->ExternalInputs.VddqVoltage, MemConfig->ExternalInputs.VppVoltage));
 
-  DEBUG((DEBUG_INFO, "------------------------ MEMORY_CONFIG_NO_CRC -----------------\n"));
+  DEBUG((DEBUG_INFO, "MEMORY_CONFIG_NO_CRC\n"));
   DEBUG((DEBUG_INFO, " CleanMemory: %d\n MemTestOnWarmBoot: %d\n", MemConfigNoCrc->CleanMemory, MemConfigNoCrc->MemTestOnWarmBoot));
   DEBUG((DEBUG_INFO, " SerialDebugLevel: %d\n PlatformMemorySize: 0x%lx\n", MemConfigNoCrc->SerialDebugLevel, MemConfigNoCrc->PlatformMemorySize));
   DEBUG((DEBUG_INFO, " SpdAddressTable[%d] :", MEM_CFG_MAX_SOCKETS));
