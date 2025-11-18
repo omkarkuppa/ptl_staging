@@ -498,7 +498,7 @@
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
 #endif
-#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 0x1
+#if FixedPcdGetBool (PcdMipiLontiumEnable) == 0x1
       oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sLontiumI2s0,
         prompt      = STRING_TOKEN(STR_PCH_HDA_I2S0_CODEC_LONTIUM),
         help        = STRING_TOKEN(STR_PCH_HDA_I2S0_CODEC_LONTIUM_HELP),
