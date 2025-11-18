@@ -437,7 +437,7 @@ InitIpInstance (
   pInst->LtrHighIdleTime                = pInst->LtrEnable ? 0x02000400 : 0x00050002;
   pInst->LtrMedIdleTime                 = pInst->LtrEnable ? 0x01320132 : 0x00050002;
   pInst->LtrLowIdleTime                 = pInst->LtrEnable ? 0x00320032 : 0x00050002;
-  pInst->LtvLimit                       = 0xBD0;
+  pInst->LtvLimit                       = 0x17FF;
   pInst->InterruptPin                   = ItssGetDevIntPin (SiPolicy, PchXhciDevNumber (), PchXhciFuncNumber ());
   pInst->MaxPayloadSize                 = 0x7;
   pInst->RequestBoundaryCrossingControl = 0x1;
