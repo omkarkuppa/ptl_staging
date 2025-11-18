@@ -135,9 +135,10 @@ CrashlogAgentUnInit (
 /**
   Crash record extraction.
 
-  @param[in] CrashNode     Indicate which crash node record to be extracted
-  @param[out] RecordCount  Count of records
-  @param[out] Records      Crashlog record
+  @param[in]  CrashNode             Indicate which crash node record to be extracted
+  @param[out] RecordCount           Count of records
+  @param[out] CpuCrashEfiPageCount  Count of EFI Pages allocated for all Cpu Crash records
+  @param[out] Records               Crashlog record
 
   @retval EFI_SUCCESS  The operation succeeds.
   @retval others       The operation failed.
@@ -147,6 +148,7 @@ EFI_STATUS
 CrashlogAgentExtract (
   IN  UINT32                     CrashNode,
   OUT UINT32                     *RecordCount,
+  OUT UINT32                     *CpuCrashEfiPageCount,
   OUT CRASHLOG_HOB_RECORD_ENTRY  *Records OPTIONAL
   )
 {
@@ -174,7 +176,7 @@ CrashlogAgentExtract (
   }
 
   *RecordCount = 0;
-
+  *CpuCrashEfiPageCount = 0;
   //
   // Get crash record information from SSRAM
   //
@@ -204,6 +206,7 @@ CrashlogAgentExtract (
         Records->Address = (UINTN)Address;
         Records->Size = CpuAgent->CrashRecordInfo.Size;
         Records ++;
+        *CpuCrashEfiPageCount += EFI_SIZE_TO_PAGES (CpuAgent->CrashRecordInfo.Size);
       } else {
         DEBUG ((DEBUG_ERROR, "failed to allocate enough memory store crashlog data.\n"));
         return Status;
@@ -279,18 +282,22 @@ CpuCrashLogPeimEntry (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
   UINTN                            VariableSize;
   CRASHLOG_VARIABLE                Variable;
+  CRASHLOG_RECORD_PAGES            CrashRecordEfiPagesVariable;
   EFI_BOOT_MODE                    BootMode;
   UINT32                           RecordCount;
   CRASHLOG_HOB_DATA                *CrashlogHob;
   CRASHLOG_HOB_RECORD_ENTRY        *CrashRecordEntry;
   CRASHLOG_CONTROL_VARIABLE        *CtlVariableHob;
+  CRASHLOG_RECORD_PAGES            *CrashRecordPagesHob;
   EFI_HOB_GUID_TYPE                *GuidHob;
+  UINT32                           CpuCrashEfiPageCount;
+  EFI_PHYSICAL_ADDRESS             Address;
 
   DEBUG ((DEBUG_INFO, "%a() - enter\n", __FUNCTION__));
 
   CrashlogHob = NULL;
   RecordCount = 0;
-
+  CpuCrashEfiPageCount = 0;
   //
   //  Skip the flow if boot mode is S3
   //
@@ -355,7 +362,7 @@ CpuCrashLogPeimEntry (
     //
     // Get crash record count from crashlog agent
     //
-    Status = CrashlogAgentExtract (CRASHLOG_NODE_ALL, &RecordCount, NULL);
+    Status = CrashlogAgentExtract (CRASHLOG_NODE_ALL, &RecordCount, &CpuCrashEfiPageCount, NULL);
     if (!EFI_ERROR (Status) && (RecordCount != 0)) {
       //
       // Build of location for Crash log in Hob
@@ -369,7 +376,7 @@ CpuCrashLogPeimEntry (
         // Extract crash record to HOB
         //
         CrashRecordEntry = (CRASHLOG_HOB_RECORD_ENTRY *)((UINTN)CrashlogHob + sizeof (CRASHLOG_HOB_DATA));
-        Status = CrashlogAgentExtract (CRASHLOG_NODE_ALL, &RecordCount, CrashRecordEntry);
+        Status = CrashlogAgentExtract (CRASHLOG_NODE_ALL, &RecordCount, &CpuCrashEfiPageCount, CrashRecordEntry);
         if (EFI_ERROR (Status)) {
           ZeroMem (CrashRecordEntry, sizeof(CRASHLOG_HOB_RECORD_ENTRY) * RecordCount);
           RecordCount = 0;
@@ -378,7 +385,32 @@ CpuCrashLogPeimEntry (
         CrashlogHob->RecordCount = RecordCount;
         CrashlogHob->CrashlogAgent = CrashlogAgentCpu;
       }
-
+    } else if (BootMode == BOOT_ON_S4_RESUME) {
+      VariableSize = sizeof (CRASHLOG_RECORD_PAGES);
+      Status = VariableServices->GetVariable (
+                                   VariableServices,
+                                   CRASHLOG_RECORDPAGES_NAME,
+                                   &gCrashLogRecordPagesGuid,
+                                   NULL,
+                                   &VariableSize,
+                                   &CrashRecordEfiPagesVariable
+                                   );
+      if (!EFI_ERROR (Status) && (CrashRecordEfiPagesVariable.CpuCrashEfiPageCount != 0)) {
+        Status = PeiServicesAllocatePages (
+                   EfiBootServicesData,
+                   CrashRecordEfiPagesVariable.CpuCrashEfiPageCount,
+                   &Address
+                   );
+        if (!EFI_ERROR (Status)) {
+          DEBUG ((DEBUG_ERROR, "Successfully allocate %d pages during S4 resume for earlier CPU crashlog data.\n", CrashRecordEfiPagesVariable.CpuCrashEfiPageCount));
+        } else {
+          DEBUG ((DEBUG_ERROR, "failed to allocate enough memory during S4 resume for earlier CPU crashlog data.\n"));
+          return Status;
+        }
+        CpuCrashEfiPageCount = CrashRecordEfiPagesVariable.CpuCrashEfiPageCount;
+      }
+    } else {
+      CpuCrashEfiPageCount = 0;
     }
   }
 
@@ -386,7 +418,27 @@ CpuCrashLogPeimEntry (
   // Set command interface based on SETUP options and capability
   //
   CrashlogAgentSendCommand ();
+  
+  //
+  // Set the cpu crash records efi page count
+  //
+  GuidHob = NULL;
+  GuidHob = GetFirstGuidHob (&gCrashLogRecordPagesGuid);
+  if (GuidHob != NULL) {
+    CrashRecordPagesHob = (CRASHLOG_RECORD_PAGES *)GET_GUID_HOB_DATA (GuidHob);
+  } else {
+    DEBUG ((DEBUG_INFO, "Create Crash Record Pages Hob\n"));
+    CrashRecordPagesHob = (CRASHLOG_RECORD_PAGES *)BuildGuidHob (
+                                         &gCrashLogRecordPagesGuid,
+                                         sizeof (CRASHLOG_RECORD_PAGES)
+                                         );
+    ZeroMem (CrashRecordPagesHob, sizeof (CRASHLOG_RECORD_PAGES));
+  }
+  if (CrashRecordPagesHob != NULL){
+    CrashRecordPagesHob->CpuCrashEfiPageCount = CpuCrashEfiPageCount;
+  }
 
+  GuidHob = NULL;
   //
   // Set the crashlog control variable
   //

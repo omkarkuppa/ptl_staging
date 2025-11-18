@@ -68,7 +68,6 @@ typedef struct {
   UINT8     CpuClear;
   UINT8     CpuRearm;
   UINT8     CpuStorageOff;
-
 } CRASHLOG_VARIABLE;
 
 //
@@ -96,13 +95,22 @@ typedef struct {
   UINT8    CpuRearm;
   UINT8    CpuStorageOff;
 } CRASHLOG_CONTROL_VARIABLE;
+
+#define CRASHLOG_RECORD_PAGES_VARIABLE_REVISION 1
+
+typedef struct {
+  UINT32    CpuCrashEfiPageCount;
+  UINT32    SocCrashEfiPageCount;
+} CRASHLOG_RECORD_PAGES;
 #pragma pack()
 
-#define CRASHLOG_VARIABLE_NAME             L"CrashLogVariable"
-#define CRASHLOG_CONTROL_VARIABLE_NAME     L"CrashLogCtlVariable"
+#define CRASHLOG_VARIABLE_NAME                 L"CrashLogVariable"
+#define CRASHLOG_CONTROL_VARIABLE_NAME         L"CrashLogCtlVariable"
+#define CRASHLOG_RECORDPAGES_NAME              L"CrashLogRecordPages"
 
 extern EFI_GUID gCrashLogVariableGuid;
 extern EFI_GUID gCrashLogCtlVariableGuid;
+extern EFI_GUID gCrashLogRecordPagesGuid;
 
 //
 // Declaration for SETUP

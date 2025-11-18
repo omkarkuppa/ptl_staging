@@ -67,6 +67,7 @@
   gCrashLogVariableGuid                                           ## CONSUMES
   gCrashLogCtlVariableGuid                                        ## CONSUMES
   gCrashLogRecordHobGuid                                          ## PRODUCES
+  gCrashLogRecordPagesGuid                                        ## CONSUMES
 
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr              ## CONSUMES

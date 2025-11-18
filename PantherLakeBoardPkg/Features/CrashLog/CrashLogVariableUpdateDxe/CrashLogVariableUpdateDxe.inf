@@ -47,6 +47,7 @@
 [Guids]
   gCrashLogVariableGuid                                           ## CONSUMES
   gCrashLogCtlVariableGuid                                        ## CONSUMES
+  gCrashLogRecordPagesGuid                                        ## CONSUMES
 
 [Depex]
   gEfiVariableArchProtocolGuid AND

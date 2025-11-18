@@ -66,7 +66,7 @@ CrashLogVariableUpdate (
   //
   GuidHob = GetFirstGuidHob (&gCrashLogVariableGuid);
   if (GuidHob != NULL) {
-    VariableHob = GET_GUID_HOB_DATA (GuidHob);
+    VariableHob = (CRASHLOG_VARIABLE *) GET_GUID_HOB_DATA (GuidHob);
 
     VarSize = sizeof (CRASHLOG_VARIABLE);
     Variable = AllocateZeroPool (VarSize);
@@ -81,7 +81,6 @@ CrashLogVariableUpdate (
                     &VarSize,
                     Variable
                     );
-
     if (!EFI_ERROR (Status) &&
          CompareMem (Variable, VariableHob, sizeof (CRASHLOG_VARIABLE))) {
       CopyMem (Variable, VariableHob, sizeof (CRASHLOG_VARIABLE));
@@ -98,6 +97,35 @@ CrashLogVariableUpdate (
     }
     FreePool (Variable);
   }
+  GuidHob = NULL;
+  //
+  // Get crash records efi page count hob and set to CRASHLOG_RECORD_PAGES
+  //
+  GuidHob = GetFirstGuidHob (&gCrashLogRecordPagesGuid);
+  if (GuidHob != NULL) {
+    VariableHob = (CRASHLOG_RECORD_PAGES *) GET_GUID_HOB_DATA (GuidHob);
+
+    VarSize = sizeof (CRASHLOG_RECORD_PAGES);
+    Variable = AllocateZeroPool (VarSize);
+    if (Variable == NULL) {
+      DEBUG ((DEBUG_ERROR, "Failed to allocate resource for %S\n", CRASHLOG_RECORDPAGES_NAME));
+      return EFI_OUT_OF_RESOURCES;
+    }
+    CopyMem (Variable, VariableHob, sizeof (CRASHLOG_RECORD_PAGES));
+    Status = gRT->SetVariable(
+                    CRASHLOG_RECORDPAGES_NAME,
+                    &gCrashLogRecordPagesGuid,
+                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                    VarSize,
+                    Variable
+                    );
+    if (!EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_INFO, "Update crashlog record pages variable.\n"));
+    }
+    FreePool (Variable);
+  }
+
+  GuidHob = NULL;
   //
   // Get control Variable hob and set to CRASHLOG_CONTROL_VARIABLE
   //
