@@ -58,6 +58,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <CnvBoardConfigPcd.h>
 #include <Ucsi.h>
+#include <Library/PeiLib.h>
 
 #define STALL_TIME                          1000000    // 1,000,000 microseconds = 1 second
 
@@ -126,7 +127,7 @@ GetVbtData (
 {
   EFI_GUID                        FileGuid;
   EFI_GUID                        BmpImageGuid;
-  UINT32                          Size;
+  UINTN                           Size;
 
   Size    = 0;
 
@@ -135,13 +136,13 @@ GetVbtData (
   CopyMem (&BmpImageGuid, PcdGetPtr (PcdIntelGraphicsVbtFileGuid), sizeof (BmpImageGuid));
 
   CopyMem (&FileGuid, &BmpImageGuid, sizeof (FileGuid));
-  PeiGetSectionFromFv (FileGuid, (VOID**) VbtAddress, &Size);
+  PeiGetSectionFromAnyFv(&FileGuid, EFI_SECTION_RAW, 0, (VOID**)VbtAddress, &Size);
   if (Size == 0) {
     DEBUG ((DEBUG_ERROR, "Could not locate VBT\n"));
   } else {
     DEBUG ((DEBUG_INFO, "GetVbtData VbtAddress is 0x%x\n", *VbtAddress));
     DEBUG ((DEBUG_INFO, "GetVbtData Size is 0x%x\n", Size));
-    *VbtSize   = Size;
+    *VbtSize   = (UINT32)Size;
   }
   DEBUG ((DEBUG_INFO, "GetVbtData exit\n"));
 

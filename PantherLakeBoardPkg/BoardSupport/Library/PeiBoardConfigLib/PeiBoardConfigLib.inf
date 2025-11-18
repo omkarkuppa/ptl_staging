@@ -51,6 +51,7 @@
   BiosIdLib
   PlatformUsbConfigLib
   TcssInfoLib
+  PeiLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -68,6 +69,7 @@
   UefiCpuPkg/UefiCpuPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
   UcsiFeaturePkg/UcsiFeaturePkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
 
 [Sources]
   PeiBoardConfigLib.c
