@@ -37,6 +37,7 @@
 #include <Library/PeiServicesTablePointerLib.h>
 #include <Library/PcdLib.h>
 #include <Register/B2pMailbox.h>
+#include <Register/Ptl/Cpu/CpuStrapSetDefinition.h>
 
 /**
   Check if VT is fused and disabled by Setup Option so reset is needed.
@@ -95,6 +96,7 @@ SetCpuStrapAndEarlyPowerOnConfig (
   UINT32                        CpuStrapSet3Low;
   EFI_BOOT_MODE                 BootMode;
   CPU_INIT_PREMEM_CONFIG        *CpuInitPreMemConfig;
+  MSR_FLEX_RATIO_REGISTER       MsrFlexRatio;
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   OVERCLOCKING_PREMEM_CONFIG    *OverClockingConfig;
 #endif
@@ -141,8 +143,23 @@ SetCpuStrapAndEarlyPowerOnConfig (
     /// Perform Flex Ratio if processor is fused to perform Flex Ratio
     ///
     if (CpuInitPreMemConfig->CpuRatio != 0) {
+      DEBUG ((DEBUG_INFO, "PeiCpuStrapProgramFlexMultiplier is getting programmend, CpuRatio from Policy is 0x%X\n", CpuInitPreMemConfig->CpuRatio));
       PeiCpuStrapProgramFlexMultiplier (&CpuStrapSet1High, (UINT8) CpuInitPreMemConfig->CpuRatio, &ColdResetFlag, &WarmResetFlag);
-    }
+    } else {
+      DEBUG ((DEBUG_INFO, "SKIPPING PeiCpuStrapProgramFlexMultiplier - CpuRatio is 0\n"));
+      MsrFlexRatio.Uint64 = AsmReadMsr64 (MSR_FLEX_RATIO);
+      DEBUG ((DEBUG_INFO, "Current MSR_FLEX_RATIO value: 0x%016llX\n", MsrFlexRatio.Uint64));
+      DEBUG ((DEBUG_INFO, "Current CPU_STRAP_SET FlexRatio value: 0x%X\n", ((CPU_STRAP_SET *) &CpuStrapSet1High)->FlexRatio));
+      if (MsrFlexRatio.Bits.FlexRatio != 0) {
+        MsrFlexRatio.Bits.Enable = 1;
+        MsrFlexRatio.Bits.FlexRatio = 0;
+        AsmWriteMsr64 (MSR_FLEX_RATIO, MsrFlexRatio.Uint64);
+        DEBUG ((DEBUG_INFO, "Updated MSR_FLEX_RATIO value: 0x%016llX\n", MsrFlexRatio.Uint64));
+        ((CPU_STRAP_SET *) &CpuStrapSet1High)->FlexRatio = 0;
+        DEBUG ((DEBUG_INFO, "Updated CPU_STRAP_SET FlexRatio value: 0x%X\n", ((CPU_STRAP_SET *) &CpuStrapSet1High)->FlexRatio));
+        WarmResetFlag = TRUE;
+      }
+    } 
     PeiCpuStrapFastWakeupEnableDisable (&CpuStrapSet1High, (UINT8) CpuInitPreMemConfig->BootMaxFrequency, &ColdResetFlag, &WarmResetFlag);
 
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
