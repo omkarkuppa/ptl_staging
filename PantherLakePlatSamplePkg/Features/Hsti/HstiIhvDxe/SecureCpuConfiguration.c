@@ -120,7 +120,6 @@ CheckSecureCpuConfiguration (
   UINT64                            ImrPrmrrPhysBase;
   UINT64                            ImrPrmrrPhysBaseRaw;
   UINT64                            ImrPrmrrPhysMask;
-  BOOLEAN                           SeamrrEnabled;
   MSR_SEAMRR_BASE_REGISTER          MsrSeamrrPhysBase;
   MSR_SEAMRR_MASK_REGISTER          MsrSeamrrPhysMask;
   MSR_SEAMRR_BASE_REGISTER          ApMsrSeamrrPhysBase;
@@ -655,52 +654,101 @@ CheckSecureCpuConfiguration (
     //
     MsrSeamrrPhysBase.Uint64 = AsmReadMsr64 (MSR_SEAMRR_BASE);
     MsrSeamrrPhysMask.Uint64 = AsmReadMsr64 (MSR_SEAMRR_MASK);
-    SeamrrEnabled = TRUE;
 
-    DEBUG ((DEBUG_INFO, "    SEAMRR enabled test\n"));
-    if ((MsrSeamrrPhysBase.Uint64 == 0) || ((MsrSeamrrPhysMask.Uint64 & BIT11) == 0) || ((MsrSeamrrPhysMask.Uint64 & B_SEAMRR_ADDR_MASK) == 0)) {
-      DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs are not enabled\n"));
-      SeamrrEnabled = FALSE;
-      BuildAndAppendHstiStatusString (
-        HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_40,
-        HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_40
-        );
-      Result = FALSE;
-    }
-
-    if (SeamrrEnabled) {
-      //
-      // SEAMRR MSRs consistency test
-      //
-      for (CpuIndex = 0; CpuIndex < CpuNumber; CpuIndex++) {
-        DEBUG ((DEBUG_INFO, "    [CPU - 0x%x]\n", CpuIndex));
-
-        DEBUG ((DEBUG_INFO, "      SEAMRR MSRs consistency Test\n"));
-        ApMsrSeamrrPhysBase.Uint64 = ProcessorReadMsr64 (CpuIndex, MSR_SEAMRR_BASE);
-        ApMsrSeamrrPhysMask.Uint64 = ProcessorReadMsr64 (CpuIndex, MSR_SEAMRR_MASK);
-        if ((MsrSeamrrPhysBase.Uint64 != ApMsrSeamrrPhysBase.Uint64) || (MsrSeamrrPhysMask.Uint64 != ApMsrSeamrrPhysMask.Uint64)) {
-          DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs are not consistent across all cores\n"));
-          BuildAndAppendHstiStatusString (
-            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_41,
-            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_41
-            );
-          Result = FALSE;
-          break;
-        }
-      }
-
-      //
-      // SEAMRR MSR Range Configured test
-      //
-
-      DEBUG ((DEBUG_INFO, "    SEAMRR MSR Range Configured test\n"));
-      if(MsrSeamrrPhysBase.Bits.Configured != 1) {
-        DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs Range is not configured\n"));
+    if ((MsrSeamrrPhysBase.Uint64 & B_SEAMRR_ADDR_MASK) == 0) {
+      DEBUG ((DEBUG_INFO, "    SEAMRR_BASE not programmed. Skipping SEAMRR enabled test along with related tests\n"));
+    } else {
+      DEBUG ((DEBUG_INFO, "    SEAMRR enabled test\n"));
+      if (((MsrSeamrrPhysMask.Uint64 & BIT11) == 0) || ((MsrSeamrrPhysMask.Uint64 & B_SEAMRR_ADDR_MASK) == 0)) {
+        DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs are not enabled\n"));
         BuildAndAppendHstiStatusString (
-          HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_42,
-          HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_42
+          HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_40,
+          HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_40
           );
         Result = FALSE;
+      } else {
+        //
+        // SEAMRR MSRs consistency test
+        //
+        for (CpuIndex = 0; CpuIndex < CpuNumber; CpuIndex++) {
+          DEBUG ((DEBUG_INFO, "    [CPU - 0x%x]\n", CpuIndex));
+
+          DEBUG ((DEBUG_INFO, "      SEAMRR MSRs consistency Test\n"));
+          ApMsrSeamrrPhysBase.Uint64 = ProcessorReadMsr64 (CpuIndex, MSR_SEAMRR_BASE);
+          ApMsrSeamrrPhysMask.Uint64 = ProcessorReadMsr64 (CpuIndex, MSR_SEAMRR_MASK);
+          if ((MsrSeamrrPhysBase.Uint64 != ApMsrSeamrrPhysBase.Uint64) || (MsrSeamrrPhysMask.Uint64 != ApMsrSeamrrPhysMask.Uint64)) {
+            DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs are not consistent across all cores\n"));
+            BuildAndAppendHstiStatusString (
+              HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_41,
+              HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_41
+              );
+            Result = FALSE;
+            break;
+          }
+        }
+
+        //
+        // SEAMRR MSR Range Configured test
+        //
+        DEBUG ((DEBUG_INFO, "    SEAMRR MSR Range Configured test\n"));
+        if(MsrSeamrrPhysBase.Bits.Configured != 1) {
+          DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs Range is not configured\n"));
+          BuildAndAppendHstiStatusString (
+            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_42,
+            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_42
+            );
+          Result = FALSE;
+        }
+
+        //
+        // SEAMRR IMR Enabled test
+        //
+        ImrSeamrrPhysBase = GetImrRegisterData (SEAMRR, IMR_BASE_BYTE);
+        ImrSeamrrPhysMask = GetImrRegisterData (SEAMRR, IMR_MASK_BYTE);
+
+        DEBUG ((DEBUG_INFO, "    SEAMRR IMR Enabled test\n"));
+        if((ImrSeamrrPhysBase != 0) && (ImrSeamrrPhysMask != 0) &&
+        ((GetImrRegisterData (SEAMRR, IMR_BASE_RAW) & BIT4) != 0)) {
+          DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR in IMR (2PowerN) Enabled Range bit is not set\n"));
+          BuildAndAppendHstiStatusString (
+            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_44,
+            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_44
+            );
+          Result = FALSE;
+        } else {
+          //
+          // SEAMRR MSRs & IMRs in SAF consistent test
+          //
+          DEBUG ((DEBUG_INFO, "    TDX SEAM MSR & IMR in SAF consistent test\n"));
+          ImrSeamrrSize = GetImrRegisterData (SEAMRR, IMR_SIZE_BYTE);
+          MsrSeamrrSize = ((MsrSeamrrPhysMask.Uint64 & B_SEAMRR_ADDR_MASK) ^ B_SEAMRR_SIZE_MASK) + 1;
+
+          if(((MsrSeamrrPhysBase.Uint64 & B_SEAMRR_ADDR_MASK) != ImrSeamrrPhysBase) ||
+          (ImrSeamrrSize != MsrSeamrrSize)) {
+            DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs and SEAMRR IMRs are not consistent\n"));
+            DEBUG ((DEBUG_INFO, "        ImrSeamrrPhysBase = 0x%llx\n", ImrSeamrrPhysBase));
+            DEBUG ((DEBUG_INFO, "        MsrSeamrrPhysBase = 0x%llx\n", (MsrSeamrrPhysBase.Uint64)));
+            DEBUG ((DEBUG_INFO, "        ImrSeamrrSize = 0x%llx\n", ImrSeamrrSize));
+            DEBUG ((DEBUG_INFO, "        MsrSeamrrPhysMask = 0x%llx\n", (MsrSeamrrPhysMask.Uint64)));
+
+            BuildAndAppendHstiStatusString (
+              HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_45,
+              HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_45
+              );
+            Result = FALSE;
+          }
+
+          DEBUG ((DEBUG_INFO, "      NOC Exclusion Range is aligned/overlap SEAMRR Test\n"));
+          if (!ImrInExclusionRange (SEAMRR, NocExclusionRangeHigh)) {
+            DEBUG ((DEBUG_INFO, "      Unexpected Status: SEAMRR IMR Range is not part of NoC Exclusion High Range\n"));
+
+            BuildAndAppendHstiStatusString (
+              HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_1B,
+              HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_1B
+              );
+            Result = FALSE;
+          }
+        }
       }
     }
 
@@ -715,60 +763,6 @@ CheckSecureCpuConfiguration (
         HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_43
         );
       Result = FALSE;
-    }
-
-    if (SeamrrEnabled) {
-
-      //
-      // SEAMRR IMR Enabled test
-      //
-      ImrSeamrrPhysBase = GetImrRegisterData (SEAMRR, IMR_BASE_BYTE);
-      ImrSeamrrPhysMask = GetImrRegisterData (SEAMRR, IMR_MASK_BYTE);
-
-      DEBUG ((DEBUG_INFO, "    SEAMRR IMR Enabled test\n"));
-      if((ImrSeamrrPhysBase != 0) && (ImrSeamrrPhysMask != 0) &&
-      ((GetImrRegisterData (SEAMRR, IMR_BASE_RAW) & BIT4) != 0)) {
-        DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR in IMR (2PowerN) Enabled Range bit is not set\n"));
-        BuildAndAppendHstiStatusString (
-          HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_44,
-          HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_44
-          );
-        Result = FALSE;
-      } else {
-
-        //
-        // SEAMRR MSRs & IMRs in SAF consistent test
-        //
-        DEBUG ((DEBUG_INFO, "    TDX SEAM MSR & IMR in SAF consistent test\n"));
-        ImrSeamrrSize = GetImrRegisterData (SEAMRR, IMR_SIZE_BYTE);
-        MsrSeamrrSize = ((MsrSeamrrPhysMask.Uint64 & B_SEAMRR_ADDR_MASK) ^ B_SEAMRR_SIZE_MASK) + 1;
-
-        if(((MsrSeamrrPhysBase.Uint64 & B_SEAMRR_ADDR_MASK) != ImrSeamrrPhysBase) ||
-        (ImrSeamrrSize != MsrSeamrrSize)) {
-          DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs and SEAMRR IMRs are not consistent\n"));
-          DEBUG ((DEBUG_INFO, "        ImrSeamrrPhysBase = 0x%llx\n", ImrSeamrrPhysBase));
-          DEBUG ((DEBUG_INFO, "        MsrSeamrrPhysBase = 0x%llx\n", (MsrSeamrrPhysBase.Uint64)));
-          DEBUG ((DEBUG_INFO, "        ImrSeamrrSize = 0x%llx\n", ImrSeamrrSize));
-          DEBUG ((DEBUG_INFO, "        MsrSeamrrPhysMask = 0x%llx\n", (MsrSeamrrPhysMask.Uint64)));
-
-          BuildAndAppendHstiStatusString (
-            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_45,
-            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_45
-            );
-          Result = FALSE;
-        }
-
-        DEBUG ((DEBUG_INFO, "      NOC Exclusion Range is aligned/overlap SEAMRR Test\n"));
-        if (!ImrInExclusionRange (SEAMRR, NocExclusionRangeHigh)) {
-          DEBUG ((DEBUG_INFO, "      Unexpected Status: SEAMRR IMR Range is not part of NoC Exclusion High Range\n"));
-
-          BuildAndAppendHstiStatusString (
-            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_CODE_1B,
-            HSTI_BYTE0_SECURE_CPU_CONFIGURATION_UNEXP_STATUS_STRING_1B
-            );
-          Result = FALSE;
-        }
-      }
     }
   }
 
