@@ -33,7 +33,7 @@
 #define FPT_PARTITION_NAME_PCOD         0x444F4350    // PCOD - P-Unit Code
 #define FPT_PARTITION_NAME_ACOD         0x444F4341    // ACOD - Audio Code
 #define FPT_PARTITION_NAME_NPHY         0x5948504E    // NPHY - Network PHY
-#define FPT_PARTITION_NAME_SSPH         0x59485053    // SSPH - Storage Steppings PHY
+#define FPT_PARTITION_NAME_SSPH         0x48505353    // SSPH - Storage Steppings PHY
 #define FPT_PARTITION_NAME_CNVI         0x49564E43    // CNVi - Connectivity (WiFi)
 #define FPT_PARTITION_NAME_NFTP         0x5054464E    // NFTP - Network File Transfer Protocol
 #define FPT_PARTITION_NAME_ISHC         0x43485349    // ISHC - Integrated Sensor Hub Controller
