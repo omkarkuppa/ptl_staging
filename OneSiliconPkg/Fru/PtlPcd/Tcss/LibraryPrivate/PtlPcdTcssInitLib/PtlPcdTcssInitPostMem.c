@@ -153,7 +153,6 @@ PtlTcssInitPostMem (
     { IpUsb3FeatIdB2bRetryFix,                    IpUsb3FeatValB2bRetryFixEn },
     { IpUsb3FeatIdReadAfterWriteDelay,            IpUsb3FeatValReadAfterWriteDelayEn },
     { IpUsb3FeatIdHSAsyncActiveExposure,          IpUsb3FeatValHSAsyncActiveExposureDis },
-    { IpUsb3FeatIdSoftErrorTriggerRecalibration,  IpUsb3FeatValSoftErrorTriggerRecalibrationDis },
     { IpUsb3FeatIdDbcTraceInEp,                   IpUsb3FeatValDbcTraceInEpEn },
   };
 
