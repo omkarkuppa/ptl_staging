@@ -554,6 +554,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       FspSecPlatformLib|$(PLATFORM_SI_PACKAGE)/Library/PlatformSecLib/FspMPlatformSecLib.inf
       NULL|$(PLATFORM_SI_PACKAGE)/Library/BasePlatformFspMultiPhaseLib/BasePlatformFspMultiPhaseLib.inf
       NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
+      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
       gIntelFsp2PkgTokenSpaceGuid.PcdMultiPhaseNumberOfPhases|0
@@ -747,7 +748,10 @@ $(SILICON_FSP_PATH)/FspRsc2PostCodeMapInit/Pei/FspRsc2PostCodeMapServicePei.inf 
     <LibraryClasses>
       NULL|$(PLATFORM_SI_PACKAGE)/Library/BasePlatformFspMultiPhaseLib/BasePlatformFspMultiPhaseLib.inf
   }
-  $(SILICON_FSP_PATH)/FspPcdInit/Pei/FspPcdInit.inf
+  $(SILICON_FSP_PATH)/FspPcdInit/Pei/FspPcdInit.inf {
+    <LibraryClasses>
+      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+  } 
   $(SILICON_FSP_PATH)/FspInit/Pei/FspInit.inf {
     <LibraryClasses>
       CpuInitPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/LibraryPrivate/PeiCpuInitPolicyLib/PeiCpuInitPolicyLib.inf

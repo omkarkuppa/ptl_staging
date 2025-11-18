@@ -522,13 +522,18 @@ DebugServiceEntryPoint (
   ASSERT_EFI_ERROR (Status);
 
   if (FspDataValid == TRUE) {
-    DEBUG ((DEBUG_INFO, " FspData: Signature             - 0x%x\n", FspData->Signature));
-    DEBUG ((DEBUG_INFO, " FspData: Version               - 0x%x\n", FspData->Version));
-    DEBUG ((DEBUG_INFO, " FspData: PerfIdx               - 0x%x\n", FspData->PerfIdx));
-    DEBUG ((DEBUG_INFO, " FspData: PerfSig               - 0x%x\n", FspData->PerfSig));
-    DEBUG ((DEBUG_INFO, " FspData: FspMode               - %s\n",   FspData->FspMode ? L"DISPATCH" : L"API"));
-    DEBUG ((DEBUG_INFO, " FspData: FspArch               - %s\n",   ((sizeof (UINTN) == sizeof (UINT64)) != 0)? L"X64" : L"IA32"));
-    DEBUG ((DEBUG_INFO, " FspData: TempRamInitUpdPtr     - 0x%x\n", FspData->TempRamInitUpdPtr));
+    DEBUG ((DEBUG_INFO, "FspData:\n"));
+    DEBUG ((DEBUG_INFO, "Signature-0x%x\n", FspData->Signature));
+    if (FspData->FspInfoHeader != NULL) {
+      DEBUG ((DEBUG_INFO, "SpecVersion-0x%x\n", FspData->FspInfoHeader->SpecVersion));
+      DEBUG ((DEBUG_INFO, "HeaderRevision-0x%x\n", FspData->FspInfoHeader->HeaderRevision));
+    }
+    DEBUG ((DEBUG_INFO, "Version-0x%x\n", FspData->Version));
+    DEBUG ((DEBUG_INFO, "PerfIdx-0x%x\n", FspData->PerfIdx));
+    DEBUG ((DEBUG_INFO, "PerfSig-0x%x\n", FspData->PerfSig));
+    DEBUG ((DEBUG_INFO, "FspMode-%s\n",   FspData->FspMode ? L"DISPATCH" : L"API"));
+    DEBUG ((DEBUG_INFO, "FspArch-%s\n", ((sizeof (UINTN) == sizeof (UINT64)) != 0)? L"X64" : L"IA32"));
+    DEBUG ((DEBUG_INFO, "TempRamInitUpdPtr-0x%x\n", FspData->TempRamInitUpdPtr));
   }
 
   return EFI_SUCCESS;
