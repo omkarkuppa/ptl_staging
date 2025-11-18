@@ -81,6 +81,7 @@ export FSP_BINARY_BUILD=TRUE
 export FSP_BINARY_BUILD_ONLY=FALSE
 export FSPB_BUILD=FALSE
 export FSPW_BUILD=FALSE
+export WHP_BUILD=FALSE
 
 
 #
@@ -107,7 +108,7 @@ export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.P
 function PrintUsage {
   echo "Client BIOS build script"
   echo
-  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [rp] [s] [gcc] [clang] [xcode] [fspapi] [fsp64] [fspsigned] [fspunsigned] [res] [cln]"
+  echo "$0 [-f FLAG VALUE] [/f FLAG VALUE] [/s] [-s] [r] [rp] [s] [gcc] [clang] [xcode] [fspapi] [fsp64] [fspsigned] [fspunsigned] [res] [whp] [cln]"
   echo
   echo "  Default build flags: build in Debug Mode; 32-bit PEI for FSP; FSP Dispatch Mode"
   echo
@@ -129,6 +130,7 @@ function PrintUsage {
   echo "  fsp64    To build using 64-bit PEI for FSP."
   echo "  fspsigned To build Signed FSP."
   echo "  fspunsigned To build UnSigned FSP."
+  echo "  whp      To set gSiPkgTokenSpaceGuid.PcdWhPSupport TRUE"
 
   echo "  cln      Build clean."
   echo "  notimestamp To eliminate the effect of timestamp."
@@ -386,6 +388,18 @@ for ((i=1 ; i <= numargs ; i++)); do
 --pcd gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosExtenedRegionEnable=TRUE"
     export SI_BUILD_OPTION_PCD="$SI_BUILD_OPTION_PCD \
 --pcd gSiPkgTokenSpaceGuid.PcdExtendedBiosRegionSupport=TRUE"
+  elif [ "$1" == "whp" ]; then
+  echo "Whp Build"
+  export WHP_BUILD=TRUE
+  ROM_FILENAME_SPECIAL_BUILD_TYPE="_Whp"
+  if [ "$2" == "r" ]; then
+    echo "Whp Release Build"
+    $PrepRelease="RELEASE"
+    echo "gSiPkgTokenSpaceGuid.PcdWhPSupport | TRUE"
+    BUILD_OPTION_PCD="${BUILD_OPTION_PCD} --pcd gSiPkgTokenSpaceGuid.PcdWhPSupport=TRUE"
+  else
+    BUILD_OPTION_PCD="${BUILD_OPTION_PCD} --pcd gSiPkgTokenSpaceGuid.PcdWhPSupport=TRUE"
+  fi
   elif [ -n "$1" ]; then  # !!! Additional arguments must be added above this line, otherwise it breaks the parsing logic
     echo "Invalid input argument: $1"
     echo

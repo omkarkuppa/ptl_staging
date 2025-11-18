@@ -129,5 +129,6 @@ echo "  FSP_BINARY_BUILD     = $FSP_BINARY_BUILD"
 echo "  FSP_TEST_RELEASE     = $FSP_TEST_RELEASE"
 echo "  FSPB_BUILD           = $FSPB_BUILD"
 echo "  FSPW_BUILD           = $FSPW_BUILD"
+echo "  WHP_BUILD            = $WHP_BUILD"
 echo
 EndPreBuild
