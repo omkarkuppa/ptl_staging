@@ -135,29 +135,32 @@ Scope (\_SB) {
         }
         Return (ToString(BUF))
       }
-      Method(_INI)
-      {
-          If (LEqual(L0SM, CUSTOM_DISPLAY_BRIDGE))
-          {
-            Store(GRI1(), _HID)
-            Store(GRI1(), _CID)
-          }
-          If (LEqual(L1SM, CUSTOM_DISPLAY_BRIDGE))
-          {
-            Store(GRI1(), _HID)
-            Store(GRI1(), _CID)
-          }
-      }
       Method (_STA, 0, NotSerialized)
       {
-          if (LEqual(L0SM, HDAC_I2S_LONTIUM)){  Return (0xF) }
-          if (LEqual(L0SM, CUSTOM_DISPLAY_BRIDGE)){ Return (0xF) }
-          if (LEqual(L1SM, HDAC_I2S_LONTIUM)){  Return (0xF) }
-          if (LEqual(L1SM, CUSTOM_DISPLAY_BRIDGE)){ Return (0xF) }
-          if (LEqual(L2SM, HDAC_I2S_LONTIUM)){  Return (0xF) }
-          if (LEqual(L3SM, HDAC_I2S_LONTIUM)){  Return (0xF) }
-          if (LEqual(L4SM, HDAC_I2S_LONTIUM)){  Return (0xF) }
-          if (LEqual(L5SM, HDAC_I2S_LONTIUM)){  Return (0xF) }
+        If (LOr (LEqual (L0SM,HDAC_I2S_LONTIUM), LEqual (L0SM, CUSTOM_DISPLAY_BRIDGE)))
+        {
+          Return (0xF)
+        }
+        If (LOr (LEqual (L1SM,HDAC_I2S_LONTIUM), LEqual (L1SM, CUSTOM_DISPLAY_BRIDGE)))
+        {
+          Return (0xF)
+        }
+        If (LOr (LEqual (L2SM,HDAC_I2S_LONTIUM), LEqual (L2SM, CUSTOM_DISPLAY_BRIDGE)))
+        {
+          Return (0xF)
+        }
+        If (LOr (LEqual (L3SM,HDAC_I2S_LONTIUM), LEqual (L3SM, CUSTOM_DISPLAY_BRIDGE)))
+        {
+          Return (0xF)
+        }
+        If (LOr (LEqual (L4SM,HDAC_I2S_LONTIUM), LEqual (L4SM, CUSTOM_DISPLAY_BRIDGE)))
+        {
+          Return (0xF)
+        }
+        If (LOr (LEqual (L5SM,HDAC_I2S_LONTIUM), LEqual (L5SM, CUSTOM_DISPLAY_BRIDGE)))
+        {
+          Return (0xF)
+        }
           Return (0x0)
       }
     } // Device (HDA1)
