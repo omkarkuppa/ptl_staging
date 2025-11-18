@@ -609,6 +609,30 @@ VgaGraphicsMode12RenderImage (
   IN const VOID  *VgaBuffer
   );
 
+  /**
+  Draw a black-and-white (1bpp) image at a specific (X, Y) position
+  in VGA Graphics Mode 12h (640x480, 16 colors).
+  Each pixel is stored as a single bit:
+    - 0 = black (color index 0)
+    - 1 = white (color index 15, i.e. all four planes set)
+  The buffer is organized as [Height][Width/8].
+  @param[in] X          The X coordinate of the top-left corner of the image.
+  @param[in] Y          The Y coordinate of the top-left corner of the image.
+  @param[in] Width      The width of the image in pixels (must be multiple of 8).
+  @param[in] Height     The height of the image in pixels.
+  @param[in] BwBuffer   Pointer to the buffer containing the 1bpp black/white image.
+  @note This API should not be used in DXE Phase.
+**/
+VOID
+EFIAPI
+VgaGraphicsMode12RenderImageBW (
+  IN UINT32      X,
+  IN UINT32      Y,
+  IN UINT32      Width,
+  IN UINT32      Height,
+  IN const VOID  *BwBuffer
+  );
+
 /**
   Draw a string on the screen in VGA Mode 3.
 

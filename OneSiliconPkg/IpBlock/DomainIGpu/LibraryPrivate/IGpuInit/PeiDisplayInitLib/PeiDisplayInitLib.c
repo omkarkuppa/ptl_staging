@@ -323,7 +323,11 @@ IGpuVgaInit (
         VgaTextMode3WriteString (String, VGA_TEXT_CENTER);
       } else if (IS_VGA_GRAPHICS_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
         if ((IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth != 0) && (IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight != 0) && (IGpuPreMemConfig->GraphicsMode12Info.ImagePtr != NULL)) {
-          VgaGraphicsMode12RenderImage (IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->GraphicsMode12Info.ImagePtr);
+          if (IS_VGA_MODE12_MONOCHROME (IGpuPreMemConfig->VgaInitControl))  {
+            VgaGraphicsMode12RenderImageBW (IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->GraphicsMode12Info.ImagePtr);
+          } else {
+            VgaGraphicsMode12RenderImage (IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->GraphicsMode12Info.ImagePtr);
+          }
         }
       }
 

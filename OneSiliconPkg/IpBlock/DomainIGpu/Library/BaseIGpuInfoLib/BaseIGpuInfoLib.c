@@ -2035,6 +2035,13 @@ VgaGraphicsMode12RenderImage (
   }
 
   //
+  // Exit if IS_VGA_MODE12_MONOCHROME is false
+  //
+  if (IS_VGA_MODE12_MONOCHROME (IGpuDataHob->VgaDisplayConfig)) {
+        return;
+  }
+
+  //
   // Calculate the number of bytes per row for the given width
   // Each byte in VGA memory represents 8 pixels (1 bit per pixel in each of the 4 planes),
   // so we divide the width by 8 to get the number of bytes per row.
@@ -2070,6 +2077,95 @@ VgaGraphicsMode12RenderImage (
     }
   }
 }
+
+/**
+  Draw a black-and-white (1bpp) image at a specific (X, Y) position
+  in VGA Graphics Mode 12h (640x480, 16 colors).
+
+  Each pixel is stored as a single bit:
+    - 0 = black (color index 0)
+    - 1 = white (color index 15, i.e. all four planes set)
+
+  The buffer is organized as [Height][Width/8].
+
+  @param[in] X          The X coordinate of the top-left corner of the image.
+  @param[in] Y          The Y coordinate of the top-left corner of the image.
+  @param[in] Width      The width of the image in pixels (must be multiple of 8).
+  @param[in] Height     The height of the image in pixels.
+  @param[in] BwBuffer   Pointer to the buffer containing the 1bpp black/white image.
+
+  @note This API should not be used in DXE Phase.
+**/
+VOID
+EFIAPI
+VgaGraphicsMode12RenderImageBW (
+  IN UINT32      X,
+  IN UINT32      Y,
+  IN UINT32      Width,
+  IN UINT32      Height,
+  IN const VOID  *BwBuffer
+  )
+{
+  const UINT8     *Buffer;
+  volatile UINT8  *VgaMemBase;
+  UINT32          BytesPerRow;
+  UINT32          Row;
+  UINT32          Col;
+  UINT8           Plane;
+  IGPU_DATA_HOB   *IGpuDataHob;
+
+  //
+  // Ensure coordinates and dimensions are within bounds
+  //
+  if ((X >= VGA_GRAPHICS_MODE12_WIDTH) ||
+      (Y >= VGA_GRAPHICS_MODE12_HEIGHT) ||
+      (X + Width > VGA_GRAPHICS_MODE12_WIDTH) ||
+      (Y + Height > VGA_GRAPHICS_MODE12_HEIGHT)) {
+    return;
+  }
+
+  //
+  // Retrieve the IGPU data HOB to determine VGA display configuration
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    return;
+  }
+
+  //
+  // Each row of the 1bpp buffer = Width/8 bytes
+  //
+  BytesPerRow = Width / 8;
+  Buffer      = (const UINT8 *)BwBuffer;
+
+  //
+  // Process each plane once - only 4 I/O operations total
+  //
+  for (Plane = 0; Plane < VGA_GRAPHICS_MODE12_MAX_PLANE; Plane++) {
+    SetVgaPlane (Plane);
+
+    //
+    // Process all rows for current plane
+    //
+    for (Row = 0; Row < Height; Row++) {
+      //
+      // Calculate VGA memory base address for this row
+      // VGA row stride = 640/8 = 80 bytes
+      //
+      VgaMemBase = (volatile UINT8 *)(UINTN)(VGA_GRAPHICS_MODE12_BASE_ADDRESS +
+                   ((Y + Row) * (VGA_GRAPHICS_MODE12_WIDTH / 8)) + (X / 8));
+
+      //
+      // Copy entire row for current plane
+      // For B&W images: all planes get identical data
+      //
+      for (Col = 0; Col < BytesPerRow; Col++) {
+        VgaMemBase[Col] = Buffer[(Row * BytesPerRow) + Col];
+      }
+    }
+  }
+}
+
 
 /**
   Draw a character at a specific (X, Y) position in VGA Graphics Mode 12h.

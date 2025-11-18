@@ -71,14 +71,22 @@
 #define VGA_MRC_PROGRESS_BAR_ENABLE   (0)
 #define VGA_MRC_PROGRESS_BAR_DISABLE  (BIT4)
 
-#define IS_VGA_ENABLED(data)                      (((data) & BIT0) == VGA_DISPLAY_ENABLED)
-#define IS_VGA_TEXT_MODE3_ENABLED(data)           (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_TEXT_MODE3_SUPPORT))
-#define IS_VGA_GRAPHICS_MODE12_ENABLED(data)      (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_GRAPHICS_MODE12_SUPPORT))
-#define IS_VGA_EXIT_STATUS_SUPPORT(data)          (IS_VGA_ENABLED(data) && (((data) & BIT2) == VGA_EXIT_SUPPORT))
-#define IS_VGA_INIT_ON_MRC_ONLY(data)             (IS_VGA_ENABLED(data) && (((data) & BIT3) == VGA_INIT_DURING_MRC_TRAINING_SUPPORT))
-#define IS_VGA_INIT_ON_DISPLAY_INIT(data)         (IS_VGA_ENABLED(data) && (((data) & BIT3) == VGA_INIT_DURING_DISPLAY_INIT_SUPPORT))
-#define IS_VGA_MRC_PROGRESS_BAR_DISABLED(data)    (IS_VGA_ENABLED(data) && (((data) & BIT4) == VGA_MRC_PROGRESS_BAR_DISABLE))
-#define IS_VGA_MRC_PROGRESS_BAR_ENABLED(data)     (IS_VGA_ENABLED(data) && (((data) & BIT4) == VGA_MRC_PROGRESS_BAR_ENABLE))
+//
+// BIT 5 : VgaInitControl for Mode 12 Color or Monochrome
+//
+#define VGA_MODE12_16_COLOR_SUPPORT    (0)
+#define VGA_MODE12_MONOCHROME_SUPPORT  (BIT5)
+
+#define IS_VGA_ENABLED(data)                    (((data) & BIT0) == VGA_DISPLAY_ENABLED)
+#define IS_VGA_TEXT_MODE3_ENABLED(data)         (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_TEXT_MODE3_SUPPORT))
+#define IS_VGA_GRAPHICS_MODE12_ENABLED(data)    (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_GRAPHICS_MODE12_SUPPORT))
+#define IS_VGA_EXIT_STATUS_SUPPORT(data)        (IS_VGA_ENABLED(data) && (((data) & BIT2) == VGA_EXIT_SUPPORT))
+#define IS_VGA_INIT_ON_MRC_ONLY(data)           (IS_VGA_ENABLED(data) && (((data) & BIT3) == VGA_INIT_DURING_MRC_TRAINING_SUPPORT))
+#define IS_VGA_INIT_ON_DISPLAY_INIT(data)       (IS_VGA_ENABLED(data) && (((data) & BIT3) == VGA_INIT_DURING_DISPLAY_INIT_SUPPORT))
+#define IS_VGA_MRC_PROGRESS_BAR_DISABLED(data)  (IS_VGA_ENABLED(data) && (((data) & BIT4) == VGA_MRC_PROGRESS_BAR_DISABLE))
+#define IS_VGA_MRC_PROGRESS_BAR_ENABLED(data)   (IS_VGA_ENABLED(data) && (((data) & BIT4) == VGA_MRC_PROGRESS_BAR_ENABLE))
+#define IS_VGA_MODE12_16_COLOR(data)            (IS_VGA_GRAPHICS_MODE12_ENABLED(data) && (((data) & BIT5) == VGA_MODE12_16_COLOR_SUPPORT))
+#define IS_VGA_MODE12_MONOCHROME(data)          (IS_VGA_GRAPHICS_MODE12_ENABLED(data) && (((data) & BIT5) == VGA_MODE12_MONOCHROME_SUPPORT))
 
 typedef enum {
   DISPLAY_AUTO = 0x00,
@@ -194,6 +202,7 @@ typedef struct {
    BIT2 - 0 : No Extended SOL Support (Disable VGA after Memory training done), 1 : Extended SOL Support
    BIT3 - 0 : VGA Init During Display Init, 1 - VGA Init During MRC Cold Boot.
    BIT4 - 0 : Enable Progress Bar, 1 : Disable Progress Bar
+   BIT5 - 0 : VGA Mode 12 16 Color Support, 1 : VGA Mode 12 Monochrome Black and White Support
   **/
   UINT8                       VgaInitControl;             ///< Offset 74 VGA Init Control
   VOID                        *VgaMessage;                ///< Pointer to Message which should be displayed
