@@ -22,7 +22,7 @@
 #define _GreenMrcCommonTypes_h_
 #include "CMrcCommonTypes.h" // for definitions common to blue and green
 
-#ifdef XCC_BUILD
+#if defined (XCC_BUILD) && !defined (HVM_MODE)
 #define FUNCTION_LOCATION_GREEN_IRAM_0 __attribute__ ((section (".iram0.text")))
 #define FUNCTION_LOCATION_GREEN_IRAM_1 __attribute__ ((section (".iram1.text")))
 #else

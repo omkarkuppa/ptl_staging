@@ -1402,13 +1402,6 @@ MrcSetOverrides (
     Outputs->EctDone = TRUE;
   }
 
-  // If Deswizzle mapping step is disabled, disabled the oscillator for LPDDR as
-  //  it depends on deswizzling to work properly
-  if ((!ExtInputs->TrainingEnables2.DQDQSSWZ) && (Outputs->IsLpddr)) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "%s Disabling WRTRETRAIN as DQ Mapping is not enabled\n", gWarnString);
-    ExtInputs->TrainingEnables3.WRTRETRAIN = 0;
-  }
-
   Inputs->IsApplyMrCommandDelays = TRUE;
 
   // Watermark granularity support; if RefreshWm == HIGH or contains invalid value, set to default watermark HIGH values
@@ -1536,6 +1529,12 @@ MrcSetOverrides (
     ExtInputs->TrainingEnables2.DQDQSSWZ = 0;
     ExtInputs->TrainingEnables.JWRL      = 0;
   }
+
+#ifndef MRC_MINIBIOS_BUILD
+  if (Outputs->IsLpddr) {
+    ExtInputs->TrainingEnables2.DQDQSSWZ = 0;   // Keep Dq/Dqs swizzle detection disabled on LP5
+  }
+#endif
 
   return Status;
 }

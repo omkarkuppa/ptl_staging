@@ -2173,12 +2173,14 @@ MrcGetSetEnPhaseGating (
   using direct multicast CR access for speed.
 
   @param[in]  MrcData - Global MRC data structure
+  @param[in]  Rank    - Target rank
   @param[in]  Param   - Margin param
   @param[in]  Value   - The value to program
 */
 VOID
 MrcWriteDirectMulticast (
   IN MrcParameters *const MrcData,
+  IN UINT32               Rank,
   IN UINT8                Param,
   IN INT32                Value
   );

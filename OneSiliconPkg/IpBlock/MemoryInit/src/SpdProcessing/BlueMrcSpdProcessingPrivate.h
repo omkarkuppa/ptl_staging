@@ -849,19 +849,6 @@ MrcCheckLpddrMapping (
   IN OUT MrcParameters *const MrcData
   );
 
-
-/**
-  Check that some MRC input parameters make sense for the current DDR type.
-
-  @param[in] MrcData - The MRC "global data".
-
-  @retval mrcSuccess on success, mrcWrongInputParameter if parameters have invalid values.
-**/
-MrcStatus
-MrcCheckInputParams (
-  IN OUT MrcParameters *const MrcData
-  );
-
 /**
   Process the SPD information for all DIMMs with no platform frequency limits
   and populate the MaxDimmFreq host struct field.

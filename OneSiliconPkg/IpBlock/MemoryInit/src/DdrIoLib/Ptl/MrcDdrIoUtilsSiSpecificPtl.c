@@ -178,17 +178,28 @@ MrcGetCatmSweepingRange (
   using direct multicast CR access for speed.
 
   @param[in]  MrcData - Global MRC data structure
+  @param[in]  Rank    - Target rank
   @param[in]  Param   - Margin param
   @param[in]  Value   - The value to program
 */
 VOID
 MrcWriteDirectMulticast (
   IN MrcParameters *const MrcData,
+  IN UINT32               Rank,
   IN UINT8                Param,
   IN INT32                Value
   )
 {
+  BOOLEAN UpdateDataOffsetTrain = FALSE;
   DATA0CH0_CR_DDRCRADC_STRUCT DdrCrAdc;
+  DATA0CH0_CR_TXCONTROL0RANK0_STRUCT      TxControl0;
+  DATA0CH0_CR_DDRCRDATAOFFSETTRAIN_STRUCT DataOffsetTrain;
+
+  DataOffsetTrain.Data = 0;
+  // Pre-populate the RdT offset with the base offset
+  // ChangeMargin may offset it with a given Value below, but for other params we keep the base RdT offset.
+  // ChangeMargin is never used to modify multiple DataOffsetTrain params together.
+  DataOffsetTrain.Bits.RxDqsOffset = MrcData->Save.Data.RxDqsBaseOffset;
 
   switch (Param) {
     case RdV:
@@ -197,8 +208,48 @@ MrcWriteDirectMulticast (
       MrcWriteCrMulticast (MrcData, DATA_CR_DDRCRADC_REG, DdrCrAdc.Data);
       break;
 
+    case RcvEna:
+      DataOffsetTrain.Bits.RcvEnOffset = Value;
+      UpdateDataOffsetTrain = TRUE;
+      break;
+
+    case RdT:
+    case RdTN:
+    case RdTP:
+      DataOffsetTrain.Bits.RxDqsOffset += Value;  // Added on top of base offset
+      UpdateDataOffsetTrain = TRUE;
+      break;
+
+    case WrDqsT:
+      DataOffsetTrain.Bits.TxDqsOffset = Value;
+      UpdateDataOffsetTrain = TRUE;
+      break;
+
+    case WrT:
+      DataOffsetTrain.Bits.TxDqOffset = Value;
+      UpdateDataOffsetTrain = TRUE;
+      break;
+
+    case WrTUnMatched:
+      // Only LP5 is supported; preserving TxDqsDelay value which is set in Loopback mode init
+      // In DDR5 this param is a function of TxDqsDelay, which is trained per byte in JWL, hence cannot use multicast
+      if (Rank == 0) {
+        TxControl0.Data = MrcReadCR (MrcData, DATA0CH0_CR_TXCONTROL0RANK0_REG);
+        TxControl0.Bits.TxDqDelay  = Value;
+        MrcWriteCrMulticast (MrcData, DATA_CR_TXCONTROL0RANK0_REG, TxControl0.Data);
+      } else {
+        TxControl0.Data = MrcReadCR (MrcData, DATA0CH0_CR_TXCONTROL0RANK1_REG);
+        TxControl0.Bits.TxDqDelay  = Value;
+        MrcWriteCrMulticast (MrcData, DATA_CR_TXCONTROL0RANK1_REG, TxControl0.Data);
+      }
+      break;
+
     default:
       break;
+  }
+
+  if (UpdateDataOffsetTrain) {
+    MrcWriteCrMulticast (MrcData, DATA_CR_DDRCRDATAOFFSETTRAIN_REG, DataOffsetTrain.Data);
   }
 }
 

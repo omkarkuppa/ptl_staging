@@ -2097,8 +2097,8 @@ ChangeMargin (
       return mrcWrongInputParameter;
   } // end switch (param)
 
-  if ((param == RdV) && (EnMultiCast == 1) && UpdateGrp[0]) { // Direct CR multicast for speed
-    MrcWriteDirectMulticast (MrcData, param, v0);
+  if ((EnMultiCast == 1) && ((param <= RdV) || (param == RdTN) || (param == RdTP))) { // Direct CR multicast for speed
+    MrcWriteDirectMulticast (MrcData, 0, param, v0);  // Rank is unused in Blue MRC as it won't be called with WrTUnMatched
   } else {
     for (GrpIdx = 0; GrpIdx < MRC_CHNG_MAR_GRP_NUM; GrpIdx++) {
       if (UpdateGrp[GrpIdx] == FALSE) {

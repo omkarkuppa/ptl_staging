@@ -2571,7 +2571,7 @@ MrcGetSetSideEffect (
         // Rounded down to QCLK
         SearchVal = SearchVal >> (7 + Gear4);
         GetSetVal = SearchVal;
-        if (IsLpddr5 && (Frequency > f8533) && (GetSetVal > 0)) {
+        if (IsLpddr5 && (Frequency >= f8533) && (GetSetVal > 0)) {
           GetSetVal -= 1;
         }
         MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, WriteGroup, LocalModeWrite, &GetSetVal);
@@ -2610,7 +2610,7 @@ MrcGetSetSideEffect (
           SearchVal2 = SearchVal2 >> (7 + Gear4); // Min TxDqs
           MinTxDqDqs = MIN (SearchVal, SearchVal2);
           GetSetVal = IsLpddr5 ? SearchVal : MinTxDqDqs; // RankMux Delay is the min of the TxDQ/DQS across ranks, rounded down to QClk (DQS is not used in LP5)
-          if (IsLpddr5 && (Frequency > f8533) && (GetSetVal > 0)) {
+          if (IsLpddr5 && (Frequency >= f8533) && (GetSetVal > 0)) {
             GetSetVal -= 1;
           }
           MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxRankMuxDelay, LocalModeWrite, &GetSetVal);

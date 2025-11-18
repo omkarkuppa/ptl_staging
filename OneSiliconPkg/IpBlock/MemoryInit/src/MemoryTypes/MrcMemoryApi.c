@@ -71,7 +71,7 @@ MrcGetOdtlTiming (
   IN  LPDDR_ODTL_PARAM      OdtlParam
   )
 {
-  UINT8           RetVal;
+  INT8            RetVal;
   MRC_LP5_BANKORG Lp5BankOrg;
 
   RetVal = 0;

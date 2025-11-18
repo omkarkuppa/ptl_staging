@@ -466,13 +466,14 @@ IsXmp (
 }
 
 /**
-   Determine if MemoryProfile is XMP and if DIMM doesn't support XMP
+   Determine if MemoryProfile is XMP and if DIMM doesn't support XMP,
+   or if the given profile is CUSTOM but MRC uses STANDARD.
 
    @param[in] MrcData - Pointer to MrcData data structure.
-   @param[in] Profile
+   @param[in] Profile - Profile to check
 
-   @retval TRUE on XMP PROFILE 1-5 and DIMM doesn't support the corresponding XMP profile.
-   @retval FALSE XMP profile is not 1-5 or DIMM does support the corresponding XMP profile.
+   @retval TRUE on XMP PROFILE 1-5 and DIMM doesn't support the corresponding XMP profile, or profile is CUSTOM but MRC uses STANDARD
+   @retval FALSE otherwise
 **/
 BOOLEAN
 NeedIgnoreXmp (
@@ -493,6 +494,11 @@ NeedIgnoreXmp (
 
   if (((Profile == USER_PROFILE4) && ((Outputs->XmpProfileEnable & XMP_USER_PROFILE4_SUPPORT_MASK) == 0)) ||
       ((Profile == USER_PROFILE5) && ((Outputs->XmpProfileEnable & XMP_USER_PROFILE5_SUPPORT_MASK) == 0))) {
+    return TRUE;
+  }
+
+  if ((MrcData->Inputs.ExtInputs.Ptr->MemoryProfile == STD_PROFILE) && (Profile == CUSTOM_PROFILE1)) {
+    // No need to calculate / print CUSTOM profile timings if we are running with STANDARD profile
     return TRUE;
   }
 
@@ -6936,25 +6942,6 @@ MrcCheckLpddrMapping (
 }
 
 /**
-  Check that some MRC input parameters make sense for the current DDR type.
-
-  @param[in] MrcData - The MRC "global data".
-
-  @retval mrcSuccess on success, mrcWrongInputParameter if parameters have invalid values.
-**/
-MrcStatus
-MrcCheckInputParams (
-  IN OUT MrcParameters *const MrcData
-  )
-{
-  MrcStatus             Status;
-
-  Status = MrcCheckLpddrMapping (MrcData);
-
-  return Status;
-}
-
-/**
   Find the vendor-specific swizzling configuration
 
   @param[in]  MrcData   - Pointer to Spd data
@@ -7356,9 +7343,9 @@ MrcSpdProcessingStatic (
   Process the SPD information for all DIMMs with no platform frequency limits
   and populate the MaxDimmFreq host struct field.
 
-    @param[in, out] MrcData - The MRC "global data".
+  @param[in, out] MrcData - The MRC "global data".
 
-    @retval mrcSuccess on success, mrcDimmNotExist if no DIMMs found.
+  @retval mrcSuccess on success, mrcDimmNotExist if no DIMMs found.
 **/
 MrcStatus
 MrcSpdProcessingMaxFreqCheck (
@@ -7378,10 +7365,18 @@ MrcSpdProcessingMaxFreqCheck (
 
   // Outputs->MemoryClockMax is zero at this point, the only frequency limit will be the DIMM SPD timings.
   MRC_DEBUG_ASSERT (Outputs->MemoryClockMax == 0, &MrcData->Outputs.Debug, "MemoryClockMax=%d", Outputs->MemoryClockMax);
-  Status = SpdTimingCalculation (MrcData);
-  if (Status == mrcSuccess) {
+  Status = mrcDimmNotExist;
+
+  if (!GetChannelDimmTimeBase (MrcData)) {
+    return Status;
+  }
+  if (!GetChannelDimmtCK (MrcData)) {
+    return Status;
+  }
+  if (GetChannelDimmtAA (MrcData)) {
     Outputs->MaxDimmFreq = Outputs->Frequency;
-    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "MaxDimmFreq=%d\n", Outputs->MaxDimmFreq);
+    MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "MaxDimmFreq=%d\n", Outputs->MaxDimmFreq);
+    Status = mrcSuccess;
   }
   return Status;
 }
@@ -7624,8 +7619,6 @@ MrcSpdProcessingCalc (
   if (Status != mrcSuccess) {
     return Status;
   }
-
-  Status = MrcCheckInputParams (MrcData);
 
   return Status;
 }

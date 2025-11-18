@@ -263,9 +263,6 @@ MrcHalSetBitField64 (
 
   Hash.Data = HashIn;
   BfWidth   = Hash.Bits.BfWidth;
-  if (BfWidth >= 64) {
-    return (BitfieldValue);
-  }
   BfOffset = Hash.Bits.BfOffset;
   Func     = MrcData->Inputs.Call.Func;
   Mask     = Func->MrcLeftShift64 ((Func->MrcLeftShift64 (1ULL, BfWidth) - 1), BfOffset);
@@ -315,9 +312,6 @@ MrcHalGetBitField64 (
 
   Hash.Data = HashIn;
   BfWidth   = Hash.Bits.BfWidth;
-  if (BfWidth >= 64) {
-    return (RegisterValue);
-  }
   Func = MrcData->Inputs.Call.Func;
   return ((Func->MrcRightShift64 (RegisterValue, Hash.Bits.BfOffset)) & (Func->MrcLeftShift64 (1ULL, BfWidth) - 1));
 }

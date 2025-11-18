@@ -159,7 +159,7 @@
 #define MRC_DCC_DDR5_CLK                (0xDD76)
 #define MRC_IBECC                       (0xDD77)
 #define MRC_UPDATE_SAVE_MC_VALUES       (0xDD78)
-#define MRC_MAP_DQDQS_SWIZZLE           (0xDD79)
+#define MRC_DDR_MAP_DQDQS_SWIZZLE       (0xDD79)
 #define MRC_RMT_TOOL_EVENODD            (0xDD7A)
 #define MRC_PMA_CONFIG                  (0xDD7B)
 #define MRC_DDRIO_FINALIZE              (0xDD7C)
@@ -184,6 +184,7 @@
 #define MRC_PH_CLK_CHECK                (0xDD8C)
 #define MRC_WRITE_EQ                    (0xDD8D)
 #define MRC_CHECK_LP5_FREQUENCY         (0xDD8E)
-#define MRC_POST_CODE_LAST              (MRC_CHECK_LP5_FREQUENCY) // IMPORTANT: Keep aligned to the largest post code
+#define MRC_LP_MAP_DQDQS_SWIZZLE        (0xDD8F)
+#define MRC_POST_CODE_LAST              (MRC_LP_MAP_DQDQS_SWIZZLE) // IMPORTANT: Keep aligned to the largest post code
 
 #endif

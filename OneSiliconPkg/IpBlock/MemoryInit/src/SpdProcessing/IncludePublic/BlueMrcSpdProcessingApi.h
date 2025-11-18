@@ -139,13 +139,14 @@ MrcSpdProcessingCalc (
   );
 
 /**
-   Determine if MemoryProfile is XMP and if DIMM doesn't support XMP
+   Determine if MemoryProfile is XMP and if DIMM doesn't support XMP,
+   or if the given profile is CUSTOM but MRC uses STANDARD.
 
    @param[in] MrcData - Pointer to MrcData data structure.
-   @param[in] Profile
+   @param[in] Profile - Profile to check
 
-   @retval TRUE on XMP PROFILE 1-5 and DIMM doesn't support the corresponding XMP profile.
-   @retval FALSE XMP profile is not 1-5 or DIMM does support the corresponding XMP profile.
+   @retval TRUE on XMP PROFILE 1-5 and DIMM doesn't support the corresponding XMP profile, or profile is CUSTOM but MRC uses STANDARD
+   @retval FALSE otherwise
 **/
 BOOLEAN
 NeedIgnoreXmp (

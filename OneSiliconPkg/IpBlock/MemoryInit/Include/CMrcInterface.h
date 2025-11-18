@@ -560,7 +560,8 @@ typedef enum {
   OemPreTraining,           ///<  before the training.
   OemMcTrainingRun,         ///<  before training code
   OemEarlyCommandTraining,  ///<  before Early Command training
-  OemMapDqDqsSwizzle,       ///<  before Map Dq Dqs Swizzle training
+  OemLpddrMapDqDqsSwizzle,  ///<  before Lpddr Map Dq Dqs Swizzle training
+  OemDdrMapDqDqsSwizzle,    ///<  before Ddr Map Dq Dqs Swizzle training
   OemSenseAmpTraining,      ///<  before Sense Amp Training
   OemWckClkPreDriverDcc,    ///<  before Duty Cycle Correction for Wck/Clk Pre-Driver
   OemWckPadDccCal,          ///<  before Wck Pad Dcc Calibration
