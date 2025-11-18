@@ -107,6 +107,11 @@ Scope (\_SB.PC00.RP03.PXSX)
   Include ("Wist.asl")                // Provided by CnvFeaturePkg
 #endif
 
+  // assign different value to SD_CARD_UID for each RP
+  #define SD_CARD_UID 0
+  Include ("PcieSdCard.asl")
+  #undef SD_CARD_UID
+
 }
 
 Scope (\_SB.PC00.RP04.PXSX)

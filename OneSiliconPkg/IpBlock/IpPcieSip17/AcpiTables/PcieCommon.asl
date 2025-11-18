@@ -35,6 +35,7 @@
   External (\_SB.ERPS, MethodObj)
   External (WAKG, IntObj)                   // WAKE GPIO PAD Number
   External (MTDL, MethodObj) // Compare MIN_TEMP, DTRHIVAL and DTRLOVAL
+  External (PXSX.SUID, MethodObj) // Alternate DSD object
 
   OperationRegion (PXCS,SystemMemory,\_SB.PC00.PC2M (_ADR (), PBNU),0x480)
   Field (PXCS,AnyAcc, NoLock, Preserve)
