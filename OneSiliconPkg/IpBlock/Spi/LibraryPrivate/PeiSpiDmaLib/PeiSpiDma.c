@@ -689,7 +689,6 @@ SpiDmaServiceInit (
       DEBUG ((DEBUG_INFO, "Installing SpiDmaReadPpi\n"));
       Status = PeiServicesInstallPpi (&mSpiDmaReadPpiList);
       ASSERT_EFI_ERROR (Status);
-      DEBUG ((DEBUG_INFO, "Installed SpiDmaReadPpi\n"));
     } else {
       DEBUG ((DEBUG_INFO, "SpiDmaReadPpi already installed\n"));
       Status = PeiServicesLocatePpi (

@@ -126,7 +126,7 @@ TxtInit (
 
   if (EFI_ERROR (Status)) {
     TxtEnvInitFail = TRUE;
-    DEBUG ((DEBUG_WARN, "TXTPEI::PEI Lib initialization failure\n"));
+    DEBUG ((DEBUG_WARN, "PEI Lib initialization failure\n"));
   }
 
   /**
@@ -141,7 +141,7 @@ TxtInit (
           DEBUG ((DEBUG_INFO, "TXTPEI::RTC Failure Detected, Restoring FIT A Content\n"));
           UpdateTxtStatusCmos(TRUE, TxtPreMemConfig);
         }
-        DEBUG ((DEBUG_INFO, "TXTPEI::RTC Failure Detected & Secrets is set, Executing ClearSecretsBit\n"));
+        DEBUG ((DEBUG_INFO, "RTC Failure Detected & Secrets is set, Executing ClearSecretsBit\n"));
         ClearSecretsBit ();
       }
     }
@@ -163,9 +163,9 @@ TxtInit (
     /// If TPM is not present / not supported, set TxtMode=0 in case TPM was removed after TXT enabled
     ///
     if (Status == EFI_UNSUPPORTED) {
-      DEBUG ((DEBUG_WARN, "TXTPEI::TPM Support is Disabled in BIOS! Disabling TXT! TxtMode=%x\n", TxtInfoHob->Data.TxtMode));
+      DEBUG ((DEBUG_WARN, "TPM Support is Disabled in BIOS! Disabling TXT! TxtMode=%x\n", TxtInfoHob->Data.TxtMode));
     } else {
-      DEBUG ((DEBUG_WARN, "TXTPEI::TPM is not present! Disabling TXT! TxtMode=%x\n", TxtInfoHob->Data.TxtMode));
+      DEBUG ((DEBUG_WARN, "TPM is not present! Disabling TXT! TxtMode=%x\n", TxtInfoHob->Data.TxtMode));
     }
 
     TxtEnvInitFail = TRUE;
@@ -174,13 +174,13 @@ TxtInit (
   /// Detect TXT capable Processor & PCH
   ///
   if (!IsTxtChipset ()) {
-    DEBUG ((DEBUG_WARN, "TXTPEI::Platform or PCH is not TXT capable\n"));
+    DEBUG ((DEBUG_WARN, "Platform or PCH is not TXT capable\n"));
     goto Done;
   } else if (!IsTxtProcessor ()) {
-    DEBUG ((DEBUG_WARN, "TXTPEI::Processor is not TXT capable\n"));
+    DEBUG ((DEBUG_WARN, "Processor is not TXT capable\n"));
     goto Done;
   } else {
-    DEBUG ((DEBUG_INFO, "TXTPEI::Processor, PCH & Platform is TXT capable\n"));
+    DEBUG ((DEBUG_INFO, "Processor, PCH & Platform is TXT capable\n"));
 
     ///
     /// If TXT Lib or TPM  initialization unsuccessful, disable TXT
@@ -198,7 +198,7 @@ TxtInit (
   }
 
   Data32 = MmioRead32 (TXT_PUBLIC_BASE + TXT_CRASHCODE_REG_OFF);
-  DEBUG ((DEBUG_INFO, "TXTPEI::Crash Code Register=%x\n", Data32));
+  DEBUG ((DEBUG_INFO, "Crash Code Register=%x\n", Data32));
 
   ///
   /// Memory is supposed to lock if system is TXT capable.
@@ -206,7 +206,7 @@ TxtInit (
   ///
   if (TxtIsEstablishmentBitAsserted (TxtInfoHob) && IsTxtWakeError ()) {
 
-    DEBUG ((DEBUG_INFO, "TXTPEI::EstablishmentBit is set\n"));
+    DEBUG ((DEBUG_INFO, "EstablishmentBit is set\n"));
     ///
     /// If TXTRESET is set , we must clean TXTRESET bit otherwise SCLEAN
     /// will fail
@@ -217,13 +217,13 @@ TxtInit (
     ///
     /// Setup and Launch SCLEAN
     ///
-    DEBUG ((DEBUG_INFO, "TXTPEI::Entering SCLEAN\n"));
+    DEBUG ((DEBUG_INFO, "Entering SCLEAN\n"));
 
   } else {
     ///
     /// Unlock memory, and then continue running
     ///
-    DEBUG ((DEBUG_INFO, "TXTPEI::EstablishmentBit not asserted - Unlock Memory\n"));
+    DEBUG ((DEBUG_INFO, "EstablishmentBit not asserted - Unlock Memory\n"));
     AsmWriteMsr64 (MSR_LT_UNLOCK_MEMORY, 0);
   }
 
@@ -250,7 +250,7 @@ Done:
   ///
 
   if (IsBptTxtPassed () == FALSE || SpiIsFlashDescriptorOverrideEnabled ()) {
-    DEBUG ((DEBUG_WARN, "TXTPEI::TXT failed reported by S-ACM\n"));
+    DEBUG ((DEBUG_WARN, "TXT failed reported by S-ACM\n"));
     TxtInfoHob->Data.TxtMode = 0;
   }
 
@@ -276,11 +276,11 @@ AliasCheck (
   EFI_STATUS          Status = EFI_SUCCESS;
   TXT_INFO_HOB        *TxtInfoHob = NULL;
 
-  DEBUG ((DEBUG_INFO, "TXTPEI::New Alias Check Begin\n"));
+  DEBUG ((DEBUG_INFO, "New Alias Check Begin\n"));
 
   TxtInfoHob = GetFirstGuidHob (&gTxtInfoHobGuid);
   if (TxtInfoHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "TXTPEI::TxtInfoHob not found\n"));
+    DEBUG ((DEBUG_ERROR, "TxtInfoHob not found\n"));
     return EFI_NOT_FOUND;
   }
 
@@ -289,11 +289,11 @@ AliasCheck (
     if (!EFI_ERROR (Status)) {
       if (IsTxtChipset ()) {
         if (IsTxtProcessor ()) {
-          DEBUG ((DEBUG_INFO, "TXTPEI::TXT enabled platform\n"));
+          DEBUG ((DEBUG_INFO, "TXT enabled platform\n"));
           if (((MmioRead32 (TXT_PUBLIC_BASE + TXT_SPAD_REG_OFF) & B_TXT_SPAD_ALIAS_CHECK) == B_TXT_SPAD_ALIAS_CHECK)
               || (IsAcheckRequested (TxtInfoHob))
               ) {
-            DEBUG ((DEBUG_INFO, "TXTPEI::DoAlias\n"));
+            DEBUG ((DEBUG_INFO, "DoAlias\n"));
 
             DoAcmLaunch (TxtInfoHob, TXT_LAUNCH_ACHECK);
             ///
@@ -305,7 +305,7 @@ AliasCheck (
       } // IsTxtChipset
     } // IsTpmPresent
   } // IsTxtEnabled
-  DEBUG ((DEBUG_INFO, "TXTPEI::New Alias Check End\n"));
+  DEBUG ((DEBUG_INFO, "New Alias Check End\n"));
 
   return EFI_UNSUPPORTED;
 }
@@ -330,11 +330,11 @@ ConfigureTxtPart1 (
   EFI_STATUS          Status = EFI_SUCCESS;
   TXT_INFO_HOB        *TxtInfoHob;
 
-  DEBUG ((DEBUG_INFO, "TXTPEI::ConfigureTxtPart1\n"));
+  DEBUG ((DEBUG_INFO, "ConfigureTxtPart1\n"));
 
   TxtInfoHob = (TXT_INFO_HOB *) GetFirstGuidHob (&gTxtInfoHobGuid);
   if (TxtInfoHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "TXTPEI::TxtInfoHob not found.... Unloading\n"));
+    DEBUG ((DEBUG_ERROR, "TxtInfoHob not found.... Unloading\n"));
     return EFI_NOT_FOUND;
   }
 
@@ -347,7 +347,7 @@ ConfigureTxtPart1 (
   /// Add to check CPU TXT capable in case CPU drivers do not check additional requirements
   ///
   if ((TxtInfoHob->Data.ChipsetIsTxtCapable) && (TxtInfoHob->Data.ProcessorIsTxtCapable) && (IsTxtEnabled (TxtInfoHob))) {
-    DEBUG ((DEBUG_INFO, "TXTPEI::TXT Enabled\n"));
+    DEBUG ((DEBUG_INFO, "TXT Enabled\n"));
 
     //
     // Update DPR Memory
@@ -382,11 +382,11 @@ ConfigureTxtPart2 (
   EFI_STATUS          Status = EFI_SUCCESS;
   TXT_INFO_HOB        *TxtInfoHob;
 
-  DEBUG ((DEBUG_INFO, "TXTPEI::ConfigureTxtPart2\n"));
+  DEBUG ((DEBUG_INFO, "ConfigureTxtPart2\n"));
 
   TxtInfoHob = (TXT_INFO_HOB *) GetFirstGuidHob (&gTxtInfoHobGuid);
   if (TxtInfoHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "TXTPEI::TxtInfoHob not found.... Unloading\n"));
+    DEBUG ((DEBUG_ERROR, "TxtInfoHob not found.... Unloading\n"));
     return EFI_NOT_FOUND;
   }
 
@@ -396,7 +396,7 @@ ConfigureTxtPart2 (
   /// boot to OS and let MLE assess situation.
     ///
   if (IsTxtResetSet ()) {
-    DEBUG ((DEBUG_ERROR, "TXTPEI::TXT_RESET bit is set.... Unloading\n"));
+    DEBUG ((DEBUG_ERROR, "TXT_RESET bit is set.... Unloading\n"));
     return EFI_UNSUPPORTED;
   }
 
@@ -409,7 +409,7 @@ ConfigureTxtPart2 (
   /// Add to check CPU TXT capable in case CPU drivers do not check additional requirements
     ///
   if ((TxtInfoHob->Data.ChipsetIsTxtCapable) && (TxtInfoHob->Data.ProcessorIsTxtCapable) && (IsTxtEnabled (TxtInfoHob))) {
-    DEBUG ((DEBUG_INFO, "TXTPEI::TXT Enabled\n"));
+    DEBUG ((DEBUG_INFO, "TXT Enabled\n"));
 
     //
     // Invoke TXT LockConfig during S3 resume
@@ -447,7 +447,7 @@ DprUpdate (
   DprDirectory = NULL;
   Index        = 0;
 
-  DEBUG ((DEBUG_INFO, "TXTPEI::DprUpdate\n"));
+  DEBUG ((DEBUG_INFO, "DprUpdate\n"));
 
   //
   // Get TxtInfoHob
@@ -497,11 +497,11 @@ ClearSecretsBit (
   EFI_STATUS          Status      = EFI_SUCCESS;
   TXT_INFO_HOB        *TxtInfoHob = NULL;
 
-  DEBUG ((DEBUG_INFO, "TXTPEI::ClearSecretsBit\n"));
+  DEBUG ((DEBUG_INFO, "ClearSecretsBit\n"));
 
   TxtInfoHob = GetFirstGuidHob (&gTxtInfoHobGuid);
   if (TxtInfoHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "TXTPEI::TxtInfoHob not found\n"));
+    DEBUG ((DEBUG_ERROR, "TxtInfoHob not found\n"));
     return EFI_NOT_FOUND;
   }
 
@@ -539,21 +539,21 @@ SetPowerDownRequest (
   EFI_STATUS                     Status      = EFI_SUCCESS;
   TXT_INFO_HOB                   *TxtInfoHob = NULL;
 
-  DEBUG ((DEBUG_INFO, "TXTPEI::SetPowerDownRequest\n"));
+  DEBUG ((DEBUG_INFO, "SetPowerDownRequest\n"));
 
   TxtInfoHob = GetFirstGuidHob (&gTxtInfoHobGuid);
   if (TxtInfoHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "TXTPEI::TxtInfoHob not found\n"));
+    DEBUG ((DEBUG_ERROR, "TxtInfoHob not found\n"));
     return EFI_NOT_FOUND;
   }
 
-  DEBUG ((DEBUG_INFO, "TXTPEI::PdrSrc = %d\n", PdrSrc));
+  DEBUG ((DEBUG_INFO, "PdrSrc = %d\n", PdrSrc));
 
   //
   // Set signal in TxtInfoHob to be consumed by request handler.
   //
   TxtInfoHob->Data.TxtPowerdownRequest = 1;
-  DEBUG ((DEBUG_INFO, "TXTPEI::TxtInfoHob->Data.TxtPowerdownRequest = %d\n", TxtInfoHob->Data.TxtPowerdownRequest));
+  DEBUG ((DEBUG_INFO, "TxtInfoHob->Data.TxtPowerdownRequest = %d\n", TxtInfoHob->Data.TxtPowerdownRequest));
 
   return Status;
 }

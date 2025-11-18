@@ -41,7 +41,7 @@ DciPreMemPrintConfig (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gDciPreMemConfigGuid, (VOID *) &DciPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "------------------ DCI PreMem Config ------------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, "DciEn = %x\n", DciPreMemConfig->DciEn));
   DEBUG ((DEBUG_INFO, "DciClkEnable = %x\n", DciPreMemConfig->DciClkEnable));
   DEBUG ((DEBUG_INFO, "DciDbcMode = %x\n", DciPreMemConfig->DciDbcMode));

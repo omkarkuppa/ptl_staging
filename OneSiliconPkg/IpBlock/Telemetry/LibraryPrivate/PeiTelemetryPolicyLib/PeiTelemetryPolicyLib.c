@@ -38,8 +38,7 @@ TelemetryLoadPeiConfigPreMemDefault (
   TELEMETRY_PEI_PREMEM_CONFIG   *TelemetryPreMemConfig;
 
   TelemetryPreMemConfig = ConfigBlockPointer;
-  DEBUG ((DEBUG_INFO, "TelemetryConfig->Header.GuidHob.Name = %g\n", &TelemetryPreMemConfig->Header.GuidHob.Name));
-  DEBUG ((DEBUG_INFO, "TelemetryConfig->Header.GuidHob.Header.HobLength = 0x%x\n", TelemetryPreMemConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "TelemetryConfig Name = %g HobLength = 0x%x\n", &TelemetryPreMemConfig->Header.GuidHob.Name, TelemetryPreMemConfig->Header.GuidHob.Header.HobLength));
 
   TelemetryPreMemConfig->CpuCrashLogDevice  = 1;
   TelemetryPreMemConfig->StreamTracerSize   = 64;
@@ -99,12 +98,12 @@ TelemetryPrintPeiPolicyPpiPreMem (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTelemetryPeiPreMemConfigGuid, (VOID *) &TelemetryPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "----------------------- Telemetry_PEI_CONFIG -----------------\n"));
-  DEBUG ((DEBUG_INFO, " Revision : %d\n", TelemetryPreMemConfig->Header.Revision));
-  DEBUG ((DEBUG_INFO, " Telemetry CpuCrashLogDevice : %01d\n", TelemetryPreMemConfig->CpuCrashLogDevice));
-  DEBUG ((DEBUG_INFO, " Telemetry StreamTracerMode  : 0x%x\n", TelemetryPreMemConfig->StreamTracerMode));
-  DEBUG ((DEBUG_INFO, " Telemetry StreamTracerSize  : 0x%x\n", TelemetryPreMemConfig->StreamTracerSize));
-  DEBUG ((DEBUG_INFO, "\n-------------------- Telemetry_CONFIG Print END -----------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "Revision : %d\n", TelemetryPreMemConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "CpuCrashLogDevice : %01d\n", TelemetryPreMemConfig->CpuCrashLogDevice));
+  DEBUG ((DEBUG_INFO, "StreamTracerMode : 0x%x\n", TelemetryPreMemConfig->StreamTracerMode));
+  DEBUG ((DEBUG_INFO, "StreamTracerSize : 0x%x\n", TelemetryPreMemConfig->StreamTracerSize));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
   return;
 }
 
@@ -181,9 +180,9 @@ TelemetryPrintPeiPolicyPpi (
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gTelemetryPeiConfigGuid, (VOID *) &TelemetryPeiConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "----------------------- Telemetry_PEI_CONFIG -----------------\n"));
-  DEBUG ((DEBUG_INFO, " Revision : %d\n", TelemetryPeiConfig->Header.Revision));
-  DEBUG ((DEBUG_INFO, " Telemetry CpuCrashLogEnable : %01d\n", TelemetryPeiConfig->CpuCrashLogEnable));
-  DEBUG ((DEBUG_INFO, "\n-------------------- Telemetry_CONFIG Print END -----------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "Revision : %d\n", TelemetryPeiConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "CpuCrashLogEnable : %01d\n", TelemetryPeiConfig->CpuCrashLogEnable));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
   return;
 }

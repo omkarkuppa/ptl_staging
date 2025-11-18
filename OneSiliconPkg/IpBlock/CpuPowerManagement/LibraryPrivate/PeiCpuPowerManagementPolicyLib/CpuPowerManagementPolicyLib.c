@@ -112,7 +112,7 @@ CpuPowerDeliveryConfigPrint (
   IN CONST CPU_POWER_DELIVERY_CONFIG   *CpuPowerDeliveryConfig
   )
 {
-  DEBUG ((DEBUG_INFO, "------------------ CPU_POWER_DELIVERY_CONFIG Begin ------------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, " PsysPowerLimit1 : 0x%x\n", CpuPowerDeliveryConfig->PsysPowerLimit1));
   DEBUG ((DEBUG_INFO, " PsysPowerLimit1Time : 0x%x\n", CpuPowerDeliveryConfig->PsysPowerLimit1Time));
   DEBUG ((DEBUG_INFO, " PsysPowerLimit2 : 0x%x\n", CpuPowerDeliveryConfig->PsysPowerLimit2));
@@ -146,7 +146,7 @@ CpuPowerDeliveryConfigPrint (
   DEBUG ((DEBUG_INFO, " CustomPowerLimit2 : 0x%x\n", CpuPowerDeliveryConfig->CustomPowerLimit2));
   DEBUG ((DEBUG_INFO, " AcDcPowerState : 0x%x\n", CpuPowerDeliveryConfig->AcDcPowerState));
 
-  DEBUG ((DEBUG_INFO, "------------------ CPU_POWER_DELIVERY_CONFIG End ------------------\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 }
 
 /**
@@ -159,7 +159,7 @@ CpuPowerMgmtTestConfigPrint (
   IN CONST CPU_POWER_MGMT_TEST_CONFIG   *CpuPowerMgmtTestConfig
   )
 {
-  DEBUG ((DEBUG_INFO, "------------------ CPU Power Mgmt Test Config ------------------\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, " Eist : 0x%x\n", CpuPowerMgmtTestConfig->Eist));
   DEBUG ((DEBUG_INFO, " EnergyEfficientPState : 0x%x\n", CpuPowerMgmtTestConfig->EnergyEfficientPState));
   DEBUG ((DEBUG_INFO, " EnergyEfficientTurbo : 0x%x\n", CpuPowerMgmtTestConfig->EnergyEfficientTurbo));
@@ -178,7 +178,7 @@ CpuPowerMgmtTestConfigPrint (
   DEBUG ((DEBUG_INFO, " PkgCStateLimit : 0x%x\n", CpuPowerMgmtTestConfig->PkgCStateLimit));
   DEBUG ((DEBUG_INFO, " PpmIrmSetting : 0x%x\n", CpuPowerMgmtTestConfig->PpmIrmSetting));
   DEBUG ((DEBUG_INFO, " VrAlertDemotion : 0x%x\n", CpuPowerMgmtTestConfig->VrAlertDemotion));
- DEBUG ((DEBUG_INFO, "------------------ CPU_POWER_MGMT_TEST_CONFIG End ------------------\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 }
 
 /**
@@ -208,13 +208,13 @@ DEBUG_CODE_BEGIN();
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtTestConfigGuid, (VOID *) &CpuPowerMgmtTestConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "\n ------------------------ SiCpuPolicy Print Begin in PostMem----------------- \n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, " Revision= %x\n", SiPolicyPpi->TableHeader.Header.Revision));
 
   CpuPowerMgmtBasicConfigPrint (CpuPowerMgmtBasicConfig);
   CpuPowerMgmtCustomConfigPrint (CpuPowerMgmtCustomConfig);
   CpuPowerMgmtTestConfigPrint (CpuPowerMgmtTestConfig);
-  DEBUG ((DEBUG_INFO, "\n ------------------------ SiCpuPolicy Print End in PostMem ----------------- \n\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 DEBUG_CODE_END();
 }
 
@@ -358,8 +358,7 @@ LoadCpuPowerDeliveryConfigDefault (
 
   CpuPowerDeliveryConfig = ConfigBlockPointer;
 
-  DEBUG ((DEBUG_INFO, "CpuPowerDeliveryConfig->Header.GuidHob.Name = %g\n", &CpuPowerDeliveryConfig->Header.GuidHob.Name));
-  DEBUG ((DEBUG_INFO, "CpuPowerDeliveryConfig->Header.GuidHob.Header.HobLength = 0x%x\n", CpuPowerDeliveryConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "CpuPowerDeliveryConfig Name = %g HobLength = 0x%x\n", &CpuPowerDeliveryConfig->Header.GuidHob.Name, CpuPowerDeliveryConfig->Header.GuidHob.Header.HobLength));
 
   /********************************
     CPU Power Management Delivery configuration

@@ -41,8 +41,8 @@ IshPreMemPrintConfig (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gIshPreMemConfigGuid, (VOID *) &IshPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "------------------ ISH PreMem Config ------------------\n"));
-  DEBUG ((DEBUG_INFO, " Enable= %x\n", IshPreMemConfig->Enable));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "Enable= %x\n", IshPreMemConfig->Enable));
 }
 
 /**
