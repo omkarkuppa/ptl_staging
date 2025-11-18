@@ -28,10 +28,12 @@
 //  2. The developer needs to make sure the required External
 //    declaration and initialization flow for the devices.
 //
+#include <VmdInfoHob.h>
 
 #define RP_DEVICE_REQUIRED_EXTERNAL(Device) \
         External (ROOT_COMPLEX.Device, DeviceObj) \
         External (ROOT_COMPLEX.Device._ADR) \
+        External (ROOT_COMPLEX.Device.VDID) \
         External (ROOT_COMPLEX.Device.PXSX.PRES, MethodObj) \
         External (ROOT_COMPLEX.Device.PXSX.GRPT, MethodObj)
 
@@ -47,6 +49,9 @@
           PEPV = 0x05 \
           If (ROOT_COMPLEX.Device.PXSX.PRES ()) { \
             PEPV = 0x01 \
+          } \
+          If (And (ShiftRight (ROOT_COMPLEX.Device.VDID, 16), 0xFFFF) == VMD_DUMMY_DEVICE_ID) { \
+            PEPV = 0x0 \
           } \
           If (CondRefOf (\_SB.PEPD.RPCO)) { \
             PEPV = \_SB.PEPD.RPCO (PEPV, ROOT_COMPLEX.Device.PXSX.GRPT ()) \

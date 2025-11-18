@@ -18,6 +18,7 @@
 
 @par Specification Reference:
 **/
+#include <VmdInfoHob.h>
 
 Name (PCP0, Package () {0, Package () {0xFF, 0}})
 Name (PCP1, Package () {0, Package () {0xFF, 0, 0x81}})
@@ -139,7 +140,7 @@ Method (PFEK, 3, Serialized)
       //
       If (LAnd (LEqual (BCCX, 0x01), LEqual (SCCX, 0x06))) {
         ADBG ("PFEK check for AHCI controller!")
-        If (DDID == 0x09AB) {
+        If (LEqual (DDID,VMD_DUMMY_DEVICE_ID)) {
           Return (0)
         }
       }
