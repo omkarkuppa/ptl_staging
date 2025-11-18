@@ -823,7 +823,7 @@ ConfigureDualTauBoostOverride (
   MSR_PACKAGE_RAPL_LIMIT_REGISTER PackageRaplLimitMsr;
   MSR_PACKAGE_RAPL_LIMIT_REGISTER PackageRaplLimitMmio;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "ConfigureDualTauBoostOverride Start\n"));
   //
   // Override power limit for Dual Tau Boost
   //
@@ -837,7 +837,7 @@ ConfigureDualTauBoostOverride (
                                      );
   if (DualTauPowerLimitValueProvided) {
     PackageRaplLimitMsr.Uint64 = AsmReadMsr64 (MSR_PACKAGE_RAPL_LIMIT);
-    DEBUG ((DEBUG_INFO, "%a original MSR 610 = %016lx\n", __FUNCTION__, PackageRaplLimitMsr.Uint64));
+    DEBUG ((DEBUG_INFO, "ConfigureDualTauBoostOverride original MSR 610 = %016lx\n", PackageRaplLimitMsr.Uint64));
     //
     // Override MSR PL1
     //
@@ -854,11 +854,11 @@ ConfigureDualTauBoostOverride (
       PackageRaplLimitMsr.Bits.PkgPwrLim2 = DualTauMsrPl2 * GetPowerUnit ();
     }
     AsmWriteMsr64 (MSR_PACKAGE_RAPL_LIMIT, PackageRaplLimitMsr.Uint64);
-    DEBUG ((DEBUG_INFO, "modified MSR 610 = %016lx\n", __FUNCTION__, PackageRaplLimitMsr.Uint64));
+    DEBUG ((DEBUG_INFO, "ConfigureDualTauBoostOverride modified MSR 610 = %016lx\n", PackageRaplLimitMsr.Uint64));
 
     MchBar = GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase);
-    DEBUG ((DEBUG_INFO, "%a original 59A0 = 0x%x\n", __FUNCTION__, MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT)));
-    DEBUG ((DEBUG_INFO, "%a original 59A4 = 0x%x\n", __FUNCTION__, MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT_HIGH)));
+    DEBUG ((DEBUG_INFO, "ConfigureDualTauBoostOverride original 59A0 = 0x%x\n", MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT)));
+    DEBUG ((DEBUG_INFO, "ConfigureDualTauBoostOverride original 59A4 = 0x%x\n", MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT_HIGH)));
 
     //
     // Reuse the MSR_PACKAGE_RAPL_LIMIT_REGISTER structure for MMIO register since they are identical.
@@ -891,8 +891,8 @@ ConfigureDualTauBoostOverride (
     }
     PackageRaplLimitMmio.Bits.PkgPwrLim2En = 1;
     MmioWrite32 (MchBar + MMIO_TURBO_POWER_LIMIT_HIGH, (UINT32) RShiftU64 (PackageRaplLimitMmio.Uint64, 32));
-    DEBUG ((DEBUG_INFO, "%a modified 59A0 = 0x%x\n", __FUNCTION__, MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT)));
-    DEBUG ((DEBUG_INFO, "%a modified 59A4 = 0x%x\n", __FUNCTION__, MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT_HIGH)));
+    DEBUG ((DEBUG_INFO, "ConfigureDualTauBoostOverride modified 59A0 = 0x%x\n", MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT)));
+    DEBUG ((DEBUG_INFO, "ConfigureDualTauBoostOverride modified 59A4 = 0x%x\n", MmioRead32 (MchBar + MMIO_TURBO_POWER_LIMIT_HIGH)));
     return TRUE;
   }
   return FALSE;

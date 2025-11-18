@@ -383,7 +383,7 @@ SetNocImrExclusion (
   TseSupport            = 1;
   TraceHubSupport       = 1;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "SetNocImrExclusion Start\n"));
 
   if (IsTseSupported() && IsTseEnabled()) {
     TseDataHobPtr = (TSE_DATA_HOB *)GetFirstGuidHob (&gTseDataHobGuid);
@@ -513,8 +513,8 @@ SetNocImrExclusion (
     MmioWrite64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_L_IOC_MCHBAR_REG)), ImrExcLimitL.Data);
   }
 
-  DEBUG ((DEBUG_INFO, "ImrExcBase below 4GB Register = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_BASE_MEM_EXCLUDE_RANGE_L_IOC_MCHBAR_REG)))));
-  DEBUG ((DEBUG_INFO, "ImrExcLimit below 4GB Register = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_L_IOC_MCHBAR_REG)))));
+  DEBUG ((DEBUG_INFO, "ImrExcBase below 4GB Register After Write = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_BASE_MEM_EXCLUDE_RANGE_L_IOC_MCHBAR_REG)))));
+  DEBUG ((DEBUG_INFO, "ImrExcLimit below 4GB Register After Write = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_L_IOC_MCHBAR_REG)))));
 
   if (SizeAbove4Gb > 0) {
     ImrExcBaseH.Data  = 0;
@@ -529,10 +529,10 @@ SetNocImrExclusion (
     MmioWrite64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_H_IOC_MCHBAR_REG)), ImrExcLimitH.Data);
   }
 
-  DEBUG ((DEBUG_INFO, "ImrExcBase Above 4GB Register = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_BASE_MEM_EXCLUDE_RANGE_H_IOC_MCHBAR_REG)))));
-  DEBUG ((DEBUG_INFO, "ImrExcLimit Above 4GB Register = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_H_IOC_MCHBAR_REG)))));
+  DEBUG ((DEBUG_INFO, "ImrExcBase Above 4GB Register After Write = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_BASE_MEM_EXCLUDE_RANGE_H_IOC_MCHBAR_REG)))));
+  DEBUG ((DEBUG_INFO, "ImrExcLimit Above 4GB Register After Write = 0x%lx\n", MmioRead64 ((UINTN)(MchBar + GET_NOC_EFFECTIVE_ADDRESS (SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_H_IOC_MCHBAR_REG)))));
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "SetNocImrExclusion End\n"));
 }
 
 /**

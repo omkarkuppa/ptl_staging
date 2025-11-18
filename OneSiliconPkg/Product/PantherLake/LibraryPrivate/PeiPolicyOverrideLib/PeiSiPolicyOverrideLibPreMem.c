@@ -461,7 +461,7 @@ PeiSiPolicyOverridePreMem (
   IN  SI_PREMEM_POLICY_PPI             *SiPreMemPolicyPpi
   )
 {
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PeiSiPolicyOverridePreMem ()\n"));
   PlatformDebugOptionEnablePreMem (SiPreMemPolicyPpi);
   PsmiTraceHubPolicyOverride (SiPreMemPolicyPpi);
   BuildTraceHubDataHob (SiPreMemPolicyPpi);

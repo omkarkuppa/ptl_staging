@@ -74,7 +74,8 @@ PeiTdxMemoryNotifyCallback (
 {
   EFI_STATUS                       Status;
 
-  DEBUG ((DEBUG_INFO, "Notify from Memory Init\n"));
+  DEBUG ((DEBUG_INFO, "[TDX] Notify from Memory Init\n"));
+  DEBUG ((DEBUG_INFO, "[TDX] Calling FillCmrArray Function\n"));
 
   // Generate CMR entries
   Status = FillCmrArray ();
@@ -232,15 +233,15 @@ FillCmrArray(
   DescriptorIndex        = 0;
   CmrIndex               = 0;
 
-  DEBUG ((DEBUG_INFO, "%a BEGIN\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[TDX] %a BEGIN\n", __FUNCTION__));
 
   // Count of memory Descriptors
   NumbDescriptors = GetNumbDescriptors();
-  DEBUG ((DEBUG_INFO, "NumbDescriptors %d \n", NumbDescriptors));
+  DEBUG ((DEBUG_INFO, "[TDX] NumbDescriptors %d \n", NumbDescriptors));
 
   ResourceDescriptorList = (MCHECK_CMR *) AllocateZeroPool (sizeof(MCHECK_CMR) * NumbDescriptors);
   if (ResourceDescriptorList == NULL) {
-    DEBUG ((DEBUG_ERROR, "Error allocating ResourceDescriptorList\n"));
+    DEBUG ((DEBUG_ERROR, "[TDX] Error allocating ResourceDescriptorList\n"));
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -251,6 +252,7 @@ FillCmrArray(
         !((Hob.ResourceDescriptor->ResourceAttribute & EFI_RESOURCE_ATTRIBUTE_MORE_RELIABLE) == EFI_RESOURCE_ATTRIBUTE_MORE_RELIABLE) &&
         !((Hob.ResourceDescriptor->ResourceAttribute & EFI_RESOURCE_ATTRIBUTE_PERSISTENT) == EFI_RESOURCE_ATTRIBUTE_PERSISTENT)) {
 
+      DEBUG ((DEBUG_INFO, "Inside EFI_RESOURCE_SYSTEM_MEMORY condition ........................\n"));
       DescriptorBase = Hob.ResourceDescriptor->PhysicalStart;
       DescriptorSize = Hob.ResourceDescriptor->ResourceLength;
 
@@ -377,7 +379,7 @@ CheckTdxDependancy (
 {
   CPUID_VERSION_INFO_ECX              CpuIdVersionInfoEcx;
 
-  DEBUG ((DEBUG_INFO, "%a \n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[TDX] %a \n", __FUNCTION__));
 
   // Detect TDX IP is supported
   if (IsTdxSupported () == FALSE )
@@ -390,47 +392,47 @@ CheckTdxDependancy (
   // VTx - for launch of VMx.
   GetSupportedCpuFeatures ((UINT32 *) &CpuIdVersionInfoEcx);
   if (CpuIdVersionInfoEcx.Bits.VMX != 1) {
-    DEBUG ((DEBUG_INFO, "VTX is not supported.\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] VTX is not supported.\n"));
     return FALSE;
   }
 
   // VMX enabled from Setup menu
   if (VmxPolicy == FALSE) {
-    DEBUG ((DEBUG_INFO, "Vmx is disabled.\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Vmx is disabled.\n"));
     return FALSE;
   }
 
   // VTd - for I/O device virtualization
   if ((IsVtdSupported () == FALSE) || (VtdPolicy == FALSE)) {
-    DEBUG ((DEBUG_INFO, "VTD is not supported.\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] VTD is not supported.\n"));
     return FALSE;
   }
 
   // SMX GetSec Instruction for launching the Intel TDx SEAMLDR.
   if (IsTxtProcessor () == FALSE) {
-    DEBUG ((DEBUG_INFO, "SMX is not supported.\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] SMX is not supported.\n"));
     return FALSE;
   }
 
   // Detect MK-TME IP is supported in the platform
   if (IsMkTmeSupported () == FALSE) {
-    DEBUG ((DEBUG_INFO, "MK-TME is not supported.\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] MK-TME is not supported.\n"));
     return FALSE;
   }
 
   // Check if MKTME is enabled
   if (MktmePolicy == FALSE) {
-    DEBUG ((DEBUG_INFO, "Tme is not enabled.\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Tme is not enabled.\n"));
     return FALSE;
   }
 
   // Check Cache Level
   if (IsSufficientCacheAvailable () != EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Cache level is not supported for TDX enablement\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Cache level is not supported for TDX enablement\n"));
     return FALSE;
   }
 
-  DEBUG ((DEBUG_INFO, "%a END\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[TDX] %a END\n", __FUNCTION__));
   return TRUE;
 }
 
@@ -457,9 +459,9 @@ IsWarmReset (
 /**
   Perform Trust Domain Execution (TDX) initialization.
 
-  This function initializes the TDX environment by performing various checks,
-  setting up necessary data structures, and launching the ACTM module if required.
-  It ensures that all preconditions for TDX are met and updates the TDX HOB with
+  This function initializes the TDX environment by performing various checks, 
+  setting up necessary data structures, and launching the ACTM module if required. 
+  It ensures that all preconditions for TDX are met and updates the TDX HOB with 
   relevant information.
 
   @param[in] TdxPolicy           Pointer to the TDX policy structure.
@@ -529,45 +531,45 @@ TdxInit (
              &TdxDataHobPtr
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Error creating TDX HOB, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "[TDX] Error creating TDX HOB, Status = %r\n", Status));
     return;
   }
 
   // Update HOB values
   TdxDataHobPtr->TdxEnabled = LocalTdxPolicy->TdxEnable;
-  DEBUG ((DEBUG_INFO, "TdxEnabled: 0x%X\n", TdxDataHobPtr->TdxEnabled));
+  DEBUG ((DEBUG_INFO, " TDX_DATA_HOB: TdxEnabled: 0x%X\n", TdxDataHobPtr->TdxEnabled));
 
   // Update SeamRR base address and size in the HOB
   TdxDataHobPtr->SeamRrBaseAddress = MemoryMapData->SeamrrBase;
   TdxDataHobPtr->SeamrrSize = CalculateSeamrrSize (Outputs);
 
   // Register for memory discovery notification.
-  DEBUG ((DEBUG_INFO, "Notify the CMR event from Tdx init\n"));
+  DEBUG ((DEBUG_INFO, "[TDX] Notify the CMR event from Tdx init\n"));
   Status = PeiServicesNotifyPpi (&mPpiPeiTdxMemoryNotifyList);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "PeiServicesNotifyPpi Failed (%r)\n", Status));
+    DEBUG ((DEBUG_ERROR, "[TDX] PeiServicesNotifyPpi Failed (%r)\n", Status));
     return;
   }
 
   // Builds the DIMM manifest for DDR5 memory type and skips for LPDDR5.
   if (Outputs->DdrType == MRC_DDR_TYPE_DDR5) {
-    DEBUG ((DEBUG_INFO, "Memory Type is DDR5 %a %d\n", __FUNCTION__, __LINE__));
-    DEBUG ((DEBUG_INFO, "Building Dimm Manifest.....\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Memory Type is DDR5 %a %d\n", __FUNCTION__, __LINE__));
+    DEBUG ((DEBUG_INFO, "[TDX] Building Dimm Manifest.....\n"));
     Status = PublishActmDimmManifest (MrcData, WarmReset);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Error building the Dimm Manifest Status = %r. exiting!..\n", Status));
+      DEBUG ((DEBUG_ERROR, "[TDX] Error building the Dimm Manifest Status = %r. exiting!..\n", Status));
       return;
     }
   } else {
-    DEBUG ((DEBUG_INFO, "Memory Type is LP5 %a %d\n", __FUNCTION__, __LINE__));
-    DEBUG ((DEBUG_INFO, "Not Building Dimm Manifest. exiting!..\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Memory Type is LP5 %a %d\n", __FUNCTION__, __LINE__));
+    DEBUG ((DEBUG_INFO, "[TDX] Not Building Dimm Manifest. exiting!..\n"));
     return;
   }
 
   // Skip ACTM launch if a warm reset is detected
   if (WarmReset) {
-    DEBUG ((DEBUG_INFO, "Warm reset detected\n"));
-    DEBUG ((DEBUG_INFO, "Skip ACTM launch\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Warm reset detected\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Skip ACTM launch\n"));
     return;
   }
 
@@ -575,7 +577,7 @@ TdxInit (
   AsmWriteMsr64 (MSR_TEE_INPUT_PARAM, (UINT64)&TdxDataHobPtr->ActmDimmManifest);
 
   // Launch the ACTM module
-  DEBUG ((DEBUG_INFO, "Allocate Temp ram for ACTM module\n"));
+  DEBUG ((DEBUG_INFO, "[TDX] Allocate Temp ram for ACTM module\n"));
 
   Status = PeiServicesAllocatePages (
                    EfiLoaderCode,
@@ -583,7 +585,7 @@ TdxInit (
                    &TempRamPtr
                    );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Page Allocation Failed, ACTM skipped\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Page Allocation Failed, ACTM skipped\n"));
   } else {
     DEBUG ((DEBUG_INFO, "Page Allocation Success, Address = 0x%X\n", TempRamPtr));
     ActmRelocPointer = (UINT64 *)((UINTN)TempRamPtr);
@@ -596,18 +598,18 @@ TdxInit (
         );
 
     // Launch the ACTM
-    DEBUG((DEBUG_INFO, "Launching ACTM\n"));
+    DEBUG((DEBUG_INFO, "[TDX] Launching ACTM\n"));
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TDX_ACM_ENTRY); // PostCode (0xD903)
     ActmStatus = AsmLaunchActm (TempRamPtr, TdxActmModuleSize);
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TDX_ACM_EXIT); // PostCode (0xD904)
-    DEBUG((DEBUG_INFO, "ACTM Return Status = 0x%x\n", ActmStatus));
+    DEBUG((DEBUG_INFO, "[TDX] ACTM Return Status = 0x%x\n", ActmStatus));
   }
 
   // Free the allocated memory for the ACTM module
   if (TempRamPtr != 0){
     Status = PeiServicesFreePages (TempRamPtr, EFI_SIZE_TO_PAGES (TdxActmModuleSize));
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "PeiServicesFreePages failed (%r)\n", Status));
+      DEBUG ((DEBUG_INFO, "[TDX] PeiServicesFreePages failed (%r)\n", Status));
     }
   }
   return;
@@ -639,7 +641,7 @@ PeiTdxMemoryAllocation(
   if (IsTdxEnabled ()) {
     Status = GetSeamrrSize (&SeamrrSize);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Fail to retrieve Seamrr Size GetSeamrrSize() - %r \n", Status));
+      DEBUG ((DEBUG_ERROR, "[TDX] Fail to retrieve Seamrr Size GetSeamrrSize() - %r \n", Status));
       ASSERT_EFI_ERROR (Status);
     }
 
@@ -694,13 +696,13 @@ PeiTdxMemoryAllocation(
 
       Status = PeiCpuSetSeamrrRegion (SeamRrBaseAddress, (SeamrrSize << 20));
       if (EFI_ERROR(Status)) {
-        DEBUG ((DEBUG_ERROR, "Fail to program Seamrr Base and Mask MSR's %a %d \n", __FUNCTION__, __LINE__));
+        DEBUG ((DEBUG_ERROR, "[TDX] Fail to program Seamrr Base and Mask MSR's %a %d \n", __FUNCTION__, __LINE__));
         ASSERT_EFI_ERROR (Status);
       }
       // Set the IMR for Seamrr (IMR26)
       Status = SetImr (IMR_SEAMRR, SeamRrBaseAddress, (SeamrrSize << 20));
       if (EFI_ERROR(Status)) {
-        DEBUG ((DEBUG_ERROR, "Fail to program Seamrr IMR %a %d \n", __FUNCTION__, __LINE__));
+        DEBUG ((DEBUG_ERROR, "[TDX] Fail to program Seamrr IMR %a %d \n", __FUNCTION__, __LINE__));
         ASSERT_EFI_ERROR (Status);
       }
     }
@@ -750,7 +752,7 @@ PeiTdxProgramImrBelow4Gb (
   if (IsTdxEnabled ()) {
     Status = GetSeamrrSize (&SeamrrSize);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Fail to retrieve Seamrr Size GetSeamrrSize() - %r \n", Status));
+      DEBUG ((DEBUG_ERROR, "[TDX] Fail to retrieve Seamrr Size GetSeamrrSize() - %r \n", Status));
       ASSERT_EFI_ERROR (Status);
     }
 
@@ -780,13 +782,13 @@ PeiTdxProgramImrBelow4Gb (
 
       Status = PeiCpuSetSeamrrRegion (SeamRrBaseAddress, (SeamrrSize << 20));
       if (EFI_ERROR(Status)) {
-        DEBUG ((DEBUG_ERROR, "Fail to program Seamrr Base and Mask MSR's %a %d \n", __FUNCTION__, __LINE__));
+        DEBUG ((DEBUG_ERROR, "[TDX] Fail to program Seamrr Base and Mask MSR's %a %d \n", __FUNCTION__, __LINE__));
         ASSERT_EFI_ERROR (Status);
       }
       // Set the IMR for Seamrr (IMR26)
       Status = SetImr (IMR_SEAMRR, SeamRrBaseAddress, (SeamrrSize << 20));
       if (EFI_ERROR(Status)) {
-        DEBUG ((DEBUG_ERROR, "Fail to program Seamrr IMR %a %d \n", __FUNCTION__, __LINE__));
+        DEBUG ((DEBUG_ERROR, "[TDX] Fail to program Seamrr IMR %a %d \n", __FUNCTION__, __LINE__));
         ASSERT_EFI_ERROR (Status);
       }
     }

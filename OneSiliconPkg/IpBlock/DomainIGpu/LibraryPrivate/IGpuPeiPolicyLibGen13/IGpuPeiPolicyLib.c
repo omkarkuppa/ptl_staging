@@ -38,7 +38,8 @@ IGpuLoadPeiPreMemDefault (
   IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig;
 
   IGpuPreMemConfig = ConfigBlockPointer;
-  DEBUG ((DEBUG_INFO, "IGpuPreMemConfig Name = %g HobLength = 0x%x\n", &IGpuPreMemConfig->Header.GuidHob.Name, IGpuPreMemConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "IGpuPreMemConfig->Header.GuidHob.Name = %g\n", &IGpuPreMemConfig->Header.GuidHob.Name));
+  DEBUG ((DEBUG_INFO, "IGpuPreMemConfig->Header.GuidHob.Header.HobLength = 0x%x\n", IGpuPreMemConfig->Header.GuidHob.Header.HobLength));
 
   ///
   /// Initialize IGPU Pre-Mem policies

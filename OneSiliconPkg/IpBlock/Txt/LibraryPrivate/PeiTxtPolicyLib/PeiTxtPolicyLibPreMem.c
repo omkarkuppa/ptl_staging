@@ -43,7 +43,8 @@ LoadTxtConfigDefaultPreMem (
   UINT32                      TxtCapableChipset;
   TxtPreMemConfig = ConfigBlockPointer;
 
-  DEBUG ((DEBUG_INFO, "TxtPreMemConfig Name = %g HobLength = 0x%x\n", &TxtPreMemConfig->Header.GuidHob.Name, TxtPreMemConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "TxtPreMemConfig->Header.GuidHob.Name = %g\n", &TxtPreMemConfig->Header.GuidHob.Name));
+  DEBUG ((DEBUG_INFO, "TxtPreMemConfig->Header.GuidHob.Header.HobLength = 0x%x\n", TxtPreMemConfig->Header.GuidHob.Header.HobLength));
 
   /********************************
     CPU TXT PreMem configuration

@@ -82,7 +82,7 @@ SmbusPrepareToArp (
   UINTN                     Length;
   UINT8                     Buffer;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusPrepareToArp() Start\n"));
 
   DeviceAddress.SmbusDeviceAddress = SMBUS_ADDRESS_ARP;
   Length                          = 1;
@@ -97,7 +97,7 @@ SmbusPrepareToArp (
              &Buffer
              );
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusPrepareToArp() End\n"));
 
   return Status;
 }
@@ -126,7 +126,7 @@ SmbusGetUdidGeneral (
   DeviceAddress.SmbusDeviceAddress = SMBUS_ADDRESS_ARP;
   Length                          = SMBUS_GET_UDID_LENGTH;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusGetUdidGeneral() Start\n"));
 
   Status = SmbusExec (
              DeviceAddress,
@@ -153,7 +153,7 @@ SmbusGetUdidGeneral (
     }
   }
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusGetUdidGeneral() End\n"));
 
   return Status;
 }
@@ -178,7 +178,7 @@ SmbusAssignAddress (
   UINTN                     Length;
   UINT8                     Buffer[SMBUS_GET_UDID_LENGTH];
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusAssignAddress() Start\n"));
 
   Buffer[0]                       = DeviceMap->SmbusDeviceUdid.DeviceCapabilities;
   Buffer[1]                       = DeviceMap->SmbusDeviceUdid.VendorRevision;
@@ -210,7 +210,7 @@ SmbusAssignAddress (
              Buffer
              );
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusAssignAddress() End\n"));
 
   return Status;
 }
@@ -306,7 +306,7 @@ SmbusFullArp (
   EFI_STATUS            Status;
   EFI_SMBUS_DEVICE_MAP  *CurrentDeviceMap;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusFullArp() Start\n"));
 
   Status = SmbusPrepareToArp (Private);
   if (EFI_ERROR (Status)) {
@@ -380,7 +380,7 @@ SmbusFullArp (
 
   } while (Private->DeviceMapEntries < MAX_SMBUS_DEVICES);
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusFullArp() End\n"));
 
   return EFI_SUCCESS;
 }
@@ -406,7 +406,7 @@ SmbusDirectedArp (
   EFI_STATUS            Status;
   EFI_SMBUS_DEVICE_MAP  *CurrentDeviceMap;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusDirectedArp() Start\n"));
 
   if (Private->DeviceMapEntries >= MAX_SMBUS_DEVICES) {
     return EFI_OUT_OF_RESOURCES;
@@ -442,7 +442,7 @@ SmbusDirectedArp (
   Private->DeviceMapEntries++;
   DeviceAddress->SmbusDeviceAddress = CurrentDeviceMap->SmbusDeviceAddress.SmbusDeviceAddress;
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PEI SmbusDirectedArp() End\n"));
 
   return EFI_SUCCESS;
 }

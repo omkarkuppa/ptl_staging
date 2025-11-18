@@ -51,15 +51,15 @@ SmbusPreMemPrintConfig (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSmbusPreMemConfigGuid, (VOID *) &SmbusPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Enable= %x\n", SmbusPreMemConfig->Enable));
-  DEBUG ((DEBUG_INFO, "ArpEnable= %x\n", SmbusPreMemConfig->ArpEnable));
-  DEBUG ((DEBUG_INFO, "DynamicPowerGating= %x\n", SmbusPreMemConfig->DynamicPowerGating));
-  DEBUG ((DEBUG_INFO, "SpdWriteDisable= %x\n", SmbusPreMemConfig->SpdWriteDisable));
-  DEBUG ((DEBUG_INFO, "SmbAlertEnable= %x\n", SmbusPreMemConfig->SmbAlertEnable));
-  DEBUG ((DEBUG_INFO, "SmbusIoBase= %x\n", SmbusPreMemConfig->SmbusIoBase));
-  DEBUG ((DEBUG_INFO, "NumRsvdSmbusAddresses= %x\n", SmbusPreMemConfig->NumRsvdSmbusAddresses));
-  DEBUG ((DEBUG_INFO, "RsvdSmbusAddressTable= {"));
+  DEBUG ((DEBUG_INFO, "------------------ SMBUS PreMem Config ------------------\n"));
+  DEBUG ((DEBUG_INFO, " Enable= %x\n", SmbusPreMemConfig->Enable));
+  DEBUG ((DEBUG_INFO, " ArpEnable= %x\n", SmbusPreMemConfig->ArpEnable));
+  DEBUG ((DEBUG_INFO, " DynamicPowerGating= %x\n", SmbusPreMemConfig->DynamicPowerGating));
+  DEBUG ((DEBUG_INFO, " SpdWriteDisable= %x\n", SmbusPreMemConfig->SpdWriteDisable));
+  DEBUG ((DEBUG_INFO, " SmbAlertEnable= %x\n", SmbusPreMemConfig->SmbAlertEnable));
+  DEBUG ((DEBUG_INFO, " SmbusIoBase= %x\n", SmbusPreMemConfig->SmbusIoBase));
+  DEBUG ((DEBUG_INFO, " NumRsvdSmbusAddresses= %x\n", SmbusPreMemConfig->NumRsvdSmbusAddresses));
+  DEBUG ((DEBUG_INFO, " RsvdSmbusAddressTable= {"));
   for (Index = 0; Index < SmbusPreMemConfig->NumRsvdSmbusAddresses; ++Index) {
     DEBUG ((DEBUG_INFO, " %02xh", SmbusPreMemConfig->RsvdSmbusAddressTable[Index]));
   }
@@ -79,7 +79,8 @@ SmbusPreMemLoadConfigDefault (
   PCH_SMBUS_PREMEM_CONFIG  *SmbusPreMemConfig;
   SmbusPreMemConfig = ConfigBlockPointer;
 
-  DEBUG ((DEBUG_INFO, "SmbusPreMemConfig Name = %g HobLength = 0x%x\n", &SmbusPreMemConfig->Header.GuidHob.Name, SmbusPreMemConfig->Header.GuidHob.Header.HobLength));
+  DEBUG ((DEBUG_INFO, "SmbusPreMemConfig->Header.GuidHob.Name = %g\n", &SmbusPreMemConfig->Header.GuidHob.Name));
+  DEBUG ((DEBUG_INFO, "SmbusPreMemConfig->Header.GuidHob.Header.HobLength = 0x%x\n", SmbusPreMemConfig->Header.GuidHob.Header.HobLength));
 
   /********************************
     SMBus configuration

@@ -97,19 +97,19 @@ MePrintPolicyPpiPreMem (
   Status = GetConfigBlock ((VOID *) SiPolicyPpiPreMem, &gMePeiPreMemConfigGuid, (VOID *) &MePeiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Revision : 0x%x\n", MePeiPreMemConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "------------------------ ME_PEI_PREMEM_CONFIG -----------------\n"));
+  DEBUG ((DEBUG_INFO, " Revision                  : 0x%x\n", MePeiPreMemConfig->Header.Revision));
 
-  DEBUG ((DEBUG_INFO, "HeciTimeouts : 0x%x\n", MePeiPreMemConfig->HeciTimeouts));
-  DEBUG ((DEBUG_INFO, "DidInitStat : 0x%x\n", MePeiPreMemConfig->DidInitStat));
-  DEBUG ((DEBUG_INFO, "DisableCpuReplacedPolling : 0x%x\n", MePeiPreMemConfig->DisableCpuReplacedPolling));
-  DEBUG ((DEBUG_INFO, "DisableMessageCheck : 0x%x\n", MePeiPreMemConfig->DisableMessageCheck));
-  DEBUG ((DEBUG_INFO, "SkipMbpHob : 0x%x\n", MePeiPreMemConfig->SkipMbpHob));
-  DEBUG ((DEBUG_INFO, "HeciCommunication : 0x%x\n", MePeiPreMemConfig->HeciCommunication));
-  DEBUG ((DEBUG_INFO, "HeciCommunication2 : 0x%x\n", MePeiPreMemConfig->HeciCommunication2));
-  DEBUG ((DEBUG_INFO, "HeciCommunication3 : 0x%x\n", MePeiPreMemConfig->HeciCommunication3));
-  DEBUG ((DEBUG_INFO, "KtDeviceEnable : 0x%x\n", MePeiPreMemConfig->KtDeviceEnable));
-  DEBUG ((DEBUG_INFO, "SkipCpuReplacementCheck : 0x%x\n", MePeiPreMemConfig->SkipCpuReplacementCheck));
+  DEBUG ((DEBUG_INFO, " HeciTimeouts              : 0x%x\n", MePeiPreMemConfig->HeciTimeouts));
+  DEBUG ((DEBUG_INFO, " DidInitStat               : 0x%x\n", MePeiPreMemConfig->DidInitStat));
+  DEBUG ((DEBUG_INFO, " DisableCpuReplacedPolling : 0x%x\n", MePeiPreMemConfig->DisableCpuReplacedPolling));
+  DEBUG ((DEBUG_INFO, " DisableMessageCheck       : 0x%x\n", MePeiPreMemConfig->DisableMessageCheck));
+  DEBUG ((DEBUG_INFO, " SkipMbpHob                : 0x%x\n", MePeiPreMemConfig->SkipMbpHob));
+  DEBUG ((DEBUG_INFO, " HeciCommunication         : 0x%x\n", MePeiPreMemConfig->HeciCommunication));
+  DEBUG ((DEBUG_INFO, " HeciCommunication2        : 0x%x\n", MePeiPreMemConfig->HeciCommunication2));
+  DEBUG ((DEBUG_INFO, " HeciCommunication3        : 0x%x\n", MePeiPreMemConfig->HeciCommunication3));
+  DEBUG ((DEBUG_INFO, " KtDeviceEnable            : 0x%x\n", MePeiPreMemConfig->KtDeviceEnable));
+  DEBUG ((DEBUG_INFO, " SkipCpuReplacementCheck   : 0x%x\n", MePeiPreMemConfig->SkipCpuReplacementCheck));
   DEBUG_CODE_END ();
 }
 
@@ -131,16 +131,16 @@ MePrintPolicyPpi (
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gMePeiConfigGuid, (VOID *) &MePeiConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Revision : 0x%x\n", MePeiConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "------------------------ ME_PEI_CONFIG -----------------\n"));
+  DEBUG ((DEBUG_INFO, " Revision                  : 0x%x\n", MePeiConfig->Header.Revision));
 
-  DEBUG ((DEBUG_INFO, "MctpBroadcastCycle : 0x%x\n", MePeiConfig->MctpBroadcastCycle));
-  DEBUG ((DEBUG_INFO, "EndOfPostMessage : 0x%x\n", MePeiConfig->EndOfPostMessage));
-  DEBUG ((DEBUG_INFO, "DisableD0I3SettingForHeci : 0x%x\n", MePeiConfig->DisableD0I3SettingForHeci));
-  DEBUG ((DEBUG_INFO, "MeUnconfigOnRtcClear : 0x%x\n", MePeiConfig->MeUnconfigOnRtcClear));
-  DEBUG ((DEBUG_INFO, "CseDataResilience : 0x%x\n", MePeiConfig->CseDataResilience));
-  DEBUG ((DEBUG_INFO, "SseCommunication : 0x%x\n", MePeiConfig->SseCommunication));
-  DEBUG ((DEBUG_INFO, "PseEomFlowEnable : 0x%x\n", MePeiConfig->PseEomFlowEnable));
+  DEBUG ((DEBUG_INFO, " MctpBroadcastCycle        : 0x%x\n", MePeiConfig->MctpBroadcastCycle));
+  DEBUG ((DEBUG_INFO, " EndOfPostMessage          : 0x%x\n", MePeiConfig->EndOfPostMessage));
+  DEBUG ((DEBUG_INFO, " DisableD0I3SettingForHeci : 0x%x\n", MePeiConfig->DisableD0I3SettingForHeci));
+  DEBUG ((DEBUG_INFO, " MeUnconfigOnRtcClear      : 0x%x\n", MePeiConfig->MeUnconfigOnRtcClear));
+  DEBUG ((DEBUG_INFO, " CseDataResilience         : 0x%x\n", MePeiConfig->CseDataResilience));
+  DEBUG ((DEBUG_INFO, " SseCommunication          : 0x%x\n", MePeiConfig->SseCommunication));
+  DEBUG ((DEBUG_INFO, " PseEomFlowEnable          : 0x%x\n", MePeiConfig->PseEomFlowEnable));
   DEBUG_CODE_END ();
 }
 

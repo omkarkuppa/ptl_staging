@@ -592,7 +592,7 @@ IocDisablePcieRootPort (
   MCHBAR_HOSTBRIDGE_CFG_STRUCT              MchBar;
   IOC_PMC_DEVEN_B_IOC_MCHBAR_STRUCT         PmcDevenStruct;
 
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "IocDisablePcieRootPort Start\n"));
 
   MchBar.Data = GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase);
     PmcDevenStruct.Data = MmioRead32 ((UINTN)(MchBar.Data + IOC_PMC_DEVEN_B_IOC_MCHBAR_REG));
@@ -618,7 +618,7 @@ IocDisablePcieRootPort (
 
     MmioWrite32 ((UINTN)(MchBar.Data + IOC_PMC_DEVEN_B_IOC_MCHBAR_REG), PmcDevenStruct.Data);
     DEBUG ((DEBUG_INFO, "DevEn after write = %x\n", MmioRead32 ((UINTN)(MchBar.Data + IOC_PMC_DEVEN_B_IOC_MCHBAR_REG))));
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "IocDisablePcieRootPort End\n"));
   return;
 }
 

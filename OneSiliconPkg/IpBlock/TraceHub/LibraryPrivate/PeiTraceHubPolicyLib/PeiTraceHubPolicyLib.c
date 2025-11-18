@@ -61,12 +61,12 @@ SocTraceHubPreMemPrintConfig (
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTraceHubPreMemConfigGuid, (VOID *) &TraceHubPreMemConfig);
   ASSERT_EFI_ERROR (Status);
-  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "EnableMode : 0x%x\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode));
-  DEBUG ((DEBUG_INFO, "MemReg0Size : 0x%lx\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg0Size));
-  DEBUG ((DEBUG_INFO, "MemReg1Size : 0x%lx\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg1Size));
-  DEBUG ((DEBUG_INFO, "AetEnabled : 0x%x\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].AetEnabled));
-  DEBUG ((DEBUG_INFO, "BiosTraceSink : 0x%x\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].BiosTraceSink));
+  DEBUG ((DEBUG_INFO, "------------------ SOC/PCD Trace Hub PreMem Config ------------------\n"));
+  DEBUG ((DEBUG_INFO, " EnableMode    : 0x%x\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode));
+  DEBUG ((DEBUG_INFO, " MemReg0Size   : 0x%lx\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg0Size));
+  DEBUG ((DEBUG_INFO, " MemReg1Size   : 0x%lx\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg1Size));
+  DEBUG ((DEBUG_INFO, " AetEnabled    : 0x%x\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].AetEnabled));
+  DEBUG ((DEBUG_INFO, " BiosTraceSink : 0x%x\n", TraceHubPreMemConfig->TraceHub[SocTraceHub].BiosTraceSink));
 }
 
 /**
