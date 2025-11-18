@@ -1,4 +1,5 @@
-/*++
+/** @file
+  SoundWire topology definitions
 
   @copyright
   INTEL CONFIDENTIAL
@@ -17,6 +18,11 @@
 
 @par Specification Reference:
 **/
+
+//
+// NEED_CONFIGS
+// NEED_CONFIGS register value LSB is set based on the configuration
+//
 
 #ifdef COHEN_NEED_CONFIGS_SIDECAR
 # define COHEN_NEED_CONFIGS_SIDECAR_BIT (1 << 7)

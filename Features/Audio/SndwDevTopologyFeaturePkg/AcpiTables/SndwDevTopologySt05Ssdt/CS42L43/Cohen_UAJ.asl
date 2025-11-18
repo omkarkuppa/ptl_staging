@@ -3,7 +3,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2025 Intel Corporation.
+  Copyright (C) 2023 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -19,103 +19,151 @@
 @par Specification Reference:
 **/
 
+
+
+/*
+    // Handy Entity ID map
+    PDE_34   2
+    PDE_47   3
+
+    IT_31    7
+    IT_32    9
+    IT_33    0xB
+    IT_41    4
+
+    FU_31    8
+    FU_32    0xA
+    FU_33    0xC
+    FU_36    0x19
+    FU_35    0xE
+    FU_41    0x10
+
+    GE_35    0x11
+
+    XU_42    0x1
+    XU_36    0x1F
+
+    MFPU_36    0x18
+    MFPU_41    0x16
+
+    MU_35    0xF
+
+    CS_36    0x1A
+    CS_41    5
+
+    OT_36    0x1B
+    OT_43    0x13
+    OT_44    0x15
+    OT_45    0x17
+
+    SU_35    0xD
+    SU_43    0x12
+    SU_44    0x14
+    SU_45    0x16
+*/
+
 #ifdef EXCLUDE_FU_36_VOLUME_CONTROL
-# define FEATURE_CS42L45_UAJ_NO_VOL_MUTE_C_COND  0x00000000
+# define FEATURE_CS42L43_UAJ_NO_VOL_MUTE_C_COND  0x00000000
 #else // !EXCLUDE_FU_36_VOLUME_CONTROL
 // Class driver creates UAJ MIC mute and volume elements.
 // XU opts out from creating UAJ MIC mute and volume elements.
-# define FEATURE_CS42L45_UAJ_NO_VOL_MUTE_C_COND  0x00000010
+# define FEATURE_CS42L43_UAJ_NO_VOL_MUTE_C_COND  0x00000010
 #endif // EXCLUDE_FU_36_VOLUME_CONTROL
 
 #ifdef EXCLUDE_FU_41_VOLUME_CONTROL
-# define FEATURE_CS42L45_UAJ_NO_VOL_MUTE_R_COND  0x00000000
+# define FEATURE_CS42L43_UAJ_NO_VOL_MUTE_R_COND  0x00000000
 #else
 // Class driver creates UAJ SPK mute and volume elements.
 // XU opts out from creating UAJ SPK mute and volume elements.
-# define FEATURE_CS42L45_UAJ_NO_VOL_MUTE_R_COND  0x00000020
+# define FEATURE_CS42L43_UAJ_NO_VOL_MUTE_R_COND  0x00000020
 #endif
 
-#ifndef CS42L45_FU_36_VOL_MIN
+#ifndef CS42L43_FU_36_VOL_MIN
 // Min = 0x0000CE00 (-64.0 dB) in Q7.8 format
-# define CS42L45_FU_36_VOL_MIN 0x00, 0xC0, 0x00, 0x00
+# define CS42L43_FU_36_VOL_MIN 0x00, 0xC0, 0x00, 0x00
 #endif
 
-#ifndef CS42L45_FU_36_VOL_MAX
+#ifndef CS42L43_FU_36_VOL_MAX
 // Max = 0x00001F80 (+31.5 dB) in Q7.8 format
-# define CS42L45_FU_36_VOL_MAX 0x80, 0x1F, 0x00, 0x00
+# define CS42L43_FU_36_VOL_MAX 0x80, 0x1F, 0x00, 0x00
 #endif
 
-#ifndef CS42L45_FU_36_VOL_STEP
+#ifndef CS42L43_FU_36_VOL_STEP
 // Step = 0x00000008 (1/32 dB per step) in Q7.8 format
-# define CS42L45_FU_36_VOL_STEP 0x08, 0x00, 0x00, 0x00
+# define CS42L43_FU_36_VOL_STEP 0x08, 0x00, 0x00, 0x00
 #endif
 
-#ifndef CS42L45_FU_36_VOL_DEFAULT
+#ifndef CS42L43_FU_36_VOL_DEFAULT
 // FU36 Default = 0x0 (0 dB) in Q7.8 format
-# define CS42L45_FU_36_VOL_DEFAULT 0x0
+# define CS42L43_FU_36_VOL_DEFAULT 0x0
 #endif
 
-#ifndef CS42L45_FU_36_VOL_FIXED_Q7_8
+#ifndef CS42L43_FU_36_VOL_FIXED_Q7_8
 // FU36 Fixed = 0x0 (0 dB) in Q7.8 format
-# define CS42L45_FU_36_VOL_FIXED_Q7_8 0x0
+# define CS42L43_FU_36_VOL_FIXED_Q7_8 0x0
 #endif
 
-#ifndef CS42L45_FU_41_VOL_MIN
+#ifndef CS42L43_FU_41_VOL_MIN
 // Min = 0x00008E00 (-114 dB) in Q7.8 format
-# define CS42L45_FU_41_VOL_MIN 0x00, 0x8E, 0x00, 0x00
+# define CS42L43_FU_41_VOL_MIN 0x00, 0x8E, 0x00, 0x00
 #endif
 
-#ifndef CS42L45_FU_41_VOL_MAX
+#ifndef CS42L43_FU_41_VOL_MAX
 // Max = 0x00000000 (0.0 dB) in Q7.8 format
-# define CS42L45_FU_41_VOL_MAX 0x00, 0x00, 0x00, 0x00
+# define CS42L43_FU_41_VOL_MAX 0x00, 0x00, 0x00, 0x00
 #endif
 
-#ifndef CS42L45_FU_41_VOL_FIXED_Q7_8
+#ifndef CS42L43_FU_41_VOL_FIXED_Q7_8
 // Fixed = 0x00000000 (0.0 dB) in Q7.8 format
-# define CS42L45_FU_41_VOL_FIXED_Q7_8 0x0
+# define CS42L43_FU_41_VOL_FIXED_Q7_8 0x0
 #endif
 
-#ifndef CS42L45_FU_41_VOL_STEP
+#ifndef CS42L43_FU_41_VOL_STEP
 // Step = 0x00000008 (1/32 dB per step) in Q7.8 format
-# define CS42L45_FU_41_VOL_STEP 0x08, 0x00, 0x00, 0x00
+# define CS42L43_FU_41_VOL_STEP 0x08, 0x00, 0x00, 0x00
 #endif
 
-#ifndef CS42L45_FU_41_VOL_DEFAULT
+#ifndef CS42L43_FU_41_VOL_DEFAULT
 // Default = 0x0 (0 dB) in Q7.8 format
-# define CS42L45_FU_41_VOL_DEFAULT 0x0
+# define CS42L43_FU_41_VOL_DEFAULT 0x0
 #endif
 
-#ifndef CS42L45_IT_31_MIC_BIAS_DEFAULT
+#ifndef CS42L43_IT_31_MIC_BIAS_DEFAULT
 // MIC-on-Jack default MIC Bias = 2.75V
 // HS MIC default MIC Bias = 2.75V
-# define CS42L45_IT_31_MIC_BIAS_DEFAULT 0x05
+# define CS42L43_IT_31_MIC_BIAS_DEFAULT 0x05
 #endif
 
-// Phife GE35 Load Detection
-#define CS42L45_GE35_CTL_LOAD_DET   (1 << 0x31)
+// Cohen GE35 Load Detection
+#define CS42L43_GE35_CTL_LOAD_DET   (1 << 0x31)
 
-// Phife GE35 ASP Output
-#define CS42L45_GE35_CTL_ASP_OUTPUT (1 << 0x32)
+// Cohen GE35 ASP Output
+#define CS42L43_GE35_CTL_ASP_OUTPUT (1 << 0x32)
 
-#include <UAJ-Clusters.asl>
-#include <UAJ-Usage.asl>
+#include <SndwDevTopologySt05Ssdt/UAJ-Clusters.asl>
+#include <SndwDevTopologySt05Ssdt/UAJ-Usage.asl>
 
 #ifdef EXCLUDE_FU_36_VOLUME_CONTROL
 // Remove FU_36
-# define PHIFE_UAJ_CAPTURE_STREAM_ENTITY_ID_LIST    0x2, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0x11, 0x1F, 0x18, 0x1A, 0x1B
+# define COHEN_UAJ_CAPTURE_STREAM_ENTITY_ID_LIST    0x2, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0x11, 0x1F, 0x18, 0x1A, 0x1B
 #else   // !EXCLUDE_FU_36_VOLUME_CONTROL
 // Define FU_36
-# define PHIFE_UAJ_CAPTURE_STREAM_ENTITY_ID_LIST    0x2, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0x11, 0x1F, 0x18, 0x19, 0x1A, 0x1B
+# define COHEN_UAJ_CAPTURE_STREAM_ENTITY_ID_LIST    0x2, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0x11, 0x1F, 0x18, 0x19, 0x1A, 0x1B
 #endif  // EXCLUDE_FU_36_VOLUME_CONTROL
 
 #ifdef EXCLUDE_FU_41_VOLUME_CONTROL
 // Remove FU_41
-# define PHIFE_UAJ_RENDER_STREAM_ENTITY_ID_LIST     0x5, 0x4, 0x6, 0xE, 0xF, 0x1, 0x3, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17
+# define COHEN_UAJ_RENDER_STREAM_ENTITY_ID_LIST     0x5, 0x4, 0x6, 0xE, 0xF, 0x1, 0x3, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17
 #else   // !EXCLUDE_FU_41_VOLUME_CONTROL
 // Define FU_41
-# define PHIFE_UAJ_RENDER_STREAM_ENTITY_ID_LIST     0x5, 0x4, 0x6, 0xE, 0xF, 0x1, 0x10, 0x3, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17
+# define COHEN_UAJ_RENDER_STREAM_ENTITY_ID_LIST     0x5, 0x4, 0x6, 0xE, 0xF, 0x1, 0x10, 0x3, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17
 #endif  // EXCLUDE_FU_41_VOLUME_CONTROL
 
+// COHEN_BRIDGE_SIDECAR_REGISTER_ACCESS_ADDRESS_SELECTOR
+#define CS42L43_UAJ_E0_CTL_SIDECAR_REG_ADDR (1 << 0x30)
+
+// COHEN_BRIDGE_SIDECAR_REGISTER_ACCESS_VALUE_SELECTOR
+#define CS42L43_UAJ_E0_CTL_SIDECAR_REG_VAL  (1 << 0x31)
 
 Name(_DSD, Package()
 {
@@ -132,14 +180,27 @@ Name(_DSD, Package()
         //Package(2) { "mipi-sdca-function-topology-features", 0x0},
         Package(2) { "mipi-sdca-control-list", (CTL_E0_FUNCTION_VERSION | CTL_E0_FUNCTION_ID | CTL_E0_FUNCTION_MANUFACTURER_ID |
                                                 CTL_E0_FUNCTION_TYPE | CTL_E0_FUNCTION_SDCA_VERSION | CTL_E0_FUNCTION_STATUS |
-                                                CTL_E0_DEVICE_MANUFACTURER_ID | CTL_E0_DEVICE_PART_ID | CTL_E0_DEVICE_VERSION | CTL_E0_DEVICE_SDCA_VERSION
+                                                CTL_E0_DEVICE_MANUFACTURER_ID | CTL_E0_DEVICE_PART_ID | CTL_E0_DEVICE_VERSION | CTL_E0_DEVICE_SDCA_VERSION |
+                                                CS42L43_UAJ_E0_CTL_SIDECAR_REG_ADDR | CS42L43_UAJ_E0_CTL_SIDECAR_REG_VAL
                                                 )},
-        Package(2) { "mipi-sdca-entity-id-list", Package() { PHIFE_UAJ_CAPTURE_STREAM_ENTITY_ID_LIST,
-                                                             PHIFE_UAJ_RENDER_STREAM_ENTITY_ID_LIST} },
+        Package(2) { "mipi-sdca-entity-id-list", Package() { COHEN_UAJ_CAPTURE_STREAM_ENTITY_ID_LIST,
+                                                             COHEN_UAJ_RENDER_STREAM_ENTITY_ID_LIST} },
 
         Package(2) { "mipi-sdca-function-busy-max-delay", 5000},
         // Clusters
         CLUSTER_ID_LIST_UAJ,
+#ifdef  SDCA_CLASS_FDL_CS42L43
+        Package () { "mipi-sdca-file-set-id-list", Package () {1,2,3}},
+        Package () { "mipi-sdca-file-set-id-0x1",
+                     Package () {0x01FA, 3, 0x0001FF28}}, // Primer 3
+        Package () { "mipi-sdca-file-set-id-0x2",
+                     Package () {0x01FA, 0x42430005, 0x00014800}}, // FW Patch
+        Package () { "mipi-sdca-file-set-id-0x3",
+                     Package () {0x01FA, 0x42430061, 0x0001F930,    // pll_cfg_48000
+                                 0x01FA, 0x42430062, 0x0001F93C,    // codec_cfg
+                                 0x01FA, 0x42430063, 0x0001FB40,    // jack_cfg
+                                 0x01FA, 0x42430064, 0x0001F910}},  // gpio_cfg
+#endif //  SDCA_CLASS_FDL_CS42L43
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -155,6 +216,8 @@ Name(_DSD, Package()
         Package(2) { "mipi-sdca-control-0x2D-subproperties", "C02D"},
         Package(2) { "mipi-sdca-control-0x2E-subproperties", "C02E"},
         Package(2) { "mipi-sdca-control-0x2F-subproperties", "C02F"},
+        Package(2) { "mipi-sdca-control-0x30-subproperties", "C030"},       // COHEN_BRIDGE_SIDECAR_REGISTER_ACCESS_ADDRESS_SELECTOR
+        Package(2) { "mipi-sdca-control-0x31-subproperties", "C031"},       // COHEN_BRIDGE_SIDECAR_REGISTER_ACCESS_VALUE_SELECTOR
 
         // Entity-level
         Package(2) { "mipi-sdca-entity-id-0x2-subproperties", "E002"},  // PDE_34
@@ -257,10 +320,10 @@ Name(C007, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
-    {   // Class, DC, Function_Id = 0x4245
+    {   // Class, DC, Function_Id = 0x4243
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
-        Package(2) { "mipi-sdca-control-dc-value", 0x4245},
+        Package(2) { "mipi-sdca-control-dc-value", 0x4243},
     }
 }) // End C007
 
@@ -285,7 +348,7 @@ Name(C010, Package()
         // Class, RW1C, Function_Status
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_RW1C},
-        Package(2) { "mipi-sdca-control-interrupt-position", PHIFE_SDCA_UAJ_FUNC_STATUS_INT},
+        Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_UAJ_FUNC_STATUS_INT},
     }
 }) // End C010
 
@@ -307,10 +370,10 @@ Name(C02D, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        // Device_Part_ID: Class, DC = 0x4245
+        // Device_Part_ID: Class, DC = 0x4243
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
-        Package(2) { "mipi-sdca-control-dc-value", 0x4245},
+        Package(2) { "mipi-sdca-control-dc-value", 0x4243},
     }
 }) // End C02D
 
@@ -341,17 +404,46 @@ Name(C02F, Package()
 }) // End C02F
 
 
+Name(C030, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        // Extension/Platform, RW, COHEN_BRIDGE_SIDECAR_REGISTER_ACCESS_ADDRESS_SELECTOR
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION | CAL_PLATFORM},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x6 }, // 0x1, 0x2
+    }
+}) // End C030
+
+
+Name(C031, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        // Extension/Platform, RW, COHEN_BRIDGE_SIDECAR_REGISTER_ACCESS_VALUE_SELECTOR
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION | CAL_PLATFORM},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x6 }, // 0x1, 0x2
+    }
+}) // End C031
+
+
 #if CTL_E0_FUNCTION_SDCA_VERSION_VAL < 0x10
 // DataPortIndex MAP1
 Name(MAP1, Buffer() {
-    0x1, PHIFE_UAJ_RENDER_DATA_PORT, // {DP_Index, DP_Num} (IT_41)
+    0x1, 0x6, // {DP_Index, DP_Num} (IT_41)
 }) // End MAP1
 
 // DataPortIndex MAP2
 Name(MAP2, Buffer() {
-    0x2, PHIFE_UAJ_CAPTURE_DATA_PORT, // {DP_Index, DP_Num} (OT_36)
+    0x2, 0x2, // {DP_Index, DP_Num} (OT_36)
 }) // End MAP2
 #endif
+
 
 
 // +====================================+
@@ -411,7 +503,6 @@ Name(RPS0, Package()
     {   // Requested_PS, Class, R/W
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS },
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
     Package()
@@ -435,7 +526,6 @@ Name(APS0, Package()
     {  // Actual_PS, Class, RO
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_RO},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
     }
 }) // End APS0
 
@@ -502,7 +592,7 @@ Name(E007, Package()
         Package(2) { "mipi-sdca-entity-label", "IT 31"},
         Package(2) { "mipi-sdca-terminal-type", 0x6A0}, // Mic-on-jack
         // SDCA 1.0 spec, Table 80 Enumeration Values for DisCo Property: Terminal Connector Type
-        Package(2) { "mipi-sdca-terminal-connector-type", 0x02}, // 3.5 mm Jack
+        Package(2) { "mipi-sdca-terminal-connector-type", 0x02},    // 3.5 mm Jack
         Package(2) { "mipi-sdca-terminal-reference-number", 0x01},
         Package(2) { "mipi-sdca-control-list", CTL_IT_CLUSTERINDEX | CTL_IT_LATENCY | CTL_IT_USAGE | CTL_IT_MIC_BIAS},
     },
@@ -551,8 +641,8 @@ Name(C103, Package()
     {    // Class, RW, Mic_Bias
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
         Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package (2) {"mipi-sdca-control-deferrable", 0},
-        Package (2) {"mipi-sdca-control-default-value", CS42L45_IT_31_MIC_BIAS_DEFAULT},
+        Package (2) {"mipi-sdca-control-deferrable", 1},
+        Package (2) {"mipi-sdca-control-default-value", CS42L43_IT_31_MIC_BIAS_DEFAULT},
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
     Package()
@@ -588,7 +678,7 @@ Name(E009, Package()
         Package(2) { "mipi-sdca-entity-label", "IT 32"},
         Package(2) { "mipi-sdca-terminal-type", 0x680}, // Line-In Stereo
         // SDCA 1.0 spec, Table 80 Enumeration Values for DisCo Property: Terminal Connector Type
-        Package(2) { "mipi-sdca-terminal-connector-type", 0x02}, // 3.5 mm Jack
+        Package(2) { "mipi-sdca-terminal-connector-type", 0x02},    // 3.5 mm Jack
         Package(2) { "mipi-sdca-terminal-reference-number", 0x01},
         Package(2) { "mipi-sdca-control-list", CTL_IT_CLUSTERINDEX | CTL_IT_LATENCY | CTL_IT_USAGE | CTL_IT_MIC_BIAS},
     },
@@ -623,7 +713,7 @@ Name(E00B, Package()
         Package(2) { "mipi-sdca-entity-label", "IT 33"},
         Package(2) { "mipi-sdca-terminal-type", 0x6D0}, // Headset Mic-on-jack
         // SDCA 1.0 spec, Table 80 Enumeration Values for DisCo Property: Terminal Connector Type
-        Package(2) { "mipi-sdca-terminal-connector-type", 0x02}, // 3.5 mm Jack
+        Package(2) { "mipi-sdca-terminal-connector-type", 0x02},    // 3.5 mm Jack
         Package(2) { "mipi-sdca-terminal-reference-number", 0x01},
         Package(2) { "mipi-sdca-control-list", CTL_IT_CLUSTERINDEX | CTL_IT_LATENCY | CTL_IT_USAGE | CTL_IT_MIC_BIAS},
     },
@@ -700,76 +790,76 @@ Name(C111, Package()
 
 // DataPortMap0
 Name(DPM0, Buffer() {
-    0x10, 0x00,                                         // Range type 0x0010
-    0x04, 0x00,                                         // NumRows = 4
+    0x10, 0x00,                 // Range type 0x0010
+    0x04, 0x00,                 // NumRows = 4
     // DP_Index_A
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    PHIFE_UAJ_RENDER_DATA_PORT, 0x00, 0x00, 0x00,       // 1: PHIFE_UAJ_RENDER_DATA_PORT
-    0xFF, 0x00, 0x00, 0x00,                             // 2: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0x06, 0x00, 0x00, 0x00,     // 1: DP6
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
     // DP_Index_B
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 1: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 2: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
     // DP_Index_C
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 1: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 2: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
     // DP_Index_D
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 1: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 2: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
 }) // End DPM0
 
 
@@ -800,7 +890,10 @@ Name(C210, Package()
     {    // Class, RW, SampleRateIndex
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+#ifdef UAJ_RENDER_192KHZ_DEFAULT
+        Package(2) { "mipi-sdca-control-default-value", 1}, // 192kHz
+#endif
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
     Package()
@@ -810,17 +903,49 @@ Name(C210, Package()
 }) // End C210
 
 // {SampleRateIndex, SampleRate} mapping.
-// Phife UAJ render stream can handle 16 kHz-192 kHz (no 44.1 kHz)
+// Cohen cannot support 48kHz, 96kHz and 192kHz sampling rates at the same time.
+// Configure for 48kHz, or 48kHz and 96kHz, or 48kHz and 96kHz and 192kHz
+// The Sample Rate list:
+//     SR 1 (Index 0) = 48 kHz
+//     SR 2 (Index 1) = 192 kHz
+//     SR 3 (Index 2) = 96 kHz
+//     SR 4 (Index 3) = 16 kHz
+
+#ifdef UAJ_RENDER_192KHZ
 Name(B210, Buffer()
 {
     0x02, 0x00,  // Range type 0x0002 (Pairs)
-    0x04, 0x00,  // Count of ranges = 0x4
-    // NOTE: The indices correspond to CCM.SAMPLE_RATEx registers
+    0x03, 0x00,  // Count of ranges = 0x3
+# ifdef UAJ_RENDER_192KHZ_DEFAULT
+    0x01, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 192000 (0x0002ee00)
+    0x02, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 96000 (0x00017700)
     0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 48000 (0x0000BB80)
-    0x01, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 96000 (0x00017700)
-    0x02, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 192000 (0x0002EE00)
-    0x03, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // SampleRateIndex = 0x00000003, SampleRate = 16000 (0x00003E80)
+# else  // !UAJ_RENDER_192KHZ_DEFAULT
+    0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 48000 (0x0000BB80)
+    0x02, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 96000 (0x00017700)
+    0x01, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 192000 (0x0002ee00)
+# endif // UAJ_RENDER_192KHZ_DEFAULT
 }) // End B210
+#else
+# ifdef UAJ_RENDER_96KHZ
+Name(B210, Buffer()
+{
+    0x02, 0x00,  // Range type 0x0002 (Pairs)
+    0x02, 0x00,  // Count of ranges = 0x2
+    0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 48000 (0x0000BB80)
+    //0x01, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 44100 (0x0000AC44)
+    0x02, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 96000 (0x00017700)
+    //0x03, 0x00, 0x00, 0x00, 0x80, 0x3e, 0x00, 0x00, // SampleRateIndex = 0x00000003, SampleRate = 16000 (0x00003e80)
+}) // End B210
+# else
+Name(B210, Buffer()
+{
+    0x02, 0x00,  // Range type 0x0002 (Pairs)
+    0x01, 0x00,  // Count of ranges = 0x1
+    0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 0x0000BB80 (48000)
+}) // End B210
+# endif
+#endif
 
 
 // +------------------------------------+
@@ -850,7 +975,8 @@ Name(C211, Package()
     {    // Class, RW, SampleRateIndex
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-default-value", 0}, // 48kHz
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
     Package()
@@ -860,16 +986,20 @@ Name(C211, Package()
 }) // End C211
 
 // {SampleRateIndex, SampleRate} mapping.
-// Phife UAJ capture stream can handle 16 kHz-96 kHz
 Name(B211, Buffer()
 {
+#ifdef UAJ_CAPTURE_96KHZ
     0x02, 0x00,  // Range type 0x0002 (Pairs)
-    0x03, 0x00,  // Count of ranges = 0x3
-    // NOTE: The indices correspond to CCM.SAMPLE_RATEx registers
+    0x02, 0x00,  // Count of ranges = 0x2
     0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 48000 (0x0000BB80)
-    0x01, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 96000 (0x00017700)
-    // 0x02, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 192000 (0x0002EE00)
-    0x03, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // SampleRateIndex = 0x00000003, SampleRate = 16000 (0x00003E80)
+    //0x01, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // SampleRateIndex = 0x00000001, SampleRate = 44100 (0x0000AC44)
+    0x02, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // SampleRateIndex = 0x00000002, SampleRate = 96000 (0x00017700)
+    //0x03, 0x00, 0x00, 0x00, 0x80, 0x3e, 0x00, 0x00, // SampleRateIndex = 0x00000003, SampleRate = 16000 (0x00003e80)
+#else
+    0x02, 0x00,  // Range type 0x0002 (Pairs)
+    0x01, 0x00,  // Count of ranges = 0x1
+    0x00, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // SampleRateIndex = 0x00000000, SampleRate = 0x0000BB80 (48000)
+#endif
 }) // End B211
 
 
@@ -881,7 +1011,7 @@ Name(C30B, Package()
     {    // Extension, RW, Control Numbers = 2
         Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x6}, // Channel Gain, Control Numbers = {1,2}
     }
 }) // End C30B
@@ -919,7 +1049,7 @@ Name(C40B, Package()
     {    // Extension, RW, Control Numbers = 0
         Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x1}, // Master Gain, Control Numbers = {0}
     }
 }) // End C40B
@@ -1016,7 +1146,7 @@ Name(C301, Package()
     {    // Class, Dual, Control Numbers = {1,2}
         Package(2) { "mipi-sdca-control-access-layer", CAL_USER},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DUAL},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x6},
         Package(2) { "mipi-sdca-control-fixed-value", 1},   // muted
     }
@@ -1030,7 +1160,7 @@ Name(C302, Package()
     {   // Class, Dual, Control Numbers = {1,2}
         Package(2) { "mipi-sdca-control-access-layer", CAL_USER},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DUAL},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x6},
         Package(2) { "mipi-sdca-control-fixed-value", 0x0},   // 0dB
     },
@@ -1083,9 +1213,9 @@ Name(B602, Buffer()
 {
     0x03, 0x00,  // Range type 0x0003 (Triples)
     0x01, 0x00,  // Count of ranges = 0x1
-    CS42L45_FU_41_VOL_MIN,
-    CS42L45_FU_41_VOL_MAX,
-    CS42L45_FU_41_VOL_STEP,
+    CS42L43_FU_41_VOL_MIN,
+    CS42L43_FU_41_VOL_MAX,
+    CS42L43_FU_41_VOL_STEP,
 }) // End B602
 
 
@@ -1097,7 +1227,7 @@ Name(C601, Package()
     {   // User, Dual, Control Numbers = {1,2}
         Package(2) { "mipi-sdca-control-access-layer", CAL_USER},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DUAL},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x6},
 #ifdef FU_41_FIXED_RENDER_MUTE
         Package(2) { "mipi-sdca-control-fixed-value", 0},   // unmuted
@@ -1114,11 +1244,11 @@ Name(C602, Package()
         Package(2) { "mipi-sdca-control-access-layer", CAL_USER},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DUAL},
 #ifdef FU_41_FIXED_RENDER_VOLUME
-        Package(2) { "mipi-sdca-control-fixed-value", CS42L45_FU_41_VOL_FIXED_Q7_8},
+        Package(2) { "mipi-sdca-control-fixed-value", CS42L43_FU_41_VOL_FIXED_Q7_8},
 #else
-        Package(2) { "mipi-sdca-control-default-value", CS42L45_FU_41_VOL_DEFAULT},
+        Package(2) { "mipi-sdca-control-default-value", CS42L43_FU_41_VOL_DEFAULT},
 #endif
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x6},
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
@@ -1174,7 +1304,7 @@ Name(C701, Package()
     {    // User, R/W, Control Numbers = {1,2}
         Package(2) { "mipi-sdca-control-access-layer", CAL_USER},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x6},
 #ifdef FU_36_FIXED_CAPTURE_MUTE
         Package(2) { "mipi-sdca-control-fixed-value", 0},   // unmuted
@@ -1191,11 +1321,11 @@ Name(C702, Package()
         Package(2) { "mipi-sdca-control-access-layer", CAL_USER},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
 #ifdef FU_36_FIXED_CAPTURE_VOLUME
-        Package(2) { "mipi-sdca-control-fixed-value", CS42L45_FU_36_VOL_FIXED_Q7_8},
+        Package(2) { "mipi-sdca-control-fixed-value", CS42L43_FU_36_VOL_FIXED_Q7_8},
 #else
-        Package(2) { "mipi-sdca-control-default-value", CS42L45_FU_36_VOL_DEFAULT},
+        Package(2) { "mipi-sdca-control-default-value", CS42L43_FU_36_VOL_DEFAULT},
 #endif
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
         Package(2) { "mipi-sdca-control-cn-list", 0x6},
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
@@ -1221,10 +1351,11 @@ Name(B702, Buffer()
 {
     0x03, 0x00,  // Range type 0x0003 (Triples)
     0x01, 0x00,  // Count of ranges = 0x1
-    CS42L45_FU_36_VOL_MIN,
-    CS42L45_FU_36_VOL_MAX,
-    CS42L45_FU_36_VOL_STEP,
+    CS42L43_FU_36_VOL_MIN,
+    CS42L43_FU_36_VOL_MAX,
+    CS42L43_FU_36_VOL_STEP,
 }) // End B702
+
 
 // +------------------------------------+
 // |                SU_35               |
@@ -1254,7 +1385,7 @@ Name(C401, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package ()
-    {    // Device, RO, Selector
+    {   // Device, RO, Selector
         Package (2) {"mipi-sdca-control-access-layer", CAL_DEVICE},
         Package (2) {"mipi-sdca-control-access-mode", CAM_RO},
     },
@@ -1404,13 +1535,14 @@ Name(E01F, Package()
     {
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 36"},
-        Package(2) { "mipi-sdca-control-list", CTL_XU_BYPASS},
+        Package(2) { "mipi-sdca-control-list", CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO},
         Package(2) { "mipi-sdca-input-pin-list", 0x2 }, // Input Pin 1 connected
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
         Package(2) { "mipi-sdca-control-0x1-subproperties", "CF01"}, // Bypass
+        Package(2) { "mipi-sdca-control-0x30-subproperties", "CF30"}, // GPIO
         Package(2) { "mipi-sdca-input-pin-1", "E00D"}, // Input Pin 1 connected to SU_35
     }
 }) // End E01F
@@ -1426,6 +1558,19 @@ Name(CF01, Package()
         Package(2) { "mipi-sdca-control-deferrable", 1},
     }
 }) // End CF01
+
+
+Name(CF30, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {   // GPIO, Extension, RW.
+        Package(2) { "mipi-sdca-control-access-layer", CAL_EXTENSION},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+        Package(2) { "mipi-sdca-control-cn-list", 0x7}, // Control Numbers = {0,1,2}
+    }
+}) // End CF30
 
 
 
@@ -1526,7 +1671,12 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 42"},
         Package(2) { "mipi-sdca-input-pin-list", 0x2}, // Pin1 has a connection
+#ifdef  SDCA_CLASS_FDL_CS42L43
+        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_FDL_CURRENTOWNER | CTL_XU_FDL_MESSAGEOFFSET | CTL_XU_FDL_MESSAGELENGTH | CTL_XU_FDL_STATUS | CTL_XU_FDL_SET_INDEX | CTL_XU_FDL_HOST_REQUEST},
+        Package(2) { "mipi-sdca-RxUMP-ownership-transition-max-delay", 10000},
+#else
         Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
+#endif //  SDCA_CLASS_FDL_CS42L43
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -1534,6 +1684,14 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-control-0x1-subproperties", "C901"}, // Bypass
         Package(2) { "mipi-sdca-control-0x7-subproperties", "C907"}, // XU_ID
         Package(2) { "mipi-sdca-control-0x8-subproperties", "C908"}, // XU_Version
+#ifdef  SDCA_CLASS_FDL_CS42L43
+        Package(2) { "mipi-sdca-control-0x10-subproperties", "C910"}, // XU_FDL_Current_Owner
+        Package(2) { "mipi-sdca-control-0x12-subproperties", "C912"}, // XU_FDL_MESSAGEOFFSET
+        Package(2) { "mipi-sdca-control-0x13-subproperties", "C913"}, // XU_FDL_MessageLength
+        Package(2) { "mipi-sdca-control-0x14-subproperties", "C914"}, // XU_FDL_Status
+        Package(2) { "mipi-sdca-control-0x15-subproperties", "C915"}, // XU_FDL_SET_INDEX
+        Package(2) { "mipi-sdca-control-0x16-subproperties", "C916"}, // XU_Host_Request
+#endif //  SDCA_CLASS_FDL_CS42L43
         Package(2) { "mipi-sdca-input-pin-1", "E00F"}, // Input Pin 1 connected to MU_35
     }
 }) // End E001
@@ -1545,7 +1703,7 @@ Name(C901, Package()
     {   // Bypass, Class, RW.
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 0},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
     }
 }) // End C901
 
@@ -1571,7 +1729,90 @@ Name(C908, Package()
     }
 }) // End C908
 
+#ifdef  SDCA_CLASS_FDL_CS42L43
+Name(C910, Package() {     // XU_FDL_CurrentOwner
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package() {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-interrupt-position", COHEN_SDCA_UAJ_FDL_BUFFER_OWNER_CHNG_INT},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_RW1S},
+        Package (2) {"mipi-sdca-control-default-value", 1},
+    }
+}) // End C910
 
+Name (C912, Package () { // XU_FDL_MESSAGEOFFSET
+   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package() {
+       Package(2) {"mipi-sdca-control-range","FMO1"},
+    },
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package() {
+        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+    }
+}) // End C912
+
+Name(FMO1, Buffer() {
+    0x03, 0x00, // Range type 0x0003 (Triples)
+    0x01, 0x00, // Count of ranges = 0x1
+    0x00, 0x00, 0x10, 0x00, // UMP Buffer Start Address: 0x100000
+    0x00, 0x00, 0x00, 0x04, // UMP Buffer Length: 64mb
+    0x00, 0x00, 0x00, 0x00, // UMP Mode: 0 = Direct, 1 = Indirect
+})
+
+Name(C913, Package() { // XU_FDL_MessageLength
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) //End C913
+
+Name(C914, Package() { // XU_FDL_Status
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) // End C914
+
+Name (C915, Package () { // XU_FDL_SET_INDEX
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package() {
+       Package(2) {"mipi-sdca-control-range","FSI1"},
+    },
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+    Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_RO},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) // End C915
+
+Name(FSI1, Buffer()
+{
+    0x02, 0x00, // Range type 0x0002 (Doubles)
+    0x03, 0x00, // Count of ranges = 0x3
+    0x03, 0x00, 0x00, 0x00, // First Set Index: 0x3    // Primer 3
+    0x01, 0x00, 0x00, 0x00, // First File Set ID: 0x1
+    0x05, 0x00, 0x00, 0x00, // First Set Index: 0x5    // FW patch
+    0x02, 0x00, 0x00, 0x00, // First File Set ID: 0x2
+    0x06, 0x00, 0x00, 0x00, // First Set Index: 0x6    // FW tuning
+    0x03, 0x00, 0x00, 0x00, // First File Set ID: 0x3
+})
+
+Name(C916, Package() { // XU_Host_Request
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) //End C916
+#endif //  SDCA_CLASS_FDL_CS42L43
 
 // +------------------------------------+
 // |                OT_36               |
@@ -1644,76 +1885,76 @@ Name(CA11, Package()
 
 // DataPortMap1
 Name(DPM1, Buffer() {
-    0x10, 0x00,                                         // Range type 0x0010
-    0x04, 0x00,                                         // NumRows = 4
+    0x10, 0x00,                 // Range type 0x0010
+    0x04, 0x00,                 // NumRows = 4
     // DP_Index_A
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 1: not used
-    PHIFE_UAJ_CAPTURE_DATA_PORT, 0x00, 0x00, 0x00,      // 2: PHIFE_UAJ_CAPTURE_DATA_PORT
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0x02, 0x00, 0x00, 0x00,     // 2: DP2
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
     // DP_Index_B
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 1: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 2: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
     // DP_Index_C
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 1: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 2: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
     // DP_Index_D
-    0xFF, 0x00, 0x00, 0x00,                             // 0: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 1: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 2: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 3: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 4: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 5: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 6: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 7: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 8: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 9: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 10: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 11: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 12: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 13: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 14: not used
-    0xFF, 0x00, 0x00, 0x00,                             // 15: not used
+    0xFF, 0x00, 0x00, 0x00,     // 0: not used
+    0xFF, 0x00, 0x00, 0x00,     // 1: not used
+    0xFF, 0x00, 0x00, 0x00,     // 2: not used
+    0xFF, 0x00, 0x00, 0x00,     // 3: not used
+    0xFF, 0x00, 0x00, 0x00,     // 4: not used
+    0xFF, 0x00, 0x00, 0x00,     // 5: not used
+    0xFF, 0x00, 0x00, 0x00,     // 6: not used
+    0xFF, 0x00, 0x00, 0x00,     // 7: not used
+    0xFF, 0x00, 0x00, 0x00,     // 8: not used
+    0xFF, 0x00, 0x00, 0x00,     // 9: not used
+    0xFF, 0x00, 0x00, 0x00,     // 10: not used
+    0xFF, 0x00, 0x00, 0x00,     // 11: not used
+    0xFF, 0x00, 0x00, 0x00,     // 12: not used
+    0xFF, 0x00, 0x00, 0x00,     // 13: not used
+    0xFF, 0x00, 0x00, 0x00,     // 14: not used
+    0xFF, 0x00, 0x00, 0x00,     // 15: not used
 }) // End DPM1
 
 
@@ -1731,7 +1972,7 @@ Name(E013, Package()
         Package(2) { "mipi-sdca-entity-label", "OT 43"},
         Package(2) { "mipi-sdca-terminal-type", 0x6C0}, // Headphone-on-Jack (HP)
         // SDCA 1.0 spec, Table 80 Enumeration Values for DisCo Property: Terminal Connector Type
-        Package(2) { "mipi-sdca-terminal-connector-type", 0x02}, // 3.5 mm Jack
+        Package(2) { "mipi-sdca-terminal-connector-type", 0x02},    // 3.5 mm Jack
         Package(2) { "mipi-sdca-terminal-reference-number", 0x01},
         Package(2) { "mipi-sdca-input-pin-list", 0x2}, // Pin1 has a connection
         Package(2) { "mipi-sdca-control-list", CTL_OT_LATENCY | CTL_OT_USAGE},
@@ -1777,7 +2018,7 @@ Name(E015, Package()
         Package(2) { "mipi-sdca-entity-label", "OT 44"},
         Package(2) { "mipi-sdca-terminal-type", 0x690}, // LineOut Stereo
         // SDCA 1.0 spec, Table 80 Enumeration Values for DisCo Property: Terminal Connector Type
-        Package(2) { "mipi-sdca-terminal-connector-type", 0x02}, // 3.5 mm Jack
+        Package(2) { "mipi-sdca-terminal-connector-type", 0x02},    // 3.5 mm Jack
         Package(2) { "mipi-sdca-terminal-reference-number", 0x01},
         Package(2) { "mipi-sdca-input-pin-list", 0x2}, // Pin1 has a connection
         Package(2) { "mipi-sdca-control-list", CTL_OT_LATENCY | CTL_OT_USAGE},
@@ -1824,7 +2065,7 @@ Name(E017, Package()
         Package(2) { "mipi-sdca-entity-label", "OT 45"},
         Package(2) { "mipi-sdca-terminal-type", 0x6D0}, // Headset-output-on-Jack (HS)
         // SDCA 1.0 spec, Table 80 Enumeration Values for DisCo Property: Terminal Connector Type
-        Package(2) { "mipi-sdca-terminal-connector-type", 0x02}, // 3.5 mm Jack
+        Package(2) { "mipi-sdca-terminal-connector-type", 0x02},    // 3.5 mm Jack
         Package(2) { "mipi-sdca-terminal-reference-number", 0x01},
         Package(2) { "mipi-sdca-input-pin-list", 0x2}, // Pin1 has a connection
         Package(2) { "mipi-sdca-control-list", CTL_OT_LATENCY | CTL_OT_USAGE},
@@ -1872,7 +2113,7 @@ Name(CE01, Package()
     {    // Class, RW
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
-        Package(2) { "mipi-sdca-control-deferrable", 1}, // ATR: Phife spreadsheet says both IMM and DEF for this?
+        Package(2) { "mipi-sdca-control-deferrable", 1},
     },
     ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
     Package () {
@@ -1888,9 +2129,9 @@ Name(CE02, Package()
     {   // Class, RO
         // Interrupt bit position = 11
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
-        Package(2) { "mipi-sdca-control-interrupt-position", PHIFE_SDCA_UAJ_JACK_MODE_UPDATE_INT},
+        Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_UAJ_JACK_MODE_UPDATE_INT},
         Package(2) { "mipi-sdca-control-access-mode", CAM_RO},
-        Package(2) { "mipi-sdca-control-deferrable", 1}, // ATR: Phife spreadsheet says both IMM and DEF for this?
+        Package(2) { "mipi-sdca-control-deferrable", 1},
     }
 }) // End CE02
 

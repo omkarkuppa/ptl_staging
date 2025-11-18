@@ -19,6 +19,7 @@
 @par Specification Reference:
 **/
 
+
 Name(PDP0, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -61,17 +62,16 @@ Name(PDPN, Package()
     {
         Package(2) {"mipi-sdw-port-wordlength-configs", Package() {8,16,24}},   // Package
         Package(2) {"mipi-sdw-data-port-type", 0},                              // Integer
-        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1} },         // Allow channels 0 and 1, may need to update this on a per port basis.
+        Package(2) {"mipi-sdw-channel-number-list", Package() {0, 1} },         // Integer: Allow channels 0 and 1, may need to update this on a per port basis.
         Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3, 0x2, 0x1}},    // Package
-        Package(2) {"mipi-sdw-port-encoding-type", 0x01},                       // PCM twos compliment
-        Package(2) {"mipi-sdw-modes-supported", 0x01},                          // Isochronous mode only
-        Package(2) {"mipi-sdw-max-async-buffer", 0},                            // Do not buffer
-        Package(2) {"mipi-sdw-block-packing-mode ", 1},                         // Block packing modes are supported
+        Package(2) {"mipi-sdw-port-encoding-type", 0x01},                       // Bitmap: PCM twos compliment
+        Package(2) {"mipi-sdw-modes-supported", 0x01},                          // Bitmap: Isochronous mode only
+        Package(2) {"mipi-sdw-max-async-buffer", 0},                            // Integer: Do not buffer
+        Package(2) {"mipi-sdw-block-packing-mode ", 1},                         // Boolean: Block packing modes are supported
         Package(2) {"mipi-sdw-max-grouping-supported", 0},                      // Integer
         Package(2) {"mipi-sdw-simplified-channelprepare-sm", 0},                // Boolean
         //Package(2) {"mipi-sdw-port-channelprepare-timeout", 0},                 // Integer
         //Package(2) {"mipi-sdw-imp-def-dpn-interrupts-supported", 0x0},          // Bitmap
         //Package(2) {"mipi-sdw-block-packing-mode", 0},                          // Bitmap
-        Package(2) {"mipi-sdw-port-encoding-type", 0x02},                       // Bitmap
     },
 }) //End PDPN

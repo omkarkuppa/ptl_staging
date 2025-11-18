@@ -19,7 +19,7 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+#include "SndwDevTopologySt10Ssdt/version.h"
 
 #ifdef EXCLUDE_FU_21_VOLUME_CONTROL
 # define FEATURE_CS42L43_AMP_NO_VOL_MUTE_R_COND 0x00000000
@@ -56,8 +56,8 @@
 
 #define COHEN_CLUSTER
 #define COHEN_USAGE
-#include <SmartAmp-Clusters.asl>
-#include <SmartAmp-Usage.asl>
+#include <SndwDevTopologySt10Ssdt/SmartAmp-Clusters.asl>
+#include <SndwDevTopologySt10Ssdt/SmartAmp-Usage.asl>
 #undef COHEN_USAGE
 #undef COHEN_CLUSTER
 
@@ -235,7 +235,7 @@ Name(EXT0, Package()
         // device.
         Package(2) {"01fa-spk-id-val", 0}, // value to be set by _INI function
 # endif
-        #include <Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
+        #include <SndwDevTopologySt10Ssdt/Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
 #endif
         Package(2) { "mipi-sdca-function-expansion-subsystem-id", 0 },  // MIPI required, but not used by MSFT
         Package(2) { "01fa-chip-id", 0x4243 },

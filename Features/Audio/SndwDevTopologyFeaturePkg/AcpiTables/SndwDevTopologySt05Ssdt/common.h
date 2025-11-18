@@ -18,8 +18,9 @@
 
 @par Specification Reference:
 **/
-#ifndef _COMMON6CH_H_
-#define _COMMON6CH_H_
+
+#ifndef _COMMON_H_
+#define _COMMON_H_
 
 /*
  * Bitmasks which define which features are supported in the XU driver.
@@ -30,6 +31,7 @@
 #define FEATURE_BIT_NO_FUN_STS  0x00000008       /* Opt-out XU from handling Function_Status bits. */
 #define FEATURE_BIT_NO_VOL_MUTE_C   0x00000010   /* Opt-out XU from creating capture volume controls. */
 #define FEATURE_BIT_NO_VOL_MUTE_R   0x00000020   /* Opt-out XU from creating render volume controls. */
+#define FEATURE_BIT_FDL         0x00000100       /* FDL is disabled. */
 
 //
 // Supported jack types mask for Cohen and Phife codecs
@@ -37,7 +39,7 @@
 // To disable jack type define it as 0 before common.h file is included.
 // Example:
 // #define COHEN_PHIFE_UAJ_LINE_IN_EN (0)
-// #include "common.h"
+// #include "SndwDevTopologySt05Ssdt/common.h"
 //
 #ifndef COHEN_PHIFE_UAJ_UNKNOWN_EN
 # define COHEN_PHIFE_UAJ_UNKNOWN_EN   (1 << 1)
@@ -112,6 +114,30 @@
 # define FEATURE_ENABLE_KNCK 0x00000000
 #endif
 
+#ifdef SDCA_CLASS_FDL_CS42L43
+# define FEATURE_DISABLE_FDL_CS42L43 0x00000100
+#else
+# define FEATURE_DISABLE_FDL_CS42L43 0x00000000
+#endif
+
+#ifdef SDCA_CLASS_FDL_CS42L45
+# define FEATURE_DISABLE_FDL_CS42L45 0x00000100
+#else
+# define FEATURE_DISABLE_FDL_CS42L45 0x00000000
+#endif
+
+#ifdef SDCA_CLASS_FDL_CS35L56
+# define FEATURE_DISABLE_FDL_CS35L56 0x00000100
+#else
+# define FEATURE_DISABLE_FDL_CS35L56 0x00000000
+#endif
+
+#ifdef SDCA_CLASS_FDL_CS35L63
+# define FEATURE_DISABLE_FDL_CS35L63 0x00000100
+#else
+# define FEATURE_DISABLE_FDL_CS35L63 0x00000000
+#endif
+
 //
 // To ensure compatibility with ACPI tables for already release projects,
 // opt-out XU driver from handling Function_Status bits.
@@ -183,12 +209,14 @@
 #define PHIFE_UAJ_CAPTURE_DATA_PORT       0x4
 #define PHIFE_UAJ_RENDER_DATA_PORT        0x5
 
-
+#define COHEN_SDCA_AMP_FDL_BUFFER_OWNER_CHNG_INT  1
+#define COHEN_SDCA_MIC_FDL_BUFFER_OWNER_CHNG_INT  2
+#define COHEN_SDCA_UAJ_FDL_BUFFER_OWNER_CHNG_INT  3
+#define COHEN_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT  4
 #define COHEN_SDCA_AMP_FUNC_STATUS_INT            6
 #define COHEN_SDCA_MIC_FUNC_STATUS_INT            7
 #define COHEN_SDCA_UAJ_FUNC_STATUS_INT            8
 #define COHEN_SDCA_HID_FUNC_STATUS_INT            9
-#define COHEN_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT  4
 #define COHEN_SDCA_UAJ_JACK_MODE_UPDATE_INT       11
 #define COHEN_SDCA_MIC_TRIGGET_STATUS_INT         13
 
@@ -196,9 +224,15 @@
 #define JAMERSON_B_SDCA_FDL_CURRENT_OWNER_INT     8
 #define JAMERSON_B_SDCA_PROTECTION_MODE_INT       10
 
+#define BUFFET_SDCA_FUNC_STATUS_INT               1
+#define BUFFET_SDCA_FDL_CURRENT_OWNER_INT         8
+#define BUFFET_SDCA_PROTECTION_MODE_INT           10
+
 #define PHIFE_SDCA_MIC_FUNC_STATUS_INT            2
 #define PHIFE_SDCA_UAJ_FUNC_STATUS_INT            3
 #define PHIFE_SDCA_HID_FUNC_STATUS_INT            4
+#define PHIFE_SDCA_MIC_FDL_BUFFER_OWNER_CHNG_INT  8
+#define PHIFE_SDCA_UAJ_FDL_BUFFER_OWNER_CHNG_INT  9
 #define PHIFE_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT  10
 #define PHIFE_SDCA_UAJ_JACK_MODE_UPDATE_INT       12
 #define PHIFE_SDCA_MIC_TRIGGET_STATUS_INT         14
@@ -248,7 +282,6 @@
 # define COHEN_AMP
 # define COHEN_DISABLE_REF_STREAM
 # define JAMERSON_DISABLE_REF_STREAM
-# define DISABLE_US_STREAM
 #endif
 
 #ifdef SIDECAR_GPIO_SPEAKER_SELECT
@@ -314,6 +347,18 @@
 #endif
 
 //
+// Cirrus Enhance APO configuration.  This requires that the volume be handled
+// by the Cirrus APO, so that it can be inserted in the correct place in the signal
+// chain.  (Post Enhance, Pre Speaker Protection).
+//
+#ifdef CIRRUS_ENHANCE_APO
+# define FU_21_FIXED_RENDER_VOLUME
+# define FU_21_FIXED_RENDER_MUTE
+# define FU_41_FIXED_RENDER_VOLUME
+# define FU_41_FIXED_RENDER_MUTE
+#endif
+
+//
 // Standard configuration, COHEN_NEED_CONFIGS = 0x80000031
 //
 #ifndef COHEN_EXCLUDE_CONFIGS_JACK
@@ -333,7 +378,7 @@
 //
 // All 256 possible values of COHEN_NEED_CONFIGS_VAL_0C, the NEED_CONFIGS LSB.
 //
-#include <CS42L43_NEED_CONFIGS.asl>
+#include <SndwDevTopologySt05Ssdt/CS42L43/CS42L43_NEED_CONFIGS.asl>
 
 /*
  * Entity Types
@@ -559,6 +604,7 @@
 #define CHR_SECONDARY_TRASNDUCER 0x51
 #define CHR_MIC                  0x53
 #define CHR_RAW                  0x54
+#define CHR_SDW_MIC              0x55
 #define CHR_SILENCED_MIC         0x56
 #define CHR_ECHO_REF_1           0x71
 #define CHR_ECHO_REF_2           0x72
@@ -707,4 +753,20 @@
 #define GLOBAL_MUTE_LED_SPK_GPIO_NUM 0x3
 #endif
 
-#endif /* defined _COMMON6CH_H_ */
+//
+// When AMP_GPIO is defined, the speaker set selection feature will be enabled.
+// This AMP_GPIO_CTRL is used to sepcifiy the controller's location. If it is
+// not defined, it will default to "\\_SB.GPI0"
+//
+#ifndef AMP_GPIO_CTRL
+#define AMP_GPIO_CTRL "\\_SB.GPI0"
+#endif
+// The GPIO pin config and driver strength may vary from platform to platform.
+// If they are not customised, define the default values
+#ifndef AMP_GPIO_PIN_CONFIG
+# define AMP_GPIO_PIN_CONFIG PullNone
+#endif
+#ifndef AMP_GPIO_DRIVE_STRENGTH
+# define AMP_GPIO_DRIVE_STRENGTH 0x0
+#endif
+#endif /* defined _COMMON_H_ */

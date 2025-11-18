@@ -37,7 +37,7 @@
 // To disable jack type define it as 0 before common.h file is included.
 // Example:
 // #define COHEN_PHIFE_UAJ_LINE_IN_EN (0)
-// #include "common.h"
+// #include "SndwDevTopologySt10Ssdt/common.h"
 //
 #ifndef COHEN_PHIFE_UAJ_UNKNOWN_EN
 # define COHEN_PHIFE_UAJ_UNKNOWN_EN   (1 << 1)
@@ -333,7 +333,7 @@
 //
 // All 256 possible values of COHEN_NEED_CONFIGS_VAL_0C, the NEED_CONFIGS LSB.
 //
-#include <CS42L43_NEED_CONFIGS.asl>
+#include <SndwDevTopologySt10Ssdt/CS42L43_NEED_CONFIGS.asl>
 
 /*
  * Entity Types

@@ -18,24 +18,9 @@
 
 @par Specification Reference:
 **/
+#ifndef _VERSION_H_
+#define _VERSION_H_
 
-/*
- *  Main flags that defines the rest of the topology
- */
-#define DISABLE_AEC                 1
-#define CODEC_NO_MIC                1
-#define UAJ_RENDER_192KHZ_DEFAULT   1
-#define UAJ_RENDER_192KHZ           1
+#define RELEASE_VERSION	"6.23.0"
 
-#include "SndwDevTopologySt10Ssdt/cirrus_config_AEP.h"
-#include "SndwDevTopologySt10Ssdt/common.h"
-
-DefinitionBlock ("SndwDevTopologySt10Ssdt.aml", "SSDT", 2, "INTEL", "St10Ssdt", 0x1000) {
-    // references to existing objects
-    External(\_SB, DeviceObj)
-    External(\_SB.PC00.HDAS.IDA.SNDW, DeviceObj)
-
-    /*Addition for Cirrus includes*/
-    #include <SndwDevTopologySt10Ssdt/Cirrus_Topology_8xAMP_1xCODEC.asl>
-    /*End of addition for Cirrus includes*/
-}
+#endif /** _VERSION_H_ **/

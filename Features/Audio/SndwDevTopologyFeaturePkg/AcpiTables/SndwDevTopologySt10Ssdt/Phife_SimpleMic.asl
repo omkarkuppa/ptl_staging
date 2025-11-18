@@ -19,7 +19,7 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+#include "SndwDevTopologySt10Ssdt/version.h"
 
 #ifdef EXCLUDE_FU_113_VOLUME_CONTROL
 # define FEATURE_CS42L45_DMIC_NO_VOL_MUTE_C_COND  0x00000000
@@ -106,8 +106,8 @@
 # define CS42L45_FU_14_VOL_DEFAULT 0x0
 #endif
 
-#include <SmartMic-Clusters.asl>
-#include <SmartMic-Usage.asl>
+#include <SndwDevTopologySt10Ssdt/SmartMic-Clusters.asl>
+#include <SndwDevTopologySt10Ssdt/SmartMic-Usage.asl>
 
 //
 // Microphone array geometry

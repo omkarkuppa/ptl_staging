@@ -28,6 +28,7 @@
 #define HWKWS              1
 #define UAJ_RENDER_192KHZ  1
 #define JAMERSON_96K       1
+#define DISABLE_US_STREAM  1
 
 //
 // 24-bit sample depth for DMIC capture
@@ -49,21 +50,24 @@
 #define MIPI_SDW_SDCA_INTERFACE_REVISION_VAL    0x1000
 
 
+// Uncomment the following lines if desired
+// Doing so will technically make the DisCo NON SDCA 1.0 conformant
+
 //
 // Prevent the class driver from creating volume and mute nodes.
 // Force XU to create volume and mute nodes.
 //
-#define EXCLUDE_FU_21_VOLUME_CONTROL
-#define EXCLUDE_FU_36_VOLUME_CONTROL
-#define EXCLUDE_FU_41_VOLUME_CONTROL
-#define EXCLUDE_FU_113_VOLUME_CONTROL
+//#define EXCLUDE_FU_21_VOLUME_CONTROL
+//#define EXCLUDE_FU_36_VOLUME_CONTROL
+//#define EXCLUDE_FU_41_VOLUME_CONTROL
+//#define EXCLUDE_FU_113_VOLUME_CONTROL
 
-#define EXCLUDE_FUN_STS
+//#define EXCLUDE_FUN_STS
 
-#include "common6ch.h"
+#include "SndwDevTopologySt05Ssdt/common.h"
 
 // GPIO for speaker selection is not used on the RVP.
-#undef JAMERSON_GPIO
+#undef AMP_GPIO
 
 // Note that if COHEN_ONLY is defined, the Jamerson
 // SoundWire link and unit IDs are not to prevent their functions from
@@ -158,6 +162,11 @@
 // UID_0, SNDW_0
 # define COHEN_1_LID                 3
 # define COHEN_1_UID                 0
+# ifdef COHEN_AMP
+#  define CODEC1_AMP
+# endif
+# define CODEC1_MIC
+# define CODEC1_UAJ
 #else   // !AIC_V2
 # ifndef COHEN_ONLY
 // UID_0, SNDW_2
@@ -195,6 +204,11 @@
 // UID_0, SNDW_0
 # define COHEN_1_LID                 3
 # define COHEN_1_UID                 0
+# ifdef COHEN_AMP
+#  define CODEC1_AMP
+# endif
+# define CODEC1_MIC
+# define CODEC1_UAJ
 #endif  // AIC_V2
 
 //
@@ -312,9 +326,9 @@ DefinitionBlock ("SndwDevTopologySt05Ssdt.aml", "SSDT", 2, "INTEL", "St05Ssdt", 
 
     /*Addition for Cirrus includes*/
 #ifdef SIX_SPEAKERS
-    #include <Cirrus_Topology_6_Jamerson_1_Cohen.asl>
+    #include <SndwDevTopologySt05Ssdt/Cirrus_Topology_6_Jamerson_1_Cohen.asl>
 #else
-    #include <Cirrus_Topology_4_Jamerson_1_Cohen.asl>
+    #include <SndwDevTopologySt05Ssdt/Cirrus_Topology_4_Jamerson_1_Cohen.asl>
 #endif
     /*End of addition for Cirrus includes*/
 }

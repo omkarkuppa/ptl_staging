@@ -19,7 +19,7 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+#include "SndwDevTopologySt10Ssdt/version.h"
 
 #ifdef EXCLUDE_FU_113_VOLUME_CONTROL
 # define FEATURE_CS42L43_DMIC_NO_VOL_MUTE_C_COND  0x00000000
@@ -111,8 +111,8 @@
 # define CS42L43_IT11_NUM_OF_MIC 2
 #endif
 
-#include <SmartMic-Clusters.asl>
-#include <SmartMic-Usage.asl>
+#include <SndwDevTopologySt10Ssdt/SmartMic-Clusters.asl>
+#include <SndwDevTopologySt10Ssdt/SmartMic-Usage.asl>
 
 //
 // Microphone array geometry
@@ -359,7 +359,7 @@ Name(EXT0, Package()
         // device.
         Package(2) {"01fa-spk-id-val", 0}, // value to be set by _INI function
 # endif
-        #include <Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
+        #include <SndwDevTopologySt10Ssdt/Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
 #endif
         Package(2) { "mipi-sdca-function-expansion-subsystem-id", 0 },  // MIPI required, but not used by MSFT
         Package(2) { "01fa-chip-id", 0x4243 },

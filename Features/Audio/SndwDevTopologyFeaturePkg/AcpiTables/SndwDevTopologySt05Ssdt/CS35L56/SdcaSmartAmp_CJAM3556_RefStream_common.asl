@@ -19,7 +19,108 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+
+// v1.24 - Add support for SDCA class FDL.
+// v1.23 - SDCA 1.0 conformance DisCo fixes.
+// v1.22 - Removed EXCLUDE_FUN_STS conditional compilation.
+// v1.21 - Added support to allow fixed unmute value on FU_23 and FU_26
+// v1.20 - Disabled Jamerson AMP FDL and Protection Mode interrupts handling at the class level.
+// v1.19 - Removed FU_23 and FU_26 volume controls. Fixed Mute access layer as Platform.
+// v1.18 - Posture support.
+// v1.17 - Added FU21 fixed mute support.
+// v1.16 - Moved downgrading Function SDCA Version to common.h file.
+// v1.15 - Redesigned preventing XU from using DisCo defined controls (Volume, Mute, Function_status).
+// v1.14 - Replaced CS35L56_FU_21_VOL_MAX_Q7_8 with CS35L56_FU_21_VOL_FIXED_Q7_8.
+// v1.13 - Set Function_SDCA_Version to 1.0.
+//         Defined missing required E0 controls.
+// v1.12 - Changed FU_21 to be opt-out rather than opt-in.
+// v1.11 - Included FU_21 and a fixed render volume if required.
+// v1.10 - Added support for Function_Status bit handling by the class driver.
+// v1.9  -  Re-introduce Cluster and Usage support
+// v1.8  - Removed Sense Capture stream (OT24) from topology.
+// v1.7  - Remove Cluster and Usage until they are supported by Microsoft
+// v1.6  -  Defined macros specifying volume range, volume default value, and volume fixed value.
+// v1.5  - Removed XU22 FDL UMP controls.
+//       - Removed reserved control numbers from the control list in XU22.
+// v1.4  - Fixed FU 21 volume range.
+// v1.3  - Updated to class driver Drop 1 from Workshop 4.0
+// v1.2  - Removed stream start, stop buffer contents
+// v1.1  - Removed FU 21 [Entity ID 0x5] (MFPU 21 [Entity ID 0x1A] is now connected to PPU 21 [Entity ID 0x4])
+//       - Added FU 23 [Entity ID C] ( OT 23 [Entity ID 0xE] is now connected to FU 23 [Entity ID 0xC] which is connected to UDMPU 23 [Entity ID 0xB])
+//       - Added FU 26 [Entity ID 0x19] ( MU 26 [Entity ID 0xA] Pin 2 is now connected to FU 26 [Entity ID 0x19] which is connected to MFPU 26 [Entity ID 0x18])
+//       - OT 24 [Entity ID 0x14 ] is now connected to DP 3
+//       - IT 26 [Entity ID 0x16 ] is now connected to DP 2
+//
+// Conditionals:
+//   EXCLUDE_FU_21_VOLUME_CONTROL - Excludes FU_21 from the topology.
+//   FU_21_FIXED_RENDER_VOLUME    - When set, and EXCLUDE_FU_21_VOLUME_CONTROL is not set, it fixes the FU 21 volume to CS35L56_FU_21_VOL_FIXED_Q7_8
+//                                  which will force the drive stack to include a volume control APO.
+//   FU_21_FIXED_RENDER_MUTE      - When set, and EXCLUDE_FU_21_VOLUME_CONTROL is not set, it fixes the
+//                                  FU 21 mute to unmuted state.
+//   FU_23_FIXED_RENDER_MUTE      - When set, it fixes the FU 23 mute control to unmuted state
+//   FU_26_FIXED_RENDER_MUTE      - When set, it fixes the FU 26 mute control to unmuted state
+//
+// +-------+  +--------+  +-------+  +---------+
+// | IT_21 +->| PPU_21 +->| FU_21 +->| MFPU_21 +--+                                                                       +--------+
+// +-------+  +--------+  +-------+  +---------+  |                                                                       | PDE_23 |
+//     ^                                          |  +-------+    +---------+    +-------+                  +-------+   +-+-----+  |
+//     |                                          +->|       +--->|         +--->|       |    +----------+  |       +-->| OT_23 +--+
+// +---+---+                                         | XU_22 |    | SAPU_29 |    | MU_26 +--->| UDMPU_23 +->| FU_23 |   +-------+
+// | CS_21 |                       +---------------->|       | +->|         | +->|       |    +----------+  |       +-+
+// +-------+                       |                 +-------+ |  +---------+ |  +-------+                  +-------+ |   +----------+  +-------+
+//                                 |                           |              |                                       +-->| UDMPU_25 +->| OT_25 |
+//                                 +---------------------------+              |                                           +----------+  +-------+
+//                                 |                                          |                                           Reference stream path
+//                       +-------+ |  +-------+   +-------+                   |
+//                       | IT_29 +-+->| XU_24 +-->| OT_24 |                   |
+//                       +-------+    +-------+   +-------+                   |
+//                               Speaker sense path   ^                       |
+//                                                    |                       |
+//                                                +---+---+                   |
+//                                                | CS_24 |                   |
+//                                                +-------+                   |
+//                                                                            |
+//                                                                            |
+//                         +-------+  +--------+  +----------+  +-------+     |
+//                         | IT_26 +->| PPU_26 +->|  MFPU_26 +->| FU_26 +-----+
+//                         +-------+  +--------+  +----------+  +-------+
+//                             ^             Ultrasonic render path
+//                             |
+//                         +---+---+
+//                         | CS_26 |
+//                         +-------+
+//
+
+
+/*
+    Handy Entity ID map
+    -------------------
+    CS_21         2
+    IT_21         3
+    PPU_21        4
+    FU_21         5
+    IT_29         6
+    XU_22         8
+    SAPU_29       9
+    MU_26         10 (0xA)
+    UDMPU_23      11 (0xB)
+    FU_23         12 (0xC)
+    PDE_23        13 (0xD)
+    OT_23         14 (0xE)
+    UDMPU_25      15 (0xF)      // only used when reference stream is enabled
+    OT_25         16 (0x10)     // only used when reference stream is enabled
+    CS_24         17 (0x11)     // only used when speaker sense is enabled
+    XU_24         19 (0x13)     // only used when speaker sense is enabled
+    OT_24         20 (0x14)     // only used when ultrasonic stream is enabled
+    CS_26         21 (0x15)     // only used when ultrasonic stream is enabled
+    IT_26         22 (0x16)     // only used when ultrasonic stream is enabled
+    PPU_26        23 (0x17)     // only used when ultrasonic stream is enabled
+    MFPU_26       24 (0x18)     // only used when ultrasonic stream is enabled
+    FU_26         25 (0x19)     // currently not used
+    MFPU_21       26 (0x1A)
+*/
+
+#include "SndwDevTopologySt05Ssdt/version.h"
 
 #ifdef EXCLUDE_FU_21_VOLUME_CONTROL
 # define FEATURE_CS35L56_AMP_NO_VOL_MUTE_R_COND  0x00000000
@@ -58,8 +159,8 @@
 
 #define JAMERSON_CLUSTER
 #define JAMERSON_USAGE
-#include <SmartAmp-Clusters.asl>
-#include <SmartAmp-Usage.asl>
+#include <SndwDevTopologySt05Ssdt/SmartAmp-Clusters.asl>
+#include <SndwDevTopologySt05Ssdt/SmartAmp-Usage.asl>
 #undef JAMERSON_USAGE
 #undef JAMERSON_CLUSTER
 
@@ -119,6 +220,13 @@ Name(_DSD, Package()
             },
         },
         CLUSTER_ID_LIST_SMART_AMP,
+#ifdef  SDCA_CLASS_FDL_CS35L56
+        Package () { "mipi-sdca-file-set-id-list", Package () {1}},
+        Package () { "mipi-sdca-file-set-id-0x1",
+      Package () {0x01FA, 0x35560001, 0x03800000,    // PM
+                                    0x01FA, 0x35560002, 0x02000000,    // XM
+                                    0x01FA, 0x35560003, 0x02c004ac}},  // YM
+#endif //  SDCA_CLASS_FDL_CS35L56
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -186,7 +294,7 @@ Name(EXT0, Package()
         Package(2) { "01fa-release-version", RELEASE_VERSION },
         Package(2) { "01fa-ssid-ex", 0x7 },
         Package(2) { "01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
-                                          FEATURE_CS35L56_AMP_NO_VOL_MUTE_R_COND)},
+                                          FEATURE_CS35L56_AMP_NO_VOL_MUTE_R_COND | FEATURE_DISABLE_FDL_CS35L56)},
     }
 }) // End EXT0
 
@@ -667,9 +775,12 @@ Name(E008, Package() {
         Package (2) {"mipi-sdca-entity-type", 0xa},
         Package (2) {"mipi-sdca-entity-label", "XU 22"},
         Package (2) {"mipi-sdca-input-pin-list", 0x6},
-        //Package (2) {"mipi-sdca-control-list", 0x7D0182},
-        Package (2) {"mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
-        Package (2) {"mipi-sdca-firmware-dl-mode", 0},
+#ifdef  SDCA_CLASS_FDL_CS35L56
+        Package (2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_FDL_CURRENTOWNER | CTL_XU_FDL_MESSAGEOFFSET | CTL_XU_FDL_MESSAGELENGTH | CTL_XU_FDL_STATUS | CTL_XU_FDL_SET_INDEX | CTL_XU_FDL_HOST_REQUEST},
+        Package (2) { "mipi-sdca-RxUMP-ownership-transition-max-delay", 10000},
+#else
+        Package (2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
+#endif //  SDCA_CLASS_FDL_CS35L56
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package () {
@@ -680,11 +791,13 @@ Name(E008, Package() {
         Package (2) {"mipi-sdca-control-0x8-subproperties", "C030"},
         Package (2) {"mipi-sdca-control-0x9-subproperties", "C031"},
         Package (2) {"mipi-sdca-control-0xA-subproperties", "C032"},
+#ifdef  SDCA_CLASS_FDL_CS35L56
         Package (2) {"mipi-sdca-control-0x10-subproperties", "C033"},
         Package (2) {"mipi-sdca-control-0x12-subproperties", "C034"},
         Package (2) {"mipi-sdca-control-0x13-subproperties", "C035"},
         Package (2) {"mipi-sdca-control-0x14-subproperties", "C036"},
         Package (2) {"mipi-sdca-control-0x15-subproperties", "C037"},
+#endif //  SDCA_CLASS_FDL_CS35L56
         Package (2) {"mipi-sdca-control-0x16-subproperties", "C038"},
     }
 }) // End E008
@@ -733,27 +846,39 @@ Name(C032, Package() {
         Package (2) {"mipi-sdca-control-dc-value", 0},
     }
 }) // End C032
-
-Name(C033, Package() {
+#ifdef  SDCA_CLASS_FDL_CS35L56
+Name(C033, Package() {  // XU_FDL_Current_Owner
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
-        //Package (2) {"mipi-sdca-control-interrupt-position", JAMERSON_B_SDCA_FDL_CURRENT_OWNER_INT},    // CS35L56 rev B0.
-        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-interrupt-position", JAMERSON_B_SDCA_FDL_CURRENT_OWNER_INT},    // CS35L56 rev B0.
+        Package (2) {"mipi-sdca-control-access-mode", CAM_RW1S},
         Package (2) {"mipi-sdca-control-default-value", 1},
     }
 }) // End C033
 
-Name(C034, Package() {
+Name(C034, Package() {  // XU_FDL_MESSAGEOFFSET
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range","FMO2"}
+    },
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
         Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
         Package (2) {"mipi-sdca-control-default-value", 0},
     }
-}) // End C034
+}) //End C034
 
-Name(C035, Package() {
+Name(FMO2, Buffer() {
+    0x03, 0x00, // Range type 0x0003 (Triples)
+    0x01, 0x00, // Count of ranges = 0x1
+    0x00, 0x80, 0x00, 0x00, // UMP Buffer Start Address: 0x8000
+    0x00, 0x00, 0x00, 0x04, // UMP Buffer Length: 64mb
+    0x00, 0x00, 0x00, 0x00, // UMP Mode: 0 = Direct, 1 = Indirect
+})
+
+Name(C035, Package() {  // XU_FDL_MessageLength
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
@@ -762,7 +887,7 @@ Name(C035, Package() {
     }
 }) // End C035
 
-Name(C036, Package() {
+Name(C036, Package() {  // XU_FDL_Status
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
@@ -771,7 +896,11 @@ Name(C036, Package() {
     }
 }) // End C036
 
-Name(C037, Package() {
+Name(C037, Package() {  // XU_FDL_SET_INDEX
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range","FSI2"}
+    },
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
@@ -779,7 +908,16 @@ Name(C037, Package() {
     }
 }) // End C037
 
-Name(C038, Package() {
+Name(FSI2, Buffer()
+{
+    0x02, 0x00, // Range type 0x0002 (Doubles)
+    0x01, 0x00, // Count of ranges = 0x1
+    0x00, 0x00, 0x00, 0x00, // First Set Index: 0x0
+    0x01, 0x00, 0x00, 0x00, // First File Set ID: 0x1
+})
+#endif // End  SDCA_CLASS_FDL_CS35L56
+
+Name(C038, Package() {  // XU_Host_Request
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},

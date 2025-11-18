@@ -19,7 +19,7 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+#include "SndwDevTopologySt10Ssdt/version.h"
 
 // Function initialization-table
 Name(BUF0, Buffer()
@@ -76,7 +76,7 @@ Name(EXT0, Package()
         // device.
         Package(2) {"01fa-spk-id-val", 0}, // value to be set by _INI function
 # endif
-        #include <Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
+        #include <SndwDevTopologySt10Ssdt/Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
 #endif
         Package(2) { "mipi-sdca-function-expansion-subsystem-id", 0 },  // MIPI required, but not used by MSFT
         Package(2) { "01fa-chip-id", 0x4243 },

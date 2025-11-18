@@ -224,8 +224,8 @@ Scope (_SB)
     {
         Name (_HID, "ACPI0018") // INF in MS audio compositor driver looks for this HWID (UEFI-defined for audio comp.)
         // #include is used so that the preprocessor is run on the contents of the file.
-        #include <AudioComposition_8xAMP_1xCODEC.asl>
-        #include <AudioComposition_8xAMP_1xCODEC_all_endpoints.asl>
+        #include <SndwDevTopologySt10Ssdt/AudioComposition_8xAMP_1xCODEC.asl>
+        #include <SndwDevTopologySt10Ssdt/AudioComposition_8xAMP_1xCODEC_all_endpoints.asl>
     }
 }
 #ifndef _AMD
@@ -242,11 +242,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP1_MANUFACTURER_ID==0x01FA
 # if AMP1_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP1_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP1_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -267,11 +267,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP1_MANUFACTURER_ID==0x01FA
 # if AMP1_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP1_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP1_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -309,9 +309,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP1_MANUFACTURER_ID==0x01FA
 # if AMP1_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP1_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -361,11 +361,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP2_MANUFACTURER_ID==0x01FA
 # if AMP2_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP2_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP2_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -386,11 +386,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP2_MANUFACTURER_ID==0x01FA
 # if AMP2_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP2_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP2_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -428,9 +428,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP2_MANUFACTURER_ID==0x01FA
 # if AMP2_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP2_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -480,11 +480,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP3_MANUFACTURER_ID==0x01FA
 # if AMP3_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP3_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP3_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -505,11 +505,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP3_MANUFACTURER_ID==0x01FA
 # if AMP3_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP3_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP3_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -548,9 +548,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP3_MANUFACTURER_ID==0x01FA
 # if AMP3_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP3_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -600,11 +600,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP4_MANUFACTURER_ID==0x01FA
 # if AMP4_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP4_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP4_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -625,11 +625,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP4_MANUFACTURER_ID==0x01FA
 # if AMP4_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP4_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP4_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -667,9 +667,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP4_MANUFACTURER_ID==0x01FA
 # if AMP4_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP4_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -719,11 +719,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP5_MANUFACTURER_ID==0x01FA
 # if AMP5_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP5_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP5_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -744,11 +744,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP5_MANUFACTURER_ID==0x01FA
 # if AMP5_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP5_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP5_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -786,9 +786,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP5_MANUFACTURER_ID==0x01FA
 # if AMP5_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP5_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -838,11 +838,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP6_MANUFACTURER_ID==0x01FA
 # if AMP6_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP6_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP6_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -863,11 +863,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP6_MANUFACTURER_ID==0x01FA
 # if AMP6_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP6_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP6_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -905,9 +905,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP6_MANUFACTURER_ID==0x01FA
 # if AMP6_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP6_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -957,11 +957,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP7_MANUFACTURER_ID==0x01FA
 # if AMP7_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP7_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP7_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -982,11 +982,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP7_MANUFACTURER_ID==0x01FA
 # if AMP7_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP7_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP7_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -1024,9 +1024,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP7_MANUFACTURER_ID==0x01FA
 # if AMP7_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP7_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -1076,11 +1076,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
         {
 #if AMP8_MANUFACTURER_ID==0x01FA
 # if AMP8_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP8_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
+            #include <SndwDevTopologySt10Ssdt/CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
 # elif AMP8_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
+            #include <SndwDevTopologySt10Ssdt/CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
 # endif
 #endif
 
@@ -1101,11 +1101,11 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP8_MANUFACTURER_ID==0x01FA
 # if AMP8_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP8_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L56_PDP.asl>
 # elif AMP8_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
+        #include <SndwDevTopologySt10Ssdt/CS35L63_PDP.asl>
 # endif
 #endif
 
@@ -1143,9 +1143,9 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #if AMP8_MANUFACTURER_ID==0x01FA
 # if AMP8_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
+            #include <SndwDevTopologySt10Ssdt/SdcaSmartAmp_CJAM3556_RefStream_common.asl>
 # elif AMP8_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+            #include <SndwDevTopologySt10Ssdt/CS35L63_AMP.asl>
 # endif
 #endif
 
@@ -1193,10 +1193,10 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 # if CODEC1_MANUFACTURER_ID==0x01FA
 #  if CODEC1_PART_ID==0x4243
-        #include <CS42L43_DSD.asl>
+        #include <SndwDevTopologySt10Ssdt/CS42L43_DSD.asl>
 #  endif
 #  if CODEC1_PART_ID==0x4245
-        #include <CS42L45_DSD.asl>
+        #include <SndwDevTopologySt10Ssdt/CS42L45_DSD.asl>
 #  endif
 # endif
 
@@ -1209,7 +1209,7 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
             #define CHANNEL_RIGHT
 #  if CODEC1_MANUFACTURER_ID==0x01FA
 #   if CODEC1_FUNC_ID==0x4243
-            #include <Cohen_Amp.asl>
+            #include <SndwDevTopologySt10Ssdt/Cohen_Amp.asl>
 #   endif
 #  endif
             #undef CHANNEL_LEFT
@@ -1250,13 +1250,13 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #  if CODEC1_MANUFACTURER_ID==0x01FA
 #   ifdef MIC_GEOMETRY_OVERLOAD
-            //#include <Mic_Geometry_Overload.asl>
+            //#include <SndwDevTopologySt10Ssdt/Mic_Geometry_Overload.asl>
 #   endif
 #   if CODEC1_FUNC_ID==0x4243
-            #include <Cohen_SimpleMic.asl>
+            #include <SndwDevTopologySt10Ssdt/Cohen_SimpleMic.asl>
 #   endif
 #   if CODEC1_FUNC_ID==0x4245
-            #include <Phife_SimpleMic.asl>
+            #include <SndwDevTopologySt10Ssdt/Phife_SimpleMic.asl>
 #   endif
 #  endif
 
@@ -1295,12 +1295,12 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #  if CODEC1_MANUFACTURER_ID==0x01FA
 #   if CODEC1_FUNC_ID==0x4243
-            #include <Cohen_UAJ.asl>
-            #include <Cohen_UAJ_capture_enable.asl>
+            #include <SndwDevTopologySt10Ssdt/Cohen_UAJ.asl>
+            #include <SndwDevTopologySt10Ssdt/Cohen_UAJ_capture_enable.asl>
 #   endif
 #   if CODEC1_FUNC_ID==0x4245
-            #include <Phife_UAJ.asl>
-            #include <Phife_UAJ_capture_enable.asl>
+            #include <SndwDevTopologySt10Ssdt/Phife_UAJ.asl>
+            #include <SndwDevTopologySt10Ssdt/Phife_UAJ_capture_enable.asl>
 #   endif
 #  endif
 
@@ -1337,10 +1337,10 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 #  if CODEC1_MANUFACTURER_ID==0x01FA
 #   if CODEC1_FUNC_ID==0x4243
-            #include <CS_HID_headset_buttons.asl>
+            #include <SndwDevTopologySt10Ssdt/CS_HID_headset_buttons.asl>
 #   endif
 #   if CODEC1_FUNC_ID==0x4245
-            #include <Phife_HID_headset_buttons.asl>
+            #include <SndwDevTopologySt10Ssdt/Phife_HID_headset_buttons.asl>
 #   endif
 #  endif
         }

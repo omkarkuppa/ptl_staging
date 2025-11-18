@@ -19,6 +19,8 @@
 @par Specification Reference:
 **/
 
+
+
 /*
     Handy Entity ID map
     -------------------
@@ -47,7 +49,7 @@
     MFPU_21       26 (0x1A)
 */
 
-#include "version.h"
+#include "SndwDevTopologySt05Ssdt/version.h"
 
 #ifdef EXCLUDE_FU_21_VOLUME_CONTROL
 # define FEATURE_CS35L63_AMP_NO_VOL_MUTE_R_COND  0x00000000
@@ -104,13 +106,15 @@
 
 #define JAMERSON_CLUSTER
 #define JAMERSON_USAGE
-#include <SmartAmp-Clusters.asl>
-#include <SmartAmp-Usage.asl>
+#include <SndwDevTopologySt05Ssdt/SmartAmp-Clusters.asl>
+#include <SndwDevTopologySt05Ssdt/SmartAmp-Usage.asl>
 #undef JAMERSON_USAGE
 #undef JAMERSON_CLUSTER
 
 #define BUFFETT_MANUFACTURER_ID  0x01FA
-#define BUFFETT_CHIP_ID          0x3563
+#ifndef BUFFETT_CHIP_ID
+# define BUFFETT_CHIP_ID         0x3563
+#endif
 #define BUFFETT_CHIP_REV_ID      0xA0
 
 
@@ -168,6 +172,13 @@ Name(_DSD, Package()
             },
         },
         CLUSTER_ID_LIST_SMART_AMP,
+#ifdef  SDCA_CLASS_FDL_CS35L63
+        Package () { "mipi-sdca-file-set-id-list", Package () {1}},
+        Package () { "mipi-sdca-file-set-id-0x1",
+                      Package () {0x01FA, 0x35630001, 0x03800000,    // PM
+                                  0x01FA, 0x35630002, 0x02000000,    // XM
+                                  0x01FA, 0x35630003, 0x02c005ac}},  // YM
+#endif //  SDCA_CLASS_FDL_CS35L63
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -235,7 +246,7 @@ Name(EXT0, Package()
         Package(2) { "01fa-release-version", RELEASE_VERSION },
         Package(2) { "01fa-ssid-ex", 0x7 },
         Package(2) { "01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
-                                          FEATURE_CS35L63_AMP_NO_VOL_MUTE_R_COND)},
+                                          FEATURE_CS35L63_AMP_NO_VOL_MUTE_R_COND | FEATURE_DISABLE_FDL_CS35L63)},
     }
 }) //End EXT0
 
@@ -750,8 +761,12 @@ Name(E008, Package() {
         Package (2) {"mipi-sdca-entity-label", "XU 22"},
         Package (2) {"mipi-sdca-input-pin-list", 0x6},
         //Package (2) {"mipi-sdca-control-list", 0x7D0182},
-        Package (2) {"mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
-        Package (2) {"mipi-sdca-firmware-dl-mode", 0},
+#ifdef  SDCA_CLASS_FDL_CS35L63
+        Package (2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_FDL_CURRENTOWNER | CTL_XU_FDL_MESSAGEOFFSET | CTL_XU_FDL_MESSAGELENGTH | CTL_XU_FDL_STATUS | CTL_XU_FDL_SET_INDEX | CTL_XU_FDL_HOST_REQUEST},
+        Package (2) { "mipi-sdca-RxUMP-ownership-transition-max-delay", 10000},
+#else
+        Package (2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS},
+#endif //  SDCA_CLASS_FDL_CS35L63
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package () {
@@ -762,11 +777,13 @@ Name(E008, Package() {
         Package (2) {"mipi-sdca-control-0x8-subproperties", "C030"},
         Package (2) {"mipi-sdca-control-0x9-subproperties", "C031"},
         Package (2) {"mipi-sdca-control-0xA-subproperties", "C032"},
+#ifdef  SDCA_CLASS_FDL_CS35L63
         Package (2) {"mipi-sdca-control-0x10-subproperties", "C033"},
         Package (2) {"mipi-sdca-control-0x12-subproperties", "C034"},
         Package (2) {"mipi-sdca-control-0x13-subproperties", "C035"},
         Package (2) {"mipi-sdca-control-0x14-subproperties", "C036"},
         Package (2) {"mipi-sdca-control-0x15-subproperties", "C037"},
+#endif //  SDCA_CLASS_FDL_CS35L63
         Package (2) {"mipi-sdca-control-0x16-subproperties", "C038"},
     }
 }) //End E008
@@ -816,17 +833,22 @@ Name(C032, Package() {
     }
 }) //End C032
 
-Name(C033, Package() {
+#ifdef  SDCA_CLASS_FDL_CS35L63
+Name(C033, Package() {  // XU_FDL_Current_Owner
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
-        //Package (2) {"mipi-sdca-control-interrupt-position", 8},    // CS35L56 rev B0.
-        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-interrupt-position", BUFFET_SDCA_FDL_CURRENT_OWNER_INT},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_RW1S},
         Package (2) {"mipi-sdca-control-default-value", 1},
     }
 }) //End C033
 
-Name(C034, Package() {
+Name(C034, Package() {  // XU_FDL_MESSAGEOFFSET
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range","FMO2"}
+    },
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
@@ -835,7 +857,15 @@ Name(C034, Package() {
     }
 }) //End C034
 
-Name(C035, Package() {
+Name(FMO2, Buffer() {
+     0x03, 0x00, // Range type 0x0003 (Triples)
+     0x01, 0x00, // Count of ranges = 0x1
+     0x00, 0x80, 0x00, 0x00, // UMP Buffer Start Address: 0x8000
+     0x00, 0x00, 0x00, 0x04, // UMP Buffer Length: 64mb
+     0x00, 0x00, 0x00, 0x00, // UMP Mode: 0 = Direct, 1 = Indirect
+})
+
+Name(C035, Package() {  // XU_FDL_MessageLength
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
@@ -844,7 +874,7 @@ Name(C035, Package() {
     }
 }) //End C035
 
-Name(C036, Package() {
+Name(C036, Package() {  // XU_FDL_Status
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
@@ -853,7 +883,11 @@ Name(C036, Package() {
     }
 }) //End C036
 
-Name(C037, Package() {
+Name(C037, Package() {  // XU_FDL_SET_INDEX
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package () {
+        Package (2) {"mipi-sdca-control-range","FSI2"}
+    },
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
@@ -861,7 +895,15 @@ Name(C037, Package() {
     }
 }) //End C037
 
-Name(C038, Package() {
+Name(FSI2, Buffer() {
+    0x02, 0x00, // Range type 0x0002 (Doubles)
+    0x01, 0x00, // Count of ranges = 0x2
+    0x00, 0x00, 0x00, 0x00, // First Set Index: 0x0
+    0x01, 0x00, 0x00, 0x00, // First File Set ID: 0x1
+})
+#endif // End  SDCA_CLASS_FDL_CS35L63
+
+Name(C038, Package() {  // XU_Host_Request
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package () {
         Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},

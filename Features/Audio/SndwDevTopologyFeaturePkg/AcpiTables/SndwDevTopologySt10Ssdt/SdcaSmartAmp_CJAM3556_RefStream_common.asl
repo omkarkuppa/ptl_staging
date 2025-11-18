@@ -19,7 +19,7 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+#include "SndwDevTopologySt10Ssdt/version.h"
 
 #ifdef EXCLUDE_FU_21_VOLUME_CONTROL
 # define FEATURE_CS35L56_AMP_NO_VOL_MUTE_R_COND  0x00000000
@@ -58,8 +58,8 @@
 
 #define JAMERSON_CLUSTER
 #define JAMERSON_USAGE
-#include <SmartAmp-Clusters.asl>
-#include <SmartAmp-Usage.asl>
+#include <SndwDevTopologySt10Ssdt/SmartAmp-Clusters.asl>
+#include <SndwDevTopologySt10Ssdt/SmartAmp-Usage.asl>
 #undef JAMERSON_USAGE
 #undef JAMERSON_CLUSTER
 

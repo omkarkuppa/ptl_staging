@@ -19,38 +19,17 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+
+#include "SndwDevTopologySt05Ssdt/version.h"
 
 // Function initialization-table
 Name(BUF0, Buffer()
 {
     // disable UAJ input, by default enabled
-    0x0c, 0xfc, 0x11, 0x00, 0x04,   // 0x11FCC0 = 0x4 (FW_MM_CONTROL_SELECTION::MM_CTRL_JCK_INP_DIS == 4)
-    0x0d, 0xfc, 0x11, 0x00, 0x00,
-    0x0e, 0xfc, 0x11, 0x00, 0x00,
-    0x0f, 0xfc, 0x11, 0x00, 0x00,
-
-    //
-    // FDL config
-    //
-    0xB8, 0xFD, 0x11, 0x00, 0x01,  // 0x0011FDB8 = 0x1 (FILE_SET_5)
-    0xB9, 0xFD, 0x11, 0x00, 0x00,
-    0xBA, 0xFD, 0x11, 0x00, 0x00,
-    0xBB, 0xFD, 0x11, 0x00, 0x00,
-
-    0x82, 0xFA, 0x11, 0x00, 0x01,  // 0x0011FA82 = 00000001 (NEED_CONFIGS)
-    0x83, 0xFA, 0x11, 0x00, 0x00,
-    0x84, 0xFA, 0x11, 0x00, 0x00,
-    0x85, 0xFA, 0x11, 0x00, 0x00,
-
-    0x34, 0xFA, 0x11, 0x00, 0x00,  // 0x0011FA34 = 00014800 (FW_IMAGE_ADDRESS)
-    0x35, 0xFA, 0x11, 0x00, 0x48,
-    0x36, 0xFA, 0x11, 0x00, 0x01,
-    0x37, 0xFA, 0x11, 0x00, 0x00,
-
-    //
-    // FDL config ends here
-    //
+    0xc0, 0xfc, 0x11, 0x00, 0x04,   // 0x11FCC0 = 0x4 (FW_MM_CONTROL_SELECTION::MM_CTRL_JCK_INP_DIS == 4)
+    0xc1, 0xfc, 0x11, 0x00, 0x00,
+    0xc2, 0xfc, 0x11, 0x00, 0x00,
+    0xc3, 0xfc, 0x11, 0x00, 0x00,
 }) // End BUF0
 
 
@@ -66,7 +45,7 @@ Name(EXT0, Package()
         Package(2) { "01fa-supported-jack-types-mask",
             COHEN_PHIFE_UAJ_UNKNOWN_EN | COHEN_PHIFE_UAJ_HEADPHONE_EN | COHEN_PHIFE_UAJ_LINE_OUT_EN },    // msft-ge-mode-terminaltype-list bitmap
         Package(2) {"01fa-xu-features", (FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
-                                         FEATURE_CS42L45_UAJ_NO_VOL_MUTE_C_COND | FEATURE_CS42L45_UAJ_NO_VOL_MUTE_R_COND)},
+                                         FEATURE_CS42L45_UAJ_NO_VOL_MUTE_C_COND | FEATURE_CS42L45_UAJ_NO_VOL_MUTE_R_COND | FEATURE_DISABLE_FDL_CS42L45)},
     }
 }) // End EXT0
 
@@ -108,8 +87,7 @@ Name(E011, Package()
             }
         },
 #endif
-        Package(2) { "mipi-sdca-control-list", CTL_GE_DETECTED_MODE | CTL_GE_SELECTED_MODE |
-                                               CS42L45_GE35_CTL_LOAD_DET | CS42L45_GE35_CTL_ASP_OUTPUT},
+        Package(2) { "mipi-sdca-control-list", CTL_GE_DETECTED_MODE | CTL_GE_SELECTED_MODE},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()

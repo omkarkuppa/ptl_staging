@@ -38,10 +38,14 @@
 # define CLUSTER_CRU_14   Package(2) {"mipi-sdca-control-0x10-subproperties", "CI14"}
 # define CLUSTER_MFPU_14  Package(2) {"mipi-sdca-control-0x10-subproperties", "CI26"}
 
-# define CLUSTER_ID_LIST_DMIC Package(2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x14, 0x23, 0x26, 0xF0} }
+# define CLUSTER_ID_LIST_DMIC Package(2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x13, 0x14, 0x23, 0x26, 0xF0} }
 
 // This is one really long line, since the preprocessor will not except line extenders '\'.
-# define CLUSTER_INIT_DMIC    Package(2) {"mipi-sdca-cluster-id-0x11-subproperties",  "CL11"},  Package(2) {"mipi-sdca-cluster-id-0x14-subproperties",  "CL14"},  Package(2) {"mipi-sdca-cluster-id-0x23-subproperties",  "CL23"},  Package(2) {"mipi-sdca-cluster-id-0x26-subproperties",  "CL26"},  Package (2) {"mipi-sdca-cluster-id-0xF0-subproperties", "CLF0"}
+# define CLUSTER_INIT_DMIC    Package(2) {"mipi-sdca-cluster-id-0x11-subproperties",  "CL11"},  Package(2) {"mipi-sdca-cluster-id-0x13-subproperties",  "CL13"},  Package(2) {"mipi-sdca-cluster-id-0x14-subproperties",  "CL14"},  Package(2) {"mipi-sdca-cluster-id-0x23-subproperties",  "CL23"},  Package(2) {"mipi-sdca-cluster-id-0x26-subproperties",  "CL26"},  Package (2) {"mipi-sdca-cluster-id-0xF0-subproperties", "CLF0"}
+
+#ifndef MIC_CLUSTER_IT_11_CHANNEL_CNT
+# define MIC_CLUSTER_IT_11_CHANNEL_CNT 2
+#endif
 
 // +-----------------------+
 // | Clusters for IT11     |
@@ -52,13 +56,19 @@ Name(CL11, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        Package(2) { "mipi-sdca-channel-count", 2},
+        Package(2) { "mipi-sdca-channel-count", MIC_CLUSTER_IT_11_CHANNEL_CNT},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHC1" },
        Package (2) { "mipi-sdca-channel-2-subproperties", "CHC2" },
+#if MIC_CLUSTER_IT_11_CHANNEL_CNT > 2
+       Package (2) { "mipi-sdca-channel-3-subproperties", "CHC9" },
+# if MIC_CLUSTER_IT_11_CHANNEL_CNT > 3
+       Package (2) { "mipi-sdca-channel-4-subproperties", "CHCA" },
+# endif
+#endif
     }
 })
 
@@ -83,6 +93,32 @@ Name(CHC2, Package()
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
     }
 })
+
+#if MIC_CLUSTER_IT_11_CHANNEL_CNT > 2
+Name(CHC9, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 3 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_ARRAY },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+
+# if MIC_CLUSTER_IT_11_CHANNEL_CNT > 3
+Name(CHCA, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 4 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_ARRAY },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+# endif
+#endif
 
 Name(CI11, Package()
 {
@@ -116,13 +152,19 @@ Name(CL23, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        Package(2) { "mipi-sdca-channel-count", 2},
+        Package(2) { "mipi-sdca-channel-count", MIC_CLUSTER_IT_11_CHANNEL_CNT},
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package ()
     {
        Package (2) { "mipi-sdca-channel-1-subproperties", "CHC3" },
        Package (2) { "mipi-sdca-channel-2-subproperties", "CHC4" },
+#if MIC_CLUSTER_IT_11_CHANNEL_CNT > 2
+       Package (2) { "mipi-sdca-channel-3-subproperties", "CHCB" },
+# if MIC_CLUSTER_IT_11_CHANNEL_CNT > 3
+       Package (2) { "mipi-sdca-channel-4-subproperties", "CHCC" },
+# endif
+#endif
     }
 })
 
@@ -132,7 +174,7 @@ Name(CHC3, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 1 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_MIC },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
     }
 })
@@ -143,10 +185,36 @@ Name(CHC4, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 2 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_MIC },  // This is 0x53, but Table 40 states 0x51.
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },  // Table 206 states 0x55.
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
     }
 })
+
+#if MIC_CLUSTER_IT_11_CHANNEL_CNT > 2
+Name(CHCB, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 3 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+
+# if MIC_CLUSTER_IT_11_CHANNEL_CNT > 3
+Name(CHCC, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-cluster-channel-id", 4 },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },
+       Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_GENERIC_AUDIO },
+    }
+})
+# endif
+#endif
 
 Name(CI21, Package()
 {
@@ -168,13 +236,28 @@ Name(CM21, Buffer()
 {
     0x02, 0x00,    // Range type 0x0002
     0x01, 0x00,    // 1 rows
-    0x01, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00     // ClusterIndex 1 --> ClusterID 21
+    0x01, 0x00, 0x00, 0x00, 0x23, 0x00, 0x00, 0x00     // ClusterIndex 1 --> ClusterID 23
 })
 
 // +---------------------+
 // | Clusters for MFPU13 |
 // |  Secondary Mic PCM  |
 // +---------------------+
+Name(CL13, Package()
+{
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+        Package(2) { "mipi-sdca-channel-count", 2},
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+    Package ()
+    {
+       Package (2) { "mipi-sdca-channel-1-subproperties", "CHC3" },
+       Package (2) { "mipi-sdca-channel-2-subproperties", "CHC4" },
+    }
+})
+
 Name(CI13, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -188,8 +271,15 @@ Name(CI13, Package()
     Package()
     {
         // Point to MFPU113 since it is the same.
-        Package(2) { "mipi-sdca-control-range", "CM21" },
+        Package(2) { "mipi-sdca-control-range", "CM22" },
     }
+})
+
+Name(CM22, Buffer()
+{
+    0x02, 0x00,    // Range type 0x0002
+    0x01, 0x00,    // 1 rows
+    0x01, 0x00, 0x00, 0x00, 0x13, 0x00, 0x00, 0x00     // ClusterIndex 1 --> ClusterID 13
 })
 
 // +-----------------------+
@@ -217,7 +307,7 @@ Name(CHC5, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 1 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_MIC },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
     }
 })
@@ -228,7 +318,7 @@ Name(CHC6, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 2 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_MIC },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
     }
 })
@@ -281,7 +371,7 @@ Name(CHC7, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 1 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_MIC },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
     }
 })
@@ -292,7 +382,7 @@ Name(CHC8, Package()
     Package ()
     {
        Package (2) { "mipi-sdca-cluster-channel-id", 2 },
-       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_MIC },
+       Package (2) { "mipi-sdca-cluster-channel-relationship", CHR_SDW_MIC },
        Package (2) { "mipi-sdca-cluster-channel-purpose", CHP_ULTRASOUND },
     }
 })

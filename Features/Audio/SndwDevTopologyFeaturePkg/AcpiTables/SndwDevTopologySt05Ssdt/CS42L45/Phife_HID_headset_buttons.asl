@@ -3,7 +3,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2024 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -18,6 +18,7 @@
 
 @par Specification Reference:
 **/
+
 
 Name(_DSD, Package()
 {
@@ -100,10 +101,10 @@ Name(C007, Package()
 {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
-    {   // Class, DC, Function_Id = 0x4243
+    {   // Class, DC, Function_Id = 0x4245
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
-        Package(2) { "mipi-sdca-control-dc-value", 0x4243},
+        Package(2) { "mipi-sdca-control-dc-value", 0x4245},
     }
 }) // End C007
 
@@ -128,9 +129,10 @@ Name(C010, Package()
         // Class, RW1C, Function_Status
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_RW1C},
-        Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_HID_FUNC_STATUS_INT},
+        Package(2) { "mipi-sdca-control-interrupt-position", PHIFE_SDCA_HID_FUNC_STATUS_INT},
     }
 }) // End C010
+
 
 Name(C02C, Package()
 {
@@ -150,10 +152,10 @@ Name(C02D, Package()
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-        // Device_Part_ID: Class, DC = 0x4243
+        // Device_Part_ID: Class, DC = 0x4245
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_DC},
-        Package(2) { "mipi-sdca-control-dc-value", 0x4243},
+        Package(2) { "mipi-sdca-control-dc-value", 0x4245},
     }
 }) // End C02D
 
@@ -215,7 +217,7 @@ Name(CS10, Package()
     {   // HIDTx_CurrentOwner, Class, RW1S
         Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
         Package(2) { "mipi-sdca-control-access-mode", CAM_RW1S},
-        Package(2) { "mipi-sdca-control-interrupt-position", COHEN_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT},   // HID interrupt bit position
+        Package(2) { "mipi-sdca-control-interrupt-position", PHIFE_SDCA_HID_FDL_BUFFER_OWNER_CHNG_INT},   // HID interrupt bit position   // ATR Phife: Make a define
     }
 }) // End CS10
 
@@ -238,7 +240,7 @@ Name(CS12, Package()
 Name(BUF2, Buffer() {
     0x03, 0x00,  // Range type 0x0003
     0x01, 0x00,  // Count of ranges = 0x1
-    0x30, 0xff, 0x11, 0x00,  // Buffer Start = 0x0011ff30
+    0xe8, 0xfd, 0x11, 0x00,  // Buffer Start = 0x0011fde8
     0x04, 0x00, 0x00, 0x00,  // Buffer Length = 0x4
     0x00, 0x00, 0x00, 0x00,  // UMP Type = 0 (Direct)
 }) //End BUF2
@@ -353,37 +355,9 @@ Name(BUF1, Buffer()
     0xc0            // End Collection
 })  // End BUF1
 
+
 // Function initialization-table
 Name(IBUF, Buffer()
 {
-    //
-    // FDL config
-    //
-    0x00, 0xff, 0x11, 0x00, 0x01,   // 0x0011FF00 = 0x1 (FILE_SET_5)
-    0x01, 0xff, 0x11, 0x00, 0x00,
-    0x02, 0xff, 0x11, 0x00, 0x00,
-    0x03, 0xff, 0x11, 0x00, 0x00,
-
-    0x04, 0xff, 0x11, 0x00, 0x01,   // 0x0011FF04 = 0x1 (FILE_SET_6)
-    0x05, 0xff, 0x11, 0x00, 0x00,
-    0x06, 0xff, 0x11, 0x00, 0x00,
-    0x07, 0xff, 0x11, 0x00, 0x00,
-
-    0x0C, 0x40, 0x11, 0x00, COHEN_NEED_CONFIGS_VAL_0C,  // 0x0011400C = 800000xx (NEED_CONFIGS)
-    0x0D, 0x40, 0x11, 0x00, 0x00,
-    0x0E, 0x40, 0x11, 0x00, 0x00,
-    0x0F, 0x40, 0x11, 0x00, 0x80,
-
-    0x04, 0x40, 0x11, 0x00, 0x00,   // 0x00114004 = 00014800 (PATCH_START)
-    0x05, 0x40, 0x11, 0x00, 0x48,
-    0x06, 0x40, 0x11, 0x00, 0x01,
-    0x07, 0x40, 0x11, 0x00, 0x00,
-
-    0xF8, 0xFB, 0x11, 0x00, 0x00,   // 0x0011FBF8 = 00014800(FW_PATCH)
-    0xF9, 0xFB, 0x11, 0x00, 0x48,
-    0xFA, 0xFB, 0x11, 0x00, 0x01,
-    0xFB, 0xFB, 0x11, 0x00, 0x00,
-    //
-    // FDL config ends here
-    //
 }) // End IBUF
+

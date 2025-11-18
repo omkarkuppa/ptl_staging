@@ -19,6 +19,7 @@
 @par Specification Reference:
 **/
 
+
 //Name(_DSD, Package() // Do not uncomment this line - for demonstration purposes only
 ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
 Package()

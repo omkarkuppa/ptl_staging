@@ -19,6 +19,11 @@
 @par Specification Reference:
 **/
 
+
+//-----------------
+// Configuration
+//-----------------
+
 #ifdef AMP6_UID
 # define _NUM_AMP_AMPS 6
 #else
@@ -72,13 +77,20 @@
 #    define AMP1_SENSE_DATA_PORT         0x3
 #    define AMP1_REF_DATA_PORT           0x4
 #   else
-#    if AMP1_PART_ID==0x3563
+#    if AMP1_PART_ID==0x3562
 #     define AMP1_RENDER_DATA_PORT        0x1
 #     define AMP1_US_DATA_PORT            0x2
 #     define AMP1_SENSE_DATA_PORT         0x3
 #     define AMP1_REF_DATA_PORT           0x4
 #    else
-#     error "AMP1 unknown part!"
+#     if AMP1_PART_ID==0x3563
+#      define AMP1_RENDER_DATA_PORT        0x1
+#      define AMP1_US_DATA_PORT            0x2
+#      define AMP1_SENSE_DATA_PORT         0x3
+#      define AMP1_REF_DATA_PORT           0x4
+#     else
+#      error "AMP1 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
@@ -101,13 +113,20 @@
 #    define AMP2_SENSE_DATA_PORT         0x3
 #    define AMP2_REF_DATA_PORT           0x4
 #   else
-#    if AMP2_PART_ID==0x3563
+#    if AMP2_PART_ID==0x3562
 #     define AMP2_RENDER_DATA_PORT        0x1
 #     define AMP2_US_DATA_PORT            0x2
 #     define AMP2_SENSE_DATA_PORT         0x3
 #     define AMP2_REF_DATA_PORT           0x4
 #    else
-#     error "AMP2 unknown part!"
+#     if AMP2_PART_ID==0x3563
+#      define AMP2_RENDER_DATA_PORT        0x1
+#      define AMP2_US_DATA_PORT            0x2
+#      define AMP2_SENSE_DATA_PORT         0x3
+#      define AMP2_REF_DATA_PORT           0x4
+#     else
+#      error "AMP2 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
@@ -130,13 +149,20 @@
 #    define AMP3_SENSE_DATA_PORT         0x3
 #    define AMP3_REF_DATA_PORT           0x4
 #   else
-#    if AMP3_PART_ID==0x3563
+#    if AMP3_PART_ID==0x3562
 #     define AMP3_RENDER_DATA_PORT        0x1
 #     define AMP3_US_DATA_PORT            0x2
 #     define AMP3_SENSE_DATA_PORT         0x3
 #     define AMP3_REF_DATA_PORT           0x4
 #    else
-#     error "AMP3 unknown part!"
+#     if AMP3_PART_ID==0x3563
+#      define AMP3_RENDER_DATA_PORT        0x1
+#      define AMP3_US_DATA_PORT            0x2
+#      define AMP3_SENSE_DATA_PORT         0x3
+#      define AMP3_REF_DATA_PORT           0x4
+#     else
+#      error "AMP3 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
@@ -159,13 +185,20 @@
 #    define AMP4_SENSE_DATA_PORT         0x3
 #    define AMP4_REF_DATA_PORT           0x4
 #   else
-#    if AMP4_PART_ID==0x3563
+#    if AMP4_PART_ID==0x3562
 #     define AMP4_RENDER_DATA_PORT        0x1
 #     define AMP4_US_DATA_PORT            0x2
 #     define AMP4_SENSE_DATA_PORT         0x3
 #     define AMP4_REF_DATA_PORT           0x4
 #    else
-#     error "AMP4 unknown part!"
+#     if AMP4_PART_ID==0x3563
+#      define AMP4_RENDER_DATA_PORT        0x1
+#      define AMP4_US_DATA_PORT            0x2
+#      define AMP4_SENSE_DATA_PORT         0x3
+#      define AMP4_REF_DATA_PORT           0x4
+#     else
+#      error "AMP4 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
@@ -188,13 +221,20 @@
 #    define AMP5_SENSE_DATA_PORT         0x3
 #    define AMP5_REF_DATA_PORT           0x4
 #   else
-#    if AMP5_PART_ID==0x3563
+#    if AMP5_PART_ID==0x3562
 #     define AMP5_RENDER_DATA_PORT        0x1
 #     define AMP5_US_DATA_PORT            0x2
 #     define AMP5_SENSE_DATA_PORT         0x3
 #     define AMP5_REF_DATA_PORT           0x4
 #    else
-#     error "AMP5 unknown part!"
+#     if AMP5_PART_ID==0x3563
+#      define AMP5_RENDER_DATA_PORT        0x1
+#      define AMP5_US_DATA_PORT            0x2
+#      define AMP5_SENSE_DATA_PORT         0x3
+#      define AMP5_REF_DATA_PORT           0x4
+#     else
+#      error "AMP5 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
@@ -217,13 +257,20 @@
 #    define AMP6_SENSE_DATA_PORT         0x3
 #    define AMP6_REF_DATA_PORT           0x4
 #   else
-#    if AMP6_PART_ID==0x3563
+#    if AMP6_PART_ID==0x3562
 #     define AMP6_RENDER_DATA_PORT        0x1
 #     define AMP6_US_DATA_PORT            0x2
 #     define AMP6_SENSE_DATA_PORT         0x3
 #     define AMP6_REF_DATA_PORT           0x4
 #    else
-#     error "AMP6 unknown part!"
+#     if AMP6_PART_ID==0x3563
+#      define AMP6_RENDER_DATA_PORT        0x1
+#      define AMP6_US_DATA_PORT            0x2
+#      define AMP6_SENSE_DATA_PORT         0x3
+#      define AMP6_REF_DATA_PORT           0x4
+#     else
+#      error "AMP6 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
@@ -246,13 +293,20 @@
 #    define AMP7_SENSE_DATA_PORT         0x3
 #    define AMP7_REF_DATA_PORT           0x4
 #   else
-#    if AMP7_PART_ID==0x3563
+#    if AMP7_PART_ID==0x3562
 #     define AMP7_RENDER_DATA_PORT        0x1
 #     define AMP7_US_DATA_PORT            0x2
 #     define AMP7_SENSE_DATA_PORT         0x3
 #     define AMP7_REF_DATA_PORT           0x4
 #    else
-#     error "AMP7 unknown part!"
+#     if AMP7_PART_ID==0x3563
+#      define AMP7_RENDER_DATA_PORT        0x1
+#      define AMP7_US_DATA_PORT            0x2
+#      define AMP7_SENSE_DATA_PORT         0x3
+#      define AMP7_REF_DATA_PORT           0x4
+#     else
+#      error "AMP7 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
@@ -275,19 +329,30 @@
 #    define AMP8_SENSE_DATA_PORT         0x3
 #    define AMP8_REF_DATA_PORT           0x4
 #   else
-#    if AMP8_PART_ID==0x3563
+#    if AMP8_PART_ID==0x3562
 #     define AMP8_RENDER_DATA_PORT        0x1
 #     define AMP8_US_DATA_PORT            0x2
 #     define AMP8_SENSE_DATA_PORT         0x3
 #     define AMP8_REF_DATA_PORT           0x4
 #    else
-#     error "AMP8 unknown part!"
+#     if AMP8_PART_ID==0x3563
+#      define AMP8_RENDER_DATA_PORT        0x1
+#      define AMP8_US_DATA_PORT            0x2
+#      define AMP8_SENSE_DATA_PORT         0x3
+#      define AMP8_REF_DATA_PORT           0x4
+#     else
+#      error "AMP8 unknown part!"
+#     endif
 #    endif
 #   endif
 #  endif
 # else
 #  error "AMP8 unknown manufacturer!"
 # endif
+#endif
+
+#ifdef CODEC1_MIC_CHANNEL_CNT
+# undef CODEC1_MIC_CHANNEL_CNT
 #endif
 
 #ifdef CODEC1_UID
@@ -298,6 +363,20 @@
 #   define CODEC1_AMP_REF_DATA_PORT     0x3
 #   define CODEC1_AMP_RENDER_DATA_PORT  0x5
 #   define CODEC1_UAJ_RENDER_DATA_PORT  0x6
+
+#   if CS42L43_IT11_NUM_OF_MIC > 3
+#    define CODEC1_MIC_CHANNEL_CNT 4
+#   else
+#    if CS42L43_IT11_NUM_OF_MIC > 2
+#     define CODEC1_MIC_CHANNEL_CNT 3
+#    else
+#     if CS42L43_IT11_NUM_OF_MIC > 1
+#      define CODEC1_MIC_CHANNEL_CNT 2
+#     else
+#      define CODEC1_MIC_CHANNEL_CNT 1
+#     endif
+#    endif
+#   endif
 #  else
 #   if CODEC1_PART_ID==0x4245
 #    define CODEC1_MIC_CAPTURE_DATA_PORT 0x1
@@ -305,12 +384,52 @@
 #    define CODEC1_SEC_CAPTURE_DATA_PORT 0x3
 #    define CODEC1_UAJ_CAPTURE_DATA_PORT 0x4
 #    define CODEC1_UAJ_RENDER_DATA_PORT  0x5
+
+#    if CS42L45_IT11_NUM_OF_MIC > 3
+#     define CODEC1_MIC_CHANNEL_CNT 4
+#    else
+#     if CS42L45_IT11_NUM_OF_MIC > 2
+#      define CODEC1_MIC_CHANNEL_CNT 3
+#     else
+#      if CS42L45_IT11_NUM_OF_MIC > 1
+#       define CODEC1_MIC_CHANNEL_CNT 2
+#      else
+#       define CODEC1_MIC_CHANNEL_CNT 1
+#      endif
+#     endif
+#    endif
 #   else
 #     error "CODEC1 unknown part!"
 #   endif
 #  endif
 # else
 #  error "CODEC1 unknown manufacturer!"
+# endif
+#endif
+
+#ifdef CODEC1_MIC_CHANNEL_MASK
+# undef CODEC1_MIC_CHANNEL_MASK
+#endif
+
+#ifdef CODEC1_MIC_PERIPHERAL_MASK
+# undef CODEC1_MIC_PERIPHERAL_MASK
+#endif
+
+#if CODEC1_MIC_CHANNEL_CNT > 3
+# define CODEC1_MIC_PERIPHERAL_MASK 0x33
+# define CODEC1_MIC_CHANNEL_MASK 0xf
+#else
+# if CODEC1_MIC_CHANNEL_CNT > 2
+#   define CODEC1_MIC_PERIPHERAL_MASK 0x13
+#  define CODEC1_MIC_CHANNEL_MASK 0x7
+# else
+#  if CODEC1_MIC_CHANNEL_CNT > 1
+#   define CODEC1_MIC_PERIPHERAL_MASK 0x3
+#   define CODEC1_MIC_CHANNEL_MASK 0x3
+#  else
+#   define CODEC1_MIC_PERIPHERAL_MASK 0x31
+#   define CODEC1_MIC_CHANNEL_MASK 0x1
+#  endif
 # endif
 #endif
 
@@ -381,8 +500,6 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_Speaker"},
 #ifdef _AMD
-        Package (2) {"amd-sdw-stream-count", 1},
-        Package (2) {"amd-sdw-stream-type", 0},    // Stream Type Default
 # if (_NUM_AMP_AMPS==0) && (_NUM_CODEC_AMPS==1)
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_AMP_RENDER_DATA_PORT},  // Raw Stream Data port number on SPK device
 # endif
@@ -1039,19 +1156,59 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_MicrophoneArray"},
 #  ifdef _AMD
-        Package (2) {"amd-sdw-stream-type", 0},
-        Package (2) {"amd-sdw-stream-count", 1},
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_MIC_CAPTURE_DATA_PORT},  // Raw Stream Data port number on Mic device
 #  else // !_AMD
 #   ifdef _NVIDIA
         // NVidia_Arm specific information for Microphone Array
         Package (2) {"acpi-vendor-sdw-data-port-number", CODEC1_MIC_CAPTURE_DATA_PORT},
+#    if CODEC1_MIC_CHANNEL_CNT > 2
+        Package (2) {"acpi-vendor-device-dp-channel-mask", CODEC1_MIC_CHANNEL_MASK},
+        Package (2) {"acpi-vendor-device-terminal-id", 0xA}, // Entity id of the streaming terminal used for this endpoint. (OT113)
+#    endif
 #   else // !_NVIDIA
+        Package (2) {"acpi-acd-sdca-terminal-type", 0x0205},
         Package (2) {"acpi-acd-connection-count", 1},
         // Microphone Array Capture stream (raw)
         Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
         Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
         Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", CODEC1_MIC_CAPTURE_DATA_PORT},
+#    if CODEC1_MIC_CHANNEL_CNT > 2
+        // multi-channel capture, applicable for > 2xDMIC
+        Package ()  {"conn-info",
+            Package () {
+                // Per connection / stream
+                Package () {"conn-agg-path-0",
+                    Package () {
+                        Package (2) {"sdca-stream-type", 0x0x181}, // Microphone Array Capture Stream Terminal type = Raw
+                        Package (2) {"agg-channel-count", CODEC1_MIC_CHANNEL_CNT}, // Channel count of enumerated endpoint
+                        Package (2) {"agg-component-count", 0x1}, // No peripheral/function aggregation
+                        // Per Peripheral
+                        Package () {"agg-component-0",
+                            Package () {
+                                Package(2) {"function-manufacturer-id", CODEC1_MANUFACTURER_ID},
+                                Package(2) {"function-id", CODEC1_FUNC_ID},
+                                Package(2) {"controller-id", 0x0},
+                                Package(2) {"link-id", CODEC1_LID},
+                                Package(2) {"unique-id", CODEC1_UID},
+                                Package(2) {"function-number", 0x2},
+                                Package(2) {"function-type", 0x3}, // Smart MIC
+                                Package(2) {"terminal-entity-id", 0xA}, // Entity id of the streaming terminal used for this endpoint. (OT113)
+                                Package(2) {"dp-map", 0x1}, // Dataport map, DP_Index_A
+                                Package(2) {"dp-peripheral-mask", CODEC1_MIC_PERIPHERAL_MASK}, // Channel mask on peripheral, KSAUDIO_SPEAKER_QUAD, etc.
+                                Package () {"data-port-map-0",
+                                    Package () {
+                                        Package (2) {"data-port-num", CODEC1_MIC_CAPTURE_DATA_PORT},
+                                        Package (2) {"data-port-mode", 0x1}, // Isochronous
+                                        Package (2) {"data-port-channel-mask", CODEC1_MIC_CHANNEL_MASK}, // Forms multi-channel microphone
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+#    endif
 #   endif // _NVIDIA
 #  endif // _AMD
     }
@@ -1125,8 +1282,6 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_Headphones"},
 #  ifdef _AMD
-        Package (2) {"amd-sdw-stream-type", 0},
-        Package (2) {"amd-sdw-stream-count", 1},
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_UAJ_RENDER_DATA_PORT},   // Raw Stream Data port number on SPK device
 #   else // !_AMD
 #   ifdef _NVIDIA
@@ -1191,8 +1346,6 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_LineOut"},
 #  ifdef _AMD
-        Package (2) {"amd-sdw-stream-type", 0},
-        Package (2) {"amd-sdw-stream-count", 1},
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_UAJ_RENDER_DATA_PORT},   // Raw Stream Data port number on SPK device
 #  else // !_AMD
 #   ifdef _NVIDIA
@@ -1257,8 +1410,6 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_HeadsetOutput"},
 #  ifdef _AMD
-        Package (2) {"amd-sdw-stream-type", 0},
-        Package (2) {"amd-sdw-stream-count", 1},
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_UAJ_RENDER_DATA_PORT},   // Raw Stream Data port number on SPK device
 #  else // !_AMD
 #   ifdef _NVIDIA
@@ -1323,8 +1474,6 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_Microphone"},
 #  ifdef _AMD
-        Package (2) {"amd-sdw-stream-type", 0},
-        Package (2) {"amd-sdw-stream-count", 1},
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_UAJ_CAPTURE_DATA_PORT},  // Raw Stream Data port number on SPK device
 #  else // !_AMD
 #   ifdef _NVIDIA
@@ -1389,8 +1538,6 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_LineIn"},
 #  ifdef _AMD
-        Package (2) {"amd-sdw-stream-type", 0},
-        Package (2) {"amd-sdw-stream-count", 1},
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_UAJ_CAPTURE_DATA_PORT},  // Raw Stream Data port number on SPK device
 #  else // !_AMD
 #   ifdef _NVIDIA
@@ -1455,8 +1602,6 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
         Package (2) {"acpi-vendor-id", 0x1},
         Package (2) {"acpi-vendor-config-type", "Streaming_HeadsetMic"},
 #  ifdef _AMD
-        Package (2) {"amd-sdw-stream-type", 0},
-        Package (2) {"amd-sdw-stream-count", 1},
         Package (2) {"amd-sdw-default-stream-dp-number", CODEC1_UAJ_CAPTURE_DATA_PORT},  // Raw Stream Data port number on SPK device
 #  else // !_AMD
 #   ifdef _NVIDIA
@@ -1625,4 +1770,16 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 
 #ifdef CODEC1_UAJ_RENDER_DATA_PORT
 # undef CODEC1_UAJ_RENDER_DATA_PORT
+#endif
+
+#ifdef CODEC1_MIC_CHANNEL_CNT
+# undef CODEC1_MIC_CHANNEL_CNT
+#endif
+
+#ifdef CODEC1_MIC_CHANNEL_MASK
+# undef CODEC1_MIC_CHANNEL_MASK
+#endif
+
+#ifdef CODEC1_MIC_PERIPHERAL_MASK
+# undef CODEC1_MIC_PERIPHERAL_MASK
 #endif

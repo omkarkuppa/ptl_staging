@@ -19,6 +19,23 @@
 @par Specification Reference:
 **/
 
+
+// v1.6 - Extracted peripherals.
+// v1.5 - Added CS35L62 (Jimmy) support.
+// v1.4 - Added AMP_GPIO_CTRL define for speaker selection.
+// v1.3 - Added multi-channel capture support.
+// v1.2 - Add support for Phife.
+// v1.1 - Added flexibility in adding CODEC1 functions.
+// v1.0 - Initial.
+//
+
+//-----------------
+// Error checking:
+// 1) Link ID,
+// 2) HW ID,
+// 3) acpi-acd-device-namestring,
+// 4) sequential definition of AMP.
+//-----------------
 #ifdef AMP1_UID
 # ifndef AMP1_LID
 #  error "AMP1 link ID undefined!"
@@ -215,8 +232,42 @@
 #endif
 
 #ifndef DSP_ACPI_ACD_DEVICE_NAMESTRING
-#  error "DSP device string undefined!"
+# error "DSP device string undefined!"
 #endif
+
+#ifdef CODEC1_UID
+# if CODEC1_MANUFACTURER_ID==0x01FA
+#  if CODEC1_PART_ID==0x4243
+#   ifndef CS42L43_IT11_NUM_OF_MIC
+// default number of MIC used!
+#    define CS42L43_IT11_NUM_OF_MIC 2
+#   endif
+#  else
+#   if CODEC1_PART_ID==0x4245
+#    ifndef CS42L45_IT11_NUM_OF_MIC
+// default number of MIC used!
+#     define CS42L45_IT11_NUM_OF_MIC 2
+#    endif
+#   else
+#     error "CODEC1 unknown part!"
+#   endif
+#  endif
+# else
+#  error "CODEC1 unknown manufacturer!"
+# endif
+#endif
+
+#ifdef AMP_GPIO
+# ifndef AMP_GPIO_CTRL
+#   error "AMP_GPIO_CTRL GPIO Controller undefined!"
+# endif
+# ifndef AMP_GPIO_PIN_CONFIG
+   error "AMP_GPIO_PIN_CONFIG GPIO Pin Config undefined!"
+# endif
+# ifndef AMP_GPIO_DRIVE_STRENGTH
+   error "AMP_GPIO_DRIVE_STRENGTH GPIO Drive Strength undefined!"
+# endif
+#endif //#ifdef AMP_GPIO
 
 Scope (_SB)
 {
@@ -224,60 +275,25 @@ Scope (_SB)
     {
         Name (_HID, "ACPI0018") // INF in MS audio compositor driver looks for this HWID (UEFI-defined for audio comp.)
         // #include is used so that the preprocessor is run on the contents of the file.
-        #include <AudioComposition_8xAMP_1xCODEC.asl>
-        #include <AudioComposition_8xAMP_1xCODEC_all_endpoints.asl>
+        #include <SndwDevTopologySt05Ssdt/AudioComposition_8xAMP_1xCODEC.asl>
+        #include <SndwDevTopologySt05Ssdt/AudioComposition_8xAMP_1xCODEC_all_endpoints.asl>
     }
 }
 #ifndef _AMD
+# ifdef _NVIDIA
+Scope (\_SB.CNT0)
+{
+# else
 Scope (_SB.PC00.HDAS.IDA.SNDW)
 {
+# endif
 #endif
+
 #ifdef AMP1_UID
     // AMP 1
     Device (SWD2)
     {
         Name (_ADR, ((0x000<<52)|(AMP1_LID << 48)|(3<<44)|(AMP1_UID << 40)|(AMP1_MANUFACTURER_ID << 24)|(AMP1_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP1_MANUFACTURER_ID==0x01FA
-# if AMP1_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP1_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP1_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP1_MANUFACTURER_ID==0x01FA
-# if AMP1_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP1_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP1_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP1_TOP_LEFT
         // AMP1 is TOP-LEFT channel.
@@ -307,47 +323,38 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP1_BOTTOM_LEFT
 # endif     // AMP1_TOP_LEFT
 
-#if AMP1_MANUFACTURER_ID==0x01FA
-# if AMP1_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP1_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP1_MANUFACTURER_ID==0x01FA
+#  if AMP1_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP1_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP1_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP1_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP1_UID
 
@@ -356,47 +363,6 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     Device (SWD3)
     {
         Name (_ADR, ((0x000<<52)|(AMP2_LID << 48)|(3<<44)|(AMP2_UID << 40)|(AMP2_MANUFACTURER_ID << 24)|(AMP2_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP2_MANUFACTURER_ID==0x01FA
-# if AMP2_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP2_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP2_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP2_MANUFACTURER_ID==0x01FA
-# if AMP2_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP2_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP2_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP2_TOP_LEFT
         // AMP2 is TOP-LEFT channel.
@@ -426,47 +392,38 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP2_BOTTOM_LEFT
 # endif     // AMP2_TOP_LEFT
 
-#if AMP2_MANUFACTURER_ID==0x01FA
-# if AMP2_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP2_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP2_MANUFACTURER_ID==0x01FA
+#  if AMP2_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP2_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP2_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP2_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP2_UID
 
@@ -475,47 +432,6 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     Device (SWD4)
     {
         Name (_ADR, ((0x000<<52)|(AMP3_LID << 48)|(3<<44)|(AMP3_UID << 40)|(AMP3_MANUFACTURER_ID << 24)|(AMP3_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP3_MANUFACTURER_ID==0x01FA
-# if AMP3_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP3_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP3_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP3_MANUFACTURER_ID==0x01FA
-# if AMP3_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP3_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP3_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP3_TOP_LEFT
         // AMP3 is TOP-LEFT channel.
@@ -545,48 +461,38 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP3_BOTTOM_LEFT
 # endif     // AMP3_TOP_LEFT
 
-
-#if AMP3_MANUFACTURER_ID==0x01FA
-# if AMP3_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP3_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP3_MANUFACTURER_ID==0x01FA
+#  if AMP3_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP3_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP3_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP3_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP3_UID
 
@@ -595,47 +501,6 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     Device (SWD5)
     {
         Name (_ADR, ((0x000<<52)|(AMP4_LID << 48)|(3<<44)|(AMP4_UID << 40)|(AMP4_MANUFACTURER_ID << 24)|(AMP4_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP4_MANUFACTURER_ID==0x01FA
-# if AMP4_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP4_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP4_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP4_MANUFACTURER_ID==0x01FA
-# if AMP4_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP4_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP4_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP4_TOP_LEFT
         // AMP4 is TOP-LEFT channel.
@@ -665,96 +530,46 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP4_BOTTOM_LEFT
 # endif     // AMP4_TOP_LEFT
 
-#if AMP4_MANUFACTURER_ID==0x01FA
-# if AMP4_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP4_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP4_MANUFACTURER_ID==0x01FA
+#  if AMP4_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP4_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP4_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP4_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP4_UID
 
 #ifdef AMP5_UID
-    // AMP 1
+    // AMP 5
     Device (SWD7)
     {
         Name (_ADR, ((0x000<<52)|(AMP5_LID << 48)|(3<<44)|(AMP5_UID << 40)|(AMP5_MANUFACTURER_ID << 24)|(AMP5_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP5_MANUFACTURER_ID==0x01FA
-# if AMP5_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP5_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP5_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP5_MANUFACTURER_ID==0x01FA
-# if AMP5_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP5_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP5_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP5_TOP_LEFT
         // AMP5 is TOP-LEFT channel.
@@ -784,47 +599,38 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP5_BOTTOM_LEFT
 # endif     // AMP5_TOP_LEFT
 
-#if AMP5_MANUFACTURER_ID==0x01FA
-# if AMP5_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP5_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP5_MANUFACTURER_ID==0x01FA
+#  if AMP5_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP5_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP5_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP5_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP5_UID
 
@@ -833,47 +639,6 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     Device (SWD8)
     {
         Name (_ADR, ((0x000<<52)|(AMP6_LID << 48)|(3<<44)|(AMP6_UID << 40)|(AMP6_MANUFACTURER_ID << 24)|(AMP6_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP6_MANUFACTURER_ID==0x01FA
-# if AMP6_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP6_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP6_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP6_MANUFACTURER_ID==0x01FA
-# if AMP6_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP6_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP6_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP6_TOP_LEFT
         // AMP6 is TOP-LEFT channel.
@@ -903,47 +668,38 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP6_BOTTOM_LEFT
 # endif     // AMP6_TOP_LEFT
 
-#if AMP6_MANUFACTURER_ID==0x01FA
-# if AMP6_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP6_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP6_MANUFACTURER_ID==0x01FA
+#  if AMP6_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP6_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP6_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP6_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP6_UID
 
@@ -952,47 +708,6 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     Device (SWD9)
     {
         Name (_ADR, ((0x000<<52)|(AMP7_LID << 48)|(3<<44)|(AMP7_UID << 40)|(AMP7_MANUFACTURER_ID << 24)|(AMP7_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP7_MANUFACTURER_ID==0x01FA
-# if AMP7_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP7_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP7_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP7_MANUFACTURER_ID==0x01FA
-# if AMP7_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP7_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP7_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP7_TOP_LEFT
         // AMP7 is TOP-LEFT channel.
@@ -1022,47 +737,38 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP7_BOTTOM_LEFT
 # endif     // AMP7_TOP_LEFT
 
-#if AMP7_MANUFACTURER_ID==0x01FA
-# if AMP7_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP7_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP7_MANUFACTURER_ID==0x01FA
+#  if AMP7_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP7_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP7_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP7_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP7_UID
 
@@ -1071,47 +777,6 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
     Device (SWD10)
     {
         Name (_ADR, ((0x000<<52)|(AMP8_LID << 48)|(3<<44)|(AMP8_UID << 40)|(AMP8_MANUFACTURER_ID << 24)|(AMP8_PART_ID << 8)|0x1) )  // _ADR: Address
-
-        Name (_DSD, Package()   // _DSD: Device-Specific Data
-        {
-#if AMP8_MANUFACTURER_ID==0x01FA
-# if AMP8_PART_ID==0x3556
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP8_PART_ID==0x3557
-            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamerson
-# elif AMP8_PART_ID==0x3563
-            #include <CS35L63_DSD.asl>  // For additional _DSD entries, common to all Buffetts
-# endif
-#endif
-
-# ifdef AMP_GPIO
-            ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
-            Package()
-            {
-                Package()
-                {
-                    "spk-id-gpios", Package()
-                    {
-                        AF01, 0, 0, 0,
-                    },
-                },
-            },
-# endif
-        }) // End _DSD
-
-#if AMP8_MANUFACTURER_ID==0x01FA
-# if AMP8_PART_ID==0x3556
-        #include <CS35L56_PDP.asl>
-# elif AMP8_PART_ID==0x3557
-        #include <CS35L56_PDP.asl>
-# elif AMP8_PART_ID==0x3563
-        #include <CS35L63_PDP.asl>
-# endif
-#endif
-
-        Device(AF01)
-        {
-            Name(_ADR, 0x1)
 
 # ifdef AMP8_TOP_LEFT
         // AMP8 is TOP-LEFT channel.
@@ -1141,47 +806,38 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 #  endif    // AMP8_BOTTOM_LEFT
 # endif     // AMP8_TOP_LEFT
 
-#if AMP8_MANUFACTURER_ID==0x01FA
-# if AMP8_FUNC_ID==0x3556
-            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
-# elif AMP8_FUNC_ID==0x3563
-            #include <CS35L63_AMP.asl>
+# if AMP8_MANUFACTURER_ID==0x01FA
+#  if AMP8_PART_ID==0x3556
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP8_PART_ID==0x3557
+        #include <SndwDevTopologySt05Ssdt/CS35L56/CS35L56.asl>
+#  elif AMP8_PART_ID==0x3562
+        #define BUFFETT_CHIP_ID 0x3562
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+        #undef BUFFETT_CHIP_ID
+#  elif AMP8_PART_ID==0x3563
+        #include <SndwDevTopologySt05Ssdt/CS35L63/CS35L63.asl>
+#  endif
 # endif
-#endif
 
-#ifdef CHANNEL_LEFT
-# undef CHANNEL_LEFT
-#endif
-#ifdef CHANNEL_RIGHT
-# undef CHANNEL_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_RIGHT
-# undef CHANNEL_BOTTOM_RIGHT
-#endif
-#ifdef CHANNEL_TOP_RIGHT
-# undef CHANNEL_TOP_RIGHT
-#endif
-#ifdef CHANNEL_BOTTOM_LEFT
-# undef CHANNEL_BOTTOM_LEFT
-#endif
-#ifdef CHANNEL_TOP_LEFT
-# undef CHANNEL_TOP_LEFT
-#endif
-
-# ifdef AMP_GPIO
-            // Assign SPKR_ID GPIO for AMP
-            Name (GPIA, ResourceTemplate ()
-            {
-                // Pin37 - GPIO15
-                GpioIo (Shared, PullNone, 0x0, 0x0, IoRestrictionInputOnly, "\\_SB.GPI0", 0, ResourceConsumer, , ) { AMP_GPIO }
-            })
-
-            Method (_CRS, 0x0, NotSerialized)
-            {
-                Return (GPIA)
-            }
+# ifdef CHANNEL_LEFT
+#  undef CHANNEL_LEFT
 # endif
-        }
+# ifdef CHANNEL_RIGHT
+#  undef CHANNEL_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_RIGHT
+#  undef CHANNEL_BOTTOM_RIGHT
+# endif
+# ifdef CHANNEL_TOP_RIGHT
+#  undef CHANNEL_TOP_RIGHT
+# endif
+# ifdef CHANNEL_BOTTOM_LEFT
+#  undef CHANNEL_BOTTOM_LEFT
+# endif
+# ifdef CHANNEL_TOP_LEFT
+#  undef CHANNEL_TOP_LEFT
+# endif
     }
 #endif  // AMP8_UID
 
@@ -1193,158 +849,16 @@ Scope (_SB.PC00.HDAS.IDA.SNDW)
 
 # if CODEC1_MANUFACTURER_ID==0x01FA
 #  if CODEC1_PART_ID==0x4243
-        #include <CS42L43_DSD.asl>
+        #define CHANNEL_LEFT
+        #define CHANNEL_RIGHT
+        #include <SndwDevTopologySt05Ssdt/CS42L43/CS42L43.asl>
+        #undef CHANNEL_LEFT
+        #undef CHANNEL_RIGHT
 #  endif
 #  if CODEC1_PART_ID==0x4245
-        #include <CS42L45_DSD.asl>
+        #include <SndwDevTopologySt05Ssdt/CS42L45/CS42L45.asl>
 #  endif
 # endif
-
-# ifdef CODEC1_AMP
-        Device (AF01)
-        {
-            Name (_ADR, 0x1) // SDCA Function Number = 0x1
-
-            #define CHANNEL_LEFT
-            #define CHANNEL_RIGHT
-#  if CODEC1_MANUFACTURER_ID==0x01FA
-#   if CODEC1_FUNC_ID==0x4243
-            #include <Cohen_Amp.asl>
-#   endif
-#  endif
-            #undef CHANNEL_LEFT
-            #undef CHANNEL_RIGHT
-
-#  ifdef SIDECAR_VARIABLE_SPEAKER_SELECT
-            // _INI method: Set 01fa-spk-id-val to the value specified in
-            // SIDECAR_VARIABLE_SPEAKER_SELECT_NAME. This can either be defined
-            // as the four-character constant of a field within an OpRegion (for
-            // instance, of the corresponding BIOS variable set by the ODM), or,
-            // for testing purposes, a constant value.
-            //
-            // Examples:
-            //   - Source the value from a field in an OpRegion named 'SIDV'
-            //   #define SIDECAR_VARIABLE_SPEAKER_SELECT_NAME     SIDV
-            //   - Use 1 as the hardcoded value for the property
-            //   #define SIDECAR_VARIABLE_SPEAKER_SELECT_NAME     0x01
-            Method (_INI, 0x0, NotSerialized) {
-                Local1 = SIDECAR_VARIABLE_SPEAKER_SELECT_NAME
-                //            +-- reference to the value part of the '01fa-spk-id-val' property package
-                //            |     +-- First package inside EXT0 inner package
-                //            |     |   (should be the '01fa-spk-id-val' package)
-                //            |     |             +-- inner package within EXT0
-                //            |     |             |
-                //            |     |             v--------------------v
-                //            |     v----------------------------------------v
-                //            v---------------------------------------------------v
-                Store(Local1, Index(DerefOf(Index(DerefOf(Index(EXT0, 1)), 0)), 1))
-            }
-#  endif // SIDECAR_VARIABLE_SPEAKER_SELECT
-        }
-# endif // CODEC1_AMP
-
-# ifdef CODEC1_MIC
-        Device (AF02)
-        {
-            Name (_ADR, 0x2) // SDCA Function Number = 0x2
-
-#  if CODEC1_MANUFACTURER_ID==0x01FA
-#   ifdef MIC_GEOMETRY_OVERLOAD
-            #include <Mic_Geometry_Overload.asl>
-#   endif
-#   if CODEC1_FUNC_ID==0x4243
-            #include <Cohen_SimpleMic.asl>
-#   endif
-#   if CODEC1_FUNC_ID==0x4245
-            #include <Phife_SimpleMic.asl>
-#   endif
-#  endif
-
-#  ifdef SIDECAR_VARIABLE_SPEAKER_SELECT
-            // _INI method: Set 01fa-spk-id-val to the value specified in
-            // SIDECAR_VARIABLE_SPEAKER_SELECT_NAME. This can either be defined
-            // as the four-character constant of a field within an OpRegion (for
-            // instance, of the corresponding BIOS variable set by the ODM), or,
-            // for testing purposes, a constant value.
-            //
-            // Examples:
-            //   - Source the value from a field in an OpRegion named 'SIDV'
-            //   #define SIDECAR_VARIABLE_SPEAKER_SELECT_NAME     SIDV
-            //   - Use 1 as the hardcoded value for the property
-            //   #define SIDECAR_VARIABLE_SPEAKER_SELECT_NAME     0x01
-            Method (_INI, 0x0, NotSerialized) {
-                Local1 = SIDECAR_VARIABLE_SPEAKER_SELECT_NAME
-                //            +-- reference to the value part of the '01fa-spk-id-val' property package
-                //            |     +-- First package inside EXT0 inner package
-                //            |     |   (should be the '01fa-spk-id-val' package)
-                //            |     |             +-- inner package within EXT0
-                //            |     |             |
-                //            |     |             v--------------------v
-                //            |     v----------------------------------------v
-                //            v---------------------------------------------------v
-                Store(Local1, Index(DerefOf(Index(DerefOf(Index(EXT0, 1)), 0)), 1))
-            }
-#  endif // SIDECAR_VARIABLE_SPEAKER_SELECT
-        }
-# endif // CODEC1_MIC
-
-#  ifdef CODEC1_UAJ
-        Device (AF03)
-        {
-            Name (_ADR, 0x3) // SDCA Hierarchical Function Number = 0x3
-
-#  if CODEC1_MANUFACTURER_ID==0x01FA
-#   if CODEC1_FUNC_ID==0x4243
-            #include <Cohen_UAJ.asl>
-            #include <Cohen_UAJ_capture_enable.asl>
-#   endif
-#   if CODEC1_FUNC_ID==0x4245
-            #include <Phife_UAJ.asl>
-            #include <Phife_UAJ_capture_enable.asl>
-#   endif
-#  endif
-
-#  ifdef SIDECAR_VARIABLE_SPEAKER_SELECT
-            // _INI method: Set 01fa-spk-id-val to the value specified in
-            // SIDECAR_VARIABLE_SPEAKER_SELECT_NAME. This can either be defined
-            // as the four-character constant of a field within an OpRegion (for
-            // instance, of the corresponding BIOS variable set by the ODM), or,
-            // for testing purposes, a constant value.
-            //
-            // Examples:
-            //   - Source the value from a field in an OpRegion named 'SIDV'
-            //   #define SIDECAR_VARIABLE_SPEAKER_SELECT_NAME     SIDV
-            //   - Use 1 as the hardcoded value for the property
-            //   #define SIDECAR_VARIABLE_SPEAKER_SELECT_NAME     0x01
-            Method (_INI, 0x0, NotSerialized) {
-                Local1 = SIDECAR_VARIABLE_SPEAKER_SELECT_NAME
-                //            +-- reference to the value part of the '01fa-spk-id-val' property package
-                //            |     +-- First package inside EXT0 inner package
-                //            |     |   (should be the '01fa-spk-id-val' package)
-                //            |     |             +-- inner package within EXT0
-                //            |     |             |
-                //            |     |             v--------------------v
-                //            |     v----------------------------------------v
-                //            v---------------------------------------------------v
-                Store(Local1, Index(DerefOf(Index(DerefOf(Index(EXT0, 1)), 0)), 1))
-            }
-#  endif // SIDECAR_VARIABLE_SPEAKER_SELECT
-        }
-
-        Device (AF04)
-        {
-            Name (_ADR, 0x4) // SDCA Hierarchical Function Number = 0x4
-
-#  if CODEC1_MANUFACTURER_ID==0x01FA
-#   if CODEC1_FUNC_ID==0x4243
-            #include <CS_HID_headset_buttons.asl>
-#   endif
-#   if CODEC1_FUNC_ID==0x4245
-            #include <Phife_HID_headset_buttons.asl>
-#   endif
-#  endif
-        }
-# endif // CODEC1_UAJ
     }
 #endif // CODEC1_UID
 #ifndef _AMD

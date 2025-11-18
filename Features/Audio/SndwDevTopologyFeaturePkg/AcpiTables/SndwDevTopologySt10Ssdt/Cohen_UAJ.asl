@@ -97,8 +97,8 @@
 // Cohen GE35 ASP Output
 #define CS42L43_GE35_CTL_ASP_OUTPUT (1 << 0x32)
 
-#include <UAJ-Clusters.asl>
-#include <UAJ-Usage.asl>
+#include <SndwDevTopologySt10Ssdt/UAJ-Clusters.asl>
+#include <SndwDevTopologySt10Ssdt/UAJ-Usage.asl>
 
 #ifdef EXCLUDE_FU_36_VOLUME_CONTROL
 // Remove FU_36

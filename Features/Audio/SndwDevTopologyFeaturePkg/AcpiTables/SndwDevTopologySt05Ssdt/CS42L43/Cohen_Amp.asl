@@ -19,7 +19,119 @@
 @par Specification Reference:
 **/
 
-#include "version.h"
+
+// v1.36 - Add support for SDCA class FDL.
+// v1.35, Added support for standard-mode ULS
+// v1.34, SDCA 1.0 conformance DisCo fixes (again).
+// v1.33, SDCA 1.0 conformance DisCo fixes.
+// v1.32, Removed EXCLUDE_FUN_STS conditional compilation.
+// v1.31, Fixed FU23.
+// v1.30, Posture support.
+// v1.29, Renamed Imp-def SPI bridge deferred controls.
+// v1.28, Fixed FW_PATCH address.
+// v1.27, Added independednt FU21 fixed mute support.
+// v1.26, Moved downgrading Function SDCA Version to common.h file.
+// v1.25, Redesigned preventing XU from using DisCo defined controls (Volume, Mute, Function_status).
+// v1.24, Replaced CS42L43_FU_21_VOL_MAX_Q7_8 with CS42L43_FU_21_VOL_FIXED_Q7_8.
+// v1.23, Set Function_SDCA_Version to 1.0.
+//        Defined missing required E0 controls.
+// v1.22, Changed FU_21 to be opt-out rather than opt-in.
+// v1.21, Added Imp-def SPI bridge deferred controls.
+// v1.20, Fixed WIN10 compatibility.
+// v1.19, Added missing Function_Commit_Group_Mask definition.
+// v1.18  Added back FU11 for some configurations as well as a method to fix
+//        the FU21 volume, so the Class driver does not change it.
+// v1.17, Added support for Function_Status bit handling by the class driver.
+// v1.16, Added BIOS variable-based speaker selection support
+// v1.15, Restored cluster and usage support.
+// v1.14, Cleaned up topology; added ref stream enable/disable
+// v1.13, Removed Usage and CluterIndex since they are not yet supported by Microsoft.
+// v1.12, Removed FU21 from topology.
+// v1.11, Marked XU22 Bypass control deferrable.
+// v1.10, Added 'mipi-sdca-function-topology-features' and 'mipi-sdca-function-busy-max-delay' properties.
+// v1.9, Changed volume step to 1/32 dB.
+// v1.8, Defined macros specifying volume range, volume default value, and volume fixed value.
+// v1.7, Removed XU22 FDL UMP controls.
+//       Added Bypass control to XU22.
+//       Fixed IT29 connection to XU22.
+// v1.6, Limited render volume range upper limit to 0dB.
+// v1.5, Added cirrus-xu-features.
+// v1.4, Added support for 'cirrus-hwkws-supported' property.
+//       Implemented deferred controls.
+//       Changed volume and mute to user access layer.
+//       Fixed volume range to {-64dB, +31.4dB].
+//       Removed support for 44.1.kHz formats.
+// v1.3, Updated for DisCo 2.1
+//
+// Conditionals:
+//   COHEN_BRIDGE                   - Enables Cohen bridge support.
+//   COHEN_DISABLE_REF_STREAM       - Disables reference stream in Cohen smart amp topology.
+//   CS42L43_FU_21_VOL_*            - Specifies the Min, Max, Step and Default for Cohen amp volume (Required)
+//   EXCLUDE_FU_21_VOLUME_CONTROL   - Excludes FU_21 from the topology.
+//   FU_21_FIXED_RENDER_VOLUME      - When set, and EXCLUDE_FU_21_VOLUME_CONTROL is not set, it fixes the FU 21 volume to CS42L43_FU_21_VOL_FIXED_Q7_8
+//                                    which will force the drive stack to include a volume control APO.
+//   FU_21_FIXED_RENDER_MUTE        - When set, and EXCLUDE_FU_21_VOLUME_CONTROL is not set, it fixes the
+//                                    FU 21 mute to unmuted state.
+//   FU_23_FIXED_RENDER_MUTE        - When set, it fixes the FU 23 mute control to unmuted state
+//   FU_26_FIXED_RENDER_MUTE        - When set, it fixes the FU 26 mute control to unmuted state
+//
+//
+// Peripheral 4243:
+//     SNDW\CLASS_01&MAN_01FA&PART_4243&VER_03&UID_00&SUBSYS_72708086&CI_01
+// Amp info:
+//     FUNC_01
+//     IT_21 @ DataPort 5
+//     IT_26 @ DataPort 7
+//     OT_25 @ DataPort 3 OR DataPort 4.
+//             If DP3 is not assigned to HWKS or ULS capture, then fw selects DP3. Otherwise, DP4.
+//
+// +-------+  +--------+  +-------+  +---------+
+// | IT_21 +->| PPU_21 +->| FU_21 +->| MFPU_21 +--+                                                      +--------+
+// +-------+  +--------+  +-------+  +---------+  |                                                      | PDE_23 |
+//     ^                                          |  +-------+                             +-------+   +-+-----+  |
+//     |                                          +->|       |  +---------+  +----------+  |       +-->| OT_23 +--+
+// +---+---+                            +-------+    | XU_22 +->| SAPU_29 +->| UDMPU_23 +->| FU_23 |   +-------+
+// | CS_21 |                            | IT_29 +--->|       |  +---------+  +----------+  |       +-+
+// +-------+                            +-------+    +-------+                             +-------+ |   +----------+  +-------+
+//                                                                                                   +-->| UDMPU_25 +->| OT_25 |
+//                                                                                                       +----------+  +-------+
+//                                                                                                       Reference stream path
+//
+// TODO:
+// * Tweak latencies as needed
+
+/*
+    Handy Entity ID map
+    -------------------
+    XU_22         1
+    PDE_23        2
+    TG_23         3             // currently not used
+    PPU_21        4
+    FU_21         5
+    IT_21         6
+    IT_29         7
+    CS_21         8
+    SAPU_29       9
+    UDMPU_23      10 (0xA)
+    FU_23         11 (0xB)
+    OT_23         12 (0xC)
+    IT_199        13 (0xD)      // currently not used
+    SPE_199       14 (0xE)      // currently not used
+    OT_199        15 (0xF)      // currently not used
+    MFPU_21       16 (0x10)
+    UDMPU_25      17 (0x11)     // only used when reference stream is enabled
+    OT_25         18 (0x12)     // only used when reference stream is enabled
+    -----
+    [Ultrasound Render Stream]
+    IT_26         19 (0x13)
+    CS_26         20 (0x14)
+    PPU_26        21 (0x15)
+    MFPU_26       22 (0x16)
+    FU_26         23 (0x17)
+    MU_26         24 (0x18)     // only defined if ULS standard-mode is enabled (default value)
+*/
+
+#include "SndwDevTopologySt05Ssdt/version.h"
 
 #ifdef EXCLUDE_FU_21_VOLUME_CONTROL
 # define FEATURE_CS42L43_AMP_NO_VOL_MUTE_R_COND 0x00000000
@@ -56,8 +168,8 @@
 
 #define COHEN_CLUSTER
 #define COHEN_USAGE
-#include <SmartAmp-Clusters.asl>
-#include <SmartAmp-Usage.asl>
+#include <SndwDevTopologySt05Ssdt/SmartAmp-Clusters.asl>
+#include <SndwDevTopologySt05Ssdt/SmartAmp-Usage.asl>
 #undef COHEN_USAGE
 #undef COHEN_CLUSTER
 
@@ -121,6 +233,18 @@ Name(_DSD, Package()
         Package(2) { "mipi-sdca-function-busy-max-delay", 5000},
         // Clusters
         CLUSTER_ID_LIST_SMART_AMP,
+#ifdef  SDCA_CLASS_FDL_CS42L43
+        Package () { "mipi-sdca-file-set-id-list", Package () {1,2,3}},
+        Package () { "mipi-sdca-file-set-id-0x1",
+                     Package () {0x01FA, 1, 0x0001FF20}}, // Primer 1
+        Package () { "mipi-sdca-file-set-id-0x2",
+                     Package () {0x01FA, 0x42430005, 0x00014800}}, // FW Patch
+        Package () { "mipi-sdca-file-set-id-0x3",
+                     Package () {0x01FA, 0x42430061, 0x0001F930,    // pll_cfg_48000
+                                 0x01FA, 0x42430062, 0x0001F93C,    // codec_cfg
+                                 0x01FA, 0x42430063, 0x0001FB40,    // jack_cfg
+                                 0x01FA, 0x42430064, 0x0001F910}},  // gpio_cfg
+#endif //  SDCA_CLASS_FDL_CS42L43
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -235,7 +359,7 @@ Name(EXT0, Package()
         // device.
         Package(2) {"01fa-spk-id-val", 0}, // value to be set by _INI function
 # endif
-        #include <Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
+        #include <SndwDevTopologySt05Ssdt/CS42L43/Sidecar_Cohen_Tweeter_Jamerson_Woofer.asl>
 #endif
         Package(2) { "mipi-sdca-function-expansion-subsystem-id", 0 },  // MIPI required, but not used by MSFT
         Package(2) { "01fa-chip-id", 0x4243 },
@@ -246,7 +370,7 @@ Name(EXT0, Package()
         // Since the audio function performing the FDL is selected at random,
         // all audio functions involved with FDL must have it defined.
         Package(2) {"01fa-xu-features", (FEATURE_ENABLE_HWKWS | FEATURE_ENABLE_WT | FEATURE_ENABLE_KNCK | FEATURE_NO_FUN_STS |
-                                         FEATURE_CS42L43_AMP_NO_VOL_MUTE_R_COND)},
+                                         FEATURE_CS42L43_AMP_NO_VOL_MUTE_R_COND | FEATURE_DISABLE_FDL_CS42L43)},
 #ifdef GLOBAL_MUTE_LED_MIC_GPIO_NUM
         package(2) {"01fa-global-mute-led-mic-mute-gpio", GLOBAL_MUTE_LED_MIC_GPIO_NUM },
 #endif
@@ -830,7 +954,12 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-entity-type", 0x0A},
         Package(2) { "mipi-sdca-entity-label", "XU 22"},
         Package(2) { "mipi-sdca-input-pin-list", 0x6}, // Pin1 and Pin2 connected
+#ifdef  SDCA_CLASS_FDL_CS42L43
+        Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO | CTL_XU_FDL_CURRENTOWNER | CTL_XU_FDL_MESSAGEOFFSET | CTL_XU_FDL_MESSAGELENGTH | CTL_XU_FDL_STATUS | CTL_XU_FDL_SET_INDEX | CTL_XU_FDL_HOST_REQUEST},
+        Package(2) { "mipi-sdca-RxUMP-ownership-transition-max-delay", 10000},
+#else
         Package(2) { "mipi-sdca-control-list", CTL_XU_VERSION | CTL_XU_ID | CTL_XU_BYPASS | CTL_XU_IMPDEF_GPIO},
+#endif //  SDCA_CLASS_FDL_CS42L43
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
@@ -838,6 +967,14 @@ Name(E001, Package()
         Package(2) { "mipi-sdca-control-0x1-subproperties", "C901"}, // Bypass
         Package(2) { "mipi-sdca-control-0x7-subproperties", "C907"}, // XU_ID
         Package(2) { "mipi-sdca-control-0x8-subproperties", "C908"}, // XU_Version
+#ifdef  SDCA_CLASS_FDL_CS42L43
+        Package(2) { "mipi-sdca-control-0x10-subproperties", "C910"}, // XU_FDL_Current_Owner
+        Package(2) { "mipi-sdca-control-0x12-subproperties", "C912"}, // XU_FDL_MESSAGEOFFSET
+        Package(2) { "mipi-sdca-control-0x13-subproperties", "C913"}, // XU_FDL_MessageLength
+        Package(2) { "mipi-sdca-control-0x14-subproperties", "C914"}, // XU_FDL_Status
+        Package(2) { "mipi-sdca-control-0x15-subproperties", "C915"}, // XU_FDL_SET_INDEX
+        Package(2) { "mipi-sdca-control-0x16-subproperties", "C916"}, // XU_Host_Request
+#endif //  SDCA_CLASS_FDL_CS42L43
         Package(2) { "mipi-sdca-control-0x30-subproperties", "C930"}, // GPIO
         Package(2) { "mipi-sdca-input-pin-1", "E010"}, // Input Pin 1 connected to MFPU_21
         Package(2) { "mipi-sdca-input-pin-2", "E007"}, // Input Pin 2 connected to IT_29
@@ -876,6 +1013,91 @@ Name(C908, Package()
         Package(2) { "mipi-sdca-control-dc-value", 0x10},
     }
 }) // End C908
+
+#ifdef  SDCA_CLASS_FDL_CS42L43
+Name(C910, Package() { // XU_FDL_CurrentOwner
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package() {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-interrupt-position", COHEN_SDCA_AMP_FDL_BUFFER_OWNER_CHNG_INT},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_RW1S},
+        Package (2) {"mipi-sdca-control-default-value", 1},
+    }
+}) // End C910
+
+Name (C912, Package () { // XU_FDL_MESSAGEOFFSET
+   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package() {
+       Package(2) {"mipi-sdca-control-range","FMO1"},
+    },
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package() {
+        Package(2) { "mipi-sdca-control-access-layer", CAL_CLASS},
+        Package(2) { "mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package(2) { "mipi-sdca-control-deferrable", 1},
+    }
+}) // End C912
+
+Name(FMO1, Buffer() {
+    0x03, 0x00, // Range type 0x0003 (Triples)
+    0x01, 0x00, // Count of ranges = 0x1
+    0x00, 0x00, 0x10, 0x00, // UMP Buffer Start Address: 0x100000
+    0x00, 0x00, 0x00, 0x04, // UMP Buffer Length: 64mb
+    0x00, 0x00, 0x00, 0x00, // UMP Mode: 0 = Direct, 1 = Indirect
+})
+
+Name(C913, Package() { // XU_FDL_MessageLength
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) //End C913
+
+Name(C914, Package() { // XU_FDL_Status
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) // End C914
+
+Name (C915, Package () { // XU_FDL_SET_INDEX
+    ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+    Package() {
+       Package(2) {"mipi-sdca-control-range","FSI1"},
+    },
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+    Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_RO},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) // End C915
+
+Name(FSI1, Buffer()
+{
+    0x02, 0x00, // Range type 0x0002 (Doubles)
+    0x03, 0x00, // Count of ranges = 0x3
+    0x01, 0x00, 0x00, 0x00, // First Set Index: 0x1    // Primer 1
+    0x01, 0x00, 0x00, 0x00, // First File Set ID: 0x1
+    0x05, 0x00, 0x00, 0x00, // First Set Index: 0x5    // FW patch
+    0x02, 0x00, 0x00, 0x00, // First File Set ID: 0x2
+    0x06, 0x00, 0x00, 0x00, // First Set Index: 0x6    // FW tuning
+    0x03, 0x00, 0x00, 0x00, // First File Set ID: 0x3
+})
+
+Name(C916, Package() { // XU_Host_Request
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package () {
+        Package (2) {"mipi-sdca-control-access-layer", CAL_CLASS},
+        Package (2) {"mipi-sdca-control-access-mode", CAM_READ_WRITE},
+        Package (2) {"mipi-sdca-control-default-value", 0},
+    }
+}) //End C916
+#endif //  SDCA_CLASS_FDL_CS42L43
 
 Name(C930, Package()
 {
