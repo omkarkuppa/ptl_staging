@@ -158,9 +158,8 @@ cd ..\..\
   echo "fspunsigned"
   set FSP_SIGNED=FALSE
   set ROM_FILENAME_SPECIAL_BUILD_TYPE=%ROM_FILENAME_SPECIAL_BUILD_TYPE%_FSPUNSIGNED
-  set BUILD_OPTION_PCD=%BUILD_OPTION_PCD%
---pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F \
---pcd gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain=TRUE
+  set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
+--pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F
   set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD% ^
 --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=FALSE
 ) else if /i "embedded" == "%1" (
@@ -189,9 +188,9 @@ cd ..\..\
   set FSP_SIGNED=FALSE
   set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD%
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
---pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=1 \
+--pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=1 ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0x8000000F
-set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD%
+  set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD% ^
 --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=FALSE
 ) else if /i "fspmuncompressed" == "%1" (
   set FSPM_COMPRESSED=FALSE
