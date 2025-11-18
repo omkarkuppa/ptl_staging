@@ -33,17 +33,20 @@
 
 typedef enum {
     Card_230C = 0,
-    Card_235A = 1,
-    Card_240C = 2,
-    Card_256B = 3,
-    Card_269C = 4,
-    Card_276C = 5,
-    Card_298C = 6,
-    Card_311B = 7,
-    Card_324B = 8,
-    Card_75B = 9,
-    Card_Samsung2R = 10,
-    Card_default = 11,
+    Card_234B = 1,
+    Card_235A = 2,
+    Card_240C = 3,
+    Card_256B = 4,
+    Card_269C = 5,
+    Card_276C = 6,
+    Card_298C = 7,
+    Card_311B = 8,
+    Card_324B = 9,
+    Card_75B = 10,
+    Card_Hynix1R = 11,
+    Card_Hynix2R = 12,
+    Card_Samsung2R = 13,
+    Card_default = 14,
     Card_Max
 } CardEnum;
 
@@ -61,14 +64,17 @@ typedef enum {
   Card_324B_2R_6400 = 10,
   Card_324B_2R_7200 = 11,
   Card_230C_1R_6400 = 12,
-  Card_235A_1R_6400 = 13,
-  Card_75B_2R_6400 = 14,
-  Card_Samsung2R_2R_6400 = 15,
-  Card_Samsung2R_2R_7200 = 16,
-  Card_default_1R_6400 = 17,
-  Card_default_1R_7200 = 18,
-  Card_default_2R_6400 = 19,
-  Card_default_2R_7200 = 20,
+  Card_234B_2R_7200 = 13,
+  Card_235A_1R_6400 = 14,
+  Card_75B_2R_6400 = 15,
+  Card_Samsung2R_2R_6400 = 16,
+  Card_Samsung2R_2R_7200 = 17,
+  Card_default_1R_6400 = 18,
+  Card_default_1R_7200 = 19,
+  Card_default_2R_6400 = 20,
+  Card_default_2R_7200 = 21,
+  Card_Hynix1R_1R_7200 = 22,
+  Card_Hynix2R_2R_7200 = 23,
   Card_NotFound
 } Ddr5ParamIndex;
 
@@ -179,6 +185,7 @@ SelectDfeTableDdr5 (
   This function is used to get the corresponding card for a given dram part info.
 
   @param[in]  ModulePartNumber - Dram module part number from SPD.
+  @param[in]  NumOfRanks       - Rank config - 1/2.
   @param[in]  ManufactorIdCode - Dram manufacture id code from SPD.
 
   @returns - The corresponding card index.
@@ -186,6 +193,7 @@ SelectDfeTableDdr5 (
 CardEnum
 Ddr5GetCardEnum (
   IN const CHAR8* ModulePartNumber,
+  IN const UINT32 NumOfRanks,
   IN const UINT8  ManufactorIdCode
   );
 #endif // MRC_DDR5_SETTINGS_H_
