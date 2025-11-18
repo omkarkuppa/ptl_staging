@@ -31,7 +31,6 @@
 const UINT16 RcompTargetLpddr5Type3[MAX_RCOMP_TARGETS]    = { 39, 25, 30, 30, 30 };
 const UINT16 RcompTargetLpddr5Type4_1R[MAX_RCOMP_TARGETS] = { 39, 25, 30, 30, 25 };
 const UINT16 RcompTargetLpddr5Type4_2R[MAX_RCOMP_TARGETS] = { 39, 25, 30, 30, 30 };
-const UINT16 RcompTargetLpddr5_2400[MAX_RCOMP_TARGETS]    = {280, 25, 30, 30, 30 };
 
 const UINT16 RcompTargetPDdr5[MAX_RCOMP_TARGETS]          = { 35, 27, 25, 25, 25 };
 
@@ -68,9 +67,7 @@ MrcGetDefaultRcompTarget (
    */
   switch (Outputs->DdrType) {
     case MRC_DDR_TYPE_LPDDR5:
-      if (Outputs->Frequency == f2400) {
-        RcompTarget = RcompTargetLpddr5_2400;
-      } else if (IsTypicalBoard) {
+      if (IsTypicalBoard) {
         RcompTarget = (Outputs->MaxRanks == 2) ? RcompTargetLpddr5Type4_2R : RcompTargetLpddr5Type4_1R;
       } else {
         RcompTarget = RcompTargetLpddr5Type3;

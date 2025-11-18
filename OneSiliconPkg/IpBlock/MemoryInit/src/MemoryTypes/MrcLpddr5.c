@@ -938,9 +938,7 @@ InitMrwLpddr5 (
   IsNnFlexEnabled     = Inputs->InitPerDeviceNnFlex;
   NnFlexDramDefault = &NnFlexInitialSettingsLpddr5[DramTypeDefault];
 
-  // LP5 2400 has CPU RdOdt = 280, hence use weaker SocOdt to match this, while keeping enough RdV margin
-  // Default RdOdt is 39 Ohm, hence set SocOdt to 40
-  SocOdt   = (Outputs->Frequency == f2400) ? 80 : (IsNnFlexEnabled ? NnFlexDramDefault->SocOdt : 40);
+  SocOdt   = IsNnFlexEnabled ? NnFlexDramDefault->SocOdt : 40;
   PreEmpUp = NnFlexDramDefault->PreEmpUp;
   PreEmpDn = NnFlexDramDefault->PreEmpDn;
 
