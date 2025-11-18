@@ -2911,6 +2911,7 @@ PtlPcdPPsfGrantCountProgramming (
   } else if (PcieCtrlBifurcationArray[PTL_PCD_P_H_PXPC_CONTROLLER_INDEX] == 2) {
     Psf_0_Pg_1_Chan2.Value = 1;
   }
+  Psf_0_Pg_1_Chan3.Value = 1;
 
   Psf_0_Pg_0_Tgt_1.Value = Psf_0_Pg_1_Chan1.Value;
   Psf_0_Pg_0_Tgt_2.Value = Psf_0_Pg_1_Chan2.Value;
