@@ -127,11 +127,6 @@ PtlPcdPolicyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdPolicyLib/PtlPcd
 !endif
 
 #
-# PEI Memory Telemetry AMT PPR Policy Lib
-#
- PeiMemTelAmtPprLib|$(PLATFORM_SI_PACKAGE)/IpBlock/PeiMemTelAmtPprLib/Library/PeiMemTelAmtPprLib/PeiMemTelAmtPprLib.inf
-
-#
 # Host Bridge
 #
  PeiHostBridgeInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/HostBridge/LibraryPrivate/PeiHostBridgeInitLib/PeiHostBridgeInitLib.inf

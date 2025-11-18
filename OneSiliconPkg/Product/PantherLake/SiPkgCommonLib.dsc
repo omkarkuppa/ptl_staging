@@ -124,8 +124,3 @@ SecCpuLib|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/SecCpuLib/SecCpuLib.inf
 # Memory
 #
 MemoryAddressDecodeEncodeLib|$(PLATFORM_SI_PACKAGE)/IpBlock/MemoryInit/Library/PeiDxeSmmMemAddrEncodeLib/MemAddrDecodeEncodeLib.inf
-
-#
-# PEIM Memory Telemetry AMT PPR variable update library
-#
-PeiMemTelAmtPprLib|$(PLATFORM_SI_PACKAGE)/IpBlock/PeiMemTelAmtPprLib/Library/PeiMemTelAmtPprLib/PeiMemTelAmtPprLib.inf

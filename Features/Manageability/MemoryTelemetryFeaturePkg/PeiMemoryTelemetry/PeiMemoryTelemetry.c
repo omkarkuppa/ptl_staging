@@ -1,5 +1,5 @@
 /** @file
-  Pei Memory Telemetry Amt Ppr Library Implementation.
+  Pei Memory Telemetry Amt Ppr PEIM Implementation.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -19,15 +19,26 @@
 @par Specification Reference:
 **/
 
-#include <Library/PeiMemTelAmtPprLib.h>
+#include "PeiMemoryTelemetry.h"
+#include <PiPei.h>
 #include <AmtPprEnableVariable.h>
 #include <MemoryConfig.h>
 #include <Ppi/SiPolicy.h>
 #include <Ppi/ReadOnlyVariable2.h>
+#include <Library/PcdLib.h>
 #include <Library/DebugLib.h>
 #include <Library/ConfigBlockLib.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/MemoryAllocationLib.h>
+
+///
+/// Notification callback descriptor
+///
+STATIC EFI_PEI_NOTIFY_DESCRIPTOR  mSiPreMemPolicyNotifyList = {
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  &gSiPreMemPolicyPpiGuid,
+  OnSiPreMemPolicyAvailable
+};
 
 /**
   Reads the AmtPprEnable UEFI variable and returns the variable data.
@@ -73,6 +84,24 @@ GetAmtPprEnableVar (
 }
 
 /**
+ Check if PPR is supported on platform
+
+ @retval TRUE   Platform supports PPR
+ @retval FALSE  Platform does not support PPR
+**/
+BOOLEAN
+IsPprSupported (
+  VOID
+  )
+{
+  if (!FixedPcdGetBool (PcdPprCapability)) {
+    DEBUG ((DEBUG_VERBOSE, "[%a] PCD PPR capability disabled\n", __FUNCTION__));
+    return FALSE;
+  }
+  return TRUE;
+}
+
+/**
   Update MRC PprEnable and and PprTestType policy
 
   @param[in]  AmtPprVariable    AMT PPR UEFI variable data to update MRC policy
@@ -88,11 +117,13 @@ UpdatePprMrcPolicy (
   EFI_STATUS              Status;
   SI_PREMEM_POLICY_PPI    *SiPreMemPolicyPpi;
   MEMORY_CONFIG_NO_CRC    *MemConfigNoCrc;
+  BOOLEAN                 PprPcdEnabled;
+
+  PprPcdEnabled = FALSE;
 
   if (AmtPprVariable == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-
 
   ///
   /// Obtain policy settings.
@@ -118,7 +149,11 @@ UpdatePprMrcPolicy (
   ///
   if (AmtPprVariable->Bits.AmtEnabled && MemConfigNoCrc != NULL) {
     MemConfigNoCrc->PprTestType.Value     = PPR_TEST;
-    if (AmtPprVariable->Bits.PprEnabled) {
+
+    // Check system PCD for PPR support
+    PprPcdEnabled = IsPprSupported ();
+
+    if (AmtPprVariable->Bits.PprEnabled && PprPcdEnabled) {
       MemConfigNoCrc->PprRepairType       = HARD_PPR;
     } else {
       MemConfigNoCrc->PprRepairType       = NOREPAIR_PPR;
@@ -128,25 +163,32 @@ UpdatePprMrcPolicy (
 }
 
 /**
-  Entry point of the Memory Telemetry PEIM
-  Checks the AMT PPR enable variable status, will update memory config accordingly.
+  Notification callback that executes when SiPreMemPolicy PPI becomes available.
+  This ensures our AMT PPR processing happens early, Memory Initialization.
 
-  @retval     EFI_SUCCESS       PEI Memory Telemetry executed as expected
-  @retval     Others            PEI Memory Telemetry failed to get and set AmtPprEnable variable
+  @param[in] PeiServices          General purpose services available to every PEIM.
+  @param[in] NotifyDescriptor     The notification structure this PEIM registered on install.
+  @param[in] Ppi                  The SiPreMemPolicy PPI that became available.
+
+  @retval    EFI_SUCCESS          AMT PPR policy was processed successfully
+  @retval    Others               Failed to process AMT PPR policy
 **/
-VOID
-MemTelemetryAmtPprVarUpdate (
-  VOID
+EFI_STATUS
+EFIAPI
+OnSiPreMemPolicyAvailable (
+  IN  EFI_PEI_SERVICES             **PeiServices,
+  IN  EFI_PEI_NOTIFY_DESCRIPTOR    *NotifyDescriptor,
+  IN  VOID                         *Ppi
   )
 {
   EFI_STATUS          Status;
   AMT_PPR_ENABLE      *AmtPprVariable;
 
-  DEBUG ((DEBUG_INFO, "[%a] Entry\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[%a] Processing AMT PPR\n", __FUNCTION__));
 
   AmtPprVariable = (AMT_PPR_ENABLE *) AllocateZeroPool (sizeof (AMT_PPR_ENABLE));
   if (AmtPprVariable == NULL) {
-    return;
+    return EFI_OUT_OF_RESOURCES;
   }
 
   ///
@@ -165,7 +207,42 @@ MemTelemetryAmtPprVarUpdate (
   ///
   Status = UpdatePprMrcPolicy (AmtPprVariable);
 
-  Exit:
-    DEBUG ((DEBUG_INFO, "[%a] Exit with status %r\n", __FUNCTION__, Status));
-    FreePool (AmtPprVariable);
+Exit:
+  DEBUG ((DEBUG_INFO, "[%a] Exit with status %r\n", __FUNCTION__, Status));
+  FreePool (AmtPprVariable);
+  return Status;
+}
+
+/**
+  Entry point of the Memory Telemetry AMT PPR PEIM
+  Registers a notification to process AMT PPR when SiPreMemPolicy becomes available.
+
+  @param[in] FileHandle       Handle of the file being invoked.
+  @param[in] PeiServices      Describes the list of possible PEI Services.
+
+  @retval     EFI_SUCCESS       Notification callback registered successfully
+  @retval     Others            Failed to register notification callback
+**/
+EFI_STATUS
+EFIAPI
+PeiMemoryTelemetryEntry (
+  IN       EFI_PEI_FILE_HANDLE  FileHandle,
+  IN CONST EFI_PEI_SERVICES     **PeiServices
+  )
+{
+  EFI_STATUS    Status;
+
+  DEBUG ((DEBUG_INFO, "[%a] Entry - registering SiPreMemPolicy notification\n", __FUNCTION__));
+
+  ///
+  /// Register notification callback to execute when SiPreMemPolicy is available
+  ///
+  Status = PeiServicesNotifyPpi (&mSiPreMemPolicyNotifyList);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to register SiPreMemPolicy notification: %r\n", __FUNCTION__, Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "[%a] Successfully registered SiPreMemPolicy notification\n", __FUNCTION__));
+  }
+
+  return Status;
 }

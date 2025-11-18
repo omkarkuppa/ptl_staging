@@ -19,6 +19,9 @@
 @par Specification Reference:
 **/
 
+#ifndef _AMT_PPR_ENABLE_VARIABLE_H_
+#define _AMT_PPR_ENABLE_VARIABLE_H_
+
 ///
 /// AMT PPR variable name
 ///
@@ -45,3 +48,5 @@ typedef union {
 /// Memory Telemetry variable revision
 ///
 #define AMT_PPR_ENABLE_VARIABLE_REVISION   1
+
+#endif // _AMT_PPR_ENABLE_VARIABLE_H_

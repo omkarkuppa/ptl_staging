@@ -86,7 +86,6 @@
   FspPerformanceLib
   PeiFusaE2eCtcLib
   HobLib
-  PeiMemTelAmtPprLib
   PeiTccInitLib
 
 [Guids]

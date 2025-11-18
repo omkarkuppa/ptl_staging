@@ -34,6 +34,9 @@
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled|TRUE
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability|TRUE
 
+[PcdsDynamicHii.common.DEFAULT.STANDARD]
+  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdAmtPprEnable|L"AmtPprEnable"|gMemTelAmtPprVariableGuid|0x00||NV, BS, RT
+
 [LibraryClasses]
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf

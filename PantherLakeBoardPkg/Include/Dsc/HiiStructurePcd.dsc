@@ -30,7 +30,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdNvStoreDefaultValueBuffer|*
 
 [PcdsDynamicHii.common.DEFAULT.STANDARD]
-gStructPcdTokenSpaceGuid.PcdAmtPprEnable|L"AmtPprEnable"|gMemTelAmtPprVariableGuid|0x00||NV, BS, RT
 gStructPcdTokenSpaceGuid.PcdAmtMacPassThroughConfig|L"AmtMacPassThroughConfig"|gAmtMacPassThroughConfigGuid|0x00||NV, BS
 gStructPcdTokenSpaceGuid.PcdAmtPetInitConfig|L"AmtPetInitConfig"|gAmtPetInitConfigGuid|0x00||NV, BS
 gStructPcdTokenSpaceGuid.PcdCnvSetup|L"CnvSetup"|gCnvFeatureSetupGuid|0x00||NV, BS, RT

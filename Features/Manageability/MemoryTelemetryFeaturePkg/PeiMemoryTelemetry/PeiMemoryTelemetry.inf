@@ -1,5 +1,5 @@
 ## @file
-#  Pei Memory Telemetry Amt Ppr Library
+#  Pei Memory Telemetry Amt Ppr PEIM
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -21,40 +21,47 @@
 ##
 
 [Defines]
-  INF_VERSION       = 0x00010010
-  BASE_NAME         = MemoryTelemetryAmtPprPolicy
+  INF_VERSION       = 0x00010005
+  BASE_NAME         = PeiMemoryTelemetry
   FILE_GUID         = 229A7433-7BB4-4EEA-AEF1-ABAA9C2DA7DC
   MODULE_TYPE       = PEIM
   VERSION_STRING    = 1.0
-  LIBRARY_CLASS     = PeiMemTelAmtPprLib
+  ENTRY_POINT       = PeiMemoryTelemetryEntry
 
 #
 # The following information is for reference only and not required by the build tools.
 #
-# VALID_ARCHITECTURES = IA32 X64
+# VALID_ARCHITECTURES = IA32
 #
 
 [Sources]
-  PeiMemTelAmtPprLib.c
+  PeiMemoryTelemetry.c
 
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
+  MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
 
 [LibraryClasses]
+  PeimEntryPoint
   DebugLib
   BaseMemoryLib
   ConfigBlockLib
   MemoryAllocationLib
+  PeiServicesLib
 
 [Guids]
   gMemoryConfigGuid                 ## CONSUMES
+  gMemoryConfigNoCrcGuid            ## CONSUMES
   gMemTelAmtPprVariableGuid         ## CONSUMES
 
 [Ppis]
   gSiPreMemPolicyPpiGuid            ## CONSUMES
   gEfiPeiReadOnlyVariable2PpiGuid   ## CONSUMES
 
+[Pcd]
+  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability ## CONSUMES
+
 [Depex]
-  TRUE
+  gEfiPeiReadOnlyVariable2PpiGuid

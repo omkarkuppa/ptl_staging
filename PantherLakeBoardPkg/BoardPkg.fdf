@@ -718,6 +718,13 @@ FILE RAW = FF7DB236-F856-4924-90F8-CDF12FB875F3 {
 !endif
 
 #
+# Memory Telemetry Post-Mem Feature
+#
+!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
+  !include MemoryTelemetryFeaturePkg/Include/PreMemory.fdf
+!endif
+
+#
 # Modular USBC IO driver
 #
 INF $(PLATFORM_BOARD_PACKAGE)/Features/ModularUsbCIo/ModularUsbCIoPei.inf

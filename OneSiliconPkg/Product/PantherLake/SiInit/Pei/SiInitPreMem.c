@@ -75,7 +75,6 @@
 #include <ConfigBlock/Ish/IshConfig.h>
 #include <Library/PchInitLib.h>
 #include <Library/FspPerformanceLib.h>
-#include <Library/PeiMemTelAmtPprLib.h>
 #if FixedPcdGet8(PcdTccSupport) == 0x1
 #include <Library/PeiTccInitLib.h>
 #include <TccConfig.h>
@@ -554,11 +553,6 @@ SiInitPreMemOnPolicy (
   // Lock pmc set strap.
   //
   PmcLockSetStrapMsgInterface ();
-
-  ///
-  /// AMT PPR Policy Pre-memory
-  ///
-  MemTelemetryAmtPprVarUpdate ();
 
   //
   // Initialize ME after Policy PPI produced
