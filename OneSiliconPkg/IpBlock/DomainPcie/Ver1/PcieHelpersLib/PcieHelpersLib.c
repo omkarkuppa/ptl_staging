@@ -1612,7 +1612,7 @@ Recursive10BitTagConfiguration (
   // On way down:
   //   do nothing
   // On way up:
-  //   
+  //   set 10bit tag
   //
   if (HasChildBus (Sbdf, &ChildSbdf)) {
     DevType = GetDeviceType (Sbdf);
@@ -1810,6 +1810,13 @@ PcieRpDownstreamConfiguration (
       RecursiveMpsConfiguration (ChildSbdf, Mps);
     }
     Status = IpPcieSetControl (pInst, pInst->RpIndex, IpPcieFeatIdMps, Mps);
+  }
+
+  ///
+  /// Set UNRS for 4px4 controllers
+  ///
+  if (pInst->SipPhyVersion == IP_SC16) {
+    Status = IpPcieSetControl (pInst, pInst->RpIndex, IpPcieFeatIdUnrs, IpPcieSplitSize64B);
   }
 
   ///

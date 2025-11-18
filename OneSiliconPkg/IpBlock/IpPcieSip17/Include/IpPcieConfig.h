@@ -99,13 +99,20 @@ typedef enum {
   IpPcieMpsUnknown,
 } IP_PCIE_MPS;
 
+typedef enum {
+  IpPcieSplitSize128B = 0,
+  IpPcieSplitSize256B,
+  IpPcieSplitSize64B = 7,
+  IpPcieSplitSizeUnknown,
+} IP_PCIE_MAX_SPLITTING_SIZE;
+
 /**
   PCIe Link EQ Platform Settings
 **/
 typedef struct {
   UINT8                      PcieLinkEqMethod;               ///< Tells BIOS which link EQ method should be used for this port. Please refer to PCIE_LINK_EQ_METHOD for details of supported methods. Default: PcieLinkHardwareEq
   UINT8                      PcieLinkEqMode;                 ///< Tells BIOS which mode should be used for PCIe link EQ. Please refer to PCIE_LINK_EQ_MODE for details of supported modes. Default: depends on SoC
-  
+
   /**
     Specifies if BIOS should perform local transmitter override during phase 2 of EQ process.
     If enabled value in Ph2LocalTransmitterOverridePreset must be valid.

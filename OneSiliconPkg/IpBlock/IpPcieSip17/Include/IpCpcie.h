@@ -120,7 +120,8 @@ typedef enum {
   IpPcieFeatIdMls,
   IpPcieFeatIdPds,
   IpPcieFeatIdLr,
-  IpPcieFeatIdSd
+  IpPcieFeatIdSd,
+  IpPcieFeatIdUnrs
 } IP_PCIE_FEAT_ID;
 
 typedef enum {

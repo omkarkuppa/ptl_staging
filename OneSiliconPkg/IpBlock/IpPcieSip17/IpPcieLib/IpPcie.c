@@ -1942,6 +1942,7 @@ IpPcieSetControl (
   DCAP2_PCIE_CFG_STRUCT      Dcap2;
   L1SCTL1_PCIE_CFG_STRUCT    L1Sctl1;
   L1SCTL2_PCIE_CFG_STRUCT    L1Sctl2;
+  CCFG_PCIE_CFG_STRUCT       Ccfg;
   BOOLEAN                    L0sSupported;
   BOOLEAN                    L1Supported;
 
@@ -2167,6 +2168,15 @@ IpPcieSetControl (
       Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
       Lctl2.Bits.sd = (UINT16)FeatureVal;
       IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, Lctl2.Data, IpWrRegFlagSize32Bits);
+      break;
+
+    case IpPcieFeatIdUnrs:
+      if (FeatureVal >= IpPcieSplitSizeUnknown) {
+        return IpCsiStsErrorBadParam;
+      }
+      Ccfg.Data      = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, CCFG_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+      Ccfg.Bits.unrs = FeatureVal;
+      IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, CCFG_PCIE_CFG_REG, Ccfg.Data, IpWrRegFlagSize32Bits);
       break;
 
     default:
