@@ -211,5 +211,5 @@
     Device(AF04)
     {
         Name (_ADR, 0x4)
-        Include ("AudioFunction_1320VBC_SPK2_ADR01.asl")
+        Include ("AudioFunction_1320VBC_SPK2_ADR01_PCM_feedback_mute.asl")
     }

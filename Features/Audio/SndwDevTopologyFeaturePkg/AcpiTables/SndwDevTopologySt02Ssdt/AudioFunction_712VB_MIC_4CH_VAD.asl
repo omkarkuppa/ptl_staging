@@ -19,13 +19,6 @@
 @par Specification Reference:
 **/
 
-//#define ULTRASOUND_PATH (0)
-//#define BUFFERRAW_PATH (1)
-//#define BUFFERRAW_1CH (0)
-//#define BUFFERRAW_2CH (1)
-//#define MICARRAY_2CH (0)
-//#define MICARRAY_3CH (0)
-//#define MICARRAY_4CH (1)
 Name(_DSD, Package()
 {
   // Function Descriptor
