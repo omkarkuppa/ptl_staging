@@ -269,11 +269,6 @@ PcieLoadDefaultConfig (
   pInst->PcieRpCommonConfig.AutoPowerGating               = TRUE;
   pInst->Integration                                      = IpPchPcie;
   pInst->PcieRpCommonConfig.PresetToCoeffConfig           = FALSE;
-  //
-  // Initialize PrivateConfig members of pInst.
-  //
-IpWrMemset (pInst->MemCntxt, &(pInst->PrivateConfig), 0, sizeof (pInst->PrivateConfig));
-
 }
 
 /**
@@ -464,6 +459,8 @@ IpPciePreLinkActiveProgramming (
       &pInst->PrivateConfig.LtrSubL11Npg
     );
   }
+
+  SipProgramHotPlugSmiEnable (pInst);
 
   PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
   return IpCsiStsSuccess;

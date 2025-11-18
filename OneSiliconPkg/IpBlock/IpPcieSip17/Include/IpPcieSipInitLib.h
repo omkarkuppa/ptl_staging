@@ -426,6 +426,19 @@ SipInitRootPort (
   );
 
 /**
+  This function checks whether Hot Plug is enabled in any of the controller Root ports.
+  If yes, it programs the Hot Plug SMI Enable (HPME) bit for the given Root port.
+
+  @param[in]  IP_PCIE_INST  *pInst
+
+  @retval     None
+**/
+void
+SipProgramHotPlugSmiEnable (
+  IP_PCIE_INST  *pInst
+  );
+
+/**
   Determines whether PCIe link is active
 
   @param[in] pInst  *pInst
