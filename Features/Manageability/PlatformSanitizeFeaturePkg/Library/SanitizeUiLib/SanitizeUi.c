@@ -612,7 +612,7 @@ ClearPopupScreen (
 
   CopyMem (&SavedConsoleMode, gST->ConOut->Mode, sizeof (EFI_SIMPLE_TEXT_OUTPUT_MODE));
   gST->ConOut->QueryMode (gST->ConOut, SavedConsoleMode.Mode, &Columns, &Rows);
-  Row = (Rows) / 2 - 3;
+  Row = (Rows) / 2 - 4;
 
   Line = (CHAR16*)AllocateZeroPool ((Columns + 1) * sizeof (CHAR16));
 
