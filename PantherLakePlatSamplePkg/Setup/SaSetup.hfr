@@ -10033,7 +10033,7 @@ endoneof;
         option text = STRING_TOKEN(STR_MIPICAM_INPUT_CLOCK_3), value = 3, flags = RESET_REQUIRED;
       endoneof;
 
-      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic1_Type == 5;
+      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic0_Type == 5;
       // Pch Clock Source
       oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic0_PchClockSource,
         prompt      = STRING_TOKEN(STR_MIPICAM_PCH_CLOCK_SOURCE),
@@ -10077,6 +10077,7 @@ endif;
           maximum     = 0x7F,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic0_Type == 2;
           // WLED1 Type
@@ -10145,7 +10146,6 @@ endif;
             endnumeric;
           endif;
         endif;
-      endif;
 
       // Number of GPIO pins enabled
       numeric varid = MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioPinsEnabled,
@@ -10237,6 +10237,7 @@ endif;
           maximum     = 1,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic0_GpioPinsEnabled == 0 1;
           // GPIO Pin 2
@@ -10647,7 +10648,6 @@ endif;
             step        = 1,
           endnumeric;
         endif;
-      endif ;
     endform;
 
     // *********************************************************
@@ -10726,6 +10726,7 @@ endoneof;
           maximum     = 0x7F,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic1_Type == 2;
           // WLED1 Type
@@ -10794,7 +10795,6 @@ endoneof;
             endnumeric;
           endif;
         endif;
-      endif;
 
       // Number of GPIO pins enabled
       numeric varid = MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioPinsEnabled,
@@ -10886,6 +10886,7 @@ endoneof;
           maximum     = 1,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic1_GpioPinsEnabled == 0 1;
           // GPIO Pin 2
@@ -11296,7 +11297,6 @@ endoneof;
               step        = 1,
             endnumeric;
         endif;
-      endif ;
     endform;
 
     // *********************************************************
@@ -11331,7 +11331,7 @@ endoneof;
         option text = STRING_TOKEN(STR_MIPICAM_INPUT_CLOCK_3), value = 3, flags = RESET_REQUIRED;
       endoneof;
 
-      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic1_Type == 5;
+      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic2_Type == 5;
       // Pch Clock Source
       oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic2_PchClockSource,
         prompt      = STRING_TOKEN(STR_MIPICAM_PCH_CLOCK_SOURCE),
@@ -11375,6 +11375,7 @@ endif;
           maximum     = 0x7F,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic2_Type == 2;
           // WLED1 Type
@@ -11443,7 +11444,6 @@ endif;
             endnumeric;
           endif;
         endif;
-      endif;
 
       // Number of GPIO pins enabled
       numeric varid = MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioPinsEnabled,
@@ -11535,6 +11535,7 @@ endif;
           maximum     = 1,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic2_GpioPinsEnabled == 0 1;
           // GPIO Pin 2
@@ -11945,7 +11946,6 @@ endif;
             step        = 1,
           endnumeric;
         endif;
-      endif ;
     endform;
 
     // *********************************************************
@@ -11980,7 +11980,7 @@ endoneof;
         option text = STRING_TOKEN(STR_MIPICAM_INPUT_CLOCK_3), value = 3, flags = RESET_REQUIRED;
       endoneof;
 
-      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic1_Type == 5;
+      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic3_Type == 5;
       // Pch Clock Source
       oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic3_PchClockSource,
         prompt      = STRING_TOKEN(STR_MIPICAM_PCH_CLOCK_SOURCE),
@@ -12024,6 +12024,7 @@ endif;
           maximum     = 0x7F,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic3_Type == 2;
           // WLED1 Type
@@ -12092,7 +12093,6 @@ endif;
             endnumeric;
           endif;
         endif;
-      endif;
 
       // Number of GPIO pins enabled
       numeric varid = MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioPinsEnabled,
@@ -12184,6 +12184,7 @@ endif;
           maximum     = 1,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic3_GpioPinsEnabled == 0 1;
           // GPIO Pin 1
@@ -12594,7 +12595,6 @@ endif;
             step        = 1,
           endnumeric;
         endif;
-      endif ;
     endform;
 
     // *********************************************************
@@ -12629,7 +12629,7 @@ endoneof;
         option text = STRING_TOKEN(STR_MIPICAM_INPUT_CLOCK_3), value = 3, flags = RESET_REQUIRED;
       endoneof;
 
-      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic1_Type == 5;
+      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic4_Type == 5;
       // Pch Clock Source
       oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic4_PchClockSource,
         prompt      = STRING_TOKEN(STR_MIPICAM_PCH_CLOCK_SOURCE),
@@ -12673,6 +12673,7 @@ endif;
           maximum     = 0x7F,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic4_Type == 2;
           // WLED1 Type
@@ -12741,7 +12742,6 @@ endif;
             endnumeric;
           endif;
         endif;
-      endif;
 
       // show below options when DISCRETE is used
       // Number of GPIO pins enabled
@@ -12833,6 +12833,7 @@ endif;
           maximum     = 1,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic4_GpioPinsEnabled == 0 1;
           // GPIO Pin 1
@@ -13243,7 +13244,6 @@ endif;
             step        = 1,
           endnumeric;
         endif;
-      endif ;
     endform;
 
     // *********************************************************
@@ -13278,7 +13278,7 @@ endoneof;
         option text = STRING_TOKEN(STR_MIPICAM_INPUT_CLOCK_3), value = 3, flags = RESET_REQUIRED;
       endoneof;
 
-      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic1_Type == 5;
+      suppressif ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic5_Type == 5;
       // Pch Clock Source
       oneof varid   = MIPICAM_CONFIG.MipiCam_ControlLogic5_PchClockSource,
         prompt      = STRING_TOKEN(STR_MIPICAM_PCH_CLOCK_SOURCE),
@@ -13322,6 +13322,7 @@ endif;
           maximum     = 0x7F,
           step        = 1,
         endnumeric;
+      endif;
 
         suppressif NOT ideqvallist MIPICAM_CONFIG.MipiCam_ControlLogic5_Type == 2;
           // WLED1 Type
@@ -13390,7 +13391,6 @@ endif;
             endnumeric;
           endif;
         endif;
-      endif;
 
       // Number of GPIO pins enabled
       numeric varid = MIPICAM_CONFIG.MipiCam_ControlLogic5_GpioPinsEnabled,
