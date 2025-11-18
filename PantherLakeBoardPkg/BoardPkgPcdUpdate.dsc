@@ -164,7 +164,7 @@
 
   !if (gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable == TRUE)
     gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableIntegrity|TRUE
-    gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableConfidentiality|TRUE
+      gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableConfidentiality|TRUE
   !endif
 
     gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable|TRUE

@@ -1832,14 +1832,26 @@ ProtectedVariableLibGetByName (
     ASSERT_EFI_ERROR (Status);
   } else {
     //
-    // A buffer for at least one variable data (<=PcdMax(Auth)VariableSize)
-    // must be reserved in advance.
+    //  If Confidentiality is enabled, use the VariableCache buffer to
+    //  hold the decrypted cipher data.
+    //  If Confidentiality is disabled, just use the buffer passed in.
+    //  The VariableCache buffer is not needed and already freed.
     //
-    ASSERT (
-      Global->VariableCache != 0
-           && Global->VariableCacheSize >= VarDig->DataSize
-      );
-    DataBuffer = GET_BUFR (Global->VariableCache);
+    if (PcdGetBool (PcdProtectedVariableConfidentiality) == TRUE) {
+      //
+      // A buffer for at least one variable data (<=PcdMax(Auth)VariableSize)
+      // must be reserved in advance.
+      //
+      ASSERT (
+        Global->VariableCache != 0
+            && Global->VariableCacheSize >= VarDig->DataSize
+        );
+
+      DataBuffer = GET_BUFR (Global->VariableCache);
+    } else {
+      DataBuffer = Data;
+    }
+
     //
     // Note name and GUID are already there.
     //
@@ -1896,7 +1908,10 @@ ProtectedVariableLibGetByName (
     return Status;
   }
 
-  CopyMem (Data, VarInfo.PlainData, VarInfo.PlainDataSize);
+  // Copy plain data to output data buffer only if confidentiality is enabled.
+  if (PcdGetBool (PcdProtectedVariableConfidentiality) == TRUE) {
+    CopyMem (Data, VarInfo.PlainData, VarInfo.PlainDataSize);
+  }
 
   return Status;
 }

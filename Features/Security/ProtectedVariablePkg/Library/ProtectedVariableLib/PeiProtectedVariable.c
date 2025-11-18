@@ -1127,10 +1127,14 @@ PerformVariableIntegrityCheck (
     );
 
   if (GET_BUFR (Global->VariableCacheSize) != NULL) {
-    //
-    // Free Buffer
-    //
-    FreePages (Buffer, EFI_SIZE_TO_PAGES (Global->VariableCacheSize));
+    if (PcdGetBool (PcdProtectedVariableConfidentiality) != TRUE) {
+      //
+      // Free Buffer only if Confidentiality is not enabled.
+      //
+      FreePages (Buffer, EFI_SIZE_TO_PAGES (Global->VariableCacheSize));
+      Global->VariableCache = 0;
+      Global->VariableCacheSize = 0;
+    }
   }
 
   //
