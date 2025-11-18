@@ -210,18 +210,18 @@ ActmPopulateDimmManifest (
           ActmDimmDescription[Index].ModeRegister58     = 0; // MR58 is Ignored
           ActmDimmDescription[Index].ModeRegister59     = 0; // MR59 is Ignored
 
-          DEBUG ((DEBUG_INFO, "MemoryController         : %d\n", ActmDimmDescription[Index].MemoryController));
-          DEBUG ((DEBUG_INFO, "Channel                  : %d\n", ActmDimmDescription[Index].Channel));
-          DEBUG ((DEBUG_INFO, "Dimm                     : %d\n", ActmDimmDescription[Index].Dimm));
-          DEBUG ((DEBUG_INFO, "Rank                     : %d\n", ActmDimmDescription[Index].Rank));
-          DEBUG ((DEBUG_INFO, "SubRankBits              : %d\n", ActmDimmDescription[Index].SubRankBits));
-          DEBUG ((DEBUG_INFO, "BankGroupBits            : %d\n", ActmDimmDescription[Index].BankGroupBits));
-          DEBUG ((DEBUG_INFO, "BankAddressBits          : %d\n", ActmDimmDescription[Index].BankAddressBits));
-          DEBUG ((DEBUG_INFO, "ColumnBits               : %d\n", ActmDimmDescription[Index].ColumnBits));
-          DEBUG ((DEBUG_INFO, "RowBits                  : %d\n", ActmDimmDescription[Index].RowBits));
-          DEBUG ((DEBUG_INFO, "Asymmetric               : %d\n", ActmDimmDescription[Index].Asymmetric));
-          DEBUG ((DEBUG_INFO, "ModeRegister58           : %d\n", ActmDimmDescription[Index].ModeRegister58));
-          DEBUG ((DEBUG_INFO, "ModeRegister59           : %d\n", ActmDimmDescription[Index].ModeRegister59));
+          DEBUG ((DEBUG_INFO, "MemoryController:%d\n", ActmDimmDescription[Index].MemoryController));
+          DEBUG ((DEBUG_INFO, "Channel:%d\n", ActmDimmDescription[Index].Channel));
+          DEBUG ((DEBUG_INFO, "Dimm:%d\n", ActmDimmDescription[Index].Dimm));
+          DEBUG ((DEBUG_INFO, "Rank:%d\n", ActmDimmDescription[Index].Rank));
+          DEBUG ((DEBUG_INFO, "SubRankBits:%d\n", ActmDimmDescription[Index].SubRankBits));
+          DEBUG ((DEBUG_INFO, "BankGroupBits:%d\n", ActmDimmDescription[Index].BankGroupBits));
+          DEBUG ((DEBUG_INFO, "BankAddressBits:%d\n", ActmDimmDescription[Index].BankAddressBits));
+          DEBUG ((DEBUG_INFO, "ColumnBits:%d\n", ActmDimmDescription[Index].ColumnBits));
+          DEBUG ((DEBUG_INFO, "RowBits:%d\n", ActmDimmDescription[Index].RowBits));
+          DEBUG ((DEBUG_INFO, "Asymmetric:%d\n", ActmDimmDescription[Index].Asymmetric));
+          DEBUG ((DEBUG_INFO, "ModeRegister58:%d\n", ActmDimmDescription[Index].ModeRegister58));
+          DEBUG ((DEBUG_INFO, "ModeRegister59:%d\n", ActmDimmDescription[Index].ModeRegister59));
           Index++;
       } // for Rank
      } // for Dimm
@@ -229,6 +229,6 @@ ActmPopulateDimmManifest (
   } // for Controller
 
   ActmDimmManifest->Header.Size = (Index * sizeof(DIMM_DESCRIPTION)) + SIZE_OF_MANIFEST_MAC;
-  DEBUG ((DEBUG_INFO, "Total Byte Size Manifest   : 0x%X\n", ActmDimmManifest->Header.Size ));
+  DEBUG ((DEBUG_INFO, "Total Byte Size Manifest: 0x%X\n", ActmDimmManifest->Header.Size ));
   return EFI_SUCCESS;
 }

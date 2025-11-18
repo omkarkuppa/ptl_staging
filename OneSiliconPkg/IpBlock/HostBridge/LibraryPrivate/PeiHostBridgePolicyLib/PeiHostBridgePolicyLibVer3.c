@@ -167,12 +167,12 @@ HostBridgePreMemPrintConfig (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gHostBridgePeiPreMemConfigGuid, (VOID *) &HostBridgePreMemConfig);
   ASSERT_EFI_ERROR (Status);
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-  DEBUG ((DEBUG_INFO, "Revision : %d\n", HostBridgePreMemConfig->Header.Revision));
-  DEBUG ((DEBUG_INFO, "MchBar : 0x%x\n", HostBridgePreMemConfig->MchBar));
-  DEBUG ((DEBUG_INFO, "RegBar : 0x%x\n", HostBridgePreMemConfig->RegBar));
-  DEBUG ((DEBUG_INFO, "CridEnable: %d\n", HostBridgePreMemConfig->CridEnable));
-  DEBUG ((DEBUG_INFO, "SafBar : 0x%lx\n", HostBridgePreMemConfig->SafBar));
-  DEBUG ((DEBUG_INFO, "FabricGVDisable : %d\n", HostBridgePreMemConfig->FabricGVDisable));
+  DEBUG ((DEBUG_INFO, "Revision:%d\n", HostBridgePreMemConfig->Header.Revision));
+  DEBUG ((DEBUG_INFO, "MchBar:0x%x\n", HostBridgePreMemConfig->MchBar));
+  DEBUG ((DEBUG_INFO, "RegBar:0x%x\n", HostBridgePreMemConfig->RegBar));
+  DEBUG ((DEBUG_INFO, "CridEnable:%d\n", HostBridgePreMemConfig->CridEnable));
+  DEBUG ((DEBUG_INFO, "SafBar:0x%lx\n", HostBridgePreMemConfig->SafBar));
+  DEBUG ((DEBUG_INFO, "FabricGVDisable:%d\n", HostBridgePreMemConfig->FabricGVDisable));
 }
 
 /**

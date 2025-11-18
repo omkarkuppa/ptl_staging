@@ -293,11 +293,11 @@ SiPreMemPrintPolicyPpi (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "%a Start\n"));
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, "PlatformDebugOption = %x\n", SiPreMemConfig->PlatformDebugOption));
   DEBUG ((DEBUG_INFO, "SkipOverrideBootModeWhenFwUpdate = %x\n", SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate));
   DEBUG ((DEBUG_INFO, "StaticContentSizeAt4Gb = %x\n", SiPreMemConfig->StaticContentSizeAt4Gb));
-  DEBUG ((DEBUG_INFO, "%a End\n"));
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
   DEBUG_CODE_END ();
 }
 
