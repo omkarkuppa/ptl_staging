@@ -37,6 +37,7 @@
   HobLib
   PchInfoLib
   UefiBootServicesTableLib
+  MemoryAllocationLib
 
 [Packages]
   MdePkg/MdePkg.dec

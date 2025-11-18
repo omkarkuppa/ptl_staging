@@ -35,6 +35,7 @@
 #include <Library/PciSegmentLib.h>
 #include <Library/PchPciBdfLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Register/EspiRegs.h>
 #include <IndustryStandard/Pci30.h>
 #include <Register/PchRegs.h>
@@ -343,8 +344,8 @@ PtlPcdDieGetNameStr (
 
 /**
   This function returns pointer to the const SoC stepping string.
-
-  @retval Pointer to name string
+  Allocates memory for the stepping string (works in PEI, DXE, and SMM).
+  @retval Pointer to stepping string
 **/
 CONST
 CHAR8*
@@ -353,8 +354,16 @@ PtlPcdDieGetSteppingStr (
   IN EDKII_INTEL_DIE_INFO_PROTOCOL  *This
   )
 {
+  CHAR8  *SteppingStr;
+
   if (This->DieIndex == 1) {
-    return "A0";
+    // Allocate pool for stepping string (works in all phases)
+    SteppingStr = AllocateZeroPool (PTL_SOC_INFO_STEPPING_STR_MIN_LENGTH + 1);
+    if (SteppingStr == NULL) {
+      return NULL;
+    }
+    PtlPcdGetSteppingStr (SteppingStr, (PTL_SOC_INFO_STEPPING_STR_MIN_LENGTH + 1));
+    return SteppingStr;
   } else {
     return NULL;
   }

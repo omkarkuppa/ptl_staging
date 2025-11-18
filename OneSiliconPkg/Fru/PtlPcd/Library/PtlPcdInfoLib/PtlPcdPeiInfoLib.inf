@@ -38,6 +38,7 @@
   HobLib
   PchInfoLib
   PeiServicesLib
+  MemoryAllocationLib
 
 [Packages]
   MdePkg/MdePkg.dec
