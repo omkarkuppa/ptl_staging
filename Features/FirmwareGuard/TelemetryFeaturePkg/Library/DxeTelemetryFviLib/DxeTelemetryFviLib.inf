@@ -58,7 +58,7 @@
   gPcodPartitionComponentId                     ## CONSUMES
   gAcodPartitionComponentId                     ## CONSUMES
   gNphyPartitionComponentId                     ## CONSUMES
-  gSphyPartitionComponentId                     ## CONSUMES
+  gSsphPartitionComponentId                     ## CONSUMES
   gCnviPartitionComponentId                     ## CONSUMES
   gNftpPartitionComponentId                     ## CONSUMES
   gIshcPartitionComponentId                     ## CONSUMES

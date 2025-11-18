@@ -178,7 +178,7 @@
     0x7a8b9cdd, 0xeeff, 0x1122, {0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa } \
   }
 
-#define SPHY_PARTITION_COMPONENT_ID \
+#define SSPH_PARTITION_COMPONENT_ID \
   { \
     0x8b9cddee, 0xff11, 0x2233, {0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb } \
   }
@@ -247,7 +247,7 @@ extern EFI_GUID gPchcPartitionComponentId;
 extern EFI_GUID gPcodPartitionComponentId;
 extern EFI_GUID gAcodPartitionComponentId;
 extern EFI_GUID gNphyPartitionComponentId;
-extern EFI_GUID gSphyPartitionComponentId;
+extern EFI_GUID gSsphPartitionComponentId;
 extern EFI_GUID gCnviPartitionComponentId;
 extern EFI_GUID gNftpPartitionComponentId;
 extern EFI_GUID gIshcPartitionComponentId;
