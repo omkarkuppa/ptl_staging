@@ -628,7 +628,6 @@ typedef enum {
   OemBeforeNormalMode,      ///<  call to MrcOemCheckPoint before normal mode is enabled.
   OemAfterNormalMode,       ///<  call to MrcOemCheckPoint after normal mode is enabled.
   OemMrcFillBdat,
-  OemRetrainMarginCheck,
   OemSsaStopPoint,          ///< Call to SSA stop point.
   OemDunitConfig,           ///< before DUnit Init Sequence.
   OemDdrPhyInit,            ///< before Phy Init Sequence.
@@ -684,7 +683,8 @@ typedef enum {
   OemDimmRxOffsetCal,       ///< before checking Dimm Rx Offset Calibration
   OemMcDeswizzleRegisters,  ///< before MrcMcProgramDeswizzleRegisters
   OemIsDramSupportsDvfsc,   ///< Check if DRAM supports E-DVFSC before finishing SAGV0 training flow
-  OemPerDeviceUpdate,       ///< before Per Device Update
+  OemPerDeviceUpdateDdr5,   ///< before Ddr5 Per Device Update
+  OemPerDeviceUpdateLp5,    ///< before Lp5 Per Device Update
   OemEmphasisTraining,      ///< before Pre-Emphasis LP5 Training
   OemMrcHVMFinalize,        ///< before HVM Finalization
   OemDqLoopbackTest,        ///< before Dq Loopback test

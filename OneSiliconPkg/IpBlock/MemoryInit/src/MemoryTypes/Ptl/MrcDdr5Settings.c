@@ -63,6 +63,10 @@ const TDFEValueDdr5 Ddr5DFETable[MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL] = {
 
 // AUTO-GENERATED DDR5 TABLES START
 // AUTO-GENERATED CODE
+#define MICRON_MANUFACTURE_ID   (0x2C)
+#define SAMSUNG_MANUFACTURE_ID  (0xCE)
+#define SKHYNIX_MANUFACTURE_ID  (0xAD)
+
 const char* CardPartNumber[Card_Max] = {
   "HMCG66AHBVA312N",         // Card_230C
   "HMCG78AHBVA312N",         // Card_235A
@@ -72,7 +76,9 @@ const char* CardPartNumber[Card_Max] = {
   "MTC4C1016ZS1VC72BCZKFF",  // Card_276C
   "MTC4C10163S1VC72BHZ KFF", // Card_298C
   "M435R8JA3MB1-CJRLC",      // Card_311B
+  "HMCG88AHBVA312N",         // Card_324B
   "HMCG88AGBSA092N",         // Card_75B
+  "none",                    // Card_Samsung2R
   "none",                    // Card_default
 };
 
@@ -98,9 +104,13 @@ const char* Ddr5CardToName[Card_NotFound] = {
   "298C_1R_7200",
   "311B_2R_7200",
   "311B_2R_6400",
+  "324B_2R_6400",
+  "324B_2R_7200",
   "230C_1R_6400",
   "235A_1R_6400",
   "75B_2R_6400",
+  "SAMSUNG2R_2R_6400",
+  "SAMSUNG2R_2R_7200",
   "DEFAULT_1R_6400",
   "DEFAULT_1R_7200",
   "DEFAULT_2R_6400",
@@ -151,8 +161,16 @@ GetDdr5ParamIndex (
       if (NumOfRanks == 2 && Frequency <= 6400) return Card_311B_2R_6400;
       if (NumOfRanks == 2 && Frequency <= 7200) return Card_311B_2R_7200;
       break;
+    case Card_324B:
+      if (NumOfRanks == 2 && Frequency <= 6400) return Card_324B_2R_6400;
+      if (NumOfRanks == 2 && Frequency <= 7200) return Card_324B_2R_7200;
+      break;
     case Card_75B:
       if (NumOfRanks == 2 && Frequency <= 6400) return Card_75B_2R_6400;
+      break;
+    case Card_Samsung2R:
+      if (NumOfRanks == 2 && Frequency <= 6400) return Card_Samsung2R_2R_6400;
+      if (NumOfRanks == 2 && Frequency <= 7200) return Card_Samsung2R_2R_7200;
       break;
     default:
       if (NumOfRanks == 1 && Frequency <= 6400) {
@@ -179,13 +197,17 @@ const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
   { -21,   0, 120,  60,  60,  40,  48 },
   { -33, -15, 120,  60,  60,  34,  40 },
   { -33,  -8,  80,  60,  60,  40,  40 },
-  { -35,   5,  80,  60,  60,  48,  48 },
-  { -35,   5,  80,  60,  60,  48,  48 },
+  { -35,   5,  80,  60,  60,  40,  40 },
+  { -35,   5,  80,  60,  60,  40,  40 },
   { -23,  -5, 120,  80,  80,  40,  40 },
   { -23,  -5, 120,  80,  80,  40,  40 },
+  { -23,  -5, 120, 120,  80,  40,  40 },
+  { -23,  -5, 120, 120,  80,  40,  40 },
   { -13,   0, 120,  60,  60,  40,  48 },
   { -13,   0, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  48,  80,  40,  40 },
+  { -23,  -5, 120, 120,  80,  40,  40 },
+  { -23,  -5, 120, 120,  80,  40,  40 },
   { -23,  -5, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  60,  60,  40,  48 },
   { -23,  -5, 120,  48,  80,  40,  40 },
@@ -362,15 +384,17 @@ MrcDdr5GetVrefDqCalibrationValue (
 }
 
 /**
-  This function is used to get the corresponding card for a given dram part number.
+  This function is used to get the corresponding card for a given dram part info.
 
   @param[in]  ModulePartNumber - Dram module part number from SPD.
+  @param[in]  ManufactorIdCode - Dram manufacture id code from SPD.
 
   @returns - The corresponding card index.
 **/
 CardEnum
-Ddr5GetCardEnumFromPartNumber (
-  IN const CHAR8* ModulePartNumber
+Ddr5GetCardEnum (
+  IN const CHAR8* ModulePartNumber,
+  IN const UINT8  ManufactorIdCode
 )
 {
   BOOLEAN  IsPartNumberFound;
@@ -411,6 +435,6 @@ Ddr5GetCardEnumFromPartNumber (
     return (CardEnum) Card;
   }
 
-  return Card_default;
+  return (ManufactorIdCode == SAMSUNG_MANUFACTURE_ID) ? Card_Samsung2R : Card_default;
 }
 

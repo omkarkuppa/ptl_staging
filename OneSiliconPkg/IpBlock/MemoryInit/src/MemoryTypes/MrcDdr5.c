@@ -32,14 +32,14 @@
 /// Initialization Timing Parameters
 ///
 
-const MrcModeRegister DFETap1Arrx16[DDR5_DFE_PER_TAP] = { mrMR129, mrMR137, mrMR145, mrMR153, mrMR161, mrMR169, mrMR177, mrMR185,
-                                                   mrMR193, mrMR201, mrMR209, mrMR217, mrMR225, mrMR233, mrMR241, mrMR249};
-const MrcModeRegister DFETap2Arrx16[DDR5_DFE_PER_TAP] = { mrMR130, mrMR138, mrMR146, mrMR154, mrMR162, mrMR170, mrMR178, mrMR186,
-                                                   mrMR194, mrMR202, mrMR210, mrMR218, mrMR226, mrMR234, mrMR242, mrMR250};
-const MrcModeRegister DFETap3Arrx16[DDR5_DFE_PER_TAP] = { mrMR131, mrMR139, mrMR147, mrMR155, mrMR163, mrMR171, mrMR179, mrMR187,
-                                                   mrMR195, mrMR203, mrMR211, mrMR219, mrMR227, mrMR235, mrMR243, mrMR251};
-const MrcModeRegister DFETap4Arrx16[DDR5_DFE_PER_TAP] = { mrMR132, mrMR140, mrMR148, mrMR156, mrMR164, mrMR172, mrMR180, mrMR188,
-                                                   mrMR196, mrMR204, mrMR212, mrMR220, mrMR228, mrMR236, mrMR244, mrMR252};
+const MrcModeRegister DFETap1Arrx16[DDR5_DFE_PER_TAP + 1] = { mrMR129, mrMR137, mrMR145, mrMR153, mrMR161, mrMR169, mrMR177, mrMR185,
+                                                              mrMR193, mrMR201, mrMR209, mrMR217, mrMR225, mrMR233, mrMR241, mrMR249, mrEndOfSequence};
+const MrcModeRegister DFETap2Arrx16[DDR5_DFE_PER_TAP + 1] = { mrMR130, mrMR138, mrMR146, mrMR154, mrMR162, mrMR170, mrMR178, mrMR186,
+                                                              mrMR194, mrMR202, mrMR210, mrMR218, mrMR226, mrMR234, mrMR242, mrMR250, mrEndOfSequence};
+const MrcModeRegister DFETap3Arrx16[DDR5_DFE_PER_TAP + 1] = { mrMR131, mrMR139, mrMR147, mrMR155, mrMR163, mrMR171, mrMR179, mrMR187,
+                                                              mrMR195, mrMR203, mrMR211, mrMR219, mrMR227, mrMR235, mrMR243, mrMR251, mrEndOfSequence};
+const MrcModeRegister DFETap4Arrx16[DDR5_DFE_PER_TAP + 1] = { mrMR132, mrMR140, mrMR148, mrMR156, mrMR164, mrMR172, mrMR180, mrMR188,
+                                                              mrMR196, mrMR204, mrMR212, mrMR220, mrMR228, mrMR236, mrMR244, mrMR252, mrEndOfSequence};
 
 typedef enum {
   GenericFsmConfigNonPdaMrs = 0,

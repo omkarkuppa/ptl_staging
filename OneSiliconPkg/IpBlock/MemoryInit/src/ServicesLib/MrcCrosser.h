@@ -495,20 +495,6 @@ SenseAmpOffsetSetVocAverage (
   );
 
 /**
-  This function looks at the margin values stored in the global data structure and checks
-  WrT, WrV, RdT, and RdV to see if they are above the minimum margin required.
-
-  @param[in, out] MrcData - MRC global data.
-
-  @retval mrcSuccess if margins are acceptable.
-  @retval Otherwise, mrcRetrain.
-**/
-MrcStatus
-MrcRetrainMarginCheck (
-  IN OUT MrcParameters *const MrcData
-  );
-
-/**
   Check Margin Limits
 
   @param[in, out] MrcData - Include all MRC global data.
@@ -1249,7 +1235,6 @@ NormalizePowerToMargins (
 /**
   This function prints out the Margin eye diagram for ParamT/ParamV.
 
-
   @param[in] MrcData      - Include all MRC global data.
   @param[in] Ranks        - Bit mask of Ranks to margin.
   @param[in] ParamT       - Time parameter to margin.
@@ -1519,7 +1504,7 @@ MrcDdr5RxXTalkCancellation (
 MrcStatus
 WriteDsTraining(
   IN MrcParameters* const MrcData
-);
+  );
 
 /**
   This function trains a PHY DFE tap
@@ -1580,7 +1565,6 @@ MrcCompOffsetTraining(
   IN TOptParamOffset          const OptParam
   );
 
-
 /**
   This function implements Read Equalization (CTLE) training.
 
@@ -1594,7 +1578,6 @@ MrcReadDqCTLETraining(
   IN MrcParameters* const MrcData,
   IN BOOLEAN             Optimize
   );
-
 
 /**
   This function is CTLE - Cap vs Res training routine.
@@ -1719,6 +1702,7 @@ MrcStatus
 MrcDimmRxOffsetCalibration(
   IN MrcParameters* const MrcData
   );
+
 /**
   This function implements RttPark 1D only training for Ddr5
 
@@ -1807,7 +1791,7 @@ WriteTimingPerBit1DCentering(
   IN     const UINT8          LoopCount,
   IN     UINT8                MsgPrintMsk,
   IN     BOOLEAN              EarlyCentering
-);
+  );
 
 /**
   1) Store current MRC settings pre-test for later restoration.
@@ -1822,7 +1806,32 @@ VOID
 SenseAmpOffsetTrainingSetup(
   IN OUT MrcParameters* const MrcData,
   IN OUT SenseAmpTrainingStateConfig* Config
-);
+  );
+
+/**
+  This function searches through all combinations of pull-up and pull-down odt static legs to find a combination that achieves VcmTarget
+  @param[in]  MrcData        - Include all MRC global data.
+  @param[in]  VcmTarget      - Vref/Vddq voltage ratio in steps of 1/512 (Value is 0 to 511).
+  @param[in]  DataOdtMode    - OdtMode=0. Lp5, 1. Ddr5.
+  @param[in]  EnableStatic   - Enable/Disable static legs combination search.
+  @param[out] CompCodeUp     - Odt Up comp code.
+  @param[out] CompCodeDn     - Odt Down comp code.
+  @param[out] StaticOnPullUp - Lp5: enable/disable Drv static legs, Ddr5: enable/disable ODT static legs.
+  @param[out] StaticOnPullDn - Lp5: enable/disable ODT static legs, Ddr5: enable/disable Drv static legs.
+
+  @retval N/A
+**/
+VOID
+SenseAmpCalcOffsetCompCodes (
+  IN MrcParameters *const MrcData,
+  IN INT32 VcmTarget,
+  IN INT64 DataOdtMode,
+  IN BOOLEAN EnableStatic,
+  OUT UINT8 *CompCodeUp,
+  OUT UINT8 *CompCodeDn,
+  OUT UINT8 *StaticOnPullUp,
+  OUT UINT8 *StaticOnPullDn
+  );
 
 /**
   Restore previous MRC settings to pre SenseAmpOffset Training
@@ -1837,7 +1846,7 @@ VOID
 SenseAmpOffsetTrainingTeardown(
   IN OUT  MrcParameters* const MrcData,
   IN     SenseAmpTrainingStateConfig* Config
-);
+  );
 
 /**
   Search for the Vref voltage per lane where the 0 to 1 transition for both Rx
@@ -1852,7 +1861,7 @@ MrcStatus
 SenseAmpOffsetVrefSearch(
   IN OUT MrcParameters* const MrcData,
   IN     SenseAmpTrainingStateConfig* Config
-);
+  );
 
 /**
   Search for the offset code per lane for the 0 to 1 transition for both Rx
@@ -1866,7 +1875,7 @@ MrcStatus
 SenseAmpOffsetVocSearch(
   IN OUT MrcParameters* const MrcData,
   IN     SenseAmpTrainingStateConfig* Config
-);
+  );
 
 /**
   Set the RxVref code for all lanes for the given Controller/Channel/Byte.
@@ -1890,7 +1899,7 @@ SenseAmpOffsetSetRxVrefCodeAllLanes(
   IN     UINT8    Byte,
   IN     UINT32   LaneValue[MAX_BITS_FOR_OFFSET_TRAINING],
   IN     BOOLEAN  MultiCast
-);
+  );
 
 /**
   Set the RxVoc (offset) codes for all lanes for the given Controller/Channel/Byte.
@@ -1914,7 +1923,7 @@ SenseAmpOffsetSetRxVocCodeAllLanes(
   IN     UINT8    Byte,
   IN     INT32    LaneValues[MAX_BITS_FOR_OFFSET_TRAINING][SOT_SELECT_RX],
   IN     BOOLEAN  MultiCast
-);
+  );
 
 /**
   Set the RxVoc codes for a specific lane.
@@ -1939,7 +1948,7 @@ SenseAmpOffsetSetRxVocCodeLane(
   IN     UINT8    Bit,
   IN     INT32    VocCodes[SOT_SELECT_RX],
   IN     BOOLEAN  MultiCast
-);
+  );
 
 /**
   Collect all samples from the DataTrainFeedback registers.
@@ -1953,7 +1962,7 @@ VOID
 SenseAmpOffsetGetRxOffsetResults(
   IN OUT MrcParameters* const MrcData,
   IN OUT UINT32   LaneResult[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM]
-);
+  );
 
 /**
   Run comp if needed based on OptParam or if ForceComp is TRUE.
@@ -1969,7 +1978,7 @@ ForceSystemRComp(
   IN MrcParameters* const MrcData,
   IN UINT8                OptParam,
   IN BOOLEAN              ForceComp
-);
+  );
 
 /**
   This function implements TxDqsDCC training.
@@ -1981,18 +1990,29 @@ ForceSystemRComp(
 MrcStatus
 MrcTxDqsDccTraining (
   IN MrcParameters* const MrcData
-);
+  );
 
 
 /**
-  This function implements NN Flexible parameters per dram device for LPDDR5 & DDR5.
+  This function implements NN Flexible parameters per dram device for DDR5.
 
   @param[in] MrcData - Include all MRC global data.
 
   @retval - mrcSuccess
 **/
-MrcStatus MrcNnFlexPerDeviceUpdate(
+MrcStatus MrcNnFlexPerDeviceUpdateDdr5 (
   IN MrcParameters* const MrcData
-);
+  );
+
+/**
+  This function implements NN Flexible parameters per dram device for LPDDR5.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval - mrcSuccess
+**/
+MrcStatus MrcNnFlexPerDeviceUpdateLp5 (
+  IN MrcParameters* const MrcData
+  );
 #endif // _MrcCrosser_h_
 

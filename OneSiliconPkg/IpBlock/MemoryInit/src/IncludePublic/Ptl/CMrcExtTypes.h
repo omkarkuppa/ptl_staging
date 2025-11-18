@@ -104,7 +104,7 @@ typedef struct {
   UINT32 RMTEVENODD:1;      ///< BIT27 - RMT Even Odd
   UINT32 ALIASCHK:1;        ///< BIT28 - SPD Alias Check
   UINT32 RCVENC1D:1;        ///< BIT29 - Receive Enable Centering 1D
-  UINT32 RMC:1;             ///< BIT30 - Retrain Margin Check
+  UINT32 RMC:1;             ///< BIT30 - Retrain Margin Check (deprecated)
   UINT32 PRETRAIN:1;        ///< BIT31 - PreTraining
 } TrainingStepsEn;
 

@@ -126,7 +126,7 @@
 
 #define MRC_CURRENT_SENSOR_RMT          (0xDD56)
 #define MRC_READ_VOLTAGE_1D             (0xDD57)
-#define MRC_RETRAIN_CHECK               (0xDD58)
+//#define MRC_                          (0xDD58)
 #define MRC_RMT_TOOL_BIT                (0xDD59)
 #define MRC_SA_GV_SWITCH                (0xDD5A)
 #define MRC_ALIAS_CHECK                 (0xDD5B)

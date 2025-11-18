@@ -117,7 +117,7 @@ typedef struct {
   UINT32  ForceRetrainPath:1;                 ///<            Bit 20 - Force retrain path in RetrainMarginCheck even if margins are good enough
   UINT32  SaGv:1;                             ///<            Bit 21 - SaGv Status: 0 - Disabled, 1 - Enabled
   UINT32  IsDdr5MR7WicaSupported:1;           ///<            Bit 22 - TRUE if DDR5 DRAM Device supports MR7 WICA 0.5 tCK offset alignment <b>0: Disable</b>, 1: Enable
-  UINT32  VoltageCurrentSensor:1;             ///<            Bit 23 - Voltage and Current Sensor: 0: Disabe, <b>1: Enable</b>
+  UINT32  VoltageCurrentSensor:1;             ///<            Bit 23 - Voltage and Current Sensor (deprecated)
   UINT32  DataInvertNibble:1;                 ///<            Bit 24 - DataInvertNibble: 0: Disable, <b>1: Enable</b>
   UINT32  CccPinsInterleaved:1;               ///<            Bit 25 - Interleaving mode of CCC pins which depends on board routing: <b>0=Disable</b>, 1=Enable
   UINT32  EnPeriodicComp:1;                   ///<            Bit 26 - Enable/disable Periodic Compensation

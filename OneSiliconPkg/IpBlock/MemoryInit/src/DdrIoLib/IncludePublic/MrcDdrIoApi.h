@@ -297,11 +297,33 @@ typedef struct {
 #define CURRENT_SENS_TEST_MAX (3)
 
 // Static Legs
-#define STATIC_LEGS  (2)
+#define STATIC_LEGS (4)
 #define STATIC_LEGS_WRTTX (12)
 
 // Dynamic Legs
-#define DYNAMIC_LEGS_MSB (32)
+#define DYNAMIC_LEGS (64)
+
+// Minimum number of legs that are required for a valid pullup/pulldown combination
+#define MIN_LEGS_ON (6)
+
+// Maximum 1/resistance as a factor of unit (leg) resistance, total series R is 1/INV_R_SERIES_MAX multiplied by unit resistance.
+#define INV_R_SERIES_MAX (4)
+
+// Enable static search, combinations of pullup and pulldown legs to find a combination that achieves VcmTarget
+#define ENABLE_STATIC (1)
+#define MAX_STATIC_COMBINATIONS (3)
+
+// Nominal total resistance
+#define RLEG (900)
+
+// Maximum high resistance, open connection
+#define MAX_RES (100000)
+
+// Fixture 50ohms resistor
+#define RFIXTURE (50)
+
+// Vcm - VcmTarget max error
+#define MAX_VCM_TARGET_ERROR (1000)
 
 // Max Comp value
 #define MAX_COMP_VALUE  (63)
@@ -311,6 +333,18 @@ typedef struct {
 #define PCTLE_VOUT       (730)
 
 #define SAL_USE_PMOS_MV  (400)
+
+// Static Legs enable controll pull Dn/Up;
+typedef struct {
+  INT8 PullDownLeg;
+  INT8 PullUpLeg;
+} StaticLegEn;
+
+typedef enum {
+  StaticEn  = 0,
+  StaticDis = 1,
+  StaticStateMax = 2
+} StaticComp;
 
 /// Values for Data ODT modes as per the MAS. Max doesn't represent a specified odt mode.
 typedef enum {
@@ -1119,82 +1153,6 @@ MrcChannelRxNuiDelay (
   IN MrcParameters* const  MrcData,
   IN UINT32                Controller,
   IN UINT32                Channel
-  );
-
-/**
-  This function sets up Point Test through all targets for Voltage Sensor
-
-  @param[in]  MrcData  - Pointer to global MRC data.
-
-  @returns MrcStatus value reflecting any errors
-**/
-MrcStatus
-MrcVoltageSensorSetup (
-  IN MrcParameters    *const MrcData
-  );
-
-/**
-  This function Reset all LVR Voltage Sensor Counters
-
-  @param[in]  MrcData - Pointer to global MRC data.
-  @param[in]  Chop    - Swap inputs to SAL comparator and invert outputs to average input offset.
-**/
-VOID
-MrcVoltageSensorResetCount (
-  IN MrcParameters    *const MrcData,
-  IN UINT8             Chop
-  );
-
-/**
-  This function reads all LVR Voltage Sensor Counters to determine if CounterPass based on counter limits
-  and prints out the CounterPass status
-
-  @param[in]  MrcData - Pointer to global MRC data.
-  @param[in]  Chop    - SAL comparator and invert outputs to compare counters pass/fail test.
-**/
-VOID
-MrcVoltageSensorCounter (
-  IN      MrcParameters   *const MrcData,
-  IN      UINT8           Chop
-  );
-
-/**
-  This function sets up Current Sensor registers setup for all Target LVR
-
-  @param[in]  MrcData - Pointer to global MRC data.
-**/
-VOID
-MrcCurrentSensorSetup (
-  IN MrcParameters  *const MrcData
-  );
-
-/**
-  This function enables Current Sensor counter for all Target LVR
-  and selects the Test Case to run for FF Current Sensor
-
-  @param[in]  MrcData - Pointer to global MRC data.
-  @param[in]  TestNum - Select Test Case for FF Current Sensor, see enum define
-                        Test cases available:
-                          Test Case 0    ,   Test Case 1 ,    Test Case 2
-                        {DATA_FFPH_DRV_PI, DATA_FFPI_DATA, DATA_FFPH_DRV_G}
-                        {DATA_FFPI_READ,   DATA_FFRX_DRV,  DATA_FFPH_DRV_G}
-                        {CCC_FFPH_DRV_PI,  CCC_FFPI_CCC,   CCC_FFPH_DRV_G }
-**/
-VOID
-MrcCurrentSensorEnable (
-  IN MrcParameters  *const MrcData,
-  IN UINT8           TestNum
-  );
-
-/**
-  This function reads Current Sensor counter for all Target LVR and FF Current Sensor
-  to calculate Analog Power and FF Power and prints out results for each test case.
-
-  @param[in]  MrcData - Pointer to global MRC data.
-**/
-VOID
-MrcCurrentSensorCounter (
-  IN MrcParameters  *const MrcData
   );
 
 /**

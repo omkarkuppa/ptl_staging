@@ -3774,7 +3774,7 @@ GetBERFindByteMax (
   @param[in,out] TwoPass       - Pointer to whether 2 contiguous passing points have been found for this location
   @param[in,out] TwoFail       - Pointer to whether 2 contiguous failing points have been found for this location
   @param[in]     DoneMask      - The bitmask used in association with TwoPass/TwoFail pointers
-  @param[in,out] ByteMax       - Pointer to the maximum value allowed for this location
+  @param[in]     ByteMax       - Maximum value allowed for this location
   @param[in,out] LastPass      - Pointer to the last pass point for this location
   @param[in]     Margin        - Value of the current test point for this location of Byte/Bit
   @param[in]     Param         - Parameter being evaulated
@@ -3796,7 +3796,7 @@ GetBERSaturationChecks (
   IN OUT UINT16           *TwoPass,
   IN OUT UINT16           *TwoFail,
   IN     UINT16           DoneMask,
-  IN OUT UINT8            *ByteMax,
+  IN     UINT8            ByteMax,
   IN OUT UINT8            *LastPass,
   IN     UINT8            Margin,
   IN     UINT8            Param,

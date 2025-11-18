@@ -305,10 +305,10 @@
 
 #define DDR5_ODT_OFFSET_DECODER (5)
 
-extern const MrcModeRegister DFETap1Arrx16[DDR5_DFE_PER_TAP];
-extern const MrcModeRegister DFETap2Arrx16[DDR5_DFE_PER_TAP];
-extern const MrcModeRegister DFETap3Arrx16[DDR5_DFE_PER_TAP];
-extern const MrcModeRegister DFETap4Arrx16[DDR5_DFE_PER_TAP];
+extern const MrcModeRegister DFETap1Arrx16[DDR5_DFE_PER_TAP + 1];
+extern const MrcModeRegister DFETap2Arrx16[DDR5_DFE_PER_TAP + 1];
+extern const MrcModeRegister DFETap3Arrx16[DDR5_DFE_PER_TAP + 1];
+extern const MrcModeRegister DFETap4Arrx16[DDR5_DFE_PER_TAP + 1];
 
 extern const MrcModeRegister JedecInitSequenceMultiCycle[];
 extern const MrcModeRegister JedecInitSequenceSingleCycle[];

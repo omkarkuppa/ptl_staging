@@ -40,8 +40,10 @@ typedef enum {
     Card_276C = 5,
     Card_298C = 6,
     Card_311B = 7,
-    Card_75B = 8,
-    Card_default = 9,
+    Card_324B = 8,
+    Card_75B = 9,
+    Card_Samsung2R = 10,
+    Card_default = 11,
     Card_Max
 } CardEnum;
 
@@ -56,13 +58,17 @@ typedef enum {
   Card_298C_1R_7200 = 7,
   Card_311B_2R_7200 = 8,
   Card_311B_2R_6400 = 9,
-  Card_230C_1R_6400 = 10,
-  Card_235A_1R_6400 = 11,
-  Card_75B_2R_6400 = 12,
-  Card_default_1R_6400 = 13,
-  Card_default_1R_7200 = 14,
-  Card_default_2R_6400 = 15,
-  Card_default_2R_7200 = 16,
+  Card_324B_2R_6400 = 10,
+  Card_324B_2R_7200 = 11,
+  Card_230C_1R_6400 = 12,
+  Card_235A_1R_6400 = 13,
+  Card_75B_2R_6400 = 14,
+  Card_Samsung2R_2R_6400 = 15,
+  Card_Samsung2R_2R_7200 = 16,
+  Card_default_1R_6400 = 17,
+  Card_default_1R_7200 = 18,
+  Card_default_2R_6400 = 19,
+  Card_default_2R_7200 = 20,
   Card_NotFound
 } Ddr5ParamIndex;
 
@@ -170,14 +176,16 @@ SelectDfeTableDdr5 (
   );
 
 /**
-  This function is used to get the corresponding card for a given dram part number.
+  This function is used to get the corresponding card for a given dram part info.
 
   @param[in]  ModulePartNumber - Dram module part number from SPD.
+  @param[in]  ManufactorIdCode - Dram manufacture id code from SPD.
 
   @returns - The corresponding card index.
 **/
 CardEnum
-Ddr5GetCardEnumFromPartNumber (
-  IN const CHAR8* ModulePartNumber
+Ddr5GetCardEnum (
+  IN const CHAR8* ModulePartNumber,
+  IN const UINT8  ManufactorIdCode
   );
 #endif // MRC_DDR5_SETTINGS_H_
