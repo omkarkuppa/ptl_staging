@@ -59,6 +59,13 @@ DefinitionBlock (
     PCIE_RP_SCOPE_BEGIN(\_SB.PC00.RP03)
     PCIE_RP_SCOPE_BODY(P1PG,P1EP,P1RG,P1RP,RW03,2)
     Include ("PcieRpGenericPcieDeviceRtd3.asl")
+
+    // assign different value to SD_CARD_UID for each RP
+    #define PCIE_SD_CARD_SCOPE \_SB.PC00.RP03
+    #define SD_CARD_UID 0
+    Include ("PcieSdCard.asl")
+    #undef SD_CARD_UID
+    #undef PCIE_SD_CARD_SCOPE
     PCIE_RP_SCOPE_END
   }
 

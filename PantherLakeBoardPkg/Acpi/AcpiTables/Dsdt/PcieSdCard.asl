@@ -18,16 +18,35 @@
 
 @par Specification Reference:
 **/
+  External (PCIE_SD_CARD_SCOPE.PXSX, DeviceObj)
 
-  //
-  // The _RMV method indicates if the device is removable
-  // (1 = removable, 0 = non-removable).
-  //
-  Method (_RMV, 0) {
-    ADBG ("_RMV method called for SD Host Controller")
-    Return (0x01)         // Removable
+  Method (ADSD, 0) {
+    ADBG ("Hot Plug Support Enable for SD Card Reader and SD Host Controller")
+    Return (
+      Package () {
+        // HotPlugSupportInD3 UUID
+        ToUUID ("6211E2C0-58A3-4AF3-90E1-927A4E0C55A4"),
+        Package () {
+          Package (2) {"HotPlugSupportInD3", 1},
+        },
+
+        // ExternalFacingPort UUID
+        ToUUID ("EFCC06CC-73AC-4BC3-BFF0-76143807C389"),
+        Package () {
+          Package (2) {"ExternalFacingPort", 1},
+          Package (2) {"UID", SD_CARD_UID},  // assign different value to SD_CARD_UID for each RP
+        }
+      }
+    )
   }
 
-  Method (SUID) {
-    Return (SD_CARD_UID)
+  Scope (PCIE_SD_CARD_SCOPE.PXSX) {
+    Method (_RMV, 0) {
+      //
+      // The _RMV method indicates if the device is removable
+      // (1 = removable, 0 = non-removable).
+      //
+      ADBG ("_RMV method called for SD Host Controller")
+      Return (0x01)         // Removable
+    }
   }

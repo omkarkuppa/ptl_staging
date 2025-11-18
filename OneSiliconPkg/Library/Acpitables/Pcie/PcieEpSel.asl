@@ -88,40 +88,16 @@
     If (LNotEqual (\STD3, 0)) {
       Method (_DSD, 0) {
         If (LOr (PAHC (), PNVM ())) {
-          If (CondRefOf (SUID)) {
-            ADBG ("SD card supported")
-            Return (
+          ADBG ("NVMe D3 Support Enable for Child Device")
+          Return (
+            Package () {
+              ToUUID ("5025030F-842F-4AB4-A561-99A5189762D0"),
+              // Enable D3 Support for NVMe Storage
               Package () {
-                // StorageD3Enable UUID - Required for Quick Removal
-                ToUUID ("5025030F-842F-4AB4-A561-99A5189762D0"),
-                Package () {
-                  Package (2) {"StorageD3Enable", 1},
-                },
-                // HotPlugSupportInD3 UUID
-                ToUUID ("6211E2C0-58A3-4AF3-90E1-927A4E0C55A4"),
-                Package () {
-                  Package (2) {"HotPlugSupportInD3", 1},
-                },
-                // ExternalFacingPort UUID
-                ToUUID ("EFCC06CC-73AC-4BC3-BFF0-76143807C389"),
-                Package () {
-                  Package (2) {"ExternalFacingPort", 1},
-                  Package (2) {"UID", 0},  // assign different value to SD_CARD_UID for each RP
-                }
+                Package (2) {"StorageD3Enable", 1}  // 1 - Enable; 0 - Disable
               }
-            )
-          } Else {
-            ADBG ("NVMe D3 Support Enable for Child Device")
-            Return (
-              Package () {
-                ToUUID ("5025030F-842F-4AB4-A561-99A5189762D0"),
-                // Enable D3 Support for NVMe Storage
-                Package () {
-                  Package (2) {"StorageD3Enable", 1}  // 1 - Enable; 0 - Disable
-                }
-              }
-            )
-          }
+            }
+          )
         } Else {
           Return (
             Package () {
