@@ -163,7 +163,7 @@ PsLpeSetDisabled (
 
   Status = PsGetLpeSetupData ();
   if (!EFI_ERROR (Status)) {
-    mLpeSetupData.LpeEnable = 0;
+    ZeroMem (&mLpeSetupData, sizeof (LPE_SETUP));
     Status = gRT->SetVariable (
                     LPE_SETUP_VARIABLE_NAME,
                     &gPsLpeSetupVariableGuid,

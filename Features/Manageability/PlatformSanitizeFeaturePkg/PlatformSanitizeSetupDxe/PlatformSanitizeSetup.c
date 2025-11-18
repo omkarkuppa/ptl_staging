@@ -506,6 +506,7 @@ LpeSetupDefaultsCallBack (
   } else {
     LpeSetup.LpeEraseAll = FALSE;
     LpeSetup.LpeEraseSSD = FALSE;
+    LpeSetup.LpeStorageEraseVerify = FALSE;
     LpeSetup.LpeClearTPM = FALSE;
     LpeSetup.LpeOemCustomAction = FALSE;
     LpeSetup.LpeClearNvm = FALSE;
