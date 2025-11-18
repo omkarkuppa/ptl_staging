@@ -789,11 +789,11 @@ TxtDxeLibLaunchBiosAcm (
   ///
   DEBUG ((DEBUG_INFO, "TXTDXE::Running of LaunchBiosAcm\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
-  OldTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
   PERF_INMODULE_BEGIN("LaunchBiosAcm");
+  OldTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
   LaunchBiosAcm (AlignedAddr, AcmFunction);
-  PERF_INMODULE_END("LaunchBiosAcm");
   gBS->RestoreTPL (OldTpl);
+  PERF_INMODULE_END("LaunchBiosAcm");
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
 
 
