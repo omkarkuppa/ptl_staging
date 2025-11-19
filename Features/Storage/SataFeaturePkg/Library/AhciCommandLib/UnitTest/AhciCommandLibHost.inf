@@ -1,0 +1,76 @@
+##@file
+#  Unit test main of the AhciCommandLib.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = AhciCommandLibHostTest
+  FILE_GUID      = ec9f7708-3133-4de4-96d5-67a4555ec97b
+  MODULE_TYPE    = HOST_APPLICATION
+  VERSION_STRING = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  #
+  # Unit Test Main
+  #
+  UnitTestMain.c
+  #
+  # Common Mock
+  #
+  #
+  # Private Mock
+  #
+  PrivateMock/AtaPassThruProtocolMock.c
+  #
+  # Unit Test Case
+  #
+  TestCase/GetAtaIdentifyData/GetAtaIdentifyDataTestCase.c
+  TestCase/SetAtaPassword/SetAtaPasswordTestCase.c
+  TestCase/DisableAtaPassword/DisableAtaPasswordTestCase.c
+  TestCase/AtaPrepareSecureErase/AtaPrepareSecureEraseTestCase.c
+  TestCase/SendAtaEraseUnit/SendAtaEraseUnitTestCase.c
+  TestCase/SendAtaSecureErase/SendAtaSecureEraseTestCase.c
+  TestCase/UnlockAtaPassword/UnlockAtaPasswordTestCase.c
+  TestCase/AtaSanitizeCommand/AtaSanitizeCommandTestCase.c
+  #
+  # Platform IP function
+  #
+  SataFeaturePkg/Library/AhciCommandLib/AhciCommandLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  SataFeaturePkg/SataFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  DebugLib
+  PrintLib
+  UnitTestLib
+  CmockaLib

@@ -1,0 +1,132 @@
+## @file
+#  Unit test main of the Psr Setup driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001D
+  BASE_NAME                      = PsrSetupHostTest
+  FILE_GUID                      = 1E87FA36-0290-4F13-B550-02EA37BAAE65
+  MODULE_TYPE                    = HOST_APPLICATION
+  VERSION_STRING                 = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  #
+  # Unit Test Main
+  #
+  UnitTestMain.c
+  #
+  # Private Mock
+  #
+  PrivateMock/PrivateMock.c
+  #
+  # PreRequisite
+  #
+  PreRequisite/PsrSetupInit/PrePsrSetupInit.c
+  PreRequisite/UpdatePsrCapabilitiesInfo/PreUpdatePsrCapabilitiesInfo.c
+  PreRequisite/GetPsrEventSource/PreGetPsrEventSource.c
+  PreRequisite/GetPsrEventStatus/PreGetPsrEventStatus.c
+  PreRequisite/GetPsrEventAction/PreGetPsrEventAction.c
+  PreRequisite/GetPsrEventName/PreGetPsrEventName.c
+  PreRequisite/GetPsrLogState/PreGetPsrLogState.c
+  PreRequisite/CountOfLeapYearsInRange/PreCountOfLeapYearsInRange.c
+  PreRequisite/UnixTimeStampToDate/PreUnixTimeStampToDate.c
+  PreRequisite/ConvertToString/PreConvertToString.c
+  PreRequisite/StrTrim/PreStrTrim.c
+  PreRequisite/PsrGetInfo/PrePsrGetInfo.c
+  #
+  # Unit Test Case
+  #
+  TestCase/PsrSetupInit/TestCasePsrSetupInit.c
+  TestCase/UpdatePsrCapabilitiesInfo/TestCaseUpdatePsrCapabilitiesInfo.c
+  TestCase/GetPsrEventSource/TestCaseGetPsrEventSource.c
+  TestCase/GetPsrEventStatus/TestCaseGetPsrEventStatus.c
+  TestCase/GetPsrEventAction/TestCaseGetPsrEventAction.c
+  TestCase/GetPsrEventName/TestCaseGetPsrEventName.c
+  TestCase/GetPsrLogState/TestCaseGetPsrLogState.c
+  TestCase/CountOfLeapYearsInRange/TestCaseCountOfLeapYearsInRange.c
+  TestCase/UnixTimeStampToDate/TestCaseUnixTimeStampToDate.c
+  TestCase/ConvertToString/TestCaseConvertToString.c
+  TestCase/StrTrim/TestCaseStrTrim.c
+  TestCase/PsrGetInfo/TestCasePsrGetInfo.c
+  #
+  # Clean Up
+  #
+  CleanUp/PsrSetupInit/CleanUpPsrSetupInit.c
+  CleanUp/UpdatePsrCapabilitiesInfo/CleanUpUpdatePsrCapabilitiesInfo.c
+  CleanUp/GetPsrEventSource/CleanUpGetPsrEventSource.c
+  CleanUp/GetPsrEventStatus/CleanUpGetPsrEventStatus.c
+  CleanUp/GetPsrEventAction/CleanUpGetPsrEventAction.c
+  CleanUp/GetPsrEventName/CleanUpGetPsrEventName.c
+  CleanUp/GetPsrLogState/CleanUpGetPsrLogState.c
+  CleanUp/CountOfLeapYearsInRange/CleanUpCountOfLeapYearsInRange.c
+  CleanUp/UnixTimeStampToDate/CleanUpUnixTimeStampToDate.c
+  CleanUp/ConvertToString/CleanUpConvertToString.c
+  CleanUp/StrTrim/CleanUpStrTrim.c
+  CleanUp/PsrGetInfo/CleanUpPsrGetInfo.c
+  #
+  # Platform IP function
+  #
+  PsrFeaturePkg/PsrSetup/PsrStrings.uni
+  PsrFeaturePkg/PsrSetup/PsrSetupVfr.vfr
+  PsrFeaturePkg/PsrSetup/PsrSetup.c
+  PsrFeaturePkg/PsrSetup/PsrSettings.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PsrFeaturePkg/PsrFeaturePkg.dec
+  CryptoPkg/CryptoPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UnitTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PrintLib
+  PcdLib
+  UefiLib
+  CmockaLib
+  HiiLib
+  BaseCryptLib
+
+[FixedPcd]
+  gPsrFeatureModuleTokenSpaceGuid.PcdPsrSetupConfiguration ## CONSUMES
+
+[Guids]
+  gEfiIfrFrontPageGuid                                     ## CONSUMES
+  gEfiIfrTianoGuid                                         ## CONSUMES
+
+[Protocols]
+  gEfiHiiConfigAccessProtocolGuid                          ## CONSUMES
+  gEfiHiiPopupProtocolGuid                                 ## CONSUMES
+  gPlatformServiceRecordProtocolGuid                       ## CONSUMES
+  gEfiBlockIoProtocolGuid                                  ## CONSUMES
+  gEfiUsbIoProtocolGuid                                    ## CONSUMES
+  gEfiHiiConfigRoutingProtocolGuid                         ## CONSUMES
+  gEfiHiiStringProtocolGuid                                ## CONSUMES

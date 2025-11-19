@@ -1,0 +1,116 @@
+## @file
+#  INF for Unit test module for DmarAcpiDxe.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = DmarAcpiDxeHostTest
+  FILE_GUID      = C4615C8D-3C0F-4B34-82EF-4A78B306F315
+  MODULE_TYPE    = HOST_APPLICATION
+  VERSION_STRING = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  #
+  # Unit Test Main
+  #
+  UnitTestMain.c
+  #
+  # Private Mock
+  #
+  DmarAcpiFeaturePkg/DmarInitDxe/UnitTest/PrivateMock/PrivateMock.c
+  #
+  # Unit Test Case
+  #
+  TestCase/AddDrhd/TestCaseAddDrhd.c
+  TestCase/AddRmrr/TestCaseAddRmrr.c
+  TestCase/AddRmrr/TestCaseRmrrStructure.c
+  TestCase/AddDrhd/TestCaseDrhdStructure1.c
+  TestCase/AddSatc/TestCaseAddSatc.c
+  TestCase/AddSatc/TestCaseSatcStructure.c
+  TestCase/AddSidp/TestCaseAddSidp.c
+  TestCase/AddSidp/TestCaseSidpStructure.c
+  TestCase/AddRhsa/TestCaseAddRhsa.c
+  TestCase/AddRhsa/TestCaseRhsaStructure.c
+  TestCase/AddAtsr/TestCaseAddAtsr.c
+  TestCase/AddAtsr/TestCaseAtsrStructure.c
+
+  TestCase/CreateHeader/TestCaseCreateHeader.c
+  TestCase/CalculateDmarLength/TestCaseCalculateDmarLength.c
+
+  #
+  # Utils
+  #
+  DmarAcpiFeaturePkg/DmarInitDxe/UnitTest/Utils/Utils.c
+
+  #
+  # Platform IP function
+  #
+  DmarAcpiFeaturePkg/DmarInitDxe/Dmar.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  DmarAcpiFeaturePkg/DmarAcpiFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+
+[Pcd]
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarFlags
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRevision
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSatcSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSidpSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRhsaSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarAtsrSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSatcEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSidpEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRhsaEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarAtsrEnable
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UnitTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PrintLib
+  PcdLib
+  UefiLib
+  CmockaLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid
+  gVtdTopologyProtocolGuid

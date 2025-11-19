@@ -20,7 +20,7 @@
 #
 # @par Glossary:
 ###
-__version__ = 1.0
+__version__ = 1.1
 
 # Import necessary libraries
 from PIL import Image
@@ -40,7 +40,7 @@ VGA_PLANES = 4  # Number of VGA planes in Mode 12h (4 planes for 16 colors)
 # Define a global logger variable
 logger = None
 
-# Define the GOP palette
+# Define the GOP palette (16-color VGA palette)
 CUSTOM_PALETTE = [
     (0x00, 0x00, 0x00),  # Black
     (0x00, 0x00, 0xAA),  # Blue
@@ -264,6 +264,64 @@ def save_planar_buffer_to_header(planar_buffer, width, height, output_path):
 
     logger.info(f"Planar buffer saved as {output_path}")
 
+def generate_bw_buffer(image_path, width, height):
+    """
+    Generate a 1-bit (black & white) planar buffer.
+    """
+    img = Image.open(image_path).convert("L")  # grayscale
+    threshold = 128
+    pixels = np.array(img)
+    bw_pixels = (pixels > threshold).astype(np.uint8)
+
+    bytes_per_row = math.ceil(width / 8)
+    logger.info(f"Bytes per row (BW): {bytes_per_row}")
+    buffer = np.zeros((height, bytes_per_row), dtype=np.uint8)
+
+    for y in range(height):
+        for x in range(width):
+            bit_position = 7 - (x % 8)
+            if bw_pixels[y, x]:
+                buffer[y, x // 8] |= (1 << bit_position)
+
+    return buffer
+
+def save_bw_buffer_to_header(bw_buffer, width, height, output_path):
+    """
+    Save the 1-bit BW buffer to a C header file (.h).
+    """
+    bytes_per_row = math.ceil(width / 8)
+    with open(output_path, "w") as f:
+        f.write("#ifndef _BW_IMAGE_DATA_H_\n#define _BW_IMAGE_DATA_H_\n\n")
+        f.write(f"#define BMP_WIDTH {bytes_per_row * 8}\n")
+        f.write(f"#define BMP_HEIGHT {height}\n\n")
+        f.write(f"CONST UINT8 BWImageData[{height}][{bytes_per_row}] = {{\n")
+
+        for y in range(height):
+            f.write("    { " + ", ".join(f"0x{byte:02X}" for byte in bw_buffer[y]) + " },\n")
+
+        f.write("};\n\n")
+        f.write("#endif // _BW_IMAGE_DATA_H_\n")
+
+    logger.info(f"BW buffer saved as {output_path}")
+
+def save_bw_bmp(bw_buffer, width, height, output_path):
+    """
+    Save the BW buffer as a BMP image for visual verification.
+    """
+    img = Image.new("1", (width, height))  # 1-bit mode
+    pixels = img.load()
+
+    for y in range(height):
+        for byte_index, byte in enumerate(bw_buffer[y]):
+            for bit in range(8):
+                bit_position = 7 - bit
+                x = byte_index * 8 + bit
+                if x < width:
+                    pixels[x, y] = 1 if (byte & (1 << bit_position)) else 0
+
+    img.save(output_path, format="BMP")
+    logger.info(f"BW BMP image saved as {output_path}")
+
 def main():
     """
     Main function to process a BMP file and convert it to VGA Mode 12h planar data format.
@@ -279,12 +337,13 @@ def main():
     -i, --input: Path to the BMP file to be processed (required).
     -o, --output: Name of the output C header file (required).
     """
-    logger.info(f"BmpToVgaMode12PlaneBuffer version: {__version__}")
+    logger.info(f"BmpToBufferConverter version: {__version__}")
 
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Process a BMP file and convert it to VGA Mode 12h planar data format.")
+    parser = argparse.ArgumentParser(description="Process a BMP file and convert it to VGA Mode 12h or BW planar data format.")
     parser.add_argument("-i", "--input", required=True, help="Path to the BMP file to be processed.")
     parser.add_argument("-o", "--output", required=True, help="Name of the output C header file.")
+    parser.add_argument("-m", "--mode", choices=["vga16", "bw"], default="vga16", help="Conversion mode: vga16 (16-color VGA) or bw (black & white). Default is vga16.")
     args = parser.parse_args()
 
     if not os.path.isfile(args.input):
@@ -294,32 +353,38 @@ def main():
     input_file_name = Path(args.input).stem
     output_bmp = f"{input_file_name}_output_8bit.bmp"
 
-    # Step 1: Convert 24-bit BMP to 8-bit indexed BMP
-    logger.info(f"Converting {args.input} to 8-bit indexed BMP...")
-    indexed_pixels = convert_to_8bit_palette(args.input, output_bmp)
-    logger.info(f"8-bit indexed BMP saved as {output_bmp}")
-
-    # Step 2: Generate planar buffer
-    logger.info(f"Generating planar buffer from {output_bmp}...")
-    img = Image.open(output_bmp)
+    img = Image.open(args.input)
     width, height = img.size
     logger.info(f"Image dimensions: Width = {width}, Height = {height}")
-    planar_buffer = generate_planar_buffer(indexed_pixels, width, height)
-    logger.info("Planar buffer generated successfully")
 
-    # Step 3: Save planar buffer to C header file
-    logger.info(f"Saving planar buffer to {args.output}...")
-    save_planar_buffer_to_header(planar_buffer, width, height, args.output)
-    logger.info(f"Planar buffer saved to {args.output}")
+    if args.mode == "vga16":
+        # VGA 16-color mode
+        logger.info("Converting to 8-bit indexed BMP for VGA Mode 12h...")
+        indexed_pixels = convert_to_8bit_palette(args.input, output_bmp)
 
-    # Print confirmation and image dimensions
+        logger.info("Generating VGA planar buffer...")
+        planar_buffer = generate_planar_buffer(indexed_pixels, width, height)
+
+        logger.info(f"Saving VGA planar buffer to {args.output}...")
+        save_planar_buffer_to_header(planar_buffer, width, height, args.output)
+
+    elif args.mode == "bw":
+        # Black & White mode
+        logger.info("Generating BW buffer...")
+        bw_buffer = generate_bw_buffer(args.input, width, height)
+
+        logger.info(f"Saving BW buffer to {args.output}...")
+        save_bw_buffer_to_header(bw_buffer, width, height, args.output)
+
+        output_bmp = f"{Path(args.input).stem}_bw_output.bmp"
+        save_bw_bmp(bw_buffer, width, height, output_bmp)
+
     logger.info("#" * 100)
-    logger.info(f"BMP data has been processed and saved to {args.output} using the custom palette.")
-    logger.info(f"Image dimensions: Width = {width}, Height = {height}")
+    logger.info(f"Processing complete! Output saved to {args.output}")
     logger.info("#" * 100)
 
     if not width % 8 == 0:
-        logger.critical("VGA Mode 12h width should be a multiple of 8. The header file has been updated accordingly.")
+        logger.critical("Width should be a multiple of 8. The header file has been updated accordingly.")
 
 if __name__ == "__main__":
     main()
