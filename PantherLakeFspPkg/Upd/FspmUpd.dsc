@@ -1512,16 +1512,11 @@
   # !BSF HELP:{Enable / Disable LP5 Safe Speed feature}
   gPlatformFspPkgTokenSpaceGuid.Lp5SafeSpeed                | * | 0x01 | 0x01
 
-  # !BSF NAME:{Force InternalClkOn}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Force InternalClocksOn and TxPiOn to be set to 1 for frequencies >= 7467}
-  gPlatformFspPkgTokenSpaceGuid.ForceInternalClkOn           | * | 0x01 | 0x00
-
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 15  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 16  | {0x00}
 
   #
   # MRC Block End

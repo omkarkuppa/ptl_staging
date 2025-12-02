@@ -272,8 +272,7 @@ typedef struct {
   UINT32  DqLoopbackTest            : 1;  ///<            Bit 25     Control Dq Loopback test: 0: Disable, 1: Enable
   UINT32  DunitTatOptimization      : 1;  ///<            Bit 26     Optimize Dunit TAT Timings
   UINT32  Lp5SafeSpeed              : 1;  ///<            Bit 27     LP5 safe speed: 0 = Disabled, 1 = Enabled
-  UINT32  ForceInternalClkOn        : 1;  ///<            Bit 28     Force InternalClocksOn and TxPiOn to be set to 1 for frequencies >= 7467. <b>0: Disable</b>, 1: Enable
-  UINT32  SvReservedBits            : 3;  ///<            Bit 29-31  Reserved
+  UINT32  SvReservedBits            : 4;  ///<            Bit 28-31  Reserved
 
   UINT8   RowPressEn;                     ///< Offset 324 Enable/disable ROW PRESS feature
   UINT8   WeaklockEn;                     ///< Offset 325 Weak Lock Enable: <b>0=Auto</b>, 1=Enable, 2=Disable
@@ -296,8 +295,7 @@ typedef struct {
   UINT16  Vdd2HVoltage;                   ///< Offset 338-339 LP5 DRAM voltage (VDD2H) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
   UINT16  Vdd1Voltage;                    ///< Offset 340-341 LP5 DRAM voltage (VDD1) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
   UINT16  Vdd2LVoltage;                   ///< Offset 342-343 LP5 DRAM voltage (VDD2L) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
-  INT8    PhyDtsTemperature;              ///< Offset 344 PHY DTS temperature override, in degrees C (2's complement). 0xFF - platform default (no override).
-  UINT8   Reserved345[43];                ///< Offset 345 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (345 + 43 bytes) = 416 should be a multiple of 8 bytes.
+  UINT8   Reserved344[44];                ///< Offset 344 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (344 + 44 bytes) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

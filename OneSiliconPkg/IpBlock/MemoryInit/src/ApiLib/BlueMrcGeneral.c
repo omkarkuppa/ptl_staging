@@ -2003,13 +2003,11 @@ MrcPrintInputParameters (
     ExtInputs->RetrainOnFastFail
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
-    "\tPhyDtsTemperature: %d\n"
     "\tDynamicRangeLow: %d\n"
     "\tIteration: %Xh\n"
     "\tMbist: %Xh\n"
     "\tRemapEnable: %Xh\n"
     "\tVoltageReadout: %u\n",
-    ExtInputs->PhyDtsTemperature,
     ExtInputs->DynamicRangeLow,
     Inputs->Iteration,
     Inputs->Mbist,
@@ -2165,14 +2163,12 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tLp5SafeSpeed: %u\n"
     "\tIsLp5SpeedLimited: %u\n"
-    "\tForceInternalClkOn: %u\n"
     "\tForceCkdBypass: %Xh\n"
     "\tIsDdrphyx64: %Xh\n"
     "\tSenseAtRxDll: %Xh\n"
     "\tWckModeOverride: %u\n",
     ExtInputs->Lp5SafeSpeed,
     Inputs->IsLp5SpeedLimited,
-    ExtInputs->ForceInternalClkOn,
     ExtInputs->ForceCkdBypass,
     Inputs->IsDdrphyx64,
     Inputs->SenseAtRxDll,

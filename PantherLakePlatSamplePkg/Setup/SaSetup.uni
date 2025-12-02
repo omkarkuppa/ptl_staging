@@ -1577,9 +1577,6 @@
 #string STR_USE_1P5_READ_POSTAMBLE_PROMPT       #language en-US "Use 1p5 Read Postamble"
 #string STR_USE_1P5_READ_POSTAMBLE_HELP         #language en-US "Enables/Disable using 1p5 tCK Read Postamble for higher freqencies"
 
-#string STR_FORCE_INTERNAL_CLK_ON_PROMPT        #language en-US "Force InternalClkOn"
-#string STR_FORCE_INTERNAL_CLK_ON_HELP          #language en-US "Force InternalClocksOn and TxPiOn to be set to 1 for frequencies >= 7467 (0: Disable, 1: Enable)"
-
 //
 // DVMT5.0 Graphics Memory
 //

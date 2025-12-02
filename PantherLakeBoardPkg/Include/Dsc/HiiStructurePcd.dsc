@@ -3856,7 +3856,6 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.SpineGatePerLpmode|0x7                      
 gStructPcdTokenSpaceGuid.PcdSaSetup.PhclkGatePerLpmode|0x0                                         #            Bit 19-23  PHCLK Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisableSwitchDfiToMc|0x0                                       #            Bit 24     Disable Switch DFI to MC after cold boot
 gStructPcdTokenSpaceGuid.PcdSaSetup.Lp5SafeSpeed|0x1                                               #            Bit 27     LP5 safe speed: 0 = Disabled, 1 = Enabled
-gStructPcdTokenSpaceGuid.PcdSaSetup.ForceInternalClkOn|0x0                                         #            Bit 28     Force InternalClocksOn and TxPiOn to be set to 1 for frequencies >= 7467. <b>0: Disable</b>, 1: Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
 gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 # Offset 325 - DLL Weak Lock Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsDelayCompEn|0x0                                           # Offset 326 - Rx DQS Delay Comp Support
