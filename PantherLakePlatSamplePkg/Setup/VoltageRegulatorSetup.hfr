@@ -281,7 +281,7 @@
       flags         = 0 | RESET_REQUIRED,
       minimum       = 0,
       maximum       = 32767,
-      step          = 125,  // Stepping of 0 equates to a manual entering of a value,
+      step          = 1,  // Stepping of 0 equates to a manual entering of a value,
                             // otherwise it will auto-increment with a left/right arrow
       default       = 0,
     endnumeric;
