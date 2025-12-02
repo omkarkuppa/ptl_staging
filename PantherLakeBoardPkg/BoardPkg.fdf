@@ -1787,6 +1787,10 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/CpuPowerManagement/Dxe/DxeCp
   INF CrashLogFeaturePkg/CrashLogDxe/CrashLogDxe.inf
 !endif
 
+!if gHestFeaturePkgTokenSpaceGuid.PcdHestFeatureEnable == TRUE
+ INF HestFeaturePkg/HestDxe/HestDxe.inf
+!endif
+
 INF  $(PLATFORM_BOARD_PACKAGE)/Features/FastBoot/FastBootHandlerDxe/FastBootHandlerDxe.inf
 INF  $(PLATFORM_BOARD_PACKAGE)/Features/FastBoot/FastBootSetupDxe/FastBootSetupDxe.inf
 

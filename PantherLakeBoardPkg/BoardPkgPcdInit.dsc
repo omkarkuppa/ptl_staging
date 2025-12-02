@@ -52,6 +52,7 @@
   PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
   MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
   TdxFeaturePkg/TdxFeaturePkg.dec
+  HestFeaturePkg/HestFeaturePkg.dec
 
 [PcdsFeatureFlag]
   ## This PCD specified whether ACPI SDT protocol is installed.
@@ -99,6 +100,8 @@
   gPsrFeatureModuleTokenSpaceGuid.PcdPlatformServiceRecordSupport|FALSE
 
   gCrashLogFeaturePkgTokenSpaceGuid.PcdCrashLogFeatureEnable|TRUE
+
+  gHestFeaturePkgTokenSpaceGuid.PcdHestFeatureEnable|TRUE
 
   gVtioFeaturePkgTokenSpaceGuid.PcdVtioFeatureEnable|FALSE
   gTmeFeaturePkgTokenSpaceGuid.PcdTmeFeatureEnable|TRUE

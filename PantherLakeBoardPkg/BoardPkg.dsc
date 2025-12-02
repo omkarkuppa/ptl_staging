@@ -1751,6 +1751,9 @@ $(PLATFORM_BOARD_PACKAGE)/Acpi/I2cPmData/I2cPmData.inf
   $(PLATFORM_BOARD_PACKAGE)/Features/CrashLog/CrashLogVariableUpdateDxe/CrashLogVariableUpdateDxe.inf
   CrashLogFeaturePkg/CrashLogDxe/CrashLogDxe.inf
 !endif
+!if gHestFeaturePkgTokenSpaceGuid.PcdHestFeatureEnable == TRUE
+  HestFeaturePkg/HestDxe/HestDxe.inf
+!endif
 
 $(PLATFORM_BOARD_PACKAGE)/Features/FastBoot/FastBootHandlerDxe/FastBootHandlerDxe.inf
 $(PLATFORM_BOARD_PACKAGE)/Features/FastBoot/FastBootSetupDxe/FastBootSetupDxe.inf
