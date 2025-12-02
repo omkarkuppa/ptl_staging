@@ -2700,7 +2700,7 @@ SipInitRootPort (
 
   Cem.Data      = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, CEM_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   Cem.Bits.ciem = 0;
-  Cem.Bits.hlom = 1;
+  Cem.Bits.hlom = 0;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, CEM_PCIE_CFG_REG, Cem.Data, IpWrRegFlagSize32Bits);
 
   ///
