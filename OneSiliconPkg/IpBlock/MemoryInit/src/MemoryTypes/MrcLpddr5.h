@@ -426,21 +426,6 @@ Lpddr5GmfDelayType (
   );
 
 /**
-  This functions checks to see if the requested latency is within the frequency range
-  required by JEDEC.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-  @param[in]  Latency - Encoded latency entry.  Supports Read Latency, Write Latency, tWR, and tRTP.
-
-  @retval MrcStatus - mrcSuccess if Latency is valid and the frequency is in the range.  Else mrcWrongInputParameter.
-**/
-MrcStatus
-LatencyFreqCheckLpddr5 (
-  IN  MrcParameters *MrcData,
-  IN  INT8          Latency
-  );
-
-/**
   This function returns the impact to Write Latency for the requested LPDDR_ODTL_PARAM.
 
   @param[in]  MrcData - Pointer to MRC global data.

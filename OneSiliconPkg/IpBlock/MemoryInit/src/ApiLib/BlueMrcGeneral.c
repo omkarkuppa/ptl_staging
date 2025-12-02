@@ -1530,12 +1530,6 @@ MrcSetOverrides (
     ExtInputs->TrainingEnables.JWRL      = 0;
   }
 
-#ifndef MRC_MINIBIOS_BUILD
-  if (Outputs->IsLpddr) {
-    ExtInputs->TrainingEnables2.DQDQSSWZ = 0;   // Keep Dq/Dqs swizzle detection disabled on LP5
-  }
-#endif
-
   return Status;
 }
 

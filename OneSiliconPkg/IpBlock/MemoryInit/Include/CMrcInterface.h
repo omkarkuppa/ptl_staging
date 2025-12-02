@@ -2011,7 +2011,8 @@ typedef struct MrcSaveData {
   MrcMptuChannelConfig MptuChannelMap[MAX_CONTROLLER][MAX_CHANNEL]; ///< System to MPTU channel map
   INT32             RxDqsBaseOffset;              ///< Base value of DataOffsetTrain.RxDqsOffset
   UINT8             DisableChannel[MAX_CONTROLLER][MAX_CHANNEL]; ///< Keeps track if a channel was disabled on the previous boot
-  UINT8             ReservedBytesAlign[4];        ///< Align to 4 bytes for MrcSavedata
+  BOOLEAN           IsDdr5Samsung;                ///< If a DDR5 Samsung DIMM is detected set it to TRUE otherwise FALSE
+  UINT8             ReservedBytesAlign[3];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //

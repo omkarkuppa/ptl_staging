@@ -7306,6 +7306,7 @@ MrcSpdProcessingStatic (
   }
 
   MrcCall->MrcSetMem ((UINT8 *) SaveData->IsDdr5Hynix, sizeof (SaveData->IsDdr5Hynix), 0);
+  SaveData->IsDdr5Samsung = FALSE;
 
   if (Outputs->IsDdr5) {
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -7329,6 +7330,11 @@ MrcSpdProcessingStatic (
             if ((Ddr5ManufactureData->DramIdCode.Data == SKHYNIX_DRAM_ID) ||
                 (Ddr5ManufactureData->ModuleId.IdCode.Data == SKHYNIX_DRAM_ID)) {
               SaveData->IsDdr5Hynix[Controller][Channel][Dimm] = TRUE;
+            }
+
+            if ((Ddr5ManufactureData->DramIdCode.Data == SAMSUNG_DRAM_ID) ||
+                (Ddr5ManufactureData->ModuleId.IdCode.Data == SAMSUNG_DRAM_ID)) {
+              SaveData->IsDdr5Samsung = TRUE;
             }
           }
         }

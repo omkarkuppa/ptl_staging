@@ -201,65 +201,6 @@ CheckVrefLimits (
 }
 
 /**
-  This functions checks to see if the requested latency is within the frequency range
-  required by JEDEC.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-  @param[in]  Latency - Encoded latency entry.  Supports Read Latency, Write Latency, tWR, and tRTP.
-
-  @retval MrcStatus - mrcSuccess if Latency is valid and the frequency is in the range.  Else mrcWrongInputParameter.
-**/
-MrcStatus
-LatencyFreqCheckLpddr5 (
-  IN  MrcParameters *MrcData,
-  IN  INT8          Latency
-  )
-{
-  MrcDebug      *Debug;
-  MrcStatus     Status;
-  MrcFrequency  CurFreq;
-  MrcFrequency  MaxFreq;
-  MrcFrequency  MinFreq;
-
-  Debug = &MrcData->Outputs.Debug;
-
-  // Check to see if the time requested matches JEDEC Frequency table
-  if ((Latency >= 0) && (Latency < LP5_TFR_NUM_ENTRIES)) {
-    CurFreq = MrcData->Outputs.HighFrequency;
-    MaxFreq = TimingFreqRangeLp5[(UINT8) Latency][LP5_TFR_MAX];
-    MinFreq = TimingFreqRangeLp5[(UINT8) Latency][LP5_TFR_MIN];
-
-    if ((CurFreq <= MinFreq) || (CurFreq > MaxFreq)) {
-      Status = mrcWrongInputParameter;
-      MRC_DEBUG_MSG (
-        Debug,
-        MSG_LEVEL_ERROR,
-        "%s Current frequency(%d) is not within supported range[%d:%d] for latency=%d",
-        gErrString,
-        CurFreq,
-        MinFreq,
-        MaxFreq,
-        Latency
-        );
-    } else {
-      Status = mrcSuccess;
-    }
-  } else {
-    Status = mrcWrongInputParameter;
-    MRC_DEBUG_MSG (
-      Debug,
-      MSG_LEVEL_ERROR,
-      "%s Latency(%d) entry out of range for TimingFreqRange Table(%d)",
-      gErrString,
-      Latency,
-      LP5_TFR_NUM_ENTRIES
-      );
-  }
-
-  return Status;
-}
-
-/**
   This function converts from DRAM Vref encoding to MRC training offset:
   Vref [10:127] - Offset [-58:58] :: LP5 (15% - 73.5%) * 500mV.
 
@@ -444,12 +385,6 @@ EncodeWriteLatencyLpddr5 (
   }
 
   if (MrValue != 0xFF) {
-    // Check to see if the time requested matches JEDEC Frequency table
-    if (!Outputs->IsDvfscEnabled) {
-      Status = LatencyFreqCheckLpddr5 (MrcData, MrValue);
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, (Status != mrcSuccess) ? " (WL)\n" : "");
-    }
-
     if (EncVal != NULL) {
       *EncVal = MrValue;
     } else {
@@ -4122,11 +4057,6 @@ EncodeReadLatencyLpddr5 (
   }
 
   if (MrValue != 0xFF) {
-    // Check to see if the time requested matches JEDEC Frequency table
-    if (!Outputs->IsDvfscEnabled) {
-      Status = LatencyFreqCheckLpddr5 (MrcData, MrValue);
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, (Status != mrcSuccess) ? " (RL)\n" : "");
-    }
     if (EncVal != NULL) {
       *EncVal = MrValue;
     } else {
