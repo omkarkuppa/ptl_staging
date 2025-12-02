@@ -85,7 +85,7 @@
   gSiPkgTokenSpaceGuid.PcdSiliconSegment               |0x0
   gSiPkgTokenSpaceGuid.PcdFspSku                       |0x0
   gSiPkgTokenSpaceGuid.PcdFspYear                      |0x25
-  gSiPkgTokenSpaceGuid.PcdFspBuildVer                  |0x4800
+  gSiPkgTokenSpaceGuid.PcdFspBuildVer                  |0x4810
   gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress             |0x0000EFA0
   gSiPkgTokenSpaceGuid.PcdSpiDmaEnable                 |TRUE
   gIntelSiliconPkgTokenSpaceGuid.PcdVTdPeiDmaBufferSize|0x00600000
