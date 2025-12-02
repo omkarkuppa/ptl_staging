@@ -385,6 +385,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.MrcFailureOnUnsupportedDimm = FspmUpd->FspmConfig.MrcFailureOnUnsupportedDimm;
   MemConfig->ExternalInputs.Use1p5ReadPostamble    = FspmUpd->FspmConfig.Use1p5ReadPostamble;
   MemConfig->ExternalInputs.Lp5SafeSpeed           = FspmUpd->FspmConfig.Lp5SafeSpeed;
+  MemConfig->ExternalInputs.ForceInternalClkOn     = FspmUpd->FspmConfig.ForceInternalClkOn;
   //
   // Enabling Probeless Trace will need to enable IED together
   //

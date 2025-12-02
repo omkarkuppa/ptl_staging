@@ -461,3 +461,4 @@ Ps2Threshold
 Ps3Threshold
 PcoreHysteresisWindow
 EcoreHysteresisWindow
+ForceInternalClkOn
