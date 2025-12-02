@@ -3859,7 +3859,7 @@ HiiConfigAccessCallback (
           UpdateDevicePage ();
 
           mBtConfigDevice->InScanning = TRUE;
-          Status = LeConfigProtocol->Scan (LeConfigProtocol, TRUE, 10, NULL, ScanCallback, NULL);
+          Status = LeConfigProtocol->Scan (LeConfigProtocol, TRUE, 10000, NULL, ScanCallback, NULL); // Timeout is in milliseconds, 10000 ms = 10 seconds
           if (!EFI_ERROR (Status)) {
             UpdateScanMenu ();
           }

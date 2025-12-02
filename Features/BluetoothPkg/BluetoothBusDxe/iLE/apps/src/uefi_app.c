@@ -2836,8 +2836,8 @@ stack_scan (
     scan_interval = MIN_SCAN_INTERVAL;         /* 1sec */
     scan_window   = MIN_SCAN_WINDOW;           /* 5ms */
   }
-
-  iLE_start_scan_ex (new_trans_id, Timeout * 1000, active, limited, use_rejectlist, background, scan_interval, scan_window, lidx, filter_uuids);
+  /* Timeout is already in milliseconds per UEFI spec, removed incorrect * 1000 multiplication for Timeout*/
+  iLE_start_scan_ex (new_trans_id, Timeout, active, limited, use_rejectlist, background, scan_interval, scan_window, lidx, filter_uuids);
   return EFI_SUCCESS;
 }
 
