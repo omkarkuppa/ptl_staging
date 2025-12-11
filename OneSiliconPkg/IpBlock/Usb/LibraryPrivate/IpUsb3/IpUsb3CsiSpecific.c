@@ -281,18 +281,6 @@ IpUsb3GetControl (
         return IpUsb3FeatValDwbDisable;
       }
 
-    case IpUsb3FeatIdBandwidthCheck:
-      Data = IP_WR_READ_32 (pInst->RegCntxtMem, R_XHCI_MEM_BWCALC_POLICY);
-      if (pCsiSts != NULL) {
-        *pCsiSts = IpCsiStsSuccess;
-      }
-
-      if (Data & B_XHCI_MEM_BWCALC_POLICY_BW_SYS_CHK_EN) {
-        return IpUsb3FeatValBandwidthCheckEn;
-      }
-      return IpUsb3FeatValBandwidthCheckDis;
-      break;
-
     case IpUsb3FeatIdUnknown:
     default:
       PRINT_WARNING ("Invalid FeatureId provided to %s\n", __FUNCTION__);
@@ -514,17 +502,6 @@ IpUsb3SetControl (
       Data32Or |= (UINT32)(V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK << N_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK);
 
       IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_TRB_PRF_CTRL_REG4, Data32And, Data32Or);
-      break;
-
-    case IpUsb3FeatIdBandwidthCheck:
-      if (FeatureVal == IpUsb3FeatValBandwidthCheckEn) {
-        IP_WR_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_BWCALC_POLICY, B_XHCI_MEM_BWCALC_POLICY_BW_SYS_CHK_EN);
-      } else if (FeatureVal == IpUsb3FeatValBandwidthCheckDis) {
-        IP_WR_AND_32 (pInst->RegCntxtMem, R_XHCI_MEM_BWCALC_POLICY, ~(B_XHCI_MEM_BWCALC_POLICY_BW_SYS_CHK_EN));
-      } else {
-        PRINT_WARNING ("Invalid parameter provided to %s\n", __FUNCTION__);
-        return IpCsiStsErrorBadParam;
-      }
       break;
 
     case IpUsb3FeatIdUnknown:

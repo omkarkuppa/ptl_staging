@@ -570,7 +570,6 @@ PtlPcdUsbHostControllerInit (
     { IpUsb3FeatIdB2bRetryFix,            IpUsb3FeatValB2bRetryFixEn           },
     { IpUsb3FeatIdReadAfterWriteDelay,    IpUsb3FeatValReadAfterWriteDelayEn   },
     { IpUsb3FeatIdHSAsyncActiveExposure,  IpUsb3FeatValHSAsyncActiveExposureEn },
-    { IpUsb3FeatIdBandwidthCheck,         IpUsb3FeatValBandwidthCheckEn        },
   };
 
   DEBUG ((DEBUG_VERBOSE, "%a entry\n", __FUNCTION__));

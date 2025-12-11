@@ -238,9 +238,6 @@
 #define R_XHCI_MEM_HOST_CTRL_USB3_CP15_DEEMPH_REG   0x8E94
 #define R_XHCI_MEM_HOST_CTRL_USB3_CP16_DEEMPH_REG   0x8E98
 
-#define R_XHCI_MEM_BWCALC_POLICY                0x9604    ///< Bandwidth Calculator Policy/Check bits
-#define B_XHCI_MEM_BWCALC_POLICY_BW_SYS_CHK_EN  BIT7      ///< Enable BW Check at the System level
-
 //
 // TCSS XHCI DAP ESS PORT Registers in MMIO Space
 //

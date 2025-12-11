@@ -154,7 +154,6 @@ PtlTcssInitPostMem (
     { IpUsb3FeatIdReadAfterWriteDelay,            IpUsb3FeatValReadAfterWriteDelayEn },
     { IpUsb3FeatIdHSAsyncActiveExposure,          IpUsb3FeatValHSAsyncActiveExposureDis },
     { IpUsb3FeatIdDbcTraceInEp,                   IpUsb3FeatValDbcTraceInEpEn },
-    { IpUsb3FeatIdBandwidthCheck,                 IpUsb3FeatValBandwidthCheckEn },
   };
 
   //
