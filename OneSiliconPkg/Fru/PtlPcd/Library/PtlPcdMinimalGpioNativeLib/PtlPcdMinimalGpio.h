@@ -54,4 +54,46 @@ GetPcdMinNativeSignalData (
   OUT UINT32                         *SignalDataArraySize
   );
 
+/**
+  Returns the GPIO pad for a given minimal native signal.
+
+  @param[in] Signal   The minimal native signal to look up.
+
+  @retval GPIOV2_PAD  The pad associated with the signal, or GPIOV2_PAD_NONE if not found.
+**/
+GPIOV2_PAD
+PtlPcdMinimalGpioGetNativePadByFunction (
+  IN GPIOV2_SIGNAL Signal
+  );
+
+/**
+  Returns the GPIO pad for a given minimal native signal with PinMux support.
+
+  @param[in] Signal   The minimal native signal to look up.
+  @param[in] PinMux   GPIO Native pin mux platform config.
+
+  @retval GPIOV2_PAD  The pad associated with the signal, or GPIOV2_PAD_NONE if not found.
+**/
+GPIOV2_PAD
+PtlPcdMinimalGpioGetNativePadByFunctionAndPinMux (
+  IN GPIOV2_SIGNAL Signal,
+  IN UINT32        PinMux
+  );
+
+/**
+  This procedure will set GPIO pad to native function based on provided native function
+  and platform muxing selection (if needed) - minimal version.
+
+  @param[in]  PadFunction         PadMode for a specific native signal. Please refer to GpioV2Signals
+  @param[in]  PinMux              GPIO Native pin mux platform config.
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid group or pad number
+**/
+EFI_STATUS
+PtlPcdMinimalGpioSetNativePadByFunction (
+  IN GPIOV2_SIGNAL Signal,
+  IN UINT32        PinMux
+  );
+  
 #endif // _PTL_PCD_MINIMAL_GPIO_H_

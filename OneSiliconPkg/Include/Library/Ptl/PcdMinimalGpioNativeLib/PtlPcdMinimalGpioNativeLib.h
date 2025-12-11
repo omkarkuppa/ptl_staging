@@ -95,4 +95,115 @@ PtlPcdMinimalGpioGetCnviCrfStrapPinStatus (
   VOID
   );
 
+/**
+  Returns the GPIO pad for a given minimal native signal.
+
+  @param[in] Signal   The minimal native signal to look up.
+
+  @retval GPIOV2_PAD  The pad associated with the signal, or GPIOV2_PAD_NONE if not found.
+**/
+GPIOV2_PAD
+PtlPcdMinimalGpioGetNativePadByFunction (
+  IN GPIOV2_SIGNAL Signal
+  );
+
+/**
+  Returns the GPIO pad for a given minimal native signal with PinMux support.
+
+  @param[in] Signal   The minimal native signal to look up.
+  @param[in] PinMux   GPIO Native pin mux platform config.
+
+  @retval GPIOV2_PAD  The pad associated with the signal, or GPIOV2_PAD_NONE if not found.
+**/
+GPIOV2_PAD
+PtlPcdMinimalGpioGetNativePadByFunctionAndPinMux (
+  IN GPIOV2_SIGNAL Signal,
+  IN UINT32        PinMux
+  );
+
+/**
+  This procedure will set GPIO pad to native function based on provided native function
+  and platform muxing selection (if needed) - minimal version.
+
+  @param[in]  PadFunction         PadMode for a specific native signal. Please refer to GpioV2Signals
+  @param[in]  PinMux              GPIO Native pin mux platform config.
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid group or pad number
+**/
+EFI_STATUS
+PtlPcdMinimalGpioSetNativePadByFunction (
+  IN GPIOV2_SIGNAL Signal,
+  IN UINT32        PinMux
+  );
+
+/**
+  This procedure will set GPIO pad reset config (minimal version).
+
+  @param[in] GpioPad              GPIO Pad
+  @param[in] ResetConfig          Reset configuration to set
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid pad number
+  @retval EFI_NOT_FOUND           Reset config not found in mapping table
+**/
+EFI_STATUS
+PtlPcdMinimalGpioSetResetConfig (
+  IN GPIOV2_PAD           GpioPad,
+  IN GPIOV2_RESET_CONFIG  ResetConfig
+  );
+
+/**
+  This procedure reads current GPIO Pad input state (minimal version).
+
+  @param[in] GpioPad              GPIO Pad
+  @param[out] InputState          Pointer to a buffer for input state
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid pad number or NULL pointer
+**/
+EFI_STATUS
+PtlPcdMinimalGpioGetRx (
+  IN  GPIOV2_PAD       GpioPad,
+  OUT GPIOV2_PAD_STATE *InputState
+  );
+
+/**
+  This procedure will set GPIO pad direction (minimal version).
+
+  @param[in] GpioPad              GPIO Pad
+  @param[in] Direction            Direction to set (Input, Output, None, InOut, InInv, InInvOut)
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid pad number
+**/
+EFI_STATUS
+PtlPcdMinimalGpioSetDirection (
+  IN GPIOV2_PAD           GpioPad,
+  IN GPIOV2_DIRECTION     Direction
+  );
+
+/**
+  Atomically configure a GPIO pad's mode, output state, direction, and reset config in a safe sequence.
+  Output state is set before direction to avoid glitches on CLKREQ# and similar critical signals.
+
+  @param[in]  GpioPad      GPIO Pad to configure
+  @param[in]  PadMode      Pad mode to set
+  @param[in]  OutputState  Output state to set (if direction is output) - set BEFORE direction
+  @param[in]  Direction    Direction to set (Input, Output, etc.)
+  @param[in]  ResetConfig  Reset configuration to set
+
+  @retval EFI_SUCCESS             The function completed successfully
+  @retval EFI_INVALID_PARAMETER   Invalid pad number or parameter
+  @retval EFI_NOT_FOUND           Reset config not found in mapping table
+*/
+EFI_STATUS
+PtlPcdMinimalGpioConfigurePadAtomic (
+  IN GPIOV2_PAD           GpioPad,
+  IN GPIOV2_PAD_MODE      PadMode,
+  IN GPIOV2_PAD_STATE     OutputState,
+  IN GPIOV2_DIRECTION     Direction,
+  IN GPIOV2_RESET_CONFIG  ResetConfig
+  );
+
 #endif // PTL_PCD_MINIMAL_GPIO_NATIVE_LIB_H

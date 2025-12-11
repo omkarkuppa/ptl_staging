@@ -32,9 +32,12 @@
 #include <Library/PcdInfoLib.h>
 #include <Library/TimerLib.h>
 #include <GpioV2Signals.h>
+#include <GpioV2ControllerInterface.h>
 #include <Library/GpioV2AccessLib.h>
 #include <Register/GpioAcpiDefines.h>
 #include <Library/PcdGpioNativeLib.h>
+#include <Library/Ptl/PcdMinimalGpioNativeLib/PtlPcdMinimalGpioNativeLib.h>
+#include <Library/Ptl/PcdMinGpioTopologyLib/PtlPcdMinGpioTopologyLib.h>
 #include <Library/GpioHelpersLib.h>
 #include <Library/P2SbSocLib.h>
 #include <PcdSbPortIds.h>
@@ -103,25 +106,9 @@ CheckClkReq (
   EFI_STATUS         Status;
   UINT32             ClkReqNumber;
   GPIOV2_NATIVE_PAD  ClkReqPad;
-  GPIOV2_CONFIG      PadConfig;
   GPIOV2_PAD_STATE   GpioValue;
   UINT32             GpioPinMuxValue;
-  GPIOV2_SERVICES    *GpioServices;
-
-  //
-  // If GPIO Override is enabled then dont change CLKREQ GPIO to GPIO mode.
-  // As Native function programming will not be done later.
-  //
-  if (GpioOverrideLevel1Enabled ()) {
-    return EFI_SUCCESS;
-  }
-
-    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
-    ASSERT (FALSE);
-    return EFI_NOT_FOUND;
-  }
+  GPIOV2_SIGNAL      ClkReqSignal;
 
   ClkReqNumber = FindClkReqForUsage (ClockUsage);
   if (ClkReqNumber == PCH_PCIE_NO_SUCH_CLOCK || ClkReqNumber >= GetPchMaxPcieClockReqNum ()) {
@@ -132,13 +119,9 @@ CheckClkReq (
   //  Get Gpio Pin Mux Value
   //
   GpioPinMuxValue = FindGpioPinMuxForClkReq (ClockUsage);
-
-  ZeroMem (&PadConfig, sizeof(PadConfig));
-
-  ClkReqPad = PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber), GpioPinMuxValue);
-  PadConfig.PadMode      = GpioV2PadModeGpio;
-  PadConfig.Direction    = GpioV2DirIn;
-  GpioServices->ConfigurePad (GpioServices, ClkReqPad, &PadConfig);
+  ClkReqSignal.Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber);
+  ClkReqPad = PtlPcdMinimalGpioGetNativePadByFunctionAndPinMux (ClkReqSignal, GpioPinMuxValue);
+  PtlPcdMinimalGpioConfigurePadAtomic(ClkReqPad, GpioV2PadModeGpio, GpioV2StateLow, GpioV2DirIn, GpioV2ResetHost);
   DEBUG ((DEBUG_INFO, "Enabling CLKREQ%d ClkReqPad %0x\n", ClkReqNumber, ClkReqPad));
 
   //
@@ -146,7 +129,7 @@ CheckClkReq (
   //
   MicroSecondDelay (5);
 
-  Status = GpioServices->GetRx (GpioServices, ClkReqPad, &GpioValue);
+  Status = PtlPcdMinimalGpioGetRx (ClkReqPad, &GpioValue);
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -176,20 +159,8 @@ EnableClkReq (
   UINT32          ClkReqNumber;
   UINT32          GpioPinMuxValue;
   GPIOV2_PAD      ClkReqPad;
-  GPIOV2_CONFIG   PadConfig;
-  GPIOV2_SERVICES *GpioServices;
-
-  if (GpioOverrideLevel1Enabled ()) {
-    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
-    return EFI_SUCCESS;
-  }
-
-    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
-    ASSERT (FALSE);
-    return EFI_NOT_FOUND;
-  }
+  GPIOV2_SIGNAL   ClkReqSignal;
+  GPIOV2_SIGNAL   ClkReqSetSignal;
 
   ClkNumber = ClockUsageToClockNumber (GetClocksPolicy (), ClockUsage);
   if (ClkNumber == PCH_PCIE_NO_SUCH_CLOCK) {
@@ -204,18 +175,19 @@ EnableClkReq (
   // Get Gpio Pin Mux Value
   //
   GpioPinMuxValue = ClockNumberToClkReqGpioPinMux (GetClocksPolicy (), ClkNumber);
-
-  ZeroMem (&PadConfig, sizeof (PadConfig));
   //
   // Configure GPIO pins for ClkReq
   //
-  Status = PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber), GpioPinMuxValue);
+  ClkReqSetSignal.Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber);
+  Status = PtlPcdMinimalGpioSetNativePadByFunction (ClkReqSetSignal, GpioPinMuxValue);
   if (Status == EFI_SUCCESS) {
-    ClkReqPad = PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber), GpioPinMuxValue);
-    PadConfig.Direction   = GpioV2DirNone;
-    PadConfig.ResetConfig = GpioV2ResetHost;
-    GpioServices->ConfigurePad (GpioServices, ClkReqPad, &PadConfig);
-    DEBUG ((DEBUG_INFO, "Enabling CLKREQ%d ClkReqPad %0x\n", ClkReqNumber, ClkReqPad));
+    ClkReqSignal.Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber);
+    ClkReqPad = PtlPcdMinimalGpioGetNativePadByFunctionAndPinMux (ClkReqSignal, GpioPinMuxValue);
+    PtlPcdMinimalGpioSetDirection (ClkReqPad, GpioV2DirNone);
+    PtlPcdMinimalGpioSetResetConfig (ClkReqPad, GpioV2ResetHost);
+    DEBUG ((DEBUG_INFO, "EnableClkReq: CLKREQ%d ClkReqPad=0x%x configured successfully\n", ClkReqNumber, ClkReqPad));
+  } else {
+    DEBUG ((DEBUG_ERROR, "EnableClkReq: Failed to set native mode for CLKREQ%d, Status=%r\n", ClkReqNumber, Status));
   }
 
   return EFI_SUCCESS;
@@ -233,26 +205,12 @@ ChangePadRstCfg (
   PCH_PCIE_CLOCK_USAGE ClockUsage
   )
 {
-  EFI_STATUS      Status;
   UINT32          ClkNumber;
   UINT32          ClkReqNumber;
   UINT32          GpioPinMuxValue;
   GPIOV2_PAD      ClkReqPad;
-  GPIOV2_CONFIG   PadConfig;
-  GPIOV2_SERVICES *GpioServices;
+  GPIOV2_SIGNAL   ClkReqSignal;
 
-  if (GpioOverrideLevel1Enabled ()) {
-    return EFI_SUCCESS;
-  }
-
-  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-
-
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices(%a, %d) failed (Status: %d)\n", __FUNCTION__, GPIO_HID_PTL_PCD_P, 0, Status));
-    ASSERT (FALSE);
-    return EFI_NOT_FOUND;
-  }
 
   ClkNumber = ClockUsageToClockNumber (GetClocksPolicy (), ClockUsage);
   if (ClkNumber == PCH_PCIE_NO_SUCH_CLOCK) {
@@ -266,12 +224,10 @@ ChangePadRstCfg (
   // Get Gpio Pin Mux Value
   //
   GpioPinMuxValue = ClockNumberToClkReqGpioPinMux (GetClocksPolicy (), ClkNumber);
-
-  ZeroMem (&PadConfig, sizeof (PadConfig));
-
-  ClkReqPad = PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber), GpioPinMuxValue);
-  PadConfig.ResetConfig = GpioV2ResetHost;
-  GpioServices->ConfigurePad (GpioServices, ClkReqPad, &PadConfig);
+  ClkReqSignal.Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber);
+  ClkReqPad = PtlPcdMinimalGpioGetNativePadByFunctionAndPinMux (ClkReqSignal, GpioPinMuxValue);
+  // Only set reset config, preserve existing pad mode (should already be native from EnableClkReq)
+  PtlPcdMinimalGpioSetResetConfig (ClkReqPad, GpioV2ResetHost);
   DEBUG ((DEBUG_INFO, "Configure PadRstCfg on CLKREQ%d ClkReqPad %0x\n", ClkReqNumber, ClkReqPad));
 
   return EFI_SUCCESS;

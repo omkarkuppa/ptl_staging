@@ -19,6 +19,7 @@
 @par Specification Reference:
 **/
 #include "PtlPcdMinimalGpio.h"
+#include <Register/Ptl/GpioV2PcdPins/GpioV2PtlPcdPins.h>
 
 
 GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_MIN_NATIVE_SIGNAL_DATA mPtlPcdMinNativeSignals[] = {
@@ -188,6 +189,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_MIN_NATIVE_SIGNAL_DATA mPtlPcdMinNativeSign
   { { .Value = GPIOV2_SIGNAL_IOM_GPPH(22) }, GPIOV2_PTL_PCD_XXGPP_H_22, GpioV2PadModeNative6,  GpioV2IosStateDefault, GpioV2IosTermDefault, TRUE , 0x15, 0x06  },
   { { .Value = GPIOV2_SIGNAL_IOM_GPPH(23) }, GPIOV2_PTL_PCD_XXGPP_H_23, GpioV2PadModeNative6,  GpioV2IosStateDefault, GpioV2IosTermDefault, TRUE , 0x15, 0x07  },
   { { .Value = GPIOV2_SIGNAL_IOM_GPPH(24) }, GPIOV2_PTL_PCD_XXGPP_H_24, GpioV2PadModeNative6,  GpioV2IosStateDefault, GpioV2IosTermDefault, TRUE , 0x16, 0x00  },
+  // PCIe SRCCLKREQ signals
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(0) }, GPIOV2_PTL_PCD_XXGPP_C_9,  GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(1) }, GPIOV2_PTL_PCD_XXGPP_C_10, GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(2) }, GPIOV2_PTL_PCD_XXGPP_C_11, GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(3) }, GPIOV2_PTL_PCD_XXGPP_C_12, GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(4) }, GPIOV2_PTL_PCD_XXGPP_C_13, GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(5) }, GPIOV2_PTL_PCD_XXGPP_C_14, GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(6) }, GPIOV2_PTL_PCD_XXGPP_D_18, GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(7) }, GPIOV2_PTL_PCD_XXGPP_D_20, GpioV2PadModeNative1, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
+  { { .Value = GPIOV2_SIGNAL_PCIE_SRCCLKREQ(8) }, GPIOV2_PTL_PCD_XXGPP_D_21, GpioV2PadModeNative2, GpioV2IosStateLatchLastValue, GpioV2IosTermSame, FALSE, 0x00, 0x00  },
 };
 /**
   Get the appropriate GPIO native signal data array based on WCL support.
