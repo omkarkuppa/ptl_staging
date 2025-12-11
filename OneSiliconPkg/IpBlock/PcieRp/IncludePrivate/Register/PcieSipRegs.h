@@ -892,6 +892,7 @@
 #define N_PCIE_CFG_LSTS_LA                    13
 
 #define R_PCIE_CFG_SLCAP                      0x00000054U      ///< Slot Capabilities
+#define B_PCIE_CFG_SLCAP_HPC                  BIT6
 
 #define R_PCIE_CFG_SLCTL                      0x00000058U      ///< Slot Control
 

@@ -1118,3 +1118,44 @@ PcieRpGetSipPhyVer (
   }
   return IP_SC16;
 }
+
+/**
+  OnHotPlugEnabledPciePort: Check if the input Endpoint device bus number is enumerated under Hot pluggable Root port.
+
+  @param[in]     EndpointBus    Input Endpoint Device bus number
+
+  @retval TRUE  if  if Endpoint device bus number is enumerated under Hot pluggable Root port.
+  @retval False if  if Endpoint device bus number is not enumerated under Hot pluggable Root port.
+**/
+
+BOOLEAN
+EFIAPI
+OnHotPlugEnabledPciePort (
+  IN UINT8 EndpointBus
+  )
+{
+  UINTN                              Index;
+  UINT64                             RpBaseAddress;
+  UINTN                              RpDev;
+  UINTN                              RpFunc;
+  UINT8                              SecondaryBus;
+  UINT8                              SubOrdinateBus;
+
+  for (Index = 0; Index < GetMaxPciePortNum (); Index++) {
+    GetPchPcieRpDevFun (Index, &RpDev, &RpFunc); // Get the actual device/function number corresponding to the Rootport no provided
+    RpBaseAddress = PCI_SEGMENT_LIB_ADDRESS (DEFAULT_PCI_SEGMENT_NUMBER_PCH, DEFAULT_PCI_BUS_NUMBER_PCH, (UINT32) RpDev, (UINT32) RpFunc, 0);
+    if (PciSegmentRead16 (RpBaseAddress + PCI_VENDOR_ID_OFFSET) == 0xFFFF) {
+      continue;
+    }
+    SubOrdinateBus = PciSegmentRead8 (RpBaseAddress + PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET);
+    SecondaryBus  = PciSegmentRead8 (RpBaseAddress + PCI_BRIDGE_SECONDARY_BUS_REGISTER_OFFSET);
+    if (EndpointBus >= SecondaryBus && EndpointBus <= SubOrdinateBus) { // Check if Endpoint Bus Number is within Valid range
+      if (((PciSegmentRead16 (RpBaseAddress + R_PCIE_CFG_MPC)) & B_PCIE_CFG_MPC_HPME) && ((PciSegmentRead16 (RpBaseAddress + R_PCIE_CFG_SLCAP)) & B_PCIE_CFG_SLCAP_HPC)) {
+        return TRUE;
+      } else {
+        return FALSE;
+      }
+    }
+  }
+  return FALSE;
+}

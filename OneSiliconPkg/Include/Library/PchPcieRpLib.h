@@ -70,4 +70,19 @@ GetPchPcieRpDevFun (
   OUT UINTN   *RpDev,
   OUT UINTN   *RpFun
   );
+
+/**
+  OnHotPlugEnabledPciePort: Check if the input Endpoint device bus number is enumerated under Hot pluggable Root port.
+
+  @param[in]     EndpointBus    Input Endpoint Device bus number
+
+  @retval TRUE  if  if Endpoint device bus number is enumerated under Hot pluggable Root port.
+  @retval False if  if Endpoint device bus number is not enumerated under Hot pluggable Root port.
+**/
+
+BOOLEAN
+EFIAPI
+OnHotPlugEnabledPciePort (
+  IN UINT8 EndpointBus
+  );
 #endif // _PCH_PCIERP_LIB_H_
