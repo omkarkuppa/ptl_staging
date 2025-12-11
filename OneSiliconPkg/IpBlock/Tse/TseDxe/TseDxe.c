@@ -33,6 +33,7 @@
 #include <Library/IoLib.h>
 #include <Library/PciLib.h>
 #include <Library/PciSegmentLib.h>
+#include <Library/PchPcieRpLib.h>
 #include <Library/PeiHostBridgeIpStatusLib.h>
 #include <Library/TseDataHob.h>
 #include <Library/TseInfoLib.h>
@@ -183,7 +184,11 @@ SetBDF (
   // Check endpoint device type is NVME drive
   //
 
-  if ((IsVmdEnabled() == TRUE) && (IsVmdBus(Bus) == TRUE)) {
+  if (OnHotPlugEnabledPciePort(Bus) == TRUE) {
+      DEBUG ((DEBUG_ERROR, "Specified BDF is not supported by TSE as a HotPlug device\n"));
+      EfiReleaseLock (&(mTseDriverContextPtr->TseDriverContextLock));
+      return EFI_INVALID_PARAMETER;
+  } else if ((IsVmdEnabled() == TRUE) && (IsVmdBus(Bus) == TRUE)) {
     DEBUG ((DEBUG_ERROR, "Specified BDF is a VMD NVMe device\n"));
   } else {
     PciBase = PCI_LIB_ADDRESS (Bus, Device, Function, 0);
