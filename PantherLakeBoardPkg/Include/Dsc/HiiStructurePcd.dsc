@@ -107,7 +107,6 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.AcheckRequest|0x0                          
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AcousticNoiseMitigation|0x2                                   # Acoustic Noise Mitigation
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PcoreHysteresisWindow|0x0                                     # IAcore Hysteresis Window
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EcoreHysteresisWindow|0x0                                     # Ecore Hysteresis Window
-gStructPcdTokenSpaceGuid.PcdCpuSetup.VccsaShutdown|0x0                                             # Vccsa Shutdown
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ActiveCoreCount|0xff                                          # Active Performance-cores
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ActiveLpAtomCoreCount|0xff                                    # Active LP Efficient-cores
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ActiveSmallCoreCount|0xff                                     # Active Efficient-cores

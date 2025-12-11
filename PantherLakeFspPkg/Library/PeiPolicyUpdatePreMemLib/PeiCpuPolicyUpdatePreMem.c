@@ -119,7 +119,6 @@ FspUpdatePeiCpuPolicyPreMem (
   CpuPowerMgmtVrConfig->AcousticNoiseMitigation      = FspmUpd->FspmConfig.AcousticNoiseMitigation;
   CpuPowerMgmtVrConfig->PcoreHysteresisWindow        = FspmUpd->FspmConfig.PcoreHysteresisWindow;
   CpuPowerMgmtVrConfig->EcoreHysteresisWindow        = FspmUpd->FspmConfig.EcoreHysteresisWindow;
-  CpuPowerMgmtVrConfig->VccsaShutdown                = FspmUpd->FspmConfig.VccsaShutdown;
   CpuPowerMgmtVrConfig->DlvrSpreadSpectrumPercentage = FspmUpd->FspmConfig.DlvrSpreadSpectrumPercentage;
   CpuPowerMgmtVrConfig->DlvrRfiFrequency             = FspmUpd->FspmConfig.DlvrRfiFrequency;
   CpuPowerMgmtVrConfig->DlvrRfiEnable                = FspmUpd->FspmConfig.DlvrRfiEnable;
