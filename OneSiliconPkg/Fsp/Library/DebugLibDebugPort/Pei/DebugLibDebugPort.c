@@ -421,6 +421,7 @@ DebugVPrint (
         }
       }
     }
+  }
   //
   //
   if (GetDebugInterfaceFlags() & STATUS_CODE_USE_TRACEHUB) {

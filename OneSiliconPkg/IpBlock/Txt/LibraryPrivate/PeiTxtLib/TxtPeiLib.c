@@ -214,6 +214,122 @@ IsTxtProcessor (
 }
 
 /**
+  Determines whether or not the LLC is present based on 3-level CPUID.4 check
+
+  @retval TRUE          - If the current processor has LLC
+  @retval FALSE         - If the current processor does not have LLC
+**/
+BOOLEAN
+IsLlcPresent (
+  VOID
+  )
+{
+  CPUID_CACHE_PARAMS_EAX Eax;
+  UINT32 Index = 0;
+  const UINT32 MaxCacheLvl = 5;
+
+  do {
+    AsmCpuidEx(CPUID_CACHE_PARAMS, Index++, &Eax.Uint32, NULL, NULL, NULL);
+
+    if ((Eax.Bits.CacheType == CPUID_CACHE_PARAMS_CACHE_TYPE_UNIFIED) && (Eax.Bits.CacheLevel == 3)) {
+      DEBUG((DEBUG_INFO, "TXTPEI::Assuming LLC is present per CPUID.4\n"));
+      return TRUE;
+    }
+
+  } while (Eax.Bits.CacheType != CPUID_CACHE_PARAMS_CACHE_TYPE_NULL && Index < MaxCacheLvl);
+
+  DEBUG((DEBUG_INFO, "TXTPEI::Assuming LLC is not present per CPUID.4\n"));
+  return FALSE;
+}
+
+/**
+ * @brief Floor passed value to nearest X
+ *
+ * @param Value
+ * @param X
+ * @retval UINT64 Floored value
+**/
+UINT64
+FloorToNearestX (
+  IN UINT64 Value,
+  IN UINT64 X
+  )
+{
+  return (Value / X) * X;
+}
+
+/**
+ * @brief Raise value to nearest 2^n
+ * @param Value
+ * @retval UINT64 Raised value
+**/
+UINT64
+RaiseToNearestPowerOf2 (
+  IN UINT64 Value
+  )
+{
+  UINT64 Result;
+
+  Result = 1;
+  while (Result < Value) {
+    Result = Result << 1;
+  }
+  return Result;
+}
+
+/**
+  Programs a single MTRR to be WB and cover the specified memory region.
+
+  @param[in] BaseAddress   - The base address of the memory region to be covered
+  @param[in] Length        - The length of the memory region to be covered
+  @param[in] MtrrNumber    - The MTRR number to program
+**/
+VOID
+ProgramWbMtrrToCoverSpecifiedRegion (
+  IN UINT64  BaseAddress,
+  IN UINT64  Length,
+  IN UINT32  MtrrNumber
+  )
+{
+  UINT64          MtrrBaseValue = 0;
+  UINT64          MtrrSizeValue = Length;
+  UINT64          MtrrMaskValue = 0;
+  const UINT32    MsrIa32MtrrValid = 0x800;
+  const UINT64    MtrrMaskHigh48Bit = 0x3FFF00000000ULL; // High mtrr mask for 48 bit phy address width cpu
+
+  // Find smallest MTRR that can cover the region and is 2^n aligned
+  do {
+    MtrrSizeValue = RaiseToNearestPowerOf2 (MtrrSizeValue);
+    MtrrBaseValue = FloorToNearestX (BaseAddress, MtrrSizeValue);
+  } while ((BaseAddress + Length) > (MtrrBaseValue + MtrrSizeValue++));
+
+  MtrrSizeValue--; // Adjust size back to valid value
+
+  DEBUG ((DEBUG_INFO, "TXTPEI: Passed Region to cover: BaseAddress=0x%lx, Length=0x%lx\n", BaseAddress, Length));
+  DEBUG ((DEBUG_INFO, "TXTPEI: To program MTRR%d to cover region: Base=0x%lx, Size=0x%lx\n", MtrrNumber, MtrrBaseValue, MtrrSizeValue));
+
+  // Patch base and mask values to program
+  MtrrBaseValue |= MSR_IA32_MTRR_CACHE_WRITE_BACK;
+  MtrrMaskValue = (~(MtrrSizeValue - 1) & 0x00000000FFFFF000ULL) | MsrIa32MtrrValid | MtrrMaskHigh48Bit;
+
+  // Program MTRR
+  AsmWriteMsr64 (
+    MSR_IA32_MTRR_PHYSBASE0 + (MtrrNumber * 2),
+    MtrrBaseValue
+    );
+  AsmWriteMsr64 (
+    MSR_IA32_MTRR_PHYSMASK0 + (MtrrNumber * 2),
+    MtrrMaskValue
+    );
+
+
+  DEBUG ((DEBUG_INFO, "TXTPEI: Actual programmed values: BaseMsr=0x%lx, MaskMsr=0x%lx\n",
+    AsmReadMsr64 (MSR_IA32_MTRR_PHYSBASE0 + (MtrrNumber * 2)),
+    AsmReadMsr64 (MSR_IA32_MTRR_PHYSMASK0 + (MtrrNumber * 2))
+    ));
+}
+
+/**
   Determines whether or not the current chipset is TXT Capable.
 
   @param[in] TxtContextDataPtr          - A pointer to an initialized TXT PEI Context data structure
@@ -992,7 +1108,7 @@ PrepareApParams (
 }
 
 /**
-  Copy ACM in WB memory.
+  Copy ACM in WB memory or cover with MTRR9 if no LLC
 
   @retval TempRamAddr   - Address of the ACM region.
 **/
@@ -1001,11 +1117,13 @@ LoadAcm (
   VOID
   )
 {
-  EFI_PHYSICAL_ADDRESS          AcmModuleAddr;
-  UINT64                        AcmModuleSize;
+  EFI_PHYSICAL_ADDRESS          AcmModuleAddr = 0;
+  UINT64                        AcmModuleSize = 0;
   TXT_INFO_HOB                  *TxtInfoHob = NULL;
-  EFI_PHYSICAL_ADDRESS          TempRamAddr;
-  EFI_STATUS                    Status;
+  EFI_PHYSICAL_ADDRESS          TempRamAddr = 0;
+  EFI_PHYSICAL_ADDRESS          LoadAddr = 0;
+  EFI_STATUS                    Status = 0;
+  UINT64                        Mtrr9Base = 0, Mtrr9Mask = 0;
 
   TxtInfoHob = GetFirstGuidHob (&gTxtInfoHobGuid);
   if (TxtInfoHob == NULL) {
@@ -1015,30 +1133,75 @@ LoadAcm (
   AcmModuleAddr = TxtInfoHob->Data.BiosAcmBase;
   AcmModuleSize = TxtInfoHob->Data.BiosAcmSize;
 
-  Status = PeiServicesAllocatePages (
-                   EfiLoaderCode,
-                   EFI_SIZE_TO_PAGES (AcmModuleSize),
-                   &TempRamAddr
-                   );
+  //
+  // Check for LLC absence
+  // If no LLC, then relocating ACM from flash location is not an option
+  //    - Before ACM launch, uCode loads ACM to MLC from level higher in mem (generally LLC)
+  //    - In MLC-only case, there is no LLC. Level higher is SPI flash
+  //    - Since SPI flash at alternate location (ie TempRAM) does not contain ACM, GETSEC[ENTERACCS] launch would fail with uCode error
+  //
+  if (!IsLlcPresent ()) {
+    DEBUG ((DEBUG_ERROR, "TXTPEI::Can't load ACM in Temp RAM, no LLC present\n"));
+    DEBUG ((DEBUG_ERROR, "TXTPEI::Attempting to load ACM in-place at 0x%X using MTRR9\n", AcmModuleAddr));
 
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Page Allocation Failed, Load ACM in Temporary RAM\n"));
     //
-    // There are no enough pages available to be allocated for ACM.
-    // Let's load ACM at the Temporary RAM base as ACM launch will anyway
-    // trigger a system reset.
+    // MTRRs are generally allocated from low to high, 0 through 9
+    // MTRR9 typically used for CNB. Should be free after CreateAcmDataHob()
+    // previously reads the CNB and zeros the MTRR
     //
-    TempRamAddr = (EFI_PHYSICAL_ADDRESS) (PcdGet32 (PcdTemporaryRamBase));
+    Mtrr9Base = AsmReadMsr64 (MSR_IA32_MTRR_PHYSBASE9);
+    Mtrr9Mask = AsmReadMsr64 (MSR_IA32_MTRR_PHYSMASK9);
+
+    ASSERT (Mtrr9Base == 0);
+    ASSERT (Mtrr9Mask == 0);
+
+    // Sanitize Acm size and addr parameters
+    if (AcmModuleAddr > 0x100000000ULL) {
+      DEBUG ((DEBUG_ERROR, "TXTPEI::AcmModuleAddr 0x%X exceeds 4GB\n", AcmModuleAddr));
+      return EFI_UNSUPPORTED;
+    }
+    if (AcmModuleSize > 0x400000) {
+      DEBUG ((DEBUG_ERROR, "TXTPEI::AcmModuleSize 0x%X exceeds 4MB\n", AcmModuleSize));
+      return EFI_UNSUPPORTED;
+    }
+
+    ProgramWbMtrrToCoverSpecifiedRegion (
+      AcmModuleAddr,
+      AcmModuleSize,
+      0x9);
+
+    LoadAddr = AcmModuleAddr;
+  } else {
+      DEBUG ((DEBUG_INFO, "TXTPEI::Loading ACM in Temp RAM\n"));
+
+      Status = PeiServicesAllocatePages (
+                    EfiLoaderCode,
+                    EFI_SIZE_TO_PAGES (AcmModuleSize),
+                    &TempRamAddr
+                    );
+
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_INFO, "Page Allocation Failed, Load ACM in Temporary RAM base address\n"));
+        //
+        // There are no enough pages available to be allocated for ACM.
+        // Let's load ACM at the Temporary RAM base as ACM launch will anyway
+        // trigger a system reset.
+        //
+        TempRamAddr = (EFI_PHYSICAL_ADDRESS) (PcdGet32 (PcdTemporaryRamBase));
+      }
+
+      CopyMem (
+        (UINT64 *) TempRamAddr,
+        (UINT64 *) AcmModuleAddr,
+        AcmModuleSize
+        );
+
+      LoadAddr = TempRamAddr;
   }
 
-  DEBUG ((DEBUG_INFO, "Loading ACM at 0x%X\n", TempRamAddr));
-  CopyMem (
-    (UINT64 *) TempRamAddr,
-    (UINT64 *) AcmModuleAddr,
-    AcmModuleSize
-    );
+  DEBUG ((DEBUG_INFO, "Loading ACM at 0x%X\n", LoadAddr));
 
-  return TempRamAddr;
+  return LoadAddr;
 }
 
 /**
