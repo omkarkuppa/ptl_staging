@@ -76,11 +76,9 @@ enum {
   ProfilePtlH12Xe25W48,        // PTL H 12Xe 25W 4+8
   ProfilePtlH12Xe25W44,        // PTL H 12Xe 25W 4+4
   ProfilePtlH12Xe25W28,        // PTL H 12Xe 25W 2+8
-  ProfilePtlH12Xe25W24,        // PTL H 12Xe 25W 2+4
   ProfilePtlH4Xe25W48,         // PTL H 4Xe  25W 4+8
   ProfilePtlH4Xe25W44,         // PTL H 4Xe  25W 4+4
   ProfilePtlH4Xe25W28,         // PTL H 4Xe  25W 2+8
-  ProfilePtlH4Xe25W24,         // PTL H 4Xe  25W 2+4
   ProfilePtlH4Xe65W48Pd2,      // PTL H 4Xe  65W 4+8 (CTDP UP, PD2)
   ProfilePtlH12Xe65W48Pd2,     // PTL H 12Xe 65W 4+8 (CTDP UP, PD2)
   ProfilePtlH4Xe65W48Pd3,      // PTL H 4Xe  65W 4+8 (CTDP UP, PD3)
@@ -107,11 +105,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mPtlPlx[] = {
   {  2500,  6400,  6400,     6500,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W48
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W44
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W28
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W24
   {  2500,  6400,  6400,     6500,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W48
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W44
   {  2500,  6500,  6500,     6500,     6500,     16000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W28
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W24
   {  6500,  8000,  8000,     8000,     8000,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe65W48Pd2
   {  6500,  8000,  8000,     8000,     8000,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe65W48Pd2
   {  6500,  9500,  9500,     9500,     9500,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe65W48Pd3
@@ -152,11 +148,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_OVERRIDE_TABLE mPowerLimitsOverrideTable[] = {
   { EnumPtlH12Xe25Watt48CpuId,       &mPtlPlx[ProfilePtlH12Xe25W48]       },
   { EnumPtlH12Xe25Watt44CpuId,       &mPtlPlx[ProfilePtlH12Xe25W44]       },
   { EnumPtlH12Xe25Watt28CpuId,       &mPtlPlx[ProfilePtlH12Xe25W28]       },
-  { EnumPtlH12Xe25Watt24CpuId,       &mPtlPlx[ProfilePtlH12Xe25W24]       },
   { EnumPtlH4Xe25Watt48CpuId,        &mPtlPlx[ProfilePtlH4Xe25W48]        },
   { EnumPtlH4Xe25Watt44CpuId,        &mPtlPlx[ProfilePtlH4Xe25W44]        },
   { EnumPtlH4Xe25Watt28CpuId,        &mPtlPlx[ProfilePtlH4Xe25W28]        },
-  { EnumPtlH4Xe25Watt24CpuId,        &mPtlPlx[ProfilePtlH4Xe25W24]        },
   { EnumPtlH4Xe65Watt48Pd2CpuId,     &mPtlPlx[ProfilePtlH4Xe65W48Pd2]     },
   { EnumPtlH12Xe65Watt48Pd2CpuId,    &mPtlPlx[ProfilePtlH12Xe65W48Pd2]    },
   { EnumPtlH4Xe65Watt48Pd3CpuId,     &mPtlPlx[ProfilePtlH4Xe65W48Pd3]     },
@@ -656,9 +650,6 @@ GetCpuSkuIdentifier (
           if (PackageTdp == CPU_TDP_28_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+4 28W, replace it with PTL Pkg-H 12Xe 2+8 28W\n"));
             CpuIdentifier = EnumPtlH12Xe25Watt28CpuId;
-          } else if (PackageTdp == CPU_TDP_25_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+4 25W, replace it with PTL Pkg-H 12Xe 2+8 25W\n"));
-            CpuIdentifier = EnumPtlH12Xe25Watt28CpuId;
           }
           break;
         ///
@@ -698,9 +689,6 @@ GetCpuSkuIdentifier (
         case PTL_H_4XE_NEX_SA_DEVICE_ID_2C_4A:
           if (PackageTdp == CPU_TDP_45_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 2+4 45W, replace it with PTL Pkg-H 4Xe 2+8 45W\n"));
-            CpuIdentifier = EnumPtlH4Xe25Watt28CpuId;
-          } else if (PackageTdp == CPU_TDP_25_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 2+4 25W, replace it with PTL Pkg-H 4Xe 2+8 25W\n"));
             CpuIdentifier = EnumPtlH4Xe25Watt28CpuId;
           }
           break;

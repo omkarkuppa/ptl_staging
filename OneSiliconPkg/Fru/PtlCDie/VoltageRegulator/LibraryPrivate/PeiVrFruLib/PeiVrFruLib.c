@@ -119,11 +119,9 @@ enum {
   ProfileVrPtlH12Xe25W48,       //  PTL H 12Xe 25W 4+8
   ProfileVrPtlH12Xe25W44,       //  PTL H 12Xe 25W 4+4
   ProfileVrPtlH12Xe25W28,       //  PTL H 12Xe 25W 2+8
-  ProfileVrPtlH12Xe25W24,       //  PTL H 12Xe 25W 2+4
   ProfileVrPtlH4Xe25W48,        //  PTL H 4Xe  25W 4+8
   ProfileVrPtlH4Xe25W44,        //  PTL H 4Xe  25W 4+4
   ProfileVrPtlH4Xe25W28,        //  PTL H 4Xe  25W 2+8
-  ProfileVrPtlH4Xe25W24,        //  PTL H 4Xe  25W 2+4
   ProfileVrPtlH4Xe65W48Pd2,     //  PTL H 4Xe  65W 4+8 (Ctdp Up, PD2)
   ProfileVrPtlH12Xe65W48Pd2,    //  PTL H 12Xe 65W 4+8 (Ctdp Up, PD2)
   ProfileVrPtlH4Xe65W48Pd3,     //  PTL H 4Xe  65W 4+8 (Ctdp Up, PD3)
@@ -140,11 +138,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_PROFILE mPtlVr[] = {
   {{  75*4,  107*4,   75*4,    80*4, 124*4,   75*4,    38*4, 56*4,     38*4,   30*4}, { 43*8,      1,             0,          28,          44*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W48
   {{  75*4,   90*4,   75*4,    80*4, 124*4,   75*4,    38*4, 56*4,     38*4,   30*4}, { 43*8,      1,             0,          28,          44*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W44
   {{  75*4,   90*4,   75*4,    80*4, 124*4,   75*4,    38*4, 56*4,     38*4,   30*4}, { 43*8,      1,             0,          28,          44*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W28
-  {{ 120*4,  111*4,   86*4,    84*4, 110*4,   84*4,    52*4, 56*4,     34*4,   25*4}, { 48*8,      1,             0,          28,          30*8,         1,       21*8,       1,         10*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W24
   {{  75*4,  107*4,   75*4,    40*4,  56*4,   38*4,    38*4, 56*4,     38*4,   30*4}, { 43*8,      1,             0,          28,          23*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W48
   {{  75*4,   90*4,   75*4,    40*4,  56*4,   38*4,    38*4, 56*4,     38*4,   30*4}, { 43*8,      1,             0,          28,          23*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W44
   {{  75*4,   90*4,   75*4,    40*4,  56*4,   38*4,    38*4, 56*4,     38*4,   30*4}, { 43*8,      1,             0,          28,          23*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W28
-  {{ 120*4,  111*4,   86*4,    38*4,  51*4,   38*4,    52*4, 56*4,     34*4,   25*4}, { 48*8,      1,             0,          28,          22*8,         1,       21*8,       1,         10*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W24
   {{  95*4,  138*4,   95*4,    40*4,  56*4,   38*4,    38*4, 56*4,     38*4,   30*4}, { 55*8,      1,             0,          28,          23*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe65W48Pd2
   {{  95*4,  138*4,   95*4,    80*4, 124*4,   75*4,    38*4, 56*4,     38*4,   30*4}, { 55*8,      1,             0,          28,          44*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe65W48Pd2
   {{ 113*4,  138*4,  113*4,    40*4,  56*4,   38*4,       0, 56*4,     38*4,   30*4}, { 64*8,      1,             0,          28,          23*8,         1,       21*8,       1,         19*8,         1,              0,               28       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe65W48Pd3
@@ -162,11 +158,9 @@ enum {
   ProfileLoadLinePtlH12Xe25W48,       //  PTL H 12Xe 25W 4+8
   ProfileLoadLinePtlH12Xe25W44,       //  PTL H 12Xe 25W 4+4
   ProfileLoadLinePtlH12Xe25W28,       //  PTL H 12Xe 25W 2+8
-  ProfileLoadLinePtlH12Xe25W24,       //  PTL H 12Xe 25W 2+4
   ProfileLoadLinePtlH4Xe25W48,        //  PTL H 4Xe  25W 4+8
   ProfileLoadLinePtlH4Xe25W44,        //  PTL H 4Xe  25W 4+4
   ProfileLoadLinePtlH4Xe25W28,        //  PTL H 4Xe  25W 2+8
-  ProfileLoadLinePtlH4Xe25W24,        //  PTL H 4Xe  25W 2+4
   ProfileLoadLinePtlH4Xe65W48Pd2,     //  PTL H 4Xe  65W 4+8 (Ctdp Up, PD2)
   ProfileLoadLinePtlH12Xe65W48Pd2,    //  PTL H 12Xe 65W 4+8 (Ctdp Up, PD2)
   ProfileLoadLinePtlH4Xe65W48Pd3,     //  PTL H 4Xe  65W 4+8 (Ctdp Up, PD3)
@@ -182,11 +176,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_LOAD_LINE_PROFILE mPtlLoadLine[] = {
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH12Xe25W48
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH12Xe25W44
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH12Xe25W28
-  { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH12Xe25W24
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH4Xe25W48
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH4Xe25W44
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH4Xe25W28
-  { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH4Xe25W24
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH4Xe65W48Pd2
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH12Xe65W48Pd2
   { 330,   330,    350,    0,   550,   550,   580,    580 }, // ProfileLoadLinePtlH4Xe65W48Pd3
@@ -259,11 +251,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_OVERRIDE_TABLE mCpuVrOverrideTable[] = {
   { EnumPtlH12Xe25Watt48CpuId,       &mPtlVr[ProfileVrPtlH12Xe25W48],       &mPtlLoadLine[ProfileLoadLinePtlH12Xe25W48]    },
   { EnumPtlH12Xe25Watt44CpuId,       &mPtlVr[ProfileVrPtlH12Xe25W44],       &mPtlLoadLine[ProfileLoadLinePtlH12Xe25W44]    },
   { EnumPtlH12Xe25Watt28CpuId,       &mPtlVr[ProfileVrPtlH12Xe25W28],       &mPtlLoadLine[ProfileLoadLinePtlH12Xe25W28]    },
-  { EnumPtlH12Xe25Watt24CpuId,       &mPtlVr[ProfileVrPtlH12Xe25W24],       &mPtlLoadLine[ProfileLoadLinePtlH12Xe25W24]    },
   { EnumPtlH4Xe25Watt48CpuId,        &mPtlVr[ProfileVrPtlH4Xe25W48],        &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W48]     },
   { EnumPtlH4Xe25Watt44CpuId,        &mPtlVr[ProfileVrPtlH4Xe25W44],        &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W44]     },
   { EnumPtlH4Xe25Watt28CpuId,        &mPtlVr[ProfileVrPtlH4Xe25W28],        &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W28]     },
-  { EnumPtlH4Xe25Watt24CpuId,        &mPtlVr[ProfileVrPtlH4Xe25W24],        &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W24]     },
   { EnumPtlH4Xe65Watt48Pd2CpuId,     &mPtlVr[ProfileVrPtlH4Xe65W48Pd2],     &mPtlLoadLine[ProfileLoadLinePtlH4Xe65W48Pd2]  },
   { EnumPtlH12Xe65Watt48Pd2CpuId,    &mPtlVr[ProfileVrPtlH12Xe65W48Pd2],    &mPtlLoadLine[ProfileLoadLinePtlH12Xe65W48Pd2] },
   { EnumPtlH4Xe65Watt48Pd3CpuId,     &mPtlVr[ProfileVrPtlH4Xe65W48Pd3],     &mPtlLoadLine[ProfileLoadLinePtlH4Xe65W48Pd3]  },
