@@ -829,7 +829,7 @@ typedef struct {
  structure revision and update below history table\n
   <b>Revision 1</b>:  - Initial version.
 **/
-#define CPU_SETUP_REVISION  1
+#define CPU_SETUP_REVISION  3
 
 typedef struct {
   UINT8   Revision;
