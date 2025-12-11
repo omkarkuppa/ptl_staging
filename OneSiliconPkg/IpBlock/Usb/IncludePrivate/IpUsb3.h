@@ -73,6 +73,7 @@ typedef enum {
   IpUsb3FeatIdSoftErrorTriggerRecalibration,  // Controls if xHCI uses soft error as an indicator for recalibration
   IpUsb3FeatIdDbcTraceInEp,                   // Controls inclusion of DbC.Trace into PMREQ Response and Wake Wire
   IpUsb3FeatIdDwbEnable,                      // Controls enable/disable of the Deferred Write Buffer feature
+  IpUsb3FeatIdBandwidthCheck,                 // Enable/disable BW check at the system level
 } IP_USB3_FEAT_ID;
 
 //
@@ -132,6 +133,10 @@ typedef enum {
   // IpUsb3FeatIdDwbEnable
   IpUsb3FeatValDwbDisable = 0,
   IpUsb3FeatValDwbEnable  = 1,
+
+  // IpUsb3FeatIdBandwidthCheck
+  IpUsb3FeatValBandwidthCheckDis = 0,
+  IpUsb3FeatValBandwidthCheckEn  = 1,
 } IP_USB3_FEAT_VAL;
 
 //
