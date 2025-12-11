@@ -19,8 +19,6 @@
 @par Specification Reference:
 **/
 
-//#define MICARRAY_2CH
-//#undef MICARRAY_4CH
 Name(_DSD, Package()
 {
   // Function Descriptor

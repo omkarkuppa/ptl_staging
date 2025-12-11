@@ -19,9 +19,6 @@
 @par Specification Reference:
 **/
 
-//#define MICARRAY_2CH (1)
-//#define MICARRAY_3CH (0)
-//#define MICARRAY_4CH (0)
 Name(_DSD, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
