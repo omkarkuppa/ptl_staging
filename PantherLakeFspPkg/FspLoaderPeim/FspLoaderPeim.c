@@ -51,6 +51,7 @@ volatile FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
 
   @param[in] FspsImageBase        FSP-S image base.
 
+  @retval EFI_UNSUPPORTED         FSP Signing not supported.
   @retval EFI_NOT_FOUND           FBM data HOB not found.
   @retval EFI_ACCESS_DENIED       Verification Fail.
   @retval EFI_SUCCESS             Verification Pass.
@@ -62,14 +63,19 @@ FspLoaderVerifyAndLogEventFsps (
   IN UINTN                        FspsImageBase
   )
 {
+  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm;
   BSPM_ELEMENT                   *Bspm;
   EFI_STATUS                     Status;
   UINT8                          AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
 
   //
+  // Initialize Fbm as NULL to maintain API compatibility.
+  //
+  Fbm = NULL;
+  //
   // Check if signing is supported
   //
-  if (!(IsSigningSupported ())) {
+  if (!(IsSigningSupported (Fbm))) {
     return EFI_UNSUPPORTED;
   }
 
@@ -81,7 +87,7 @@ FspLoaderVerifyAndLogEventFsps (
   //
   // Verify and create hash event log.
   //
-  Status = mFspVerifyApiWrapper.VerifyFspsApiWrapper (FspsImageBase, AvailableMemoryBuffer);
+  Status = mFspVerifyApiWrapper.VerifyFspsApiWrapper (FspsImageBase, Fbm, AvailableMemoryBuffer);
 
   return Status;
 }

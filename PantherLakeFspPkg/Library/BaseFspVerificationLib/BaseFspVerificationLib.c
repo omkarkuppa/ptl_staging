@@ -153,7 +153,7 @@ VerifyCrtmStatusAndDisableTxtCmos (
 
 **/
 UINT8
-IsSigningSupported (
+IsSigningSupportedInternal (
   VOID
   )
 {
@@ -179,6 +179,23 @@ IsSigningSupported (
     }
   }
   return FALSE;
+}
+
+/**
+  Check if FSP signing is supported.
+
+  @param[in]  Fbm  FSP Boot Manifest which keeps FSP-M digest and IBB information.
+
+  @retval TRUE   Signing is supported.
+  @retval FALSE  Signing is not supported.
+
+**/
+UINT8
+IsSigningSupported (
+  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm
+  )
+{ 
+  return IsSigningSupportedInternal ();
 }
 
 /**
@@ -403,6 +420,7 @@ VerifyAndExtendFspm (
   FSP-S image base in memory.
 
   @param[in]   FspsImageBase      FSP-S image base in memory.
+  @param[in]   Fbm                FSP Boot Manifest which keeps FSP-S digest and IBB information.
   @param[in]   Buffer             Memory buffer for hash verification.
 
   @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
@@ -415,14 +433,16 @@ EFI_STATUS
 EFIAPI
 VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
+  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   )
 {
   VOID                    *HashCtx;
-  UINT8                   CmosOffset;
   SHA384_HASH_STRUCTURE   *FspsDigest;
   UINTN                   SegmentCount;
   REGION_SEGMENT          *Segments;
+  UINT8                   CmosOffset;
+  FBM_DATA_HOB            *FbmHob;
   EFI_STATUS              Status;
 
   DEBUG ((DEBUG_INFO, "FSP-S Verification Start ...\n"));
@@ -431,15 +451,19 @@ VerifyAndLogEventFsps (
     return EFI_INVALID_PARAMETER;
   }
 
+  HashCtx = (VOID *) Buffer;
   //
   // Retrieve FBM data from HOB
   //
-  Status = GetFbmDataFromHob (&FspsDigest, &SegmentCount, &Segments, &CmosOffset);
+  Status = GetFbmDataFromHob (&FbmHob);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  HashCtx = (VOID *) Buffer;
+  FspsDigest   = &FbmHob->FspDigestSha384;
+  SegmentCount = FbmHob->SegmentCount;
+  Segments     = &FbmHob->Segments[0];
+  CmosOffset   = FbmHob->CmosOffset;
 
   DEBUG ((DEBUG_INFO, "Using FSP-S digest\n"));
   DEBUG ((DEBUG_INFO, "FSP-S SegmentCount: %d\n", SegmentCount));
@@ -525,12 +549,9 @@ VerifyBsp (
   Retrieve FBM data from HOB.
   
   This function locates the FSP-S verification data HOB created earlier
-  and returns pointers to the digest and region segments.
+  and returns a pointer to the FBM data HOB structure.
   
-  @param[out] FspsDigest    Pointer to receive FSP-S SHA384 digest pointer
-  @param[out] SegmentCount  Pointer to receive segment count
-  @param[out] Segments      Pointer to receive segments array pointer
-  @param[out] CmosOffset    Pointer to receive CMOS offset
+  @param[out] FbmHob    Pointer to receive FBM data HOB pointer
 
   @retval EFI_SUCCESS      Data retrieved successfully from HOB
   @retval EFI_NOT_FOUND    FSP-S verification data HOB not found
@@ -539,35 +560,22 @@ VerifyBsp (
 EFI_STATUS
 EFIAPI
 GetFbmDataFromHob (
-  OUT SHA384_HASH_STRUCTURE  **FspsDigest,
-  OUT UINTN                  *SegmentCount,
-  OUT REGION_SEGMENT         **Segments,
-  OUT UINT8                  *CmosOffset
+  OUT FBM_DATA_HOB **FbmHob
   )
 {
   EFI_PEI_HOB_POINTERS  Hob;
-  FBM_DATA_HOB          *HobData;
   
   //
   // Locate FSP-S verification data HOB
   //
   Hob.Raw = GetFirstGuidHob (&gFbmDataHobGuid);
-  
+
   if (Hob.Raw == NULL) {
     DEBUG ((DEBUG_ERROR, "FSP-S verification data HOB not found!\n"));
     DEBUG ((DEBUG_ERROR, "FSP Signing is not supported!\n"));
     return EFI_NOT_FOUND;
   }
-  
-  HobData = GET_GUID_HOB_DATA (Hob);
-  
-  //
-  // Return pointers to data within HOB
-  //
-  *FspsDigest = &HobData->FspDigestSha384;
-  *SegmentCount = HobData->SegmentCount;
-  *Segments = &HobData->Segments[0];
-  *CmosOffset = HobData->CmosOffset;
 
+  *FbmHob = GET_GUID_HOB_DATA (Hob);
   return EFI_SUCCESS;
 }

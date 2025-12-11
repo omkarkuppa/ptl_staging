@@ -25,6 +25,7 @@
 #include <Uefi.h>
 #include <BspmDef.h>
 #include <FbmDef.h>
+#include <FbmDataHob.h>
 
 #define MSR_BOOT_GUARD_SACM_INFO             0x0000013A
 #define B_BOOT_GUARD_SACM_INFO_TPM_SUCCESS   BIT3
@@ -77,13 +78,15 @@ DetectBootGuardProfile (
 /**
   Check if FSP signing is supported.
 
+  @param[in]   Fbm    FSP Boot Manifest which keeps FSP-M digest and IBB information.
+
   @retval TRUE   Signing is supported.
   @retval FALSE  Signing is not supported.
 
 **/
 UINT8
 IsSigningSupported (
-  VOID
+  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm
   );
 
 /**
@@ -141,6 +144,7 @@ VerifyAndExtendFspm (
   FSP-S image base in memory.
 
   @param[in]   FspsImageBase      FSP-S image base in memory.
+  @param[in]   Fbm                FSP Boot Manifest which keeps FSP-M digest and IBB information.
   @param[in]   Buffer             Memory buffer for hash verification.
 
   @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
@@ -153,6 +157,7 @@ EFI_STATUS
 EFIAPI
 VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
+  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   );
 
@@ -195,13 +200,10 @@ VerifyCrtmStatusAndDisableTxtCmos (
 /**
   Retrieve FBM data from HOB.
   
-  This function locates the FBM data HOB created earlier
-  and returns pointers to the digest and region segments.
+  This function locates the FSP-S verification data HOB created earlier
+  and returns a pointer to the FBM data HOB structure.
   
-  @param[out] FspsDigest    Pointer to receive FSP-S SHA384 digest pointer
-  @param[out] SegmentCount  Pointer to receive segment count
-  @param[out] Segments      Pointer to receive segments array pointer
-  @param[out] CmosOffset    Pointer to receive CMOS offset
+  @param[out] FbmHob    Pointer to receive FBM data HOB pointer
 
   @retval EFI_SUCCESS      Data retrieved successfully from HOB
   @retval EFI_NOT_FOUND    FSP-S verification data HOB not found
@@ -210,10 +212,7 @@ VerifyCrtmStatusAndDisableTxtCmos (
 EFI_STATUS
 EFIAPI
 GetFbmDataFromHob (
-  OUT SHA384_HASH_STRUCTURE  **FspsDigest,
-  OUT UINTN                  *SegmentCount,
-  OUT REGION_SEGMENT         **Segments,
-  OUT UINT8                  *CmosOffset
+  OUT FBM_DATA_HOB **FbmHob
   );
 
 //
@@ -238,6 +237,7 @@ typedef
 EFI_STATUS
 (EFIAPI *VERIFY_FSPS_API_WRAPPER) (
   IN UINTN                          FspsImageBase,
+  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   );
 

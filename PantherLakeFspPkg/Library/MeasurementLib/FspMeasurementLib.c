@@ -1212,13 +1212,13 @@ VerifiedComponentSaveHashEvent (
 
   Fbm = LocateFbm ();
   if (Fbm == NULL) {
-    return EFI_INVALID_PARAMETER;
+    return EFI_NOT_FOUND;
   }
 
   //
   // Check if signing is supported
   //
-  if (!(IsSigningSupported ())) {
+  if (!(IsSigningSupported (Fbm))) {
     return EFI_UNSUPPORTED;
   }
 
