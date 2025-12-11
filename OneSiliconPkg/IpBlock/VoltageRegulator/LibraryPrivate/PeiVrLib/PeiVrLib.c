@@ -119,6 +119,7 @@ SetVrCommon (
   EFI_HOB_GUID_TYPE                 *GuidHob;
   CPU_PM_DATA                       *CpuPmData;
   MAILBOX_DATA_FORMAT_HYSTERESIS    HysteresisWindowData;
+  MAILBOX_DATA_VCCSA_SHUTDOWN_CONFIG VccsaShutdownMailboxData;
 
   SiPreMemPolicyPpi = NULL;
   GuidHob           = NULL;
@@ -330,6 +331,24 @@ SetVrCommon (
       if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
         DEBUG ((DEBUG_ERROR, "Error Writing Hysteresis Window. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
       }
+    }
+  }
+
+  ///
+  /// Programming VCCSA_Shutdown.
+  ///
+  if (CpuPowerMgmtVrConfig->VccsaShutdown != 0) {
+    VccsaShutdownMailboxData.Data32 = 0;
+    MailboxCommand.InterfaceData  = 0;
+    MailboxCommand.Fields.Command = MAILBOX_VR_CMD_PROJECT_SPECIFIC;
+    MailboxCommand.Fields.Param1 = WRITE_VCCSA_SHUTDOWN_ENABLE;
+    MailboxCommand.Fields.Param2 = 0;
+    VccsaShutdownMailboxData.Fields.VccsaShutdownEnable = CpuPowerMgmtVrConfig->VccsaShutdown;
+    DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = WRITE_VCCSA_SHUTDOWN_ENABLE\n"));
+    DEBUG ((DEBUG_INFO, "(MAILBOX) VccsaShutdown Mailboxdata = %d ms\n", VccsaShutdownMailboxData.Fields.VccsaShutdownEnable));
+    Status = MailboxWrite (MailboxCommand.InterfaceData, VccsaShutdownMailboxData.Data32, &MailboxStatus);
+    if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+      DEBUG ((DEBUG_ERROR, "Error Writing VccsaShutdown Mailbox. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
     }
   }
 

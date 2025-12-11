@@ -1172,6 +1172,11 @@ UpdatePeiCpuPolicyPreMem (
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcoreHysteresisWindow, CpuPowerMgmtVrConfig->PcoreHysteresisWindow, CpuSetup.PcoreHysteresisWindow );
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EcoreHysteresisWindow, CpuPowerMgmtVrConfig->EcoreHysteresisWindow, CpuSetup.EcoreHysteresisWindow );
 
+  //
+  // Vccsa Shutdown
+  //
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VccsaShutdown, CpuPowerMgmtVrConfig->VccsaShutdown, CpuSetup.VccsaShutdown );
+
   ///
   /// Update VrPowerDeliveryDesign when cTDP up selected
   ///

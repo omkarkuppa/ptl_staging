@@ -101,6 +101,9 @@
 #string STR_VR_CEP_ENABLE                       #language en-US "CEP Enable"
 #string STR_VR_CEP_ENABLE_HELP                  #language en-US "Enable/Disable CEP (Current Excursion Protection) Support."
 
+#string STR_VCCSA_SHUTDOWN_ENABLE               #language en-US "VCCSA Shutdown"
+#string STR_VCCSA_SHUTDOWN_ENABLE_HELP          #language en-US "Enable/Disable VCCSA Shutdown."
+
 #string STR_2227_2MHZ                             #language en-US "2227.2MHz"
 #string STR_2140MHZ                             #language en-US "2140MHz"
 

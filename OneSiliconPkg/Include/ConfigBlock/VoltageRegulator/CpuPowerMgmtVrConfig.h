@@ -36,9 +36,11 @@ extern EFI_GUID gCpuPowerMgmtVrConfigGuid;
 
   <b>Revision 1</b>:
   - Initial version.
+  <b>Revision 2</b>:
+  - Added VccsaShutdown.
 **/
 
-#define CPU_POWER_MGMT_VR_CONFIG_REVISION 1
+#define CPU_POWER_MGMT_VR_CONFIG_REVISION 2
 
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;                   ///< Config Block Header
@@ -87,7 +89,7 @@ typedef struct {
   UINT8  DlvrRfiEnable;                           ///< PCODE MMIO Mailbox: Enable/Disable RFI frequency hopping. 0: Disable; <b>1: Enable.</b>
   UINT8  PcoreHysteresisWindow;                   ///< PCODE MMIO Mailbox: Pcore VR Hysteresis time window. This can be programmed only if AcousticNoiseMitigation is enabled.<b>Default Value = 0 </b> Range is 0-50ms.
   UINT8  EcoreHysteresisWindow;                   ///< PCODE MMIO Mailbox: Ecore VR Hysteresis time window. This can be programmed only if AcousticNoiseMitigation is enabled.<b>Default Value = 0 </b> Range is 0-50ms.
-  UINT8  RsvdBytes91[1];                          ///< Reserved.
+  UINT8  VccsaShutdown ;                          ///< If Enable, Pcode will switch to VccSA Shutdown on PKGC3.
   UINT16 DlvrRfiFrequency;                        ///< PCODE MMIO Mailbox: DLVR clock frequency in MHz.
   UINT8  PS1toPS0DynamicCutoffEnable[MAX_NUM_VRS];///< Enable/Disable PS1 to PS0 Dynamic Cutoff; <b>0: Disable</b>; 1: Enable.
   UINT8  PS2toPS1DynamicCutoffEnable[MAX_NUM_VRS];///< Enable/Disable:PS2 to PS1 Dynamic Cutoff; <b>0: Disable</b>; 1: Enable.

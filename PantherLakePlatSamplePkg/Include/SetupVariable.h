@@ -828,8 +828,9 @@ typedef struct {
  will need to maintain backward compatibility, bump up
  structure revision and update below history table\n
   <b>Revision 1</b>:  - Initial version.
+  <b>Revision 2</b>:  - Added VccsaShutdown.
 **/
-#define CPU_SETUP_REVISION  1
+#define CPU_SETUP_REVISION  2
 
 typedef struct {
   UINT8   Revision;
@@ -1136,6 +1137,7 @@ typedef struct {
   UINT8   SkinTempControl;
   UINT8   TdxEnable;
   UINT8   ReduceXecores;
+  UINT8   VccsaShutdown;
 } CPU_SETUP;
 
 #define CPU_SETUP_VOLATILE_DATA_REVISION       2

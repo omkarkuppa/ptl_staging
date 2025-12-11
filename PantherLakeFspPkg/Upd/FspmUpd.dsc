@@ -2920,8 +2920,10 @@
   # !BSF NAME:{Ecore VR Hysteresis time window} TYPE:{EditNum, HEX, (0x00,0x32)}
   # !BSF HELP:{0 is default. Range of EcoreHysteresisWindow from 1ms to 50ms.}
   gPlatformFspPkgTokenSpaceGuid.EcoreHysteresisWindow               | * | 0x1| 0x00
-  # Added reserved space  UnusedUpdSpace30
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd30                 | * | 0x1 | 0x00
+
+  # !BSF NAME:{VCCSA Shutdown} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable VCCSA Shutdown hopping. 0: Disable; <b>1: Enable</b>.}
+  gPlatformFspPkgTokenSpaceGuid.VccsaShutdown                 | * | 0x1 | 0x00
 
   # !BSF NAME:{DLVR RFI Frequency}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFF)}
