@@ -38,7 +38,7 @@ extern EFI_GUID gCpuPowerMgmtVrConfigGuid;
   - Initial version.
 **/
 
-#define CPU_POWER_MGMT_VR_CONFIG_REVISION 3
+#define CPU_POWER_MGMT_VR_CONFIG_REVISION 1
 
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;                   ///< Config Block Header
