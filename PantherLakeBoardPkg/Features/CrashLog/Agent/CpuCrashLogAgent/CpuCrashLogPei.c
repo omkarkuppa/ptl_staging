@@ -385,7 +385,7 @@ CpuCrashLogPeimEntry (
         CrashlogHob->RecordCount = RecordCount;
         CrashlogHob->CrashlogAgent = CrashlogAgentCpu;
       }
-    } else if (BootMode == BOOT_ON_S4_RESUME) {
+    } else {
       VariableSize = sizeof (CRASHLOG_RECORD_PAGES);
       Status = VariableServices->GetVariable (
                                    VariableServices,
@@ -409,8 +409,6 @@ CpuCrashLogPeimEntry (
         }
         CpuCrashEfiPageCount = CrashRecordEfiPagesVariable.CpuCrashEfiPageCount;
       }
-    } else {
-      CpuCrashEfiPageCount = 0;
     }
   }
 
