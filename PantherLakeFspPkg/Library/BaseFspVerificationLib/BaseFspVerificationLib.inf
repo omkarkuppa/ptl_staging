@@ -54,6 +54,10 @@
   FspVerificationLib
   FspMeasurementLib
   IoLib
+  HobLib
+
+[Guids]
+  gFbmDataHobGuid                                          ## CONSUMES
 
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase           ## CONSUMES

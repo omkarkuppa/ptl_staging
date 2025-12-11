@@ -293,6 +293,7 @@ FspExtendFspm (
   Extend FSP-S digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
+  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
   @retval EFI_SUCCESS       Operation completed successfully.
@@ -303,6 +304,7 @@ EFI_STATUS
 EFIAPI
 FspExtendFsps (
   IN  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN  BSPM_ELEMENT                   *Bspm,
   IN  UINT32                         TpmActivePcrBanks
   );
 

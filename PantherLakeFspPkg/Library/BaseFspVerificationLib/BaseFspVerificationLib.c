@@ -29,9 +29,11 @@
 #include <Library/FspVerificationLib.h>
 #include <Library/FspMeasurementLib.h>
 #include <Library/FspFbmSupportLib.h>
+#include <Library/HobLib.h>
 #include <Pi/PiFirmwareVolume.h>
 #include <Library/IoLib.h>
 #include <Txt.h>
+#include <FbmDataHob.h>
 
 /**
   DisableTxtCmos to clear the TXT enable bit in CMOS
@@ -42,13 +44,10 @@
 VOID
 EFIAPI
 DisableTxtCmos (
-  IN BSPM_ELEMENT *Bspm
+  IN UINT8 CmosTxtOffset
   )
 {
   UINT8   CmosStatus;
-  UINT8   CmosTxtOffset;
-
-  CmosTxtOffset = Bspm->CmosOffset;
 
   DEBUG ((DEBUG_INFO, "CmosTxtOffset=0x%x\n", CmosTxtOffset));
 
@@ -123,13 +122,13 @@ DetectBootGuardProfile (
   Verify CRTM Status and disable Txt Cmos
   Disable TXT when verification fail in BTG 0T/3T.
 
-  @param[in]   Bspm  BSPM element containing the CMOS offset.
+  @param[in]   CmosOffset  CMOS offset from BSPM.
 
 **/
 VOID
 EFIAPI
 VerifyCrtmStatusAndDisableTxtCmos (
-  IN BSPM_ELEMENT     *Bspm
+  IN UINT8     CmosOffset
   )
 {
   UINT64            AcmPolicyStatus;
@@ -139,7 +138,7 @@ VerifyCrtmStatusAndDisableTxtCmos (
   BootGuardProfile = DetectBootGuardProfile ();
 
   if ((BootGuardProfile < BOOT_GUARD_PROFILE_4) && (AcmPolicyStatus & (B_SCRTM_STATUS))) {
-      DisableTxtCmos (Bspm);
+      DisableTxtCmos (CmosOffset);
       DEBUG ((DEBUG_INFO, "TXT disabled due to verification failure in BTG 0T/3T\n"));
   } else {
     CpuDeadLoop ();
@@ -149,15 +148,13 @@ VerifyCrtmStatusAndDisableTxtCmos (
 /**
   Check if FSP signing is supported.
 
-  @param[in]   Fbm   FSP Boot Manifest which keeps FSP-M digest and IBB information.
-
   @retval TRUE   Signing is supported.
   @retval FALSE  Signing is not supported.
 
 **/
 UINT8
 IsSigningSupported (
-  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm
+  VOID
   )
 {
   UINT64         AcmPolicyStatus;
@@ -175,7 +172,7 @@ IsSigningSupported (
   AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
   BootGuardProfile = DetectBootGuardProfile ();
 
-  if ((Fbm != NULL) && (AcmPolicyStatus & B_FBM_VALID_STATUS)) {
+  if (AcmPolicyStatus & B_FBM_VALID_STATUS) {
     if ((BootGuardProfile >= BOOT_GUARD_PROFILE_4) ||
         ((BootGuardProfile < BOOT_GUARD_PROFILE_4) && (AcmPolicyStatus & (B_SCRTM_STATUS)))) {
       return TRUE;
@@ -398,18 +395,18 @@ VerifyAndExtendFspm (
 }
 
 /**
-  Verify FSP-S with the information in FBM.
-  FSP-S digest information is kept in FBM, FSP will only verify the SHA384 digest.
-  FSP-S IBB region information is kept in FBM, only hashed IBB (indicate by flag, follow the same way
-  to describe region should be calculated in digest or not) should be taken into digest calculation.
-  FSP-S IBB region in FBM are relative offset since FSP-S will be executed in memory. OEM should provide
+  Verify FSP-S with the information from FBM Data HOB.
+  FSP-S digest information is retrieved from FBM Data HOB and will only verify the SHA384 digest.
+  FSP-S IBB region information is retrieved from HOB, only hashed IBB (indicated by flag, following the same way
+  to describe which regions should be calculated in digest or not) should be taken into digest calculation.
+  FSP-S IBB region segments in HOB are relative offsets since FSP-S will be executed in memory. OEM should provide
   FSP-S image base in memory.
 
   @param[in]   FspsImageBase      FSP-S image base in memory.
-  @param[in]   Fbm                FSP Boot Manifest which keeps FSP-S digest and IBB information.
   @param[in]   Buffer             Memory buffer for hash verification.
 
   @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_NOT_FOUND           FBM data HOB not found.
   @retval EFI_ACCESS_DENIED       Verification Fail.
   @retval EFI_SUCCESS             Verification Pass.
 
@@ -418,58 +415,43 @@ EFI_STATUS
 EFIAPI
 VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
-  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   )
 {
-  FSP_REGION_DIGEST       *FspDigest;
-  FSP_REGION_STRUCTURE    *FspRegion;
-  UINT8                   Index;
   VOID                    *HashCtx;
-  BSPM_ELEMENT            *Bspm;
+  UINT8                   CmosOffset;
+  SHA384_HASH_STRUCTURE   *FspsDigest;
+  UINTN                   SegmentCount;
+  REGION_SEGMENT          *Segments;
+  EFI_STATUS              Status;
 
   DEBUG ((DEBUG_INFO, "FSP-S Verification Start ...\n"));
-  Bspm = LocateBspm ();
 
-  if (Fbm == NULL || Buffer == NULL || Bspm == NULL) {
+  if (Buffer == NULL) {
     return EFI_INVALID_PARAMETER;
+  }
+
+  //
+  // Retrieve FBM data from HOB
+  //
+  Status = GetFbmDataFromHob (&FspsDigest, &SegmentCount, &Segments, &CmosOffset);
+  if (EFI_ERROR (Status)) {
+    return Status;
   }
 
   HashCtx = (VOID *) Buffer;
 
-  FspDigest  = COMPONENT_DIGEST0_PTR (Fbm);
-  FspDigest += FSP_REGION_TYPE_FSPS;    ///Skip Digest for FSP-O/T and FSP-M
+  DEBUG ((DEBUG_INFO, "Using FSP-S digest\n"));
+  DEBUG ((DEBUG_INFO, "FSP-S SegmentCount: %d\n", SegmentCount));
 
-  if (FspDigest->ComponentID != FSP_REGION_TYPE_FSPS) {
-    return EFI_INVALID_PARAMETER;
-  }
-  DEBUG ((DEBUG_INFO, "FSP-S Digest is Found!\n"));
-
-  FspRegion  = FSP_REGION0_PTR (Fbm);
-
-  for (Index = 0; Index < FSP_REGION_TYPE_FSPS; Index++) {
-    //
-    // Skip FSP region for FSP-O/T and FSP-M
-    //
-    FspRegion = (FSP_REGION_STRUCTURE *) ((UINT8 *) FspRegion + sizeof (FSP_REGION_STRUCTURE) +
-                FspRegion->SegmentCnt * sizeof (REGION_SEGMENT));
-  }
-
-  if ((FspRegion->ComponentID != FSP_REGION_TYPE_FSPS) ||
-       FspDigest->ComponentDigests.Sha384Digest.Size == 0) {
-    return EFI_INVALID_PARAMETER;
-  }
-  DEBUG ((DEBUG_INFO, "FSP-S Region is Found!\n"));
-
-  if (Sha384Verify (HashCtx, &FspDigest->ComponentDigests.Sha384Digest,
-    FspsImageBase, FspRegion->SegmentCnt, IBB_SEGMENTS_PTR (FspRegion)) == TRUE)
+  if (Sha384Verify (HashCtx, FspsDigest, FspsImageBase, SegmentCount, Segments) == TRUE)
   {
     DEBUG ((DEBUG_INFO, "FSP-S Verification Pass!\n"));
     return EFI_SUCCESS;
   }
 
   DEBUG ((DEBUG_ERROR, "FSP-S Verification Fail!\n"));
-  VerifyCrtmStatusAndDisableTxtCmos (Bspm);
+  VerifyCrtmStatusAndDisableTxtCmos (CmosOffset);
 
   return EFI_ACCESS_DENIED;
 }
@@ -537,4 +519,55 @@ VerifyBsp (
 
   DEBUG ((DEBUG_INFO, "BSP Verification Fail!\n"));
   return EFI_ACCESS_DENIED;
+}
+
+/**
+  Retrieve FBM data from HOB.
+  
+  This function locates the FSP-S verification data HOB created earlier
+  and returns pointers to the digest and region segments.
+  
+  @param[out] FspsDigest    Pointer to receive FSP-S SHA384 digest pointer
+  @param[out] SegmentCount  Pointer to receive segment count
+  @param[out] Segments      Pointer to receive segments array pointer
+  @param[out] CmosOffset    Pointer to receive CMOS offset
+
+  @retval EFI_SUCCESS      Data retrieved successfully from HOB
+  @retval EFI_NOT_FOUND    FSP-S verification data HOB not found
+
+**/
+EFI_STATUS
+EFIAPI
+GetFbmDataFromHob (
+  OUT SHA384_HASH_STRUCTURE  **FspsDigest,
+  OUT UINTN                  *SegmentCount,
+  OUT REGION_SEGMENT         **Segments,
+  OUT UINT8                  *CmosOffset
+  )
+{
+  EFI_PEI_HOB_POINTERS  Hob;
+  FBM_DATA_HOB          *HobData;
+  
+  //
+  // Locate FSP-S verification data HOB
+  //
+  Hob.Raw = GetFirstGuidHob (&gFbmDataHobGuid);
+  
+  if (Hob.Raw == NULL) {
+    DEBUG ((DEBUG_ERROR, "FSP-S verification data HOB not found!\n"));
+    DEBUG ((DEBUG_ERROR, "FSP Signing is not supported!\n"));
+    return EFI_NOT_FOUND;
+  }
+  
+  HobData = GET_GUID_HOB_DATA (Hob);
+  
+  //
+  // Return pointers to data within HOB
+  //
+  *FspsDigest = &HobData->FspDigestSha384;
+  *SegmentCount = HobData->SegmentCount;
+  *Segments = &HobData->Segments[0];
+  *CmosOffset = HobData->CmosOffset;
+
+  return EFI_SUCCESS;
 }

@@ -40,7 +40,7 @@ typedef struct _FSP_LOADER_PPI FSP_LOADER_PPI;
 
   @param[in] FspsImageBase        FSP-S image base.
 
-  @retval EFI_UNSUPPORTED         FBM is not found or valid.
+  @retval EFI_NOT_FOUND           FBM data HOB not found.
   @retval EFI_ACCESS_DENIED       Verification Fail.
   @retval EFI_SUCCESS             Verification Pass.
 

@@ -94,7 +94,7 @@ LoadFspm (
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "FSP-M verification fails...\n"));
-    VerifyCrtmStatusAndDisableTxtCmos (Bspm);
+    VerifyCrtmStatusAndDisableTxtCmos (Bspm->CmosOffset);
     return EFI_UNSUPPORTED;
   } else {
     DEBUG ((DEBUG_INFO, "FSP-M verification pass...\n"));
@@ -143,7 +143,7 @@ LoadBspPreMem (
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "BSP verification fails...\n"));
-    VerifyCrtmStatusAndDisableTxtCmos (Bspm);
+    VerifyCrtmStatusAndDisableTxtCmos (Bspm->CmosOffset);
     return EFI_UNSUPPORTED;
   } else  {
     DEBUG ((DEBUG_INFO, "BSP verification pass...\n"));
@@ -356,6 +356,9 @@ FspLoadComponents (
   }
 
   Fbm = LocateFbm ();
+  if (Fbm == NULL) {
+    return ;
+  }
 
   //
   // Check if signing is supported

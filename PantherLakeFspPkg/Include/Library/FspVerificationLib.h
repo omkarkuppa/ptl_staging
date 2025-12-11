@@ -77,15 +77,13 @@ DetectBootGuardProfile (
 /**
   Check if FSP signing is supported.
 
-  @param[in]   Fbm    FSP Boot Manifest which keeps FSP-M digest and IBB information.
-
   @retval TRUE   Signing is supported.
   @retval FALSE  Signing is not supported.
 
 **/
 UINT8
 IsSigningSupported (
-  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm
+  VOID
   );
 
 /**
@@ -135,18 +133,18 @@ VerifyAndExtendFspm (
   );
 
 /**
-  Verify FSP-S with the information in FBM.
-  FSP-S digest information is kept in FBM, FSP will only verify the SHA384 digest.
-  FSP-S IBB region information is kept in FBM, only hashed IBB (indicate by flag, follow the same way
-  to describe region should be calculated in digest or not) should be taken into digest calculation.
-  FSP-S IBB region in FBM are relative offset since FSP-S will be executed in memory. OEM should provide
+  Verify FSP-S with the information from FBM Data HOB.
+  FSP-S digest information is retrieved from FBM Data HOB and will only verify the SHA384 digest.
+  FSP-S IBB region information is retrieved from HOB, only hashed IBB (indicated by flag, following the same way
+  to describe which regions should be calculated in digest or not) should be taken into digest calculation.
+  FSP-S IBB region segments in HOB are relative offsets since FSP-S will be executed in memory. OEM should provide
   FSP-S image base in memory.
 
   @param[in]   FspsImageBase      FSP-S image base in memory.
-  @param[in]   Fbm                FSP Boot Manifest which keeps FSP-S digest and IBB information.
   @param[in]   Buffer             Memory buffer for hash verification.
 
   @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_NOT_FOUND           FBM data HOB not found.
   @retval EFI_ACCESS_DENIED       Verification Fail.
   @retval EFI_SUCCESS             Verification Pass.
 
@@ -155,7 +153,6 @@ EFI_STATUS
 EFIAPI
 VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
-  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   );
 
@@ -186,13 +183,37 @@ VerifyBsp (
   Verify CRTM Status and disable Txt Cmos
   Disable TXT when verification fail in BTG 0T/3T.
 
-  @param[in]   Bspm  BSPM element containing the CMOS offset.
+  @param[in]   CmosOffset  CMOS offset from BSPM.
 
 **/
 VOID
 EFIAPI
 VerifyCrtmStatusAndDisableTxtCmos (
-  IN BSPM_ELEMENT     *Bspm
+  IN UINT8     CmosOffset
+  );
+
+/**
+  Retrieve FBM data from HOB.
+  
+  This function locates the FBM data HOB created earlier
+  and returns pointers to the digest and region segments.
+  
+  @param[out] FspsDigest    Pointer to receive FSP-S SHA384 digest pointer
+  @param[out] SegmentCount  Pointer to receive segment count
+  @param[out] Segments      Pointer to receive segments array pointer
+  @param[out] CmosOffset    Pointer to receive CMOS offset
+
+  @retval EFI_SUCCESS      Data retrieved successfully from HOB
+  @retval EFI_NOT_FOUND    FSP-S verification data HOB not found
+
+**/
+EFI_STATUS
+EFIAPI
+GetFbmDataFromHob (
+  OUT SHA384_HASH_STRUCTURE  **FspsDigest,
+  OUT UINTN                  *SegmentCount,
+  OUT REGION_SEGMENT         **Segments,
+  OUT UINT8                  *CmosOffset
   );
 
 //
@@ -217,7 +238,6 @@ typedef
 EFI_STATUS
 (EFIAPI *VERIFY_FSPS_API_WRAPPER) (
   IN UINTN                          FspsImageBase,
-  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   );
 

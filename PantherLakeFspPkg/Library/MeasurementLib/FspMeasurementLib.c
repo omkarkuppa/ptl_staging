@@ -31,6 +31,7 @@
 #include <Library/FspVerificationLib.h>
 #include <Library/IoLib.h>
 #include <Register/PmcRegs.h>
+#include <FbmDataHob.h>
 
 STATIC TPMI_ALG_HASH SortedAlgIds[] = {
   TPM_ALG_SHA1,
@@ -736,32 +737,146 @@ FspExtendFspm (
 }
 
 /**
+  Create HOB with FSP-S verification data from FBM.
+  This prevents TOCTOU vulnerability by capturing FBM data early.
+
+  @param[in]   FspDigest           Pointer to FSP-S digest structure from FBM
+  @param[in]   FspRegion           Pointer to FSP-S region structure from FBM
+  @param[in]   Bspm                Base address of Bspm
+
+  @retval EFI_SUCCESS           HOB created successfully
+  @retval EFI_OUT_OF_RESOURCES  Failed to allocate HOB
+
+**/
+EFI_STATUS
+EFIAPI
+LoadFbmDataToHob (
+  IN  FSP_REGION_DIGEST     *FspDigest,
+  IN  FSP_REGION_STRUCTURE  *FspRegion,
+  IN  BSPM_ELEMENT          *Bspm
+  )
+{
+  FBM_DATA_HOB            *HobData;
+  UINTN                   HobSize;
+
+  //
+  // Calculate HOB size and create HOB
+  // Size = base structure + additional segments (first segment already in structure)
+  //
+  HobSize = sizeof (SHA384_HASH_STRUCTURE) + sizeof (FspRegion->SegmentCnt) + 
+            FspRegion->SegmentCnt * sizeof (REGION_SEGMENT) + sizeof (Bspm->CmosOffset);
+
+  HobData = (FBM_DATA_HOB *) BuildGuidHob (
+              &gFbmDataHobGuid,
+              HobSize
+              );
+
+  if (HobData == NULL) {
+    DEBUG ((DEBUG_ERROR, "Failed to create FBM data HOB!\n"));
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  CopyMem (
+    &HobData->FspDigestSha384,
+    &FspDigest->ComponentDigests.Sha384Digest,
+    sizeof (SHA384_HASH_STRUCTURE)
+    );
+
+  HobData->SegmentCount = FspRegion->SegmentCnt;
+
+  HobData->CmosOffset = Bspm->CmosOffset;
+
+  CopyMem (
+        &HobData->Segments[0],
+        IBB_SEGMENTS_PTR (FspRegion),
+        FspRegion->SegmentCnt * sizeof (REGION_SEGMENT)
+        );
+
+  return EFI_SUCCESS;
+}
+
+/**
   Extend FSP-S digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
+  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
-  @retval EFI_SUCCESS       Operation completed successfully.
-  @retval EFI_DEVICE_ERROR  Unexpected device behavior.
+  @retval EFI_SUCCESS           Operation completed successfully.
+  @retval EFI_NOT_FOUND         FSP-S digest or region not found in FBM.
+  @retval EFI_OUT_OF_RESOURCES  Failed to allocate HOB for FBM data.
+  @retval EFI_DEVICE_ERROR      Unexpected device behavior
 
 **/
 EFI_STATUS
 EFIAPI
 FspExtendFsps (
   IN  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN  BSPM_ELEMENT                   *Bspm,
   IN  UINT32                         TpmActivePcrBanks
   )
 {
-  TPML_DIGEST_VALUES  TpmDigestValues;
-  EFI_STATUS          Status;
+  TPML_DIGEST_VALUES    TpmDigestValues;
+  EFI_STATUS            Status;
+  FSP_REGION_DIGEST     *FspDigest;
+  FSP_REGION_STRUCTURE  *FspRegion;
+  UINT8                 Index;
 
+  //
+  // First, extract all digests from FBM (including SHA384)
+  //
   ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
   Status = FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
   DEBUG ((DEBUG_INFO, "FspRegionGetDigestList  Status: %r\n", Status));
-  if (!EFI_ERROR (Status)) {
-    Status = Tpm2PcrExtend (0, &TpmDigestValues);
-    DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-S digests have been extended!)\n", Status, TpmDigestValues.count));
+  
+  if (EFI_ERROR (Status)) {
+    return Status;
   }
+
+  //
+  // Get FspDigest pointer from extracted digests
+  //
+  FspDigest = COMPONENT_DIGEST0_PTR (Fbm);
+  FspDigest += FSP_REGION_TYPE_FSPS;  // Skip FSP-O/T and FSP-M
+  
+  if (FspDigest->ComponentID != FSP_REGION_TYPE_FSPS) {
+    DEBUG ((DEBUG_ERROR, "FSP-S digest not found in FBM! ComponentID=0x%x\n", FspDigest->ComponentID));
+    return EFI_NOT_FOUND;
+  }
+
+  //
+  // Navigate to FSP-S region structure
+  //
+  FspRegion = FSP_REGION0_PTR (Fbm);
+
+  for (Index = 0; Index < FSP_REGION_TYPE_FSPS; Index++) {
+    //
+    // Skip FSP region for FSP-O/T and FSP-M
+    //
+    FspRegion = (FSP_REGION_STRUCTURE *) ((UINT8 *) FspRegion + sizeof (FSP_REGION_STRUCTURE) +
+                FspRegion->SegmentCnt * sizeof (REGION_SEGMENT));
+  }
+  
+  if (FspRegion->ComponentID != FSP_REGION_TYPE_FSPS) {
+    DEBUG ((DEBUG_ERROR, "FSP-S region not found in FBM! ComponentID=0x%x\n", FspRegion->ComponentID));
+    return EFI_NOT_FOUND;
+  }
+
+  //
+  // Create HOB with FBM data to prevent TOCTOU vulnerability
+  //
+  Status = LoadFbmDataToHob (FspDigest, FspRegion, Bspm);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to create FBM data HOB! Status: %r\n", Status));
+    return Status;
+  }
+
+  //
+  // Extend FSP-S digests to TPM PCR
+  //
+  Status = Tpm2PcrExtend (0, &TpmDigestValues);
+  DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-S digests have been extended!)\n", Status, TpmDigestValues.count));
+
   return Status;
 }
 
@@ -1096,11 +1211,14 @@ VerifiedComponentSaveHashEvent (
   }
 
   Fbm = LocateFbm ();
+  if (Fbm == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Check if signing is supported
   //
-  if (!(IsSigningSupported (Fbm))) {
+  if (!(IsSigningSupported ())) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1181,7 +1299,7 @@ VerifiedComponentSaveHashEvent (
   // if verification fails.
   //
   if (!EFI_ERROR (Status)) {
-    Status = FspExtendFsps (Fbm, TpmActivePcrBanks);
+    Status = FspExtendFsps (Fbm, Bspm, TpmActivePcrBanks);
     if (Status == EFI_SUCCESS) {
       DEBUG ((DEBUG_INFO, "FSP-S extended to PCR Bank %d\n", TpmActivePcrBanks));
       Status = SaveHashEvent (&TpmDigestValues,
