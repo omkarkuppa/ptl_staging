@@ -126,7 +126,7 @@
 # TBT
 #
 !if gSiPkgTokenSpaceGuid.PcdTcssSupport == TRUE
-  $(PLATFORM_SI_PACKAGE)/IpBlock/Tbt/ITbtInit/Dxe/ITbtDxe.inf
+    $(PLATFORM_SI_PACKAGE)/IpBlock/Tbt/ITbtInit/Dxe/ITbtDxe.inf
 !endif
 
 !if gSiPkgTokenSpaceGuid.PcdAcpiEnable == TRUE

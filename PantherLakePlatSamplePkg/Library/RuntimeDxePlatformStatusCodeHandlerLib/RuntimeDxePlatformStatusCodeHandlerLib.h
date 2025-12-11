@@ -3,7 +3,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2010 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -32,6 +32,7 @@
 #include <Library/HobLib.h>
 #include <Library/Usb3DebugPortLib.h>
 #include <Library/SerialPortParameterLib.h>
+#include <Library/SerialIoUartDebugHelperLib.h>
 
 /**
   Convert status code value and extended data to readable ASCII string, send string to Usb3 device.
@@ -82,6 +83,32 @@ VOID
 EFIAPI
 UnregisterSerialIoUartBootTimeHandler (
   VOID
+  );
+
+/**
+  Convert status code value and extended data to readable ASCII string, send string to SerialIoUart device.
+  @param  CodeType         Indicates the type of status code being reported.
+  @param  Value            Describes the current status of a hardware or software entity.
+                           This included information about the class and subclass that is used to
+                           classify the entity as well as an operation.
+  @param  Instance         The enumeration of a hardware or software entity within
+                           the system. Valid instance numbers start with 1.
+  @param  CallerId         This optional parameter may be used to identify the caller.
+                           This parameter allows the status code driver to apply different rules to
+                           different callers.
+  @param  Data             This optional parameter may be used to pass additional data.
+  @retval EFI_SUCCESS      Status code reported to SerialIoUart successfully.
+  @retval EFI_DEVICE_ERROR SerialIoUart device cannot work after ExitBootService() is called.
+  @retval EFI_DEVICE_ERROR SerialIoUart device cannot work with TPL higher than TPL_CALLBACK.
+**/
+EFI_STATUS
+EFIAPI
+SerialIoUartStatusCodeReportWorker (
+  IN EFI_STATUS_CODE_TYPE     CodeType,
+  IN EFI_STATUS_CODE_VALUE    Value,
+  IN UINT32                   Instance,
+  IN EFI_GUID                 *CallerId,
+  IN EFI_STATUS_CODE_DATA     *Data OPTIONAL
   );
 
 #endif

@@ -73,6 +73,7 @@
 !endif
 
   MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+
   MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
   MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
@@ -97,6 +98,7 @@
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
 
   FatPkg/EnhancedFatDxe/Fat.inf

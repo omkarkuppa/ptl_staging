@@ -1572,7 +1572,7 @@ $(PLATFORM_BOARD_PACKAGE)/Features/ModularUsbCIo/ModularUsbCIoDxe.inf
 #
 !if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == FALSE
   $(PLATFORM_FEATURES_PATH)/VTd/PlatformVTdSampleDxe/PlatformVTdSampleDxe.inf
-  IntelSiliconPkg/Feature/VTd/IntelVTdCoreDxe/IntelVTdCoreDxe.inf
+    IntelSiliconPkg/Feature/VTd/IntelVTdCoreDxe/IntelVTdCoreDxe.inf
 !endif
 
 #
@@ -1737,7 +1737,7 @@ $(PLATFORM_FEATURES_PATH)/Me/MeExtMeasurement/Dxe/MeExtMeasurement.inf
 #
 # USB4 Connection Manager
 #
-Usb4FeaturePkg/Usb4CmDxe/Usb4CmDxe.inf
+  Usb4FeaturePkg/Usb4CmDxe/Usb4CmDxe.inf
 
 !if gI2cFeaturePkgTokenSpaceGuid.PcdI2cTouchCommonEnable == TRUE
   $(PLATFORM_BOARD_PACKAGE)/Acpi/I2cBoardData/I2cBoardData.inf

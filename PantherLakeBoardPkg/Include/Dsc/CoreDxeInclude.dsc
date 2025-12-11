@@ -72,15 +72,15 @@
   MdeModulePkg/Universal/ReportStatusCodeRouter/Smm/ReportStatusCodeRouterSmm.inf
   MdeModulePkg/Universal/StatusCodeHandler/Smm/StatusCodeHandlerSmm.inf {
     <LibraryClasses>
-    !if $(TARGET) == DEBUG
-      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-    !endif
-    !if gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable == TRUE
-      NULL|BeepDebugFeaturePkg/Library/BeepStatusCodeHandlerLib/SmmBeepStatusCodeHandlerLib.inf
-    !endif
-    !if gPlatformModuleTokenSpaceGuid.PcdPostCodeStatusCodeEnable == TRUE
-      NULL|PostCodeDebugFeaturePkg/Library/PostCodeStatusCodeHandlerLib/SmmPostCodeStatusCodeHandlerLib.inf
-    !endif
+      !if $(TARGET) == DEBUG
+        DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
+      !endif
+      !if gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable == TRUE
+        NULL|BeepDebugFeaturePkg/Library/BeepStatusCodeHandlerLib/SmmBeepStatusCodeHandlerLib.inf
+      !endif
+      !if gPlatformModuleTokenSpaceGuid.PcdPostCodeStatusCodeEnable == TRUE
+        NULL|PostCodeDebugFeaturePkg/Library/PostCodeStatusCodeHandlerLib/SmmPostCodeStatusCodeHandlerLib.inf
+      !endif
       NULL|$(PLATFORM_SI_PACKAGE)/Library/TraceHubStatusCodeHandlerLib/SmmTraceHubStatusCodeHandlerLib.inf
   }
 

@@ -413,7 +413,6 @@ DebugVPrint (
     if (GetDebugInterfaceFlags () & STATUS_CODE_USE_ISA_SERIAL) {
       SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
     }
-
     if (GetDebugInterfaceFlags () & STATUS_CODE_USE_SERIALIO) {
       if(PcdGetBool (PcdFspValidatePeiServiceTablePointer)){
         Status = WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
@@ -422,10 +421,7 @@ DebugVPrint (
         }
       }
     }
-  }
-
   //
-  // Send the print string to Trace Hub
   //
   if (GetDebugInterfaceFlags() & STATUS_CODE_USE_TRACEHUB) {
     //
@@ -473,7 +469,6 @@ DebugAssert (
 {
   CHAR8           Buffer[MAX_DEBUG_MESSAGE_LENGTH];
   EFI_STATUS      Status;
-
   //
   // Generate the ASSERT() message in Ascii format
   //
@@ -485,7 +480,6 @@ DebugAssert (
   if (GetDebugInterfaceFlags() & STATUS_CODE_USE_ISA_SERIAL) {
     SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
   }
-
   if (GetDebugInterfaceFlags() & STATUS_CODE_USE_SERIALIO) {
     if(PcdGetBool (PcdFspValidatePeiServiceTablePointer)){
       Status = WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
@@ -494,7 +488,6 @@ DebugAssert (
       }
     }
   }
-
   //
   // Send the print string to Trace Hub
   //

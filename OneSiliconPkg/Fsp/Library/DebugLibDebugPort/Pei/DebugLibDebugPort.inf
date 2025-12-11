@@ -75,3 +75,4 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask             ## CONSUMES
   gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdWclSupport                        ## CONSUMES

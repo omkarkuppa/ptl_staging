@@ -165,7 +165,6 @@ FspDebugPrint (
   EVENT_HANDLER_PARAMETER      FspEventHandlerParameter;
   BOOLEAN                      FspEventHandlerExecuted;
   EFI_STATUS                   Status;
-
   FspGlobalData = NULL;
   FspEventHandlerParameter.FspEventHandler = NULL;
   FspsUpd = NULL;
@@ -417,7 +416,6 @@ FspApiDebugAssert (
 {
   CHAR8      Buffer[MAX_DEBUG_MESSAGE_LENGTH];
   EFI_STATUS Status;
-
   //
   // Generate the ASSERT() message in Ascii format
   //
@@ -430,6 +428,12 @@ FspApiDebugAssert (
   Status = WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
   if (EFI_ERROR (Status)) {
     SerialPortWrite ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+  }
+  //
+  // Send the print string to Trace Hub
+  //
+  if (GetDebugInterfaceFlags() & STATUS_CODE_USE_TRACEHUB) {
+    TraceHubDebugWrite (SeverityError, (UINT8 *)Buffer, AsciiStrLen (Buffer));
   }
 
    //

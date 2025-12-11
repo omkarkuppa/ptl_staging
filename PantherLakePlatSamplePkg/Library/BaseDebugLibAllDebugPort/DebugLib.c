@@ -111,7 +111,7 @@ DebugPrint (
   // Convert the DEBUG() message to an ASCII String
   //
   VA_START (Marker, Format);
-  AsciiVSPrint (Buffer, sizeof (Buffer), Format, Marker);
+    AsciiVSPrint (Buffer, sizeof (Buffer), Format, Marker);
   VA_END (Marker);
 
   //

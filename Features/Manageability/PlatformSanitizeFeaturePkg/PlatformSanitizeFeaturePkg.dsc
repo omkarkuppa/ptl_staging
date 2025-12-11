@@ -51,8 +51,8 @@ gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport       |TRUE
 [LibraryClasses]
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr.inf
-  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
+    DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+    PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
   MeUtilsLib|OneSiliconPkg/IpBlock/Me/Library/PeiDxeSmmMeUtilsLib/DxeSmmMeUtilsLib.inf

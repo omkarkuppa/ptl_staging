@@ -26,7 +26,7 @@
 !endif
 !endif
 
-  $(PLATFORM_SI_PACKAGE)/IpBlock/Wdt/Dxe/WdtDxe.inf
+    $(PLATFORM_SI_PACKAGE)/IpBlock/Wdt/Dxe/WdtDxe.inf
 !if gSiPkgTokenSpaceGuid.PcdSmmVariableEnable == TRUE
   $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Smm/SpiSmm.inf
   $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Dxe/SpiSmmStub.inf
