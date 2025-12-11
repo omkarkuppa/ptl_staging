@@ -96,6 +96,34 @@ AmtGetGbeMac (
 }
 
 /**
+  Checks if the AMT MAC Pass-Through enforcement is requested.
+
+  This function retrieves the ME BIOS Payload (MBP) data
+  and checks if Media Table Push is requested by CSME.
+
+  @retval TRUE   AMT MacPassThrough command shall be sent.
+  @retval FALSE  There is no need for sending AMT MacPassThrough command.
+**/
+BOOLEAN
+IsAmtMacPassThroughEnforceRequested (
+  VOID
+  )
+{
+  ME_BIOS_PAYLOAD_HOB     *MbpHob;
+
+  DEBUG ((DEBUG_INFO, "%a() enter\n", __FUNCTION__));
+  MbpHob = NULL;
+
+  MbpHob = GetFirstGuidHob (&gMeBiosPayloadHobGuid);
+  if (MbpHob == NULL) {
+    DEBUG ((DEBUG_WARN, "HwAsset: No MBP Data HOB available\n"));
+    return FALSE;
+  }
+
+  return MbpHob->MeBiosPayload.HwaRequest.Available && (BOOLEAN) MbpHob->MeBiosPayload.HwaRequest.Data.Fields.MediaTablePush;
+}
+
+/**
   This event will send MAC address to CSME
 
   @param[in] Event     - A pointer to the Event that triggered the callback.
@@ -104,8 +132,8 @@ AmtGetGbeMac (
 VOID
 EFIAPI
 AmtSendMacAddress (
-  IN EFI_EVENT Event,
-  IN VOID      *Context
+  IN EFI_EVENT               Event,
+  IN VOID                    *Context
   )
 {
   EFI_STATUS                 Status;
@@ -141,10 +169,14 @@ AmtSendMacAddress (
   }
 
   //
-  // Send the command when the feature state changes or when feature is enabled and MAC changes
+  // Send the command when:
+  //   - feature state changes
+  //   - feature is enabled and MAC changes
+  //   - CSME requests HWA tables
   //
   if (MacConfig.AmtMacPassThroughState != MacConfig.AmtMacPassThroughPreviousBootState ||
-     (MacConfig.AmtMacPassThroughState == 1 && CompareMem (MacConfig.MacBuffer, MacBuffer, sizeof (MacBuffer)) != 0)) {
+     (MacConfig.AmtMacPassThroughState == 1 && CompareMem (MacConfig.MacBuffer, MacBuffer, sizeof (MacBuffer)) != 0) ||
+     IsAmtMacPassThroughEnforceRequested ()) {
     //
     // Send command only if the required change is different from the stored values.
     //
@@ -163,6 +195,7 @@ AmtSendMacAddress (
       ASSERT_EFI_ERROR (Status);
     }
   }
+  gBS->CloseEvent (Event);
 }
 
 /**

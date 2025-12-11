@@ -25,7 +25,8 @@ Set ```gAmtMacPassThroughFeaturePkgTokenSpaceGuid.PcdAmtMacPassThroughFeatureEna
 
 ## Data flows
 
-Before determining if AMT MAC PassThrough message shall be issued, BIOS shall compare the current feature settings with the ones from the previous boot. The current MAC Address should be determined by reading GBE region through SPI. These settings are held in [AMT MAC PassThrough Configuration EFI variable](#Amt-MAC-PassThrough-Configuration).
+Before determining if AMT MAC PassThrough message shall be issued, BIOS shall compare the current feature settings with the ones from the previous boot. The current MAC Address should be determined by reading GBE region through SPI. These settings are held in [AMT MAC PassThrough Configuration EFI variable](#Amt-MAC-PassThrough-Configuration). AMT MAC Passthrough message shall also be issued when CSME explicitly asks for it. This can be detected by checking MBP for existence of HWA MBP item
+with Media Table Request.
 ### Amt MAC PassThrough Configuration
 
 Field Name                               | Description
