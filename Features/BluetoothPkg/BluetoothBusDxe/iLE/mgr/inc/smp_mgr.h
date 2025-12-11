@@ -257,6 +257,10 @@ smpm_send_nc_result (
   UINT8       authorization
   );
 
+void
+finish_transac_and_process_new_req(
+  );
+
 #endif /* SECURE_CONNECTION*/
 
 INT8

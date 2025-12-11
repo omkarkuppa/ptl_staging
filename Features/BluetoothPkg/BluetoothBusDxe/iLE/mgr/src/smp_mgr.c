@@ -189,7 +189,7 @@ smpm_dequeue_and_cleanup_from_pending_queue (
   }
 }
 
-static void
+void
 finish_transac_and_process_new_req (
   )
 {
@@ -1260,7 +1260,28 @@ smp_mgr_bond_status (
                                                           );
   }
 
-  finish_transac_and_process_new_req ();
+  /*
+   * Critical SECURE_CONNECTION key generation flow control:
+   * When SECURE_CONNECTION is enabled, after bonding completion callbacks, we initiate
+   * P256 key generation by transitioning to SMP_STATE_WAIT_SC_PUB_KEY_GEN state.
+   * The smp_generate_p256_keys() call triggers key generation, and we RETURN without
+   * calling finish_transac_and_process_new_req() to keep SMP manager busy.
+   *
+   * Later, when key generation completes in smp.c, finish_transac_and_process_new_req()
+   * is called to enable processing of different SC key requests. This ensures proper
+   * sequencing of SC operations and prevents interference from other SMP requests
+   * during key generation.
+   *
+   * Without SC: immediately finish transaction and process next request normally.
+   */
+#if (SECURE_CONNECTION)
+  g_local_adapter.smp_data.smp_cur_cb.state = SMP_STATE_WAIT_SC_PUB_KEY_GEN;
+  g_local_adapter.smp_data.smp_cur_cb.enc_stage = SMP_ENC_PUB_KEY;
+  smp_generate_p256_keys();  // Initiates async SC key generation
+  return;  // Keep SMP manager busy until key generation completes
+#else
+  finish_transac_and_process_new_req();
+#endif
 }
 
   #if (SIGNED_WRITE)

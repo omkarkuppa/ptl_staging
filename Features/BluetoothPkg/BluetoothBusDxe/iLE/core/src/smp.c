@@ -480,9 +480,6 @@ smp_g2 (
   UINT8  *y
   );
 
-static void
-smp_generate_p256_keys (
-  );
 
     #if (HOST_ECDH)
 static void
@@ -3811,10 +3808,27 @@ smp_handle_enc_operations (
       pp = g_local_adapter.smp_data.local_p256_key_y;
       REVERSE_STREAM_TO_ARRAY (pp, data, SMP_PUB_KEY_COORDINATE_LEN);
       hex_dump ("PUB KEY Y:", g_local_adapter.smp_data.local_p256_key_y, SMP_PUB_KEY_COORDINATE_LEN);
-      cur_cb->state                       = SMP_STATE_IDLE;
-      cur_cb->enc_stage                   = SMP_ENC_IDLE;
-      g_local_adapter.smp_data.sc_support = TRUE;
-      smp_mgr_init_cb ();
+      /*
+       * This change enables generating different keys in Secure Connection (SC) mode.
+       * When SC public key generation is complete (SMP_STATE_WAIT_SC_PUB_KEY_GEN),
+       * we need to finish the current transaction and allow processing of new requests
+       * that may require different cryptographic keys. The finish_transac_and_process_new_req()
+       * call ensures the SMP manager can handle subsequent key generation requests properly.
+       */
+      if (cur_cb->state == SMP_STATE_WAIT_SC_PUB_KEY_GEN)
+      {
+          cur_cb->state = SMP_STATE_IDLE;
+          cur_cb->enc_stage = SMP_ENC_IDLE;
+          g_local_adapter.smp_data.sc_support = TRUE;
+          finish_transac_and_process_new_req();  // Enable processing of different SC key requests
+      }
+      else
+      {
+          cur_cb->state = SMP_STATE_IDLE;
+          cur_cb->enc_stage = SMP_ENC_IDLE;
+          g_local_adapter.smp_data.sc_support = TRUE;
+          smp_mgr_init_cb();
+      }
       break;
  #endif /* SECURE_CONNECTION */
  #if (AES_CMAC)
@@ -4243,7 +4257,7 @@ smp_generate_p256_key_internal (
 
     #endif /* HOST_ECDH */
 
-static void
+void
 smp_generate_p256_keys (
   )
 {

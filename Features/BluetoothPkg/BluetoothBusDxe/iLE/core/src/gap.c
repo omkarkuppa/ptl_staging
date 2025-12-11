@@ -626,7 +626,7 @@ scan_res_timeout_handler (
 #if (GAP_CENTRAL_ROLE_SUPPORTED == TRUE || GAP_PERIPHERAL_ROLE_SUPPORTED == TRUE)
 
 static void
-finish_transac_and_process_new_req (
+gap_finish_transac_and_process_new_req (
   )
 {
   gap_req_handler (NULL);
@@ -664,7 +664,7 @@ gap_conn_comp_rpa_resolution_cb (
 
       fromremote = update_connected_device (device);
       if (!fromremote) {
-        finish_transac_and_process_new_req ();
+          gap_finish_transac_and_process_new_req ();
         end_operation (GAP_OPERATION_CONNECTING);
       }
     }
@@ -926,7 +926,7 @@ remote_command_timeout_handler (
         device_set_state (connected_device_list_idx, GAP_CONNECTION_STATE_ACL_DISCONNECTED);
         delete_connected_device (connected_device_list_idx);
         adapter_restore_prev_state ();
-        finish_transac_and_process_new_req ();
+        gap_finish_transac_and_process_new_req ();
         end_operation (GAP_OPERATION_CONNECTING);
       }
 
@@ -1708,7 +1708,7 @@ gap_stop_advertise (
   if (ret != STATUS_SUCCESS) {
     adapter_enter_adv_state (GAP_ADAPTER_STATE_ADV_DISABLED);
     end_operation (GAP_OPERATION_ADVERTISING);
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
   }
 
   return ret;
@@ -2182,7 +2182,7 @@ gap_stop_scan (
       end_operation (GAP_OPERATION_FG_SCANNING);
     }
 
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
   }
 
   return ret;
@@ -2552,7 +2552,7 @@ gap_add_to_rejectlist (
 
   if (ret != STATUS_SUCCESS) {
     adapter_restore_prev_state ();
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
     end_operation (GAP_OPERATION_UPDATING_REJECTLIST);
   }
 
@@ -2580,7 +2580,7 @@ gap_remove_from_rejectlist (
 
   if (ret != STATUS_SUCCESS) {
     adapter_restore_prev_state ();
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
     end_operation (GAP_OPERATION_UPDATING_REJECTLIST);
   }
 
@@ -2598,7 +2598,7 @@ gap_clear_rejectlist (
   ret = hci_ble_clear_white_list ();
   if (ret != STATUS_SUCCESS) {
     adapter_restore_prev_state ();
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
     end_operation (GAP_OPERATION_UPDATING_REJECTLIST);
   }
 
@@ -2634,7 +2634,7 @@ gap_add_to_resolvinglist (
   status = hci_ble_add_device_to_resolving_list (peer_addr_type, peer_bdaddr, peer_irk, local_irk);
   if (status != STATUS_SUCCESS) {
     adapter_restore_prev_state ();
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
     end_operation (GAP_OPERATION_UPDATING_RL);
     return status;
   }
@@ -2646,7 +2646,7 @@ gap_add_to_resolvinglist (
   status = hci_ble_set_privacy_mode (peer_addr_type, peer_bdaddr, LE_DEVICE_PRIVACY_MODE);
   if (status != STATUS_SUCCESS) {
     adapter_restore_prev_state ();
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req();
     end_operation (GAP_OPERATION_UPDATING_RL);
   }
 
@@ -2680,7 +2680,7 @@ gap_remove_from_resolvinglist (
   ret = hci_ble_remove_device_from_resolving_list (peer_addr_type, peer_bdaddr);
   if (ret != STATUS_SUCCESS) {
     adapter_restore_prev_state ();
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
     end_operation (GAP_OPERATION_UPDATING_RL);
   }
 
@@ -2703,7 +2703,7 @@ gap_clear_resolvinglist (
   ret = hci_ble_clear_resolving_list ();
   if (ret != STATUS_SUCCESS) {
     adapter_restore_prev_state ();
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
     end_operation (GAP_OPERATION_UPDATING_RL);
   }
 
@@ -2749,7 +2749,7 @@ controller_error_cleanup (
   pm_disconnect_cb (device, FALSE);
 
   delete_connected_device (idx);
-  finish_transac_and_process_new_req ();
+  gap_finish_transac_and_process_new_req ();
 
   return STATUS_SUCCESS;
 }
@@ -2796,7 +2796,7 @@ gap_terminate_connection (
       device_set_state (connected_device_list_idx, GAP_CONNECTION_STATE_ACL_DISCONNECTED);
       delete_connected_device (connected_device_list_idx);
       adapter_restore_prev_state ();
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_CONNECTING);
     }
 
@@ -2823,7 +2823,7 @@ gap_terminate_connection (
       disconnect_one_device ();
     }
 
-    finish_transac_and_process_new_req ();
+    gap_finish_transac_and_process_new_req ();
 
     return ret;
   }
@@ -3103,7 +3103,7 @@ gap_handle_command_complete (
         }
 
         osa_delete_timer (timer, GAP_ADV_TIMER);
-        finish_transac_and_process_new_req ();
+        gap_finish_transac_and_process_new_req ();
       }
 
       break;
@@ -3125,7 +3125,7 @@ gap_handle_command_complete (
         }
 
         osa_delete_timer (timer, GAP_ADV_TIMER);
-        finish_transac_and_process_new_req ();
+        gap_finish_transac_and_process_new_req ();
       }
 
       break;
@@ -3140,7 +3140,7 @@ gap_handle_command_complete (
         }
 
         osa_delete_timer (timer, GAP_ADV_TIMER);
-        finish_transac_and_process_new_req ();
+        gap_finish_transac_and_process_new_req ();
       }
 
       break;
@@ -3164,7 +3164,7 @@ gap_handle_command_complete (
           end_operation (GAP_OPERATION_ADVERTISING);
         } else {
           end_operation (GAP_OPERATION_ADVERTISING);
-          finish_transac_and_process_new_req ();
+          gap_finish_transac_and_process_new_req ();
         }
       } else {
         logd ("Advertisement started");
@@ -3172,7 +3172,7 @@ gap_handle_command_complete (
         if (adapter_is_disabling ()) {
           gap_stop_advertise ();
         } else {
-          finish_transac_and_process_new_req ();
+            gap_finish_transac_and_process_new_req ();
         }
       }
 
@@ -3195,7 +3195,7 @@ gap_handle_command_complete (
           end_operation (GAP_OPERATION_FG_SCANNING);
         }
 
-        finish_transac_and_process_new_req ();
+        gap_finish_transac_and_process_new_req ();
       }
 
       break;
@@ -3244,7 +3244,7 @@ gap_handle_command_complete (
             end_operation (GAP_OPERATION_FG_SCANNING);
           }
 
-          finish_transac_and_process_new_req ();
+          gap_finish_transac_and_process_new_req ();
         }
       } else {
         logd ("Scan started");
@@ -3256,14 +3256,14 @@ gap_handle_command_complete (
         if (adapter_is_disabling ()) {
           gap_stop_scan (FALSE);
         } else {
-          finish_transac_and_process_new_req ();
+            gap_finish_transac_and_process_new_req ();
         }
       }
 
       break;
     case HCI_CMD_LE_CREATE_CONN_CANCEL:
       adapter_restore_prev_state ();
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_CONNECTING);
       break;
  #endif /* GAP_CENTRAL_ROLE_SUPPORTED == TRUE */
@@ -3276,7 +3276,7 @@ gap_handle_command_complete (
         adapter_restore_prev_state ();
       }
 
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_UPDATING_REJECTLIST);
       break;
     case HCI_CMD_LE_REMOVE_DEV_FRM_WHITE_LIST:
@@ -3288,7 +3288,7 @@ gap_handle_command_complete (
         adapter_restore_prev_state ();
       }
 
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req();
       end_operation (GAP_OPERATION_UPDATING_REJECTLIST);
       break;
     case HCI_CMD_LE_CLEAR_WHITE_LIST:
@@ -3300,7 +3300,7 @@ gap_handle_command_complete (
         adapter_restore_prev_state ();
       }
 
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_UPDATING_REJECTLIST);
       break;
  #if (PRIVACY_FEATURE == TRUE)
@@ -3338,7 +3338,7 @@ gap_handle_command_complete (
         adapter_restore_prev_state ();
       }
 
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_UPDATING_RL);
       break;
     case HCI_CMD_LE_REMOVE_DEV_FROM_RESOLVING_LIST:
@@ -3350,7 +3350,7 @@ gap_handle_command_complete (
         adapter_restore_prev_state ();
       }
 
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_UPDATING_RL);
       break;
     case HCI_CMD_LE_CLEAR_RESOLVING_LIST:
@@ -3362,7 +3362,7 @@ gap_handle_command_complete (
         adapter_restore_prev_state ();
       }
 
-      finish_transac_and_process_new_req ();
+      gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_UPDATING_RL);
       break;
  #endif /* CONTROLLER_PRIVACY */
@@ -3623,7 +3623,7 @@ gap_handle_conn_complete (
 
   if (!resolving) {
     if (!fromremote) {
-      finish_transac_and_process_new_req ();
+        gap_finish_transac_and_process_new_req ();
       end_operation (GAP_OPERATION_CONNECTING);
     }
   }
@@ -3812,7 +3812,7 @@ if (adapter_is_disabling ()) {
   disconnect_one_device ();
 }
 
-finish_transac_and_process_new_req ();
+gap_finish_transac_and_process_new_req ();
 end_operation (GAP_OPERATION_DISCONNECTING);
 
 return STATUS_SUCCESS;

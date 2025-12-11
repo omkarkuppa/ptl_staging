@@ -135,6 +135,7 @@
 #define SMP_STATE_WAIT_DHKEY_CHECK_CMD       22
 #define SMP_STATE_WAIT_DHKEY_CHECK_GEN       23
 #define SMP_STATE_WAIT_PEER_DHKEY_CHECK_GEN  24
+#define SMP_STATE_WAIT_SC_PUB_KEY_GEN        25
 
 /* Encryption stages */
 #define SMP_ENC_IDLE           0
@@ -364,6 +365,10 @@ void
 smp_proc_dhkey (
   UINT8  *buffer,
   UINT8  len
+  );
+
+void
+smp_generate_p256_keys(
   );
 
 #endif /* SECURE_CONNECTION */
