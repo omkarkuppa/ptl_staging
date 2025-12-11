@@ -1150,7 +1150,7 @@ OnHotPlugEnabledPciePort (
     SubOrdinateBus = PciSegmentRead8 (RpBaseAddress + PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET);
     SecondaryBus  = PciSegmentRead8 (RpBaseAddress + PCI_BRIDGE_SECONDARY_BUS_REGISTER_OFFSET);
     if (EndpointBus >= SecondaryBus && EndpointBus <= SubOrdinateBus) { // Check if Endpoint Bus Number is within Valid range
-      if (((PciSegmentRead16 (RpBaseAddress + R_PCIE_CFG_MPC)) & B_PCIE_CFG_MPC_HPME) && ((PciSegmentRead16 (RpBaseAddress + R_PCIE_CFG_SLCAP)) & B_PCIE_CFG_SLCAP_HPC)) {
+      if ((PciSegmentRead16 (RpBaseAddress + R_PCIE_CFG_SLCAP)) & B_PCIE_CFG_SLCAP_HPC) {
         return TRUE;
       } else {
         return FALSE;
