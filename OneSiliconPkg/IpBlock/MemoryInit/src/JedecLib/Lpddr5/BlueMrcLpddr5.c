@@ -626,6 +626,67 @@ MrcJedecInitLpddr5 (
 }
 
 /**
+  If Enable = TRUE:  Issue CAS WS_FS on all channels / ranks, and enable WCK always-on mode in DUNIT / MC
+  If Enable = FALSE: Issue CAS WS_OFF on all channels / ranks, and restore original WCK mode in DUNIT / MC
+
+  @param[in]      MrcData - Include all MRC global data.
+  @param[in,out]  WckMode - Wck mode value to save/restore
+  @param[in]      Enable  - Fast sync on/off and WCK mode save/restore.
+**/
+VOID
+MrcIssueLp5FastSync (
+  IN     MrcParameters *const MrcData,
+  IN OUT UINT8         *const WckMode,
+  IN     BOOLEAN              Enable
+  )
+{
+  MrcOutput *Outputs;
+  UINT32    Controller;
+  UINT32    Channel;
+  INT64     GetSetVal;
+
+  Outputs = &MrcData->Outputs;
+
+  if (!Enable) {
+    // Issue CAS Sync OFF on all populated ranks before changing the MC WCK mode
+    MrcIssueCas (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MrhCasWck2CkSyncOff, MRC_PRINTS_OFF);
+  }
+
+  // Enable WCK always-on mode on MC, or restore the original mode
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if ((!MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (Outputs->IsLpddr, Channel)) {
+        continue;
+      }
+      if (Enable) {
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccLp5WckMode, ReadCached, &GetSetVal);
+        *WckMode = (UINT8) GetSetVal;   // Save the original value
+        GetSetVal = 0;                  // AS_SAFE
+      } else {
+        GetSetVal = *WckMode;
+      }
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccLp5WckMode, WriteCached, &GetSetVal);
+    }
+  }
+
+  if (Enable) {
+    // Issue Fast WCK to CK Sync on all populated ranks
+    // DRAM could be already in WCK sync mode, so issue OFF, then Sync
+    MrcIssueCas (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MrhCasWck2CkSyncOff, MRC_PRINTS_OFF);
+    // tWCKSTOP is very small (6ns), no need to wait
+    MrcIssueCas (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MrhCasWckFastSync, MRC_PRINTS_OFF);
+  } else {
+    if ((*WckMode == MrcLp5WckSafe) || (*WckMode == MrcLp5WckManual)) { // Always-on
+      // Resync WCK after MC WCK mode is updated by sending CAS_FS
+      MrcIssueCas (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MrhCasWckFastSync, MRC_PRINTS_OFF);
+    }
+  }
+
+  // Track WCK sync status
+  MrcData->Outputs.IsWckSynced = Enable;
+}
+
+/**
   If WCK sync is required (WCK Always On mode and after WCK leveling):
    - Issue CAS WS_OFF on all channels / ranks, followed by CAS WS_FS
 

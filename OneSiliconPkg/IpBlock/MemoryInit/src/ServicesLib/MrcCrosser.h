@@ -1692,18 +1692,6 @@ DimmOdtTrainingDDR5(
   );
 
 /**
-  This function implements Lpddr5 DimmRx Offset Calibration training.
-
-  @param[in] MrcData - Include all MRC global data.
-
-  @retval MrcStatus - If it succeeds return mrcSuccess
-**/
-MrcStatus
-MrcDimmRxOffsetCalibration(
-  IN MrcParameters* const MrcData
-  );
-
-/**
   This function implements RttPark 1D only training for Ddr5
 
   @param[in] MrcData - Include all MRC global data.

@@ -245,6 +245,9 @@
 #define MRC_LP5_tVRCG_ENABLE_NS     (150)
 #define MRC_LP5_tVRCG_ENABLE_FS     (150 * 1000 * 1000)
 
+// Rx Offset Calibration Training time: tOSCal = 3us
+#define MRC_LP5_tOSCAL_NS           (3000)
+
 #define MRC_LP5_TXDQ_CENTER         (1024)
 #define MRC_LP5_TXDQ_RANGE          (1020)
 
@@ -373,9 +376,10 @@ typedef enum {
   MrcLp516Bank
 } MRC_LP5_BANKORG;
 
+// Matches MC CR encoding, also used by ExtInputs->AdjustWckMode (where 3 means no override)
 typedef enum {
-  MrcLp5WckSafe,
-  MrcLp5WckManual,
+  MrcLp5WckSafe,    // Always-on, both DRAM and MC
+  MrcLp5WckManual,  // Always-on in DRAM, MC can stop/resume WCK when idle
   MrcLp5WckDynamic,
   MrcLp5WckOff
 } MRC_LP5_WCKMODE;
@@ -1055,8 +1059,8 @@ MrcLpddr5SetMr30(
 );
 
 /**
-  If Enable = TRUE:  Issue CAS WS_FS on all channels / ranks, and enable WCK always-on mode in DUNIT
-  If Enable = FALSE: Issue CAS WS_OFF on all channels / ranks, and restore original WCK mode in DUNIT
+  If Enable = TRUE:  Issue CAS WS_FS on all channels / ranks, and enable WCK always-on mode in DUNIT / MC
+  If Enable = FALSE: Issue CAS WS_OFF on all channels / ranks, and restore original WCK mode in DUNIT / MC
 
   @param[in]      MrcData - Include all MRC global data.
   @param[in,out]  WckMode - Wck mode value to save/restore.
@@ -1431,4 +1435,29 @@ UINT8
 Lpddr5DcaEncode (
   IN  INT16  DcaValue
 );
+
+/**
+  This function implements Lpddr5 Dimm Rx Offset Calibration body.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - If it succeeds return mrcSuccess
+**/
+MrcStatus
+MrcDimmRxOcc (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function implements Lpddr5 Dimm Rx Offset Calibration training.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - If it succeeds return mrcSuccess
+**/
+MrcStatus
+MrcDimmRxOffsetCalibration (
+  IN MrcParameters *const MrcData
+  );
+
 #endif // _MRC_LPDDR5_H_

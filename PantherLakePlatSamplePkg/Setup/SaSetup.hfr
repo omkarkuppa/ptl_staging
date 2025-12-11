@@ -4570,6 +4570,13 @@ endform;
         option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
+      oneof varid   = SA_SETUP.DIMMRXOFFSET,
+        prompt      = STRING_TOKEN(STR_DIMMRXOFFSET_TRNG_NAME),
+        help        = STRING_TOKEN(STR_DIMMRXOFFSET_TRNG_NAME),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
       oneof varid   = SA_SETUP.RXDQSVOCC,
         prompt      = STRING_TOKEN(STR_RXDQSVOCC_TRNG_NAME),
         help        = STRING_TOKEN(STR_RXDQSVOCC_TRNG_NAME),

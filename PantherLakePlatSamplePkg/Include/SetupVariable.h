@@ -1288,9 +1288,10 @@ typedef struct {
   <b>Revision 21</b>: - Add Lp5SafeSpeed
   <b>Revision 22</b>: - Add Vdd2HVoltage, Vdd1Voltage, Vdd2LVoltage, VddqVoltage
   <b>Revision 23</b>: - Add ForceInternalClkOn
+  <b>Revision 24</b>: - Add DIMMRXOFFSET
 **/
 
-#define SA_SETUP_REVISION   23
+#define SA_SETUP_REVISION   24
 
 typedef struct {
   UINT8   Revision;
@@ -1810,7 +1811,8 @@ typedef struct {
   UINT16  Vdd2LVoltage;
   UINT16  VddqVoltage;
   UINT8   ForceInternalClkOn;
-  UINT8   Rsvd[6];
+  UINT8   DIMMRXOFFSET;
+  UINT8   Rsvd[5];
 } SA_SETUP;
 
 /**

@@ -314,6 +314,10 @@ MrcResetSequencePrivate (
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctMrhAfterCommandDelay, WriteCached, &GetSetVal);
   }
 
+  if (IsLpddr && MrcData->Save.Data.IsRxOccDone) {
+    MrcDimmRxOcc (MrcData);
+  }
+
   // Set flag to restore from host structure instead from look-up table
   Outputs->RestoreMRs = TRUE;
   Outputs->JedecInitDone = TRUE;

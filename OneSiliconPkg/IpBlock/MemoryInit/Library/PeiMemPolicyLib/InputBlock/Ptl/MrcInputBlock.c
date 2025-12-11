@@ -172,7 +172,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RDCTLET                (1)  // BIT17
 #define MRC_EXT_INPUTS_INIT_VAL_RDDQODTT               (1)  // BIT18
 #define MRC_EXT_INPUTS_INIT_VAL_EMPHASIS               (1)  // BIT19
-#define MRC_EXT_INPUTS_INIT_VAL_DIMMRXOFFSET           (0)  // BIT20
+#define MRC_EXT_INPUTS_INIT_VAL_DIMMRXOFFSET           (1)  // BIT20
 #define MRC_EXT_INPUTS_INIT_VAL_VIEWPINCAL             (0)  // BIT21
 #define MRC_EXT_INPUTS_INIT_VAL_QCLKDCC                (0)  // BIT22
 #define MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC           (0)  // BIT23

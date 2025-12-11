@@ -4069,3 +4069,181 @@ EncodeReadLatencyLpddr5 (
 
   return Status;
 }
+
+/**
+  Override DQ ODT for LP5x DRAM Rx Offset Calibration, on all ranks
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] Enable  - TRUE: override DQ ODT to RZQ/6 (40 Ohm); FALSE: restore original DQ ODT
+**/
+VOID
+MrcUpdateDqOdt (
+  IN MrcParameters *const MrcData,
+  IN const BOOLEAN        Enable
+  )
+{
+  MrcOutput             *Outputs;
+  UINT32                Controller;
+  UINT32                Channel;
+  UINT32                Rank;
+  MrcModeRegister       Mr11Address;
+  MrcModeRegisterIndex  Mr11ArrayIndex;
+  LPDDR5_MODE_REGISTER_11_TYPE  Mr11;
+
+  Outputs = &MrcData->Outputs;
+  Mr11Address = mrMR11;
+  Mr11ArrayIndex = MrcMrAddrToIndex (MrcData, &Mr11Address);
+
+  for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+    if (((1 << Rank) & Outputs->ValidRankMask) == 0) {
+      continue;   // Skip if no such rank
+    }
+    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+      for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+        if (MrcChannelExist (MrcData, Controller, Channel)) {
+          Mr11.Data8 = (Outputs->Controller[Controller].Channel[Channel].Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR[Mr11ArrayIndex]);
+          if (Enable) {
+            // DQ ODT shall be enabled and be set to the smallest ODT value (RZQ/6)
+            Mr11.Bits.DqOdt = Odt40;
+          } // else restore original DQ ODT settings from the Host struct
+          MrcIssueMrw (MrcData, Controller, Channel, Rank, Mr11Address, Mr11.Data8, MRC_PRINTS_OFF);
+        }
+      }
+    }
+  }
+}
+
+/**
+  Start / stop LP5x DRAM Rx Offset Calibration, on a given rank
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] Rank    - Rank to work on
+  @param[in] Enable  - TRUE: start the calibration via MR15; FALSE: stop the calibration
+**/
+VOID
+MrcStartRxOffsetCal (
+  IN MrcParameters *const MrcData,
+  IN const UINT32         Rank,
+  IN const BOOLEAN        Enable
+  )
+{
+  MrcOutput             *Outputs;
+  UINT32                Controller;
+  UINT32                Channel;
+  MrcModeRegister       Mr15Address;
+  MrcModeRegisterIndex  Mr15ArrayIndex;
+  LPDDR5_MODE_REGISTER_15_TYPE  Mr15;
+
+  Outputs = &MrcData->Outputs;
+  Mr15Address = mrMR15;
+  Mr15ArrayIndex = MrcMrAddrToIndex (MrcData, &Mr15Address);
+
+  // Start / stop Rx Offset Calibration Training - set/clear MR15 OP[7]
+  // This MR contains trained DQ Vref for the upper byte, hence we need to preserve it on each device
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if (MrcChannelExist (MrcData, Controller, Channel)) {
+        Mr15.Data8 = (Outputs->Controller[Controller].Channel[Channel].Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR[Mr15ArrayIndex]);
+        Mr15.Bits.OffsetCalibration = Enable ? 1 : 0;
+        MrcIssueMrw (MrcData, Controller, Channel, Rank, Mr15Address, Mr15.Data8, MRC_PRINTS_OFF);
+      }
+    }
+  }
+}
+
+/**
+  This function implements Lpddr5 Dimm Rx Offset Calibration body.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - If it succeeds return mrcSuccess
+**/
+MrcStatus
+MrcDimmRxOcc (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *Outputs;
+  UINT32    Rank;
+  UINT8     WckMode;
+
+  Outputs = &MrcData->Outputs;
+
+  // DQ ODT shall be enabled and be set to the smallest ODT value (RZQ/6)
+  MrcUpdateDqOdt (MrcData, MRC_ENABLE);
+
+  // Issue CAS WS_FS on all channels / ranks, and enable WCK always-on mode in DUNIT / MC
+  // This is needed because we will enable Dimm Training mode below, one rank at a time
+  MrcIssueLp5FastSync (MrcData, &WckMode, MRC_ENABLE);
+
+  // Run Rx Offset Calibration Training one rank at a time
+  for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+    if (((1 << Rank) & Outputs->ValidRankMask) == 0) {
+      continue;   // Skip if no such rank
+    }
+
+    // Start Rx Offset Calibration Training - set MR15 OP[7]
+    MrcStartRxOffsetCal (MrcData, Rank, MRC_ENABLE);
+
+    // Wait tOSCAL
+    MrcWait (MrcData, DIVIDECEIL (MRC_LP5_tOSCAL_NS, MRC_TIMER_1NS));
+
+    // Stop Rx Offset Calibration Training - clear MR15 OP[7]
+    MrcStartRxOffsetCal (MrcData, Rank, MRC_DISABLE);
+  }
+
+  // Issue CAS WS_OFF on all channels / ranks, and restore original WCK mode in DUNIT
+  // If the original mode was always-on, also issue CAS_FS to keep WCK synced
+  MrcIssueLp5FastSync (MrcData, &WckMode, MRC_DISABLE);
+
+  // Restore original DQ ODT settings
+  MrcUpdateDqOdt (MrcData, MRC_DISABLE);
+
+  // This flag is used to re-run this calibration after any subsequent JEDEC reset (including Fast flow)
+  MrcData->Save.Data.IsRxOccDone = TRUE;
+
+  return mrcSuccess;
+}
+
+/**
+  This function implements Lpddr5 Dimm Rx Offset Calibration training.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - If it succeeds return mrcSuccess
+**/
+MrcStatus
+MrcDimmRxOffsetCalibration (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *Outputs;
+  MrcDebug  *Debug;
+  UINT32    FirstController;
+  UINT32    FirstChannel;
+  UINT8     MrrResult[MRC_MRR_ARRAY_SIZE];
+  UINT8     VendorId;
+
+  Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
+
+  // Offset Calibration Control (OCC) bit is valid only on LPDDR5X SDRAM
+  if (!Outputs->LpX) {  // Not LPDDR5X
+    return mrcSuccess;
+  }
+
+  FirstController = Outputs->FirstPopController;
+  FirstChannel    = Outputs->Controller[FirstController].FirstPopCh;
+
+  // Read DRAM Vendor ID, assume uniform LP5 population
+  MrcIssueMrr (MrcData, FirstController, FirstChannel, rRank0, mrMR5, MrrResult);
+  VendorId = MrrResult[0];
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MR5: 0x%02X\n", VendorId);
+  if (VendorId != 1) {
+    // Apply RxOCC on Samsung DRAMs only
+    return mrcSuccess;
+  }
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Starting RxOCC\n");
+  return MrcDimmRxOcc (MrcData);
+}

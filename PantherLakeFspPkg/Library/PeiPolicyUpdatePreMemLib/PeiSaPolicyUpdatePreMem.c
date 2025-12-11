@@ -516,6 +516,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables3.RDCTLET                 = FspmUpd->FspmConfig.RDCTLET;
   MemConfig->ExternalInputs.TrainingEnables3.RDDQODTT                = FspmUpd->FspmConfig.RDDQODTT;
   MemConfig->ExternalInputs.TrainingEnables3.EMPHASIS                = FspmUpd->FspmConfig.EMPHASIS;
+  MemConfig->ExternalInputs.TrainingEnables3.DIMMRXOFFSET            = FspmUpd->FspmConfig.DIMMRXOFFSET;
   MemConfig->ExternalInputs.TrainingEnables3.RXDQSVOCC               = FspmUpd->FspmConfig.RXDQSVOCC;
   MemConfig->ExternalInputs.TrainingEnables3.DCCPISERIALCAL          = FspmUpd->FspmConfig.DCCPISERIALCAL;
   MemConfig->ExternalInputs.ThrtCkeMinTmr           = FspmUpd->FspmConfig.ThrtCkeMinTmr;

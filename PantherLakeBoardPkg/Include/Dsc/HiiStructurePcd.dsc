@@ -3633,6 +3633,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.WCKPADDCCCAL|0x1                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x1                                                    #           BIT17 - Read CTLE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x1                                                   #           BIT18 - Read DQ ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x1                                                   #           BIT19 - Pre-Emphasis LP5 Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMRXOFFSET|0x1                                               #           BIT20 - DIMM Rx Offset Calibration training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSVOCC|0x0                                                  #           BIT26 - RxDqsVocCentering1D Training
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x1                                             # Offset 60 Bit 0 - Time Measure

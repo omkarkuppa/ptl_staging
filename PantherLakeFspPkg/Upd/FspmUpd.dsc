@@ -1515,13 +1515,18 @@
   # !BSF NAME:{Force InternalClkOn}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Force InternalClocksOn and TxPiOn to be set to 1 for frequencies >= 7467}
-  gPlatformFspPkgTokenSpaceGuid.ForceInternalClkOn           | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.ForceInternalClkOn          | * | 0x01 | 0x00
+
+  # !BSF NAME:{DIMM Rx Offset Calibration training}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable DIMM Rx Offset Calibration training}
+  gPlatformFspPkgTokenSpaceGuid.DIMMRXOFFSET                | * | 0x01 | 0x01
 
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 15  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 14  | {0x00}
 
   #
   # MRC Block End

@@ -1098,6 +1098,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RDCTLET,  MemConfig->ExternalInputs.TrainingEnables3.RDCTLET,        SaSetup.RDCTLET        );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RDDQODTT,  MemConfig->ExternalInputs.TrainingEnables3.RDDQODTT,       SaSetup.RDDQODTT       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EMPHASIS,  MemConfig->ExternalInputs.TrainingEnables3.EMPHASIS,       SaSetup.EMPHASIS       );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DIMMRXOFFSET,  MemConfig->ExternalInputs.TrainingEnables3.DIMMRXOFFSET,       SaSetup.DIMMRXOFFSET       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RXDQSVOCC,  MemConfig->ExternalInputs.TrainingEnables3.RXDQSVOCC,       SaSetup.RXDQSVOCC       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MrcTimeMeasure, MemConfig->ExternalInputs.MrcTimeMeasure,          SaSetup.MrcTimeMeasure         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MrcFastBoot, MemConfig->ExternalInputs.MrcFastBoot,             SaSetup.MrcFastBoot            );

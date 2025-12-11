@@ -393,8 +393,8 @@ typedef union {
 /// Mode Register is Read/Write
 typedef union {
   struct {
-    UINT8 DqVref  : 7;  ///< Bits 0:6
-    UINT8         : 1;  ///< Bits 7:7
+    UINT8 DqVref            : 7;  ///< Bits 0:6
+    UINT8 OffsetCalibration : 1;  ///< Bits 7:7
   } Bits;
   UINT8 Data8;
 } LPDDR5_MODE_REGISTER_15_TYPE;
