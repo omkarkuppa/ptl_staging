@@ -53,4 +53,4 @@
   gMeFwuProtocol  ## CONSUMES
 
 [Depex]
-  TRUE
+  gHeciProtocolGuid
