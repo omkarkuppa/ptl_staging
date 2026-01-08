@@ -58,6 +58,7 @@
   gMeBiosPayloadHobGuid                  ## CONSUMES
   gEfiEndOfDxeEventGroupGuid             ## CONSUMES
   gAmtMacPassThroughConfigGuid           ## CONSUMES
+  gMeSavedPmconHobGuid                   ## CONSUMES
 
 [Depex]
   gDxeAmtPolicyGuid                 AND

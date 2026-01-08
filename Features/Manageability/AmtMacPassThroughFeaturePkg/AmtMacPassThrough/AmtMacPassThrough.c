@@ -32,6 +32,7 @@
 #include <Library/PciSegmentLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Register/PmcRegs.h>
 
 /**
   Get mac address from Gbe region
@@ -96,31 +97,32 @@ AmtGetGbeMac (
 }
 
 /**
-  Checks if the AMT MAC Pass-Through enforcement is requested.
+  Detect Warm Reset.
 
-  This function retrieves the ME BIOS Payload (MBP) data
-  and checks if Media Table Push is requested by CSME.
-
-  @retval TRUE   AMT MacPassThrough command shall be sent.
-  @retval FALSE  There is no need for sending AMT MacPassThrough command.
+  @retval TRUE         System is after warm reset.
+  @retval FALSE        System is not after warm reset.
 **/
 BOOLEAN
-IsAmtMacPassThroughEnforceRequested (
+IsWarmReset (
   VOID
   )
 {
-  ME_BIOS_PAYLOAD_HOB     *MbpHob;
+  VOID    *HobPtr;
+  UINT32  PmconVal;
 
-  DEBUG ((DEBUG_INFO, "%a() enter\n", __FUNCTION__));
-  MbpHob = NULL;
-
-  MbpHob = GetFirstGuidHob (&gMeBiosPayloadHobGuid);
-  if (MbpHob == NULL) {
-    DEBUG ((DEBUG_WARN, "HwAsset: No MBP Data HOB available\n"));
-    return FALSE;
+  //
+  // CPU might trigger a warm reset in pre-mem phase after G3 to update CPU strap.
+  // So use additional "DISB" bit to check if warm reset is triggered after G3
+  //
+  HobPtr = GetFirstGuidHob (&gMeSavedPmconHobGuid);
+  if (HobPtr != NULL) {
+    PmconVal = *(UINT32 *) GET_GUID_HOB_DATA (HobPtr);
+    if (((PmconVal & B_PMC_PWRM_GEN_PMCON_A_MEM_SR) != 0) && ((PmconVal & B_PMC_PWRM_GEN_PMCON_A_DISB) != 0)) {
+      return TRUE;
+    }
   }
 
-  return MbpHob->MeBiosPayload.HwaRequest.Available && (BOOLEAN) MbpHob->MeBiosPayload.HwaRequest.Data.Fields.MediaTablePush;
+  return FALSE;
 }
 
 /**
@@ -172,11 +174,11 @@ AmtSendMacAddress (
   // Send the command when:
   //   - feature state changes
   //   - feature is enabled and MAC changes
-  //   - CSME requests HWA tables
+  //   - after a cold reset
   //
   if (MacConfig.AmtMacPassThroughState != MacConfig.AmtMacPassThroughPreviousBootState ||
      (MacConfig.AmtMacPassThroughState == 1 && CompareMem (MacConfig.MacBuffer, MacBuffer, sizeof (MacBuffer)) != 0) ||
-     IsAmtMacPassThroughEnforceRequested ()) {
+     !IsWarmReset ()) {
     //
     // Send command only if the required change is different from the stored values.
     //

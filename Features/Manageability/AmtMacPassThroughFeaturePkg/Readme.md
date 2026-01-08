@@ -11,7 +11,7 @@ This package implements support for sending information about the onboard LAN MA
 # High-Level Theory of Operation
 
 If Intel AMT is enabled in the system, BIOS shall send [MAC PassThrough command](#Amt-MAC-PassThrough-ASF-command) with current GBE MAC address to AMT before passing control to the OS.
-This step is required each time the feature state changes or when the feature is enabled and GBE MAC changes.
+This step is required each time the feature state changes or when the feature is enabled and GBE MAC changes or after cold reset.
 
 For more information on ASF please refer to [Alert Standard Format specification](https://www.dmtf.org/standards/asf).
 
@@ -25,8 +25,7 @@ Set ```gAmtMacPassThroughFeaturePkgTokenSpaceGuid.PcdAmtMacPassThroughFeatureEna
 
 ## Data flows
 
-Before determining if AMT MAC PassThrough message shall be issued, BIOS shall compare the current feature settings with the ones from the previous boot. The current MAC Address should be determined by reading GBE region through SPI. These settings are held in [AMT MAC PassThrough Configuration EFI variable](#Amt-MAC-PassThrough-Configuration). AMT MAC Passthrough message shall also be issued when CSME explicitly asks for it. This can be detected by checking MBP for existence of HWA MBP item
-with Media Table Request.
+Before determining if AMT MAC PassThrough message shall be issued, BIOS shall compare the current feature settings with the ones from the previous boot. The current MAC Address should be determined by reading GBE region through SPI. These settings are held in [AMT MAC PassThrough Configuration EFI variable](#Amt-MAC-PassThrough-Configuration).
 ### Amt MAC PassThrough Configuration
 
 Field Name                               | Description
