@@ -25,9 +25,7 @@ Name (_DSD, Package ()  // _DSD: Device-Specific Data
   Package ()
   {
     Package (2) {"mipi-sdw-sw-interface-revision", 0x00020001},  // v2.1
-    Package (2) {"mipi-sdw-sdca-interface-revision", 0x0801}, // v0.8r01
-    //Package (2) {"mipi-sdca-control-list",  Package() {0x4, 0x5,0x6, 0x7, 0x8} },
-    //Package (2) {"mipi-sdca-control-list",  0x01F0},  // Bitmap: 0x4, 0x5,0x6, 0x7, 0x8
+    Package (2) {"mipi-sdca-function-topology-features", 0x0000}, // No option
     Package (2) {"mipi-sdca-control-list",  0xF000000301F2 }, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
         Package (2) {"mipi-sdca-entity-id-list", Package() {0x1} },
   },
@@ -127,10 +125,10 @@ Name(C004, Package()
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package()
   {
-    // Function_SDCA_Version = 0.8, Class, DC
+    // Function_SDCA_Version = 1.0, Class, DC
     Package(2) {"mipi-sdca-control-access-layer", 4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x8},
+    Package(2) {"mipi-sdca-control-dc-value", 0x10},
   }
 }) // End C004
 
@@ -198,7 +196,7 @@ Name(C043, Package()
     //Function_Status, Class, RW1C
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 2},
-    Package(2) {"mipi-sdca-control-interrupt-position", 11}, //IntStat_SDCA_11
+    Package(2) {"mipi-sdca-control-interrupt-position", 10}, //IntStat_SDCA_10
   }
 }) //End AF04.C043
 
@@ -230,10 +228,10 @@ Name(C02D, Package()
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package()
   {
-    //Device_Part_ID = 0x721, Class, DC
+    //Device_Part_ID = 0x712, Class, DC
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x0721},
+    Package(2) {"mipi-sdca-control-dc-value", 0x0712},
   }
 }) //End AF04.C02D
 
@@ -257,7 +255,7 @@ Name(C02F, Package()
     //Device_SDCA_Version, Class, DC
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x8},
+    Package(2) {"mipi-sdca-control-dc-value", 0x10},
   }
 }) //End AF04.C02F
 
@@ -267,8 +265,9 @@ Name(E001, Package()
   Package ()
   {
     Package (2) {"mipi-sdca-entity-type", 0x31},
-    //Package (2) {"mipi-sdca-control-list", Package() {0x10, 0x11, 0x12, 0x13} },
-    Package (2) {"mipi-sdca-control-list", 0x000D0000},  // Bitmap: 0x10, 0x11, 0x12, 0x13
+    Package (2) {"mipi-sdca-entity-label", "HIDE 101"},
+    Package (2) {"mipi-sdca-control-list", 0x000D0000}, // Bitmap: 0x10, 0x12, 0x13
+    Package (2) {"mipi-sdca-hide-related-audio-function-list", Package() {0x1} },   // sending/receiving the messages in this HIDE to/from AF01(UAJ)
     Package (2) {"mipi-sdca-HIDTx-supported-report-ids", Package() {0x11} },   // HIDE 1 TX Routing Table
   },
   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
