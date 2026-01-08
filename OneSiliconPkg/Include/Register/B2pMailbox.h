@@ -82,6 +82,22 @@ typedef union {
   UINT32    Data32;
 } MAILBOX_DATA_VR_TDC_CONFIG;
 
+///
+/// VCCSA Shutdown Configuration
+/// Project specific opcode for VCCSA VR shutdown control in PKGC10.3
+/// Note: Must be configured before MRC_DONE and requires DFD mailbox coordination
+///
+#define MAILBOX_VR_CMD_PROJECT_SPECIFIC                                    0x00000001
+#define WRITE_VCCSA_SHUTDOWN_ENABLE                                        0x00000004
+#define READ_VCCSA_SHUTDOWN_ENABLE                                         0x00000005
+typedef union {
+  struct {
+    UINT32  VccsaShutdownEnable      :1;   ///< [0:0]   : VCCSA Shutdown Enable
+    UINT32  Reserved                 :31;  ///< [31:1]  : Reserved
+  } Fields;
+  UINT32    Data32;
+} MAILBOX_DATA_VCCSA_SHUTDOWN_CONFIG;
+
 //
 // Get IPC Scaling Factor per module
 //

@@ -102,6 +102,7 @@ CpuPowerMgmtVrConfigPrint (
   DEBUG ((DEBUG_INFO, "VsysAssertionDeglitchExponent:0x%X\n", CpuPowerMgmtVrConfig->VsysAssertionDeglitchExponent));
   DEBUG ((DEBUG_INFO, "VsysDeassertionDeglitchMantissa:0x%X\n", CpuPowerMgmtVrConfig->VsysDeassertionDeglitchMantissa));
   DEBUG ((DEBUG_INFO, "VsysDeassertionDeglitchExponent:0x%X\n", CpuPowerMgmtVrConfig->VsysDeassertionDeglitchExponent));
+  DEBUG ((DEBUG_INFO, "VccsaShutdown:0x%X\n", CpuPowerMgmtVrConfig->VccsaShutdown));
 }
 /**
   Load Config block default
