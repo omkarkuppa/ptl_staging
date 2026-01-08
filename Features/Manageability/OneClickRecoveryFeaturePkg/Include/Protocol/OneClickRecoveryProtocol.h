@@ -31,8 +31,8 @@ typedef union {
     UINT8 OcrBootHttps      : 1;    ///< [0]    BIOS supports Intel One Click Recovery Https  with AMT specified device path
     UINT8 OcrBootPba        : 1;    ///< [1]    BIOS supports Intel One Click Recovery PBA Boot with AMT specified device path
     UINT8 OcrBootWinRe      : 1;    ///< [2]    BIOS supports Intel One Click Recovery WinRe Boot
-    UINT8 OcrAmtDisSecBoot  : 1;    ///< [3]    BIOS supports Intel One Click Recovery disable Secure Boot for AMT provided UEFI Load option
-    UINT8 OcrWifiProfile    : 1;    ///< [4]    Deprecated - Updated to use PcdWifiProfileSyncEnable in Smbios Type 130
+    UINT8 OcrAmtDisSecBoot  : 1;    ///< [3]    BIOS suporrts Intel One Click Recovery disable Secure Boot for AMT provided UEFI Load option
+    UINT8 OcrWifiProfile    : 1;    ///< [4]    BIOS suporrts Intel One Click Recovery WiFi Profile sync
     UINT8 Reserved2         : 3;    ///< [7:5]  Reserved
   } Bits;
   UINT8   Data;
@@ -144,8 +144,7 @@ struct _ONE_CLICK_RECOVERY_PROTOCOL {
   Intel One Click Recovery Setup Protocol revision number
 
   Revision 1:   Initial version
-  Revision 2:   Deprecating OcrWifiProfile bit in ONE_CLICK_RECOVERY_CAP
 **/
-#define  ONE_CLICK_RECOVERY_PROTOCOL_REVISION   2
+#define  ONE_CLICK_RECOVERY_PROTOCOL_REVISION   1
 
 #endif

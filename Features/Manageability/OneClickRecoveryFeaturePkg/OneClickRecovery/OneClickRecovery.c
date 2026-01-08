@@ -105,12 +105,7 @@ OcrGetCapabilities (
   mOcrCap.Bits.OcrBootPba       = (PcdGet8 (PcdOneClickRecoveryCapabilities) & 0x2) >> 1;
   mOcrCap.Bits.OcrBootWinRe     = (PcdGet8 (PcdOneClickRecoveryCapabilities) & 0x4) >> 2;
   mOcrCap.Bits.OcrAmtDisSecBoot = (PcdGet8 (PcdOneClickRecoveryCapabilities) & 0x8) >> 3;
-
-  DEBUG ((DEBUG_INFO, "OCR Capabilities:\n\tHTTPS: %x\n\tPBA: %x\n\tWinRe: %x\n\tDisable Sec Boot: %x\n",
-    mOcrCap.Bits.OcrBootHttps,
-    mOcrCap.Bits.OcrBootPba,
-    mOcrCap.Bits.OcrBootWinRe,
-    mOcrCap.Bits.OcrAmtDisSecBoot));
+  mOcrCap.Bits.OcrWifiProfile   = (UINT8) FixedPcdGetBool (PcdWifiProfileSyncEnable);
 
   return mOcrCap;
 }

@@ -1966,7 +1966,7 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServi
 #
 # OCR
 #
-!if (gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryEnable == TRUE) || (gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdWifiProfileSyncEnable == TRUE)
+!if gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryEnable == TRUE
   !include OneClickRecoveryFeaturePkg/Include/Fdf/OneClickRecoveryFeature.fdf
 !endif
 

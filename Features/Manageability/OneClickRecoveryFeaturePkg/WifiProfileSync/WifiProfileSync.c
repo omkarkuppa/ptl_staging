@@ -497,7 +497,7 @@ WifiProfileSyncMain (
 }
 
 /**
-  Check for Secure boot and boot guard for enabling ProfileSync.
+  Check for Secure boot, boot guard and proper boot options and PCD's are enabling for ProfileSync.
 
   @retval EFI_SUCCESS         Profiles returned
   @retval EFI_UNSUPPORTED     Protocol not supported
@@ -509,6 +509,7 @@ IsProfileSyncSupported (
   )
 {
   EFI_STATUS    Status;
+  UINT16        SpecialCommand;
   UINT8         SecureBootState;
   UINTN         VarSize;
   UINT32        VarAttributes;
@@ -533,8 +534,17 @@ IsProfileSyncSupported (
   if (IsBootGuardSupported ()) {
     BootGuardBootStatus = (*(UINT64 *) (UINTN) (TXT_PUBLIC_BASE + R_CPU_BOOT_GUARD_BOOTSTATUS) & (BIT63 | BIT62));
     BootGuardOperationMode = AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & (B_BOOT_GUARD_SACM_INFO_MEASURED_BOOT | B_BOOT_GUARD_SACM_INFO_VERIFIED_BOOT);
+
     if ((BootGuardBootStatus == V_CPU_BOOT_GUARD_LOAD_ACM_SUCCESS) && (BootGuardOperationMode != 0)) {
-      return TRUE;
+      SpecialCommand = AsfGetSpecialCommand ();
+      if ((SpecialCommand == ASF_INTEL_OEM_FORCE_HTTPS_BOOT_CMD) || (SpecialCommand == ASF_INTEL_OEM_FORCE_PBA_BOOT_CMD)) {
+        return TRUE;
+      }
+      if (!EFI_ERROR (Status) && AmtIsKvmSessionEnabled ()) {
+        return TRUE;
+      } else {
+        DEBUG ((DEBUG_ERROR, "[%a] Unsupported - KVM not enabled and boot option is 0x%X\n", __FUNCTION__, SpecialCommand));
+      }
     } else {
       DEBUG ((DEBUG_ERROR, "[%a] Unsupported - Bootguard disabled\n", __FUNCTION__));
     }

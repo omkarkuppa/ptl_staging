@@ -19,10 +19,7 @@
 # @par Specification
 ##
 
-!if gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryEnable == TRUE
 INF OneClickRecoveryFeaturePkg/OneClickRecovery/OneClickRecovery.inf
-!endif
-
 !if gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdWifiProfileSyncEnable == TRUE
 INF OneClickRecoveryFeaturePkg/WifiProfileSync/WifiProfileSync.inf
 !endif

@@ -245,10 +245,9 @@ UpdateOemCapabilities4 (
   IN  ME_BIOS_PAYLOAD_HOB  *MbpHob
   )
 {
-  EFI_STATUS                    Status;
-  ONE_CLICK_RECOVERY_PROTOCOL   *OneClickRecovery;
-  ONE_CLICK_RECOVERY_CAP        OcrCap;
-  BOOLEAN                       WifiProfileSyncCap;
+  EFI_STATUS                  Status;
+  ONE_CLICK_RECOVERY_PROTOCOL *OneClickRecovery;
+  ONE_CLICK_RECOVERY_CAP      OcrCap;
 
   if (MbpHob == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: No MBP HOB available\n", __FUNCTION__));
@@ -263,29 +262,20 @@ UpdateOemCapabilities4 (
   }
 
   //
-  // One Click Recovery Supported Capabilities
+  // Supported in full manageability
   //
   Status = gBS->LocateProtocol (&gOneClickRecoveryProtocolGuid, NULL, (VOID **) &OneClickRecovery);
-  if (!EFI_ERROR (Status)) {
-    OcrCap = OneClickRecovery->OcrCap ();
-  } else {
-    OcrCap.Data = 0;
+  if (EFI_ERROR (Status)) {
+    return;
   }
 
-  //
-  // WiFi Profile Sync Supported Capability
-  //
-#if FixedPcdGetBool (PcdWifiProfileSyncEnable) == 1
-  WifiProfileSyncCap = TRUE;
-#else
-  WifiProfileSyncCap = FALSE;
-#endif
+  OcrCap = OneClickRecovery->OcrCap ();
 
   *OemCapabilities4 |= (((!!OcrCap.Bits.OcrBootHttps)     << OEM_CAPS_4_OCR_HTTPS_BOOT_BIT_OFFSET      ) |
                         ((!!OcrCap.Bits.OcrBootPba)       << OEM_CAPS_4_OCR_PBA_BOOT_BIT_OFFSET        ) |
                         ((!!OcrCap.Bits.OcrBootWinRe)     << OEM_CAPS_4_OCR_WINRE_BOOT_BIT_OFFSET      ) |
                         ((!!OcrCap.Bits.OcrAmtDisSecBoot) << OEM_CAPS_4_OCR_AMT_DIS_SEC_BOOT_BIT_OFFSET) |
-                        ((!!WifiProfileSyncCap)           << OEM_CAPS_4_WIFI_PROFILE_SYNC_BIT_OFFSET   )
+                        ((!!OcrCap.Bits.OcrWifiProfile)   << OEM_CAPS_4_OCR_WIFI_PROFILE_BIT_OFFSET    )
                         );
 }
 

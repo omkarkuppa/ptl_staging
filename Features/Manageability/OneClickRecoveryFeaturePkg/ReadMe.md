@@ -25,7 +25,7 @@
 
 ## Purpose
 * One Click Recovery: Provide a method driver to support Out of Band OS recovery, triggered from a remote administrator.
-* WiFi Profile Sync: Install gEdkiiWiFiProfileSyncProtocolGuid, supporting pre-OS wireless LAN connectivity through an AMT provided WiFi profile.
+* WiFi Profile Sync: Supporting wireless LAN KVM and One Click Recovery WinRe, PBA, and HTTPS flows through an AMT profided WiFi profile. Install's gEdkiiWiFiProfileSyncProtocolGuid.
 
 ## Currently supported function:
 - One Click Recovery:
@@ -53,16 +53,14 @@
 5. OCR sets the recovery boot setup configuration
 6. System reboots
 7. WiFi Profile Sync driver loaded
-  7.1.  WiFiProfileSync driver will install gEdkiiWiFiProfileSyncProtocolGuid during DXE.
-  7.2.  WiFiProfileSync driver will check if boot guard and secure boot are enabled.
-  7.3.  Driver will create EnableWifiAmtCoex UEFI variable and set it to FALSE to indicate WiFi-AMT coexistence is initially disabled.
-  7.4.  Driver will poll request WiFi profile name from AMT, if no name provided in 15 seconds then uninstall protocol and exit.
-  7.5.  Driver will request WiFi profile data using the profile name to identify the profile.
-  7.6.  Driver will request Root CA, Certificate and Key if WiFi profile data certificate availability bit is set.
-  7.7.  Driver will set EnableWifiAmtCoex variable to TRUE to enable WiFi-AMT coexistence with the UEFI Wifi Driver and CSME.
-  7.8.  Driver will store data in memory till exit boot services, where its callback will delete all data in memory and reset EnableWifiAmtCoex to FALSE.
-  7.9.  WifiConnectionManager Driver will check if gEdkiiWiFiProfileSyncProtocolGuid installed, if found it will request WiFi profile data.
-  7.10. WiFiProfileSync driver will configure the profile data to WiFiConnectionManager driver profile structure and pass back data.
+  7.1. WiFiProfileSync driver will install gEdkiiWiFiProfileSyncProtocolGuid during DXE.
+  7.2. WiFiProfileSync driver will check if boot guard and secure boot are enabled and if either in WinRe, HTTPS, PBA recovery or KVM is enabled.
+  7.3. Driver will poll request WiFi profile name from AMT, if no name provided in 15 seconds then uninstall protocol and exit.
+  7.4. Driver will request WiFi profile data using the profile name to identify the profile.
+  7.5. Driver will request Root CA, Certificate and Key if WiFi profile data certificate avalability bit is set.
+  7.6. Driver will store data in memory till exit boot services, where its callback will delete all data in memory.
+  7.7. WifiConnectionManager Driver will check if gEdkiiWiFiProfileSyncProtocolGuid installed, if found it will request WiFi profile data.
+  7.8. WiFiProfileSync driver will configure the profile data to WiFiConnectionManager driver profile sturcture and pass back data.
 8. Recovery flow operates to access new OS and install
 9. OCR uninstall OCR protocol
 10. At Exit Boot Service WifiProfileSync driver callback will delete all profile data from memory and uninstall gEdkiiWiFiProfileSyncProtocolGuid.
@@ -76,7 +74,7 @@
 Provides ONE_CLICK_RECOVERY_PROTOCOL service for use.
   - ONE_CLICK_RECOVERY_ENTRY: The Intel One Click Recovery setup main function. This does the necessary work to setup the One Click Recovery feature. Called in BDS phase.
   - ONE_CLICK_RECOVERY_CAPABILITIES: Returns device One Click Recovery capabilities from SMBIOS table 130, to check for support types.
-  - ONE_CLICK_RECOVERY_SAVE_UEFI_BOOT_OPTION: Saves OCR UEFI Boot Option from AMT. Needs to be called before Clear Boot Options.
+  - ONE_CLICK_RECOVERY_SAVE_UEFI_BOOT_OPTION: Saves OCR Uefi Boot Option from AMT. Needs to be called before Clear Boot Options.
 
 ### WifiProfileSync.inf
  Provide EDKII_WIFI_PROFILE_SYNC_PROTOCOL service for usage.
@@ -84,8 +82,6 @@ Provides ONE_CLICK_RECOVERY_PROTOCOL service for use.
     Use status for reconnection attempts and reporting connection status.
   - Get WiFi Profile
     WiFiConnectionManager uses this protocol function to get profile data for connection.
-  - Manage EnableWifiAmtCoex Variable
-    Creates and manages the EnableWifiAmtCoex UEFI variable to coordinate WiFi-AMT coexistence during profile sync operations with the UEFI Wifi Driver and CSME. Set to FALSE initially, TRUE during active sync, and FALSE again at Exit Boot Services.
 
 ## Configuration
 * Set gSiPkgTokenSpaceGuid.PcdAmtEnable to True
@@ -104,12 +100,12 @@ Provides ONE_CLICK_RECOVERY_PROTOCOL service for use.
 * Install recovery boot option callback gEfiHttpBootCallbackProtocolGuid
   and gEdkiiHttpCallbackProtocolGuid
 * Install EDKII_WIFI_PROFILE_SYNC_PROTOCOL service for usage.
-* Update SMBIOS table 130 with WiFi Profile Sync capability.
+* Update SMBIOS table 130 with One Click Recovery WLAN support from WiFi Profile Sync capabilities.
 * Store and pass Wifi Profile Data from AMT to WifiConnectionManager for WLAN connection use.
 
 ## Control Flows
 * SKU must be corporate and support AMT.
-* BootGuard and Secure boot must be enabled.
+* BootGuard and Secure boot must be endabled.
 * Must request special boot command for WinRe, PBA, or HTTPS recovery boot or find KVM enabled.
 
 ## Build flows

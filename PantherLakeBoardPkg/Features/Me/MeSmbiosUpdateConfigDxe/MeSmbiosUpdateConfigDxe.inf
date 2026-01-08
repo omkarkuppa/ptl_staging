@@ -59,7 +59,6 @@
   gOneClickRecoveryProtocolGuid         ## CONSUMES
   gMebxConfigProtocolGuid               ## CONSUMES
   gEfiPciIoProtocolGuid                 ## CONSUMES
-  gEdkiiWiFiProfileSyncProtocolGuid     ## CONSUMES
 
 [Guids]
   gMeBiosPayloadHobGuid                 ## CONSUMES
@@ -67,10 +66,9 @@
   gMeSetupVariableGuid                  ## CONSUMES
 
 [Pcd]
-  gSiPkgTokenSpaceGuid.PcdSolTerminalType                             ## CONSUMES
-  gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport        ## CONSUMES
-  gPsFeatureModuleTokenSpaceGuid.PcdPsSupportCapabilities             ## CONSUMES
-  gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdWifiProfileSyncEnable  ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSolTerminalType                       ## CONSUMES
+  gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport  ## CONSUMES
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSupportCapabilities       ## CONSUMES
 
 [Depex]
   gEfiVariableArchProtocolGuid        AND
