@@ -61,6 +61,7 @@
   gEfiPeiReadOnlyVariable2PpiGuid      ## CONSUMES
   gEfiPeiTsegMemoryTestPpiGuid         ## PRODUCES
   gSiPreMemPolicyPpiGuid               ## CONSUMES
+  gEfiPeiBiosMemoryTestPpiGuid         ## CONSUMES
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdTsegSize
@@ -69,6 +70,7 @@
   gTishDataHobGuid                     ## PRODUCES
   gSetupVariableGuid                   ## CONSUMES
   gMemoryConfigNoCrcGuid               ## CONSUMES
+  gSiMemoryPlatformDataGuid            ## CONSUMES
 
  [Depex]
   TRUE

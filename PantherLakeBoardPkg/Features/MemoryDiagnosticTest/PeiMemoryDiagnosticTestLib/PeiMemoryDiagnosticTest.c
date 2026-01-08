@@ -40,6 +40,7 @@
 #include <Library/PeiServicesTablePointerLib.h>
 #include <Include/BootStateLib.h>
 #include <TishDataHob.h>
+#include <MemInfoHob.h>
 #include <MemoryConfig.h>
 #include <Ppi/SiPolicy.h>
 #include <Library/PeiHostBridgeIpStatusLib.h>
@@ -127,11 +128,88 @@ PerformTsegRegionMemoryTest (
   IN VOID                       *Ppi
   );
 
+/**
+  Callback to update TISH HOB with PEI memory information
+
+  @param[in]  PeiServices       General purpose services available to every PEIM.
+  @param[in]  NotifyDescriptor  Notify that this module published.
+  @param[in]  Ppi               PPI that was installed.
+
+  @retval     EFI_SUCCESS       The function completed successfully.
+**/
+EFI_STATUS
+EFIAPI
+UpdateTishHobWithPeiMemoryInfo (
+  IN CONST EFI_PEI_SERVICES     **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+  IN VOID                       *Ppi
+  );
+
 static EFI_PEI_NOTIFY_DESCRIPTOR  mTsegMemoryTestNotifyList = {
   (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiTsegMemoryTestPpiGuid,
   (EFI_PEIM_NOTIFY_ENTRY_POINT)PerformTsegRegionMemoryTest
 };
+
+static EFI_PEI_NOTIFY_DESCRIPTOR  mBiosPeiMemoryTestInitNotifyList = {
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gEfiPeiBiosMemoryTestPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT)UpdateTishHobWithPeiMemoryInfo
+};
+
+/**
+  Callback to update TISH HOB with PEI memory information
+
+  @param[in]  PeiServices       General purpose services available to every PEIM.
+  @param[in]  NotifyDescriptor  Notify that this module published.
+  @param[in]  Ppi               PPI that was installed.
+
+  @retval     EFI_SUCCESS       The function completed successfully.
+**/
+EFI_STATUS
+EFIAPI
+UpdateTishHobWithPeiMemoryInfo (
+  IN CONST EFI_PEI_SERVICES     **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+  IN VOID                       *Ppi
+  )
+{
+  TISH_CONFIG_HOB           *TishDataHob;
+  MEMORY_PLATFORM_DATA_HOB  *MemPlatformDataHob;
+
+  DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
+
+  //
+  // Get TISH_CONFIG_HOB
+  //
+  TishDataHob = (TISH_CONFIG_HOB *)GetFirstGuidHob (&gTishDataHobGuid);
+  if (TishDataHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "TISH_CONFIG_HOB not found!\n"));
+    return EFI_NOT_FOUND;
+  }
+
+  //
+  // Get MEMORY_PLATFORM_DATA_HOB with PEI memory information
+  //
+  MemPlatformDataHob = GetFirstGuidHob (&gSiMemoryPlatformDataGuid);
+  if (MemPlatformDataHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "MEMORY_PLATFORM_DATA_HOB not found!\n"));
+    return EFI_NOT_FOUND;
+  }
+
+  //
+  // Update TISH HOB with PEI memory base address and length from MEMORY_PLATFORM_DATA_HOB
+  //
+  TishDataHob->BiosPeiMemoryBaseAddress = MemPlatformDataHob->Data.BiosPeiMemoryBaseAddress;
+  TishDataHob->BiosPeiMemoryLength = MemPlatformDataHob->Data.BiosPeiMemoryLength;
+
+  DEBUG ((DEBUG_INFO, "Updated TISH HOB: BiosPeiMemoryBaseAddress = 0x%lx, BiosPeiMemoryLength = 0x%lx\n",
+          TishDataHob->BiosPeiMemoryBaseAddress, TishDataHob->BiosPeiMemoryLength));
+
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+
+  return EFI_SUCCESS;
+}
 
 /**
   This function checks the memory range.
@@ -506,6 +584,14 @@ PeiMemoryDiagnosticTestLibContructor (
       // Performing TSEG Region Memory Test after TsegMemoryTestInit PPI Installed
       //
       Status      = PeiServicesNotifyPpi (&mTsegMemoryTestNotifyList);
+      ASSERT_EFI_ERROR (Status);
+
+      //
+      // Register callback to update TISH HOB when BIOS PEI memory test PPI is installed
+      //
+      Status      = PeiServicesNotifyPpi (&mBiosPeiMemoryTestInitNotifyList);
+      ASSERT_EFI_ERROR (Status);
+
       TishDataHob = (TISH_CONFIG_HOB *)GetFirstGuidHob (&gTishDataHobGuid);
       if (TishDataHob != NULL) {
         RetryCount = CmosRead8 (CMOS_MEM_TEST_INFO_OFFSET) & 0x7;

@@ -23,6 +23,7 @@
 #include <Library/ReportStatusCodeLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/IoLib.h>
+#include <Library/HobLib.h>
 #include <Guid/SmramMemoryReserve.h>
 #include <Guid/MemoryTypeInformation.h>
 #include <Library/MemoryAllocationLib.h>
@@ -1548,6 +1549,7 @@ InstallEfiMemory (
   UINT64                                NocImrExclusionLimit;
   UINT64                                NocImrExclusionSize;
   UINT64                                NocImrExclusionDelta;
+  MEMORY_PLATFORM_DATA_HOB              *MemPlatformDataHob;
 
   TseDataHob = NULL;
   MemorySubSystemConfig = NULL;
@@ -1669,6 +1671,20 @@ InstallEfiMemory (
   }
 
   if ((MemConfigNoCrc != NULL) && (MemConfigNoCrc->SafeLoadingBiosEnableState == 1)) {
+    
+    //
+    // Update MEMORY_PLATFORM_DATA_HOB with PEI memory info for platform consumption
+    //
+    MemPlatformDataHob = GetFirstGuidHob (&gSiMemoryPlatformDataGuid);
+    if (MemPlatformDataHob != NULL) {
+      MemPlatformDataHob->Data.BiosPeiMemoryBaseAddress = PeiMemoryBaseAddress;
+      MemPlatformDataHob->Data.BiosPeiMemoryLength = PeiMemoryLength;
+      DEBUG ((DEBUG_INFO, "Updated MEMORY_PLATFORM_DATA_HOB - BiosPeiMemoryBaseAddr: 0x%lx, Length: 0x%lx\n",
+              PeiMemoryBaseAddress, PeiMemoryLength));
+    } else {
+      DEBUG ((DEBUG_ERROR, "Failed to find MEMORY_PLATFORM_DATA_HOB\n"));
+    }
+    
     Status = PeiServicesInstallPpi(&mBiosPeiMemoryTestInitPpi);
     ASSERT_EFI_ERROR(Status);
   }
