@@ -564,8 +564,8 @@ Name(C602, Package()
     // Volume, User, RW
     Package(2) {"mipi-sdca-control-access-layer", 0x1},
     Package(2) {"mipi-sdca-control-access-mode", 0},
-    Package(2) {"mipi-sdca-control-default-value", 0x0000}, // 0dB
-    //Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
+    //Package(2) {"mipi-sdca-control-default-value", 0x0000}, // 0dB
+    Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
     Package(2) {"mipi-sdca-control-cn-list", 0x6 },
   },
 
