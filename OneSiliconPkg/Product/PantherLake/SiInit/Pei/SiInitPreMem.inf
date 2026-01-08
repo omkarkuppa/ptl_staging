@@ -87,6 +87,7 @@
   PeiFusaE2eCtcLib
   HobLib
   PeiTccInitLib
+  PtlCpuInfoLib
 
 [Guids]
   ##

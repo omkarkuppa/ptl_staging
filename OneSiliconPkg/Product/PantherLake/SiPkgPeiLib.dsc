@@ -81,6 +81,7 @@ PtlPcdPolicyLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdPolicyLib/PtlPcd
  CpuCommonLib|$(PLATFORM_SI_PACKAGE)/LibraryPrivate/PeiDxeSmmCpuCommonLib/PeiDxeSmmCpuCommonLib.inf
  CpuInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/LibraryPrivate/PeiCpuInitLib/PeiCpuInitLib.inf
  SmmRelocationLib|$(PLATFORM_SI_PACKAGE)/IpBlock/CpuInit/LibraryPrivate/SmmRelocationLib/SmmRelocationLib.inf
+ PtlCpuInfoLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/Library/PtlCpuInfoLib/PeiPtlCpuInfoLib.inf
 !if gSiPkgTokenSpaceGuid.PcdBiosGuardEnable == TRUE
  BiosGuardLib|$(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/LibraryPrivate/PeiBiosGuardLib/PeiBiosGuardLib.inf
  PeiBiosGuardInitFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/PeiBiosGuardInitFruLib/PeiBiosGuardInitFruLib.inf

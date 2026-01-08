@@ -75,6 +75,7 @@
 #include <ConfigBlock/Ish/IshConfig.h>
 #include <Library/PchInitLib.h>
 #include <Library/FspPerformanceLib.h>
+#include <Library/PtlCpuInfoLib.h>
 #if FixedPcdGet8(PcdTccSupport) == 0x1
 #include <Library/PeiTccInitLib.h>
 #include <TccConfig.h>
@@ -908,6 +909,9 @@ SiInitPrePolicy (
   ASSERT_EFI_ERROR (Status);
 
   Status = PtlPcdInstallDieInfo ();
+  ASSERT_EFI_ERROR (Status);
+
+  Status = CpuInstallDieInfo ();
   ASSERT_EFI_ERROR (Status);
 
   //

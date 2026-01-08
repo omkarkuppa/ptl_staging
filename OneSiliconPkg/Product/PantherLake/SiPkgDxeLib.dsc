@@ -47,6 +47,7 @@
 # Cpu
 #
  CpuCommonLib|$(PLATFORM_SI_PACKAGE)/LibraryPrivate/PeiDxeSmmCpuCommonLib/PeiDxeSmmCpuCommonLib.inf
+ PtlCpuInfoLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/Library/PtlCpuInfoLib/DxePtlCpuInfoLib.inf
 
 #
 # Pch

@@ -52,6 +52,7 @@ DebugLib
 CpuInfoFruLib
 CpuPlatformLib
 LocalApicLib
+PtlCpuInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec

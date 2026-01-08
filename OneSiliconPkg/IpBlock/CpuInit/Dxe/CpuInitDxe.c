@@ -42,6 +42,7 @@
 #include <Register/GenerationMsr.h>
 #include <Register/Cpuid.h>
 #include <Register/Msr.h>
+#include <Library/PtlCpuInfoLib.h>
 
 //
 // Private GUIDs for BIOS Guard initializes
@@ -694,6 +695,14 @@ InitializeCpu (
                   &ExitBootServicesEvent
                   );
   ASSERT_EFI_ERROR (Status);
+
+  ///
+  /// Install CPU die info protocol
+  ///
+  Status = CpuInstallDieInfo ();
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   return EFI_SUCCESS;
 }
