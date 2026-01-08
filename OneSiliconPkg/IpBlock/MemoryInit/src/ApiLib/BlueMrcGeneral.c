@@ -565,12 +565,14 @@ MrcNormalMode (
   This function calculates the Storage size per selected Ibecc Region.
 
   @param[in] IbeccProtectedRegionMask - Selected IBECC region mask to calculate Storage Size
+  @param[in] EccSpaceFraction         -  1/16 (32B ECC granularity) or 1/32 (64B ECC granularity)
 
   @retval Storage Size in size of 1MB.
 **/
 UINT32
 MrcCalcStorageSize (
-  IN UINT32        IbeccProtectedRegionMask
+  IN UINT32        IbeccProtectedRegionMask,
+  IN UINT32        EccSpaceFraction
   )
 {
   UINT32                    ProtectedSize;
@@ -578,8 +580,8 @@ MrcCalcStorageSize (
 
   // The size granularity for protected range per IBECC instance is 32MB (CMI address bits 38:25)
   ProtectedSize = (0x4000 - IbeccProtectedRegionMask) * 32;
-  // Storage size is 1/32 of protected range
-  StorageSize = ProtectedSize / 32;
+  // Storage size is 1/EccSpaceFraction of protected range
+  StorageSize = ProtectedSize / EccSpaceFraction;
   // Minimum storage size is 16MB (Storage size in MB)
   StorageSize = MAX (StorageSize, 16);
 
@@ -612,7 +614,7 @@ MrcGetIbeccStorageSize (
 
   for (IbeccRegion = 0; IbeccRegion < MAX_IBECC_REGIONS; IbeccRegion++) {
     if (ExtInputs->IbeccProtectedRegionEnable[IbeccRegion] == 1) {
-      TotalStorageSize += MrcCalcStorageSize (ExtInputs->IbeccProtectedRegionMask[IbeccRegion]);
+      TotalStorageSize += MrcCalcStorageSize (ExtInputs->IbeccProtectedRegionMask[IbeccRegion], ExtInputs->EccGranularity32BEn ? 16 : 32);
     }
   }
 
@@ -698,6 +700,8 @@ MrcIbecc (
   BOOLEAN                                       IsIbeccSymmetric;
   UINT32                                        HashMask;
   UINT32                                        HashLsb;
+  UINT32                                        PrevRangeSizeSum;
+  UINT32                                        EccSpaceFraction;
   INT64                                         GetSetEnable;
   IbeccOpMode                                   IbeccOperationMode;
   MC0_IBECC_CONTROL_STRUCT                      IbeccControl;
@@ -720,6 +724,7 @@ MrcIbecc (
   ControllerCount       = 0;
   GetSetEnable          = 1;
   TomMinusEdsr          = 0;
+  EccSpaceFraction = ExtInputs->EccGranularity32BEn ? 16 : 32;
   Outputs->FinalIbeccOperationMode = (UINT8) ExtInputs->IbeccOperationMode;
 
   if (Inputs->IsIbeccPmaEnabled) {
@@ -783,13 +788,14 @@ MrcIbecc (
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "EccStorage ADDRESS: 0x%x\n", EccStorage.Bits.ADDRESS);
 
         } else if (IbeccOperationMode == IbeccPartialProtect) {
+          PrevRangeSizeSum = 0;
           for (IbeccRegion = 0; IbeccRegion < MAX_IBECC_REGIONS; IbeccRegion++) {
             // Specifies the Address Space that is reserved to store ECC data for all protected ranges
             Offset = OFFSET_CALC_CH (MC0_IBECC_ECC_STORAGE_ADDR_RANGE_0_REG, MC1_IBECC_ECC_STORAGE_ADDR_RANGE_0_REG, Controller);
             Offset += ((MC0_IBECC_ECC_STORAGE_ADDR_RANGE_1_REG - MC0_IBECC_ECC_STORAGE_ADDR_RANGE_0_REG) * IbeccRegion);
             EccStorage.Data = MrcReadCR (MrcData, Offset);
             if (ExtInputs->IbeccProtectedRegionEnable[IbeccRegion] == 1) {
-              EccStorage.Bits.ADDRESS = TomMinusEdsr >> (24 - 20);
+              EccStorage.Bits.ADDRESS = ((TomMinusEdsr + PrevRangeSizeSum) >> (24 - 20));
               MrcWriteCR (MrcData, Offset, EccStorage.Data);
               MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "EccStorage Range %d ADDRESS: 0x%x\n", IbeccRegion, EccStorage.Bits.ADDRESS);
               Offset = OFFSET_CALC_CH (MC0_IBECC_PROTECT_ADDR_RANGE_0_REG, MC1_IBECC_PROTECT_ADDR_RANGE_0_REG, Controller);
@@ -797,6 +803,7 @@ MrcIbecc (
               IbeccAddressRange.Data = MrcReadCR(MrcData, Offset);
               IbeccAddressRange.Bits.BASE = ExtInputs->IbeccProtectedRegionBase[IbeccRegion] & (MC0_IBECC_PROTECT_ADDR_RANGE_0_BASE_MSK >> MC0_IBECC_PROTECT_ADDR_RANGE_0_BASE_OFF);
               IbeccAddressRange.Bits.MASK = ExtInputs->IbeccProtectedRegionMask[IbeccRegion] & (MC0_IBECC_PROTECT_ADDR_RANGE_0_MASK_MSK >> MC0_IBECC_PROTECT_ADDR_RANGE_0_MASK_OFF);
+              PrevRangeSizeSum += (MrcCalcStorageSize(IbeccAddressRange.Bits.MASK, EccSpaceFraction)); // for next iteration
               IbeccAddressRange.Bits.RANGE_EN = 0x1;
               MrcWriteCR (MrcData, Offset, IbeccAddressRange.Data);
               MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Protected Range %d: BASE = 0x%x, MASK = 0x%x\n", IbeccRegion, IbeccAddressRange.Bits.BASE, IbeccAddressRange.Bits.MASK);

@@ -744,6 +744,7 @@ typedef struct {
   UINT32  FailedDataSharedMask;   // [0:7] - DataShared[0..7]
   UINT32  FailedCccSharedMask;    // [0:3] - CccShared[0..3]
   UINT32  FailedCompMask;         // [0]   - COMP
+                                  // Can also represent bitmask of failed DllIndex at BwselCal
   UINT32  FailedLvrMask;          // Bitmask of (1 << Supply), where Supply is one of LVR_AUTO_TRIM_SUPPLY_TYPE
   UINT32  FailedPhClkCheckMask;   // Bitmask of failed phase clock check stages
                                   // [0:9] - bitmask corresponding to DcdType enum
