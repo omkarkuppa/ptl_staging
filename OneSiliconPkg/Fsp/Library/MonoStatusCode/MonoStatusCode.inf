@@ -39,14 +39,9 @@
   IntelFsp2Pkg/IntelFsp2Pkg.dec
 
 [LibraryClasses]
-  BaseMemoryLib
   DebugLib
   PeiServicesLib
-  PrintLib
   ReportStatusCodeLib
-  SerialPortLib
-  TraceHubDebugLib
-  FspCommonLib
 
 [Ppis]
   gEfiPeiStatusCodePpiGuid

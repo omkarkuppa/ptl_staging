@@ -199,13 +199,6 @@ FspUpdatePeiSiPolicy (
 
 EFI_STATUS
 EFIAPI
-InstallMonoStatusCode (
-  IN EFI_FFS_FILE_HEADER       *FfsHeader,
-  IN CONST EFI_PEI_SERVICES    **PeiServices
-  );
-
-EFI_STATUS
-EFIAPI
 MpWrapperGetNumberOfProcessors (
   IN  EDKII_PEI_MP_SERVICES2_PPI *This,
   OUT UINTN                      *NumberOfProcessors,

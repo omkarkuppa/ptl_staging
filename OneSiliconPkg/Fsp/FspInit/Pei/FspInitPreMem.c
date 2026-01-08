@@ -813,6 +813,14 @@ FspInitPreMemEntryPoint (
   Status = PeiServicesNotifyPpi (&mMemoryDiscoveredNotifyList);
   ASSERT_EFI_ERROR (Status);
 
+  //
+  // Installs the Report Status Code PPI
+  //
+  Status = InstallMonoStatusCode (FileHandle, PeiServices);
+  if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR (Status);
+  }
+
   DEBUG ((DEBUG_INFO, "FspInitPreMemEntryPoint done\n"));
   return Status;
 }

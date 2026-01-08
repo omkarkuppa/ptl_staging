@@ -572,14 +572,8 @@ FspInitEntryPoint (
     if (EFI_ERROR (Status)) {
       ASSERT_EFI_ERROR (Status);
     }
-  }
-
-  //
-  // Installs the Report Status Code PPI
-  //
-  Status = InstallMonoStatusCode (FileHandle, PeiServices);
-  if (EFI_ERROR (Status)) {
-    ASSERT_EFI_ERROR (Status);
+  } else {
+    Status = EFI_SUCCESS;
   }
 
   DEBUG ((DEBUG_INFO, "SI PEI Policy Initialization Done in Post-Memory\n"));

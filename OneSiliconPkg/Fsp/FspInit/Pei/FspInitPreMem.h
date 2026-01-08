@@ -244,4 +244,10 @@ FspUpdatePeiOcPolicyPreMem (
   IN     FSPM_UPD                 *FspmUpd
   );
 
+EFI_STATUS
+EFIAPI
+InstallMonoStatusCode (
+  IN EFI_FFS_FILE_HEADER       *FfsHeader,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
+  );
 #endif

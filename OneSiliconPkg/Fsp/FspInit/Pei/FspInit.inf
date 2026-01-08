@@ -72,7 +72,6 @@
   SmbusLib
   ConfigBlockLib
   PcdLib
-  MonoStatusCodeLib
   BaseMemoryLib
   MemoryAllocationLib
   HobLib

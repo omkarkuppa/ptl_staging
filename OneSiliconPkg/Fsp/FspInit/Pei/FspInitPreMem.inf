@@ -86,6 +86,7 @@
   MeLib
   FiaSocLib
   ReportStatusCodeLib
+  MonoStatusCodeLib
 
 [Depex]
   gSiPreMemDefaultPolicyInitPpiGuid AND
