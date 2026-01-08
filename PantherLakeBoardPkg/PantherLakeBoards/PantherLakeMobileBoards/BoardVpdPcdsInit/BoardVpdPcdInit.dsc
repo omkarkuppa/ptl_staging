@@ -216,6 +216,9 @@
   gBoardModuleTokenSpaceGuid.VpdPcdM2Ssd1RstGpioPolarity|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdIpfEnable|*|0x1
 
+  # Enable/Disable Sd card
+  gBoardModuleTokenSpaceGuid.VpdPcdSdCardEnable|*|0x0
+
   #Mipi Cam
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamGpioEnable|*|0x0
 

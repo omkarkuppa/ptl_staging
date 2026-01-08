@@ -477,6 +477,8 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdPchPCIeSlot1PwrEnableGpioPolarity|FALSE|BOOLEAN|0x00000A85
   gBoardModuleTokenSpaceGuid.PcdPchPCIeSlot1RstGpioPolarity|FALSE|BOOLEAN|0x00000A86
 
+  gBoardModuleTokenSpaceGuid.PcdSdCardEnable|0x0|UINT8|0x00000A87
+
   # PCIE SLOT #2
   gBoardModuleTokenSpaceGuid.PcdPcieSlot2PwrEnableGpioNo|0|UINT32|0x00000084
   gBoardModuleTokenSpaceGuid.PcdPcieSlot2PwrEnableGpioPolarity|0|BOOLEAN|0x00000085
@@ -1636,6 +1638,9 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     <HeaderFiles>
       PlatformBoardConfig.h
   }
+
+  # SD Card Enable/Disable
+  gBoardModuleTokenSpaceGuid.VpdPcdSdCardEnable               |{0}|UINT8|0x000012C7
 
   # Slot number for Nvme recovery feature
   gBoardModuleTokenSpaceGuid.VpdPcdNvmeRecoveryPrimarySlotPortNumber|0|UINT32|0x50000031

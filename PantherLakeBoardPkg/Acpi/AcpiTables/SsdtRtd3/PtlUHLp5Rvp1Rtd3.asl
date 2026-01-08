@@ -39,6 +39,7 @@ DefinitionBlock (
 
   External (\_SB.PC00.RP02.PXSX.PNVM, MethodObj)
   External (\_SB.PC00.RP02.PXSX.PAHC, MethodObj)
+  External(\SCED, IntObj)
   Name (\_SB.PC00.RP02.WAKG, 0)
   //
   // PCIe Root Port Start
@@ -61,11 +62,15 @@ DefinitionBlock (
     Include ("PcieRpGenericPcieDeviceRtd3.asl")
 
     // assign different value to SD_CARD_UID for each RP
-    #define PCIE_SD_CARD_SCOPE \_SB.PC00.RP03
-    #define SD_CARD_UID 0
-    Include ("PcieSdCard.asl")
-    #undef SD_CARD_UID
-    #undef PCIE_SD_CARD_SCOPE
+    If (CondRefOf (\SCED)) {
+      If (LEqual (\SCED, 0x1)) {
+        #define PCIE_SD_CARD_SCOPE \_SB.PC00.RP03
+        #define SD_CARD_UID 0
+        Include ("PcieSdCard.asl")
+        #undef SD_CARD_UID
+        #undef PCIE_SD_CARD_SCOPE
+      }
+    }
     PCIE_RP_SCOPE_END
   }
 

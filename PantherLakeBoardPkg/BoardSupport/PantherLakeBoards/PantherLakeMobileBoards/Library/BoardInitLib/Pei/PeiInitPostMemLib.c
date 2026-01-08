@@ -288,6 +288,8 @@ PtlBoardMiscInit (
   PcdSetBoolS (PcdPchThermalHotEnable, PcdGetBool (VpdPcdPchThermalHotEnable));
   PcdSetBoolS (PcdDashGEnable, PcdGetBool (VpdPcdDashGEnable));
 
+  PcdSet8S (PcdSdCardEnable, PcdGet8 (VpdPcdSdCardEnable));
+
   // PCIE SLOT #1 RTD3
   GpioVpd = PcdGetPtr (VpdPcdPcieSlot1PwrEnableGpioNo);
   PcdSet32S (PcdPcieSlot1PwrEnableGpioNo, GpioVpd->GpioPad);

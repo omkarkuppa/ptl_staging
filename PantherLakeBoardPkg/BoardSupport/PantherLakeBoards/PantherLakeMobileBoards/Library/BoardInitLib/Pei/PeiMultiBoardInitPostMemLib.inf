@@ -127,6 +127,8 @@
 
   # Pcd Hook Function
   gBoardModuleTokenSpaceGuid.PcdFuncPeiBoardSpecificInitPostMem
+  gBoardModuleTokenSpaceGuid.PcdSdCardEnable
+
 
   # PCIE SLOT 1 - CONNECTOR RTD3
   gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstGpioNo
@@ -176,6 +178,8 @@
   gBoardModuleTokenSpaceGuid.PcdPmPowerButtonGpioPin
   gBoardModuleTokenSpaceGuid.PcdAcpiEnableAllButtonSupport
   gBoardModuleTokenSpaceGuid.PcdAcpiHidDriverButtonSupport
+
+  gBoardModuleTokenSpaceGuid.VpdPcdSdCardEnable
 
   # PCIE SLOT #1 RTD3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1RootPort

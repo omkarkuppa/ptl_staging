@@ -165,6 +165,8 @@
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                                   ## CONSUMES
 
 
+  gBoardModuleTokenSpaceGuid.PcdSdCardEnable
+
   # PCIE Slot1 GPIO configuration  PCDs
   gBoardModuleTokenSpaceGuid.PcdPcieSlot1RootPort                ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstGpioNo           ## CONSUMES

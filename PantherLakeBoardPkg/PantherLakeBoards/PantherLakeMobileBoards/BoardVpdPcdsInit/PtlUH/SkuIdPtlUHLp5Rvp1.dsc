@@ -320,6 +320,9 @@
   # M.2 Gen4 SSD (NIST)
   gBoardModuleTokenSpaceGuid.VpdPcdNvmeRecoveryPrimarySlotPortNumber|*|0x5
 
+  # Enable/Disable Sd card
+  gBoardModuleTokenSpaceGuid.VpdPcdSdCardEnable|*|0x1
+
 # PCIE SLOT 1 - X1 CONNECTOR RTD3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1RootPort|*|0x3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1PwrEnableGpioNo|*|{CODE(

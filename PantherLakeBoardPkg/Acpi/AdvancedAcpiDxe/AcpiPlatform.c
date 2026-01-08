@@ -3371,6 +3371,9 @@ InstallAcpiPlatform (
 
   mPlatformNvsAreaProtocol.Area->Rtd3Pcie = mSystemConfiguration.Rtd3Pcie;
 
+  // SD Card Enable/Disable
+  mPlatformNvsAreaProtocol.Area->SdCardEnable         = PcdGet8 (PcdSdCardEnable);
+
   //
   // PCIe Slot 1 GPIO pin configuration
   //

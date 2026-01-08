@@ -133,6 +133,8 @@
   #SA GPIO Config
   gBoardModuleTokenSpaceGuid.PcdRootPortIndex
 
+  gBoardModuleTokenSpaceGuid.PcdSdCardEnable
+
   # PCIE Slot1 (x4 Connector) GPIO PCDs
   gBoardModuleTokenSpaceGuid.PcdPcieSlot1GpioSupport
   gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstExpanderNo
