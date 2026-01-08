@@ -3105,11 +3105,11 @@
 
   # !BSF NAME:{Temporary address for NvmeHcPeiMmioBase} TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
   # !BSF HELP:{The reference code will use this as Temporary address space}
-  gPlatformFspPkgTokenSpaceGuid.NvmeHcPeiMmioBase                            | * | 0x4 | 0xA0000000
+  gPlatformFspPkgTokenSpaceGuid.NvmeHcPeiMmioBase                            | * | 0x4 | 0xB1000000
 
   # !BSF NAME:{Temporary address for NvmeHcPeiMmioLimit} TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
   # !BSF HELP:{The reference code will use this as Temporary address space}
-  gPlatformFspPkgTokenSpaceGuid.NvmeHcPeiMmioLimit                           | * | 0x4 | 0xA1000000
+  gPlatformFspPkgTokenSpaceGuid.NvmeHcPeiMmioLimit                           | * | 0x4 | 0xB2000000
 
   # !BSF NAME:{Temporary address for AhciPeiMmioBase} TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
   # !BSF HELP:{The reference code will use this as Temporary address space}
