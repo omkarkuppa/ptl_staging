@@ -1522,11 +1522,16 @@
   # !BSF HELP:{Enable/Disable DIMM Rx Offset Calibration training}
   gPlatformFspPkgTokenSpaceGuid.DIMMRXOFFSET                | * | 0x01 | 0x01
 
+  # !BSF NAME:{Enable Flexible Analog Settings}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable Flexible Analog Settings}
+  gPlatformFspPkgTokenSpaceGuid.FlexibleAnalogSettings      | * | 0x01 | 0x01
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 14  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 13  | {0x00}
 
   #
   # MRC Block End

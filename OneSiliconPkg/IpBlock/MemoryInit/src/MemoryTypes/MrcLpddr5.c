@@ -870,7 +870,7 @@ InitMrwLpddr5 (
   Profile = ExtInputs->MemoryProfile;
   Status = mrcSuccess;
 
-  IsNnFlexEnabled     = Inputs->InitPerDeviceNnFlex;
+  IsNnFlexEnabled   = ExtInputs->FlexibleAnalogSettings;
   NnFlexDramDefault = &NnFlexInitialSettingsLpddr5[DramTypeDefault];
 
   SocOdt   = IsNnFlexEnabled ? NnFlexDramDefault->SocOdt : 40;

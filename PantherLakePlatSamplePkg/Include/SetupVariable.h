@@ -1291,9 +1291,10 @@ typedef struct {
   <b>Revision 22</b>: - Add Vdd2HVoltage, Vdd1Voltage, Vdd2LVoltage, VddqVoltage
   <b>Revision 23</b>: - Add ForceInternalClkOn
   <b>Revision 24</b>: - Add DIMMRXOFFSET
+  <b>Revision 25</b>: - Add FlexibleAnalogSettings
 **/
 
-#define SA_SETUP_REVISION   24
+#define SA_SETUP_REVISION   25
 
 typedef struct {
   UINT8   Revision;
@@ -1814,7 +1815,8 @@ typedef struct {
   UINT16  VddqVoltage;
   UINT8   ForceInternalClkOn;
   UINT8   DIMMRXOFFSET;
-  UINT8   Rsvd[5];
+  UINT8   FlexibleAnalogSettings;
+  UINT8   Rsvd[4];
 } SA_SETUP;
 
 /**

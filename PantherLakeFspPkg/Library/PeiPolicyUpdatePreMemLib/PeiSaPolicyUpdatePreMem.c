@@ -571,7 +571,8 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.IbeccEccInjAddrBase                 = FspmUpd->FspmConfig.IbeccEccInjAddrBase;
   MemConfig->ExternalInputs.IbeccEccInjCount                    = FspmUpd->FspmConfig.IbeccEccInjCount;
 
-  MemConfig->ExternalInputs.IsWckIdleExitEnabled = FspmUpd->FspmConfig.IsWckIdleExitEnabled;
+  MemConfig->ExternalInputs.IsWckIdleExitEnabled    = FspmUpd->FspmConfig.IsWckIdleExitEnabled;
+  MemConfig->ExternalInputs.FlexibleAnalogSettings  = FspmUpd->FspmConfig.FlexibleAnalogSettings;
 
   MemConfig->ExternalInputs.EccCorrectionMode       = FspmUpd->FspmConfig.EccCorrectionMode;
   MemConfig->ExternalInputs.CaVrefHigh              = FspmUpd->FspmConfig.CaVrefHigh;

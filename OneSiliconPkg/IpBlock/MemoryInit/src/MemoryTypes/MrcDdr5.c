@@ -970,7 +970,7 @@ Ddr5JedecInitVal (
     return mrcFail;
   }
 
-  if (Inputs->InitPerDeviceNnFlex) {
+  if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) {
     // Update Odt table
     DqOdtTableIndex.RttWr    = NnFlexInitialSettingsDdr5[OptParamIndex].RttWr;
     DqOdtTableIndex.RttNomRd = NnFlexInitialSettingsDdr5[OptParamIndex].RttNomRd;
@@ -1037,7 +1037,7 @@ Ddr5JedecInitVal (
       break;
 
     case mrMR5:
-      if (Inputs->InitPerDeviceNnFlex) {
+      if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) {
         // Ron Up
         Mr5Encoding = Ddr5DriveStrengthEncode (NnFlexInitialSettingsDdr5[OptParamIndex].RonUp);
         if (Mr5Encoding == DDR5_ODIC_INVALID_VALUE) {

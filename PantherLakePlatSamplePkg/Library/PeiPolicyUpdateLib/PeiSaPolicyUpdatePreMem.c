@@ -1156,7 +1156,8 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccEccInjAddrBase, MemConfig->ExternalInputs.IbeccEccInjAddrBase, SaSetup.IbeccEccInjAddrBase);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IbeccEccInjCount,    MemConfig->ExternalInputs.IbeccEccInjCount,    SaSetup.IbeccEccInjCount);
 
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IsWckIdleExitEnabled, MemConfig->ExternalInputs.IsWckIdleExitEnabled, SaSetup.IsWckIdleExitEnabled);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IsWckIdleExitEnabled,   MemConfig->ExternalInputs.IsWckIdleExitEnabled,   SaSetup.IsWckIdleExitEnabled);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.FlexibleAnalogSettings, MemConfig->ExternalInputs.FlexibleAnalogSettings, SaSetup.FlexibleAnalogSettings);
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.AllowOppRefBelowWriteThrehold, MemConfig->ExternalInputs.AllowOppRefBelowWriteThrehold, SaSetup.AllowOppRefBelowWriteThrehold);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WriteThreshold, MemConfig->ExternalInputs.WriteThreshold,        SaSetup.WriteThreshold               );

@@ -104,8 +104,6 @@ MrcEccClean (
     return mrcSuccess;
   }
 
-  MrcModifyRdRdTimings (MrcData, TRUE);
-
   MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcSaveEnum, &MadSavedValues);
 
   GetSetVal = 1;
@@ -222,6 +220,8 @@ MrcEccClean (
   } // for Rank
 
   if (TxtClean) {
+    MrcModifyRdRdTimings (MrcData, TRUE);
+
     // Perform Memory Read Test to Check Zeros per rank, on both channels in parallel
     for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
       if (((1 << Rank) & Outputs->ValidRankMask) == 0) {
@@ -251,6 +251,8 @@ MrcEccClean (
       RunIOTest (MrcData, McChBitMask, MRC_IGNORE_ARG_8, Outputs->DQPat, 1, FALSE);
       McChError |= Cpgc20GetAllChannelsError (MrcData, McChBitMask);
     } // for Rank
+
+    MrcModifyRdRdTimings (MrcData, FALSE);
   } // for TxtClean
 
   MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcRestoreEnum, &MadSavedValues);
@@ -303,8 +305,6 @@ MrcEccClean (
       Outputs->TxtScrubSuccess = 1;
     }
   }
-
-  MrcModifyRdRdTimings (MrcData, FALSE);
 
   GetSetVal = 0;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);

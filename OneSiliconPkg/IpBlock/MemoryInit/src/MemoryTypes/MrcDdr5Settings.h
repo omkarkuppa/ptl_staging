@@ -69,12 +69,12 @@ typedef enum {
   Card_75B_2R_6400 = 15,
   Card_Samsung2R_2R_6400 = 16,
   Card_Samsung2R_2R_7200 = 17,
-  Card_default_1R_6400 = 18,
-  Card_default_1R_7200 = 19,
-  Card_default_2R_6400 = 20,
-  Card_default_2R_7200 = 21,
-  Card_Hynix1R_1R_7200 = 22,
-  Card_Hynix2R_2R_7200 = 23,
+  Card_Hynix1R_1R_7200 = 18,
+  Card_Hynix2R_2R_7200 = 19,
+  Card_default_1R_6400 = 20,
+  Card_default_1R_7200 = 21,
+  Card_default_2R_6400 = 22,
+  Card_default_2R_7200 = 23,
   Card_NotFound
 } Ddr5ParamIndex;
 
@@ -195,5 +195,32 @@ Ddr5GetCardEnum (
   IN const CHAR8* ModulePartNumber,
   IN const UINT32 NumOfRanks,
   IN const UINT8  ManufactorIdCode
+  );
+
+/**
+  Remove whitespaces from a module part number string.
+
+  @param[in]      ModulePartNumber      - Source module part number string from SPD.
+  @param[in, out] PartNumberNoSpaces    - Destination buffer for part number without spaces (allocated by caller)
+**/
+VOID
+RemoveWhitespacesFromPartNumber (
+  IN     const CHAR8* ModulePartNumber,
+  IN OUT       CHAR8* PartNumberNoSpaces
+  );
+
+/**
+  This function checks if a substring matches the beginning of a module part number.
+
+  @param[in]  ModulePartNumber - DIMM module part number from SPD.
+  @param[in]  Prefix           - String to check if it's a prefix of the module part number.
+
+  @retval TRUE  - Prefix matches the beginning of ModulePartNumber.
+  @retval FALSE - Prefix does not match or invalid parameters.
+**/
+BOOLEAN
+Ddr5IsModulePartPrefix (
+  IN const CHAR8* ModulePartNumber,
+  IN const CHAR8* Prefix
   );
 #endif // MRC_DDR5_SETTINGS_H_

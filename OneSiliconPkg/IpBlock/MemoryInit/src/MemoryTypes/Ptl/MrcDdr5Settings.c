@@ -54,6 +54,12 @@ const TOdtValueCccDdr5 Ddr5CccOdtTable1Dpc[MAX_DIMMS_IN_CHANNEL][MAX_DDR5_1SPC_O
   {{{ 480, 480, 0 },{ 40, 40, 80 }}, {{ 480, 480, 0 },{ 80, 40, 80 }}}, // DIMM 0
 };
 
+const TOdtValueCccDdr5 HynixDdr5CccOdtTable1Dpc[MAX_DIMMS_IN_CHANNEL][MAX_DDR5_1SPC_ODT][MAX_DDR5_ODT_STRAP] = {
+  //  1DPC 1R,                      1DPC 2R
+  //  Group A,    Group B           Group A,    Group B
+  {{{ 480, 480, 0 },{ 40, 40, 40 }}, {{ 480, 480, 0 },{ 80, 40, 80 }}}, // DIMM 0
+};
+
 // DDR5 Dimm DFE values in this order { Tap1, Tap2, Tap3, Tap4 }
 const TDFEValueDdr5 Ddr5DFETable[MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL] = {
   //DIMM 0
@@ -68,21 +74,21 @@ const TDFEValueDdr5 Ddr5DFETable[MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL] = {
 #define SKHYNIX_MANUFACTURE_ID  (0xAD)
 
 const char* CardPartNumber[Card_Max] = {
-  "HMCG66AHBVA312N",         // Card_230C
-  "HMCG88AHBVA312N",         // Card_234B
-  "HMCG78AHBVA312N",         // Card_235A
-  "M435R1GB4PB1-CCPSG",      // Card_240C
-  "HMCGY8AKBVB318N",         // Card_256B
-  "M435RZGB4PB1-CCPRC",      // Card_269C
-  "MTC4C1016ZS1VC72BCZKFF",  // Card_276C
-  "MTC4C10163S1VC72BHZ KFF", // Card_298C
-  "M435R8JA3MB1-CJRLC",      // Card_311B
-  "HMCG88AHBVA312N",         // Card_324B
-  "HMCG88AGBSA092N",         // Card_75B
-  "none",                    // Card_Hynix1R
-  "none",                    // Card_Hynix2R
-  "none",                    // Card_Samsung2R
-  "none",                    // Card_default
+  "HMCG66AHBVA312N",        // Card_230C
+  "HMCG88AHBVA312N",        // Card_234B
+  "HMCG78AHBVA312N",        // Card_235A
+  "M435R1GB4PB1-CCPSG",     // Card_240C
+  "HMCGY8AKBVB318N",        // Card_256B
+  "M435RZGB4PB1-CCPRC",     // Card_269C
+  "MTC4C1016ZS1VC72BCZKFF", // Card_276C
+  "MTC4C10163S1VC72BHZKFF", // Card_298C
+  "M435R8JA3MB1-CJRLC",     // Card_311B
+  "HMCG88AHBVA312N",        // Card_324B
+  "HMCG88AGBSA092N",        // Card_75B
+  "none",                   // Card_Hynix1R
+  "none",                   // Card_Hynix2R
+  "none",                   // Card_Samsung2R
+  "none",                   // Card_default
 };
 
 #ifdef MRC_DEBUG_PRINT
@@ -115,12 +121,12 @@ const char* Ddr5CardToName[Card_NotFound] = {
   "75B_2R_6400",
   "SAMSUNG2R_2R_6400",
   "SAMSUNG2R_2R_7200",
+  "HYNIX1R_1R_7200",
+  "HYNIX2R_2R_7200",
   "DEFAULT_1R_6400",
   "DEFAULT_1R_7200",
   "DEFAULT_2R_6400",
   "DEFAULT_2R_7200",
-  "HYNIX1R_1R_7200",
-  "HYNIX2R_2R_7200",
 };
 #endif
 
@@ -224,12 +230,12 @@ const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
   { -10,  -5, 120,  48,  80,  40,  40 },
   { -23,  -5, 120, 120,  80,  40,  40 },
   { -23,  -5, 120, 120,  80,  40,  40 },
-  { -23,  -5, 120,  60,  60,  40,  48 },
-  { -23,  -5, 120,  60,  60,  40,  48 },
-  { -23,  -5, 120,  48,  80,  40,  40 },
-  { -23,  -5, 120,  48,  80,  40,  40 },
   { -10,   0, 120,  60,  60,  40,  48 },
   { -10,   0, 120,  48,  80,  40,  40 },
+  { -23,  -5, 120,  60,  60,  40,  48 },
+  { -23,  -5, 120,  60,  60,  40,  48 },
+  { -23,  -5, 120,  48,  80,  40,  40 },
+  { -23,  -5, 120,  48,  80,  40,  40 },
 };
 // AUTO-GENERATED DDR5 TABLES END
 
@@ -252,21 +258,33 @@ SelectCccTableDdr5 (
   IN const UINT32         Dimm
   )
 {
+  MrcInput            *Inputs;
   MrcOutput           *Outputs;
+  MrcChannelIn        *ChannelIn;
   MrcChannelOut       *ChannelOut;
   TOdtIndex           OdtIndex;
   TOdtValueCccDdr5    *OdtTable;
   MrcDimmOut          *DimmOut;
   UINT8               RanksInDimm0;
+  BOOLEAN             IsDdr5Hynix;
+  BOOLEAN             IsDdr5CkOdt40Ohms;
+  const CHAR8         *ModulePartNumber;
+  static const CHAR8  HynixPrefixDimm[] = "HMCGG6BKBVB";
 
+  Inputs       = &MrcData->Inputs;
   Outputs      = &MrcData->Outputs;
+  ChannelIn    = &Inputs->Controller[Controller].Channel[Channel];
   ChannelOut   = &Outputs->Controller[Controller].Channel[Channel];
   DimmOut      = &ChannelOut->Dimm[dDIMM0];
   RanksInDimm0 = DimmOut[dDIMM0].RankInDimm;
 
+  ModulePartNumber = (const CHAR8 *) &ChannelIn->Dimm->Spd.Data.Ddr5.ManufactureInfo.ModulePartNumber;
+  IsDdr5Hynix = MrcData->Save.Data.IsDdr5Hynix[Controller][Channel][Dimm];
   OdtIndex = (RanksInDimm0 == 2) ? oi1DPC2R : oi1DPC1R;
 
-  OdtTable = (TOdtValueCccDdr5 *) &Ddr5CccOdtTable1Dpc[Dimm][OdtIndex][0];
+  IsDdr5CkOdt40Ohms = (IsDdr5Hynix && (DimmOut->RankInDimm == 1) && Ddr5IsModulePartPrefix (ModulePartNumber, HynixPrefixDimm));
+
+  OdtTable = IsDdr5CkOdt40Ohms ? (TOdtValueCccDdr5 *) &HynixDdr5CccOdtTable1Dpc[Dimm][OdtIndex][0] : (TOdtValueCccDdr5 *) &Ddr5CccOdtTable1Dpc[Dimm][OdtIndex][0];
 
   return OdtTable;
 }
@@ -402,6 +420,36 @@ MrcDdr5GetVrefDqCalibrationValue (
 }
 
 /**
+  Remove whitespaces from a module part number string.
+
+  @param[in]      ModulePartNumber      - Source module part number string from SPD.
+  @param[in, out] PartNumberNoSpaces    - Destination buffer for part number without spaces (allocated by caller)
+**/
+VOID
+RemoveWhitespacesFromPartNumber (
+  IN     const CHAR8* ModulePartNumber,
+  IN OUT       CHAR8* PartNumberNoSpaces
+  )
+{
+  UINT16 PartNumberIdx;
+  UINT16 PartNumberNoSpacesIdx;
+
+  if (ModulePartNumber == NULL) {
+    PartNumberNoSpaces[0] = '\0';
+    return;
+  }
+
+  // Remove whitespaces from ModulePartNumber, because
+  // according to spec unused digits are coded as ASCII blanks (0x20).
+  for (PartNumberIdx = 0, PartNumberNoSpacesIdx = 0; ModulePartNumber[PartNumberIdx] && (PartNumberIdx < SPD5_MODULE_PART_NUMBER_SIZE); PartNumberIdx++) {
+    if (!MRC_ISSPACE(ModulePartNumber[PartNumberIdx])) {
+      PartNumberNoSpaces[PartNumberNoSpacesIdx++] = ModulePartNumber[PartNumberIdx];
+    }
+  }
+  PartNumberNoSpaces[PartNumberNoSpacesIdx] = '\0';
+}
+
+/**
   This function is used to get the corresponding card for a given dram part info.
 
   @param[in]  ModulePartNumber - Dram module part number from SPD.
@@ -421,20 +469,12 @@ Ddr5GetCardEnum (
   UINT16   PartNumberIdx;
   UINT8    Card;
   CHAR8    PartNumberNoSpaces[SPD5_MODULE_PART_NUMBER_SIZE + 1]; // +1 for null terminator
-  UINT16   PartNumberNoSpacesIdx;
 
   if (ModulePartNumber == NULL) {
     return Card_default;
   }
 
-  // Remove whitespaces from ModulePartNumber, because
-  // according to spec unsed digits are coded as ASCII blanks (0x20).
-  for (PartNumberIdx = 0, PartNumberNoSpacesIdx = 0; ModulePartNumber[PartNumberIdx] && PartNumberIdx < SPD5_MODULE_PART_NUMBER_SIZE; PartNumberIdx++) {
-    if (!MRC_ISSPACE(ModulePartNumber[PartNumberIdx])) {
-      PartNumberNoSpaces[PartNumberNoSpacesIdx++] = ModulePartNumber[PartNumberIdx];
-    }
-  }
-  PartNumberNoSpaces[PartNumberNoSpacesIdx] = '\0';
+  RemoveWhitespacesFromPartNumber (ModulePartNumber, PartNumberNoSpaces);
 
   // Find matching serial number in CardPartNumber
   IsPartNumberFound = FALSE;
@@ -471,3 +511,37 @@ Ddr5GetCardEnum (
   return Card_default;
 }
 
+/**
+  This function checks if a substring matches the beginning of a module part number.
+
+  @param[in]  ModulePartNumber - DIMM module part number from SPD.
+  @param[in]  Prefix           - String to check if it's a prefix of the module part number.
+
+  @retval TRUE  - Prefix matches the beginning of ModulePartNumber.
+  @retval FALSE - Prefix does not match or invalid parameters.
+**/
+BOOLEAN
+Ddr5IsModulePartPrefix (
+  IN const CHAR8* ModulePartNumber,
+  IN const CHAR8* Prefix
+  )
+{
+  UINT16  PrefixIdx;
+  CHAR8   PartNumberNoSpaces[SPD5_MODULE_PART_NUMBER_SIZE + 1];
+
+  if ((ModulePartNumber == NULL) || (Prefix == NULL) || (Prefix[0] == '\0')) {
+    return FALSE;
+  }
+
+  RemoveWhitespacesFromPartNumber (ModulePartNumber, PartNumberNoSpaces);
+
+  // Check if Prefix matches the beginning of PartNumberNoSpaces
+  PrefixIdx = 0;
+  while ((Prefix[PrefixIdx] != '\0') &&
+         (PartNumberNoSpaces[PrefixIdx] != '\0') &&
+         (PartNumberNoSpaces[PrefixIdx] == Prefix[PrefixIdx])) {
+    PrefixIdx++;
+  }
+
+  return (Prefix[PrefixIdx] == '\0');
+}

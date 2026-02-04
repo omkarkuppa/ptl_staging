@@ -3277,7 +3277,7 @@ GetChannelDimmtRAS (
                   Calculated  = PicoSecondsToClocks (Spd->Ddr5.Base.tRASmin.Bits.tRASmin, tCKmin);
                 } else {
                   // LPDDR5
-                  Calculated = DIVIDECEIL ((42000000 - (tCKmin / 100)), tCKmin); // 42ns
+                  Calculated = DIVIDECEIL ((MRC_LP5_tRAS_FS - (tCKmin / 100)), tCKmin); // 42ns
                 }
               }
               break;
@@ -3405,9 +3405,13 @@ GetChannelDimmtRC (
                 if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
                   Calculated  = PicoSecondsToClocks (Spd->Ddr5.Base.tRCmin.Bits.tRCmin, tCKmin);
                 } else {
-                  TimingMTB = (UINT32) (Spd->Lpddr.Base.tRPpb.Bits.tRPpb);
-                  TimingFTB = Spd->Lpddr.Base.tRPpbFine.Bits.tRPpbFine;
-                  Calculated = DIVIDECEIL (((MediumTimebase * TimingMTB) + (FineTimebase * TimingFTB) + 42000000 - (tCKmin / 100)), tCKmin); // tRC = tRAS + tRPpb (tRAS is 42ns)
+                  if (Outputs->IsDvfscEnabled) {
+                    Calculated = DIVIDECEIL ((MRC_LP5_tRPPB_EDVFSC_FS + MRC_LP5_tRAS_FS - (tCKmin / 100)), tCKmin); // tRC = tRAS + tRPpb
+                  } else {
+                    TimingMTB = (UINT32) (Spd->Lpddr.Base.tRPpb.Bits.tRPpb);
+                    TimingFTB = Spd->Lpddr.Base.tRPpbFine.Bits.tRPpbFine;
+                    Calculated = DIVIDECEIL (((MediumTimebase * TimingMTB) + (FineTimebase * TimingFTB) + MRC_LP5_tRAS_FS - (tCKmin / 100)), tCKmin); // tRC = tRAS + tRPpb
+                  }
                 }
               }
               break;
@@ -4380,10 +4384,14 @@ GetChannelDimmtRP (
               if (tCKmin > 0) {
                 if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
                   Calculated  = PicoSecondsToClocks (Spd->Ddr5.Base.tRPmin.Bits.tRPmin, tCKmin);
-                } else {
-                  TimingMTB = Spd->Lpddr.Base.tRPpb.Bits.tRPpb;
-                  TimingFTB = Spd->Lpddr.Base.tRPpbFine.Bits.tRPpbFine;
-                  Calculated = ((MediumTimebase * TimingMTB) + (FineTimebase * TimingFTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
+                } else { // LP5
+                  if (Outputs->IsDvfscEnabled) {
+                    Calculated = DIVIDECEIL ((MRC_LP5_tRPPB_EDVFSC_FS - (tCKmin / 100)), tCKmin); // 20ns
+                  } else {
+                    TimingMTB = Spd->Lpddr.Base.tRPpb.Bits.tRPpb;
+                    TimingFTB = Spd->Lpddr.Base.tRPpbFine.Bits.tRPpbFine;
+                    Calculated = ((MediumTimebase * TimingMTB) + (FineTimebase * TimingFTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
+                  }
                 }
               }
               break;
@@ -4495,9 +4503,13 @@ GetChannelDimmtRPab (
             MediumTimebase = TimeBase->Mtb;
             FineTimebase   = TimeBase->Ftb;
             if (tCKmin > 0) {
-              TimingMTB  = Spd->Lpddr.Base.tRPab.Bits.tRPab;
-              TimingFTB  = Spd->Lpddr.Base.tRPabFine.Bits.tRPabFine;
-              Calculated = ((MediumTimebase * TimingMTB) + (FineTimebase * TimingFTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
+              if (Outputs->IsDvfscEnabled) {
+                Calculated = DIVIDECEIL ((MRC_LP5_tRPAB_EDVFSC_FS - (tCKmin / 100)), tCKmin); // 23ns
+              } else {
+                TimingMTB  = Spd->Lpddr.Base.tRPab.Bits.tRPab;
+                TimingFTB  = Spd->Lpddr.Base.tRPabFine.Bits.tRPabFine;
+                Calculated = ((MediumTimebase * TimingMTB) + (FineTimebase * TimingFTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
+              }
             }
 
             if (Calculated >= TRPABMINPOSSIBLE) {

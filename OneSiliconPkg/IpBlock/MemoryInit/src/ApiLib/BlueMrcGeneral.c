@@ -1900,14 +1900,14 @@ MrcPrintInputParameters (
     "\tIsCaDeselectStress: %u\n"
     "\tRxDqVrefPerBit: %u\n"
     "\tFourToggleReadPreamble: %u\n"
-    "\tInitPerDeviceNnFlex: %u\n",
+    "\tFlexibleAnalogSettings: %u\n",
     Inputs->UcPayloadAddress,
     Inputs->IsKeepUcssPostMrc,
     Inputs->IsIOTestAddressRandom,
     Inputs->IsCaDeselectStress,
     Inputs->RxDqVrefPerBit,
     Inputs->FourToggleReadPreamble,
-    Inputs->InitPerDeviceNnFlex
+    ExtInputs->FlexibleAnalogSettings
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,

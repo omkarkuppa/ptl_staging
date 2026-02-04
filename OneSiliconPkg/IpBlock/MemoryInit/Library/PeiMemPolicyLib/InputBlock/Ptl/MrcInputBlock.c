@@ -387,7 +387,8 @@
 #define MRC_EXT_INPUTS_INIT_VAL_Vdd1Voltage                     (VDD_INVALID)
 #define MRC_EXT_INPUTS_INIT_VAL_Vdd2LVoltage                    (VDD_INVALID)
 #define MRC_EXT_INPUTS_INIT_VAL_PhyDtsTemperature               (0xFF)
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved345                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_FlexibleAnalogSettings          (1)
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved346                     {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -776,7 +777,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_Vdd1Voltage,
     MRC_EXT_INPUTS_INIT_VAL_Vdd2LVoltage,
     MRC_EXT_INPUTS_INIT_VAL_PhyDtsTemperature,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved345,
+    MRC_EXT_INPUTS_INIT_VAL_FlexibleAnalogSettings,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved346,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE

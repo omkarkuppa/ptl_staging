@@ -224,6 +224,15 @@
 /// tMOD for LPDDR4/5 max(14ns, 5nCK) in femtoseconds (tMRD)
 #define tMOD_LPDDR_FS         (14 * 1000 * 1000)
 
+/// tRPpb - PRE delay - per bank.  EDVFSC requires a unique/longer value vs. regular DVFSC (or the DVFSC disabled) case
+#define MRC_LP5_tRPPB_EDVFSC_FS     (20000000)
+
+/// tRPab - PRE delay - all banks.  EDVFSC requires a unique/longer value vs. regular DVFSC (or the DVFSC disabled) case
+#define MRC_LP5_tRPAB_EDVFSC_FS     (23000000)
+
+/// tRAS = 42ns
+#define MRC_LP5_tRAS_FS             (42000000)
+
 /// Valid CA LOW requirement before CS change Low to High (tCA2CS_PRE) pS
 #define MRC_LP5_tCA2CS_PRE_MIN      (1750)
 #define MRC_LP5_tCA2CS_PRE_MIN_NCK  (2)

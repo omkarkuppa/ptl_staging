@@ -3873,6 +3873,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2HVoltage|0x0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd1Voltage|0x0                                                # Offset 340 LP5 DRAM voltage (VDD1) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
 gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2LVoltage|0x0                                               # Offset 342 LP5 DRAM voltage (VDD2L) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
 
+gStructPcdTokenSpaceGuid.PcdSaSetup.FlexibleAnalogSettings|0x1                                     # Offset 345 Enable/disable usage of flexible analog settings (NN flex feature): 0 = Disable, 1 = Enable
+
 ##############################
 # MRC - ExtInputs end
 ##############################

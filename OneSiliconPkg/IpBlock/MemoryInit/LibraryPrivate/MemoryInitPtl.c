@@ -1671,7 +1671,7 @@ InstallEfiMemory (
   }
 
   if ((MemConfigNoCrc != NULL) && (MemConfigNoCrc->SafeLoadingBiosEnableState == 1)) {
-    
+
     //
     // Update MEMORY_PLATFORM_DATA_HOB with PEI memory info for platform consumption
     //
@@ -1684,7 +1684,7 @@ InstallEfiMemory (
     } else {
       DEBUG ((DEBUG_ERROR, "Failed to find MEMORY_PLATFORM_DATA_HOB\n"));
     }
-    
+
     Status = PeiServicesInstallPpi(&mBiosPeiMemoryTestInitPpi);
     ASSERT_EFI_ERROR(Status);
   }
@@ -3262,7 +3262,6 @@ DEBUG_CODE_END();
   Inputs->IsKeepUcssPostMrc = 0;
 
   Inputs->FourToggleReadPreamble = TRUE;
-  Inputs->InitPerDeviceNnFlex = TRUE;
   Inputs->LockUiDiv6Flow = FALSE;
 
   Inputs->EnablePda = TRUE;

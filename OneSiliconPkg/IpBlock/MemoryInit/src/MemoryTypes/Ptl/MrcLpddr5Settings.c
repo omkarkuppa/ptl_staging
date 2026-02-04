@@ -117,7 +117,7 @@ SelectTableLpddr5 (
     OdtTable = (TOdtValueLpddr*) &Lpddr5OdtTableType3[Dimm][OdtIndex];
   }
 
-  if (Inputs->InitPerDeviceNnFlex) {
+  if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) {
     // Nn Flex RttWr/ RttCa/ RttNT settings for Lpddr5 - All Cards can have same default values
     OdtTable->RttWr = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttWr;
     OdtTable->RttCa = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttCa;
@@ -148,7 +148,7 @@ MrcLp5GetDFE (
 
   // DFE setting range is from -0.052V to -0.01V in step size of 7mV. Tap=1: -0.052V, Tap=7: -0.01V
   if ((Dfeql != NULL) && (Dfequ != NULL)) {
-    if (Inputs->InitPerDeviceNnFlex) { // Nn Flex initial settings for Lpddr5
+    if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) { // Nn Flex initial settings for Lpddr5
       *Dfeql = NnFlexInitialSettingsLpddr5[DramTypeDefault].Dfeq; // NN "Per Device" logic
       *Dfequ = NnFlexInitialSettingsLpddr5[DramTypeDefault].Dfeq; // NN "Per Device" logic
     } else {
