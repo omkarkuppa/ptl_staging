@@ -1026,6 +1026,10 @@ UpdateEnableHotPlugInController (
   IP_PCIE_INST      *pInst;
   EFI_HOB_GUID_TYPE *GuidHob;
 
+  UINT64            PcieBase;
+  UINTN             Dev;
+  UINTN             Fun;
+
   Status = PeiServicesLocatePpi (
              &gSiPolicyPpiGuid,
              0,
@@ -1042,6 +1046,16 @@ UpdateEnableHotPlugInController (
   }
 
   for (RpIndex = 0; RpIndex < MaxRootPortNum; RpIndex++) {
+
+    GetPchPcieRpDevFun (RpIndex, &Dev, &Fun);
+    PcieBase = PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, 0, (UINT8) Dev, (UINT8) Fun, 0);
+    //
+    // Skip HotPlug policy check for root ports that are disabled already.
+    //
+    if (PciSegmentRead32 (PcieBase + PCI_VENDOR_ID_OFFSET) == 0xFFFFFFFF) {
+      continue;
+    }
+
     ControllerIndex = (UINT8)RpIndexToControllerIndex (RpIndex);
     if (PcieConfig->RootPort[RpIndex].PcieRpCommonConfig.HotPlug && ControllerIndex < PCH_MAX_PCIE_CONTROLLERS) {
       EnableHotPlugInController[ControllerIndex] = 1;

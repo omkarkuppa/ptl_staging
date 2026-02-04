@@ -123,6 +123,8 @@ PchPcieSmi (
   UINT32                        OldDeviceState;
   PCIE_FEATURE_CONFIGURATION    FeatureConfiguration;
   UINT8                         CurrentLinkSpeed;
+  BOOLEAN                       IsRpHotPlugCapable;
+  UINT16                        SlotStatusReg;
 
   RpBase   = PCI_SEGMENT_LIB_ADDRESS (
                DEFAULT_PCI_SEGMENT_NUMBER_PCH,
@@ -138,6 +140,24 @@ PchPcieSmi (
   if (PciSegmentRead16 (RpBase + PCI_VENDOR_ID_OFFSET) == 0xFFFF) {
     return EFI_SUCCESS;
   }
+
+  //
+  // Check if Hot Plug Capable is set in Slot Capability Register
+  //
+  IsRpHotPlugCapable = !!(PciSegmentRead8 (RpBase + R_PCIE_CFG_SLCAP) & B_PCIE_CFG_SLCAP_HPC);
+
+  //
+  // Check and Clear Presence Detect Changed (PDC) Bit, if Root port is not Hot Plug Capable
+  //
+  if (IsRpHotPlugCapable == FALSE) {
+    SlotStatusReg = PciSegmentRead16 (RpBase + R_PCIE_CFG_SLSTS);
+    if (SlotStatusReg & B_PCIE_SLSTS_PDC) {
+      SlotStatusReg |= B_PCIE_SLSTS_PDC; // "Write 1 to clear"
+      PciSegmentWrite16 (RpBase + R_PCIE_CFG_SLSTS, SlotStatusReg);
+    }
+    return EFI_SUCCESS;
+  }
+
   OldDeviceState = PciSegmentRead32 (RpBase + R_PCH_PCIE_CFG_PMCS) & B_PCH_PCIE_CFG_PMCS_PS_MASK;
   PciSegmentAnd32 (RpBase + R_PCH_PCIE_CFG_PMCS, ~(UINT32) B_PCH_PCIE_CFG_PMCS_PS_MASK);
   //
@@ -369,6 +389,7 @@ InitializePchPcieSmm (
   EFI_STATUS                            Status;
   UINT32                                PortIndex;
   UINT8                                 Data8;
+  UINT32                                Data32;
   UINT32                                Data32Or;
   UINT64                                RpBase;
   EFI_HANDLE                            PcieHandle;
@@ -465,7 +486,8 @@ InitializePchPcieSmm (
     // Register SMI Handlers for Hot Plug and Link Active State Change
     //
     Data8 = PciSegmentRead8 (RpBase + R_PCIE_CFG_SLCAP);
-    if (Data8 & B_PCIE_SLCAP_HPC) {
+    Data32 = PciSegmentRead32 (RpBase + R_PCIE_CFG_MPC);
+    if ((Data8 & B_PCIE_SLCAP_HPC) || (Data32 & B_PCIE_CFG_MPC_HPME)) {
       PcieHandle = NULL;
       Status = PchPcieSmiDispatchProtocol->HotPlugRegister (
                                              PchPcieSmiDispatchProtocol,

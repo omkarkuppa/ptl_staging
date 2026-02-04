@@ -897,6 +897,7 @@
 #define R_PCIE_CFG_SLCTL                      0x00000058U      ///< Slot Control
 
 #define R_PCIE_CFG_SLSTS                      0x0000005aU      ///< Slot Status
+#define B_PCIE_CFG_SLSTS_PDC                  BIT3             ///< Presence Detect Changed
 #define B_PCIE_CFG_SLSTS_PDS                  BIT6             ///< Presence Detect State
 
 #define R_PCIE_CFG_RCTL                       0x0000005cU      ///< Root Control

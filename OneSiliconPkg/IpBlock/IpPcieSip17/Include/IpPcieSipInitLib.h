@@ -240,6 +240,16 @@ SipStartEqualization (
   );
 
 /**
+  Disable PCIe Hot Plug Capability.
+
+  @param[in] pInst  *pInst
+**/
+void
+SipDisableHotPlugCapability (
+  IP_PCIE_INST  *pInst
+  );
+
+/**
   Disable PCIe root port in controller.
 
   @param[in] pInst                *pInst

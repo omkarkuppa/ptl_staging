@@ -460,8 +460,6 @@ IpPciePreLinkActiveProgramming (
     );
   }
 
-  SipProgramHotPlugSmiEnable (pInst);
-
   PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
   return IpCsiStsSuccess;
 }
@@ -580,6 +578,9 @@ IpPcieDisableRootPort (
   Pmcs.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Sb, PMCS_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   Pmcs.Bits.ps = V_PMCS_PS_D3H;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Sb, PMCS_PCIE_CFG_REG, Pmcs.Data, IpWrRegFlagSize32Bits);
+
+  SipDisableHotPlugCapability (pInst);
+
   //
   // Make port disappear from PCI bus
   //

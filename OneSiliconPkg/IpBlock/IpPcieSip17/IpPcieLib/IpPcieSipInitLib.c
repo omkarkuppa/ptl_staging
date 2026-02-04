@@ -639,6 +639,37 @@ SipDisableRootPortInController (
 }
 
 /**
+  Disable PCIe Hot Plug Capability.
+
+  @param[in] pInst  *pInst
+**/
+void
+SipDisableHotPlugCapability (
+  IP_PCIE_INST  *pInst
+  )
+{
+  SLCAP_PCIE_CFG_STRUCT  Slcap;
+  SLCTL_PCIE_CFG_STRUCT  Slctl;
+  MPC_PCIE_CFG_STRUCT    Mpc;
+
+  PRINT_LEVEL1 ("Rp%d is disabled, so clear HotPlug capability registers\n", pInst->RpIndex);
+  Slcap.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Sb, SLCAP_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+  Slcap.Bits.hpc = 0;
+  Slcap.Bits.hps = 0;
+  IpWrRegWrite (pInst->RegCntxt_Cfg_Sb, SLCAP_PCIE_CFG_REG, Slcap.Data, IpWrRegFlagSize32Bits);
+
+  Slctl.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Sb, SLCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+  Slctl.Bits.hpe = 0;
+  Slctl.Bits.pde = 0;
+  IpWrRegWrite (pInst->RegCntxt_Cfg_Sb, SLCTL_PCIE_CFG_REG, Slctl.Data, IpWrRegFlagSize16Bits);
+
+  Mpc.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Sb, MPC_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+  Mpc.Bits.hpce = 0;
+  Mpc.Bits.hpme = 0;
+  IpWrRegWrite (pInst->RegCntxt_Cfg_Sb, MPC_PCIE_CFG_REG, Mpc.Data, IpWrRegFlagSize16Bits);
+}
+
+/**
   This function creates SIP17 Capability and Extended Capability List
 
   @param[in]  IP_PCIE_INST       *pInst
@@ -1219,11 +1250,7 @@ SipConfigureControllerBasePowerManagement (
   // Set 0x1330[10] FCTL2.HPICTL         - 1b
   //
   Fctl2.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
-  if (pInst->PrivateConfig.EnableHotPlugInController) {
-    Fctl2.Bits.hpictl = 0;
-  } else {
-    Fctl2.Bits.hpictl = 1;
-  }
+  Fctl2.Bits.hpictl = 1;
   IpWrRegWrite (pInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, Fctl2.Data, IpWrRegFlagSize32Bits);
 
   PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
@@ -1975,6 +2002,7 @@ SipInitRootPort (
   IP_PCIE_INST    *pInst
   )
 {
+  IP_PCIE_INST                       *ControllerInst;
   IP_PCIE_SPEED                      RootPortSpeed;
   UINT32                             Cls;
   UINT32                             RpMaxPayloadCapability;
@@ -1988,6 +2016,7 @@ SipInitRootPort (
   LCTL_PCIE_CFG_STRUCT               Lctl;
   CMD_PCIE_CFG_STRUCT                Cmd;
   FCTL_PCIE_MEM_RCRB_STRUCT          Fctl;
+  FCTL2_PCIE_MEM_RCRB_STRUCT         Fctl2;
   MPHYCAPCFG_PCIE_MEM_RCRB_STRUCT    MPhyCapCfg;
   TXMDEC1_PCIE_MEM_RCRB_STRUCT       TxmDec1;
   PWRCTL_PCIE_CFG_STRUCT             PwrCtl;
@@ -2039,6 +2068,7 @@ SipInitRootPort (
   if(Cls > V_CLS_GEN2) {
     IpWrError (pInst->ErrorAssert, IpWrErrorMajorError, __LINE__);
   }
+  ControllerInst = pInst->ControllerInst;
 
   /// PCH BIOS Spec Section 8.2.10 Completion Retry Status Replay Enable
   /// Following reset it is possible for a device to terminate the
@@ -2450,6 +2480,11 @@ SipInitRootPort (
   if (pInst->PcieRpCommonConfig.HotPlug) {
     Slcap.Bits.hpc = 1;
     Slcap.Bits.hps = 1;
+
+    PRINT_LEVEL1 ("Clearing HPICTL - Per Controller Register\n");
+    Fctl2.Data = (UINT32) IpWrRegRead (ControllerInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
+    Fctl2.Bits.hpictl = 0;
+    IpWrRegWrite (ControllerInst->RegCntxt_Mem_Rcrb, FCTL2_PCIE_MEM_RCRB_REG, Fctl2.Data, IpWrRegFlagSize32Bits);
   }
   ///
   /// Get the width from LCAP
@@ -2687,6 +2722,9 @@ SipInitRootPort (
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, UEM_PCIE_CFG_REG, Uem.Data, IpWrRegFlagSize32Bits);
 
   }
+
+  SipProgramHotPlugSmiEnable (pInst);
+
   //
   // Set UEM.PTLPEBM 108h[26] to 1 for Gen5 Capable controller
   //
