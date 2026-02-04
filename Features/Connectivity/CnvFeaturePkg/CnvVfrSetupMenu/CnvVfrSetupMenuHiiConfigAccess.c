@@ -675,14 +675,16 @@ CnvVfrSetupMenuFormCallback (
   Status                  = EFI_SUCCESS;
   CnvFormPlatformProtocol = NULL;
 
-  DEBUG ((DEBUG_INFO, "%a Entry - Action: %d, QuestionId: %d\n", __FUNCTION__, Action, QuestionId));
+  DEBUG ((DEBUG_INFO, " %a Entry - Action: %d, QuestionId: %d\n", __FUNCTION__, Action, QuestionId));
 
-  // Remove the filter that blocks default actions - allow EFI_BROWSER_ACTION_DEFAULT_STANDARD
+  // Validate Action
   if ((Action != EFI_BROWSER_ACTION_CHANGED)   &&
       (Action != EFI_BROWSER_ACTION_SUBMITTED) &&
       (Action != EFI_BROWSER_ACTION_FORM_OPEN) &&
+      (Action != EFI_BROWSER_ACTION_FORM_CLOSE) &&
       (Action != EFI_BROWSER_ACTION_DEFAULT_STANDARD) &&
-      (Action != EFI_BROWSER_ACTION_DEFAULT_MANUFACTURING))
+      (Action != EFI_BROWSER_ACTION_DEFAULT_MANUFACTURING) &&
+      (Action != EFI_BROWSER_ACTION_DEFAULT_SAFE))
   {
     DEBUG ((DEBUG_INFO, "Unsupported action: %d\n", Action));
     return EFI_UNSUPPORTED;
@@ -702,42 +704,31 @@ CnvVfrSetupMenuFormCallback (
   }
 
   // Handle F3 (Load Setup Defaults) action
-  if (Action == EFI_BROWSER_ACTION_DEFAULT_STANDARD) {
-    DEBUG ((DEBUG_INFO, "F3 Load Setup Defaults pressed\n"));
+  if ((Action == EFI_BROWSER_ACTION_DEFAULT_STANDARD) || (Action == EFI_BROWSER_ACTION_DEFAULT_SAFE)) {
+    DEBUG ((DEBUG_ERROR, "F3 detected for QuestionId %d - calling platform callback with Action %d\n", QuestionId, Action));
 
-    //Set to default
-    ZeroMem (CnvSetupDataPtr, VarSize);
-    CnvSetupDataPtr->CnviMode = 1;
-    CnvSetupDataPtr->CnviBtAudioOffload = 1;
-    CnvSetupDataPtr->CnviBtAudioOffloadInterface = 0;
-
-    DEBUG ((DEBUG_INFO, "Setting CNVi Mode to default: %d (Auto)\n", CnvSetupDataPtr->CnviMode));
-
-    // Save the default values back to browser data
-    if (!HiiSetBrowserData (&gCnvFeatureSetupGuid, CNV_SETUP_VARIABLE_NAME, VarSize, (UINT8 *)CnvSetupDataPtr, NULL)) {
-      DEBUG ((DEBUG_ERROR, "Failed to set browser data with defaults\n"));
-      Status = EFI_DEVICE_ERROR;
+    Status = gBS->LocateProtocol (&gCnvFormPlatformProtocolGuid, NULL, (VOID **)&CnvFormPlatformProtocol);
+    if ((Status == EFI_SUCCESS) && (CnvFormPlatformProtocol != NULL)) {
+      DEBUG ((DEBUG_ERROR, "Calling CnvFormPlatformProtocol->Callback with Action=%d, QuestionId=%d\n", Action, QuestionId));
+      CnvFormPlatformProtocol->Callback (Action, QuestionId, Value);
     } else {
-      DEBUG ((DEBUG_INFO, "Successfully set CNVi defaults\n"));
+      DEBUG ((DEBUG_ERROR, "Failed to locate CnvFormPlatformProtocol, Status=%r\n", Status));
     }
 
     FreePool (CnvSetupDataPtr);
-    return Status;
+    return EFI_SUCCESS;
   }
 
+  // For non-F3 actions, get browser data as usual
   if (!HiiGetBrowserData (&gCnvFeatureSetupGuid, CNV_SETUP_VARIABLE_NAME, VarSize, (UINT8 *)CnvSetupDataPtr)) {
     Status = EFI_NOT_FOUND;
   }
 
   ASSERT_EFI_ERROR (Status);
 
-  // Add debug for current values
-  if (Action == EFI_BROWSER_ACTION_CHANGED || Action == EFI_BROWSER_ACTION_SUBMITTED) {
-    DEBUG ((DEBUG_INFO, "Current CNVi Mode: %d\n", CnvSetupDataPtr->CnviMode));
-  }
-
   //
   // Locate gCnvFormPlatformProtocolGuid and update the latest CNV browser data to the protocol
+  // (For non-F3 actions)
   //
   Status = gBS->LocateProtocol (&gCnvFormPlatformProtocolGuid, NULL, (VOID **)&CnvFormPlatformProtocol);
   if ((Status == EFI_SUCCESS) && (CnvFormPlatformProtocol != NULL)) {

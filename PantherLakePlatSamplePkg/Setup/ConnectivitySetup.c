@@ -68,7 +68,7 @@ CnvFormPlatformCallback (
   CNV_VFR_CONFIG_SETUP                         CnvSetupData;
   UINTN                                        CnvSetupVarSize;
 
-  DEBUG ((DEBUG_INFO, "%a Entry\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "Entry - Action: %d, KeyValue: %d\n", __FUNCTION__, Action, KeyValue));
 
   Status = EFI_SUCCESS;
   PchNeedUpdate = FALSE;
@@ -90,7 +90,7 @@ CnvFormPlatformCallback (
     //
     // Check Bt Interace, and override default vaules.
     //
-    if (Action >= EFI_BROWSER_ACTION_DEFAULT_STANDARD) {
+    if ((Action >= EFI_BROWSER_ACTION_DEFAULT_STANDARD) || (Action == EFI_BROWSER_ACTION_DEFAULT_SAFE)) {
       DEBUG ((DEBUG_INFO, "Action: Default , KeyValue: KEY_CNV_BT_INTERFACE\n"));
 
       if (PcdGetBool (PcdCnviCrfBtUsbOnly) ) {
@@ -104,8 +104,33 @@ CnvFormPlatformCallback (
     }
   }
 
-  if (KeyValue == KEY_CNV_BT_AUDIO_OFFLOAD || KeyValue == KEY_CNV_BT_AUDIO_OFFLOAD_INTERFACE ||
-      KeyValue == PCH_HDAUDIO_DBT_OFFLOAD_ACTION_KEY || KeyValue == KEY_CNV_BT_CNVI_MODE) {
+  //
+  // Handle F3 (Load Setup Defaults) actions for CNVi-related fields
+  //
+  if ((Action >= EFI_BROWSER_ACTION_DEFAULT_STANDARD) || (Action == EFI_BROWSER_ACTION_DEFAULT_SAFE)) {
+    switch (KeyValue) {
+      case KEY_CNV_BT_AUDIO_OFFLOAD_INTERFACE:
+        DEBUG ((DEBUG_INFO, "F3 Default: BT Audio Offload Interface -> 0 (I2S)\n"));
+        Value->u8 = 0x00;  // I2S interface (default)
+        return Status;
+
+      case KEY_CNV_BT_CNVI_MODE:
+        DEBUG ((DEBUG_INFO, "F3 Default: CNVi Mode -> 1 (Auto/Enabled)\n"));
+        Value->u8 = 0x01;  // Auto/Enabled (default)
+        return Status;
+
+      case KEY_CNV_BT_AUDIO_OFFLOAD:
+        DEBUG ((DEBUG_INFO, "F3 Default: BT Audio Offload -> 1 (Enabled)\n"));
+        Value->u8 = 0x01;  // Enabled (default)
+        return Status;
+
+      default:
+        break;
+    }
+  }
+
+  if (KeyValue == KEY_CNV_BT_AUDIO_OFFLOAD ||
+      KeyValue == PCH_HDAUDIO_DBT_OFFLOAD_ACTION_KEY) {
 
     // Inform DSP features submenu about the change
     if (Action == EFI_BROWSER_ACTION_CHANGED) {
