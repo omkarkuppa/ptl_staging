@@ -3796,7 +3796,7 @@ InstallAcpiPlatform (
     }
     for (Index = 0; Index < 2; Index++) {
       if (VtioSetupData.SdevXhciRootPortNumber[Index] > 0) {
-        UpdateUsbCameraConnector (VtioSetupData.SdevXhciRootPortNumber[Index]);
+        UpdateUsbCameraConnector (VtioSetupData.SdevXhciRootPortNumber[Index]-1); // Pass the 'SdevXhciRootPortNumber' input as 1-based to align with ACPI device string naming starts from HS01 etc. There is no device associated with HS00.
       }
     }
   }
