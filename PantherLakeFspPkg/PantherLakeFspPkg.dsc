@@ -662,7 +662,7 @@ $(SILICON_FSP_PATH)/FspRsc2PostCodeMapInit/Pei/FspRsc2PostCodeMapServicePei.inf 
     <LibraryClasses>
       MmPciLib|$(SILICON_FSP_PATH)/Library/MmPciCf8Lib/MmPciCf8Lib.inf
       PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
-      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+      DebugLib|$(SILICON_FSP_PATH)/Library/DebugLibDebugPort/Pei/DebugLibDebugPort.inf
       SerialPortLib|$(SILICON_FSP_PATH)/Library/SerialPortLib/SerialPortLib.inf
     <PcdsFixedAtBuild>
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2F

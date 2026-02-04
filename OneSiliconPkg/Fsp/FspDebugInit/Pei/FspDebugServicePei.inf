@@ -59,12 +59,6 @@
 [Sources]
   FspDebugServicePei.c
 
-[Sources.IA32]
-  Ia32/FspDebugServicePei.nasm
-
-[Sources.X64]
-  X64/FspDebugServicePei.nasm
-
 [Ppis]
   gFspDebugServicePpiGuid                          ## PRODUCES
 

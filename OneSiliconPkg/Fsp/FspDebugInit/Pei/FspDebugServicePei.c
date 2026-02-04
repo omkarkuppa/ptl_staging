@@ -106,24 +106,7 @@ EFI_STATUS
 WriteToSerialIoPpi (
   IN UINT8            *Buffer,
   IN UINTN            NumberOfBytes
-  )
-{
-  EFI_STATUS                Status;
-  EFI_SERIAL_IO_PROTOCOL    *SerialIoAccess;
-
-  Status = PeiServicesLocatePpi (
-             &gEfiSerialIoProtocolGuid,
-             0,
-             NULL,
-             (VOID **) &SerialIoAccess
-             );
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  SerialIoAccess->Write (SerialIoAccess, &NumberOfBytes, Buffer);
-  return EFI_SUCCESS;
-}
+  );
 
 /**
   Prints a debug message to the debug output device if the specified error level is enabled.
