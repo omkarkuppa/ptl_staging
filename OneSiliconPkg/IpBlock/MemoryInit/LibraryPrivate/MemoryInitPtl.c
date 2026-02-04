@@ -3685,8 +3685,10 @@ BuildMemoryInfoDataHob (
   MemoryInfo->EccSupport              = Outputs->EccSupport;
   MemoryInfo->MixedEccDimms           = SaveData->IsMixedEccDimms;
   MemoryInfo->TotalPhysicalMemorySize = Outputs->MemoryMapData.TotalPhysicalMemorySize;
-  // Max Rank Capacity comes from MC HAS: 16GB in DDR5 and 8GB in LP5
-  MemoryInfo->MaxRankCapacity = Outputs->IsDdr5 ? 16 : 8;
+  // Max Rank Capacity comes from MC HAS: 16GB in DDR5 and 8GB in LP5 (this is per channel)
+  // For DDR5 we should report the max capacity per DIMM, hence it's 32GB
+  // For LP5 we report the max capacity per channel, so it's 8GB
+  MemoryInfo->MaxRankCapacity = Outputs->IsDdr5 ? 32 : 8;
   MrcCall->MrcSetMem ((UINT8 *) &MemoryInfo->RcompTarget, sizeof (MemoryInfo->RcompTarget), 0);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
     MemoryInfo->VddVoltage[Profile]   = Outputs->VddVoltage[Profile];
