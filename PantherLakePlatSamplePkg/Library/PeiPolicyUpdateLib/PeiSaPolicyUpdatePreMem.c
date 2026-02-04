@@ -59,6 +59,10 @@
 #endif
 #include <Library/PeiLib.h>
 
+#if FixedPcdGetBool (PcdMemoryTelemetryEnabled) == 1
+#include <Library/PeiMemoryTelemetryLib.h>
+#endif
+
 #if FixedPcdGetBool (PcdTcssSupport) == 1
 #include <TcssPeiPreMemConfig.h>
 #include <Library/PlatformUsbConfigLib.h>
@@ -1264,27 +1268,31 @@ UpdatePeiSaPolicyPreMem (
       COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Row,        MemConfigNoCrc->PprEntryAddress[Index].Row,                        SaSetup.PprRequestRow[Index]                                           );
       COMPARE_AND_UPDATE_POLICY (((MRC_PPR_ENTRY_ADDRESS *)(((FSPM_UPD *) FspmUpd)->FspmConfig.PprEntryAddress))[Index].Device,     MemConfigNoCrc->PprEntryAddress[Index].Device,                     SaSetup.PprRequestDevice[Index]                                           );
     }
+#if FixedPcdGetBool (PcdMemoryTelemetryEnabled)
+    if (UpdateAmtPprMrcPolicy (MemConfigNoCrc) != EFI_SUCCESS) {
+#endif
+      PprTestType.Value = 0;
+      PprTestType.Bits.WcMats8       = SaSetup.PprRunWCHMATS8;
+      PprTestType.Bits.DataRetention = SaSetup.PprRunRetention;
+      PprTestType.Bits.XMarch        = SaSetup.PprRunXMarch;
+      PprTestType.Bits.XMarchG       = SaSetup.PprRunXMarchG;
+      PprTestType.Bits.YMarchShort   = SaSetup.PprRunYMarchShort;
+      PprTestType.Bits.YMarchLong    = SaSetup.PprRunYMarchLong;
+      PprTestType.Bits.Mmrw          = SaSetup.PprRunMmrw;
+      PprTestType.Bits.TestDisabled  = (PprTestType.Value == 0) ? 1 : 0;
 
-    PprTestType.Value = 0;
-    PprTestType.Bits.WcMats8       = SaSetup.PprRunWCHMATS8;
-    PprTestType.Bits.DataRetention = SaSetup.PprRunRetention;
-    PprTestType.Bits.XMarch        = SaSetup.PprRunXMarch;
-    PprTestType.Bits.XMarchG       = SaSetup.PprRunXMarchG;
-    PprTestType.Bits.YMarchShort   = SaSetup.PprRunYMarchShort;
-    PprTestType.Bits.YMarchLong    = SaSetup.PprRunYMarchLong;
-    PprTestType.Bits.Mmrw          = SaSetup.PprRunMmrw;
-    PprTestType.Bits.TestDisabled = (PprTestType.Value == 0) ? 1 : 0;
-
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunWCHMATS8,    MemConfigNoCrc->PprTestType.Bits.WcMats8,       SaSetup.PprRunWCHMATS8                 );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunRetention,   MemConfigNoCrc->PprTestType.Bits.DataRetention, SaSetup.PprRunRetention                );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunXMarch,      MemConfigNoCrc->PprTestType.Bits.XMarch,        SaSetup.PprRunXMarch                   );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunXMarchG,     MemConfigNoCrc->PprTestType.Bits.XMarchG,       SaSetup.PprRunXMarchG                  );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunYMarchShort, MemConfigNoCrc->PprTestType.Bits.YMarchShort,   SaSetup.PprRunYMarchShort              );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunYMarchLong,  MemConfigNoCrc->PprTestType.Bits.YMarchLong,    SaSetup.PprRunYMarchLong               );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunMmrw,        MemConfigNoCrc->PprTestType.Bits.Mmrw,          SaSetup.PprRunMmrw                     );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprTestDisabled,   MemConfigNoCrc->PprTestType.Bits.TestDisabled,  (UINT8) PprTestType.Bits.TestDisabled  );
-
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairType,     MemConfigNoCrc->PprRepairType,                  SaSetup.PprRepairType                  );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunWCHMATS8,    MemConfigNoCrc->PprTestType.Bits.WcMats8,       SaSetup.PprRunWCHMATS8                 );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunRetention,   MemConfigNoCrc->PprTestType.Bits.DataRetention, SaSetup.PprRunRetention                );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunXMarch,      MemConfigNoCrc->PprTestType.Bits.XMarch,        SaSetup.PprRunXMarch                   );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunXMarchG,     MemConfigNoCrc->PprTestType.Bits.XMarchG,       SaSetup.PprRunXMarchG                  );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunYMarchShort, MemConfigNoCrc->PprTestType.Bits.YMarchShort,   SaSetup.PprRunYMarchShort              );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunYMarchLong,  MemConfigNoCrc->PprTestType.Bits.YMarchLong,    SaSetup.PprRunYMarchLong               );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunMmrw,        MemConfigNoCrc->PprTestType.Bits.Mmrw,          SaSetup.PprRunMmrw                     );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprTestDisabled,   MemConfigNoCrc->PprTestType.Bits.TestDisabled,  (UINT8) PprTestType.Bits.TestDisabled  );
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRepairType,     MemConfigNoCrc->PprRepairType,                  SaSetup.PprRepairType                  );
+#if FixedPcdGetBool (PcdMemoryTelemetryEnabled)
+    }
+#endif
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRetryLimit,     MemConfigNoCrc->PprRetryLimit,                  SaSetup.PprRetryLimit                  );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprRunOnce,        MemConfigNoCrc->PprRunOnce,                     SaSetup.PprRunOnce                     );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PprErrorInjection, MemConfigNoCrc->PprErrorInjection,              SaSetup.PprErrorInjection              );

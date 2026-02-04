@@ -1,9 +1,10 @@
-## @file
-#  Pei Memory Telemetry Amt Ppr PEIM
+### @file
+#  Memory Telemetry library provides APIs for updating memory configuration
+#  based on UEFI variable updates
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2024 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -16,26 +17,19 @@
 #  express or implied warranties, other than those that are expressly stated
 #  in the License.
 #
-# @par Specification Reference:
-#
-##
+# @par Specification
+###
 
 [Defines]
-  INF_VERSION       = 0x00010005
-  BASE_NAME         = PeiMemoryTelemetry
-  FILE_GUID         = 229A7433-7BB4-4EEA-AEF1-ABAA9C2DA7DC
-  MODULE_TYPE       = PEIM
-  VERSION_STRING    = 1.0
-  ENTRY_POINT       = PeiMemoryTelemetryEntry
-
-#
-# The following information is for reference only and not required by the build tools.
-#
-# VALID_ARCHITECTURES = IA32
-#
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiMemoryTelemetryLib
+  FILE_GUID                      = 7AA59C31-401A-4754-ACFD-D6B872439925
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PeiMemoryTelemetryLib
 
 [Sources]
-  PeiMemoryTelemetry.c
+  PeiMemoryTelemetryLib.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -54,14 +48,11 @@
 [Guids]
   gMemoryConfigGuid                 ## CONSUMES
   gMemoryConfigNoCrcGuid            ## CONSUMES
+  gRmtVariableGuid                  ## CONSUMES
   gMemTelAmtPprVariableGuid         ## CONSUMES
 
 [Ppis]
-  gSiPreMemPolicyPpiGuid            ## CONSUMES
   gEfiPeiReadOnlyVariable2PpiGuid   ## CONSUMES
 
 [Pcd]
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability ## CONSUMES
-
-[Depex]
-  gEfiPeiReadOnlyVariable2PpiGuid

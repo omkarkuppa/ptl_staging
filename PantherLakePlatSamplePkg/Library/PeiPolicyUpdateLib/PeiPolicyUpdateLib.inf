@@ -71,6 +71,7 @@
   TmeInfoLib
   FusaInfoLib
   PtlPcdGpioNativeLib
+  PeiMemoryTelemetryLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -98,6 +99,7 @@
   Usb4FeaturePkg/Usb4FeaturePkg.dec
   UcsiFeaturePkg/UcsiFeaturePkg.dec
   AmtPetInitFeaturePkg/AmtPetInitFeaturePkg.dec
+  MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdTsegSize                                            ## CONSUMES
@@ -300,6 +302,8 @@
   # Discrete Thunderbolt Board Configuration VPD
   gBoardModuleTokenSpaceGuid.VpdPcdDTbtBoardConfig       ## CONSUMES
 
+  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled ## CONSUMES
+
 [Sources]
   PeiPchPolicyUpdatePreMem.c
   PeiPchPolicyUpdate.c
@@ -423,4 +427,5 @@
   gCnviPreMemConfigGuid                         ## CONSUMES
   gUefiIntelCnvWlanVariablesGuid                ## CONSUMES
   gRmtVariableGuid                              ## CONSUMES
+  gMemTelAmtPprVariableGuid                     ## CONSUMES
   gPchPcieConfigGuid                            ## CONSUMES

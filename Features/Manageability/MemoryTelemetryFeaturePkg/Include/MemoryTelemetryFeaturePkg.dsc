@@ -26,12 +26,10 @@
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled|TRUE
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability|TRUE
 
-[Components.$(FSP_ARCH)]
-!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
-  MemoryTelemetryFeaturePkg/PeiMemoryTelemetry/PeiMemoryTelemetry.inf
-!endif
-
 [Components.X64]
 !if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
   MemoryTelemetryFeaturePkg/DxeMemoryTelemetry/DxeMemoryTelemetry.inf
 !endif
+
+[LibraryClasses]
+  PeiMemoryTelemetryLib|MemoryTelemetryFeaturePkg/Library/PeiMemoryTelemetryLib/PeiMemoryTelemetryLib.inf

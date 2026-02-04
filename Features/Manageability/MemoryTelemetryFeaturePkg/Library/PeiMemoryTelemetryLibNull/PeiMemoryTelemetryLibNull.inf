@@ -1,5 +1,7 @@
 ## @file
-#  Memory Telemetry pre-mem feature module
+#  NULL instance of PeiMemoryTelemetryLib
+#
+#  Used when PcdMemoryTelemetryEnabled is FALSE to avoid unnecessary dependencies
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -16,9 +18,21 @@
 #  express or implied warranties, other than those that are expressly stated
 #  in the License.
 #
-# @par Specification
+#  @par Specification Reference:
 ##
 
-!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
-INF MemoryTelemetryFeaturePkg/PeiMemoryTelemetry/PeiMemoryTelemetry.inf
-!endif
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiMemoryTelemetryLibNull
+  FILE_GUID                      = 8F7E8B9A-1C2D-4E5F-9A6B-3C4D5E6F7A8B
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PeiMemoryTelemetryLib
+
+[Sources]
+  PeiMemoryTelemetryLibNull.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec

@@ -698,6 +698,13 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
 !if gBoardModuleTokenSpaceGuid.PcdSetupEnable == TRUE
   !include $(PLATFORM_BOARD_PACKAGE)/Features/Setup/Include/Dsc/SetupPeiLib.dsc
 !endif
+
+!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
+  PeiMemoryTelemetryLib|MemoryTelemetryFeaturePkg/Library/PeiMemoryTelemetryLib/PeiMemoryTelemetryLib.inf
+!else
+  PeiMemoryTelemetryLib|MemoryTelemetryFeaturePkg/Library/PeiMemoryTelemetryLibNull/PeiMemoryTelemetryLibNull.inf
+!endif
+
 #
 # SmmAccess
 #
