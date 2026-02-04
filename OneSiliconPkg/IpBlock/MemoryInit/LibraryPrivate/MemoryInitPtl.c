@@ -1135,13 +1135,13 @@ DEBUG_CODE_END();
     MrcGetSaGvPointBeforeReset (MrcData);
   }
 
-  if (MrcBootMode == bmCold) {
-    if (IS_VGA_INIT_ON_MRC_ONLY (IGpuPreMemConfig->VgaInitControl)) {
-      IGpuVgaInit (IGpuPreMemConfig);
-    }
-  }
-
   do {
+    if (MrcBootMode == bmCold) {
+      if (IS_VGA_INIT_ON_MRC_ONLY (IGpuPreMemConfig->VgaInitControl)) {
+        IGpuVgaInit (IGpuPreMemConfig);
+      }
+    }
+
     if ((Inputs->BootMode == bmCold) || (Inputs->BootMode == bmFast)) {
       //
       // Clear DRAM Init Bit if we are doing a cold boot, to prevent hang if a warm reset occurs in the training flow

@@ -754,18 +754,16 @@ UpdatePeiSaPolicyPreMem (
     // Check if SOL is enabled from BIOS Setup Menu
     //
     if (SaSetup.SolFeatureEnabled != VGA_DISPLAY_DISABLED) {
-      if ((BootMode == BOOT_WITH_FULL_CONFIGURATION) || (BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {
-        if (SaSetup.SolFeatureEnabled == 1) {
-          VgaInitControl = (VGA_TEXT_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
-        } else if (SaSetup.SolFeatureEnabled == 2) {
-          VgaInitControl = (VGA_GRAPHICS_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
-        } else if (SaSetup.SolFeatureEnabled == 3) {
-          VgaInitControl = (VGA_NO_EXIT_SUPPORT | VGA_TEXT_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
-        } else if (SaSetup.SolFeatureEnabled == 4) {
-          VgaInitControl = (VGA_NO_EXIT_SUPPORT | VGA_GRAPHICS_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
-        } else {
-          VgaInitControl = VGA_DISPLAY_DISABLED;
-        }
+      if (SaSetup.SolFeatureEnabled == 1) {
+        VgaInitControl = (VGA_INIT_DURING_MRC_TRAINING_SUPPORT | VGA_TEXT_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
+      } else if (SaSetup.SolFeatureEnabled == 2) {
+        VgaInitControl = (VGA_INIT_DURING_MRC_TRAINING_SUPPORT | VGA_GRAPHICS_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
+      } else if (SaSetup.SolFeatureEnabled == 3) {
+        VgaInitControl = (VGA_INIT_DURING_MRC_TRAINING_SUPPORT | VGA_NO_EXIT_SUPPORT | VGA_TEXT_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
+      } else if (SaSetup.SolFeatureEnabled == 4) {
+        VgaInitControl = (VGA_INIT_DURING_MRC_TRAINING_SUPPORT | VGA_NO_EXIT_SUPPORT | VGA_GRAPHICS_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
+      } else {
+        VgaInitControl = VGA_DISPLAY_DISABLED;
       }
     }
 
