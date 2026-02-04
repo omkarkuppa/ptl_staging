@@ -122,16 +122,16 @@
       // Controller-0
       {
         0x1, // DIMM0
-        0x1, // DIMM0
-        0x1, // DIMM0
-        0x1  // DIMM0
+        0x0, // DIMM0
+        0x0, // DIMM0
+        0x0  // DIMM0
       },
       // Controller-1
       {
         0x1, // DIMM0
-        0x1, // DIMM0
-        0x1, // DIMM0
-        0x1  // DIMM0
+        0x0, // DIMM0
+        0x0, // DIMM0
+        0x0  // DIMM0
       }
     }
   })}
