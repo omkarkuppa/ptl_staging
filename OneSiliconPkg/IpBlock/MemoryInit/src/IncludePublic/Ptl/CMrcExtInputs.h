@@ -298,7 +298,8 @@ typedef struct {
   UINT16  Vdd2LVoltage;                   ///< Offset 342-343 LP5 DRAM voltage (VDD2L) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
   INT8    PhyDtsTemperature;              ///< Offset 344 PHY DTS temperature override, in degrees C (2's complement). 0xFF - platform default (no override).
   BOOLEAN FlexibleAnalogSettings;         ///< Offset 345 Enable/disable usage of flexible analog settings (NN flex feature): 0 = Disable, 1 = Enable
-  UINT8   Reserved346[42];                ///< Offset 346 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (346 + 42 bytes) = 416 should be a multiple of 8 bytes.
+  BOOLEAN PhClkCheck;                     ///< Offset 346 Phase Clock Check.
+  UINT8   Reserved347[41];                ///< Offset 347 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (347 + 41 bytes) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

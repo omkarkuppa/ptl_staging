@@ -1768,6 +1768,7 @@ MrcPrintInputParameters (
     "\tRxDqsStepSizeLB: %u\n"
     "\tRxVrefStepSizeLB: %u\n"
     "\tTxStepSizeLB: %u\n"
+    "\tPhClkCheck: %u\n"
     "\tEnPeriodicComp: %u\n"
     "\tDunitTatOptimization: %u\n",
     Inputs->NumCL,
@@ -1776,6 +1777,7 @@ MrcPrintInputParameters (
     ExtInputs->RxDqsStepSizeLB,
     ExtInputs->RxVrefStepSizeLB,
     ExtInputs->TxStepSizeLB,
+    ExtInputs->PhClkCheck,
     ExtInputs->EnPeriodicComp,
     ExtInputs->DunitTatOptimization
     );
@@ -1801,9 +1803,7 @@ MrcPrintInputParameters (
     ExtInputs->CccPinsInterleaved
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
-    "\tPhClkCheck: %u\n"
     "\tTscTimeBase: %llu\n",
-    Inputs->PhClkCheck,
     Inputs->TscTimeBase
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,

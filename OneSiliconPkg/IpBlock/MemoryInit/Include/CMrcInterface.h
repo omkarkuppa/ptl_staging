@@ -2414,12 +2414,11 @@ typedef struct {
   UINT8 PprRetryLimit;
   McRegOffsets OffsetKnobs;       ///< Options for MC Register Offset settings
   BOOLEAN PerDeviceDdr5ReadDca;
-  BOOLEAN PhClkCheck;                    ///< Phase Clock Check
   UINT8   PhClkCheckPerLanePhError;      ///< Min to max tolerance for the per-lane PhClkCheck (phase). 0 - Auto
   UINT8   PhClkCheckPerLanePiLinError;   ///< Min to max tolerance for the per-lane PhClkCheck (PI Linearity). 0 - Auto
   BOOLEAN IsVdd2Margining;               ///< TRUE: Skip Vsense run in LVR AutoTrim
   BOOLEAN IsLp5SpeedLimited;             ///< Reduce top LP5 speed
-  UINT8   Reserved3[2];                  ///< Reserved to ensure config block size is a multiple of DWORDs
+  UINT8   Reserved3[3];                  ///< Reserved to ensure config block size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

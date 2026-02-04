@@ -753,6 +753,9 @@ typedef struct {
   UINT32  PhClkDccMaxDelta;       // PH/DCC Max delta of Phase Clk DCC stage
                                   // [0:15]  - value corresponding to DCC max delta
                                   // [16:31] - value corresponding to PH max delta
+  UINT32  PhCheckDccMaxDelta;     // PH/PI Max delta of Phase Check DCC stage
+                                  // [0:15]  - value corresponding to PI max delta
+                                  // [16:31] - value corresponding to PH max delta
 } HVM_RESULT;
 #pragma pack (pop)
 
