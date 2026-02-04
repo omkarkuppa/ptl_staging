@@ -45,8 +45,8 @@ CHAR16 *mBoardIdIndex[] = {
   L"TBD",                                   // 0x14
   L"PTL-H LP5 ADK1",                        // 0x15
   L"PTL-H LP5 ADK2",                        // 0x16
-  L"TBD",                                   // 0x17
-  L"TBD",                                   // 0x18
+  L"PTL UH LP5x ADK MEM 9600",              // 0x17
+  L"PTL-UH LP5x GCS MEM 9600",              // 0x18
   L"TBD",                                   // 0x19
   L"TBD",                                   // 0x1A
   L"TBD",                                   // 0x1B
