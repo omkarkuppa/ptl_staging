@@ -675,13 +675,16 @@ CnvVfrSetupMenuFormCallback (
   Status                  = EFI_SUCCESS;
   CnvFormPlatformProtocol = NULL;
 
-  DEBUG ((DEBUG_INFO, "%a Entry\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "%a Entry - Action: %d, QuestionId: %d\n", __FUNCTION__, Action, QuestionId));
 
+  // Remove the filter that blocks default actions - allow EFI_BROWSER_ACTION_DEFAULT_STANDARD
   if ((Action != EFI_BROWSER_ACTION_CHANGED)   &&
       (Action != EFI_BROWSER_ACTION_SUBMITTED) &&
       (Action != EFI_BROWSER_ACTION_FORM_OPEN) &&
-      (Action < EFI_BROWSER_ACTION_DEFAULT_STANDARD))
+      (Action != EFI_BROWSER_ACTION_DEFAULT_STANDARD) &&
+      (Action != EFI_BROWSER_ACTION_DEFAULT_MANUFACTURING))
   {
+    DEBUG ((DEBUG_INFO, "Unsupported action: %d\n", Action));
     return EFI_UNSUPPORTED;
   }
 
@@ -698,11 +701,40 @@ CnvVfrSetupMenuFormCallback (
     return EFI_OUT_OF_RESOURCES;
   }
 
+  // Handle F3 (Load Setup Defaults) action
+  if (Action == EFI_BROWSER_ACTION_DEFAULT_STANDARD) {
+    DEBUG ((DEBUG_INFO, "F3 Load Setup Defaults pressed\n"));
+
+    //Set to default
+    ZeroMem (CnvSetupDataPtr, VarSize);
+    CnvSetupDataPtr->CnviMode = 1;
+    CnvSetupDataPtr->CnviBtAudioOffload = 1;
+    CnvSetupDataPtr->CnviBtAudioOffloadInterface = 0;
+
+    DEBUG ((DEBUG_INFO, "Setting CNVi Mode to default: %d (Auto)\n", CnvSetupDataPtr->CnviMode));
+
+    // Save the default values back to browser data
+    if (!HiiSetBrowserData (&gCnvFeatureSetupGuid, CNV_SETUP_VARIABLE_NAME, VarSize, (UINT8 *)CnvSetupDataPtr, NULL)) {
+      DEBUG ((DEBUG_ERROR, "Failed to set browser data with defaults\n"));
+      Status = EFI_DEVICE_ERROR;
+    } else {
+      DEBUG ((DEBUG_INFO, "Successfully set CNVi defaults\n"));
+    }
+
+    FreePool (CnvSetupDataPtr);
+    return Status;
+  }
+
   if (!HiiGetBrowserData (&gCnvFeatureSetupGuid, CNV_SETUP_VARIABLE_NAME, VarSize, (UINT8 *)CnvSetupDataPtr)) {
     Status = EFI_NOT_FOUND;
   }
 
   ASSERT_EFI_ERROR (Status);
+
+  // Add debug for current values
+  if (Action == EFI_BROWSER_ACTION_CHANGED || Action == EFI_BROWSER_ACTION_SUBMITTED) {
+    DEBUG ((DEBUG_INFO, "Current CNVi Mode: %d\n", CnvSetupDataPtr->CnviMode));
+  }
 
   //
   // Locate gCnvFormPlatformProtocolGuid and update the latest CNV browser data to the protocol
