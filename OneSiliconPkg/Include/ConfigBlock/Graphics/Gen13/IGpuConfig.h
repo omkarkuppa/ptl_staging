@@ -77,6 +77,13 @@
 #define VGA_MODE12_16_COLOR_SUPPORT    (0)
 #define VGA_MODE12_MONOCHROME_SUPPORT  (BIT5)
 
+//
+// BIT 6-7 : VgaInitControl for Higher Cd Clock Requirement
+//
+#define VGA_HIGHER_CD_CLOCK_NONE       (0)
+#define VGA_HIGHER_CD_CLOCK_442MHZ     (BIT6)
+#define VGA_HIGHER_CD_CLOCK_461MHZ     (BIT7)
+
 #define IS_VGA_ENABLED(data)                    (((data) & BIT0) == VGA_DISPLAY_ENABLED)
 #define IS_VGA_TEXT_MODE3_ENABLED(data)         (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_TEXT_MODE3_SUPPORT))
 #define IS_VGA_GRAPHICS_MODE12_ENABLED(data)    (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_GRAPHICS_MODE12_SUPPORT))
@@ -87,6 +94,16 @@
 #define IS_VGA_MRC_PROGRESS_BAR_ENABLED(data)   (IS_VGA_ENABLED(data) && (((data) & BIT4) == VGA_MRC_PROGRESS_BAR_ENABLE))
 #define IS_VGA_MODE12_16_COLOR(data)            (IS_VGA_GRAPHICS_MODE12_ENABLED(data) && (((data) & BIT5) == VGA_MODE12_16_COLOR_SUPPORT))
 #define IS_VGA_MODE12_MONOCHROME(data)          (IS_VGA_GRAPHICS_MODE12_ENABLED(data) && (((data) & BIT5) == VGA_MODE12_MONOCHROME_SUPPORT))
+
+#define IS_VGA_HIGHER_CD_CLOCK_REQUIRED(data)   (IS_VGA_ENABLED(data) && (((data) & (BIT6 | BIT7)) != 0))
+#define IS_VGA_HIGHER_CD_CLOCK_442MHZ(data)     (IS_VGA_ENABLED(data) && (((data) & BIT6) == BIT6))
+#define IS_VGA_HIGHER_CD_CLOCK_461MHZ(data)     (IS_VGA_ENABLED(data) && (((data) & BIT7) == BIT7))
+#define GET_VGA_HIGHER_CD_CLOCK_SETTING(data)   (((data) >> 6) & 0x03)
+
+typedef enum {
+  CD_CLOCK_442MHZ          = 442,
+  CD_CLOCK_461MHZ          = 461
+} CD_CLOCK_SETTING;
 
 typedef enum {
   DISPLAY_AUTO = 0x00,
@@ -203,6 +220,7 @@ typedef struct {
    BIT3 - 0 : VGA Init During Display Init, 1 - VGA Init During MRC Cold Boot.
    BIT4 - 0 : Enable Progress Bar, 1 : Disable Progress Bar
    BIT5 - 0 : VGA Mode 12 16 Color Support, 1 : VGA Mode 12 Monochrome Black and White Support
+   BIT6-7 - 0 : No Higher Cd Clock, 1 : 442 MHz, 2 : 461 MHz, 3 : Reserved
   **/
   UINT8                       VgaInitControl;             ///< Offset 74 VGA Init Control
   VOID                        *VgaMessage;                ///< Pointer to Message which should be displayed

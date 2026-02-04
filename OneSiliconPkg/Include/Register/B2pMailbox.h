@@ -99,6 +99,12 @@ typedef union {
 } MAILBOX_DATA_VCCSA_SHUTDOWN_CONFIG;
 
 //
+// Cd Clock
+//
+#define MAILBOX_PCODE_CMD_SET_DISPLAY_FREQUENCY                             0x00000001
+#define MAILBOX_SUBCMD_SET_DISPLAY_FREQUENCY_PARAM1                         0x00000007
+
+//
 // Get IPC Scaling Factor per module
 //
 #define MAILBOX_BIOS_CMD_READ_CORE_SCALING_FACTOR                          0x00000021

@@ -80,6 +80,7 @@
 #include <Library/PeiTccInitLib.h>
 #include <TccConfig.h>
 #endif
+#include <Library/CpuMailboxLib.h>
 
 /**
   PPV dummy reset handler.
@@ -364,6 +365,9 @@ SiInitPreMemOnPolicy (
   CPU_POWER_MGMT_VR_CONFIG      *CpuPowerMgmtVrConfig;
   CPU_SECURITY_PREMEM_CONFIG    *CpuSecurityPreMemConfig;
   PCH_PCIE_RP_PREMEM_CONFIG     *PcieRpPreMemConfig;
+  PCODE_MAILBOX_INTERFACE       MailboxCommand;
+  UINT32                        MailboxStatus;
+  UINT16                        MailboxData;
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
@@ -533,6 +537,45 @@ SiInitPreMemOnPolicy (
   /// Send Early PM Configuration done through mailbox
   ///
   SendPowerDeliveryDone ();
+
+  //
+  // CdClock setting for VGA when higher cd clock is required
+  //
+  if (IS_VGA_HIGHER_CD_CLOCK_REQUIRED (IGpuPreMemConfig->VgaInitControl)) {
+    ///
+    /// Set Display CdClock Frequency through Pcode Mailbox
+    ///
+    Status                       = EFI_SUCCESS;
+    MailboxStatus                = PCODE_MAILBOX_CC_SUCCESS;
+    MailboxCommand.InterfaceData = 0;
+
+    MailboxCommand.Fields.Command = MAILBOX_PCODE_CMD_SET_DISPLAY_FREQUENCY;
+    MailboxCommand.Fields.Param1  = MAILBOX_SUBCMD_SET_DISPLAY_FREQUENCY_PARAM1;
+
+    if (IS_VGA_HIGHER_CD_CLOCK_442MHZ (IGpuPreMemConfig->VgaInitControl)) {
+      MailboxData = CD_CLOCK_442MHZ;
+    } else if (IS_VGA_HIGHER_CD_CLOCK_461MHZ (IGpuPreMemConfig->VgaInitControl)) {
+      MailboxData = CD_CLOCK_461MHZ;
+    } else {
+      MailboxData = 0;
+    }
+
+    DEBUG ((
+      DEBUG_INFO,
+      "Mailbox Command Write: Command = 0x%X, Param1 = 0x%X, Data = 0x%X\n",
+      MailboxCommand.Fields.Command,
+      MailboxCommand.Fields.Param1,
+      MailboxData
+      ));
+    if (MailboxData != 0) {
+      Status = MailboxWrite (MailboxCommand.InterfaceData, MailboxData, &MailboxStatus);
+      if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+        DEBUG ((DEBUG_ERROR, "Mailbox Command Write failed. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+      }
+
+      DEBUG ((DEBUG_INFO, "Mailbox Command Write success. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+    }
+  }
 
   ///
   /// Initializes TSE after Policy PPI produced
