@@ -249,6 +249,17 @@ IGpuVgaInit (
     return;
   }
 
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob != NULL) {
+    //
+    // If VGA HW is already enabled, skip VGA Init
+    //
+    if (IGpuDataHob->VgaHwEnabled == 1) {
+      DEBUG ((DEBUG_INFO, "VGA HW is already enabled, skip VGA Init\n"));
+      return;
+    }
+  }
+
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
     IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
@@ -310,12 +321,15 @@ IGpuVgaInit (
         return;
       }
 
-      IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
       if (IGpuDataHob != NULL) {
         //
         // Update IGpuDataHob when the PreMem GOP Init is successful
         //
         IGpuDataHob->VgaDisplayConfig = IGpuPreMemConfig->VgaInitControl;
+        //
+        // Set VGA HW enabled status in IGpuDataHob
+        //
+        IGpuDataHob->VgaHwEnabled = 1;
       }
 
       String = IGpuPreMemConfig->VgaMessage;
@@ -323,7 +337,7 @@ IGpuVgaInit (
         VgaTextMode3WriteString (String, VGA_TEXT_CENTER);
       } else if (IS_VGA_GRAPHICS_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
         if ((IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth != 0) && (IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight != 0) && (IGpuPreMemConfig->GraphicsMode12Info.ImagePtr != NULL)) {
-          if (IS_VGA_MODE12_MONOCHROME (IGpuPreMemConfig->VgaInitControl))  {
+          if (IS_VGA_MODE12_MONOCHROME (IGpuPreMemConfig->VgaInitControl)) {
             VgaGraphicsMode12RenderImageBW (IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->GraphicsMode12Info.ImagePtr);
           } else {
             VgaGraphicsMode12RenderImage (IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->GraphicsMode12Info.ImagePtr);
@@ -494,11 +508,11 @@ IGpuPeiNotifyCallback (
 
   DEBUG ((DEBUG_INFO, "Configure FrameBuffer Memory as Write Combine before PEIM GOP load.\n"));
   Status = MtrrSetMemoryAttributeInMtrrSettings (
-                                                 NULL,
-                                                 GtApertureAdr,
-                                                 GtApertureSize,
-                                                 CacheWriteCombining
-                                                 );
+             NULL,
+             GtApertureAdr,
+             GtApertureSize,
+             CacheWriteCombining
+             );
 
   DEBUG ((DEBUG_INFO, "IGpuCallPpiAndFillFrameBuffer\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_CALLPPI_AND_FILLFRAMEBUFFER);  // PostCode (0xA05)
@@ -568,10 +582,10 @@ IGpuCallPpiAndFillFrameBuffer (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "GraphicsPpiInit failed. \n"));
     SendFspErrorInfo (
-                      gSaFspErrorTypeCallerId,
-                      gSaFspErrorTypePeiGopInit,
-                      EfiStatusToUint32 (Status)
-                      );
+      gSaFspErrorTypeCallerId,
+      gSaFspErrorTypePeiGopInit,
+      EfiStatusToUint32 (Status)
+      );
     return Status;
   }
 
@@ -594,10 +608,10 @@ IGpuCallPpiAndFillFrameBuffer (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "GraphicsPpiGetMode failed. \n"));
     SendFspErrorInfo (
-                      gSaFspErrorTypeCallerId,
-                      gSaFspErrorTypePeiGopGetMode,
-                      EfiStatusToUint32 (Status)
-                      );
+      gSaFspErrorTypeCallerId,
+      gSaFspErrorTypePeiGopGetMode,
+      EfiStatusToUint32 (Status)
+      );
     return Status;
   }
 

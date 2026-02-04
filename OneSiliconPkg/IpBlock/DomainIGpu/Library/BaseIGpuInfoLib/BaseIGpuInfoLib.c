@@ -70,6 +70,8 @@
 #define VGA_GRAPHICS_MODE12_CHAR_WIDTH           8
 #define VGA_GRAPHICS_MODE12_CHAR_HEIGHT          16
 
+#define UDIVIDEROUND(a, b)  (((a) + ((b) / 2)) / (b))
+
 /**
   Update the GttMmAdr if it's updated in register context.
   @param[in] pInst       Pointer to IP inst
@@ -1871,16 +1873,33 @@ SetChar (
   )
 {
   volatile UINT16  *VgaBuffer;
+  UINT16           Offset;
+  UINT16           Value;
 
   //
-  // Ensure X and Y are within bounds
+  // Validate that X and Y coordinates are within the valid range
   //
   if ((X >= VGA_TEXT_MODE3_COLUMNS) || (Y >= VGA_TEXT_MODE3_LINES)) {
     return; // Invalid coordinates
   }
 
-  VgaBuffer                                 = (UINT16 *)(UINTN)VGA_TEXT_MODE3_BASE_ADDRESS;
-  VgaBuffer[Y * VGA_TEXT_MODE3_COLUMNS + X] = (UINT16)((Color << 8) | Char);
+  //
+  // Calculate linear offset into VGA text buffer: Offset = Y * 80 + X
+  //
+  Offset = (UINT16)(Y * VGA_TEXT_MODE3_COLUMNS + X);
+
+  //
+  // Use volatile pointer for VGA memory to ensure each write operation is performed
+  // as specified without optimization that could reorder or eliminate memory accesses
+  //
+  VgaBuffer = (volatile UINT16 *)(UINTN)VGA_TEXT_MODE3_BASE_ADDRESS;
+
+  //
+  // Compose the character cell value with color attribute in high byte and character in low byte.
+  // Cast Char to UINT8 to prevent sign extension before OR operation
+  //
+  Value             = (UINT16)((Color << 8) | (UINT8)Char);
+  VgaBuffer[Offset] = Value;
 }
 
 /**
@@ -2038,7 +2057,7 @@ VgaGraphicsMode12RenderImage (
   // Exit if IS_VGA_MODE12_MONOCHROME is false
   //
   if (IS_VGA_MODE12_MONOCHROME (IGpuDataHob->VgaDisplayConfig)) {
-        return;
+    return;
   }
 
   //
@@ -2120,7 +2139,8 @@ VgaGraphicsMode12RenderImageBW (
   if ((X >= VGA_GRAPHICS_MODE12_WIDTH) ||
       (Y >= VGA_GRAPHICS_MODE12_HEIGHT) ||
       (X + Width > VGA_GRAPHICS_MODE12_WIDTH) ||
-      (Y + Height > VGA_GRAPHICS_MODE12_HEIGHT)) {
+      (Y + Height > VGA_GRAPHICS_MODE12_HEIGHT))
+  {
     return;
   }
 
@@ -2152,8 +2172,7 @@ VgaGraphicsMode12RenderImageBW (
       // Calculate VGA memory base address for this row
       // VGA row stride = 640/8 = 80 bytes
       //
-      VgaMemBase = (volatile UINT8 *)(UINTN)(VGA_GRAPHICS_MODE12_BASE_ADDRESS +
-                   ((Y + Row) * (VGA_GRAPHICS_MODE12_WIDTH / 8)) + (X / 8));
+      VgaMemBase = (volatile UINT8 *)(UINTN)(VGA_GRAPHICS_MODE12_BASE_ADDRESS + ((Y + Row) * (VGA_GRAPHICS_MODE12_WIDTH / 8)) + (X / 8));
 
       //
       // Copy entire row for current plane
@@ -2165,7 +2184,6 @@ VgaGraphicsMode12RenderImageBW (
     }
   }
 }
-
 
 /**
   Draw a character at a specific (X, Y) position in VGA Graphics Mode 12h.
@@ -2277,8 +2295,11 @@ UpdateProgressBar (
   UINT8          Index;
   IGPU_DATA_HOB  *IGpuDataHob;
   BOOLEAN        IsMode3;
+  BOOLEAN        IsClearing;
   UINT8          MaxColumns;
+  UINT8          PreviousColumns;
   UINT16         FilledWidth;
+  UINT16         PreviousWidth;
   UINT8          Color;
   CHAR8          Char;
 
@@ -2288,6 +2309,11 @@ UpdateProgressBar (
   if (Percentage > 100) {
     Percentage = 100;
   }
+
+  //
+  // Check if we're clearing the progress bar
+  //
+  IsClearing = (Percentage == 0);
 
   //
   // Retrieve the IGPU data HOB to determine the VGA display configuration
@@ -2300,7 +2326,7 @@ UpdateProgressBar (
   //
   // Exit if the VGA display or Mrc progress bar is disabled
   //
-  if ((IGpuDataHob->VgaDisplayConfig == VGA_DISPLAY_DISABLED) || (IS_VGA_MRC_PROGRESS_BAR_DISABLED(IGpuDataHob->VgaDisplayConfig) == TRUE)) {
+  if ((IGpuDataHob->VgaDisplayConfig == VGA_DISPLAY_DISABLED) || (IS_VGA_MRC_PROGRESS_BAR_DISABLED (IGpuDataHob->VgaDisplayConfig) == TRUE)) {
     return;
   }
 
@@ -2319,9 +2345,10 @@ UpdateProgressBar (
   Char  = SOLID_BLOCK_CHAR;
 
   //
-  // Clear Progress Bar if Percentage is 0
+  // Clear progress bar when Percentage is 0 by writing spaces (0x20) in black color.
+  // Set Percentage to 100 to ensure all columns/pixels are overwritten with blank content.
   //
-  if (Percentage == 0) {
+  if (IsClearing) {
     Color      = VGA_COLOR_BLACK;
     Char       = ' ';
     Percentage = 100;
@@ -2332,28 +2359,70 @@ UpdateProgressBar (
   //
   if (IsMode3) {
     //
-    // Calculate the maximum columns to fill based on the percentage.
+    // Calculate the maximum columns to fill based on percentage (0-100).
     //
-    MaxColumns = (UINT8)(((UINT16)Percentage * (UINT16)VGA_TEXT_MODE3_COLUMNS) / 100);
-    for (Index = 0; Index < MaxColumns; Index++) {
+    MaxColumns = (UINT8)UDIVIDEROUND ((UINT16)Percentage * (UINT16)VGA_TEXT_MODE3_COLUMNS, 100);
+
+    if (IsClearing) {
       //
-      // Set each character in the progress bar to a solid block character with white color.
-      // Display the progress bar in the 2nd line from the bottom of the screen.
+      // When clearing, start from column 0 to overwrite the entire progress bar.
       //
-      SetChar (Index, VGA_TEXT_MODE3_LINES - 2, Char, Color);
+      PreviousColumns = 0;
+    } else {
+      //
+      // Retrieve the previous column position from HOB to enable incremental updates.
+      // Only the delta between previous and current positions will be written.
+      //
+      PreviousColumns = (UINT8)UDIVIDEROUND ((UINT16)IGpuDataHob->PreviousProgressBar * (UINT16)VGA_TEXT_MODE3_COLUMNS, 100);
+    }
+
+    //
+    // Write only the delta between previous and current column positions.
+    //
+    if (PreviousColumns < MaxColumns) {
+      for (Index = PreviousColumns; (Index < MaxColumns) && (Index < VGA_TEXT_MODE3_COLUMNS); Index++) {
+        //
+        // Write character to VGA text buffer at 2nd line from bottom (line 23).
+        // Each column receives the solid block character (0xDB) or space (0x20) for clearing.
+        //
+        SetChar (Index, VGA_TEXT_MODE3_LINES - 2, Char, Color);
+      }
     }
   } else {
     //
-    // Calculate the filled width for the progress bar based on the percentage.
+    // Calculate the filled width in pixels based on percentage (0-100).
     //
-    FilledWidth = (UINT16)(((UINT16)Percentage * (UINT16)VGA_GRAPHICS_MODE12_WIDTH) / 100);
+    FilledWidth = (UINT16)UDIVIDEROUND ((UINT16)Percentage * (UINT16)VGA_GRAPHICS_MODE12_WIDTH, 100);
+
+    if (IsClearing) {
+      //
+      // When clearing, start from pixel 0 to overwrite the entire progress bar.
+      //
+      PreviousWidth = 0;
+    } else {
+      //
+      // Retrieve the previous pixel width from HOB to enable incremental updates.
+      // Only the delta between previous and current width will be drawn.
+      //
+      PreviousWidth = (UINT16)UDIVIDEROUND ((UINT16)IGpuDataHob->PreviousProgressBar * (UINT16)VGA_GRAPHICS_MODE12_WIDTH, 100);
+    }
+
     //
-    // Draw a filled rectangle for the progress bar with white color.
-    // Considering a line size of 16 pixels, we will have 30 lines (480 / 16).
-    // Display the progress bar in the 2nd line from the bottom of the screen.
+    // Draw progress bar as a filled rectangle in Graphics Mode 12 (640x480).
+    // Progress bar height is 16 pixels, positioned at line 28 (2nd from bottom).
+    // Incremental rendering: only draw pixels between PreviousWidth and FilledWidth.
+    // Bounds checking prevents writes beyond screen width (640 pixels).
     //
-    FillRectangle (0, VGA_GRAPHICS_MODE12_HEIGHT - (2 * VGA_GRAPHICS_MODE12_PROGRESS_BAR_HEIGHT), FilledWidth, VGA_GRAPHICS_MODE12_PROGRESS_BAR_HEIGHT, Color);
+    if ((FilledWidth > PreviousWidth) && (FilledWidth <= VGA_GRAPHICS_MODE12_WIDTH) && (PreviousWidth < VGA_GRAPHICS_MODE12_WIDTH)) {
+      FillRectangle (PreviousWidth, VGA_GRAPHICS_MODE12_HEIGHT - (2 * VGA_GRAPHICS_MODE12_PROGRESS_BAR_HEIGHT), FilledWidth - PreviousWidth, VGA_GRAPHICS_MODE12_PROGRESS_BAR_HEIGHT, Color);
+    }
   }
+
+  //
+  // Store current progress in HOB for next invocation to enable incremental updates.
+  // Reset to 0 when clearing to allow full redraw from the beginning.
+  //
+  IGpuDataHob->PreviousProgressBar = IsClearing ? 0 : Percentage;
 }
 
 /**
