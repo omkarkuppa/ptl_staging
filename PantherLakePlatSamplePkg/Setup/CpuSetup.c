@@ -1671,6 +1671,15 @@ InitCPUInfo (
         if (mCpuSetup.FastPkgCRampDisable[1] == 2) { // 2 = AUTO
           mCpuSetup.FastPkgCRampDisable[1] = 1;
         }
+        break;
+        default:
+        if (mCpuSetup.AcousticNoiseMitigation == 2 ) { // Disable for other SKU
+          mCpuSetup.AcousticNoiseMitigation = 0;
+        }
+        if (mCpuSetup.FastPkgCRampDisable[1] == 2 ) { // Disable for other SKU
+          mCpuSetup.FastPkgCRampDisable[1] = 0;
+        }
+        break;
       }
 
   //

@@ -2874,7 +2874,7 @@ endform; // CPU_VR_SETTINGS
           SUBTITLE(STRING_TOKEN(STR_CPU_GT_DOMAIN))
           oneof varid  = CPU_SETUP.FastPkgCRampDisable[1],
             prompt   = STRING_TOKEN (STR_GT_FAST_PKG_C_RAMP_DISABLE),
-            help     = STRING_TOKEN (STR_GT_FAST_PKG_C_RAMP_DISABLE_HELP),
+            help     = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE_HELP),
             option text = STRING_TOKEN (STR_FALSE),  value = 0, flags = RESET_REQUIRED;
             option text = STRING_TOKEN (STR_TRUE),  value = 1, flags = RESET_REQUIRED;
             option text = STRING_TOKEN (STR_AUTO),  value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;

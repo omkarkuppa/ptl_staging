@@ -798,7 +798,7 @@
 #string STR_VSYS_DEASSERTION_EXPONENT_HELP      #language en-US "De Assertion Deglitch Exponent 0x49[3-0]. Assertion Deglitch = 2µs * Mantissa * 2^(Exponent) "
 
 #string STR_ACOUSTIC_NOISE_MITIGATION           #language en-US "Acoustic Noise Mitigation"
-#string STR_ACOUSTIC_NOISE_MITIGATION_HELP      #language en-US "Enabling this option will help mitigate acoustic noise on certain SKUs when the CPU is in deeper C state. Auto = use processor default setting based on cpudid check "
+#string STR_ACOUSTIC_NOISE_MITIGATION_HELP      #language en-US "Enabling this option will help mitigate acoustic noise on certain SKUs when the CPU is in deeper C state"
 
 #string STR_FALSE                               #language en-US "False"
 #string STR_TRUE                                #language en-US "True"
@@ -815,8 +815,7 @@
 #string STR_IA_FAST_PKG_C_RAMP_DISABLE          #language en-US "Disable Fast PKG C State Ramp for IAcore Domain"
 #string STR_GT_FAST_PKG_C_RAMP_DISABLE          #language en-US "Disable Fast PKG C State Ramp for GT Domain"
 #string STR_ATOM_FAST_PKG_C_RAMP_DISABLE        #language en-US "Disable Fast PKG C State Ramp for Ecore Domain"
-#string STR_FAST_PKG_C_RAMP_DISABLE_HELP        #language en-US "This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state."
-#string STR_GT_FAST_PKG_C_RAMP_DISABLE_HELP     #language en-US "This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state. Auto = use processor default setting based on cpudid check."
+#string STR_FAST_PKG_C_RAMP_DISABLE_HELP        #language en-US "This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state"
 
 #string STR_IA_SLOW_SLEW_RATE_CONFIG            #language en-US "Slow Slew Rate for IAcore Domain"
 #string STR_IA_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR IAcore Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4 to slow down the slew rate to help minimize acoustic noise; divide by 8 and 16 are disabled"
