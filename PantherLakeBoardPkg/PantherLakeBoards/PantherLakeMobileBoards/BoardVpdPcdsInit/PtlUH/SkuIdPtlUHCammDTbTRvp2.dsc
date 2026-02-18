@@ -759,7 +759,7 @@
   {
     {
       0,                            // Revision
-      3,                            // WlanRootPortNumber
+      4,                            // WlanRootPortNumber
       3,                            // DiscreteUsbBtPortNumber
       8,                            // IntegratedUsbBtPortNumber
       GPIOV2_PTL_PCD_XXGPP_A_17,    // WlanRfKillGpio
