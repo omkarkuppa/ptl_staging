@@ -27,6 +27,7 @@
 #include <Defines/IgdDefines.h>
 #include <Library/NguInfoLib.h>
 #include <IGpuDataHob.h>
+#include <IGpuConfig.h>
 
 //
 // VGA Text Mode (Mode 3)
@@ -71,6 +72,11 @@
 #define VGA_GRAPHICS_MODE12_CHAR_HEIGHT          16
 
 #define UDIVIDEROUND(a, b)  (((a) + ((b) / 2)) / (b))
+
+//
+// Hex character lookup table for converting POST code to hex string
+//
+STATIC CONST CHAR8  mHexChars[] = "0123456789ABCDEF";
 
 /**
   Update the GttMmAdr if it's updated in register context.
@@ -2208,10 +2214,7 @@ VgaMode12DrawChar (
   )
 {
   volatile UINT8  *VgaMemBase;
-  UINT8           CurrentByte;
   UINT8           Plane;
-  UINT8           Bit;
-  UINT8           Bitmap;
   UINT8           Row;
   UINT32          ScreenOffset;
   UINT32          ScreenOffsetBase;
@@ -2231,47 +2234,101 @@ VgaMode12DrawChar (
   ScreenOffsetBase = (UINT32)((Y * VGA_GRAPHICS_MODE12_WIDTH / 8) + (X / 8));
 
   //
-  // Iterate over each row of the character bitmap
+  // Process each of the 4 VGA planes first to minimize I/O operations
+  // This reduces SetVgaPlane calls from 64 (16 rows × 4 planes) to just 4 (one per plane)
   //
-  for (Row = 0; Row < VGA_GRAPHICS_MODE12_CHAR_HEIGHT; Row++) {
-    //
-    // Get the bitmap data for the current row
-    //
-    Bitmap = CharData[Row];
+  VgaMemBase = (volatile UINT8 *)VGA_GRAPHICS_MODE12_BASE_ADDRESS;
+
+  for (Plane = 0; Plane < 4; Plane++) {
+    SetVgaPlane (Plane); // Set the current VGA plane once per plane
 
     //
-    // Process each of the 4 VGA planes
+    // Iterate over each row of the character bitmap for this plane
+    // Write the bitmap data directly to VGA memory without bit-by-bit operations
     //
-    for (Plane = 0; Plane < 4; Plane++) {
-      SetVgaPlane (Plane); // Set the current VGA plane
+    for (Row = 0; Row < VGA_GRAPHICS_MODE12_CHAR_HEIGHT; Row++) {
       //
-      // Calculate the screen offset for the current row and plane
+      // Calculate the screen offset for the current row
       // Each byte in VGA memory represents 8 pixels (1 bit per pixel), so we divide by 8 to get the byte offset.
-      // The offset is calculated by adding the base offset and the row offset.
       //
       ScreenOffset = ScreenOffsetBase + (Row * (VGA_GRAPHICS_MODE12_WIDTH / 8));
-      VgaMemBase   = (volatile UINT8 *)VGA_GRAPHICS_MODE12_BASE_ADDRESS;
-
-      // Read the existing value to preserve other bits
-      CurrentByte = VgaMemBase[ScreenOffset];
 
       //
-      // Iterate over each bit in the byte
+      // Write the bitmap data directly to VGA memory
+      // CharData[Row] already contains the complete byte pattern for this row
       //
-      for (Bit = 0; Bit < VGA_GRAPHICS_MODE12_CHAR_WIDTH; Bit++) {
-        //
-        // Check if the corresponding bit in the bitmap is set
-        // Bitmap is an 8-bit value where each bit represents a pixel in the character row.
-        // If the bit is set (1), we set the corresponding bit in the VGA memory byte.
-        //
-        if (Bitmap & (1 << (7 - Bit))) {
-          CurrentByte |= (1 << (7 - Bit));  // Set the bit if the corresponding bit in the bitmap is set
-        }
-      }
-
-      // Write back the modified byte to VGA memory
-      VgaMemBase[ScreenOffset] = CurrentByte;
+      VgaMemBase[ScreenOffset] = CharData[Row];
     }
+  }
+}
+
+/**
+  Draw a string at a specific (X, Y) position in VGA Graphics Mode 12h.
+
+  This function draws a string at the specified (X, Y) position in VGA Graphics Mode 12h (640x480, 16 colors).
+  It iterates through each character in the string and calls VgaMode12DrawChar to render each character.
+
+  @param[in] X         The X coordinate of the top-left corner of the string.
+  @param[in] Y         The Y coordinate of the top-left corner of the string.
+  @param[in] String    Pointer to the null-terminated string to display.
+  @param[in] FontPtr   Pointer to the font table (e.g., C8x16_Character_Set).
+
+  @note This function assumes VGA Mode 12h is active and VGA is enabled.
+        This API should not be used in DXE Phase.
+**/
+VOID
+EFIAPI
+VgaGraphicsMode12WriteString (
+  IN UINT16       X,
+  IN UINT16       Y,
+  IN CONST CHAR8  *String,
+  IN UINT8        *FontPtr
+  )
+{
+  UINT16  CurrentX;
+  UINT16  Index;
+  CHAR8   Char;
+  UINT8   *CharFont;
+
+  //
+  // Validate input parameters
+  //
+  if ((String == NULL) || (FontPtr == NULL)) {
+    return;
+  }
+
+  CurrentX = X;
+  Index    = 0;
+
+  //
+  // Iterate through each character in the string
+  //
+  while (String[Index] != '\0') {
+    Char = String[Index];
+
+    //
+    // Check if we've reached the right edge of the screen
+    //
+    if (CurrentX + VGA_GRAPHICS_MODE12_CHAR_WIDTH > VGA_GRAPHICS_MODE12_WIDTH) {
+      break;  // Stop drawing if we exceed the screen width
+    }
+
+    //
+    // Get pointer to the character's font data
+    // Each character has 16 bytes of font data
+    //
+    CharFont = FontPtr + ((UINT8)Char * VGA_GRAPHICS_MODE12_CHAR_HEIGHT);
+
+    //
+    // Draw the character using the font data
+    //
+    VgaMode12DrawChar (CurrentX, Y, Char, CharFont);
+
+    //
+    // Move to the next character position (8 pixels to the right)
+    //
+    CurrentX += VGA_GRAPHICS_MODE12_CHAR_WIDTH;
+    Index++;
   }
 }
 
@@ -2423,6 +2480,239 @@ UpdateProgressBar (
   // Reset to 0 when clearing to allow full redraw from the beginning.
   //
   IGpuDataHob->PreviousProgressBar = IsClearing ? 0 : Percentage;
+}
+
+/**
+  Display a message above the progress bar based on MRC POST code.
+
+  This function displays a message on the VGA display above the progress bar.
+  The message is looked up from the MRC Error Key Value Table based on the provided POST code.
+  The message is centered and displayed 2 lines above the progress bar.
+
+  Lookup behavior:
+  1. If an exact match for MrcPostCode is found in the table, display that message.
+  2. If no exact match is found:
+     a. If the OEM table contains key 0xFFFF, use that as fallback prefix + "0xXXXX"
+     b. Otherwise, use the API default: "MRC FAILED, POST CODE: 0xXXXX"
+
+  Example OEM table entries:
+  - { MRC_NO_MEMORY_DETECTED,        "NO MEMORY DETECTED" }
+  - { MRC_MEM_INIT_DONE_WITH_ERRORS, "BASIC MEMORY TEST FAILED" }
+  - { 0xFFFF,                        "MRC ERROR: " }  // Optional OEM fallback prefix
+
+  @param[in] MrcPostCode  The MRC POST code to look up (16-bit value).
+                          If MrcPostCode == 0, the message line will be cleared.
+
+  @note: This API should not be used in DXE Phase.
+**/
+VOID
+EFIAPI
+ShowProgressBarMessage (
+  IN UINT32  MrcPostCode
+  )
+{
+  IGPU_DATA_HOB              *IGpuDataHob;
+  MRC_ERROR_KEY_VALUE_TABLE  *MrcErrorKeyValueTable;
+  CONST CHAR8                *MessageString;
+  CONST CHAR8                *FallbackString;
+  UINT32                     Index;
+  BOOLEAN                    IsMode3;
+  UINT16                     MessageX;
+  UINT16                     MessageY;
+  UINT8                      MessageLine;
+  UINTN                      StringLength;
+  UINTN                      FallbackLen;
+  UINT8                      Column;
+  CHAR8                      FormattedMessage[VGA_TEXT_MODE3_COLUMNS + 1];  // Max 80 chars + null
+  UINT16                     PostCode;
+
+  MessageString  = NULL;
+  FallbackString = NULL;
+  MessageX       = 0;
+  MessageY       = 0;
+
+  //
+  // Retrieve the IGPU data HOB to determine the VGA display configuration
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    DEBUG ((DEBUG_INFO, "IGpuDataHob not found, cannot display message\n"));
+    return;
+  }
+
+  //
+  // Exit if the VGA display is disabled
+  //
+  if (IGpuDataHob->VgaDisplayConfig == VGA_DISPLAY_DISABLED) {
+    return;
+  }
+
+  //
+  // Check if it's VGA Text Mode3 or Graphics Mode12
+  //
+  if (IS_VGA_TEXT_MODE3_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
+    IsMode3     = TRUE;
+    MessageLine = VGA_TEXT_MODE3_LINES - 4;  // 2 lines above progress bar (line 21)
+  } else if (IS_VGA_GRAPHICS_MODE12_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
+    IsMode3  = FALSE;
+    MessageY = 416;  // 2 lines (32 pixels) above progress bar at Y=448
+  } else {
+    return;
+  }
+
+  //
+  // If MrcPostCode == 0, clear the message line and return
+  //
+  if (MrcPostCode == 0) {
+    if (IsMode3) {
+      // Clear entire line in text mode
+      for (Column = 0; Column < VGA_TEXT_MODE3_COLUMNS; Column++) {
+        SetChar (Column, MessageLine, ' ', VGA_COLOR_BLACK);
+      }
+    } else {
+      // Clear line in graphics mode (write black rectangle)
+      FillRectangle (0, MessageY, VGA_GRAPHICS_MODE12_WIDTH, VGA_GRAPHICS_MODE12_CHAR_HEIGHT, VGA_COLOR_BLACK);
+    }
+
+    return;
+  }
+
+  //
+  // Get the MRC Error MrcPostCode Value Table pointer from HOB
+  //
+  MrcErrorKeyValueTable = (MRC_ERROR_KEY_VALUE_TABLE *)IGpuDataHob->MrcErrorKeyValueTablePtr;
+  if (MrcErrorKeyValueTable == NULL) {
+    DEBUG ((DEBUG_INFO, "MrcErrorKeyValueTable not found in HOB\n"));
+    return;
+  }
+
+  //
+  // Look up the MrcPostCode in the MRC Error MrcPostCode Value Table
+  // Also look for the fallback message (key 0xFFFF) in case the POST code is not found
+  // Note: 0xFFFF is reserved as the fallback key, not a valid POST code for exact match
+  //
+  for (Index = 0; Index < MrcErrorKeyValueTable->Count; Index++) {
+    if ((MrcErrorKeyValueTable->Entry[Index].Key == MrcPostCode) && (MrcPostCode != 0xFFFF)) {
+      MessageString = MrcErrorKeyValueTable->Entry[Index].Value;
+    }
+
+    if (MrcErrorKeyValueTable->Entry[Index].Key == 0xFFFF) {
+      FallbackString = MrcErrorKeyValueTable->Entry[Index].Value;  // OEM fallback prefix
+    }
+  }
+
+  //
+  // If MrcPostCode not found in table, use fallback message with POST code appended
+  //
+  if (MessageString == NULL) {
+    //
+    // Use OEM-provided fallback (key 0xFFFF) if available, otherwise use API default
+    //
+    if (FallbackString == NULL) {
+      FallbackString = "MEMORY INITIALIZATION FAILED, POST CODE: ";
+    }
+
+    //
+    // Build the formatted message: FallbackString + "0x" + 4 hex digits
+    // Example: "MRC FAILED, POST CODE: 0xDF12"
+    //
+    FallbackLen = AsciiStrLen (FallbackString);
+    PostCode    = (UINT16)MrcPostCode;
+
+    //
+    // Copy fallback string to buffer (leave room for "0xXXXX" = 6 chars + null)
+    // Limit copy length to avoid buffer overrun
+    //
+    if (FallbackLen > (VGA_TEXT_MODE3_COLUMNS - 7)) {
+      FallbackLen = VGA_TEXT_MODE3_COLUMNS - 7;
+    }
+
+    CopyMem (FormattedMessage, FallbackString, FallbackLen);
+    Index = (UINT32)FallbackLen;
+
+    //
+    // Append "0x" prefix and 4-digit hex POST code using lookup table
+    //
+    FormattedMessage[Index++] = '0';
+    FormattedMessage[Index++] = 'x';
+    FormattedMessage[Index++] = mHexChars[(PostCode >> 12) & 0xF];
+    FormattedMessage[Index++] = mHexChars[(PostCode >> 8) & 0xF];
+    FormattedMessage[Index++] = mHexChars[(PostCode >> 4) & 0xF];
+    FormattedMessage[Index++] = mHexChars[PostCode & 0xF];
+    FormattedMessage[Index]   = '\0';
+
+    MessageString = FormattedMessage;
+  }
+
+  //
+  // Calculate string length for centering
+  //
+  StringLength = AsciiStrLen (MessageString);
+
+  //
+  // Display the message based on the VGA mode
+  //
+  if (IsMode3) {
+    //
+    // Clear the message line first
+    //
+    for (Column = 0; Column < VGA_TEXT_MODE3_COLUMNS; Column++) {
+      SetChar (Column, MessageLine, ' ', VGA_COLOR_BLACK);
+    }
+
+    //
+    // Limit string length to screen width to prevent overflow
+    //
+    if (StringLength > VGA_TEXT_MODE3_COLUMNS) {
+      StringLength = VGA_TEXT_MODE3_COLUMNS;
+    }
+
+    //
+    // Calculate centered X position for text mode
+    //
+    if (StringLength < VGA_TEXT_MODE3_COLUMNS) {
+      MessageX = (UINT16)((VGA_TEXT_MODE3_COLUMNS - StringLength) / 2);
+    } else {
+      MessageX = 0;  // If string too long, start from left
+    }
+
+    //
+    // Display string character by character in text mode
+    //
+    for (Index = 0; (Index < (UINT32)StringLength) && (Index < VGA_TEXT_MODE3_COLUMNS); Index++) {
+      SetChar (MessageX + (UINT16)Index, MessageLine, MessageString[Index], WHITE_ON_BLACK);
+    }
+  } else {
+    //
+    // Clear the message line first in graphics mode
+    //
+    FillRectangle (0, MessageY, VGA_GRAPHICS_MODE12_WIDTH, VGA_GRAPHICS_MODE12_CHAR_HEIGHT, VGA_COLOR_BLACK);
+
+    //
+    // Limit string length to maximum displayable characters (640 / 8 = 80 characters)
+    //
+    if (StringLength > (VGA_GRAPHICS_MODE12_WIDTH / VGA_GRAPHICS_MODE12_CHAR_WIDTH)) {
+      StringLength = (VGA_GRAPHICS_MODE12_WIDTH / VGA_GRAPHICS_MODE12_CHAR_WIDTH);
+    }
+
+    //
+    // Calculate centered X position for graphics mode (8 pixels per character)
+    //
+    if ((StringLength * VGA_GRAPHICS_MODE12_CHAR_WIDTH) < VGA_GRAPHICS_MODE12_WIDTH) {
+      MessageX = (UINT16)((VGA_GRAPHICS_MODE12_WIDTH - (StringLength * VGA_GRAPHICS_MODE12_CHAR_WIDTH)) / 2);
+    } else {
+      MessageX = 0;  // If string too long, start from left
+    }
+
+    //
+    // Display string using VgaGraphicsMode12WriteString
+    //
+    if (IGpuDataHob->GraphicsMode12FontPtr != NULL) {
+      VgaGraphicsMode12WriteString (MessageX, MessageY, MessageString, IGpuDataHob->GraphicsMode12FontPtr);
+    } else {
+      DEBUG ((DEBUG_ERROR, "GraphicsMode12FontPtr is NULL, cannot display message\n"));
+    }
+  }
 }
 
 /**

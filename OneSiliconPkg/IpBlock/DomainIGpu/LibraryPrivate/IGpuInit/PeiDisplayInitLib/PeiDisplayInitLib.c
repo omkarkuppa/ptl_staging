@@ -330,6 +330,11 @@ IGpuVgaInit (
         // Set VGA HW enabled status in IGpuDataHob
         //
         IGpuDataHob->VgaHwEnabled = 1;
+        //
+        // Store MRC Error Key Value Table pointer and Font pointer for ShowProgressBarMessage
+        //
+        IGpuDataHob->MrcErrorKeyValueTablePtr = IGpuPreMemConfig->MrcErrorKeyValueTablePtr;
+        IGpuDataHob->GraphicsMode12FontPtr    = IGpuPreMemConfig->GraphicsMode12FontPtr;
       }
 
       String = IGpuPreMemConfig->VgaMessage;

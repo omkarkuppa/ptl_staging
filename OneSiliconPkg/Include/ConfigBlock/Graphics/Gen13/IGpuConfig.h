@@ -80,9 +80,9 @@
 //
 // BIT 6-7 : VgaInitControl for Higher Cd Clock Requirement
 //
-#define VGA_HIGHER_CD_CLOCK_NONE       (0)
-#define VGA_HIGHER_CD_CLOCK_442MHZ     (BIT6)
-#define VGA_HIGHER_CD_CLOCK_461MHZ     (BIT7)
+#define VGA_HIGHER_CD_CLOCK_NONE    (0)
+#define VGA_HIGHER_CD_CLOCK_442MHZ  (BIT6)
+#define VGA_HIGHER_CD_CLOCK_461MHZ  (BIT7)
 
 #define IS_VGA_ENABLED(data)                    (((data) & BIT0) == VGA_DISPLAY_ENABLED)
 #define IS_VGA_TEXT_MODE3_ENABLED(data)         (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_TEXT_MODE3_SUPPORT))
@@ -95,14 +95,14 @@
 #define IS_VGA_MODE12_16_COLOR(data)            (IS_VGA_GRAPHICS_MODE12_ENABLED(data) && (((data) & BIT5) == VGA_MODE12_16_COLOR_SUPPORT))
 #define IS_VGA_MODE12_MONOCHROME(data)          (IS_VGA_GRAPHICS_MODE12_ENABLED(data) && (((data) & BIT5) == VGA_MODE12_MONOCHROME_SUPPORT))
 
-#define IS_VGA_HIGHER_CD_CLOCK_REQUIRED(data)   (IS_VGA_ENABLED(data) && (((data) & (BIT6 | BIT7)) != 0))
-#define IS_VGA_HIGHER_CD_CLOCK_442MHZ(data)     (IS_VGA_ENABLED(data) && (((data) & BIT6) == BIT6))
-#define IS_VGA_HIGHER_CD_CLOCK_461MHZ(data)     (IS_VGA_ENABLED(data) && (((data) & BIT7) == BIT7))
-#define GET_VGA_HIGHER_CD_CLOCK_SETTING(data)   (((data) >> 6) & 0x03)
+#define IS_VGA_HIGHER_CD_CLOCK_REQUIRED(data)  (IS_VGA_ENABLED(data) && (((data) & (BIT6 | BIT7)) != 0))
+#define IS_VGA_HIGHER_CD_CLOCK_442MHZ(data)    (IS_VGA_ENABLED(data) && (((data) & BIT6) == BIT6))
+#define IS_VGA_HIGHER_CD_CLOCK_461MHZ(data)    (IS_VGA_ENABLED(data) && (((data) & BIT7) == BIT7))
+#define GET_VGA_HIGHER_CD_CLOCK_SETTING(data)  (((data) >> 6) & 0x03)
 
 typedef enum {
-  CD_CLOCK_442MHZ          = 442,
-  CD_CLOCK_461MHZ          = 461
+  CD_CLOCK_442MHZ = 442,
+  CD_CLOCK_461MHZ = 461
 } CD_CLOCK_SETTING;
 
 typedef enum {
@@ -160,6 +160,23 @@ typedef struct {
   UINT16    LogoYPosition;   ///< Y position of Image on Display
 } VGA_GRAPHICS_MODE12_INFO;
 
+///
+/// MRC Error Key Value Entry structure maps an MRC error code to an error message string.
+/// Maximum message length (excluding null terminator):
+/// - Exact match messages (specific POST code keys): 80 characters
+/// - Fallback message (key 0xFFFF): 73 characters (+ "0xXXXX" appended automatically)
+///
+typedef struct {
+  UINT32         Key;            ///< MRC POST code (16-bit value, 0xFFFF = fallback key)
+  CONST CHAR8    *Value;         ///< MRC error message string
+} MRC_ERROR_KEY_VALUE_ENTRY;
+
+typedef struct {
+  UINT32                       Count;   ///< Number of entries
+  UINT32                       Size;    ///< Size of table in bytes
+  MRC_ERROR_KEY_VALUE_ENTRY    Entry[]; ///< Array of key value entries
+} MRC_ERROR_KEY_VALUE_TABLE;
+
 /**
   This Configuration block is to configure GT related PreMem data/variables.\n
   <b>Revision 1</b>:
@@ -200,18 +217,18 @@ typedef struct {
     253 = 56MB,<b> 254 = 60MB</b>,\n
     <b>Note: enlarging pre-allocated memory for IGPU may need to reduce MmioSize because of 4GB boundary limitation</b>
   **/
-  UINT16                      IgdDvmt50PreAlloc;          ///< Offset 30 >
-  UINT8                       PanelPowerEnable;           ///< Offset 32 :<b>(Test)</b> Control for enabling/disabling VDD force bit (Required only for early enabling of eDP panel): 0=FALSE, <b>1=TRUE</b>
-  UINT8                       MemoryBandwidthCompression; ///< Offset 33 This policy is used to enable/disable Memory Bandwidth Compression <b>0- Disable</b>, 1- Enable
-  UINT16                      DeltaT12PowerCycleDelay;    ///< Offset 34 Power Cycle Delay required for eDP as per VESA standard.0 - 0 ms, <b>0xFFFF - Auto calculate to max 500 ms<\b>
-  UINT32                      VbtSize;                    ///< Size of VBT data
-  UINT64                      GttMmAdr;                   ///< Offset 36 Temp Address of Graphics GTTMMADR: Default is <b>0xAF000000</b>
-  UINT64                      LMemBar;                    ///< Offset 44 Temp Address of Graphics LMEMBAR: Default is <b>0xB0000000</b>
-  DDI_CONFIGURATION           DdiConfiguration;           ///< Offset 52 DDI configuration, need to match with VBT settings.
-  UINT8                       OemT12DelayOverride;        ///< Offset 68 :Oem T12 Delay Override <b> Disable<\b>,Enable-Enable T12 Time.
-  UINT8                       IGpuGsm2Size;               ///< Offset 68 {0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF/Other Value:No Allocation}
-  UINT8                       TestRsvd0[4];               ///< Offset 69 Reserved for 8 bytes alignment
-  BOOLEAN                     LidStatus;                  ///< Lid Status: 0=Close, <b>1=Open</b>
+  UINT16               IgdDvmt50PreAlloc;                 ///< Offset 30 >
+  UINT8                PanelPowerEnable;                  ///< Offset 32 :<b>(Test)</b> Control for enabling/disabling VDD force bit (Required only for early enabling of eDP panel): 0=FALSE, <b>1=TRUE</b>
+  UINT8                MemoryBandwidthCompression;        ///< Offset 33 This policy is used to enable/disable Memory Bandwidth Compression <b>0- Disable</b>, 1- Enable
+  UINT16               DeltaT12PowerCycleDelay;           ///< Offset 34 Power Cycle Delay required for eDP as per VESA standard.0 - 0 ms, <b>0xFFFF - Auto calculate to max 500 ms<\b>
+  UINT32               VbtSize;                           ///< Size of VBT data
+  UINT64               GttMmAdr;                          ///< Offset 36 Temp Address of Graphics GTTMMADR: Default is <b>0xAF000000</b>
+  UINT64               LMemBar;                           ///< Offset 44 Temp Address of Graphics LMEMBAR: Default is <b>0xB0000000</b>
+  DDI_CONFIGURATION    DdiConfiguration;                  ///< Offset 52 DDI configuration, need to match with VBT settings.
+  UINT8                OemT12DelayOverride;               ///< Offset 68 :Oem T12 Delay Override <b> Disable<\b>,Enable-Enable T12 Time.
+  UINT8                IGpuGsm2Size;                      ///< Offset 68 {0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF/Other Value:No Allocation}
+  UINT8                TestRsvd0[4];                      ///< Offset 69 Reserved for 8 bytes alignment
+  BOOLEAN              LidStatus;                         ///< Lid Status: 0=Close, <b>1=Open</b>
 
   /**
    BIT0 - 0 : Disable VGA Support, 1 : Enable VGA Support
@@ -222,11 +239,13 @@ typedef struct {
    BIT5 - 0 : VGA Mode 12 16 Color Support, 1 : VGA Mode 12 Monochrome Black and White Support
    BIT6-7 - 0 : No Higher Cd Clock, 1 : 442 MHz, 2 : 461 MHz, 3 : Reserved
   **/
-  UINT8                       VgaInitControl;             ///< Offset 74 VGA Init Control
-  VOID                        *VgaMessage;                ///< Pointer to Message which should be displayed
-  VOID                        *VbtPtr;                    ///< Address of the Graphics Configuration Table
-  VGA_GRAPHICS_MODE12_INFO    GraphicsMode12Info;         ///< Offset 82 VGA Mode 12 Information
-  UINT8                       Reserved[32];               ///< Reserved space for future use
+  UINT8                        VgaInitControl;            ///< Offset 74 VGA Init Control
+  VOID                         *VgaMessage;               ///< Pointer to Message which should be displayed
+  VOID                         *VbtPtr;                   ///< Address of the Graphics Configuration Table
+  VGA_GRAPHICS_MODE12_INFO     GraphicsMode12Info;        ///< Offset 82 VGA Mode 12 Information
+  UINT8                        *GraphicsMode12FontPtr;    ///< Pointer to VGA Mode 12 Font Data
+  MRC_ERROR_KEY_VALUE_TABLE    *MrcErrorKeyValueTablePtr; ///< Pointer to MRC Error Key Value Table
+  UINT8                        Reserved[16];              ///< Reserved space for future use
 } IGPU_PEI_PREMEM_CONFIG;
 
 typedef struct {

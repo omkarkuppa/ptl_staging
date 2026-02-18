@@ -257,4 +257,33 @@ UpdateProgressBar (
   IN UINT8  Percentage
   );
 
+/**
+  Display a message above the progress bar based on MRC POST code.
+
+  This function displays a message on the VGA display above the progress bar.
+  The message is looked up from the MRC Error Key Value Table based on the provided POST code.
+  The message is centered and displayed 2 lines above the progress bar.
+
+  Lookup behavior:
+  1. If an exact match for MrcPostCode is found in the table, display that message.
+  2. If no exact match is found:
+     a. If the OEM table contains key 0xFFFF, use that as fallback prefix + "0xXXXX"
+     b. Otherwise, use the API default: "MRC FAILED, POST CODE: 0xXXXX"
+
+  Example OEM table entries:
+  - { MRC_NO_MEMORY_DETECTED,        "NO MEMORY DETECTED" }
+  - { MRC_MEM_INIT_DONE_WITH_ERRORS, "BASIC MEMORY TEST FAILED" }
+  - { 0xFFFF,                        "MRC ERROR: " }  // Optional OEM fallback prefix
+
+  @param[in] MrcPostCode  The MRC POST code to look up (16-bit value).
+                          If MrcPostCode == 0, the message line will be cleared.
+
+  @note: This API should not be used in DXE Phase.
+**/
+VOID
+EFIAPI
+ShowProgressBarMessage (
+  IN UINT32  MrcPostCode
+  );
+
 #endif // __DOMAIN_IGPU_INIT_H__

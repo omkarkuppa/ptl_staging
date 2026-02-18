@@ -31,18 +31,20 @@ extern EFI_GUID  gIGpuDataHobGuid;
   These members describe the configuration of IGPU_DATA_HOB.
 **/
 typedef struct {
-  EFI_HOB_GUID_TYPE    EfiHobGuidType;          ///< Offset 0 - 23: GUID Hob type structure for gIGpuDataHobGuid
-  UINT8                PrimaryDisplayDetection; ///< Primary Display - default is IGD. [IGD = 0; PEG = 1; PCIE = 2]
-  UINT64               FlatCcsBaseAddr;         ///< Flat CCS Base Address
-  UINT32               FlatCcsMemSize;          ///< Flat CCS Size in MB
-  UINT32               GraphicsConfigPtr;       ///< Graphics Configuration Ptr.
-  UINT32               VbtSize;                 ///< Intel Graphics VBT (Video BIOS Table) Size.
-  UINT8                LidStatus;               ///< LFP Display Lid Status (LID_STATUS enum).
-  UINT8                VgaDisplayConfig;        ///< VGA Display configuration
-  UINT8                PreviousProgressBar;     ///< Previous Progress Bar Position
-  UINT8                VgaHwEnabled;            ///< VGA Hardware enabled status (0 = disabled, 1 = enabled).
-  UINT64               Gsm2BaseAddress;         ///< Graphics stolen memory 2 base address
-  UINT64               Gsm2Size;                ///< Graphics stolen memory 2 size
+  EFI_HOB_GUID_TYPE    EfiHobGuidType;            ///< Offset 0 - 23: GUID Hob type structure for gIGpuDataHobGuid
+  UINT8                PrimaryDisplayDetection;   ///< Primary Display - default is IGD. [IGD = 0; PEG = 1; PCIE = 2]
+  UINT64               FlatCcsBaseAddr;           ///< Flat CCS Base Address
+  UINT32               FlatCcsMemSize;            ///< Flat CCS Size in MB
+  UINT32               GraphicsConfigPtr;         ///< Graphics Configuration Ptr.
+  UINT32               VbtSize;                   ///< Intel Graphics VBT (Video BIOS Table) Size.
+  UINT8                LidStatus;                 ///< LFP Display Lid Status (LID_STATUS enum).
+  UINT8                VgaDisplayConfig;          ///< VGA Display configuration
+  UINT8                PreviousProgressBar;       ///< Previous Progress Bar Position
+  UINT8                VgaHwEnabled;              ///< VGA Hardware enabled status (0 = disabled, 1 = enabled).
+  UINT64               Gsm2BaseAddress;           ///< Graphics stolen memory 2 base address
+  UINT64               Gsm2Size;                  ///< Graphics stolen memory 2 size
+  VOID                 *MrcErrorKeyValueTablePtr; ///< Pointer to MRC Error Key Value Table
+  UINT8                *GraphicsMode12FontPtr;    ///< Pointer to Graphics Mode 12 Font Table (C8x16_Character_Set)
 } IGPU_DATA_HOB;
 #pragma pack (pop)
 #endif

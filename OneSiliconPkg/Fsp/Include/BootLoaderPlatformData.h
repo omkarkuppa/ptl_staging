@@ -49,6 +49,41 @@ typedef struct {
   UINT16            BiosChipInitCrc;  ///< 16 bit CRC value of PchChipInit Table
 } CHIPSET_INIT_INFO;
 
+///
+/// MRC Error Key Value Entry structure maps an MRC error code to an error message string.
+///
+/*
+//
+// MRC Error Key Value Table Entries
+// OEM can customize this table to display error messages on VGA display
+// The Key is used to look up the error message, and the Value is the message string
+//
+// Message types:
+// - MRC_NO_MEMORY_DETECTED (0xDF7E)        - "NO MEMORY DETECTED"
+// - MRC_MEM_INIT_DONE_WITH_ERRORS (0xDF55) - "BASIC MEMORY TEST FAILED"
+// - 0xFFFF (Fallback)                      - "MRC FAILED, POST CODE: " + POST code in hex
+//   Any other MRC failure (SPD processing, PLL lock, calibration, training etc.)
+//   will use the fallback message with the actual POST code appended.
+//
+// Maximum message length (excluding null terminator):
+// - Exact match messages (specific POST code keys): 80 characters
+// - Fallback message (key 0xFFFF): 73 characters (+ "0xXXXX" appended automatically)
+//
+*/
+typedef struct {
+  UINT32         Key;            ///< MRC POST code (16-bit value, 0xFFFF = fallback key)
+  CONST CHAR8    *Value;         ///< MRC error message string
+} FSP_MRC_ERROR_KEY_VALUE_ENTRY;
+
+///
+/// MRC Error Key Value Table contains array of error code to message mappings.
+///
+typedef struct {
+  UINT32                         Count; ///< Number of entries in Entry[] array
+  UINT32                         Size;  ///< Total size of table in bytes
+  FSP_MRC_ERROR_KEY_VALUE_ENTRY  Entry[]; ///< Variable length array of key-value pairs
+} FSP_MRC_ERROR_KEY_VALUE_TABLE;
+
 /* !EXPORT FSPM EXTERNAL_BOOTLOADER_STRUCT_END   */
 
 

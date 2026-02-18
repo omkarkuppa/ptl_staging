@@ -75,6 +75,7 @@
 #define VGA_LOGO_WIDTH 200
 #define VGA_LOGO_HEIGHT 58
 extern CONST UINT8  VgaPlanarImage200x58[4][58][25];
+extern CONST UINT8  C8x16_Character_Set[256][16];
 
 #endif
 

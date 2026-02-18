@@ -68,6 +68,7 @@
 #include <Library/PlatformUsbConfigLib.h>
 #endif
 #include <TishDataHob.h>
+#include <MrcPostCodes.h>
 ///
 ///
 ///
@@ -90,6 +91,28 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_MEMORY_TYPE_INFORMATION mDefaultMemoryTypeInfo
 // Ex: "MEMORY TRAINING\nIN PROGRESS"
 //
 GLOBAL_REMOVE_IF_UNREFERENCED const CHAR8 VgaMessage[] = "MEMORY TRAINING IN PROGRESS";
+
+//
+// MRC Error Key Value Table Entries
+// OEM can customize this table to display error messages on VGA display
+// The Key is used to look up the error message, and the Value is the message string
+//
+// Message types:
+// - MRC_NO_MEMORY_DETECTED (0xDF7E)        - "NO MEMORY DETECTED"
+// - MRC_MEM_INIT_DONE_WITH_ERRORS (0xDF55) - "BASIC MEMORY TEST FAILED"
+// - 0xFFFF (Fallback)                      - "MRC FAILED, POST CODE: " + POST code in hex
+//   Any other MRC failure (SPD processing, PLL lock, calibration, training etc.)
+//   will use the fallback message with the actual POST code appended.
+//
+// Maximum message length (excluding null terminator):
+// - Exact match messages (specific POST code keys): 80 characters
+// - Fallback message (key 0xFFFF): 73 characters (+ "0xXXXX" appended automatically)
+//
+GLOBAL_REMOVE_IF_UNREFERENCED CONST MRC_ERROR_KEY_VALUE_ENTRY mMrcErrorKeyValueEntries[] = {
+  { MRC_NO_MEMORY_DETECTED,        "NO MEMORY DETECTED" },
+  { MRC_MEM_INIT_DONE_WITH_ERRORS, "BASIC MEMORY TEST FAILED" },
+  { 0xFFFF,                        "MEMORY INITIALIZATION FAILED, POST CODE: " }  // Fallback for any other MRC failure
+};
 
 /**
   Return TRUE when the Operand is exactly power of 2.
@@ -261,6 +284,8 @@ UpdatePeiSaPolicyPreMem (
   VOID                                            *Buffer;
   UINT8                                           VgaInitControl;
   UINT8                                           VtdCpabilityControl;
+  MRC_ERROR_KEY_VALUE_TABLE                       *MrcErrorTable;
+  UINTN                                           TableSize;
 
   DEBUG ((DEBUG_INFO, "Update %a Start\n", __FUNCTION__));
   ZeroMem ((VOID*) SaDisplayConfigTable, sizeof (SaDisplayConfigTable));
@@ -776,6 +801,16 @@ UpdatePeiSaPolicyPreMem (
     if (VgaInitControl != VGA_DISPLAY_DISABLED) {
       PeiGetSectionFromAnyFv (PcdGetPtr (PcdIntelGraphicsPreMemVbtFileGuid), EFI_SECTION_RAW, 0, &Buffer, &Size);
       Status = CheckLidStatus (&LidStatusOpen);
+      //
+      // Build MRC Error Key Value Table locally
+      //
+      TableSize = sizeof (MRC_ERROR_KEY_VALUE_TABLE) + sizeof (mMrcErrorKeyValueEntries);
+      MrcErrorTable = (MRC_ERROR_KEY_VALUE_TABLE *) AllocateZeroPool (TableSize);
+      if (MrcErrorTable != NULL) {
+        MrcErrorTable->Count = ARRAY_SIZE (mMrcErrorKeyValueEntries);
+        MrcErrorTable->Size = (UINT32) TableSize;
+        CopyMem (MrcErrorTable->Entry, mMrcErrorKeyValueEntries, sizeof (mMrcErrorKeyValueEntries));
+      }
 #if FixedPcdGet8(PcdFspModeSelection) == 1
       ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage                 = (UINT64)VgaMessage;
       ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtPtr                     = (UINT64)Buffer;
@@ -791,6 +826,10 @@ UpdatePeiSaPolicyPreMem (
       } else {
         ((FSPM_UPD *) FspmUpd)->FspmConfig.LidStatus = LidOpen;
       }
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.GraphicsMode12FontPtr   = (UINT64)C8x16_Character_Set;
+      if (MrcErrorTable != NULL) {
+        ((FSPM_UPD *) FspmUpd)->FspmConfig.MrcErrorKeyValueTablePtr  = (UINT64)MrcErrorTable;
+      }
 #else
       IGpuPreMemConfig->VgaMessage = (VOID *)VgaMessage;
       IGpuPreMemConfig->VbtPtr = Buffer;
@@ -805,6 +844,10 @@ UpdatePeiSaPolicyPreMem (
         IGpuPreMemConfig->LidStatus = LidStatusOpen;
       } else {
         IGpuPreMemConfig->LidStatus = LidOpen;
+      }
+      IGpuPreMemConfig->GraphicsMode12FontPtr = (UINT8 *)C8x16_Character_Set;
+      if (MrcErrorTable != NULL) {
+        IGpuPreMemConfig->MrcErrorKeyValueTablePtr = MrcErrorTable;
       }
 #endif
     }

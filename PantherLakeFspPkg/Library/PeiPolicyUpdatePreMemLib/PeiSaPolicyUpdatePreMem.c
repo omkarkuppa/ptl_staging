@@ -647,6 +647,8 @@ FspUpdatePeiSaPolicyPreMem (
     IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition   = FspmUpd->FspmConfig.LogoYPosition;
     IGpuPreMemConfig->VbtSize                            = FspmUpd->FspmConfig.VbtSize;
     IGpuPreMemConfig->LidStatus                          = FspmUpd->FspmConfig.LidStatus;
+    IGpuPreMemConfig->GraphicsMode12FontPtr              = (UINT8 *)(UINTN)FspmUpd->FspmConfig.GraphicsMode12FontPtr;
+    IGpuPreMemConfig->MrcErrorKeyValueTablePtr           = (MRC_ERROR_KEY_VALUE_TABLE *)(UINTN)FspmUpd->FspmConfig.MrcErrorKeyValueTablePtr;
 
     //
     // Display DDI Initialization

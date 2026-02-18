@@ -3931,8 +3931,21 @@
   # !BSF HELP:{Voltage is multiple of 5mV where 0 means Auto.}
   gPlatformFspPkgTokenSpaceGuid.VddqVoltage          | * | 0x02 | 0x00
 
+  # Padding for 8-byte alignment of GraphicsMode12FontPtr
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd50                | * | 0x06 | {0x00}
+
+  # !BSF NAME:{Graphics Mode 12 Font Pointer}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFFFFFFFFFF)}
+  # !BSF HELP:{Pointer to VGA Mode 12 Font Data (8x16 character set).\n Format: UINT8 array[256][16] where each character is 16 bytes (16 rows of 8 pixels).\n Must be provided if VGA Mode 12 is enabled.}
+  gPlatformFspPkgTokenSpaceGuid.GraphicsMode12FontPtr        | * | 0x08 | 0x0000000000000000
+
+  # !BSF NAME:{MRC Error Key Value Table Pointer}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFFFFFFFFFF)}
+  # !BSF HELP:{Pointer to MRC Error Key Value Table. Table maps MRC error codes to error message strings for display during memory init. See FSP_MRC_ERROR_KEY_VALUE_TABLE.}
+  gPlatformFspPkgTokenSpaceGuid.MrcErrorKeyValueTablePtr     | * | 0x08 | 0x0000000000000000
+
   # Added reserved space (for SA) UnusedUpdSpace0[35]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x1B | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x05 | {0x00}
 
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}
