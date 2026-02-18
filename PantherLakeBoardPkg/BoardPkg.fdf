@@ -1007,18 +1007,6 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Dxe/SpiSmmDxe.inf
 $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/RuntimeDxe/SpiRuntime.inf
 !endif
 
-!if gSiPkgTokenSpaceGuid.PcdIgdEnable == TRUE
-    FILE DRIVER = 84bd674a-9ceb-4335-9015-26b7cf2f9365 {
-      !if $(TARGET) == DEBUG
-        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverDxeDebug.efi
-      !else
-        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverDxe.efi
-      !endif
-      SECTION DXE_DEPEX = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverDxe.depex
-      SECTION UI = "GopConfigDriverDxe"
-    }
-!endif # gSiPkgTokenSpaceGuid.PcdIgdEnable
-
 !if gBoardModuleTokenSpaceGuid.PcdAdvancedFeatureEnable == TRUE
 !if gSiPkgTokenSpaceGuid.PcdAcpiEnable == TRUE
 INF  $(PLATFORM_BOARD_PACKAGE)/BoardInitAdvanced/BoardInitAdvancedSmm/BoardInitAdvancedSmm.inf
