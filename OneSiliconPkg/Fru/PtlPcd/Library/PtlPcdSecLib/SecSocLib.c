@@ -287,12 +287,10 @@ EarlyCycleDecoding (
   //
   PchTcoBaseSet (PcdGet16 (PcdTcoBaseAddress));
 
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   //
   // Halt the TCO timer as early as possible
   //
   IoWrite16 (PcdGet16 (PcdTcoBaseAddress) + R_TCO_IO_TCTL1, B_TCO_IO_TCTL1_TCO_TMR_HALT);
-#endif
 
   SmbusBase = SmbusPciCfgBase ();
   //
