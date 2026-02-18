@@ -550,10 +550,22 @@ PsClearBootOption (
   //
   if (mPsBootParameters->TriggerSource == BootLpe) {
     //
-    // Disable Setup option
-    // No action needed in case if Clear All Nvm is attempted
+    // Disable LPE Setup option.
     //
-    if (!(mPsBootParameters->PsStatus.PsAttempted & PS_CLEAR_ALL_BIOS_NVM_VARIABLE_REGION)) {
+    if (mPsBootParameters->PsStatus.PsAttempted & PS_CLEAR_ALL_BIOS_NVM_VARIABLE_REGION) {
+      //
+      // Clear All BIOS NVM Variable Region was attempted, skip PsLpeSetDisabled only if succeeded
+      //
+      if (!(mPsBootParameters->PsStatus.PsAttemptResult & PS_CLEAR_ALL_BIOS_NVM_VARIABLE_REGION)) {
+        Status = PsLpeSetDisabled ();
+        if (EFI_ERROR (Status)) {
+          DEBUG ((DEBUG_ERROR, "PS: Failed to disable LPE, Status = %r\n", Status));
+        }
+      }
+    } else {
+      //
+      // Clear All BIOS NVM Variable Region was not attempted, disable LPE normally
+      //
       Status = PsLpeSetDisabled ();
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "PS: Failed to disable LPE, Status = %r\n", Status));
@@ -562,7 +574,7 @@ PsClearBootOption (
   } else if (mPsBootParameters->TriggerSource == BootRpe) {
     Status = PsClearRpeBoot ();
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "PS: Failed to disabled LPE, Status = %r\n", Status));
+      DEBUG ((DEBUG_ERROR, "PS: CSME failed to clear RPE boot, Status = %r\n", Status));
     }
   }
   //
