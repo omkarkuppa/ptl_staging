@@ -774,7 +774,21 @@ FvNameGuid         = 7C4DCFC6-AECA-4707-85B9-FD4B2EEA49E7
         SECTION UI = "GopConfigDriverPei"
       }
     }
-!endif # PcdPeiDisplayEnable
+
+  !if gBoardModuleTokenSpaceGuid.PcdFspPeiGopDisable == TRUE
+    FILE PEIM = 76ed893a-b2f9-4c7d-a05f-1ea170ecf6cd {
+      SECTION COMPRESS {
+        !if $(TARGET) == DEBUG
+          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/IntelGraphicsPeimDebug.efi
+        !else
+          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/IntelGraphicsPeim.efi
+        !endif
+        SECTION PEI_DEPEX_EXP = {gEfiPeiStallPpiGuid AND gEnablePeiGraphicsPpiGuid}
+        SECTION UI = "IntelGraphicsPeim"
+      }
+    }
+  !endif  #PcdFspPeiGopDisable
+!endif  #PcdPeiDisplayEnable
 
 !if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == TRUE
   INF $(PLATFORM_BOARD_PACKAGE)/Features/MipiCam/MipiCamInitPei/MipiCamInitPei.inf
@@ -2150,22 +2164,6 @@ FvNameGuid         = 8B98AB22-E354-42f0-88B9-049810F0FDAA
 
 !include $(PLATFORM_BIN_PACKAGE)/Include/Fdf/FvFwBinaries.fdf
 
-
-!if gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable == TRUE
-  !if gBoardModuleTokenSpaceGuid.PcdFspPeiGopDisable == TRUE
-    FILE PEIM = 76ed893a-b2f9-4c7d-a05f-1ea170ecf6cd {
-      SECTION COMPRESS {
-        !if $(TARGET) == DEBUG
-          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/IntelGraphicsPeimDebug.efi
-        !else
-          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/IntelGraphicsPeim.efi
-        !endif
-        SECTION PEI_DEPEX_EXP = {gEfiPeiStallPpiGuid AND gEnablePeiGraphicsPpiGuid}
-        SECTION UI = "IntelGraphicsPeim"
-      }
-    }
-  !endif  #PcdFspPeiGopDisable
-!endif  #PcdPeiDisplayEnable
 
 !endif # PcdSocCoreBootEnable
 
