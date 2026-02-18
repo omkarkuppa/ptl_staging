@@ -1285,6 +1285,7 @@ DEBUG_CODE_END();
           );
         // Write the final MRC POST code after DID message
         MrcCall->MrcDebugHook (MrcData, PostCode);
+        MrcShowProgressBarMessage (IGpuPreMemConfig, PostCode);
         ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
     }
@@ -1382,6 +1383,7 @@ DEBUG_CODE_END();
         );
       // Update the Port80 POST code after the DID message
       MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
+      MrcShowProgressBarMessage (IGpuPreMemConfig, MRC_MEM_INIT_DONE_WITH_ERRORS);
       ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
       return EFI_DEVICE_ERROR;
     }
@@ -1408,6 +1410,7 @@ DEBUG_CODE_END();
           );
         // Update the Port80 POST code after the DID message
         MrcCall->MrcDebugHook (MrcData, MRC_MEM_INIT_DONE_WITH_ERRORS);
+        MrcShowProgressBarMessage (IGpuPreMemConfig, MRC_MEM_INIT_DONE_WITH_ERRORS);
         ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
       }
@@ -4051,3 +4054,22 @@ MrcUpdateProgressBar (
     }
   }
 }
+
+/**
+  Show an error message upon encountering an MRC failure.
+
+  @param[in]       IGpuPreMemConfig   - IGPU_PEI_PREMEM_CONFIG to access the IGpuConfig related information.
+  @param[in]       PostCode           - Current post code.
+**/
+VOID
+MrcShowProgressBarMessage (
+  IN IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig,
+  IN UINT16                        PostCode
+  )
+{
+  if (IS_VGA_INIT_ON_MRC_ONLY (IGpuPreMemConfig->VgaInitControl)) {
+    IGpuVgaInit (IGpuPreMemConfig);
+  }
+  ShowProgressBarMessage (PostCode);
+}
+

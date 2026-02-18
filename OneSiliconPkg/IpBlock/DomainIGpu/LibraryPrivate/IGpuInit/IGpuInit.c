@@ -957,6 +957,10 @@ IGpuSetMemMap (
           // Update disabled VGA in Hob
           //
           IGpuDataHob->VgaDisplayConfig = VGA_DISPLAY_DISABLED;
+          //
+          // Clear VGA HW enabled status in IGpuDataHob
+          //
+          IGpuDataHob->VgaHwEnabled = 0;
 
           //
           // Exit VGA

@@ -78,3 +78,15 @@ VOID
 MrcUpdateProgressBar (
   IN OUT MrcParameters *CONST MrcData
   );
+
+/**
+  Show an error message upon encountering an MRC failure.
+
+  @param[in]       IGpuPreMemConfig   - IGPU_PEI_PREMEM_CONFIG to access the IGpuConfig related information.
+  @param[in]       PostCode           - Current post code.
+**/
+VOID
+MrcShowProgressBarMessage (
+  IN IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig,
+  IN UINT16                        PostCode
+  );
