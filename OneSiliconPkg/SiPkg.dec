@@ -1457,8 +1457,8 @@ gSiPkgTokenSpaceGuid.PcdTseNumberOfDeviceScopes|0x00|UINT8|0x50000006
 gSiPkgTokenSpaceGuid.PcdTseEngines|0x01|UINT8|0x50000007
 gSiPkgTokenSpaceGuid.PcdTseTweakSize|0x2C|UINT8|0x50000008
 gSiPkgTokenSpaceGuid.PcdTseEnable|TRUE|BOOLEAN|0x50000009
-gSiPkgTokenSpaceGuid.PcdMmio64Base|0x0000010000000000|UINT64|0x5000000A
-gSiPkgTokenSpaceGuid.PcdMmio64Length|0x000004000000000|UINT64|0x50000012
+gSiPkgTokenSpaceGuid.PcdMmio64Base|0x0000008000000000|UINT64|0x5000000A
+gSiPkgTokenSpaceGuid.PcdMmio64Length|0x0000038000000000|UINT64|0x50000012
 
 ##
 ## Those PCDs are used to control build process.
