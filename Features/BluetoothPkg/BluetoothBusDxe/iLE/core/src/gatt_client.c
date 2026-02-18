@@ -497,7 +497,7 @@ prepare_sign_data_req (
   }
 
   param             = (smpm_sign_data_param_t *)req->parameter;
-  param->app_handle = (UINT8)INVALID_INDEX;
+  param->app_handle = MAX_UINT8;
   param->device     = get_connected_device_by_conn_id (conn_id);
   param->cback      = pm_data_signing_complete_cb;
   p                 = param->data;

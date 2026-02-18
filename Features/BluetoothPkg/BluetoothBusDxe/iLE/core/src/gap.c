@@ -3965,7 +3965,7 @@ gap_handle_remote_conn_param_req (
   UINT16  acl_handle;
   UINT8   *p_buf = buffer;
   UINT16  interval_min, interval_max, conn_latency, sup_timeout;
-  UINT8   ret = STATUS_SUCCESS;
+  INT8    ret = STATUS_SUCCESS;
 
   /* fix for Out Of Bound memory. JIRA: BT-123203*/
   if ((len < HCI_EVT_PREAMBLE_SIZE) || (len > HCI_CMD_EVT_MAX_SIZE)) {

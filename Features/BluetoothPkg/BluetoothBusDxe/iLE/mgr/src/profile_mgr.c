@@ -175,7 +175,7 @@ pm_find_transac_id (
         return idx;
       }
 
-      if (((pm_operation == (UINT8)INVALID_INDEX) || (g_local_adapter.pm_transac_list[idx]->pm_operation == pm_operation))
+      if (((pm_operation == MAX_UINT8) || (g_local_adapter.pm_transac_list[idx]->pm_operation == pm_operation))
           &&
           (g_local_adapter.pm_transac_list[idx]->connected_device_idx == connected_device_idx))
       {
@@ -256,7 +256,7 @@ pm_finish_transac (
 
  #endif
   transac      = g_local_adapter.pm_transac_list[transac_id];
-  pm_operation = (UINT8)INVALID_INDEX;
+  pm_operation = MAX_UINT8;
   if (transac != NULL ) {
     pm_operation = transac->pm_operation;
     if (transac->additional_param) {
@@ -866,7 +866,7 @@ pm_register_application (
     }
   }
 
-  register_application_cb ((UINT8)INVALID_INDEX, FALSE);
+  register_application_cb (MAX_UINT8, FALSE);
   if (app_data) {
     dealloc (app_data);
   }
@@ -910,7 +910,7 @@ pm_connect (
 {
   INT8  ret = STATUS_ERR_UNKNOWN;
 
-  ret = pm_create_transac (trans_id, API_REQ_OPCODE_CONNECT, (UINT8)INVALID_INDEX, NULL);
+  ret = pm_create_transac (trans_id, API_REQ_OPCODE_CONNECT, MAX_UINT8, NULL);
   logi ("");
   if (ret) {
     return ret;
@@ -1425,7 +1425,7 @@ pm_connect_inform_apps (
   trans_id_t  trans_id;
 
   /* Locate the transaction */
-  UINT8  transac_id = pm_find_transac_id (API_REQ_OPCODE_CONNECT, (UINT8)INVALID_INDEX);
+  UINT8  transac_id = pm_find_transac_id (API_REQ_OPCODE_CONNECT, MAX_UINT8);
 
   if (transac_id == MAX_NUMBER_OF_PM_REQ) {
     /* No transaction found... peer device must have initiated the connection */
@@ -1519,7 +1519,7 @@ pm_connect_error_cb (
   UINT8  transac_id, idx = MAX_NUM_CONNECTED_DEVICE;
 
   /* Check if pm transaction exists for Connect request */
-  transac_id = pm_find_transac_id (API_REQ_OPCODE_CONNECT, (UINT8)INVALID_INDEX);
+  transac_id = pm_find_transac_id (API_REQ_OPCODE_CONNECT, MAX_UINT8);
   if (transac_id != MAX_NUMBER_OF_PM_REQ) {
     /* pm transaction found */
     /* Locate the app that created the transaction */
@@ -2078,19 +2078,19 @@ pm_gatt_client_timeout_cb (
 
  #endif
   loge ("");
-  app_handle = (UINT8)INVALID_INDEX;
-  transac_id = pm_find_transac_id ((UINT8)INVALID_INDEX, device->idx);
+  app_handle = MAX_UINT8;
+  transac_id = pm_find_transac_id (MAX_UINT8, device->idx);
   if (transac_id != MAX_NUMBER_OF_PM_REQ) {
     trans_id = get_transid_from_transac_id (transac_id);
     if (trans_id == INVALID_TRANS_ID) {
-      app_handle = (UINT8)INVALID_INDEX;
+      app_handle = MAX_UINT8;
     } else {
       app_handle = get_appid_from_transid (trans_id);
     }
   }
 
   if (app_handle == MAX_NUMBER_OF_APP) {
-    app_handle = (UINT8)INVALID_INDEX;
+    app_handle = MAX_UINT8;
   }
 
   if (transac_id != MAX_NUMBER_OF_PM_REQ) {
@@ -2099,7 +2099,7 @@ pm_gatt_client_timeout_cb (
 
  #if (CONTROLLER_PRIVACY)
   /* Check if the ATT read request for CAR support timed out */
-  if ((app_handle == (UINT8)INVALID_INDEX) && (transac_id == MAX_NUMBER_OF_PM_REQ) && (device->car_supported == PEER_CAR_SUPPORT_UNKNOWN)) {
+  if ((app_handle == MAX_UINT8) && (transac_id == MAX_NUMBER_OF_PM_REQ) && (device->car_supported == PEER_CAR_SUPPORT_UNKNOWN)) {
     /* Since CAR support read goes only for the very first app who tries to connect to the
      * device, the usage_map of the device should have only one valid entry at this stage.
      */

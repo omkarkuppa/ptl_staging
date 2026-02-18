@@ -3281,11 +3281,14 @@ stack_set_local_data (
 
   switch (data_type) {
     case EfiBluetoothConfigDataTypeDeviceName:
-      status = iLE_set_local_device_name (new_trans_id, (UINT8)data_size, data);
+      if ((INT8)iLE_set_local_device_name (new_trans_id, (UINT8)data_size, data) != STATUS_SUCCESS) {
+        status = EFI_DEVICE_ERROR;
+      }
       break;
     case EfiBluetoothConfigDataTypeIoCapability:
-      status = iLE_smp_set_io_capabilities (new_trans_id, *((UINT8 *)data));
-      if (!status) {
+      if ((INT8)iLE_smp_set_io_capabilities (new_trans_id, *((UINT8 *)data)) != STATUS_SUCCESS) {
+        status = EFI_DEVICE_ERROR;
+      } else {
         uefi_app_data.iocap = *((UINT8 *)data);
       }
 

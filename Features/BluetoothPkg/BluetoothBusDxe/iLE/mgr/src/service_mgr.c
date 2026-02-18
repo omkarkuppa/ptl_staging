@@ -106,7 +106,7 @@ sm_read_attribute (
 
   logi ("");
   if (owner_trans_id == INVALID_TRANS_ID) {
-    app_idx = (UINT8)INVALID_INDEX;
+    app_idx = MAX_UINT8;
   } else {
     app_idx = get_appid_from_transid (owner_trans_id);
   }
@@ -864,7 +864,7 @@ sm_write_attribute (
   trans_id_t  owner_trans_id = get_owner_trans_id_from_hdl (att_hdl);
   UINT8       app_idx;
   if (owner_trans_id == INVALID_TRANS_ID) {
-    app_idx = (UINT8)INVALID_INDEX;
+    app_idx = MAX_UINT8;
   } else {
     app_idx = get_appid_from_transid (owner_trans_id);
   }
@@ -890,7 +890,7 @@ sm_indication_confirmataion (
   trans_id_t  owner_trans_id = get_owner_trans_id_from_hdl (att_hdl);
   UINT8       app_idx;
   if (owner_trans_id == INVALID_TRANS_ID) {
-    app_idx = (UINT8)INVALID_INDEX;
+    app_idx = MAX_UINT8;
   } else {
     app_idx = get_appid_from_transid (owner_trans_id);
   }
@@ -1011,7 +1011,7 @@ sm_connect_cb (
  #endif
   g_local_adapter.sm_device_idx_to_execute = 0;
   init_no_guard_q (&device->sm_device_data.pending_req_q);
-  device->sm_device_data.prepared_wr_app_handle = (UINT8)INVALID_INDEX;
+  device->sm_device_data.prepared_wr_app_handle = MAX_UINT8;
 }
 
 void
