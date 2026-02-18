@@ -95,6 +95,7 @@ typedef enum {
   MeStolenBaseAddress,
   TseImrBaseAddress,
   SeamrrBaseAddress,
+  HighMmioBaseAddress,
 
   MemoryMapTableLength         // Add new entries above it
 } MEMORY_RANGES;
