@@ -573,6 +573,7 @@ FspUpdatePeiSaPolicyPreMem (
 
   MemConfig->ExternalInputs.IsWckIdleExitEnabled    = FspmUpd->FspmConfig.IsWckIdleExitEnabled;
   MemConfig->ExternalInputs.FlexibleAnalogSettings  = FspmUpd->FspmConfig.FlexibleAnalogSettings;
+  MemConfig->ExternalInputs.ForceWRDSEQT2400        = FspmUpd->FspmConfig.ForceWRDSEQT2400;
 
   MemConfig->ExternalInputs.EccCorrectionMode       = FspmUpd->FspmConfig.EccCorrectionMode;
   MemConfig->ExternalInputs.CaVrefHigh              = FspmUpd->FspmConfig.CaVrefHigh;

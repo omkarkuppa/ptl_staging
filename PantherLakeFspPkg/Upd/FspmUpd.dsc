@@ -1527,11 +1527,16 @@
   # !BSF HELP:{Enable/Disable Flexible Analog Settings}
   gPlatformFspPkgTokenSpaceGuid.FlexibleAnalogSettings      | * | 0x01 | 0x01
 
+  # !BSF NAME:{Force WRDSEQT at 2400}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Force Enable Write Drive Strength training at 2400}
+  gPlatformFspPkgTokenSpaceGuid.ForceWRDSEQT2400            | * | 0x01 | 0x00
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 13  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 12  | {0x00}
 
   #
   # MRC Block End

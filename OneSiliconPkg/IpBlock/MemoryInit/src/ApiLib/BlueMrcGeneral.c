@@ -2176,14 +2176,16 @@ MrcPrintInputParameters (
     "\tForceCkdBypass: %Xh\n"
     "\tIsDdrphyx64: %Xh\n"
     "\tSenseAtRxDll: %Xh\n"
-    "\tWckModeOverride: %u\n",
+    "\tWckModeOverride: %u\n"
+    "\tForceWRDSEQT2400: %u\n",
     ExtInputs->Lp5SafeSpeed,
     Inputs->IsLp5SpeedLimited,
     ExtInputs->ForceInternalClkOn,
     ExtInputs->ForceCkdBypass,
     Inputs->IsDdrphyx64,
     Inputs->SenseAtRxDll,
-    ExtInputs->WckModeOverride
+    ExtInputs->WckModeOverride,
+    ExtInputs->ForceWRDSEQT2400
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n%s*****    MRC TRAINING STEPS     *****\n%s", PrintBorder, PrintBorder);

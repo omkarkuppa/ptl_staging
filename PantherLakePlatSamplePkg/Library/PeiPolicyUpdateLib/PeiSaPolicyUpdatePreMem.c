@@ -1156,6 +1156,7 @@ UpdatePeiSaPolicyPreMem (
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IsWckIdleExitEnabled,   MemConfig->ExternalInputs.IsWckIdleExitEnabled,   SaSetup.IsWckIdleExitEnabled);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.FlexibleAnalogSettings, MemConfig->ExternalInputs.FlexibleAnalogSettings, SaSetup.FlexibleAnalogSettings);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ForceWRDSEQT2400,       MemConfig->ExternalInputs.ForceWRDSEQT2400,       SaSetup.ForceWRDSEQT2400);
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.AllowOppRefBelowWriteThrehold, MemConfig->ExternalInputs.AllowOppRefBelowWriteThrehold, SaSetup.AllowOppRefBelowWriteThrehold);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WriteThreshold, MemConfig->ExternalInputs.WriteThreshold,        SaSetup.WriteThreshold               );

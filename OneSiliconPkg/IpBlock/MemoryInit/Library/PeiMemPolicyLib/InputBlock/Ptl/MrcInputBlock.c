@@ -389,7 +389,8 @@
 #define MRC_EXT_INPUTS_INIT_VAL_PhyDtsTemperature               (0xFF)
 #define MRC_EXT_INPUTS_INIT_VAL_FlexibleAnalogSettings          (1)
 #define MRC_EXT_INPUTS_INIT_VAL_PhClkCheck                      (0)
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved347                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_ForceWRDSEQT2400                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved348                     {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -780,7 +781,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_PhyDtsTemperature,
     MRC_EXT_INPUTS_INIT_VAL_FlexibleAnalogSettings,
     MRC_EXT_INPUTS_INIT_VAL_PhClkCheck,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved347,
+    MRC_EXT_INPUTS_INIT_VAL_ForceWRDSEQT2400,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved348,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE

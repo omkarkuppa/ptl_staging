@@ -1292,9 +1292,10 @@ typedef struct {
   <b>Revision 23</b>: - Add ForceInternalClkOn
   <b>Revision 24</b>: - Add DIMMRXOFFSET
   <b>Revision 25</b>: - Add FlexibleAnalogSettings
+  <b>Revision 26</b>: - Add ForceWRDSEQT2400
 **/
 
-#define SA_SETUP_REVISION   25
+#define SA_SETUP_REVISION   26
 
 typedef struct {
   UINT8   Revision;
@@ -1816,7 +1817,8 @@ typedef struct {
   UINT8   ForceInternalClkOn;
   UINT8   DIMMRXOFFSET;
   UINT8   FlexibleAnalogSettings;
-  UINT8   Rsvd[4];
+  UINT8   ForceWRDSEQT2400;
+  UINT8   Rsvd[3];
 } SA_SETUP;
 
 /**

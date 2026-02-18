@@ -299,7 +299,8 @@ typedef struct {
   INT8    PhyDtsTemperature;              ///< Offset 344 PHY DTS temperature override, in degrees C (2's complement). 0xFF - platform default (no override).
   BOOLEAN FlexibleAnalogSettings;         ///< Offset 345 Enable/disable usage of flexible analog settings (NN flex feature): 0 = Disable, 1 = Enable
   BOOLEAN PhClkCheck;                     ///< Offset 346 Phase Clock Check.
-  UINT8   Reserved347[41];                ///< Offset 347 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (347 + 41 bytes) = 416 should be a multiple of 8 bytes.
+  BOOLEAN ForceWRDSEQT2400;               ///< Offset 347 Force Enable Write Drive Strength training at 2400: 0 = Disable, 1 = Enable
+  UINT8   Reserved348[40];                ///< Offset 348 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (348 + 40 bytes) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)
