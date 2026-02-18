@@ -185,7 +185,7 @@
   gPlatformModuleTokenSpaceGuid.PcdEbcEnable|TRUE
   gPlatformModuleTokenSpaceGuid.PcdHddPasswordEnable|TRUE
   gPlatformModuleTokenSpaceGuid.PcdNetworkEnable|TRUE
-  gPantherLakeBinPkgTokenSpaceGuid.PcdGigUndiBinEnable|TRUE
+  gPantherLakeBinPkgTokenSpaceGuid.PcdEthernetLanBinEnable|TRUE
   gPlatformModuleTokenSpaceGuid.PcdSinitAcmBinEnable|FALSE
   gPlatformModuleTokenSpaceGuid.PcdScsiEnable|TRUE
   gPlatformModuleTokenSpaceGuid.PcdJpgEnable|TRUE
