@@ -26,7 +26,7 @@
 
 #pragma pack(push, 1)
 
-#define IGPU_PEI_PREMEM_CONFIG_REVISION  1
+#define IGPU_PEI_PREMEM_CONFIG_REVISION  2
 #define IGPU_PEI_CONFIG_REVISION         1
 #define IGPU_DXE_CONFIG_REVISION         1
 
