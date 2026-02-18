@@ -766,8 +766,10 @@ UpdateUsbCRetimerInfoResetCallback (
     Status = DriveToFwUpdateMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
     WaitForRetimerReadyToUpdate = (UINTN) PcdGet32 (PcdTcssWaitRetimerDeviceReady);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UpdateUsbCRetimerInfoResetCallback - Failed to drive ports to TBT mode (%r).\n", Status));
-      goto RestorePdPowerMode;
+      if (Status != EFI_ALREADY_STARTED) {
+        DEBUG ((DEBUG_ERROR, "UpdateUsbCRetimerInfoResetCallback - Failed to drive ports to TBT mode (%r).\n", Status));
+        goto RestorePdPowerMode;
+      }
     } else {
       //
       // Delay for Retimer device ready.
