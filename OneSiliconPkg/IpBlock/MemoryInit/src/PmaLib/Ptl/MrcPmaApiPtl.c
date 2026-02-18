@@ -66,13 +66,17 @@ MrcBoardAndSkuFreqCheck (
     }
   }
 
-  if (Inputs->Lpddr5Camm) {
-    FreqMax = f7467;
-  }
-
   // PTL-U and WCL are limited to 7467 (LP5) and 6400 (DDR5)
   if (SkuType == MrcSkuTypeU || Inputs->IsDdrphyx64) {
     FreqMax = IsDdr5 ? f6400 : f7467;
+  }
+
+  if (Inputs->Lpddr5Camm) {
+    if (SkuType == MrcSkuTypeU) {
+      FreqMax = f6800;
+    } else {
+      FreqMax = f7467;
+    }
   }
 
   Outputs->FreqMax = MIN (Outputs->FreqMax, FreqMax);
