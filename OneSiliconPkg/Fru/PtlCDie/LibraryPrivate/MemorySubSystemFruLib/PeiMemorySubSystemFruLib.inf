@@ -79,8 +79,6 @@
   gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress             ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSafBarBaseAddress           ## CONSUMES
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize   ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdMmio64Base                  ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdMmio64Length                ## CONSUMES
 
 [Ppis]
   gSiPreMemPolicyPpiGuid                              ## CONSUMES

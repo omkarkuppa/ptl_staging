@@ -121,7 +121,6 @@ LoadMemoryMapDict (
   StrCpyS (MemoryMapTable[MeStolenBaseAddress].BaseName, 30, L"MeStolen Base");
   StrCpyS (MemoryMapTable[TseImrBaseAddress].BaseName, 30, L"TSE IMR Base");
   StrCpyS (MemoryMapTable[SeamrrBaseAddress].BaseName, 30, L"SEAMRR Base");
-  StrCpyS (MemoryMapTable[HighMmioBaseAddress].BaseName, 30, L"High MMIO Base");
 }
 
 /**
@@ -198,8 +197,6 @@ LoadMemoryMapTable (
   /// Memory Map Table filling
   /// Base above 4GB
   //
-  MemoryMapTable[HighMmioBaseAddress].Base   = PcdGet64 (PcdMmio64Base);
-  MemoryMapTable[HighMmioBaseAddress].Limit  = PcdGet64 (PcdMmio64Base) + PcdGet64 (PcdMmio64Length) - 1;
   MemoryMapTable[SbRegBaseAddress].Base       = PCH_PCR_BASE_ADDRESS;
   MemoryMapTable[SbRegBaseAddress].Limit      = PCH_PCR_BASE_ADDRESS + PCH_PCR_MMIO_SIZE - 1;
   MemoryMapTable[SbReg2BaseAddress].Base      = PCH_PCR_SECOND_BASE_ADDRESS;
