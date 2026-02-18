@@ -80,6 +80,7 @@ const char* CardPartNumber[Card_Max] = {
   "M435R1GB4PB1-CCPSG",     // Card_240C
   "HMCGY8AKBVB318N",        // Card_256B
   "M435RZGB4PB1-CCPRC",     // Card_269C
+  "M435R4GA3EB1-CCPRC",     // Card_270B
   "MTC4C1016ZS1VC72BCZKFF", // Card_276C
   "MTC4C10163S1VC72BHZKFF", // Card_298C
   "M435R8JA3MB1-CJRLC",     // Card_311B
@@ -119,6 +120,7 @@ const char* Ddr5CardToName[Card_NotFound] = {
   "234B_2R_7200",
   "235A_1R_6400",
   "75B_2R_6400",
+  "270B_2R_6400",
   "SAMSUNG2R_2R_6400",
   "SAMSUNG2R_2R_7200",
   "HYNIX1R_1R_7200",
@@ -163,6 +165,9 @@ GetDdr5ParamIndex (
       break;
     case Card_269C:
       if (NumOfRanks == 1 && Frequency <= 6400) return Card_269C_1R_6400;
+      break;
+    case Card_270B:
+      if (NumOfRanks == 2 && Frequency <= 6400) return Card_270B_2R_6400;
       break;
     case Card_276C:
       if (NumOfRanks == 1 && Frequency <= 6400) return Card_276C_1R_6400;
@@ -228,6 +233,7 @@ const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
   { -10,  -5, 120, 120,  80,  40,  40 },
   { -13,   0, 120,  60,  60,  40,  48 },
   { -10,  -5, 120,  48,  80,  40,  40 },
+  { -12,  -2,  80,  60,  80,  40,  40 },
   { -23,  -5, 120, 120,  80,  40,  40 },
   { -23,  -5, 120, 120,  80,  40,  40 },
   { -10,   0, 120,  60,  60,  40,  48 },

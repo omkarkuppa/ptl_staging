@@ -66,6 +66,15 @@ MrcPowerWeightMapping DdrPhyPowerTableDdr5[MAX_FREQ] = {
   {f8800,  {27602,      5101,       774902,       379817}}
 };
 
+MrcPowerWeightMapping DdrPhyPowerTableWclDdr5[MAX_FREQ] = {
+// Freq    ReadPower  WritePower  IdlePower     CkePower
+//         (fj/byte)   (fj/byte)  (microWatts) (microWatts)
+  {f3200,  {44535,      16741,      403881,       210508}},
+  {f4800,  {31345,      11945,      460181,       320308}},
+  {f6000,  {27240,      11682,      465547,       316199}},
+  {f6400,  {25666,      10919,      499943,       365246}},
+};
+
 /**
   This function calculates power weights at non-POR frequencies using linear interpolation.
 
@@ -79,23 +88,17 @@ MrcPowerWeightMapping DdrPhyPowerTableDdr5[MAX_FREQ] = {
   @retval Nothing.
 **/
 static VOID CaculateDdrPhyPower (
-  IN  MrcParameters   *const MrcData,
-  IN  MrcFrequency           Freq,
-  OUT UINT32          *const ReadPower,
-  OUT UINT32          *const WritePower,
-  OUT UINT32          *const IdlePower,
-  OUT UINT32          *const CkePower
+  IN  MrcParameters     *const MrcData,
+  IN  MrcFrequency             Freq,
+  OUT UINT32            *const ReadPower,
+  OUT UINT32            *const WritePower,
+  OUT UINT32            *const IdlePower,
+  OUT UINT32            *const CkePower,
+  MrcPowerWeightMapping *DdrPhyPowerTable
   )
 {
   INT32 x1, x2, y1, y2;
   UINT32 Index1, Index2;
-  BOOLEAN IsDdr5;
-  MrcOutput *Outputs;
-  MrcPowerWeightMapping *DdrPhyPowerTable;
-
-  Outputs = &MrcData->Outputs;
-  IsDdr5 = Outputs->IsDdr5;
-  DdrPhyPowerTable = (IsDdr5) ? DdrPhyPowerTableDdr5 : (MrcData->Inputs.SkuType == MrcSkuTypeU) ? DdrPhyPowerTableLp5SkuTypeU : DdrPhyPowerTableLp5;
 
   if (DdrPhyPowerTable[0].Freq > Freq) {
     Index1 = 0;
@@ -160,7 +163,12 @@ VOID MrcGetDdrPhyWeights (
   Freq              = Outputs->Frequency;
   Found             = FALSE;
   IsDdr5            = Outputs->IsDdr5;
-  DdrPhyPowerTable  = (IsDdr5) ? DdrPhyPowerTableDdr5 : (MrcData->Inputs.SkuType == MrcSkuTypeU) ? DdrPhyPowerTableLp5SkuTypeU : DdrPhyPowerTableLp5;
+
+  if (IsDdr5) {
+    DdrPhyPowerTable = (MrcData->Inputs.IsDdrphyx64) ? DdrPhyPowerTableWclDdr5 : DdrPhyPowerTableDdr5;
+  } else {
+    DdrPhyPowerTable = (MrcData->Inputs.SkuType == MrcSkuTypeU) ? DdrPhyPowerTableLp5SkuTypeU : DdrPhyPowerTableLp5;
+  }
 
   for (Count = 0; Count < MAX_FREQ; Count++) {
     PowerMeasurePtr = &DdrPhyPowerTable[Count];
@@ -174,7 +182,7 @@ VOID MrcGetDdrPhyWeights (
   }
   //If don't found the value on table, use linear interpolation to calculate those.
   if (!Found) {
-    CaculateDdrPhyPower (MrcData, Freq, ReadPower, WritePower, IdlePower, CkePower);
+    CaculateDdrPhyPower (MrcData, Freq, ReadPower, WritePower, IdlePower, CkePower, DdrPhyPowerTable);
   }
   *ReadPower = UDIVIDEROUND(*ReadPower, 200); //Read power in pJ per Byte in units of 0.2pJ/byte
   *WritePower = UDIVIDEROUND(*WritePower, 200); //Write power in pJ per Byte in units of 0.2pJ/byte

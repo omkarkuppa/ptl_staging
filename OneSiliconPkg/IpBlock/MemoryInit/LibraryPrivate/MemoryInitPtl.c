@@ -631,6 +631,7 @@ PeimMemoryInit (
   SI_PREMEM_CONFIG             *SiPreMemConfig;
   UINT32                       SavedTsegSize;
   IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig;
+  BOOLEAN                      IsVgaInitDone;
 
   DEBUG ((DEBUG_INFO, "[PeimMemoryInit]\n"));
 
@@ -652,6 +653,7 @@ PeimMemoryInit (
   IsLastBasicMemoryTestPass                = TRUE;
   DidPreviousTrainingFail                  = FALSE;
   IsEfiResetColdRequired                   = FALSE;
+  IsVgaInitDone                            = FALSE;
 
   // Print MRC Interface Structure Sizes before the execution of the MRC.
   DEBUG_CODE_BEGIN();
@@ -1137,8 +1139,16 @@ DEBUG_CODE_END();
 
   do {
     if (MrcBootMode == bmCold) {
-      if (IS_VGA_INIT_ON_MRC_ONLY (IGpuPreMemConfig->VgaInitControl)) {
-        IGpuVgaInit (IGpuPreMemConfig);
+      if (!IsVgaInitDone) {
+        if (IS_VGA_INIT_ON_MRC_ONLY (IGpuPreMemConfig->VgaInitControl)) {
+          IGpuVgaInit (IGpuPreMemConfig);
+          IsVgaInitDone = TRUE;
+        }
+      } else {
+        // Clear the previous progress bar state
+        SaveData->PostCodesDone = 0;
+        SaveData->PostCodesTotal = 0;
+        MrcUpdateProgressBar (MrcData);
       }
     }
 
