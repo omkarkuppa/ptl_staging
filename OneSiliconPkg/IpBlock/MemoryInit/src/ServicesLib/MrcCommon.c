@@ -3032,6 +3032,45 @@ MrcPrintHeader (
 }
 
 /**
+  Obtain CKD LID via SMBUS Read.
+
+  @param[in] MrcData - Pointer to MRC global data.
+  @param[in] DimmIn  - Dimm Info.
+  @param[in, out] CkdLid  - CkdLid 
+**/
+VOID
+GetCkdLid (
+  MrcParameters    *const MrcData,
+  MrcDimmIn        *DimmIn,
+  UINT8            *CkdLid
+  )
+{
+  const MRC_FUNCTION *MrcCall;
+  const MrcSpd       *SpdIn;
+  UINT8              LidAddr;
+  UINT8              VendorId[2];
+  RETURN_STATUS      Status;
+  UINT16             SpdCkdVen;
+  UINT8              SpdCkdRev;
+
+  MrcCall      = MrcData->Inputs.Call.Func;
+  SpdIn        = &DimmIn->Spd.Data;
+  SpdCkdVen    = SpdIn->Ddr5.ModuleCommon.ModuleSpecific.Registered.DeviceInfoRegister.ManufacturerId.Data;
+  SpdCkdRev    = SpdIn->Ddr5.ModuleCommon.ModuleSpecific.Registered.DeviceInfoRegister.DeviceRevision;
+  if ((SpdCkdVen == 0x9D86) && (SpdCkdRev < 0x30)){
+    LidAddr = 0xB0;
+    VendorId[0] = MrcCall->MrcSmbusRead8 (((DimmIn->SpdAddress & 0x0F) | LidAddr) | (0x4A << 8), &Status); // VendorID Byte0
+    VendorId[1] = MrcCall->MrcSmbusRead8 (((DimmIn->SpdAddress & 0x0F) | LidAddr) | (0x4B << 8), &Status); // VendorID Byte1
+
+    if ((VendorId[0] | VendorId[1]) != 0) {
+      *CkdLid = 0xB0;
+    } else {
+      *CkdLid = 0x40;
+    }
+  }
+}
+
+/**
   Obtain CKD Smbus Address through SPD Smbus Address.
 
   @param[in] MrcData - Pointer to MRC global data.
@@ -3053,6 +3092,7 @@ MrcSetupCkdAddress (
   UINT32             DimmIndex;
   UINT8              CkdIndex;
   UINT32             MaxDimm;
+  UINT8              CkdLid;
 
   Index = 0;
 
@@ -3069,9 +3109,11 @@ MrcSetupCkdAddress (
         if (DimmOut->IsCkdSupport == FALSE) {
           continue;
         }
+        CkdLid = 0xB0;
+        GetCkdLid (MrcData, DimmIn, &CkdLid);
         // For CUDIMM, CSODIMM: set CKD Address based on SPD Address if it's not assigned
         if ((DimmIn->CkdAddress == 0) && (DimmIn->SpdAddress > 0)) {
-          DimmIn->CkdAddress = (DimmIn->SpdAddress & 0x0F) | 0xB0;
+          DimmIn->CkdAddress = (DimmIn->SpdAddress & 0x0F) | CkdLid;
         }
         if (DimmIn->CkdAddress == 0) {
           continue;

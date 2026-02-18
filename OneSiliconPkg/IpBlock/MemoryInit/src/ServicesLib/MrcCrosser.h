@@ -1606,6 +1606,20 @@ MrcReadCTLETraining(
   );
 
 /**
+  This function is read equalization 2D training for CTLE vs RxDFETap0 per byte.
+
+  @param[in] MrcData   - Include all MRC global data.
+  @param[in] Optimize  - Add Convolution.
+
+  @retval MrcStatus - if it succeed return mrcSuccess
+**/
+MrcStatus
+MrcDdr5CtleDFE2DTraining (
+  IN MrcParameters* const MrcData,
+  IN BOOLEAN              Optimize
+  );
+
+/**
   This function is used to train the TxDq TCO Comp offset.
 
   @param[in] MrcData - Pointer to global MRC data.

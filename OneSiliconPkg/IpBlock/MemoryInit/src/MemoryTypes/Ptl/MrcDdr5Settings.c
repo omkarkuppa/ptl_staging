@@ -212,7 +212,7 @@ GetDdr5ParamIndex (
 
 // DfeTap1/ DfeTap2/ RttWr/ RttNomWr/ RttNomRd/ RonUp/ RonDn/
 const NnFlexDdr5Params NnFlexInitialSettingsDdr5[] = {
-  { -32,  -5,  80,  60,  60,  34,  40 },
+  { -15,  -5,  80,  60,  60,  34,  40 },
   { -25,  -5, 120,  80,  80,  40,  40 },
   { -25,  -5, 120,  80,  48,  34,  34 },
   { -21,   0, 120,  60,  60,  40,  48 },
