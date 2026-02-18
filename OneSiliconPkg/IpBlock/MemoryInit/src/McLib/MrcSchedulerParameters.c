@@ -424,6 +424,10 @@ MrcSchedulerParametersConfig (
         // Disable ZQ on SRX: PM_SREF_CONTROL.EN_SRX_ZQCAL = 0
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSrxZqcal,  WriteToCache | PrintValue, &GetSetDis);
       }
+      if (IsLpddr5) {
+        // Force Wake_on_zqcal = 0
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccWakeOnZqcal,  WriteToCache | PrintValue, &GetSetDis);
+      }
 
 
     } // Channel

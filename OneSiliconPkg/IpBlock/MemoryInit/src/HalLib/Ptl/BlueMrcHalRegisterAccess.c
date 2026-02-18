@@ -590,6 +590,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccMaxPcit",
   "GsmMccEnSrxTempRead",
   "GsmMccSrxZqcal",
+  "GsmMccWakeOnZqcal",
   "GsmMccEcDis",
   "GsmMccEccGranularity",
   "GsmMccAutoPrechargeEn",
@@ -2183,6 +2184,7 @@ MrcCheckGroupSupported (
     case GsmMiscPmMessageWpSel:
     case GsmMccEnSrxTempRead:
     case GsmMccSrxZqcal:
+    case GsmMccWakeOnZqcal:
     case GsmCkdPllMode:
     case GsmCkdIctInputClkTerm:
     case GsmCkdQckClkDisable:

@@ -568,6 +568,7 @@ typedef enum {
   GsmMccMaxPcit,
   GsmMccEnSrxTempRead,
   GsmMccSrxZqcal,
+  GsmMccWakeOnZqcal,
   GsmMccEcDis,
   GsmMccEccGranularity,
   GsmMccAutoPrechargeEn,

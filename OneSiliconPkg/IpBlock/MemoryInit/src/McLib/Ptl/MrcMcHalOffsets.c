@@ -830,6 +830,7 @@ MrcGetMcConfigRegOffset (
     case GsmMccSrxZqcal:
     case GsmMccForceSreWithFreqChange:
     case GsmMccEnSrxWrRetraining:
+    case GsmMccWakeOnZqcal:
       if (Channel < MaxChannel) {
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_PM_SREF_CONTROL_REG, MC1_CH0_CR_PM_SREF_CONTROL_REG, Controller, MC0_CH1_CR_PM_SREF_CONTROL_REG, Channel);
       }

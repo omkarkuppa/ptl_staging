@@ -972,6 +972,7 @@ MrcGetMcConfigGroupLimits (
     case GsmMccCfiE2eParityEnRdata:
     case GsmMccCfiE2eParityEnRdCmplHeader:
     case GsmMccCfiE2eParityEn:
+    case GsmMccWakeOnZqcal:
       Min = 0;
       Max = 1;
       break;

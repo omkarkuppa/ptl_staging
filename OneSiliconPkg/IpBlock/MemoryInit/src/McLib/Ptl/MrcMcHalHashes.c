@@ -1133,6 +1133,10 @@ MrcGetMcConfigHash (
       HashPtr->Data = MC0_CH0_CR_PM_SREF_CONTROL_EN_SRX_ZQCAL_HSH;
       break;
 
+    case GsmMccWakeOnZqcal:
+      HashPtr->Data = MC0_CH0_CR_PM_SREF_CONTROL_WAKE_ON_ZQCAL_HSH;
+      break;
+
     case GsmMccEcDis:
       HashPtr->Data = MC0_IBECC_CONTROL_EC_DIS_HSH;
       break;
