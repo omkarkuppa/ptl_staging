@@ -882,6 +882,7 @@ Ddr5JedecInitVal (
   MrcStatus      Status;
   MrcInput       *Inputs;
   MrcOutput      *Outputs;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
   MrcDebug       *Debug;
   MrcChannelOut  *ChannelOut;
   MrcDimmOut     *DimmOut;
@@ -898,6 +899,7 @@ Ddr5JedecInitVal (
   UINT8          DfeTap2;
   UINT8          DfeTap3;
   UINT8          DfeTap4;
+  BOOLEAN        IsFlexibleAnalogSettings;
   UINT32         Profile;
   UINT32         Dimm;
   INT8           Mr5Encoding;
@@ -940,7 +942,8 @@ Ddr5JedecInitVal (
   Inputs     = &MrcData->Inputs;
   Outputs    = &MrcData->Outputs;
   Debug      = &Outputs->Debug;
-  Profile    = Inputs->ExtInputs.Ptr->MemoryProfile;
+  ExtInputs  = Inputs->ExtInputs.Ptr;
+  Profile    = ExtInputs->MemoryProfile;
   ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
   DimmOut = &ChannelOut->Dimm[Rank / MAX_RANK_IN_DIMM];
   RankOut = &DimmOut->Rank[Rank % MAX_RANK_IN_DIMM];
@@ -948,6 +951,8 @@ Ddr5JedecInitVal (
   RetVal     = 0;
   CccRttValue = 0;
   DataRttValue = 0;
+  IsFlexibleAnalogSettings = ExtInputs->FlexibleAnalogSettings;
+
   OptParamIndex = GetDdr5ParamIndex (Outputs->Frequency, DimmOut->RankInDimm, Card_default);
 
   if (OptParamIndex == Card_NotFound) {
@@ -970,15 +975,16 @@ Ddr5JedecInitVal (
     return mrcFail;
   }
 
-  if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) {
+  if (IsFlexibleAnalogSettings) {
     // Update Odt table
-    DqOdtTableIndex.RttWr    = NnFlexInitialSettingsDdr5[OptParamIndex].RttWr;
-    DqOdtTableIndex.RttNomRd = NnFlexInitialSettingsDdr5[OptParamIndex].RttNomRd;
-    DqOdtTableIndex.RttNomWr = NnFlexInitialSettingsDdr5[OptParamIndex].RttNomWr;
+    // NNFlex overrides are in MR encoding, so convert to Ohms
+    DqOdtTableIndex.RttWr    = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RttWr)    ? (UINT16) Ddr5RttOdtDecode ((UINT16) ExtInputs->NnFlexDdr5RttWr)    : NnFlexInitialSettingsDdr5[OptParamIndex].RttWr;
+    DqOdtTableIndex.RttNomRd = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RttNomRd) ? (UINT16) Ddr5RttOdtDecode ((UINT16) ExtInputs->NnFlexDdr5RttNomRd) : NnFlexInitialSettingsDdr5[OptParamIndex].RttNomRd;
+    DqOdtTableIndex.RttNomWr = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RttNomWr) ? (UINT16) Ddr5RttOdtDecode ((UINT16) ExtInputs->NnFlexDdr5RttNomWr) : NnFlexInitialSettingsDdr5[OptParamIndex].RttNomWr;
 
     // Update Dfe table
-    DFETableIndex.Tap1 = NnFlexInitialSettingsDdr5[OptParamIndex].DfeTap1;
-    DFETableIndex.Tap2 = NnFlexInitialSettingsDdr5[OptParamIndex].DfeTap2;
+    DFETableIndex.Tap1 = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5DfeTap1) ? (INT8) ExtInputs->NnFlexDdr5DfeTap1 : NnFlexInitialSettingsDdr5[OptParamIndex].DfeTap1;
+    DFETableIndex.Tap2 = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5DfeTap2) ? (INT8) ExtInputs->NnFlexDdr5DfeTap2 : NnFlexInitialSettingsDdr5[OptParamIndex].DfeTap2;
   }
 
   // We will only return one value for the input MR Num.
@@ -1037,20 +1043,20 @@ Ddr5JedecInitVal (
       break;
 
     case mrMR5:
-      if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) {
+      if (IsFlexibleAnalogSettings) {
         // Ron Up
-        Mr5Encoding = Ddr5DriveStrengthEncode (NnFlexInitialSettingsDdr5[OptParamIndex].RonUp);
+        Mr5Encoding = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RonUp) ? (INT8) ExtInputs->NnFlexDdr5RonUp : Ddr5DriveStrengthEncode (NnFlexInitialSettingsDdr5[OptParamIndex].RonUp);
         if (Mr5Encoding == DDR5_ODIC_INVALID_VALUE) {
-          MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, NnFlexInitialSettingsDdr5[OptParamIndex].RonUp);
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, Mr5Encoding);
           Status = mrcWrongInputParameter;
           break;
         } else {
           Mr5->Bits.PullUpOutputDriverImpedance = Mr5Encoding;
         }
         // Ron Dn
-        Mr5Encoding = Ddr5DriveStrengthEncode (NnFlexInitialSettingsDdr5[OptParamIndex].RonDn);
+        Mr5Encoding = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RonDn) ? (INT8) ExtInputs->NnFlexDdr5RonDn : Ddr5DriveStrengthEncode (NnFlexInitialSettingsDdr5[OptParamIndex].RonDn);
         if (Mr5Encoding == DDR5_ODIC_INVALID_VALUE) {
-          MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, NnFlexInitialSettingsDdr5[OptParamIndex].RonDn);
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, Mr5Encoding);
           Status = mrcWrongInputParameter;
         } else {
           Mr5->Bits.PullDownOutputDriverImpedance = Mr5Encoding;

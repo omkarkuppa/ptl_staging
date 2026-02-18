@@ -272,4 +272,42 @@ typedef struct {
 } DramPartMap;
 
 // AUTO-GENERATED LP5 TABLE DECLARATIONS END
+
+#ifndef IS_NNFLEX_PHY_VAR_EN
+#define IS_NNFLEX_PHY_VAR_EN(Index)  ((ExtInputs->NnFlexPhyOvrdMask & (Index)) != 0)
+#endif
+
+#ifndef IS_NNFLEX_DRAM_VAR_EN
+#define IS_NNFLEX_DRAM_VAR_EN(Index)  ((ExtInputs->NnFlexDramOvrdMask & (Index)) != 0)
+#endif
+
+// Bitmasks for MRC_EXT_INPUTS_TYPE.NnFlexPhyOvrdMask
+#define NnFlexPhyMaskRxEqTap0      MRC_BIT0  ///<  PhyRxEqTap0
+#define NnFlexPhyMaskRxEqTap1      MRC_BIT1  ///<  PhyRxEqTap1
+#define NnFlexPhyMaskDqTcoComp     MRC_BIT2  ///<  PhyDqTcoComp
+#define NnFlexPhyMaskRxCtleR       MRC_BIT3  ///<  PhyRxCtleR
+#define NnFlexPhyMaskRxCtleC       MRC_BIT4  ///<  PhyRxCtleC
+#define NnFlexPhyMaskRxCtleRcmn    MRC_BIT5  ///<  PhyRxCtleRcmn
+#define NnFlexPhyMaskRxCtleEq      MRC_BIT6  ///<  PhyRxCtleEq
+#define NnFlexPhyMaskRxCtleTailCtl MRC_BIT7  ///<  PhyRxCtleTailCtl
+
+// Bitmasks for MRC_EXT_INPUTS_TYPE.NnFlexDramOvrdMask in case of LP5
+#define NnFlexMaskLpddr5Dfeq       MRC_BIT0  ///<  Lpddr5Dfeq
+#define NnFlexMaskLpddr5PdDrvStr   MRC_BIT1  ///<  Lpddr5PdDrvStr
+#define NnFlexMaskLpddr5SocOdt     MRC_BIT2  ///<  Lpddr5SocOdt
+#define NnFlexMaskLpddr5PreEmpDn   MRC_BIT3  ///<  Lpddr5PreEmpDn
+#define NnFlexMaskLpddr5PreEmpUp   MRC_BIT4  ///<  Lpddr5PreEmpUp
+#define NnFlexMaskLpddr5WckDcaWr   MRC_BIT5  ///<  Lpddr5WckDcaWr
+#define NnFlexMaskLpddr5WckDcaRd   MRC_BIT6  ///<  Lpddr5WckDcaRd
+#define NnFlexMaskLpddr5RttNT      MRC_BIT7  ///<  Lpddr5RttNT
+
+// Bitmasks for MRC_EXT_INPUTS_TYPE.NnFlexDramOvrdMask in case of DDR5
+#define NnFlexMaskDdr5DfeTap1      MRC_BIT0  ///< Ddr5DfeTap1
+#define NnFlexMaskDdr5DfeTap2      MRC_BIT1  ///< Ddr5DfeTap2
+#define NnFlexMaskDdr5RttWr        MRC_BIT2  ///< Ddr5RttWr
+#define NnFlexMaskDdr5RttNomWr     MRC_BIT3  ///< Ddr5RttNomWr
+#define NnFlexMaskDdr5RttNomRd     MRC_BIT4  ///< Ddr5RttNomRd
+#define NnFlexMaskDdr5RonUp        MRC_BIT5  ///< Ddr5RonUp
+#define NnFlexMaskDdr5RonDn        MRC_BIT6  ///< Ddr5RonDn
+
 #endif

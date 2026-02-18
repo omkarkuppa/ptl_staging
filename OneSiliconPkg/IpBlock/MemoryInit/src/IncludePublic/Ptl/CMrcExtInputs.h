@@ -300,7 +300,39 @@ typedef struct {
   BOOLEAN FlexibleAnalogSettings;         ///< Offset 345 Enable/disable usage of flexible analog settings (NN flex feature): 0 = Disable, 1 = Enable
   BOOLEAN PhClkCheck;                     ///< Offset 346 Phase Clock Check.
   BOOLEAN ForceWRDSEQT2400;               ///< Offset 347 Force Enable Write Drive Strength training at 2400: 0 = Disable, 1 = Enable
-  UINT8   Reserved348[40];                ///< Offset 348 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (348 + 40 bytes) = 416 should be a multiple of 8 bytes.
+
+  UINT32   NnFlexPhyRxEqTap0      : 6;    ///< Offset 348 Bits 0-5   PhyRxEqTap0  - 6 bit 2's complement
+  UINT32   NnFlexPhyRxEqTap1      : 6;    ///<            Bits 6-11  PhyRxEqTap1  - 6 bit 2's complement, valid range: [-16..15]
+  UINT32   NnFlexPhyDqTcoComp     : 6;    ///<            Bits 12-17 PhyDqTcoComp - 6 bit 2's complement
+  UINT32   NnFlexPhyRxCtleR       : 2;    ///<            Bits 18-19 PhyRxCtleR       - [0..3]
+  UINT32   NnFlexPhyRxCtleC       : 2;    ///<            Bits 20-21 PhyRxCtleC       - [0..3]
+  UINT32   NnFlexPhyRxCtleRcmn    : 2;    ///<            Bits 22-23 PhyRxCtleRcmn    - [0..3]
+  UINT32   NnFlexPhyRxCtleEq      : 3;    ///<            Bits 24-26 PhyRxCtleEq      - [0..7]
+  UINT32   NnFlexPhyRxCtleTailCtl : 2;    ///<            Bits 27-28 PhyRxCtleTailCtl - [0..3]
+  UINT32   NnFlexPhyReserved      : 3;    ///<            Bits 29-31 Reserved
+
+  UINT32   NnFlexLpddr5Dfeq       : 3;    ///< Offset 352 Bits 0-2   Lpddr5Dfeq     - [0..7], MR24 encoding
+  UINT32   NnFlexLpddr5PdDrvStr   : 3;    ///<            Bits 3-5   Lpddr5PdDrvStr - [0..6], MR3 encoding
+  UINT32   NnFlexLpddr5SocOdt     : 3;    ///<            Bits 6-8   Lpddr5SocOdt   - [0..6], MR17 encoding
+  UINT32   NnFlexLpddr5PreEmpDn   : 2;    ///<            Bits 9-10  Lpddr5PreEmpDn - [0..3], MR58 encoding
+  UINT32   NnFlexLpddr5PreEmpUp   : 2;    ///<            Bits 11-12 Lpddr5PreEmpUp - [0..3], MR58 encoding
+  UINT32   NnFlexLpddr5WckDcaWr   : 4;    ///<            Bits 13-16 Lpddr5WckDcaWr - 4-bit 2's complement, valid range: [-7..7]
+  UINT32   NnFlexLpddr5WckDcaRd   : 4;    ///<            Bits 17-20 Lpddr5WckDcaRd - 4-bit 2's complement, valid range: [-7..7]
+  UINT32   NnFlexLpddr5RttNT      : 3;    ///<            Bits 21-23 Lpddr5RttNT    - [0..7], MR41 encoding
+  UINT32   NnFlexDramOvrdMask     : 8;    ///<            Bits 24-31 Bit mask to enable the use of NnFlexDdr5/Lpddr5 overrides. Use NnFlexMaskLpddr5XXX / NnFlexMaskDdr5XXX for indexing.
+
+  UINT32   NnFlexDdr5DfeTap1      : 8;    ///< Offset 356 Bits 0-7   Ddr5DfeTap1  - 8-bit 2's complement, valid range: [-40..40]
+  UINT32   NnFlexDdr5DfeTap2      : 8;    ///<            Bits 8-15  Ddr5DfeTap2  - 8-bit 2's complement, valid range: [-15..15]
+  UINT32   NnFlexDdr5RttWr        : 3;    ///<            Bits 16-18 Ddr5RttWr    - [0..7], MR34 encoding
+  UINT32   NnFlexDdr5RttNomWr     : 3;    ///<            Bits 19-21 Ddr5RttNomWr - [0..7], MR35 encoding
+  UINT32   NnFlexDdr5RttNomRd     : 3;    ///<            Bits 22-24 Ddr5RttNomRd - [0..7], MR35 encoding
+  UINT32   NnFlexDdr5RonUp        : 2;    ///<            Bits 25-26 Ddr5RonUp    - [0..2], MR5 encoding
+  UINT32   NnFlexDdr5RonDn        : 2;    ///<            Bits 27-28 Ddr5RonDn    - [0..2], MR5 encoding
+  UINT32   NnFlexDdr5Reserved     : 3;    ///<            Bits 29-31 Reserved
+
+  UINT8    NnFlexPhyOvrdMask;             ///< Offset 360 Bitmask to enable NnFlexPhyXXX overrides above (offset 348)
+
+  UINT8   Reserved361[27];                ///< Offset 361 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (361 + 27 bytes) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

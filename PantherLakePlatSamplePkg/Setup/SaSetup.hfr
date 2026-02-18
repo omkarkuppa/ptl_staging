@@ -1845,6 +1845,309 @@
         option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
+      suppressif ideqval SA_SETUP.FlexibleAnalogSettings == 0;
+
+        numeric varid = SA_SETUP.NnFlexPhyOvrdMask,
+          prompt      = STRING_TOKEN(STR_NNFLEX_PHY_OVRD_MASK_PROMPT),
+          help        = STRING_TOKEN(STR_NNFLEX_PHY_OVRD_MASK_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 0xFF,
+          step        = 1,
+          default     = 0,
+        endnumeric;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x1) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyRxEqTap0,
+            prompt      = STRING_TOKEN(STR_NNFLEX_PHY_RX_EQ_TAP0_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_PHY_RX_EQ_TAP0_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x3F,
+            step        = 1,
+            default     = 0,
+          endnumeric;
+        endif;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x2) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyRxEqTap1,
+            prompt      = STRING_TOKEN(STR_NNFLEX_PHY_RX_EQ_TAP1_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_PHY_RX_EQ_TAP1_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x3F,
+            step        = 1,
+            default     = 0,
+          endnumeric;
+        endif;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x4) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyDqTcoComp,
+          prompt      = STRING_TOKEN(STR_NNFLEX_PHY_DQ_TCO_COMP_PROMPT),
+          help        = STRING_TOKEN(STR_NNFLEX_PHY_DQ_TCO_COMP_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 0x3F,
+          step        = 1,
+          default     = 0,
+          endnumeric;
+        endif;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x8) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyRxCtleR,
+            prompt      = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_R_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_R_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x3,
+            step        = 1,
+            default     = 0,
+          endnumeric;
+        endif;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x10) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyRxCtleC,
+            prompt      = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_C_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_C_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x3,
+            step        = 1,
+            default     = 0,
+          endnumeric;
+        endif;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x20) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyRxCtleRcmn,
+            prompt      = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_RCMN_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_RCMN_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x3,
+            step        = 1,
+            default     = 0,
+          endnumeric;
+        endif;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x40) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyRxCtleEq,
+            prompt      = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_EQ_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_EQ_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x7,
+            step        = 1,
+            default     = 0,
+          endnumeric;
+        endif;
+
+        suppressif cond ((get(SA_SETUP.NnFlexPhyOvrdMask) & 0x80) == 0 ? 0 : 1);
+          numeric varid = SA_SETUP.NnFlexPhyRxCtleTailCtl,
+            prompt      = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_TAIL_CTL_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_PHY_RX_CTLE_TAIL_CTL_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x3,
+            step        = 1,
+            default     = 0,
+          endnumeric;
+        endif;
+
+        numeric varid = SA_SETUP.NnFlexDramOvrdMask,
+          prompt      = STRING_TOKEN(STR_NNFLEX_DRAM_OVRD_MASK_PROMPT),
+          help        = STRING_TOKEN(STR_NNFLEX_DRAM_OVRD_MASK_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 0xFF,
+          step        = 1,
+          default     = 0,
+        endnumeric;
+
+        suppressif ideqvallist SETUP_VOLATILE_DATA.MemoryType == 1; // Hide LP5 options for non-LP5 memory types
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x1) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5Dfeq,
+              prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_DFEQ_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_DFEQ_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x7,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x2) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5PdDrvStr,
+              prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_PD_DRV_STR_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_PD_DRV_STR_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x6,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x4) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5SocOdt,
+              prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_SOC_ODT_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_SOC_ODT_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x6,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x8) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5PreEmpDn,
+            prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_PRE_EMP_DN_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_PRE_EMP_DN_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x3,
+            step        = 1,
+            default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x10) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5PreEmpUp,
+              prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_PRE_EMP_UP_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_PRE_EMP_UP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x3,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x20) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5WckDcaWr,
+              prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_WCK_DCA_WR_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_WCK_DCA_WR_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0xF,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x40) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5WckDcaRd,
+              prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_WCK_DCA_RD_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_WCK_DCA_RD_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0xF,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x80) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexLpddr5RttNT,
+              prompt      = STRING_TOKEN(STR_NNFLEX_LPDDR5_RTT_NT_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_LPDDR5_RTT_NT_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x7,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+        endif; // Suppress LP5 options
+
+        suppressif ideqvallist SETUP_VOLATILE_DATA.MemoryType == 0; // Hide DDR5 options for non-DDR5 memory types
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x1) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexDdr5DfeTap1,
+              prompt      = STRING_TOKEN(STR_NNFLEX_DDR5_DFE_TAP1_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_DDR5_DFE_TAP1_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0xFF,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x2) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexDdr5DfeTap2,
+              prompt      = STRING_TOKEN(STR_NNFLEX_DDR5_DFE_TAP2_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_DDR5_DFE_TAP2_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0xFF,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x4) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexDdr5RttWr,
+            prompt      = STRING_TOKEN(STR_NNFLEX_DDR5_RTT_WR_PROMPT),
+            help        = STRING_TOKEN(STR_NNFLEX_DDR5_RTT_WR_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 0x7,
+            step        = 1,
+            default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x8) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexDdr5RttNomWr,
+              prompt      = STRING_TOKEN(STR_NNFLEX_DDR5_RTT_NOM_WR_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_DDR5_RTT_NOM_WR_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x7,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x10) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexDdr5RttNomRd,
+              prompt      = STRING_TOKEN(STR_NNFLEX_DDR5_RTT_NOM_RD_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_DDR5_RTT_NOM_RD_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x7,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x20) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexDdr5RonUp,
+              prompt      = STRING_TOKEN(STR_NNFLEX_DDR5_RON_UP_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_DDR5_RON_UP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x2,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+
+          suppressif cond ((get(SA_SETUP.NnFlexDramOvrdMask) & 0x40) == 0 ? 0 : 1);
+            numeric varid = SA_SETUP.NnFlexDdr5RonDn,
+              prompt      = STRING_TOKEN(STR_NNFLEX_DDR5_RON_DN_PROMPT),
+              help        = STRING_TOKEN(STR_NNFLEX_DDR5_RON_DN_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 0x2,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif;
+        endif; // Suppress DDR5 options
+      endif;
+
       oneof varid   = SA_SETUP.ForceWRDSEQT2400,
         prompt      = STRING_TOKEN (STR_FORCE_WRDSEQT_2400_PROMPT),
         help        = STRING_TOKEN (STR_FORCE_WRDSEQT_2400_HELP),

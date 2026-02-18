@@ -837,6 +837,12 @@ InitMrwLpddr5 (
   UINT8         DfeQl;
   UINT8         DcaValue;
   BOOLEAN       IsNnFlexEnabled;
+  BOOLEAN       PdDrvStrEnable;
+  BOOLEAN       SocOdtEnable;
+  BOOLEAN       PreEmpDnEnable;
+  BOOLEAN       PreEmpUpEnable;
+  BOOLEAN       WckDcaWrEnable;
+  BOOLEAN       WckDcaRdEnable;
   const NnFlexLpddr5Params* NnFlexDramDefault;
   MRC_EXT_INPUTS_TYPE  *ExtInputs;
   TOdtValueLpddr LpddrOdtTableIndex;
@@ -873,26 +879,29 @@ InitMrwLpddr5 (
   IsNnFlexEnabled   = ExtInputs->FlexibleAnalogSettings;
   NnFlexDramDefault = &NnFlexInitialSettingsLpddr5[DramTypeDefault];
 
+  if (IsNnFlexEnabled) {
+    PdDrvStrEnable = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5PdDrvStr);
+    SocOdtEnable   = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5SocOdt);
+    PreEmpDnEnable = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5PreEmpDn);
+    PreEmpUpEnable = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5PreEmpUp);
+    WckDcaWrEnable = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5WckDcaWr);
+    WckDcaRdEnable = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5WckDcaRd);
+  } else {
+    PdDrvStrEnable = FALSE;
+    SocOdtEnable   = FALSE;
+    PreEmpDnEnable = FALSE;
+    PreEmpUpEnable = FALSE;
+    WckDcaWrEnable = FALSE;
+    WckDcaRdEnable = FALSE;
+  }
+
   SocOdt   = IsNnFlexEnabled ? NnFlexDramDefault->SocOdt : 40;
-  PreEmpUp = NnFlexDramDefault->PreEmpUp;
-  PreEmpDn = NnFlexDramDefault->PreEmpDn;
+  PreEmpUp = PreEmpUpEnable ? (INT8) ExtInputs->NnFlexLpddr5PreEmpUp : NnFlexDramDefault->PreEmpUp;
+  PreEmpDn = PreEmpDnEnable ? (INT8) ExtInputs->NnFlexLpddr5PreEmpDn : NnFlexDramDefault->PreEmpDn;
 
   CaDrvStrength = Outputs->RcompTarget[WrDSCmd];
-  PdDrvStr = IsNnFlexEnabled ? NnFlexInitialSettingsLpddr5[DramTypeDefault].PdDrvStr : 60;
+  PdDrvStr = IsNnFlexEnabled ? NnFlexDramDefault->PdDrvStr : 60;
   CsOdtEnc = 0;
-
-  if (ExtInputs->DqLoopbackTest) {
-#ifndef HVM_FLAG
-    Inputs->NonTargetOdtEn = 1;
-#endif
-    if ((2 & Outputs->ValidRankMask) == 0) {
-      NtOdtEnc = 6; // 1R: RZQ/6 = 40 Ohm
-    } else {
-      NtOdtEnc = 3; // 2R: RZQ/3 = 80 Ohm
-    }
-  } else {
-    NtOdtEnc = 0;
-  }
 
   // Extract ODT table for first populated channel
   FirstMc = (MrcControllerExist (MrcData, cCONTROLLER0) ? cCONTROLLER0 : cCONTROLLER1);
@@ -915,6 +924,19 @@ InitMrwLpddr5 (
   if (DqOdtEnc == -1) {
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s ODT Value %u\n", gErrString, gDataString, DqOdtEnc);
     Status  = mrcWrongInputParameter;
+  }
+
+  if (ExtInputs->DqLoopbackTest) {
+#ifndef HVM_FLAG
+    Inputs->NonTargetOdtEn = 1;
+#endif
+    if ((2 & Outputs->ValidRankMask) == 0) {
+      NtOdtEnc = 6; // 1R: RZQ/6 = 40 Ohm
+    } else {
+      NtOdtEnc = 3; // 2R: RZQ/3 = 80 Ohm
+    }
+  } else {
+    NtOdtEnc = LpddrOdtEncode (LpddrOdtTableIndex.RttNT);
   }
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -988,7 +1010,11 @@ InitMrwLpddr5 (
         MrPtr[mrIndexMR24] = Mr24.Data8;
 
         DcaValue = (Outputs->Frequency > f4800) ? 9 : 0;
-        DcaValue   = IsNnFlexEnabled ? Lpddr5DcaEncode ((INT16) NnFlexDramDefault->WckDcaWr) : DcaValue;
+        if (WckDcaWrEnable) {
+          DcaValue = Lpddr5DcaEncode ((INT8) MrcSE ((UINT16) ExtInputs->NnFlexLpddr5WckDcaWr, 4, 8));  // Sign extend from 4 bits 2's complement
+        } else {
+          DcaValue = IsNnFlexEnabled ? Lpddr5DcaEncode ((INT16) NnFlexDramDefault->WckDcaWr) : DcaValue;
+        }
         //MR30 - WCK_DCA_WR
         Mr30.Data8 = 0;
         Mr30.Bits.DcaUpperByte = DcaValue;
@@ -1006,7 +1032,11 @@ InitMrwLpddr5 (
         //MR69 - DCA READ
         Mr69.Data8 = 0;
         DcaValue = 2;
-        DcaValue = IsNnFlexEnabled ? Lpddr5DcaEncode ((INT16) NnFlexDramDefault->WckDcaRd) : DcaValue;
+        if (WckDcaRdEnable) {
+          DcaValue = Lpddr5DcaEncode ((INT8) MrcSE ((UINT16) ExtInputs->NnFlexLpddr5WckDcaRd, 4, 8));  // Sign extend from 4 bits 2's complement
+        } else {
+          DcaValue = IsNnFlexEnabled ? Lpddr5DcaEncode ((INT16) NnFlexDramDefault->WckDcaRd) : DcaValue;
+        }
         //MR69 - WCK_DCA_RD
         Mr69.Bits.ReadDcaUpperByte = DcaValue;
         Mr69.Bits.ReadDcaLowByte = DcaValue;
@@ -1014,7 +1044,7 @@ InitMrwLpddr5 (
 
         //MR17 -Rank 0 CK/CA/CS ODT
         Mr17.Data8 = 0;
-        SocOdtEnc = LpddrOdtEncode (SocOdt);
+        SocOdtEnc = SocOdtEnable ? (INT8) ExtInputs->NnFlexLpddr5SocOdt : (INT8) LpddrOdtEncode (SocOdt);
         if (SocOdtEnc == -1) {
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s ODT Value 0x%x\n", gErrString, gSocString, SocOdt);
           Status = mrcWrongInputParameter;
@@ -1095,7 +1125,7 @@ InitMrwLpddr5 (
 
         //MR3 - DBI-RD/WR = 0 (Disabled)
         Mr3.Data8 = 0;
-        PdDsEnc = LpddrOdtEncode (PdDrvStr);
+        PdDsEnc = PdDrvStrEnable ? (INT8) ExtInputs->NnFlexLpddr5PdDrvStr : (INT8) LpddrOdtEncode (PdDrvStr);
         if (PdDsEnc == -1) {
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid %s Value: %u\n", gErrString, gDrvStr, PdDrvStr);
           Status = mrcWrongInputParameter;

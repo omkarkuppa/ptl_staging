@@ -95,13 +95,15 @@ SelectTableLpddr5 (
 {
   const MrcInput        *Inputs;
   const MrcBoardInputs  *BoardDetails;
+  const MRC_EXT_INPUTS_TYPE *ExtInputs;
   MrcDebug              *Debug;
   MrcOutput             *Outputs;
   BOOLEAN               IsTypicalBoard;
   TOdtValueLpddr        *OdtTable;
 
   Inputs          = &MrcData->Inputs;
-  BoardDetails    = &Inputs->ExtInputs.Ptr->BoardDetails;
+  ExtInputs       = Inputs->ExtInputs.Ptr;
+  BoardDetails    = &ExtInputs->BoardDetails;
   IsTypicalBoard  = BoardDetails->BoardStackUp == 0;
   Outputs         = &MrcData->Outputs;
   Debug           = &Outputs->Debug;
@@ -117,11 +119,11 @@ SelectTableLpddr5 (
     OdtTable = (TOdtValueLpddr*) &Lpddr5OdtTableType3[Dimm][OdtIndex];
   }
 
-  if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) {
+  if (ExtInputs->FlexibleAnalogSettings) {
     // Nn Flex RttWr/ RttCa/ RttNT settings for Lpddr5 - All Cards can have same default values
-    OdtTable->RttWr = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttWr;
-    OdtTable->RttCa = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttCa;
-    OdtTable->RttNT = NnFlexInitialSettingsLpddr5[DramTypeDefault].RttNT;
+    OdtTable->RttWr = (ExtInputs->LpddrRttWr != 0) ? ExtInputs->LpddrRttWr : NnFlexInitialSettingsLpddr5[DramTypeDefault].RttWr;
+    OdtTable->RttCa = (ExtInputs->LpddrRttCa != 0) ? ExtInputs->LpddrRttCa : NnFlexInitialSettingsLpddr5[DramTypeDefault].RttCa;
+    OdtTable->RttNT = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5RttNT) ? (UINT16) LpddrOdtDecode ((UINT16) ExtInputs->NnFlexLpddr5RttNT) : NnFlexInitialSettingsLpddr5[DramTypeDefault].RttNT;
   }
 
   return OdtTable;
@@ -144,13 +146,18 @@ MrcLp5GetDFE (
   )
 {
   const MrcInput* Inputs;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
+  UINT8 DfeqVal;
+
   Inputs = &MrcData->Inputs;
+  ExtInputs = Inputs->ExtInputs.Ptr;
 
   // DFE setting range is from -0.052V to -0.01V in step size of 7mV. Tap=1: -0.052V, Tap=7: -0.01V
   if ((Dfeql != NULL) && (Dfequ != NULL)) {
-    if (Inputs->ExtInputs.Ptr->FlexibleAnalogSettings) { // Nn Flex initial settings for Lpddr5
-      *Dfeql = NnFlexInitialSettingsLpddr5[DramTypeDefault].Dfeq; // NN "Per Device" logic
-      *Dfequ = NnFlexInitialSettingsLpddr5[DramTypeDefault].Dfeq; // NN "Per Device" logic
+    if (ExtInputs->FlexibleAnalogSettings) { // Nn Flex initial settings for Lpddr5
+      DfeqVal = IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5Dfeq) ?  (UINT8) ExtInputs->NnFlexLpddr5Dfeq : NnFlexInitialSettingsLpddr5[DramTypeDefault].Dfeq; // NN "Per Device" logic
+      *Dfeql = DfeqVal;
+      *Dfequ = DfeqVal;
     } else {
       *Dfeql = 4;
       *Dfequ = 4;

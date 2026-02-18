@@ -1327,6 +1327,31 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Use1p5ReadPostamble, MemConfig->ExternalInputs.Use1p5ReadPostamble, SaSetup.Use1p5ReadPostamble );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Lp5SafeSpeed,        MemConfig->ExternalInputs.Lp5SafeSpeed,        SaSetup.Lp5SafeSpeed        );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ForceInternalClkOn,  MemConfig->ExternalInputs.ForceInternalClkOn,  SaSetup.ForceInternalClkOn  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyRxEqTap0,        MemConfig->ExternalInputs.NnFlexPhyRxEqTap0,        SaSetup.NnFlexPhyRxEqTap0     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyRxEqTap1,        MemConfig->ExternalInputs.NnFlexPhyRxEqTap1,        SaSetup.NnFlexPhyRxEqTap1     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyDqTcoComp,       MemConfig->ExternalInputs.NnFlexPhyDqTcoComp,       SaSetup.NnFlexPhyDqTcoComp    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyRxCtleR,         MemConfig->ExternalInputs.NnFlexPhyRxCtleR,         SaSetup.NnFlexPhyRxCtleR      );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyRxCtleC,         MemConfig->ExternalInputs.NnFlexPhyRxCtleC,         SaSetup.NnFlexPhyRxCtleC      );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyRxCtleRcmn,      MemConfig->ExternalInputs.NnFlexPhyRxCtleRcmn,      SaSetup.NnFlexPhyRxCtleRcmn   );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyRxCtleEq,        MemConfig->ExternalInputs.NnFlexPhyRxCtleEq,        SaSetup.NnFlexPhyRxCtleEq     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyRxCtleTailCtl,   MemConfig->ExternalInputs.NnFlexPhyRxCtleTailCtl,   SaSetup.NnFlexPhyRxCtleTailCtl);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5Dfeq,         MemConfig->ExternalInputs.NnFlexLpddr5Dfeq,         SaSetup.NnFlexLpddr5Dfeq      );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5PdDrvStr,     MemConfig->ExternalInputs.NnFlexLpddr5PdDrvStr,     SaSetup.NnFlexLpddr5PdDrvStr  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5SocOdt,       MemConfig->ExternalInputs.NnFlexLpddr5SocOdt,       SaSetup.NnFlexLpddr5SocOdt    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5PreEmpDn,     MemConfig->ExternalInputs.NnFlexLpddr5PreEmpDn,     SaSetup.NnFlexLpddr5PreEmpDn  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5PreEmpUp,     MemConfig->ExternalInputs.NnFlexLpddr5PreEmpUp,     SaSetup.NnFlexLpddr5PreEmpUp  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5WckDcaWr,     MemConfig->ExternalInputs.NnFlexLpddr5WckDcaWr,     SaSetup.NnFlexLpddr5WckDcaWr  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5WckDcaRd,     MemConfig->ExternalInputs.NnFlexLpddr5WckDcaRd,     SaSetup.NnFlexLpddr5WckDcaRd  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexLpddr5RttNT,        MemConfig->ExternalInputs.NnFlexLpddr5RttNT,        SaSetup.NnFlexLpddr5RttNT     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDramOvrdMask,       MemConfig->ExternalInputs.NnFlexDramOvrdMask,       SaSetup.NnFlexDramOvrdMask    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5DfeTap1,        MemConfig->ExternalInputs.NnFlexDdr5DfeTap1,        SaSetup.NnFlexDdr5DfeTap1     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5DfeTap2,        MemConfig->ExternalInputs.NnFlexDdr5DfeTap2,        SaSetup.NnFlexDdr5DfeTap2     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5RttWr,          MemConfig->ExternalInputs.NnFlexDdr5RttWr,          SaSetup.NnFlexDdr5RttWr       );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5RttNomWr,       MemConfig->ExternalInputs.NnFlexDdr5RttNomWr,       SaSetup.NnFlexDdr5RttNomWr    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5RttNomRd,       MemConfig->ExternalInputs.NnFlexDdr5RttNomRd,       SaSetup.NnFlexDdr5RttNomRd    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5RonUp,          MemConfig->ExternalInputs.NnFlexDdr5RonUp,          SaSetup.NnFlexDdr5RonUp       );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5RonDn,          MemConfig->ExternalInputs.NnFlexDdr5RonDn,          SaSetup.NnFlexDdr5RonDn       );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyOvrdMask,        MemConfig->ExternalInputs.NnFlexPhyOvrdMask,        SaSetup.NnFlexPhyOvrdMask     );
 
 
     DEBUG_CODE (

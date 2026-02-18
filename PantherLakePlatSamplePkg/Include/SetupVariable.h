@@ -1293,9 +1293,10 @@ typedef struct {
   <b>Revision 24</b>: - Add DIMMRXOFFSET
   <b>Revision 25</b>: - Add FlexibleAnalogSettings
   <b>Revision 26</b>: - Add ForceWRDSEQT2400
+  <b>Revision 27</b>: - Add NnFlex override knobs
 **/
 
-#define SA_SETUP_REVISION   26
+#define SA_SETUP_REVISION   27
 
 typedef struct {
   UINT8   Revision;
@@ -1818,7 +1819,32 @@ typedef struct {
   UINT8   DIMMRXOFFSET;
   UINT8   FlexibleAnalogSettings;
   UINT8   ForceWRDSEQT2400;
-  UINT8   Rsvd[3];
+  UINT8   NnFlexPhyRxEqTap0;
+  UINT8   NnFlexPhyRxEqTap1;
+  UINT8   NnFlexPhyDqTcoComp;
+  UINT8   NnFlexPhyRxCtleR;
+  UINT8   NnFlexPhyRxCtleC;
+  UINT8   NnFlexPhyRxCtleRcmn;
+  UINT8   NnFlexPhyRxCtleEq;
+  UINT8   NnFlexPhyRxCtleTailCtl;
+  UINT8   NnFlexLpddr5Dfeq;
+  UINT8   NnFlexLpddr5PdDrvStr;
+  UINT8   NnFlexLpddr5SocOdt;
+  UINT8   NnFlexLpddr5PreEmpDn;
+  UINT8   NnFlexLpddr5PreEmpUp;
+  UINT8   NnFlexLpddr5WckDcaWr;
+  UINT8   NnFlexLpddr5WckDcaRd;
+  UINT8   NnFlexLpddr5RttNT;
+  UINT8   NnFlexDramOvrdMask;
+  UINT8   NnFlexDdr5DfeTap1;
+  UINT8   NnFlexDdr5DfeTap2;
+  UINT8   NnFlexDdr5RttWr;
+  UINT8   NnFlexDdr5RttNomWr;
+  UINT8   NnFlexDdr5RttNomRd;
+  UINT8   NnFlexDdr5RonUp;
+  UINT8   NnFlexDdr5RonDn;
+  UINT8   NnFlexPhyOvrdMask;
+  UINT8   Rsvd[32];
 } SA_SETUP;
 
 /**

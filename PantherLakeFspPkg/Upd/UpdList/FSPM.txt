@@ -63,6 +63,12 @@ MemorySpdPtr121
 MemorySpdPtr130
 MemorySpdPtr131
 MemorySpdDataLen
+NnFlexPhyRxCtleRcmn
+NnFlexPhyRxCtleEq
+NnFlexPhyRxCtleTailCtl
+NnFlexLpddr5Dfeq
+NnFlexLpddr5PdDrvStr
+NnFlexLpddr5SocOdt
 SpdAddressTable
 PcieClkSrcUsage
 DqPinsInterleaved
@@ -194,6 +200,11 @@ PchPcieHsioTxGen1DeEmph
 PchSmbusIoBase
 PchPcieHsioTxGen2DeEmph6p0
 MemTestOnWarmBoot
+NnFlexPhyRxEqTap0
+NnFlexPhyRxEqTap1
+NnFlexPhyDqTcoComp
+NnFlexPhyRxCtleR
+NnFlexPhyRxCtleC
 PanelPowerEnable
 BiosAcmBase
 CmdMirror
@@ -341,6 +352,7 @@ ChHashMask
 DdrFreqLimit
 ThrtCkeMinTmr
 ThrtCkeMinTmrLpddr
+NnFlexLpddr5WckDcaWr
 SaGvWpMask
 NModeSupport
 ExtendedBankHashing
@@ -359,6 +371,7 @@ LpddrRttCa
 SaGvFreq
 SaGvGear
 IbeccProtectedRegionEnable
+NnFlexLpddr5PreEmpDn
 IbeccProtectedRegionBase
 IbeccProtectedRegionMask
 AllowOppRefBelowWriteThrehold
@@ -369,6 +382,7 @@ Lfsr0Mask
 Lfsr1Mask
 RefreshWm
 SafeModeOverride
+NnFlexLpddr5PreEmpUp
 DdrSafeMode
 McSafeMode
 LpMode
@@ -746,3 +760,14 @@ CmosTxtOffset
 WCKPADDCCCAL
 FlexibleAnalogSettings
 ForceWRDSEQT2400
+NnFlexLpddr5WckDcaRd
+NnFlexLpddr5RttNT
+NnFlexDdr5DfeTap1
+NnFlexDdr5DfeTap2
+NnFlexDdr5RttWr
+NnFlexDdr5RttNomWr
+NnFlexDdr5RttNomRd
+NnFlexDdr5RonUp
+NnFlexDdr5RonDn
+NnFlexPhyOvrdMask
+NnFlexDramOvrdMask

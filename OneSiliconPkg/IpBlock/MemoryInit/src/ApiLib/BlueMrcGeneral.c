@@ -1911,6 +1911,120 @@ MrcPrintInputParameters (
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tNnFlexPhyOvrdMask: 0x%x\n"
+    "\t RxEqTap0En: %u\n"
+    "\t RxEqTap1En: %u\n"
+    "\t DqTcoCompEn: %u\n"
+    "\t RxCtleREn: %u\n"
+    "\t RxCtleCEn: %u\n"
+    "\t RxCtleRcmnEn: %u\n"
+    "\t RxCtleEqEn: %u\n"
+    "\t RxCtleTailCtlEn: %u\n",
+    ExtInputs->NnFlexPhyOvrdMask,
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskRxEqTap0),
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskRxEqTap1),
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskDqTcoComp),
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskRxCtleR),
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskRxCtleC),
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskRxCtleRcmn),
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskRxCtleEq),
+    IS_NNFLEX_PHY_VAR_EN (NnFlexPhyMaskRxCtleTailCtl)
+    );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tNnFlexPhyRxEqTap0: %d\n"
+    "\tNnFlexPhyRxEqTap1: %d\n"
+    "\tNnFlexPhyDqTcoComp: %d\n"
+    "\tNnFlexPhyRxCtleR: %u\n"
+    "\tNnFlexPhyRxCtleC: %u\n"
+    "\tNnFlexPhyRxCtleRcmn: %u\n"
+    "\tNnFlexPhyRxCtleEq: %u\n"
+    "\tNnFlexPhyRxCtleTailCtl: %u\n",
+    (INT8) MrcSE ((UINT16) ExtInputs->NnFlexPhyRxEqTap0, 6, 8),  // Sign extend from 6-bit 2's complement
+    (INT8) MrcSE ((UINT16) ExtInputs->NnFlexPhyRxEqTap1, 6, 8),  // Sign extend from 6-bit 2's complement
+    (INT8) MrcSE ((UINT16) ExtInputs->NnFlexPhyDqTcoComp, 6, 8), // Sign extend from 6-bit 2's complement
+    ExtInputs->NnFlexPhyRxCtleR,
+    ExtInputs->NnFlexPhyRxCtleC,
+    ExtInputs->NnFlexPhyRxCtleRcmn,
+    ExtInputs->NnFlexPhyRxCtleEq,
+    ExtInputs->NnFlexPhyRxCtleTailCtl
+    );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tNnFlexDramOvrdMask: 0x%x\n"
+    "\t Lp5DfeqEn: %u\n"
+    "\t Lp5PdDrvStrEn: %u\n"
+    "\t Lp5SocOdtEn: %u\n"
+    "\t Lp5PreEmpDnEn: %u\n"
+    "\t Lp5PreEmpUpEn: %u\n"
+    "\t Lp5WckDcaWrEn: %u\n"
+    "\t Lp5WckDcaRdEn: %u\n"
+    "\t Lp5RttNTEn: %u\n",
+    ExtInputs->NnFlexDramOvrdMask,
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5Dfeq),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5PdDrvStr),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5SocOdt),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5PreEmpDn),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5PreEmpUp),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5WckDcaWr),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5WckDcaRd),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskLpddr5RttNT)
+    );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tNnFlexLpddr5Dfeq: %u\n"
+    "\tNnFlexLpddr5PdDrvStr: %u\n"
+    "\tNnFlexLpddr5SocOdt: %u\n"
+    "\tNnFlexLpddr5PreEmpDn: %u\n"
+    "\tNnFlexLpddr5PreEmpUp: %u\n"
+    "\tNnFlexLpddr5WckDcaWr: %d\n"
+    "\tNnFlexLpddr5WckDcaRd: %d\n"
+    "\tNnFlexLpddr5RttNT: %u\n",
+    ExtInputs->NnFlexLpddr5Dfeq,
+    ExtInputs->NnFlexLpddr5PdDrvStr,
+    ExtInputs->NnFlexLpddr5SocOdt,
+    ExtInputs->NnFlexLpddr5PreEmpDn,
+    ExtInputs->NnFlexLpddr5PreEmpUp,
+    (INT8) MrcSE ((UINT16) ExtInputs->NnFlexLpddr5WckDcaWr, 4, 8), // Sign extend from 4-bit 2's complement
+    (INT8) MrcSE ((UINT16) ExtInputs->NnFlexLpddr5WckDcaRd, 4, 8), // Sign extend from 4-bit 2's complement
+    ExtInputs->NnFlexLpddr5RttNT
+    );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\t Ddr5DfeTap1En: %u\n"
+    "\t Ddr5DfeTap2En: %u\n"
+    "\t Ddr5RttWrEn: %u\n"
+    "\t Ddr5RttNomWrEn: %u\n"
+    "\t Ddr5RttNomRdEn: %u\n"
+    "\t Ddr5RonUpEn: %u\n"
+    "\t Ddr5RonDnEn: %u\n",
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5DfeTap1),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5DfeTap2),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RttWr),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RttNomWr),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RttNomRd),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RonUp),
+    IS_NNFLEX_DRAM_VAR_EN (NnFlexMaskDdr5RonDn)
+    );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tNnFlexDdr5DfeTap1: %d\n"
+    "\tNnFlexDdr5DfeTap2: %d\n"
+    "\tNnFlexDdr5RttWr: %u\n"
+    "\tNnFlexDdr5RttNomWr: %u\n"
+    "\tNnFlexDdr5RttNomRd: %u\n"
+    "\tNnFlexDdr5RonUp: %u\n"
+    "\tNnFlexDdr5RonDn: %u\n",
+    (INT8) ExtInputs->NnFlexDdr5DfeTap1,
+    (INT8) ExtInputs->NnFlexDdr5DfeTap2,
+    ExtInputs->NnFlexDdr5RttWr,
+    ExtInputs->NnFlexDdr5RttNomWr,
+    ExtInputs->NnFlexDdr5RttNomRd,
+    ExtInputs->NnFlexDdr5RonUp,
+    ExtInputs->NnFlexDdr5RonDn
+    );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\nDRAM setup Items:\n"
     "\tFreqMax: %u\n"
     "\tGearRatio: %u\n"

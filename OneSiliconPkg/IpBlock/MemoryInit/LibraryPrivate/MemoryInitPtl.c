@@ -1193,6 +1193,10 @@ DEBUG_CODE_END();
                                SiPreMemPolicy,
                                DidPreviousTrainingFail
                                );
+          // Fast boot being promoted to Cold - CPU or DRAM has changed, disable NN Flex overrides in this case
+          DEBUG ((DEBUG_INFO, "Disable NN Flex overrides\n"));
+          ExtInputs->NnFlexPhyOvrdMask  = 0;
+          ExtInputs->NnFlexDramOvrdMask = 0;
         } else {
           Inputs->BootMode = bmCold;
         }

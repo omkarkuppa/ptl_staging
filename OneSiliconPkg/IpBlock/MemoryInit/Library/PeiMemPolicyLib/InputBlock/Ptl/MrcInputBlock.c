@@ -390,7 +390,34 @@
 #define MRC_EXT_INPUTS_INIT_VAL_FlexibleAnalogSettings          (1)
 #define MRC_EXT_INPUTS_INIT_VAL_PhClkCheck                      (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ForceWRDSEQT2400                (0)
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved348                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxEqTap0               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxEqTap1               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyDqTcoComp              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleR                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleC                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleRcmn             (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleEq               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleTailCtl          (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyReserved               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5Dfeq                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5PdDrvStr            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5SocOdt              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5PreEmpDn            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5PreEmpUp            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5WckDcaWr            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5WckDcaRd            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5RttNT               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDramOvrdMask              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5DfeTap1               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5DfeTap2               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RttWr                 (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RttNomWr              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RttNomRd              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RonUp                 (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RonDn                 (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5Reserved              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyOvrdMask               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved361                     {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -782,7 +809,34 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_FlexibleAnalogSettings,
     MRC_EXT_INPUTS_INIT_VAL_PhClkCheck,
     MRC_EXT_INPUTS_INIT_VAL_ForceWRDSEQT2400,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved348,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxEqTap0,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxEqTap1,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyDqTcoComp,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleR,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleC,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleRcmn,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleEq,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyRxCtleTailCtl,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyReserved,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5Dfeq,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5PdDrvStr,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5SocOdt,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5PreEmpDn,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5PreEmpUp,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5WckDcaWr,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5WckDcaRd,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexLpddr5RttNT,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDramOvrdMask,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5DfeTap1,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5DfeTap2,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RttWr,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RttNomWr,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RttNomRd,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RonUp,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RonDn,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5Reserved,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyOvrdMask,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved361,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE

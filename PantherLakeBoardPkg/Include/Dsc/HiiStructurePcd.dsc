@@ -3876,6 +3876,32 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2LVoltage|0x0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.FlexibleAnalogSettings|0x1                                     # Offset 345 Enable/disable usage of flexible analog settings (NN flex feature): 0 = Disable, 1 = Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.ForceWRDSEQT2400|0x0                                           # Offset 347 Force Enable Write Drive Strength training at 2400: 0 = Disable, 1 = Enable
 
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyRxEqTap0|0x0                                          # Offset 348 Bits 0-5   PhyRxEqTap0
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyRxEqTap1|0x0                                          #            Bits 6-11  PhyRxEqTap1
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyDqTcoComp|0x0                                         #            Bits 12-17 PhyDqTcoComp
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyRxCtleR|0x0                                           #            Bits 18-19 PhyRxCtleR
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyRxCtleC|0x0                                           #            Bits 20-21 PhyRxCtleC
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyRxCtleRcmn|0x0                                        #            Bits 22-23 PhyRxCtleRcmn
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyRxCtleEq|0x0                                          #            Bits 24-26 PhyRxCtleEq
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyRxCtleTailCtl|0x0                                     #            Bits 27-28 PhyRxCtleTailCtl
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5Dfeq|0x0                                           # Offset 352 Bits 0-2   Lpddr5Dfeq
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5PdDrvStr|0x0                                       #            Bits 3-5   Lpddr5PdDrvStr
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5SocOdt|0x0                                         #            Bits 6-8   Lpddr5SocOdt
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5PreEmpDn|0x0                                       #            Bits 9-10  Lpddr5PreEmpDn
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5PreEmpUp|0x0                                       #            Bits 11-12 Lpddr5PreEmpUp
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5WckDcaWr|0x0                                       #            Bits 13-16 Lpddr5WckDcaWr
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5WckDcaRd|0x0                                       #            Bits 17-20 Lpddr5WckDcaRd
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexLpddr5RttNT|0x0                                          #            Bits 21-23 Lpddr5RttNT
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDramOvrdMask|0x0                                         #            Bits 24-31 NnFlex DRAM Override Mask: Bit0=LPDDR5 Dfeq/DDR5 DfeTap1, Bit1=LPDDR5 PdDrvStr/DDR5 DfeTap2, Bit2=LPDDR5 SocOdt/DDR5 RttWr, Bit3=LPDDR5 PreEmpDn/DDR5 RttNomWr, Bit4=LPDDR5 PreEmpUp/DDR5 RttNomRd, Bit5=LPDDR5 WckDcaWr/DDR5 RonUp, Bit6=LPDDR5 WckDcaRd/DDR5 RonDn, Bit7=LPDDR5 RttNT
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5DfeTap1|0x0                                          # Offset 356 Bits 0-7   Ddr5DfeTap1
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5DfeTap2|0x0                                          #            Bits 8-15  Ddr5DfeTap2
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RttWr|0x0                                            #            Bits 16-18 Ddr5RttWr
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RttNomWr|0x0                                         #            Bits 19-21 Ddr5RttNomWr
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RttNomRd|0x0                                         #            Bits 22-24 Ddr5RttNomRd
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RonUp|0x0                                            #            Bits 25-26 Ddr5RonUp
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RonDn|0x0                                            #            Bits 27-28 Ddr5RonDn
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyOvrdMask|0x0                                          # Offset 360 Bitmask to enable NnFlexPhyXXX overrides above (offset 348)
+
 ##############################
 # MRC - ExtInputs end
 ##############################

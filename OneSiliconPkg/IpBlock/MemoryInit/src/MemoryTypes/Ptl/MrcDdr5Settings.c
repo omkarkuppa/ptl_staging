@@ -97,7 +97,7 @@ const char* Ddr5OptParamNames[DDR5_NUM_OF_OPTS] = {
   "DDR5_DFE_TAP2",
   "DDR5_RTT_WR",
   "DDR5_RTT_NOM_WR",
-  "DDR5_RTT_PARK_RX",
+  "DDR5_RTT_NOM_RD",
   "DDR5_RON_UP",
   "DDR5_RON_DN",
 };

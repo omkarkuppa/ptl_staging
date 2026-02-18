@@ -141,9 +141,32 @@
   # !BSF NAME:{Memory Test on Warm Boot}
   # !BSF TYPE:{Combo} OPTION:{0:Disable, 1:Enable}
   # !BSF HELP:{Run Base Memory Test on Warm Boot}
-  gPlatformFspPkgTokenSpaceGuid.MemTestOnWarmBoot              | * | 0x01 | 0x01
-  # Added reserved space UnusedUpdSpace1[5]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd1                | * | 0x05 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MemTestOnWarmBoot           | * | 0x01 | 0x01
+
+  # !BSF NAME:{NnFlex Override for PHY RxEqTap0}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x3F)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[0], 6 bit 2's complement}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyRxEqTap0           | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for PHY RxEqTap1}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x3F)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[1], 6 bit 2's complement, valid range: [-16..15]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyRxEqTap1           | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for PHY DqTcoComp}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x3F)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[2], 6 bit 2's complement}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyDqTcoComp          | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for PHY RxCtleR}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x03)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[3]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyRxCtleR            | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for PHY RxCtleC}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x03)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[4]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyRxCtleC            | * | 0x01 | 0x00
 
   # !BSF NAME:{Platform Reserved Memory Size} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{The minimum platform memory size required to pass control into DXE}
@@ -153,8 +176,36 @@
   # !BSF OPTION:{0x100:256 Bytes, 0x200:512 Bytes, 0x400:1024 Bytes}
   # !BSF HELP:{Length of SPD Data}
   gPlatformFspPkgTokenSpaceGuid.MemorySpdDataLen            | * | 0x02 | 0x200
-  # Added reserved space UnusedUpdSpace2[6]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd2                | * | 0x06 | {0x00}
+
+  # !BSF NAME:{NnFlex Override for PHY RxCtleRcmn}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x03)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[5]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyRxCtleRcmn         | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for PHY RxCtleEq}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x07)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[6]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyRxCtleEq           | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for PHY RxCtleTailCtl}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x03)}
+  # !BSF HELP:{Controlled by NnFlexPhyOvrdMask bit[7]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyRxCtleTailCtl      | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for LP5 Dfeq}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x07)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[0], MR24 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5Dfeq            | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for LP5 PdDrvStr}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x06)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[1], MR3 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5PdDrvStr        | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for LP5 SocOdt}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x06)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[2], MR17 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5SocOdt          | * | 0x01 | 0x00
 
   # !BSF NAME:{Memory SPD Pointer Controller 0 Channel 0 Dimm 0}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Pointer to SPD data, will be used only when SpdAddressTable SPD Address are marked as 00}
@@ -1069,8 +1120,10 @@
   # !BSF HELP:{In-Band ECC Protected Region Enable }
   gPlatformFspPkgTokenSpaceGuid.IbeccProtectedRegionEnable  | * | 0x8 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 
-  # Added reserved space  UnusedUpdSpace45[1]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd45               | * | 0x1 | 0x00
+  # !BSF NAME:{NnFlex Override for LP5 PreEmpDn}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x03)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[3], MR58 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5PreEmpDn        | * | 0x01 | 0x00
 
   # !BSF NAME:{IbeccProtectedRegionBases} TYPE:{EditNum, HEX, (0x00,0xFFFF)}
   # !HDR STRUCT:{UINT16}
@@ -1300,8 +1353,10 @@
   # !BSF HELP:{SafeModeOverride[0] Enable DdrSafeMode override, SafeModeOverride[1] Enable McSafeMode override, SafeModeOverride[2] Enable MrcSafeMode override, SafeModeOverride[3] Enable Training Algorithm (TrainingEnables) safe mode override, SafeModeOverride[4] Enable SaGv safe mode override}
   gPlatformFspPkgTokenSpaceGuid.SafeModeOverride            | * | 0x01 | 0xFF
 
-  # Added reserved space UnusedUpdSpace7[1]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd7                | * | 0x01 | 0x00
+  # !BSF NAME:{NnFlex Override for LP5 PreEmpUp}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x03)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[4], MR58 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5PreEmpUp        | * | 0x01 | 0x00
 
   # !BSF NAME:{IbeccEccInjAddrBase} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Address to match against for ECC error injection. Example: 1 = 32MB, 2 = 64MB}
@@ -1390,8 +1445,11 @@
   # !BSF TYPE:{EditNum, HEX, (0x00, 0xFF)}
   # !BSF HELP:{Throttler CKE min timer for LPDDR: 0=Minimal, 0xFF=Maximum, <b>0x00=Default</b>}
   gPlatformFspPkgTokenSpaceGuid.ThrtCkeMinTmrLpddr          | * | 0x01 | 0x00
-  # Added reserved space UnusedUpdSpace8
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd8                | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for LP5 WckDcaWr}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x0F)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[5], 4-bit 2's complement, valid range: [-7..7]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5WckDcaWr        | * | 0x01 | 0x00
 
   # !BSF NAME:{Margin limit check L2}
   # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
@@ -1532,11 +1590,66 @@
   # !BSF HELP:{Force Enable Write Drive Strength training at 2400}
   gPlatformFspPkgTokenSpaceGuid.ForceWRDSEQT2400            | * | 0x01 | 0x00
 
+  # !BSF NAME:{NnFlex Override for LP5 WckDcaRd}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x0F)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[6], 4-bit 2's complement, valid range: [-7..7]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5WckDcaRd        | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for LP5 RttNT}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x07)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[7], MR41 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexLpddr5RttNT           | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for DDR5 DfeTap1}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[0], 8-bit 2's complement, valid range: [-40..40]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDdr5DfeTap1           | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for DDR5 DfeTap2}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[1], 8-bit 2's complement, valid range: [-15..15]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDdr5DfeTap2           | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for DDR5 RttWr}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x07)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[2], MR34 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDdr5RttWr             | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for DDR5 RttNomWr}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x07)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[3], MR35 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDdr5RttNomWr          | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for DDR5 RttNomRd}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x07)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[4], MR35 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDdr5RttNomRd          | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for DDR5 RonUp}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x02)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[5], MR5 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDdr5RonUp             | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Override for DDR5 RonDn}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0x02)}
+  # !BSF HELP:{Controlled by NnFlexDramOvrdMask bit[6], MR5 encoding}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDdr5RonDn             | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex Phy Override Enable bit mask}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Bitmask to enable PHY NnFlex overrides. [0]: PhyRxEqTap0 [1]: PhyRxEqTap1 [2]: PhyDqTcoComp [3]: PhyRxCtleR [4]: PhyRxCtleC [5]: PhyRxCtleRcmn [6]: PhyRxCtleEq [7]: PhyRxCtleTailCtl}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexPhyOvrdMask           | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlex LP5/DDR5 Override Enable bit mask}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Bitmask to enable LP5/DDR5 NnFlex overrides. [0]: Lp5Dfeq/Ddr5DfeTap1 [1]: Lp5PdDrvStr/Ddr5DfeTap2 [2]: Lp5SocOdt/Ddr5RttWr [3]: Lp5PreEmpDn/Ddr5RttNomWr [4]: Lp5PreEmpUp/Ddr5RttNomRd [5]: Lp5WckDcaWr/Ddr5RonUp [6]: Lp5WckDcaRd/Ddr5RonDn [7]: Lp5RttNT}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexDramOvrdMask          | * | 0x01 | 0x00
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 12  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 1   | 0x00
 
   #
   # MRC Block End

@@ -386,6 +386,31 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.Use1p5ReadPostamble    = FspmUpd->FspmConfig.Use1p5ReadPostamble;
   MemConfig->ExternalInputs.Lp5SafeSpeed           = FspmUpd->FspmConfig.Lp5SafeSpeed;
   MemConfig->ExternalInputs.ForceInternalClkOn     = FspmUpd->FspmConfig.ForceInternalClkOn;
+  MemConfig->ExternalInputs.NnFlexPhyRxEqTap0      = FspmUpd->FspmConfig.NnFlexPhyRxEqTap0;
+  MemConfig->ExternalInputs.NnFlexPhyRxEqTap1      = FspmUpd->FspmConfig.NnFlexPhyRxEqTap1;
+  MemConfig->ExternalInputs.NnFlexPhyDqTcoComp     = FspmUpd->FspmConfig.NnFlexPhyDqTcoComp;
+  MemConfig->ExternalInputs.NnFlexPhyRxCtleR       = FspmUpd->FspmConfig.NnFlexPhyRxCtleR;
+  MemConfig->ExternalInputs.NnFlexPhyRxCtleC       = FspmUpd->FspmConfig.NnFlexPhyRxCtleC;
+  MemConfig->ExternalInputs.NnFlexPhyRxCtleRcmn    = FspmUpd->FspmConfig.NnFlexPhyRxCtleRcmn;
+  MemConfig->ExternalInputs.NnFlexPhyRxCtleEq      = FspmUpd->FspmConfig.NnFlexPhyRxCtleEq;
+  MemConfig->ExternalInputs.NnFlexPhyRxCtleTailCtl = FspmUpd->FspmConfig.NnFlexPhyRxCtleTailCtl;
+  MemConfig->ExternalInputs.NnFlexLpddr5Dfeq       = FspmUpd->FspmConfig.NnFlexLpddr5Dfeq;
+  MemConfig->ExternalInputs.NnFlexLpddr5PdDrvStr   = FspmUpd->FspmConfig.NnFlexLpddr5PdDrvStr;
+  MemConfig->ExternalInputs.NnFlexLpddr5SocOdt     = FspmUpd->FspmConfig.NnFlexLpddr5SocOdt;
+  MemConfig->ExternalInputs.NnFlexLpddr5PreEmpDn   = FspmUpd->FspmConfig.NnFlexLpddr5PreEmpDn;
+  MemConfig->ExternalInputs.NnFlexLpddr5PreEmpUp   = FspmUpd->FspmConfig.NnFlexLpddr5PreEmpUp;
+  MemConfig->ExternalInputs.NnFlexLpddr5WckDcaWr   = FspmUpd->FspmConfig.NnFlexLpddr5WckDcaWr;
+  MemConfig->ExternalInputs.NnFlexLpddr5WckDcaRd   = FspmUpd->FspmConfig.NnFlexLpddr5WckDcaRd;
+  MemConfig->ExternalInputs.NnFlexLpddr5RttNT      = FspmUpd->FspmConfig.NnFlexLpddr5RttNT;
+  MemConfig->ExternalInputs.NnFlexDramOvrdMask     = FspmUpd->FspmConfig.NnFlexDramOvrdMask;
+  MemConfig->ExternalInputs.NnFlexDdr5DfeTap1      = FspmUpd->FspmConfig.NnFlexDdr5DfeTap1;
+  MemConfig->ExternalInputs.NnFlexDdr5DfeTap2      = FspmUpd->FspmConfig.NnFlexDdr5DfeTap2;
+  MemConfig->ExternalInputs.NnFlexDdr5RttWr        = FspmUpd->FspmConfig.NnFlexDdr5RttWr;
+  MemConfig->ExternalInputs.NnFlexDdr5RttNomWr     = FspmUpd->FspmConfig.NnFlexDdr5RttNomWr;
+  MemConfig->ExternalInputs.NnFlexDdr5RttNomRd     = FspmUpd->FspmConfig.NnFlexDdr5RttNomRd;
+  MemConfig->ExternalInputs.NnFlexDdr5RonUp        = FspmUpd->FspmConfig.NnFlexDdr5RonUp;
+  MemConfig->ExternalInputs.NnFlexDdr5RonDn        = FspmUpd->FspmConfig.NnFlexDdr5RonDn;
+  MemConfig->ExternalInputs.NnFlexPhyOvrdMask      = FspmUpd->FspmConfig.NnFlexPhyOvrdMask;
   //
   // Enabling Probeless Trace will need to enable IED together
   //

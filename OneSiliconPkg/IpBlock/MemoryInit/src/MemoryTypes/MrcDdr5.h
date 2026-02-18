@@ -935,6 +935,18 @@ Ddr5DriveStrengthDecode (
   );
 
 /**
+  This function converts from DDR5 MR Rtt ODT encoding to Ohms.
+
+  @param[in]  DecodeVal - Encoded Rtt ODT value.
+
+  @retval INT16 - ODT Value in Ohms if valid. Else, -1.
+**/
+INT16
+Ddr5RttOdtDecode (
+  IN  UINT16 DecodeVal
+  );
+
+/**
   This function returns the requested DelayType timing in nCK units.
 
   @param[in]  MrcData      - Pointer to global MRC data.

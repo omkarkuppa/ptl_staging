@@ -72,18 +72,6 @@ CccOdtEncode_DDR5 (
   );
 
 /**
-  This function converts from DDR5 MR Rtt ODT encoding to Ohms.
-
-  @param[in]  DecodeVal - Encoded Rtt ODT value.
-
-  @retval INT16 - ODT Value in Ohms if valid. Else, -1.
-**/
-INT16
-Ddr5RttOdtDecode (
-  IN  UINT16 DecodeVal
-  );
-
-/**
   This function converts from Ohms to DDR5 MR ODT encoding.
 
   @param[in]  OdtValue  - ODT Value in Ohms.
