@@ -506,6 +506,13 @@ CnvVfrSetupMenuFormExtractConfig (
   ConfigRequest    = NULL;
   Length           = 0;
 
+  *Progress = Request;
+  if ((Request != NULL) &&
+      !HiiIsConfigHdrMatch (Request, &gCnvFeatureSetupGuid, mCnvVfrSetupName))
+  {
+    return EFI_NOT_FOUND;
+  }
+
   //
   // Convert buffer data to <ConfigResp> by helper function BlockToConfig()
   //

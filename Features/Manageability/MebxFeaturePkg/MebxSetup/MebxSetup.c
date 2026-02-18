@@ -1025,6 +1025,13 @@ ExtractConfig (
     return EFI_NOT_FOUND;
   }
 
+  *Progress = Request;
+  if ((Request != NULL) &&
+      !HiiIsConfigHdrMatch (Request, &gMebxFormSetGuid, MEBX_CFG_VARIABLE_NAME))
+  {
+    return EFI_NOT_FOUND;
+  }
+
   DEBUG ((DEBUG_INFO, "MEBx Setup Extract Config:\n"));
   MebxGetInfo (&gMebxConfiguration);
   ShowConfig (&gMebxConfiguration);
