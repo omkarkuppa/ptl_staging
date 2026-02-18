@@ -125,45 +125,6 @@ GetPeiPlatformLidStatus (
   return EFI_SUCCESS;
 }
 
-EFI_STATUS
-EFIAPI
-GetMaxActiveDisplays (
-  OUT UINT8  *MaxActiveDisplays
-  )
-{
-  FSPS_UPD  *FspsUpd;
-
-  *MaxActiveDisplays = 0;
-
-  FspsUpd = GetFspSiliconInitUpdDataPointer ();
-  if (FspsUpd != NULL) {
-    if (FspsUpd->FspsConfig.MaxActiveDisplays > 2) {
-      DEBUG ((DEBUG_ERROR, "Invalid MaxActiveDisplays value in FSPS UPD. Supported values are 0-2\n"));
-      DEBUG ((DEBUG_ERROR, "Resetting to default value 0\n"));
-      return EFI_INVALID_PARAMETER;
-    }
-    *MaxActiveDisplays = FspsUpd->FspsConfig.MaxActiveDisplays;
-  } else {
-    DEBUG ((EFI_D_ERROR, "FspsUpd Data not found\n"));
-    return EFI_NOT_FOUND;
-  }
-  DEBUG ((DEBUG_INFO, "MaxActiveDisplays = %d\n", *MaxActiveDisplays));
-  return EFI_SUCCESS;
-}
-
-PEI_IGPU_PLATFORM_POLICY_PPI PeiIGpuPlatform = {
-  PEI_IGPU_PLATFORM_POLICY_REVISION,
-  GetPeiPlatformLidStatus,
-  GetVbtData,
-  GetMaxActiveDisplays
-};
-
-EFI_PEI_PPI_DESCRIPTOR  mPeiIGpuPpiDescriptor = {
-  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
-  &gPeiGraphicsPlatformPpiGuid,
-  &PeiIGpuPlatform
-};
-
 /**
   This routine is used to get Sec Platform Information Record Pointer.
 
@@ -434,6 +395,62 @@ FspApiModePolicyInitUpdateDone (
 }
 
 /**
+ Install PeiIGpuPlatformPpi.
+**/
+VOID
+InstallFspPeiGfxPlatformPpi (
+  VOID
+  )
+{
+  EFI_STATUS                    Status;
+  EFI_PEI_PPI_DESCRIPTOR        *PeiIGpuPlatformPpiDesc;
+  PEI_IGPU_PLATFORM_POLICY_PPI  *PeiIGpuPlatformPpi;
+  FSPS_UPD                      *FspsUpd;
+
+  PeiIGpuPlatformPpi = NULL;
+  DEBUG ((DEBUG_INFO, "Install PeiIGpuPlatformPpi\n"));
+
+  FspsUpd = GetFspSiliconInitUpdDataPointer ();
+
+  if (FspsUpd != NULL) {
+    if (FspsUpd->FspsConfig.MaxActiveDisplays > 2) {
+      DEBUG ((DEBUG_ERROR, "Invalid MaxActiveDisplays value in FSPS UPD. Supported values are 0-2\n"));
+      DEBUG ((DEBUG_ERROR, "Resetting to default value 0\n"));
+      FspsUpd->FspsConfig.MaxActiveDisplays = 0;
+    }
+  } else {
+    DEBUG ((EFI_D_ERROR, "FspsUpd Data not found\n"));
+    return;
+  }
+
+  PeiIGpuPlatformPpi = (PEI_IGPU_PLATFORM_POLICY_PPI *)AllocateZeroPool (sizeof (PEI_IGPU_PLATFORM_POLICY_PPI));
+  if (PeiIGpuPlatformPpi == NULL) {
+    ASSERT (FALSE);
+    return;
+  }
+
+  PeiIGpuPlatformPpi->Revision             = PEI_IGPU_PLATFORM_POLICY_REVISION;
+  PeiIGpuPlatformPpi->GetMaxActiveDisplays = FspsUpd->FspsConfig.MaxActiveDisplays;
+  PeiIGpuPlatformPpi->GetPlatformLidStatus = GetPeiPlatformLidStatus;
+  PeiIGpuPlatformPpi->GetVbtData           = GetVbtData;
+
+  PeiIGpuPlatformPpiDesc = (EFI_PEI_PPI_DESCRIPTOR *)AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
+  if (PeiIGpuPlatformPpiDesc == NULL) {
+    ASSERT (FALSE);
+    return;
+  }
+
+  PeiIGpuPlatformPpiDesc->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
+  PeiIGpuPlatformPpiDesc->Guid  = &gPeiGraphicsPlatformPpiGuid;
+  PeiIGpuPlatformPpiDesc->Ppi   = PeiIGpuPlatformPpi;
+
+  Status = PeiServicesInstallPpi (PeiIGpuPlatformPpiDesc);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "InstallPeiGfxPLatformPpi: PeiServicesInstallPpi failed\n"));
+  }
+}
+
+/**
   FSP Init PEI module entry point
 
   @param[in]  FileHandle           Not used.
@@ -518,8 +535,7 @@ FspInitEntryPoint (
     //
     // For FSP API mode, Install PEI_IGPU_PLATFORM_POLICY_PPI.
     //
-    Status = PeiServicesInstallPpi (&mPeiIGpuPpiDescriptor);
-    ASSERT_EFI_ERROR (Status);
+    InstallFspPeiGfxPlatformPpi ();
 
     //
     // Install an instance of SecPlatformInformation2 with BIST data

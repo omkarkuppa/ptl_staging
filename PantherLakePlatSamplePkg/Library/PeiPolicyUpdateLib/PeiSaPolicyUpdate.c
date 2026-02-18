@@ -90,8 +90,7 @@ PeiGraphicsPlatformPolicyNotifyCallback (
   DEBUG ((DEBUG_INFO, "LidStatus from GetPlatformLidStatus is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.LidStatus));
   DEBUG ((DEBUG_INFO, "PeiGraphicsPlatformPolicyNotifyCallback Exit\n"));
 
-  Status = IGpuPlatformPolicyPpi->GetMaxActiveDisplays (&MaxActiveDisplays);
-  ASSERT_EFI_ERROR (Status);
+  MaxActiveDisplays = IGpuPlatformPolicyPpi->GetMaxActiveDisplays;
   if (MaxActiveDisplays > 2) {
     //
     // Cap to maximum supported value to VBT default

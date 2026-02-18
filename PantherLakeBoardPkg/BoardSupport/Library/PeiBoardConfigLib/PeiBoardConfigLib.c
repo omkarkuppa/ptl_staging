@@ -56,6 +56,7 @@
 #include <Library/PeiGetFvInfoLib.h>
 #include <HsioBoardConfig.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <CnvBoardConfigPcd.h>
 #include <Ucsi.h>
 #include <Library/PeiLib.h>
@@ -79,35 +80,6 @@ static EFI_PEI_NOTIFY_DESCRIPTOR  mPlatformDebugStateChecksNotifyList  = {
   (EFI_PEIM_NOTIFY_ENTRY_POINT) PlatformDebugStateChecksCallback
 };
 #endif
-
-EFI_STATUS
-EFIAPI
-GetMaxActiveDisplays (
-  OUT UINT8  *MaxActiveDisplays
-  )
-{
-  //
-  // 0 - Default VBT
-  // 1 - 1 display
-  // 2 - 2 displays
-  // Maximum supported is 2 displays only
-  //
-  *MaxActiveDisplays = 0;
-  return EFI_SUCCESS;
-}
-
-PEI_IGPU_PLATFORM_POLICY_PPI PeiIGpuPlatform = {
-  PEI_IGPU_PLATFORM_POLICY_REVISION,
-  GetPeiPlatformLidStatus,
-  GetVbtData,
-  GetMaxActiveDisplays
-};
-
-EFI_PEI_PPI_DESCRIPTOR  mPeiIGpuPlatformPpi = {
-  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
-  &gPeiGraphicsPlatformPpiGuid,
-  &PeiIGpuPlatform
-};
 
 /**
  * @brief  This function returns VBT address and size in the PEI Phase.
@@ -150,16 +122,42 @@ GetVbtData (
 }
 
 /**
- Install mPeiIGpuPlatformPpi.
+ Install PeiIGpuPlatformPpi.
 **/
 VOID
 InstallPeiGfxPlatformPpi (
   VOID
   )
 {
-  EFI_STATUS              Status;
-  DEBUG ((DEBUG_INFO, "Install mPeiIGpuPlatformPpi\n"));
-  Status = PeiServicesInstallPpi (&mPeiIGpuPlatformPpi);
+  EFI_STATUS                    Status;
+  EFI_PEI_PPI_DESCRIPTOR        *PeiIGpuPlatformPpiDesc;
+  PEI_IGPU_PLATFORM_POLICY_PPI  *PeiIGpuPlatformPpi;
+
+  PeiIGpuPlatformPpi = NULL;
+  DEBUG ((DEBUG_INFO, "Install PeiIGpuPlatformPpi\n"));
+
+  PeiIGpuPlatformPpi = (PEI_IGPU_PLATFORM_POLICY_PPI *)AllocateZeroPool (sizeof (PEI_IGPU_PLATFORM_POLICY_PPI));
+  if (PeiIGpuPlatformPpi == NULL) {
+    ASSERT (FALSE);
+    return;
+  }
+
+  PeiIGpuPlatformPpi->Revision             = PEI_IGPU_PLATFORM_POLICY_REVISION;
+  PeiIGpuPlatformPpi->GetMaxActiveDisplays = 0;
+  PeiIGpuPlatformPpi->GetPlatformLidStatus = GetPeiPlatformLidStatus;
+  PeiIGpuPlatformPpi->GetVbtData           = GetVbtData;
+
+  PeiIGpuPlatformPpiDesc = (EFI_PEI_PPI_DESCRIPTOR *)AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
+  if (PeiIGpuPlatformPpiDesc == NULL) {
+    ASSERT (FALSE);
+    return;
+  }
+
+  PeiIGpuPlatformPpiDesc->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
+  PeiIGpuPlatformPpiDesc->Guid  = &gPeiGraphicsPlatformPpiGuid;
+  PeiIGpuPlatformPpiDesc->Ppi   = PeiIGpuPlatformPpi;
+
+  Status = PeiServicesInstallPpi (PeiIGpuPlatformPpiDesc);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "InstallPeiGfxPLatformPpi: PeiServicesInstallPpi failed\n"));
   }

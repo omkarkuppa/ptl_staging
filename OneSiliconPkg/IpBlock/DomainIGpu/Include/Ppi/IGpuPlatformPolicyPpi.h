@@ -114,32 +114,13 @@ EFI_STATUS
 
 
 /**
-  This function to get Max active displays support.
-
-  @param[out] MaxActiveDisplays  Output variable to store the max active displays supported.
-
-  0 - default VBT
-  1 - 1 display
-  2 - 2 displays
-  Maximum supported is 2 displays only
-
-  @retval EFI_SUCCESS           Correct max active displays is returned.
-  @retval Other error codes     Platform does not support this feature.
-**/
-typedef
-EFI_STATUS
-(EFIAPI *GET_MAX_ACTIVE_DISPLAYS)(
-  OUT UINT8  *MaxActiveDisplays
-  );
-
-/**
   This defines the PEI Graphics Platform Policy PPI structure.
 **/
 struct _PEI_IGPU_PLATFORM_POLICY_PPI {
   UINT32                     Revision;                  ///< Revision of current implementation.
   GET_PLATFORM_LID_STATUS    GetPlatformLidStatus;      ///< Function Pointer for get platform lid status.
   GET_VBT_DATA               GetVbtData;                ///< Function pointer for get vbt data.
-  GET_MAX_ACTIVE_DISPLAYS    GetMaxActiveDisplays;      ///< Function pointer for get max active displays support.
+  UINT32                     GetMaxActiveDisplays;      ///< Max Displays to be enabled by PEIM, Max Value : 2, 0 :default VBT..
 };
 
 /**

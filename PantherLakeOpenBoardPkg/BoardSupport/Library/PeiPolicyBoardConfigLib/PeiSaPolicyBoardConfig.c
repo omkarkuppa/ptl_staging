@@ -30,6 +30,7 @@
 #include <Library/BmpSupportLib.h>
 #include <Protocol/GraphicsOutput.h>
 #include <Ppi/IGpuPlatformPolicyPpi.h>
+#include <Library/MemoryAllocationLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -44,34 +45,6 @@ GetVbtData (
   OUT UINT32               *VbtSize
   );
 
-EFI_STATUS
-EFIAPI
-GetMaxActiveDisplays (
-  OUT UINT8  *MaxActiveDisplays
-  )
-{
-  //
-  // 0 - Default VBT
-  // 1 - 1 display
-  // 2 - 2 displays
-  // Maximum supported is 2 displays only
-  //
-  *MaxActiveDisplays = 0;
-  return EFI_SUCCESS;
-}
-
-PEI_IGPU_PLATFORM_POLICY_PPI PeiIGpuPlatform = {
-  PEI_IGPU_PLATFORM_POLICY_REVISION,
-  GetPeiPlatformLidStatus,
-  GetVbtData,
-  GetMaxActiveDisplays
-};
-
-EFI_PEI_PPI_DESCRIPTOR  mPeiIGpuPlatformPpi = {
-  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
-  &gPeiGraphicsPlatformPpiGuid,
-  &PeiIGpuPlatform
-};
 
 EFI_STATUS
 EFIAPI
@@ -124,6 +97,47 @@ GetPeiPlatformLidStatus (
 }
 
 
+/**
+ Install PeiIGpuPlatformPpi.
+**/
+VOID
+InstallPeiGfxPlatformPpi (
+  VOID
+  )
+{
+  EFI_STATUS                    Status;
+  EFI_PEI_PPI_DESCRIPTOR        *PeiIGpuPlatformPpiDesc;
+  PEI_IGPU_PLATFORM_POLICY_PPI  *PeiIGpuPlatformPpi;
+
+  PeiIGpuPlatformPpi = NULL;
+  DEBUG ((DEBUG_INFO, "Install PeiIGpuPlatformPpi\n"));
+
+  PeiIGpuPlatformPpi = (PEI_IGPU_PLATFORM_POLICY_PPI *)AllocateZeroPool (sizeof (PEI_IGPU_PLATFORM_POLICY_PPI));
+  if (PeiIGpuPlatformPpi == NULL) {
+    ASSERT (FALSE);
+    return;
+  }
+
+  PeiIGpuPlatformPpi->Revision             = PEI_IGPU_PLATFORM_POLICY_REVISION;
+  PeiIGpuPlatformPpi->GetMaxActiveDisplays = 0;
+  PeiIGpuPlatformPpi->GetPlatformLidStatus = GetPeiPlatformLidStatus;
+  PeiIGpuPlatformPpi->GetVbtData           = GetVbtData;
+
+  PeiIGpuPlatformPpiDesc = (EFI_PEI_PPI_DESCRIPTOR *)AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
+  if (PeiIGpuPlatformPpiDesc == NULL) {
+    ASSERT (FALSE);
+    return;
+  }
+
+  PeiIGpuPlatformPpiDesc->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
+  PeiIGpuPlatformPpiDesc->Guid  = &gPeiGraphicsPlatformPpiGuid;
+  PeiIGpuPlatformPpiDesc->Ppi   = PeiIGpuPlatformPpi;
+
+  Status = PeiServicesInstallPpi (PeiIGpuPlatformPpiDesc);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "InstallPeiGfxPLatformPpi: PeiServicesInstallPpi failed\n"));
+  }
+}
 
 /**
   Performs FSP SA PEI Policy initialization.
@@ -193,10 +207,10 @@ UpdateGraphics(
   }
 
   //
-  // Install mPeiIGpuPlatformPpi
+  // Install PeiIGpuPlatformPpi
   //
-  DEBUG ((DEBUG_INFO, "Install mPeiIGpuPlatformPpi\n"));
-  Status = PeiServicesInstallPpi (&mPeiIGpuPlatformPpi);
+  DEBUG ((DEBUG_INFO, "Install PeiIGpuPlatformPpi\n"));
+  InstallPeiGfxPlatformPpi ();
 
   return EFI_SUCCESS;
 }
