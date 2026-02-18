@@ -434,7 +434,8 @@ CheckTpmActiveLocality (
 
   TpmInterfaceId.Uint32    = MmioRead32 ((UINTN)&((PTP_CRB_REGISTERS *)TpmBaseAddress)->InterfaceId);
 
-  if (TpmInterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO) {
+  if (TpmInterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO ||
+      TpmInterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_TIS) {
     //
     // supported interface is FIFO
     //
@@ -493,7 +494,8 @@ CheckTpmEstablishment (
 
   TpmInterfaceId.Uint32 = MmioRead32 ((UINTN)&((PTP_CRB_REGISTERS *)TpmBaseAddress)->InterfaceId);
 
-  if (TpmInterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO) {
+  if (TpmInterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO ||
+      TpmInterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_TIS) {
     //
     // supported interface is FIFO
     //
