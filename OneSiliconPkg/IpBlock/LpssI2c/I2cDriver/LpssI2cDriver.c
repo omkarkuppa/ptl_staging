@@ -420,9 +420,9 @@ LpssI2cDriverStart (
   Context->HostApi.StartRequest                   = LpssI2cStartRequest;
   Context->HostApi.I2cControllerCapabilities      = &(Context->Host.Capabilities);
   Context->Host.Capabilities.StructureSizeInBytes = sizeof (EFI_I2C_CONTROLLER_CAPABILITIES);
-  Context->Host.Capabilities.MaximumReceiveBytes  = (UINT32) -1;
-  Context->Host.Capabilities.MaximumTransmitBytes = (UINT32) -1;
-  Context->Host.Capabilities.MaximumTotalBytes    = (UINT32) -1;
+  Context->Host.Capabilities.MaximumReceiveBytes  = MAX_UINT32;
+  Context->Host.Capabilities.MaximumTransmitBytes = MAX_UINT32;
+  Context->Host.Capabilities.MaximumTotalBytes    = MAX_UINT32;
 
   Status = gBS->CreateEvent (
                   EVT_TIMER | EVT_NOTIFY_SIGNAL,
