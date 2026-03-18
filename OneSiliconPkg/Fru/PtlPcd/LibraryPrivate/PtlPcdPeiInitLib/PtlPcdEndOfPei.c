@@ -32,6 +32,8 @@
 #include <Library/P2SbSocLib.h>
 #include <LockDownConfig.h>
 #include <Library/PerformanceLib.h>
+#include <Library/PeiGbeInitLib.h>
+#include <Library/PchPciBdfLib.h>
 
 /**
   Configures BIOS Interface Lock Down bit
@@ -137,6 +139,8 @@ PtlPcdOnEndOfPei (
   if (!EFI_ERROR (Status) && FiaConfig->FiaProgramming) {
     PtlPcdFiaFinalizeConfigurationAndLock ();
   }
+
+  GbeLockWriteFlash (GbePciCfgBase (), PcdGet32 (PcdSiliconInitTempMemBaseAddr));
 
   PtlPcdPmcInitEndOfPei (SiPolicy);
 
