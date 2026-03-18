@@ -50,6 +50,7 @@
 #ifndef _GBE_REGS_H_
 #define _GBE_REGS_H_
 
+#define R_GBE_CFG_DID                         0x00000002U
 
 #define N_GBE_CFG_DMI_CONFIG4_ADDR            17
 

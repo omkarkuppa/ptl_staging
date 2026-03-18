@@ -34,8 +34,13 @@
 #include <Register/GbeRegs.h>
 #include <GbeHandle.h>
 
-#define GBE_DEFAULT_MAC_RAL  0x88888888
-#define GBE_DEFAULT_MAC_RAH  0x8887
+#define GBE_DEFAULT_MAC_RAL          0x88888888
+#define GBE_DEFAULT_MAC_RAH          0x8887
+
+//
+//  GBE Controller Default (On-Reset) DID value.
+//
+#define V_GBE_CFG_DID_RESET_VALUE    0x15FC
 
 /**
   Check whether GbE is enabled in PMC.
@@ -176,20 +181,61 @@ GbeIsDefaultMacAddress (
 }
 
 /**
-  Sets GbE Lock Write Flash
+  Assign MMIO resource to GbE controller and enable memory space decoding.
 
-  @param[in]  GbeMemBar      GbE MMMIO Address
+  @param[in]  GbePciBase   GbE PCI Base Address
+  @param[in]  GbeMemBar    GbE MMIO Address
 **/
 STATIC
 VOID
+SetGbeMmioBase (
+  IN UINT64  GbePciBase,
+  IN UINTN   GbeMemBar
+  )
+{
+  PciSegmentAnd16 (GbePciBase + PCI_COMMAND_OFFSET, (UINT16) ~EFI_PCI_COMMAND_MEMORY_SPACE);
+  PciSegmentWrite32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET, (UINT32) GbeMemBar);
+  if (PciSegmentRead32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET) & BIT2) {
+    PciSegmentWrite32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET + 4, (UINT32) RShiftU64 (GbeMemBar, 32));
+  }
+  PciSegmentOr16 (GbePciBase + PCI_COMMAND_OFFSET, EFI_PCI_COMMAND_MEMORY_SPACE);
+}
+
+/**
+  Disable memory space decoding and clear GbE MMIO BAR.
+
+  @param[in]  GbePciBase   GbE PCI Base Address
+**/
+STATIC
+VOID
+ClearGbeMmioBase (
+  IN UINT64  GbePciBase
+  )
+{
+  PciSegmentAnd16 (GbePciBase + PCI_COMMAND_OFFSET, (UINT16) ~EFI_PCI_COMMAND_MEMORY_SPACE);
+  PciSegmentWrite32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET, 0);
+  if (PciSegmentRead32 (GbePciBase + PCI_COMMAND_OFFSET) & BIT2) {
+    PciSegmentWrite32 (GbePciBase + PCI_COMMAND_OFFSET + 4, 0);
+  }
+}
+
+/**
+  Sets GbE Lock Write Flash
+
+  @param[in]  GbePciBase     GbE PCI Base Address
+  @param[in]  GbeMemBar      GbE MMIO Address
+**/
+VOID
 GbeLockWriteFlash (
-  IN   UINTN     GbeMemBar
+  IN   UINT64         GbePciBase,
+  IN   UINTN          GbeMemBar
   )
 {
   EFI_STATUS      Status;
   EFI_BOOT_MODE   BootMode;
   BOOLEAN         MacValid;
 
+  SetGbeMmioBase (GbePciBase, GbeMemBar);
   MacValid = FALSE;
 
   //
@@ -198,8 +244,9 @@ GbeLockWriteFlash (
   // 2. Out of Manufacturing Mode
   // 3. No capsule update
   //
-  if ((MmioRead32 (GbeMemBar + R_GBE_MEM_STATUS) & B_GBE_MEM_STATUS_LAN_INIT_DONE)) {
+  if (( PciSegmentRead16 (GbePciBase + R_GBE_CFG_DID)  != V_GBE_CFG_DID_RESET_VALUE)) {
     MacValid = !GbeIsDefaultMacAddress (GbeMemBar);
+    DEBUG ((DEBUG_INFO, "%a: MAC address valid: %d\n", __FUNCTION__, MacValid));
   } else {
     // If BIOS was not able to read mac address it assumes it is valid
     MacValid = TRUE;
@@ -209,15 +256,17 @@ GbeLockWriteFlash (
     Status = PeiServicesGetBootMode (&BootMode);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_WARN, "%a: Failed to get the current boot mode.\n", __FUNCTION__));
+      ClearGbeMmioBase (GbePciBase);
       return;
     }
     if ((BootMode != BOOT_ON_FLASH_UPDATE) && IsEom ()) {
       MmioOr32 (GbeMemBar + R_GBE_MEM_FEXTNVM12, B_GBE_MEM_FEXTNVM12_LOCK_WRITE_TO_FLASH);
+      DEBUG ((DEBUG_INFO, "%a: Write Flash is locked.\n", __FUNCTION__));
     }
   }
 
   DEBUG ((DEBUG_INFO, "%a: FEXTNVM12 Offset: 0x%X Value: 0x%X.\n", __FUNCTION__, GbeMemBar + R_GBE_MEM_FEXTNVM12, MmioRead32 (GbeMemBar + R_GBE_MEM_FEXTNVM12)));
-
+  ClearGbeMmioBase (GbePciBase);
 }
 
 /**
@@ -284,12 +333,7 @@ ConfigureGbeRegisters (
     // Assign MMIO resource to Gbe controller
     //
     GbeMemBar = GbeHandle->Mmio;
-    PciSegmentAnd16 (GbePciBase + PCI_COMMAND_OFFSET, (UINT16) ~EFI_PCI_COMMAND_MEMORY_SPACE);
-    PciSegmentWrite32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET, (UINT32) GbeMemBar);
-    if (PciSegmentRead32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET) & BIT2) {
-      PciSegmentWrite32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET + 4, (UINT32) RShiftU64 (GbeMemBar, 32));
-    }
-    PciSegmentOr16 (GbePciBase + PCI_COMMAND_OFFSET, EFI_PCI_COMMAND_MEMORY_SPACE);
+    SetGbeMmioBase (GbePciBase, GbeMemBar);
 
     //
     // Additional GbE Controller Configurations for WOL Support
@@ -319,18 +363,10 @@ ConfigureGbeRegisters (
     MmioOr32 (GbeMemBar + R_GBE_MEM_PBECCSTS, B_GBE_MEM_PBECCSTS_ECC_EN);
     MmioOr32 (GbeMemBar + R_GBE_MEM_CTRL, B_GBE_MEM_CTRL_MEHE);
 
-    if (GbeHandle->PrivateConfig->LockWriteFlashSupported) {
-      GbeLockWriteFlash (GbeMemBar);
-    }
-
     //
     // Disable memory space decoding
     //
-    PciSegmentAnd16 (GbePciBase + PCI_COMMAND_OFFSET, (UINT16) ~EFI_PCI_COMMAND_MEMORY_SPACE);
-    PciSegmentWrite32 (GbePciBase + PCI_BASE_ADDRESSREG_OFFSET, 0);
-    if (PciSegmentRead32 (GbePciBase + PCI_COMMAND_OFFSET) & BIT2) {
-      PciSegmentWrite32 (GbePciBase + PCI_COMMAND_OFFSET + 4, 0);
-    }
+    ClearGbeMmioBase (GbePciBase);
   }
 }
 

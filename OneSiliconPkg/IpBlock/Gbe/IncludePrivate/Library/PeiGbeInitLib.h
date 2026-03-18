@@ -37,4 +37,15 @@ GbeInit (
   IN  GBE_HANDLE          *GbeHandle
   );
 
+/**
+  Sets GbE Lock Write Flash
+
+  @param[in]  GbePciBase     GbE PCI Base Address
+  @param[in]  GbeMemBar      GbE MMIO Address
+**/
+VOID
+GbeLockWriteFlash (
+  IN   UINT64         GbePciBase,
+  IN   UINTN          GbeMemBar
+  );
 #endif // _PEI_GBE_INIT_LIB_H_
