@@ -38,10 +38,11 @@
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/TimerLib.h>
-#include <Library/DxeAsfLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DxeAmtHeciLib.h>
 #include <Library/DxeAmtSupportLib.h>
+#include <Library/MeUtilsLib.h>
+#include <MeState.h>
 #include <Library/BootGuardLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -514,6 +515,17 @@ IsProfileSyncSupported (
   UINT32        VarAttributes;
   UINT64        BootGuardBootStatus;
   UINT64        BootGuardOperationMode;
+  UINT32        MeStatus;
+
+  //
+  // Check for boot option set in FWSTS1 bit 24.
+  // Only attempt Wi-Fi profile sync when an ME boot option is active
+  //
+  Status = MeBiosGetMeStatus (&MeStatus);
+  if (EFI_ERROR (Status) || !ME_STATUS_IS_ME_FW_BOOT_OPTIONS_PRESENT (MeStatus)) {
+    DEBUG ((DEBUG_WARN, "[%a] Unsupported - Me boot option not present\n", __FUNCTION__));
+    return FALSE;
+  }
 
   // Check for secure boot enabled
   VarSize = sizeof (UINT8);

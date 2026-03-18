@@ -46,10 +46,17 @@ typedef struct {
 } UNIT_TEST_CASE_STRUCT;
 
 //
-// Description------------------------Name------------------------Function-----------------------Pre------------------------------------Post---------------------------------Context---------Attribute-----Reserved
+// Description--------------------------------------Name-------------------------Function-------------------------------------------------------------Pre---Post--Context-Attribute-Reserved
 //
-UNIT_TEST_CASE_STRUCT mUnitTestCasesStruct [] = {
-  {"VerifyGetAsfWifiProfile",         "GetAsfWifiProfile",        VerifyGetAsfWifiProfile,       NULL,                                  NULL,                                NULL,           0,            0}
+UNIT_TEST_CASE_STRUCT mIsSupportedUnitTestCases [] = {
+  {"VerifyGetAsfWifiProfile",                      "GetAsfWifiProfile",          VerifyGetAsfWifiProfile,                                             NULL, NULL, NULL, 0, 0},
+  {"AmtBootOptionNotPresent_ReturnsFalse",         "IsProfileSyncSupported",     TestIsProfileSyncSupported_AmtBootOptionNotPresent,                  NULL, NULL, NULL, 0, 0},
+  {"SecureBootDisabled_ReturnsFalse",              "IsProfileSyncSupported",     TestIsProfileSyncSupported_SecureBootDisabled,                       NULL, NULL, NULL, 0, 0},
+  {"BootGuardNotSupported_ReturnsFalse",           "IsProfileSyncSupported",     TestIsProfileSyncSupported_SecureBootEnabled_BootGuardNotSupported,  NULL, NULL, NULL, 0, 0},
+  {"MeBiosGetMeStatusFails_ReturnsFalse",          "IsProfileSyncSupported",     TestIsProfileSyncSupported_MeBiosGetMeStatusFails,                   NULL, NULL, NULL, 0, 0},
+  {"MeStatusNoBootOptionBit_ReturnsFalse",         "IsProfileSyncSupported",     TestIsProfileSyncSupported_MeStatusNoBootOptionBit,                  NULL, NULL, NULL, 0, 0},
+  {"MeStatusWithOtherBitsSet_ReturnsFalse",        "IsProfileSyncSupported",     TestIsProfileSyncSupported_MeStatusWithOtherBitsSet,                 NULL, NULL, NULL, 0, 0},
+  {"SecureBootExplicitlyDisabled_ReturnsFalse",    "IsProfileSyncSupported",     TestIsProfileSyncSupported_SecureBootExplicitlyDisabled,             NULL, NULL, NULL, 0, 0}
 };
 
 /**
@@ -108,15 +115,15 @@ UnitTestMain (
   //
   // [Create / Add a Test Case]
   //
-  for (Index = 0; Index < ARRAY_SIZE (mUnitTestCasesStruct); Index++) {
+  for (Index = 0; Index < ARRAY_SIZE (mIsSupportedUnitTestCases); Index++) {
     Status = AddTestCase (
                UnitTestOcrDxe,                           // SuiteHandle        : Unit test suite to add test to
-               mUnitTestCasesStruct[Index].Description,  // "Test Description" : User friendly ASCII String for Test Case Description
-               mUnitTestCasesStruct[Index].ClassName,    // "Test.Name"        : User friendly ASCII String for Suite Name (no spaces)
-               mUnitTestCasesStruct[Index].Func,         // UnitTestFunction   : Unit Test Function
-               mUnitTestCasesStruct[Index].PreReq,       // NULL               : Optional Prerequisite Function runs before test function
-               mUnitTestCasesStruct[Index].CleanUp,      // NULL               : Optional Clean-up Function runs after test function
-               mUnitTestCasesStruct[Index].Context       // NULL               : UNIT_TEST_CONTEXT - Optional Pointer to Context
+               mIsSupportedUnitTestCases[Index].Description,  // "Test Description" : User friendly ASCII String for Test Case Description
+               mIsSupportedUnitTestCases[Index].ClassName,    // "Test.Name"        : User friendly ASCII String for Suite Name (no spaces)
+               mIsSupportedUnitTestCases[Index].Func,         // UnitTestFunction   : Unit Test Function
+               mIsSupportedUnitTestCases[Index].PreReq,       // NULL               : Optional Prerequisite Function runs before test function
+               mIsSupportedUnitTestCases[Index].CleanUp,      // NULL               : Optional Clean-up Function runs after test function
+               mIsSupportedUnitTestCases[Index].Context       // NULL               : UNIT_TEST_CONTEXT - Optional Pointer to Context
                );
     if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Failed in AddTestCase for Test\n"));

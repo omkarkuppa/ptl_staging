@@ -49,6 +49,7 @@
   # Unit Test Case
   #
   TestCase/WpsGetProfile/WpsGetProfile.c
+  TestCase/IsProfileSyncSupported/IsProfileSyncSupported.c
   #
   # Clean Up
   #
@@ -56,8 +57,11 @@
   # Platform IP function
   #
   OneClickRecoveryFeaturePkg/WifiProfileSync/WifiProfileSync.c
+  OneClickRecoveryFeaturePkg/WifiProfileSync/WpsGetAsfProfile.c
+  OneClickRecoveryFeaturePkg/WifiProfileSync/WpsSetWcmProfile.c
   OneClickRecoveryFeaturePkg/WifiProfileSync/WifiProfileSyncUtils.c
   OneClickRecoveryFeaturePkg/WifiProfileSync/WifiProfileSync.h
+  OneClickRecoveryFeaturePkg/WifiProfileSync/WpsGetAsfProfile.h
   OneClickRecoveryFeaturePkg/WifiProfileSync/WpsSetWcmProfile.h
   OneClickRecoveryFeaturePkg/WifiProfileSync/WifiProfileSyncUtils.h
 
@@ -77,7 +81,7 @@
   DebugLib
   PrintLib
   TimerLib
-  DxeAsfLib
+  MeUtilsLib
   CmockaLib
   UnitTestLib
   BootGuardLib

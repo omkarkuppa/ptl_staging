@@ -41,7 +41,7 @@
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
   HobLib|MdeModulePkg/Library/BaseHobLibNull/BaseHobLibNull.inf
-  DxeAsfLib|OneSiliconPkg/IpBlock/Me/Library/DxeAsfLib/DxeAsfLib.inf
+  MeUtilsLib|OneClickRecoveryFeaturePkg/UnitTest/Library/MeUtilsLibMock/MeUtilsLibMock.inf
   DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   TimerLib|Ec/EcFeaturePkg/Test/CommonMock/Library/BaseTimerLibMock/BaseTimerLibMock.inf

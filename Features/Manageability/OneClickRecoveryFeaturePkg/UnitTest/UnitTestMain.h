@@ -22,5 +22,6 @@
 #define __OCR_UNIT_TEST_MAIN__
 
 #include <TestCase/WpsGetProfile/WpsGetProfile.h>
+#include <TestCase/IsProfileSyncSupported/IsProfileSyncSupported.h>
 
 #endif // __OCR_UNIT_TEST_MAIN__

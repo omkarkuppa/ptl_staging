@@ -39,6 +39,18 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Protocol/EapConfiguration.h>
 
+//
+// Mock counts for enterprise suites - must match the arrays in WpsSetWcmProfile.c
+//
+#define ENTERPRISE_AKM_SUITE_COUNT_MOCK     4
+#define ENTERPRISE_CIPHER_SUITE_COUNT_MOCK  3
+
+//
+// Extern references to the enterprise suite arrays defined in WpsSetWcmProfile.c
+//
+extern UINT32  mEnterpriseAkmSuite[];
+extern UINT32  mEnterpriseCipherSuite[];
+
 extern WIFI_PROFILE  *mSyncProfile;
 
 /**
