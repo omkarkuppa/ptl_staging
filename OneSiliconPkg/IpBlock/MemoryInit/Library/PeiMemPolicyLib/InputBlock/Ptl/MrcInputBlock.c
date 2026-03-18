@@ -49,7 +49,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_Vdd2Mv                 (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_EccSupport              (0)
-#define MRC_EXT_INPUTS_INIT_VAL_RsvdBit1                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_ForceDIMMRXOFFSET       (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RemapEnable             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_ScramblerSupport        (1)
 #define MRC_EXT_INPUTS_INIT_VAL_ProbelessTrace          (0)
@@ -465,7 +465,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_Vdd2Mv,
 
     MRC_EXT_INPUTS_INIT_VAL_EccSupport,
-    MRC_EXT_INPUTS_INIT_VAL_RsvdBit1,
+    MRC_EXT_INPUTS_INIT_VAL_ForceDIMMRXOFFSET,
     MRC_EXT_INPUTS_INIT_VAL_RemapEnable,
     MRC_EXT_INPUTS_INIT_VAL_ScramblerSupport,
     MRC_EXT_INPUTS_INIT_VAL_ProbelessTrace,

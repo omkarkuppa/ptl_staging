@@ -1645,11 +1645,12 @@
   # !BSF HELP:{Bitmask to enable LP5/DDR5 NnFlex overrides. [0]: Lp5Dfeq/Ddr5DfeTap1 [1]: Lp5PdDrvStr/Ddr5DfeTap2 [2]: Lp5SocOdt/Ddr5RttWr [3]: Lp5PreEmpDn/Ddr5RttNomWr [4]: Lp5PreEmpUp/Ddr5RttNomRd [5]: Lp5WckDcaWr/Ddr5RonUp [6]: Lp5WckDcaRd/Ddr5RonDn [7]: Lp5RttNT}
   gPlatformFspPkgTokenSpaceGuid.NnFlexDramOvrdMask          | * | 0x01 | 0x00
 
-  ## MEMORY_CONFIGURATION End
+  # !BSF NAME:{Force DIMM Rx Offset Calibration training}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Force DIMM Rx Offset Calibration training for LPDDR5X, frequencies >= 6800: 0 = Disable, 1 = Enable}
+  gPlatformFspPkgTokenSpaceGuid.ForceDIMMRXOFFSET           | * | 0x01 | 0x00
 
-  # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 1   | 0x00
+  ## MEMORY_CONFIGURATION End
 
   #
   # MRC Block End

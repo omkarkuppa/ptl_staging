@@ -4247,6 +4247,8 @@ MrcDimmRxOffsetCalibration (
   IN MrcParameters *const MrcData
   )
 {
+  MrcInput  *Inputs;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
   MrcOutput *Outputs;
   MrcDebug  *Debug;
   UINT32    FirstController;
@@ -4254,8 +4256,10 @@ MrcDimmRxOffsetCalibration (
   UINT8     MrrResult[MRC_MRR_ARRAY_SIZE];
   UINT8     VendorId;
 
-  Outputs = &MrcData->Outputs;
-  Debug   = &Outputs->Debug;
+  Inputs    = &MrcData->Inputs;
+  ExtInputs = Inputs->ExtInputs.Ptr;
+  Outputs   = &MrcData->Outputs;
+  Debug     = &Outputs->Debug;
 
   // Offset Calibration Control (OCC) bit is valid only on LPDDR5X SDRAM
   if (!Outputs->LpX) {  // Not LPDDR5X
@@ -4269,8 +4273,8 @@ MrcDimmRxOffsetCalibration (
   MrcIssueMrr (MrcData, FirstController, FirstChannel, rRank0, mrMR5, MrrResult);
   VendorId = MrrResult[0];
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MR5: 0x%02X\n", VendorId);
-  if (VendorId != 1) {
-    // Apply RxOCC on Samsung DRAMs only
+  if (VendorId != 1  && !ExtInputs->ForceDIMMRXOFFSET) {
+    // Apply RxOCC on Samsung DRAMs only unless forced by ExtInputs->ForceDIMMRXOFFSET
     return mrcSuccess;
   }
 

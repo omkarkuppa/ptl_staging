@@ -51,7 +51,7 @@ typedef struct {
   UINT16  Vdd2Mv;                 ///< Offset 30 Vdd2Mv
 
   UINT32  EccSupport:1;              ///< Offset 32 Bit 0  - DIMM Ecc Support option - for Desktop only: 0=Disable, <b>1=Enable</b>
-  UINT32  RsvdBit1:1;                ///<           Bit 1  - Reserved
+  UINT32  ForceDIMMRXOFFSET:1;       ///<           Bit 1  - Force DIMM Rx Offset Calibration training for LPDDR5X, frequencies >= 6800: 0 = Disable, 1 = Enable
   UINT32  RemapEnable:1;             ///<           Bit 2  - This option is used to control whether to enable/disable memory remap above 4GB: 0=Disable, <b>1=Enable</b>.
   UINT32  ScramblerSupport:1;        ///<           Bit 3  - Memory scrambler support: 0=Disable, <b>1=Enable</b>
   UINT32  ProbelessTrace:1;          ///<           Bit 4  - Probeless Trace: <b>0=Disabled</b>, <b>1=Enabled</b>

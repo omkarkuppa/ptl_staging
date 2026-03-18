@@ -771,3 +771,4 @@ NnFlexDdr5RonUp
 NnFlexDdr5RonDn
 NnFlexPhyOvrdMask
 NnFlexDramOvrdMask
+ForceDIMMRXOFFSET

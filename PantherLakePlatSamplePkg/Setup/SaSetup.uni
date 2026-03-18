@@ -1594,9 +1594,11 @@
 #string STR_NNFLEX_DDR5_RON_DN_PROMPT           #language en-US "NnFlex DDR5 RonDn"
 #string STR_NNFLEX_DDR5_RON_DN_HELP             #language en-US "(0-2), MR5 encoding"
 
-#string STR_FORCE_WRDSEQT_2400_PROMPT                     #language en-US "Force WRDSEQT at 2400"
-#string STR_FORCE_WRDSEQT_2400_HELP                       #language en-US "Force Enable Write Drive Strength training at 2400"
+#string STR_FORCE_WRDSEQT_2400_PROMPT           #language en-US "Force WRDSEQT at 2400"
+#string STR_FORCE_WRDSEQT_2400_HELP             #language en-US "Force Enable Write Drive Strength training at 2400"
 
+#string STR_FORCE_DIMMRXOFFSET_PROMPT           #language en-US "Force DIMM Rx Offset Calibration training"
+#string STR_FORCE_DIMMRXOFFSET_HELP             #language en-US "Force Enable DIMM Rx Offset Calibration training for LPDDR5X, frequencies >= 6800"
 
 #string STR_REMAP_ENABLE_PROMPT                 #language en-US "Memory Remap"
 #string STR_REMAP_ENABLE_PROMPT_HELP            #language en-US "Enable/Disable Memory Remap above 4GB"

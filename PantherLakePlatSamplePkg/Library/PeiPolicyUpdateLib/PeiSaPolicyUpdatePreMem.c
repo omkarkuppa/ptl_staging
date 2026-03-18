@@ -1043,6 +1043,7 @@ UpdatePeiSaPolicyPreMem (
     }
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EccSupport, MemConfig->ExternalInputs.EccSupport,              SaSetup.EccSupport                                        );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ForceDIMMRXOFFSET, MemConfig->ExternalInputs.ForceDIMMRXOFFSET,    SaSetup.ForceDIMMRXOFFSET                             );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RemapEnable, MemConfig->ExternalInputs.RemapEnable,             SaSetup.RemapEnable                                       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ScramblerSupport, MemConfig->ExternalInputs.ScramblerSupport,        SaSetup.ScramblerSupport                                  );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RmtPerTask, MemConfig->ExternalInputs.RmtPerTask,              SaSetup.RmtPerTask                                        );
