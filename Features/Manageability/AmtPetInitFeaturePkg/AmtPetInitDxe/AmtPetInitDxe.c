@@ -416,7 +416,7 @@ SendPetMessageInQueue (
     ///
     /// Mark it as sent
     ///
-    PetQueueHob->Type = (UINT32) -1;
+    PetQueueHob->Type = MAX_UINT32;
 
     ///
     /// Need find next one
