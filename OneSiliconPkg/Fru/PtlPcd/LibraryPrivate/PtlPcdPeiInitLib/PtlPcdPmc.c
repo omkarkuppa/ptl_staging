@@ -358,7 +358,6 @@ PtlPcdPmcInit (
     }
   }
   MmioOr32 (PmcHandle.PwrmBase + R_PMC_PWRM_VR_MISC_CTL, 0x00100000);
-  MmioOr32 (PmcHandle.PwrmBase + R_PMC_PWRM_PM_CFG, 0x234F0000);
   MmioAnd32 (PmcHandle.PwrmBase + R_PMC_PWRM_PM_CFG4, (UINT32)~B_PMC_PWRM_PM_CFG4_VCCST_TMR);
   PmcLockFivrConfig (PmcHandle.PwrmBase);
   PtlPcdPsfHidePmc ();
