@@ -2742,7 +2742,7 @@ GetChannelDimmtAA (
                 TimingFTB   = Spd->Lpddr.Base.tAAminFine.Bits.tAAminFine;
                 CasMask     = Spd->Lpddr.Base.CasLatencies.Data & MRC_SPD_LPDDR_CL_SUPPORTED_MASK;
                 if (DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) {
-                  Calculated  = GetLpddr5tCL (tCKmin, SdramWidth, (BOOLEAN) ExtInputs->TrainingEnables2.DBI, Outputs->IsDvfscEnabled);
+                  Calculated  = GetLpddr5tCL (Outputs->Frequency, SdramWidth, (BOOLEAN) ExtInputs->TrainingEnables2.DBI, Outputs->IsDvfscEnabled);
                 }
               }
               break;
@@ -5220,18 +5220,7 @@ GetChannelDimmtRTP (
                 if (DimmOut->DdrType == MRC_DDR_TYPE_DDR5) {
                   Calculated = GetDdr5tRTP (tCKmin);
                 } else {
-                  if (Outputs->IsDvfscEnabled) {
-                    Calculated = DIVIDECEIL ((8500000 - (tCKmin / 100)), tCKmin); // 8.5ns
-                  } else {
-                    Calculated = DIVIDECEIL ((7500000 - (tCKmin / 100)), tCKmin); // 7.5ns
-                  }
-                  if (DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) {
-                    if (Calculated > 2) {
-                      Calculated -= 2;
-                    } else {
-                      Calculated = 0;
-                    }
-                  }
+                  Calculated = GetLpddr5nRBTP (MrcData);                  
                 }
               }
               break;

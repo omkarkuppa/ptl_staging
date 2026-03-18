@@ -66,7 +66,16 @@ MrcPowerWeightMapping DdrPhyPowerTableDdr5[MAX_FREQ] = {
   {f8800,  {27602,      5101,       774902,       379817}}
 };
 
-MrcPowerWeightMapping DdrPhyPowerTableWclDdr5[MAX_FREQ] = {
+MrcPowerWeightMapping DdrPhyPowerTableWclLp5[4] = {
+// Freq    ReadPower  WritePower  IdlePower     CkePower
+//         (fj/byte)   (fj/byte)  (microWatts) (microWatts)
+  {f2400,  {10612,      12186,      262173,       197577}},
+  {f4800,  {10383,      8202,       339572,       273619}},
+  {f6400,  {11084,      8307,       322384,       222726}},
+  {f7467,  {10761,      7613,       365793,       264075}},
+};
+
+MrcPowerWeightMapping DdrPhyPowerTableWclDdr5[4] = {
 // Freq    ReadPower  WritePower  IdlePower     CkePower
 //         (fj/byte)   (fj/byte)  (microWatts) (microWatts)
   {f3200,  {44535,      16741,      403881,       210508}},
@@ -104,7 +113,8 @@ static VOID CaculateDdrPhyPower (
     Index1 = 0;
     Index2 = 1;
   } else {
-    for (Index1 = 0; Index1 < MAX_FREQ - 2; Index1++) {
+    UINT8 MaxFreqIndex = (MrcData->Inputs.IsDdrphyx64) ? 2 : (MAX_FREQ - 2);
+    for (Index1 = 0; Index1 < MaxFreqIndex; Index1++) {
       if (DdrPhyPowerTable[Index1].Freq < Freq && DdrPhyPowerTable[Index1 + 1].Freq > Freq)
         break;
     }
@@ -167,10 +177,15 @@ VOID MrcGetDdrPhyWeights (
   if (IsDdr5) {
     DdrPhyPowerTable = (MrcData->Inputs.IsDdrphyx64) ? DdrPhyPowerTableWclDdr5 : DdrPhyPowerTableDdr5;
   } else {
-    DdrPhyPowerTable = (MrcData->Inputs.SkuType == MrcSkuTypeU) ? DdrPhyPowerTableLp5SkuTypeU : DdrPhyPowerTableLp5;
+    if (MrcData->Inputs.IsDdrphyx64) {
+      DdrPhyPowerTable = DdrPhyPowerTableWclLp5;
+    } else {
+      DdrPhyPowerTable = (MrcData->Inputs.SkuType == MrcSkuTypeU) ? DdrPhyPowerTableLp5SkuTypeU : DdrPhyPowerTableLp5;
+    }
   }
 
-  for (Count = 0; Count < MAX_FREQ; Count++) {
+  UINT8 MaxFreqIndex = (MrcData->Inputs.IsDdrphyx64) ? 4 : MAX_FREQ;
+  for (Count = 0; Count < MaxFreqIndex; Count++) {
     PowerMeasurePtr = &DdrPhyPowerTable[Count];
     if(Freq == PowerMeasurePtr->Freq) {
       *ReadPower = PowerMeasurePtr->PowerValue.ReadPwr;
