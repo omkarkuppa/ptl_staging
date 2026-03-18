@@ -93,13 +93,13 @@ SelectTableLpddr5 (
   IN const TOdtIndex      OdtIndex
   )
 {
-  const MrcInput        *Inputs;
-  const MrcBoardInputs  *BoardDetails;
+  const MrcInput            *Inputs;
+  const MrcBoardInputs      *BoardDetails;
   const MRC_EXT_INPUTS_TYPE *ExtInputs;
-  MrcDebug              *Debug;
-  MrcOutput             *Outputs;
-  BOOLEAN               IsTypicalBoard;
-  TOdtValueLpddr        *OdtTable;
+  MrcDebug                  *Debug;
+  MrcOutput                 *Outputs;
+  BOOLEAN                   IsTypicalBoard;
+  TOdtValueLpddr            *OdtTable;
 
   Inputs          = &MrcData->Inputs;
   ExtInputs       = Inputs->ExtInputs.Ptr;
@@ -145,11 +145,11 @@ MrcLp5GetDFE (
   OUT UINT8          *Dfequ
   )
 {
-  const MrcInput* Inputs;
+  const MrcInput      *Inputs;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
-  UINT8 DfeqVal;
+  UINT8                DfeqVal;
 
-  Inputs = &MrcData->Inputs;
+  Inputs    = &MrcData->Inputs;
   ExtInputs = Inputs->ExtInputs.Ptr;
 
   // DFE setting range is from -0.052V to -0.01V in step size of 7mV. Tap=1: -0.052V, Tap=7: -0.01V

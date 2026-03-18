@@ -1401,7 +1401,7 @@ MrcLp5GetVrefDq (
     Set1 - x8 and No DBI, or x16 and DBI
     Set2 - x8 and DBI
 
-    @param[in] tCK          - The memory tCK in femtoseconds.
+    @param[in] Frequency    - DDR data rate.
     @param[in] SdramWidth   - SDRAM width (8 or 16)
     @param[in] IsDbiEnabled - TRUE if DBI is enabled
     @param[in] IsDvfscEnabled - TRUE if Dvfsc is enabled
@@ -1410,10 +1410,25 @@ MrcLp5GetVrefDq (
 **/
 UINT32
 GetLpddr5tCL (
-  IN const UINT32     tCK,
+  IN MrcFrequency     Frequency,
   IN UINT8            SdramWidth,
   IN BOOLEAN          IsDbiEnabled,
   IN BOOLEAN          IsDvfscEnabled
+  );
+
+/**
+  Calculate the nRBTP value for LPDDR5.
+
+  JEDEC Spec Table 225 - Read Latencies for Read Link ECC Off Case (DVFSC Disabled and Enhanced DVFS Disabled).
+  JEDEC Spec Table 227 - Read Latencies for Read Link ECC Off Case (DVFSC Disabled and Enhanced DVFS Enabled).
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval LPDDR5 nRBTP in tCK units
+**/
+UINT32
+GetLpddr5nRBTP (
+  IN MrcParameters    *const MrcData
   );
 
 /**

@@ -93,9 +93,12 @@ const UINT8 Lp5ReadLatencyDvfscDisabledSet0[MrcLp5RlDvfscDisIndexMax] = { 3, 4, 
 const UINT8 Lp5ReadLatencyDvfscDisabledSet1[MrcLp5RlDvfscDisIndexMax] = { 3, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 18, 22, 25, 28, 30 };
 const UINT8 Lp5ReadLatencyDvfscDisabledSet2[MrcLp5RlDvfscDisIndexMax] = { 3, 4, 6, 7, 9, 10, 12, 14, 15, 17, 19, 20, 24, 26, 29, 33 };
 
-const UINT8 Lp5ReadLatencyDvfscEnabledSet0[6] = { 3, 5, 7, 8, 10, 12 };
-const UINT8 Lp5ReadLatencyDvfscEnabledSet1[6] = { 3, 5, 7, 8, 10, 12 };
-const UINT8 Lp5ReadLatencyDvfscEnabledSet2[6] = { 3, 5, 7, 10, 12, 14 };
+const UINT8 Lp5ReadLatencyDvfscEnabledSet0[MrcLp5RlDvfscDisIndex3200+1] = { 3, 5, 7, 8, 10, 12 };
+const UINT8 Lp5ReadLatencyDvfscEnabledSet1[MrcLp5RlDvfscDisIndex3200+1] = { 3, 5, 7, 8, 10, 12 };
+const UINT8 Lp5ReadLatencyDvfscEnabledSet2[MrcLp5RlDvfscDisIndex3200+1] = { 3, 5, 7, 10, 12, 14 };
+
+const UINT8 Lp5nRBTPDvfscDisabled[MrcLp5RlDvfscDisIndexMax]   = { 0, 0, 0, 0, 1, 1, 2, 2, 3, 4, 4, 4, 6, 6, 7, 8 };
+const UINT8 Lp5nRBTPDvfscEnabled[MrcLp5RlDvfscDisIndex3200+1] = { 0, 0, 0, 1, 2, 2 };
 
 // This table is the list of possible terminations the DRAM can achieve using ZQ Resistor.
 const UINT16 Lp5RzqValues[LP5_RZQ_NUM_VALUES] = { 0xFFFF, 240, 120, 80, 60, 48, 40 };
@@ -3926,7 +3929,7 @@ GetLpddr5tCWL (
     Set1 - x8 and No DBI, or x16 and DBI
     Set2 - x8 and DBI
 
-    @param[in] tCK          - The memory tCK in femtoseconds.
+    @param[in] Frequency    - DDR data rate.
     @param[in] SdramWidth   - SDRAM width (8 or 16)
     @param[in] IsDbiEnabled - TRUE if DBI is enabled
     @param[in] IsDvfscEnabled - TRUE if Dvfsc is enabled
@@ -3935,21 +3938,15 @@ GetLpddr5tCWL (
 **/
 UINT32
 GetLpddr5tCL (
-  IN const UINT32     tCK,
+  IN MrcFrequency     Frequency,
   IN UINT8            SdramWidth,
   IN BOOLEAN          IsDbiEnabled,
   IN BOOLEAN          IsDvfscEnabled
   )
 {
   UINT32 tCL;
-  UINT32 tCKNorm;
   UINT32 RlSet;
-  UINT32 Index;
   MrcLp5RlDvfscDisIndex RlIndex;
-
-  // Scale tCK up to typical DDR ratio of 2:1 between tCK and Data Rate
-  // We are always in 4:1 mode for WCK.
-  tCKNorm = tCK / 4;
 
   RlSet = 0;
   if (SdramWidth == 8) {
@@ -3959,41 +3956,9 @@ GetLpddr5tCL (
     RlSet += 1;
   }
 
-  Index = 0;
+  RlIndex = GetFreqBinIndex (Frequency);
   if (!IsDvfscEnabled) {
-    if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex533;
-    } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex1067;
-    } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex1600;
-    } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex2133;
-    } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex2750;
-    } else if (tCKNorm >= MRC_DDR_3200_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex3200;
-    } else if (tCKNorm >= MRC_DDR_3733_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex3733;
-    } else if (tCKNorm >= MRC_DDR_4267_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex4267;
-    } else if (tCKNorm >= MRC_DDR_4800_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex4800;
-    } else if (tCKNorm >= MRC_DDR_5500_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex5500;
-    } else if (tCKNorm >= MRC_DDR_6000_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex6000;
-    } else if (tCKNorm >= MRC_DDR_6400_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex6400;
-    } else if (tCKNorm >= MRC_DDR_7500_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex7500;
-    } else if (tCKNorm >= MRC_DDR_8533_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex8533;
-    } else if (tCKNorm >= MRC_DDR_9600_TCK_MIN) {
-      RlIndex = MrcLp5RlDvfscDisIndex9600;
-    } else {
-      RlIndex = MrcLp5RlDvfscDisIndex10667;
-    }
+    RlIndex = MIN (RlIndex, MrcLp5RlDvfscDisIndexMax - 1);
     if (RlSet == 0) {
       tCL = Lp5ReadLatencyDvfscDisabledSet0[RlIndex];
     } else if (RlSet == 1) {
@@ -4002,29 +3967,47 @@ GetLpddr5tCL (
       tCL = Lp5ReadLatencyDvfscDisabledSet2[RlIndex];
     }
   } else {  //Dvfsc enabled
-    if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
-      Index = 0;
-    } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
-      Index = 1;
-    } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
-      Index = 2;
-    } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
-      Index = 3;
-    } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
-      Index = 4;
-    } else {
-      Index = 5;
-    }
-
+    RlIndex = MIN (RlIndex, MrcLp5RlDvfscDisIndex3200);
     if (RlSet == 0) {
-      tCL = Lp5ReadLatencyDvfscEnabledSet0[Index];
+      tCL = Lp5ReadLatencyDvfscEnabledSet0[RlIndex];
     } else if (RlSet == 1) {
-      tCL = Lp5ReadLatencyDvfscEnabledSet1[Index];
+      tCL = Lp5ReadLatencyDvfscEnabledSet1[RlIndex];
     } else {
-      tCL = Lp5ReadLatencyDvfscEnabledSet2[Index];
+      tCL = Lp5ReadLatencyDvfscEnabledSet2[RlIndex];
     }
   }
   return tCL;
+}
+
+/**
+  Calculate the nRBTP value for LPDDR5.
+
+  JEDEC Spec Table 225 - Read Latencies for Read Link ECC Off Case (DVFSC Disabled and Enhanced DVFS Disabled).
+  JEDEC Spec Table 227 - Read Latencies for Read Link ECC Off Case (DVFSC Disabled and Enhanced DVFS Enabled).
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval LPDDR5 nRBTP in tCK units
+**/
+UINT32
+GetLpddr5nRBTP (
+  IN MrcParameters    *const MrcData
+  )
+{
+  MrcOutput *Outputs;
+  UINT32 nRBTP;
+  MrcLp5RlDvfscDisIndex RlIndex;
+
+  Outputs = &MrcData->Outputs;
+  RlIndex = GetFreqBinIndex (Outputs->Frequency);
+  if (!Outputs->IsDvfscEnabled) {
+    RlIndex = MIN (RlIndex, ARRAY_COUNT(Lp5nRBTPDvfscDisabled) - 1);
+    nRBTP = Lp5nRBTPDvfscDisabled[RlIndex];
+  } else {  //Dvfsc enabled
+    RlIndex = MIN (RlIndex, ARRAY_COUNT(Lp5nRBTPDvfscEnabled) - 1);
+    nRBTP = Lp5nRBTPDvfscEnabled[RlIndex];
+  }
+  return nRBTP;
 }
 
 /**
@@ -4255,7 +4238,7 @@ MrcDimmRxOffsetCalibration (
   UINT32    FirstChannel;
   UINT8     MrrResult[MRC_MRR_ARRAY_SIZE];
   UINT8     VendorId;
-
+  
   Inputs    = &MrcData->Inputs;
   ExtInputs = Inputs->ExtInputs.Ptr;
   Outputs   = &MrcData->Outputs;
@@ -4273,7 +4256,7 @@ MrcDimmRxOffsetCalibration (
   MrcIssueMrr (MrcData, FirstController, FirstChannel, rRank0, mrMR5, MrrResult);
   VendorId = MrrResult[0];
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MR5: 0x%02X\n", VendorId);
-  if (VendorId != 1  && !ExtInputs->ForceDIMMRXOFFSET) {
+  if (VendorId != 1 && !ExtInputs->ForceDIMMRXOFFSET) {
     // Apply RxOCC on Samsung DRAMs only unless forced by ExtInputs->ForceDIMMRXOFFSET
     return mrcSuccess;
   }
