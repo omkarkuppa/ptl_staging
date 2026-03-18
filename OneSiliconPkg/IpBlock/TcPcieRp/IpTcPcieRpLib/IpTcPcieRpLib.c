@@ -70,7 +70,7 @@ IpTcPcieInitCapabilityList (
   UINT32      Data32Or;
   UINT16      Data16;
   UINT8       Data8;
-  UINT16      NextCap;
+  UINT32      NextCap;
 
   ///
   /// If not valid root port configuration space then return
