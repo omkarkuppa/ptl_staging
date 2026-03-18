@@ -75,3 +75,7 @@
   gEfiPeiGraphicsPpiGuid              ## CONSUMES
   gPeiGraphicsFramebufferReadyPpiGuid ## PRODUCES
   gIntelPeiPreMemGraphicsPpiGuid      ## CONSUMES
+  gIGpuPreMemFramebufferReadyPpiGuid ## SOMETIMES_PRODUCES
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable ## CONSUMES
