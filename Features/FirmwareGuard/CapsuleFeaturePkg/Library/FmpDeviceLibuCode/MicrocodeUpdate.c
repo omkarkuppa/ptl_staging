@@ -795,7 +795,7 @@ GetMicrocodeInfo (
         TotalSize = MicrocodeEntryPoint->TotalSize;
       }
 
-      TargetCpuIndex = (UINTN)-1;
+      TargetCpuIndex = MAX_UINTN;
       Status = VerifyMicrocode(MicrocodeFmpPrivate, MicrocodeEntryPoint, TotalSize, FALSE, &AttemptStatus, NULL, &TargetCpuIndex);
 
       if (!EFI_ERROR(Status)) {
@@ -807,7 +807,7 @@ GetMicrocodeInfo (
         // This logic complies with Physical CPU uCode patching logic
         //
         if (!MicrocodeFmpPrivate->ProcessorInfo[TargetCpuIndex].IsRealCpu) {
-          if ((MicrocodeFmpPrivate->ProcessorInfo[TargetCpuIndex].MicrocodeRevision == (UINT32)-1) ||
+          if ((MicrocodeFmpPrivate->ProcessorInfo[TargetCpuIndex].MicrocodeRevision == MAX_UINT32) ||
               (MicrocodeFmpPrivate->ProcessorInfo[TargetCpuIndex].MicrocodeRevision < MicrocodeEntryPoint->UpdateRevision)) {
             MicrocodeFmpPrivate->ProcessorInfo[TargetCpuIndex].MicrocodeRevision = MicrocodeEntryPoint->UpdateRevision;
           }
@@ -871,7 +871,7 @@ GetMicrocodeInfo (
   @param[in]  MicrocodeFmpPrivate        The Microcode driver private data
   @param[in]  ProcessorSignature         The processor signature to be matched
   @param[in]  ProcessorFlags             The processor flags to be matched
-  @param[in, out] TargetCpuIndex         On input, the index of target CPU which tries to match the Microcode. (UINTN)-1 means to try all.
+  @param[in, out] TargetCpuIndex         On input, the index of target CPU which tries to match the Microcode. MAX_UINTN means to try all.
                                          On output, the index of target CPU which matches the Microcode.
 
   @return matched processor information.
@@ -886,7 +886,7 @@ GetMatchedProcessor (
 {
   UINTN  Index;
 
-  if (*TargetCpuIndex != (UINTN)-1) {
+  if (*TargetCpuIndex != MAX_UINTN) {
     Index = *TargetCpuIndex;
     if (ProcessorSignature == MicrocodeFmpPrivate->ProcessorInfo[Index].ProcessorSignature &&
         (ProcessorFlags & MicrocodeFmpPrivate->ProcessorInfo[Index].ProcessorFlags) != 0) {
@@ -923,7 +923,7 @@ GetMatchedProcessor (
                                          details for the aborted operation. The buffer is allocated by this function
                                          with AllocatePool(), and it is the caller's responsibility to free it with a
                                          call to FreePool().
-  @param[in, out] TargetCpuIndex         On input, the index of target CPU which tries to match the Microcode. (UINTN)-1 means to try all.
+  @param[in, out] TargetCpuIndex         On input, the index of target CPU which tries to match the Microcode. MAX_UINTN means to try all.
                                          On output, the index of target CPU which matches the Microcode.
 
   @retval EFI_SUCCESS               The Microcode image passes verification.
@@ -1128,7 +1128,7 @@ VerifyMicrocode (
   // Caller can double filter this case outside VerifyMicrocde
   //
   CurrentRevision = ProcessorInfo->MicrocodeRevision;
-  if ((CurrentRevision != (UINT32)-1) && (MicrocodeEntryPoint->UpdateRevision < CurrentRevision)) {
+  if ((CurrentRevision != MAX_UINT32) && (MicrocodeEntryPoint->UpdateRevision < CurrentRevision)) {
     DEBUG ((DEBUG_ERROR, "VerifyMicrocode - fail on UpdateRevision\n"));
 
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_INCORRECT_VERSION;
@@ -2068,7 +2068,7 @@ MicrocodeSlotSpiWrite (
   AlignedImage                     = Image;
   TargetMicrocodeEntryPoint        = NULL;
   ProcessorInfo                    = MicrocodeFmpPrivate->ProcessorInfo;
-  TargetMicrcodeIndex              = (UINTN) - 1;
+  TargetMicrcodeIndex              = MAX_UINTN;
 
   //
   // MCU must be 16 bytes aligned
@@ -2113,7 +2113,7 @@ MicrocodeSlotSpiWrite (
       DEBUG ((DEBUG_INFO, " New uCod Version 0x%x\n", ((CPU_MICROCODE_HEADER *)AlignedImage)->UpdateRevision));
       DEBUG ((DEBUG_INFO, " Existing uCode Revision 0x%x\n", MicrocodeInfo->MicrocodeEntryPoint->UpdateRevision));
 
-      if ((ProcessorInfo[CpuIndex].MicrocodeIndex == (UINT32) -1 ||
+      if ((ProcessorInfo[CpuIndex].MicrocodeIndex == MAX_UINT32 ||
           ((CPU_MICROCODE_HEADER *)AlignedImage)->UpdateRevision > MicrocodeInfo->MicrocodeEntryPoint->UpdateRevision)) {
         TargetProcessorBuf[TargetProcessorNum] = CpuIndex;
         TargetProcessorNum++;
@@ -2140,7 +2140,7 @@ MicrocodeSlotSpiWrite (
     //
     // New uCode targeting CPU don't have an exisiting uCode to replace. Skip it
     //
-    if (ProcessorInfo[TargetCpuIndex].MicrocodeIndex == (UINTN) -1) {
+    if (ProcessorInfo[TargetCpuIndex].MicrocodeIndex == MAX_UINTN) {
       continue;
     }
 
@@ -2171,7 +2171,7 @@ MicrocodeSlotSpiWrite (
 
   DEBUG ((DEBUG_INFO, "  TargetMicrocodeIndex - 0x%x\n", TargetMicrcodeIndex));
 
-  if (TargetMicrcodeIndex != (UINTN)-1) {
+  if (TargetMicrcodeIndex != MAX_UINTN) {
     ASSERT (TargetMicrcodeIndex < MicrocodeFmpPrivate->DescriptorCount);
     TargetMicrocodeEntryPoint = MicrocodeFmpPrivate->MicrocodeInfo[TargetMicrcodeIndex].MicrocodeEntryPoint;
   } else {
@@ -2746,7 +2746,7 @@ InitializedProcessorMicrocodeIndex (
 
   for (CpuIndex = 0; CpuIndex < MicrocodeFmpPrivate->ProcessorCount; CpuIndex++) {
     ProcessorInfo = &MicrocodeFmpPrivate->ProcessorInfo[CpuIndex];
-    if (ProcessorInfo->MicrocodeIndex != (UINTN)-1) {
+    if (ProcessorInfo->MicrocodeIndex != MAX_UINTN) {
       continue;
     }
 
@@ -2773,7 +2773,7 @@ InitializedProcessorMicrocodeIndex (
         // This logic complies with Physical CPU uCode patching logic
         //
         if (!ProcessorInfo->IsRealCpu) {
-          if ((ProcessorInfo->MicrocodeRevision == (UINT32) -1) ||
+          if ((ProcessorInfo->MicrocodeRevision == MAX_UINT32) ||
               (ProcessorInfo->MicrocodeRevision < MicrocodeInfo->MicrocodeEntryPoint->UpdateRevision)) {
             ProcessorInfo->MicrocodeRevision = MicrocodeInfo->MicrocodeEntryPoint->UpdateRevision;
           }
@@ -2913,7 +2913,7 @@ InitializeProcessorInfo (
 
   for (CpuIndex = 0; CpuIndex < NumberOfPhysicalProcessors; CpuIndex++) {
     MicrocodeFmpPrivate->ProcessorInfo[CpuIndex].CpuIndex       = CpuIndex;
-    MicrocodeFmpPrivate->ProcessorInfo[CpuIndex].MicrocodeIndex = (UINTN)-1;
+    MicrocodeFmpPrivate->ProcessorInfo[CpuIndex].MicrocodeIndex = MAX_UINTN;
     MicrocodeFmpPrivate->ProcessorInfo[CpuIndex].IsRealCpu      = TRUE;
     if (CpuIndex == BspIndex) {
       CollectProcessorInfo (&MicrocodeFmpPrivate->ProcessorInfo[CpuIndex]);
@@ -2981,8 +2981,8 @@ InitializeProcessorInfo (
         MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].CpuIndex           = MicrocodeFmpPrivate->ProcessorCount;
         MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].ProcessorSignature = MicrocodePolicy[Index].ProcessorSignature;
         MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].ProcessorFlags     = MicrocodePolicy[Index].ProcessorFlags;
-        MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].MicrocodeRevision  = (UINT32)-1;
-        MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].MicrocodeIndex     = (UINTN)-1;
+        MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].MicrocodeRevision  = MAX_UINT32;
+        MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].MicrocodeIndex     = MAX_UINTN;
         MicrocodeFmpPrivate->ProcessorInfo[MicrocodeFmpPrivate->ProcessorCount].IsRealCpu          = FALSE;
         MicrocodeFmpPrivate->ProcessorCount++;
       }

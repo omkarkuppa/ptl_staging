@@ -229,7 +229,7 @@ GetMicrocodeInfo (
                                          details for the aborted operation. The buffer is allocated by this function
                                          with AllocatePool(), and it is the caller's responsibility to free it with a
                                          call to FreePool().
-  @param[in, out] TargetCpuIndex         On input, the index of target CPU which tries to match the Microcode. (UINTN)-1 means to try all.
+  @param[in, out] TargetCpuIndex         On input, the index of target CPU which tries to match the Microcode. MAX_UINTN means to try all.
                                          On output, the index of target CPU which matches the Microcode.
 
   @retval EFI_SUCCESS               The Microcode image passes verification.
