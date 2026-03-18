@@ -2446,7 +2446,7 @@ gap_handle_adv_report (
       while (pos < (length_data - 1)) {
         elem_len = data[pos++];
         elem_len--;
-        if (elem_len == 0 || pos + elem_len > length_data) {  
+        if (elem_len == 0 || pos + elem_len >= length_data) {  
           break;  //prevent out-of-bounds access
         }                        // Except the Type field
         switch (data[pos++]) {
