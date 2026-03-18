@@ -290,10 +290,20 @@ CollectCpuCacheInfo (
     switch (CacheInfoData[Index].CoreType) {
       case CORE_TYPE_NON_HYBRID:
         if (mNumBigCore != 0 && mNumSmallCore == 0) {
+          if (BigCoreCacheCount >= MAX_CACHE_LEVEL_COUNT) {
+            DEBUG ((DEBUG_ERROR, "BigCoreCacheCount exceeds MAX_CACHE_LEVEL_COUNT\n"));
+            ASSERT (FALSE);
+            continue;
+          }
           CoreType = BIG_CORE;
           CacheCount = BigCoreCacheCount;
           BigCoreCacheCount++;
         } else if (mNumBigCore == 0 && mNumSmallCore != 0) {
+          if (SmallCoreCacheCount >= MAX_CACHE_LEVEL_COUNT) {
+            DEBUG ((DEBUG_ERROR, "SmallCoreCacheCount exceeds MAX_CACHE_LEVEL_COUNT\n"));
+            ASSERT (FALSE);
+            continue;
+          }
           CoreType = SMALL_CORE;
           CacheCount = SmallCoreCacheCount;
           SmallCoreCacheCount ++;
@@ -303,12 +313,22 @@ CollectCpuCacheInfo (
         break;
 
       case CPUID_CORE_TYPE_INTEL_ATOM:
+        if (SmallCoreCacheCount >= MAX_CACHE_LEVEL_COUNT) {
+          DEBUG ((DEBUG_ERROR, "SmallCoreCacheCount exceeds MAX_CACHE_LEVEL_COUNT\n"));
+          ASSERT (FALSE);
+          continue;
+        }
         CoreType = SMALL_CORE;
         CacheCount = SmallCoreCacheCount;
         SmallCoreCacheCount++;
         break;
 
       case CPUID_CORE_TYPE_INTEL_CORE:
+        if (BigCoreCacheCount >= MAX_CACHE_LEVEL_COUNT) {
+          DEBUG ((DEBUG_ERROR, "BigCoreCacheCount exceeds MAX_CACHE_LEVEL_COUNT\n"));
+          ASSERT (FALSE);
+          continue;
+        }
         CoreType = BIG_CORE;
         CacheCount = BigCoreCacheCount;
         BigCoreCacheCount++;
