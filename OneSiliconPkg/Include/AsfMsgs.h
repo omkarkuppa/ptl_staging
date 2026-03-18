@@ -300,7 +300,7 @@ typedef union {
     UINT32 AmtTrigBootToPba          : 1;  ///< [2] AMT can trigger PBA Boot
     UINT32 AmtTrigBootToWinRe        : 1;  ///< [3] AMT can trigger WinRe Boot
     UINT32 AmtAllowedToDisSecureBoot : 1;  ///< [4] AMT is allowed to disable secure boot
-    UINT32 WifiProfileSync           : 1;  ///< [5] Wifi Profile Sync
+    UINT32 Reserved3                 : 1;  ///< [5] Reserved
     UINT32 BiosPasswordAuthRequired  : 1;  ///< [6] BIOS password authorization required
     UINT32 Reserved1                 : 1;  ///< [7] Reserved
     UINT32 RemotePlatformErase       : 1;  ///< [8] Remote Platform Erase
