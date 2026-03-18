@@ -2302,6 +2302,11 @@ MrcPrintInputParameters (
     ExtInputs->ForceWRDSEQT2400
     );
 
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tForceDIMMRXOFFSET: %u\n",
+    ExtInputs->ForceDIMMRXOFFSET
+    );
+
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n%s*****    MRC TRAINING STEPS     *****\n%s", PrintBorder, PrintBorder);
   TrainingSteps = &ExtInputs->TrainingEnables;
   TrainingSteps2 = &ExtInputs->TrainingEnables2;

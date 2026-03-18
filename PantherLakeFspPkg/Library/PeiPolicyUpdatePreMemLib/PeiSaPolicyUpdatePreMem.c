@@ -501,6 +501,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables.RMC                     = FspmUpd->FspmConfig.RMC;
   MemConfig->ExternalInputs.TrainingEnables.PRETRAIN                = FspmUpd->FspmConfig.PRETRAIN;
   MemConfig->ExternalInputs.EccSupport              = FspmUpd->FspmConfig.EccSupport;
+  MemConfig->ExternalInputs.ForceDIMMRXOFFSET       = FspmUpd->FspmConfig.ForceDIMMRXOFFSET;
   MemConfig->ExternalInputs.RemapEnable             = FspmUpd->FspmConfig.RemapEnable;
   MemConfig->ExternalInputs.MrcFastBoot             = FspmUpd->FspmConfig.MrcFastBoot;
   MemConfig->ExternalInputs.RankInterleave          = FspmUpd->FspmConfig.RankInterleave;

@@ -3519,6 +3519,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.tREFI|0x0                                   
 gStructPcdTokenSpaceGuid.PcdSaSetup.MemoryVoltage|0x0                                              # Offset 28 Memory Voltage
 gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2Mv|0x0                                                     # Offset 30 Vdd2Mv
 gStructPcdTokenSpaceGuid.PcdSaSetup.EccSupport|0x0                                                 # Offset 32 Bit 0 - ECC Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.ForceDIMMRXOFFSET|0x0                                          #           Bit 1 - Force DIMM Rx Offset Calibration training for LPDDR5X, frequencies >= 6800: 0 = Disable, 1 = Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.RemapEnable|0x1                                                #           Bit 2 - Memory Remap
 gStructPcdTokenSpaceGuid.PcdSaSetup.ScramblerSupport|0x1                                           #           Bit 3 - Memory Scrambler
 gStructPcdTokenSpaceGuid.PcdSaSetup.ProbelessTrace|0x0                                             #           Bit 4 - Probeless Trace
