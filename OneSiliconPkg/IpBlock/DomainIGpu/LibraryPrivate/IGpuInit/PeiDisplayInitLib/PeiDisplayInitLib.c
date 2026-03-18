@@ -40,6 +40,12 @@ EFI_PEI_PPI_DESCRIPTOR  mIGpuFramebufferReadyPpi = {
   NULL
 };
 
+CONST EFI_PEI_PPI_DESCRIPTOR  mIGpuPreMemFramebufferReadyPpi = {
+  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gIGpuPreMemFramebufferReadyPpiGuid,
+  NULL
+};
+
 /**
   ProgramDisplayNativeGpioInit: Initialize the Display Native Gpio
 
@@ -320,6 +326,12 @@ IGpuVgaInit (
         IpIGpuDisableIoCmdReg (IGpuInst);
         return;
       }
+
+      ///
+      /// Install PeiGraphicsPreMemFramebufferReadyPpi
+      ///
+      Status = PeiServicesInstallPpi (&mIGpuPreMemFramebufferReadyPpi);
+      ASSERT_EFI_ERROR (Status);
 
       if (IGpuDataHob != NULL) {
         //
