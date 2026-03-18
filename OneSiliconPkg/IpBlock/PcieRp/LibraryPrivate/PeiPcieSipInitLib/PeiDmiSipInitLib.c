@@ -96,7 +96,7 @@ Dmi3SipConfigureCapability (
   UINT32                        Data32;
   UINT16                        Data16;
   UINT8                         Data8;
-  UINT16                        NextCap;
+  UINT32                        NextCap;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
 
