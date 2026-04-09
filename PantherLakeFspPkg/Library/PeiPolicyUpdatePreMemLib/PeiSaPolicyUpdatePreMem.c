@@ -706,7 +706,7 @@ FspUpdatePeiSaPolicyPreMem (
     HostBridgePreMemConfig->VmdMemBar1Bar        = FspmUpd->FspmConfig.VmdMemBar1Bar;
     HostBridgePreMemConfig->VmdMemBar2Bar        = FspmUpd->FspmConfig.VmdMemBar2Bar;
     HostBridgePreMemConfig->CridEnable           = FspmUpd->FspmConfig.CridEnable;
-    HostBridgePreMemConfig->FabricGVDisable      = FspmUpd->FspmConfig.FabricGVDisable;
+    HostBridgePreMemConfig->FabricGvEnable       = FspmUpd->FspmConfig.FabricGvEnable;
   }
 
 #if FixedPcdGetBool(PcdIpuEnable) == 1

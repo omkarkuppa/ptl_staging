@@ -546,7 +546,7 @@ EcorePowerDensityThrottle
 EnPeriodicComp
 EnableVsysCritical
 ExtendedBiosDecodeRange
-FabricGVDisable
+FabricGvEnable
 FakeSagv
 FivrSpectrumEnable
 FllOverclockMode

@@ -189,8 +189,8 @@ PeiFabricGvInit(
     return Status;
   }
 
-  if (HostBridgePreMemConfig->FabricGVDisable == 0) {
-    DEBUG ((DEBUG_INFO, "Fabriv GV is disabled\n"));
+  if (HostBridgePreMemConfig->FabricGvEnable == 0) {
+    DEBUG ((DEBUG_INFO, "Fabric GV is disabled\n"));
     FabricGvConfiguration.Data = 0;
     FabricGvConfiguration.Fields.IsFabricGvEn = 0xFFFFFFFF;
 
@@ -199,9 +199,9 @@ PeiFabricGvInit(
       return Status;
     }
     DEBUG ((DEBUG_INFO, "Fabric GV configuration is updated\n"));
-    DEBUG ((DEBUG_INFO, "IsFabricGvEn: %x\n", HostBridgePreMemConfig->FabricGVDisable));
+    DEBUG ((DEBUG_INFO, "IsFabricGvEn: %x\n", HostBridgePreMemConfig->FabricGvEnable));
   } else {
-    DEBUG ((DEBUG_INFO, "Fabriv GV is enabled\n"));
+    DEBUG ((DEBUG_INFO, "Fabric GV is enabled\n"));
     FabricGvConfiguration.Data = 0;
     FabricGvConfiguration.Fields.IsFabricGvEn = 0x0;
 

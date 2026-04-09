@@ -2515,9 +2515,9 @@
           help   = STRING_TOKEN(STR_MIPICAM_OPTIONS_FORM_TITLE);
 #endif
 
-    oneof varid   =  SA_SETUP.FabricGVDisable,
-      prompt   = STRING_TOKEN(STR_FABRIC_GV_DISABLE_PROMPT),
-      help     = STRING_TOKEN(STR_FABRIC_GV_DISABLE_HELP),
+    oneof varid   =  SA_SETUP.FabricGvEnable,
+      prompt   = STRING_TOKEN(STR_FABRIC_GV_PROMPT),
+      help     = STRING_TOKEN(STR_FABRIC_GV_HELP),
       option text = STRING_TOKEN (STR_ENABLED_STRING),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
     endoneof;

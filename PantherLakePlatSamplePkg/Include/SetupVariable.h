@@ -1811,7 +1811,7 @@ typedef struct {
   UINT8   PostedInterruptSupport;
   UINT8   TbtPerfBoostEn;
 
-  UINT8   FabricGVDisable;
+  UINT8   FabricGvEnable;
   UINT8   Lp5SafeSpeed;
   UINT16  Vdd2HVoltage;
   UINT16  Vdd1Voltage;

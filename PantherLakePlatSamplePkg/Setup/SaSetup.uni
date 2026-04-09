@@ -1919,8 +1919,8 @@
 #string AUTO                                    #language en-US "Auto"
 #string USER_INPUT                              #language en-US "User input"
 
-#string STR_FABRIC_GV_DISABLE_PROMPT            #language en-US "Fabric GV Disable"
-#string STR_FABRIC_GV_DISABLE_HELP              #language en-US "Enable/Disable Fabric GV"
+#string STR_FABRIC_GV_PROMPT                    #language en-US "Fabric GV"
+#string STR_FABRIC_GV_HELP                      #language en-US "Enable/Disable Fabric GV
 
 //---------------------------------------------------------------------------
 // MipiCam configuration strings

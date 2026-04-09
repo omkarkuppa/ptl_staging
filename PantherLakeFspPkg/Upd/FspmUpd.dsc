@@ -2028,7 +2028,7 @@
   # !BSF HELP:{Set 1 to clear WDT status, then disable and lock WDT registers.}
   gPlatformFspPkgTokenSpaceGuid.WdtDisableAndLock           | * | 0x01 | 0x00
 
-  gPlatformFspPkgTokenSpaceGuid.FabricGVDisable             | * | 0x01 | 0x1
+  gPlatformFspPkgTokenSpaceGuid.FabricGvEnable             | * | 0x01 | 0x1
 
   # Added reserved space  UnusedUpdSpace13[1]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd13               | * | 0x01 | {0x00}

@@ -54,7 +54,7 @@ HostBridgeLoadPeiConfigPreMemDefault (
   HostBridgePreMemConfig->VmdCfgBarBar        = 0xA0000000;
   HostBridgePreMemConfig->VmdMemBar1Bar       = 0xA2000000;
   HostBridgePreMemConfig->VmdMemBar2Bar       = 0xA4000000;
-  HostBridgePreMemConfig->FabricGVDisable     = 0x1;
+  HostBridgePreMemConfig->FabricGvEnable      = 0x1;
 }
 
 /**
@@ -172,7 +172,7 @@ HostBridgePreMemPrintConfig (
   DEBUG ((DEBUG_INFO, "RegBar:0x%x\n", HostBridgePreMemConfig->RegBar));
   DEBUG ((DEBUG_INFO, "CridEnable:%d\n", HostBridgePreMemConfig->CridEnable));
   DEBUG ((DEBUG_INFO, "SafBar:0x%lx\n", HostBridgePreMemConfig->SafBar));
-  DEBUG ((DEBUG_INFO, "FabricGVDisable:%d\n", HostBridgePreMemConfig->FabricGVDisable));
+  DEBUG ((DEBUG_INFO, "FabricGvEnable:%d\n", HostBridgePreMemConfig->FabricGvEnable));
 }
 
 /**
