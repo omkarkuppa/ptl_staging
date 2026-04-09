@@ -331,8 +331,13 @@ typedef struct {
   UINT32   NnFlexDdr5Reserved     : 3;    ///<            Bits 29-31 Reserved
 
   UINT8    NnFlexPhyOvrdMask;             ///< Offset 360 Bitmask to enable NnFlexPhyXXX overrides above (offset 348)
+  UINT8    NnFlexCmdOvrdMask;             ///< Offset 361 Bitmask to enable the use of NnFlexCmd: CmdDrvVrefUp, CtlDrvVrefUp, CmdCaTxEq, CtlDrvVrefDn
+  UINT8    NnFlexCmdDrvVrefUp;            ///< Offset 362 NnFlex CmdDrvVrefUp (0-191)
+  UINT8    NnFlexCtlDrvVrefUp;            ///< Offset 363 NnFlex CtlDrvVrefUp (0-191)
+  UINT8    NnFlexCmdCaTxEq;               ///< Offset 364 NnFlex CmdCaTxEq (0-31)
+  UINT8    NnFlexCtlDrvVrefDn;            ///< Offset 365 NnFlex CtlDrvVrefDn (0-191)
 
-  UINT8   Reserved361[27];                ///< Offset 361 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (361 + 27 bytes) = 416 should be a multiple of 8 bytes.
+  UINT8   Reserved366[22];                ///< Offset 366 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (366 + 22 bytes) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

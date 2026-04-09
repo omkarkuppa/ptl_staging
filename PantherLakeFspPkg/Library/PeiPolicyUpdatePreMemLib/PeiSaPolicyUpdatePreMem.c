@@ -411,6 +411,11 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.NnFlexDdr5RonUp        = FspmUpd->FspmConfig.NnFlexDdr5RonUp;
   MemConfig->ExternalInputs.NnFlexDdr5RonDn        = FspmUpd->FspmConfig.NnFlexDdr5RonDn;
   MemConfig->ExternalInputs.NnFlexPhyOvrdMask      = FspmUpd->FspmConfig.NnFlexPhyOvrdMask;
+  MemConfig->ExternalInputs.NnFlexCmdOvrdMask      = FspmUpd->FspmConfig.NnFlexCmdOvrdMask;
+  MemConfig->ExternalInputs.NnFlexCmdDrvVrefUp     = FspmUpd->FspmConfig.NnFlexCmdDrvVrefUp;
+  MemConfig->ExternalInputs.NnFlexCtlDrvVrefUp     = FspmUpd->FspmConfig.NnFlexCtlDrvVrefUp;
+  MemConfig->ExternalInputs.NnFlexCmdCaTxEq        = FspmUpd->FspmConfig.NnFlexCmdCaTxEq;
+  MemConfig->ExternalInputs.NnFlexCtlDrvVrefDn     = FspmUpd->FspmConfig.NnFlexCtlDrvVrefDn;
   //
   // Enabling Probeless Trace will need to enable IED together
   //

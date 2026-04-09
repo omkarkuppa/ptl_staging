@@ -417,7 +417,12 @@
 #define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RonDn                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5Reserved              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyOvrdMask               (0)
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved361                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexCmdOvrdMask               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexCmdDrvVrefUp              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexCtlDrvVrefUp              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexCmdCaTxEq                 (0)
+#define MRC_EXT_INPUTS_INIT_VAL_NnFlexCtlDrvVrefDn              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved366                     {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -836,7 +841,12 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5RonDn,
     MRC_EXT_INPUTS_INIT_VAL_NnFlexDdr5Reserved,
     MRC_EXT_INPUTS_INIT_VAL_NnFlexPhyOvrdMask,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved361,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexCmdOvrdMask,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexCmdDrvVrefUp,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexCtlDrvVrefUp,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexCmdCaTxEq,
+    MRC_EXT_INPUTS_INIT_VAL_NnFlexCtlDrvVrefDn,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved366,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE

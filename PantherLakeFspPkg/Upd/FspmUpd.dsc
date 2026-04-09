@@ -1844,8 +1844,18 @@
   # !BSF NAME:{Sndw Multilane enablement} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{SoundWire Multiline enablement. Default is DISABLE. 0: DISABLE, 1: Two lines enabled, 2: Three lines enabled, 3: Four Lines enabled.}
   gPlatformFspPkgTokenSpaceGuid.PchHdAudioSndwMultilaneEnable    | * | 0x02 | { 0x00, 0x02 }
-  # Added reserved space UnusedUpdSpace10[3]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd10                | * | 0x03 | {0x00}
+
+  # !BSF NAME:{NnFlexCmdOvrdMask} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Bitmask to enable CMD NnFlex overrides. [0]: CmdDrvVrefUp, [1]: CtlDrvVrefUp, [2]: CmdCaTxEq, [3]: CtlDrvVrefDn}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexCmdOvrdMask                | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlexCmdDrvVrefUp} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Controlled by NnFlexCmdOvrdMask bit[0], [0..191]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexCmdDrvVrefUp               | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlexCtlDrvVrefUp} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Controlled by NnFlexCmdOvrdMask bit[1], [0..191]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexCtlDrvVrefUp               | * | 0x01 | 0x00
 
   # !BSF NAME:{SoundWire<N> Clk Pin Muxing (N - SoundWire number)} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{Determines SoundWire<N> Clk Pin muxing. See  GPIOV2_*_MUXING_SNDW<N>_CLK*}
@@ -1946,8 +1956,18 @@
   # !BSF NAME:{Debug Interfaces} TYPE:{EditNum, HEX, (0x00,0x3F)}
   # !BSF HELP:{Debug Interfaces. BIT0-RAM, BIT1-UART, BIT3-USB3, BIT4-Serial IO, BIT5-TraceHub, BIT2 - Not used.}
   gPlatformFspPkgTokenSpaceGuid.PcdDebugInterfaceFlags                  | * | 0x01 | 0x32
-  # Added reserved space UnusedUpdSpace12[3]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd12               | * | 0x03 | {0x00}
+
+  # !BSF NAME:{NnFlexCmdCaTxEq} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Controlled by NnFlexCmdOvrdMask bit[2], [0..31]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexCmdCaTxEq                     | * | 0x01 | 0x00
+
+  # !BSF NAME:{NnFlexCtlDrvVrefDn} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Controlled by NnFlexCmdOvrdMask bit[3], [0..191]}
+  gPlatformFspPkgTokenSpaceGuid.NnFlexCtlDrvVrefDn                  | * | 0x01 | 0x00
+
+  # !BSF NAME:{FspmUpdRsvd12} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Reserved}
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd12                       | * | 0x01 | 0x00
 
   # !BSF NAME:{Serial Io Uart Debug Mmio Base} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdLpssUartMode = SerialIoUartPci.}

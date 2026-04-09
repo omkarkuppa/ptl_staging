@@ -2148,6 +2148,64 @@
         endif; // Suppress DDR5 options
       endif;
 
+      numeric varid = SA_SETUP.NnFlexCmdOvrdMask,
+        prompt      = STRING_TOKEN(STR_NNFLEX_CMD_OVRD_MASK_PROMPT),
+        help        = STRING_TOKEN(STR_NNFLEX_CMD_OVRD_MASK_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 0xFF,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      suppressif cond ((get(SA_SETUP.NnFlexCmdOvrdMask) & 0x1) == 0x1 ? 1 : 0);
+        numeric varid = SA_SETUP.NnFlexCmdDrvVrefUp,
+          prompt      = STRING_TOKEN(STR_NNFLEX_CMD_DRV_VREF_UP_PROMPT),
+          help        = STRING_TOKEN(STR_NNFLEX_CMD_DRV_VREF_UP_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 191,
+          step        = 1,
+          default     = 0,
+        endnumeric;
+      endif;
+
+      suppressif cond ((get(SA_SETUP.NnFlexCmdOvrdMask) & 0x2) == 0x2 ? 1 : 0);
+        numeric varid = SA_SETUP.NnFlexCtlDrvVrefUp,
+          prompt      = STRING_TOKEN(STR_NNFLEX_CTL_DRV_VREF_UP_PROMPT),
+          help        = STRING_TOKEN(STR_NNFLEX_CTL_DRV_VREF_UP_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 191,
+          step        = 1,
+          default     = 0,
+        endnumeric;
+      endif;
+
+      suppressif cond ((get(SA_SETUP.NnFlexCmdOvrdMask) & 0x4) == 0x4 ? 1 : 0);
+        numeric varid = SA_SETUP.NnFlexCmdCaTxEq,
+          prompt      = STRING_TOKEN(STR_NNFLEX_CCC_TX_EQ_PROMPT),
+          help        = STRING_TOKEN(STR_NNFLEX_CCC_TX_EQ_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 31,
+          step        = 1,
+          default     = 0,
+        endnumeric;
+      endif;
+
+      suppressif cond ((get(SA_SETUP.NnFlexCmdOvrdMask) & 0x8) == 0x8 ? 1 : 0);
+        numeric varid = SA_SETUP.NnFlexCtlDrvVrefDn,
+          prompt      = STRING_TOKEN(STR_NNFLEX_CTL_DRV_VREF_DN_PROMPT),
+          help        = STRING_TOKEN(STR_NNFLEX_CTL_DRV_VREF_DN_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 191,
+          step        = 1,
+          default     = 0,
+        endnumeric;
+      endif;
+
       oneof varid   = SA_SETUP.ForceWRDSEQT2400,
         prompt      = STRING_TOKEN (STR_FORCE_WRDSEQT_2400_PROMPT),
         help        = STRING_TOKEN (STR_FORCE_WRDSEQT_2400_HELP),

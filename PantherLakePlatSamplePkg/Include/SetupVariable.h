@@ -1295,9 +1295,10 @@ typedef struct {
   <b>Revision 26</b>: - Add ForceWRDSEQT2400
   <b>Revision 27</b>: - Add NnFlex override knobs
   <b>Revision 28</b>: - Add ForceDIMMRXOFFSET
+  <b>Revision 29</b>: - Add NnFlexCmdOvrdMask, NnFlexCmdDrvVrefUp, NnFlexCtlDrvVrefUp, NnFlexCmdCaTxEq, NnFlexCtlDrvVrefDn
 **/
 
-#define SA_SETUP_REVISION   28
+#define SA_SETUP_REVISION   29
 
 typedef struct {
   UINT8   Revision;
@@ -1846,7 +1847,12 @@ typedef struct {
   UINT8   NnFlexDdr5RonDn;
   UINT8   NnFlexPhyOvrdMask;
   UINT8   ForceDIMMRXOFFSET;
-  UINT8   Rsvd[31];
+  UINT8   NnFlexCmdOvrdMask;
+  UINT8   NnFlexCmdDrvVrefUp;
+  UINT8   NnFlexCtlDrvVrefUp;
+  UINT8   NnFlexCmdCaTxEq;
+  UINT8   NnFlexCtlDrvVrefDn;
+  UINT8   Rsvd[26];
 } SA_SETUP;
 
 /**

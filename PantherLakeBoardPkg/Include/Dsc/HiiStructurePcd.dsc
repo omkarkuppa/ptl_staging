@@ -3902,6 +3902,11 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RttNomRd|0x0                      
 gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RonUp|0x0                                            #            Bits 25-26 Ddr5RonUp
 gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexDdr5RonDn|0x0                                            #            Bits 27-28 Ddr5RonDn
 gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexPhyOvrdMask|0x0                                          # Offset 360 Bitmask to enable NnFlexPhyXXX overrides above (offset 348)
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexCmdOvrdMask|0x0                                          # Offset 361 Bitmask to enable the use of NnFlexCmd: CmdDrvVrefUp, CtlDrvVrefUp, CmdCaTxEq, CtlDrvVrefDn
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexCmdDrvVrefUp|0x0                                         # Offset 362 NnFlex CmdDrvVrefUp (0-191)
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexCtlDrvVrefUp|0x0                                         # Offset 363 NnFlex CtlDrvVrefUp (0-191)
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexCmdCaTxEq|0x0                                            # Offset 364 NnFlex CmdCaTxEq (0-31)
+gStructPcdTokenSpaceGuid.PcdSaSetup.NnFlexCtlDrvVrefDn|0x0                                         # Offset 365 NnFlex CtlDrvVrefDn (0-191)
 
 ##############################
 # MRC - ExtInputs end

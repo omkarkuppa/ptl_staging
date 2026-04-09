@@ -1396,6 +1396,11 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5RonUp,          MemConfig->ExternalInputs.NnFlexDdr5RonUp,          SaSetup.NnFlexDdr5RonUp       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexDdr5RonDn,          MemConfig->ExternalInputs.NnFlexDdr5RonDn,          SaSetup.NnFlexDdr5RonDn       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexPhyOvrdMask,        MemConfig->ExternalInputs.NnFlexPhyOvrdMask,        SaSetup.NnFlexPhyOvrdMask     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexCmdOvrdMask,        MemConfig->ExternalInputs.NnFlexCmdOvrdMask,        SaSetup.NnFlexCmdOvrdMask     );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexCmdDrvVrefUp,       MemConfig->ExternalInputs.NnFlexCmdDrvVrefUp,       SaSetup.NnFlexCmdDrvVrefUp    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexCtlDrvVrefUp,       MemConfig->ExternalInputs.NnFlexCtlDrvVrefUp,       SaSetup.NnFlexCtlDrvVrefUp    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexCmdCaTxEq,          MemConfig->ExternalInputs.NnFlexCmdCaTxEq,          SaSetup.NnFlexCmdCaTxEq       );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.NnFlexCtlDrvVrefDn,       MemConfig->ExternalInputs.NnFlexCtlDrvVrefDn,       SaSetup.NnFlexCtlDrvVrefDn    );
 
 
     DEBUG_CODE (

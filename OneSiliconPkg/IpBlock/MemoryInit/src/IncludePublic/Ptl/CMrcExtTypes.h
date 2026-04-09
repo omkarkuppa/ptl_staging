@@ -310,4 +310,14 @@ typedef struct {
 #define NnFlexMaskDdr5RonUp        MRC_BIT5  ///< Ddr5RonUp
 #define NnFlexMaskDdr5RonDn        MRC_BIT6  ///< Ddr5RonDn
 
+#ifndef IS_NNFLEX_CMD_VAR_EN
+#define IS_NNFLEX_CMD_VAR_EN(Index)  ((ExtInputs->NnFlexCmdOvrdMask & (Index)) != 0)
+#endif
+
+// Bitmasks for MRC_EXT_INPUTS_TYPE.NnFlexCmdOvrdMask
+#define NnFlexCmdMaskCmdDrvVrefUp       MRC_BIT0  ///<  CmdDrvVrefUp
+#define NnFlexCmdMaskCtlDrvVrefUp       MRC_BIT1  ///<  CtlDrvVrefUp
+#define NnFlexCmdMaskCmdCaTxEq          MRC_BIT2  ///<  CmdCaTxEq
+#define NnFlexCmdMaskCtlDrvVrefDn       MRC_BIT3  ///<  CtlDrvVrefDn
+
 #endif

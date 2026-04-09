@@ -1645,6 +1645,21 @@
 #string STR_FORCE_INTERNAL_CLK_ON_PROMPT        #language en-US "Force InternalClkOn"
 #string STR_FORCE_INTERNAL_CLK_ON_HELP          #language en-US "Force InternalClocksOn and TxPiOn to be set to 1 for frequencies >= 7467 (0: Disable, 1: Enable)"
 
+#string STR_NNFLEX_CMD_OVRD_MASK_PROMPT         #language en-US "NnFlex CMD Override Mask"
+#string STR_NNFLEX_CMD_OVRD_MASK_HELP           #language en-US "Bit mask to enable NnFlex CMD overrides:\n[0]: CmdDrvVrefUp\n[1]: CtlDrvVrefUp\n[2]: CmdCaTxEq\n[3]: CtlDrvVrefDn"
+
+#string STR_NNFLEX_CMD_DRV_VREF_UP_PROMPT       #language en-US "NnFlex CmdDrvVrefUp"
+#string STR_NNFLEX_CMD_DRV_VREF_UP_HELP         #language en-US "CMD Drive Strength Vref Up (0-191)"
+
+#string STR_NNFLEX_CTL_DRV_VREF_UP_PROMPT       #language en-US "NnFlex CtlDrvVrefUp"
+#string STR_NNFLEX_CTL_DRV_VREF_UP_HELP         #language en-US "CTL Drive Strength Vref Up (0-191)"
+
+#string STR_NNFLEX_CCC_TX_EQ_PROMPT             #language en-US "NnFlex CmdCaTxEq"
+#string STR_NNFLEX_CCC_TX_EQ_HELP               #language en-US "CA/CTL TX Equalization (0-31)"
+
+#string STR_NNFLEX_CTL_DRV_VREF_DN_PROMPT       #language en-US "NnFlex CtlDrvVrefDn"
+#string STR_NNFLEX_CTL_DRV_VREF_DN_HELP         #language en-US "CTL Drive Strength Vref Down (0-191)"
+
 //
 // DVMT5.0 Graphics Memory
 //

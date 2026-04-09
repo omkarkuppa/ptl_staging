@@ -487,6 +487,28 @@ CalcUpDnVref (
 
   UpVal = (INT16) (MRC_RCOMP_VREF_CALCULATION_VALUE * RcompResistor) / (RcompResistor + RtargForCalculations);
 
+  // NnFlex Cmd Ovrd
+  switch (Param) {
+    case WrDSCtl:
+      if (IS_NNFLEX_CMD_VAR_EN (NnFlexCmdMaskCtlDrvVrefDn)) {
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%8s: override %s from %3d to %3d\n", GlobalCompOffsetStr[Param], "VrefDn", DnVal, ExtInputs->NnFlexCtlDrvVrefDn);
+        DnVal = ExtInputs->NnFlexCtlDrvVrefDn;
+      }
+      if (IS_NNFLEX_CMD_VAR_EN (NnFlexCmdMaskCtlDrvVrefUp)) {
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%8s: override %s from %3d to %3d\n", GlobalCompOffsetStr[Param], "VrefUp", UpVal, ExtInputs->NnFlexCtlDrvVrefUp);
+        UpVal = ExtInputs->NnFlexCtlDrvVrefUp;
+      }
+      break;
+    case WrDSCmd:
+      if (IS_NNFLEX_CMD_VAR_EN (NnFlexCmdMaskCmdDrvVrefUp)) {
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%8s: override %s from %3d to %3d\n", GlobalCompOffsetStr[Param], "VrefUp", UpVal, ExtInputs->NnFlexCmdDrvVrefUp);
+        UpVal = ExtInputs->NnFlexCmdDrvVrefUp;
+      }
+      break;
+    default:
+      break;
+  }
+
   if (Print) {
     MRC_DEBUG_MSG (
       Debug,

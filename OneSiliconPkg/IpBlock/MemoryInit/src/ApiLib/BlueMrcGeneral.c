@@ -2025,6 +2025,30 @@ MrcPrintInputParameters (
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tNnFlexCmdOvrdMask: 0x%x\n"
+    "\t CmdDrvVrefUpEn: %u\n"
+    "\t CtlDrvVrefUpEn: %u\n"
+    "\t CaTxEqEn: %u\n"
+    "\t CtlDrvVrefDnEn: %u\n",
+    ExtInputs->NnFlexCmdOvrdMask,
+    IS_NNFLEX_CMD_VAR_EN (NnFlexCmdMaskCmdDrvVrefUp),
+    IS_NNFLEX_CMD_VAR_EN (NnFlexCmdMaskCtlDrvVrefUp),
+    IS_NNFLEX_CMD_VAR_EN (NnFlexCmdMaskCmdCaTxEq),
+    IS_NNFLEX_CMD_VAR_EN (NnFlexCmdMaskCtlDrvVrefDn)
+  );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
+    "\tNnFlexCmdDrvVrefUp: %u\n"
+    "\tNnFlexCtlDrvVrefUp: %u\n"
+    "\tNnFlexCmdCaTxEq: %u\n"
+    "\tNnFlexCtlDrvVrefDn: %u\n",
+    ExtInputs->NnFlexCmdDrvVrefUp,
+    ExtInputs->NnFlexCtlDrvVrefUp,
+    ExtInputs->NnFlexCmdCaTxEq,
+    ExtInputs->NnFlexCtlDrvVrefDn
+  );
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\nDRAM setup Items:\n"
     "\tFreqMax: %u\n"
     "\tGearRatio: %u\n"
