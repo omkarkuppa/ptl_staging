@@ -1765,7 +1765,7 @@ TranscodeJedecSpecLPCammSdramDensityPerDie (
 
     default:
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Invalid LP CAMM2 SdramDensityPerDie %s%d\n", SpdValString, SdramDensityPerDie);
-      return MRC_UINT8_MAX;
+      return MRC_UINT_MIN;
   }
 }
 

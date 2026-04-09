@@ -1411,7 +1411,7 @@ MrcCalculateCrc32 (
   UINT32 crc;
   UINT32 CrcTable[256];
 
-  crc = (UINT32) (-1);
+  crc = MRC_UINT32_MAX;
 
   // Initialize the CRC base table.
   for (i = 0; i < 256; i++) {

@@ -914,7 +914,7 @@ InitMrwLpddr5 (
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s: Retrieving Lpddr OdtTableIndex failed!\n", gNullPtrErrStr);
     return mrcFail;
   }
-  DqOdt = (Outputs->DramDqOdtEn) ? LpddrOdtTableIndex.RttWr : 0xFFFF;
+  DqOdt = (Outputs->DramDqOdtEn) ? LpddrOdtTableIndex.RttWr : 0;
   DqOdtEnc = LpddrOdtEncode (DqOdt);
 
   WckOdtEnc = LpddrOdtEncode (LpddrOdtTableIndex.RttWck); // Ohms

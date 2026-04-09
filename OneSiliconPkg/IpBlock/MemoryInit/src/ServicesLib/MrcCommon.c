@@ -2092,7 +2092,8 @@ PrintParamSpacing (
     NumberOfSpaces = 0;
   }
 
-  while (NumberOfSpaces--) {
+  while (NumberOfSpaces) {
+    NumberOfSpaces--;
     MRC_DEBUG_MSG(Debug, MSG_LEVEL_NOTE, " ");
   }
   MRC_DEBUG_MSG(Debug, MSG_LEVEL_NOTE, "%lld", GetSetDecValue);
