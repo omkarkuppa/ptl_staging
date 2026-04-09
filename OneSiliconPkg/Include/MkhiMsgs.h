@@ -911,6 +911,7 @@ typedef union {
 #define FPT_PARTITION_NAME_UNDEFINED  0x00000000
 #define FTP_PARTITION_NAME_PMCP       0x50434D50
 #define FPT_PARTITION_NAME_EFWP       0x50574645
+#define FPT_PARTITION_NAME_PCOD       0x444F4350
 #define MAX_NUM_OF_PARTITIONS         32
 
 typedef struct {
