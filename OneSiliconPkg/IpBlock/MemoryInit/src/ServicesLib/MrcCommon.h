@@ -350,7 +350,7 @@ typedef enum {
   RcvEnaX,
   WrTUnMatched, // 10
   CmdT,
-  CmdV,
+  CmdV, // if Outputs->SplitCmdCtlV is FALSE, this is combined CMD+CTL Vref; otherwise, only CMD Vref
   CtlV,
   RdTN,
   RdTP,
@@ -769,6 +769,7 @@ extern const char WrVDelayString[];
 extern const char RdVDelayString[];
 extern const char DqsDelayString[];
 extern const char CmdVDelayString[];
+extern const char CtlVDelayString[];
 extern const char TxDqDelayString[];
 #endif
 
@@ -2240,6 +2241,28 @@ WriteTimeByteCentering1D (
   );
 
 /**
+  This procedure is meant to handle Command/Control Voltage centering, places CmdV/CtlV in the middle of the eye,
+  using a very robust, linear search algorithm.
+
+  @param[in,out] MrcData          - Include all MRC global data.
+  @param[in]     MarginParam      - Margin parameter type (CmdV or CtlV)
+  @param[in]     StepSize         - Step size
+  @param[in]     MsgPrintMask     - Serial debug output message enable mask
+  @param[out]    VrefOffsets      - Per-rank offsets from the low CAC Vref edge
+
+  @retval        MrcStatus -  If succeeded, return mrcSuccess
+**/
+MRC_IRAM0_FUNCTION
+MrcStatus
+CmdCtlVrefCentering1D (
+  IN OUT MrcParameters *const MrcData,
+  IN     UINT8                MarginParam,
+  IN     const UINT8          StepSize,
+  IN     UINT8                MsgPrintMask,
+  OUT    UINT8                VrefOffsets[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL]
+  );
+
+/**
   This procedure is meant to handle command voltage centering, places  CmdV in the middle of the eye,
   using a very robust, linear search algorithm.
 
@@ -2253,6 +2276,26 @@ WriteTimeByteCentering1D (
 MRC_IRAM0_FUNCTION
 MrcStatus
 CmdVCentering1D (
+  IN OUT MrcParameters *const MrcData,
+  IN     const UINT8          StepSize,
+  IN     UINT8                MsgPrintMask,
+  OUT    UINT8                VrefOffsets[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL]
+  );
+
+/**
+  CTL Voltage Centering for DDR5 only.
+  Center CTL Vref independently from CMD Vref.
+
+  @param[in,out] MrcData          - Include all MRC global data.
+  @param[in]     StepSize         - Step size
+  @param[in]     MsgPrintMask     - Serial debug output message enable mask
+  @param[out]    VrefOffsets      - Per-rank offsets from the low CTL Vref edge
+
+  @retval        MrcStatus -  If succeeded, return mrcSuccess
+**/
+MRC_IRAM0_FUNCTION
+MrcStatus
+CtlVCentering1D (
   IN OUT MrcParameters *const MrcData,
   IN     const UINT8          StepSize,
   IN     UINT8                MsgPrintMask,

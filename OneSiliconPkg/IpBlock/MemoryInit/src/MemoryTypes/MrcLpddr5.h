@@ -1461,6 +1461,24 @@ Lpddr5DcaEncode (
 );
 
 /**
+  Calculate the tWR value for LPDDR5
+  JEDEC Spec: 7.4.8.3 Write Recovery time
+  Table 230 - nWR Latency
+
+  @param[in] Frequency        - the memory frequency.
+  @param[in] SdramWidth       - The SDRAM width
+  @param[in] IsDvfscEnabled   - TRUE if DVFSC is enabled
+
+  @retval tWR in tCK units
+**/
+UINT32
+GetLpddr5tWR (
+  IN MrcFrequency     Frequency,
+  IN UINT8            SdramWidth,
+  IN BOOLEAN          IsDvfscEnabled
+  );
+
+/**
   This function implements Lpddr5 Dimm Rx Offset Calibration body.
 
   @param[in] MrcData - Include all MRC global data.

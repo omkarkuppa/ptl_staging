@@ -56,6 +56,7 @@ const char  WrVDelayString[] = "WriteVoltage";
 const char  RdVDelayString[] = "ReadVoltage";
 const char  DqsDelayString[] = "DqsDelay";
 const char  CmdVDelayString[] = "CmdVoltage";
+const char  CtlVDelayString[] = "CtlVoltage";
 const char  TxDqDelayString[] = "TxDqDelay";
 #endif
 
@@ -3879,7 +3880,7 @@ CalcMcChannelMask (
   MaxChannels = Outputs->MaxChannels;
 
   McChannelMask = 0;
-  if ((Param == CmdV) || (Param == WrV)) {
+  if ((Param == CmdV) || (Param == WrV) || (Param == CtlV)) {
     if (EnMultiCast) {
       for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
         for (Channel = 0; Channel < MaxChannels; Channel++) {
@@ -3934,6 +3935,7 @@ GetVrefOffsetLimits (
       break;
 
     case CmdV:
+    case CtlV:
       // CmdV technology dependent
       if (IsDdr5) {
         MaxMargin = DDR5_CMD_VREF_OFFSET_MAX;
@@ -4114,16 +4116,27 @@ MrcCalcMaxVrefMargin (
       RankOut = &DimmOut->Rank[Rank % MAX_RANK_IN_DIMM];
       if (IsDdr5) {
         if (Param == CmdV) {
-          CurrentVrefOffCmd = MrcVrefToOffsetDdr5 (Pda ? RankOut->DdrPdaVrefCmd[Byte] : RankOut->MR[mrIndexMR11], Param);
-          CurrentVrefOffCtl = MrcVrefToOffsetDdr5 (DDR5_VREFCS_RAW (RankOut->MR[mrIndexMR12]), Param);
-
-          if (CurrentVrefOffCmd > CurrentVrefOffCtl) {
-            CurrentVrefOffHigh = CurrentVrefOffCmd;
-            CurrentVrefOffLow = CurrentVrefOffCtl;
+          if (Outputs->SplitCmdCtlV) {
+            // CMD Vref only
+            CurrentVrefOffHigh = MrcVrefToOffsetDdr5 (Pda ? RankOut->DdrPdaVrefCmd[Byte] : RankOut->MR[mrIndexMR11], Param);
+            CurrentVrefOffLow = CurrentVrefOffHigh;
           } else {
-            CurrentVrefOffHigh = CurrentVrefOffCtl;
-            CurrentVrefOffLow = CurrentVrefOffCmd;
+            // Combined CMD + CTL Vref
+            CurrentVrefOffCmd = MrcVrefToOffsetDdr5 (Pda ? RankOut->DdrPdaVrefCmd[Byte] : RankOut->MR[mrIndexMR11], Param);
+            CurrentVrefOffCtl = MrcVrefToOffsetDdr5 (DDR5_VREFCS_RAW (RankOut->MR[mrIndexMR12]), Param);
+
+            if (CurrentVrefOffCmd > CurrentVrefOffCtl) {
+              CurrentVrefOffHigh = CurrentVrefOffCmd;
+              CurrentVrefOffLow = CurrentVrefOffCtl;
+            } else {
+              CurrentVrefOffHigh = CurrentVrefOffCtl;
+              CurrentVrefOffLow = CurrentVrefOffCmd;
+            }
           }
+        } else if (Param == CtlV) {
+          // CTL Vref only
+          CurrentVrefOffHigh = MrcVrefToOffsetDdr5 (DDR5_VREFCS_RAW (RankOut->MR[mrIndexMR12]), Param);
+          CurrentVrefOffLow = CurrentVrefOffHigh;
         } else {
           CurrentVrefOffHigh = MrcVrefToOffsetDdr5 (Pda ? RankOut->DdrPdaVrefDq[Byte] : RankOut->MR[mrIndexMR10], Param);
           CurrentVrefOffLow = CurrentVrefOffHigh;

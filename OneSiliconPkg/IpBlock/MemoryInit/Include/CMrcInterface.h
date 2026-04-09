@@ -2227,7 +2227,8 @@ typedef struct {
   BOOLEAN             PprTargetedStatus[PPR_REQUEST_MAX]; ///< PPR status of each Targeted PPR request (0 = Targeted PPR was successful, 1 = PPR failed)
   UINT8               FailingChannelMask;           ///< Per MC/CH Bitmask showing failing channels disabled due to Limp Home mode feature during previous boot
   BOOLEAN             MarginIsRd;                   ///< Flag for MarginType
-  UINT8               ReservedBytesForAlignment[2]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  BOOLEAN             SplitCmdCtlV;                 ///< TRUE: ChangeMargin and MrcCalcMaxVrefMargin will treat CmdV as CA Vref only (and CS Vref uses CtlV); FALSE: CmdV is treated as CA/CS Vref (combined)
+  UINT8               ReservedBytesForAlignment[1]; ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;

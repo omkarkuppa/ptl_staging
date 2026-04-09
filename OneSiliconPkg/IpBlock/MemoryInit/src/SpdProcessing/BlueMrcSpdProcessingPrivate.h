@@ -672,23 +672,6 @@ GetDdr5tRTP (
 
 
 /**
-  Calculate the tWR value for LPDDR5
-  JEDEC Spec: 36 ns.
-
-    @param[in] tCK              - the memory DCLK in femtoseconds.
-    @param[in] SdramWidthIndex  - 1 for X8 and 2 for X16 SDRAM width
-
-    @retval tWR in DCLK units
-**/
-UINT32
-GetLpddr5tWR (
-  IN const UINT32     tCK,
-  IN UINT8            SdramWidthIndex,
-  IN BOOLEAN          IsDvfscEnabled
-  );
-
-
-/**
   Calculate the minimum tRTP timing value for the given memory frequency.
 
     @param[in, out] MrcData - Pointer to MrcData data structure.

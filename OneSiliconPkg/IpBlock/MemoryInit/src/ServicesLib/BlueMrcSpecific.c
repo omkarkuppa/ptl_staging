@@ -316,6 +316,7 @@ GetMarginResultType (
       return LastCmdT;
 
     case CmdV:
+    case CtlV:
       return LastCmdV;
 
     default:
@@ -383,6 +384,7 @@ IsPerRankMarginParam (
       break;
 
     case CmdV:
+    case CtlV:
       // CmdV technology dependent
       PerRankMp = TRUE;
       break;
@@ -2012,8 +2014,8 @@ ChangeMargin (
   // Pre-Process the margin numbers.
   v0    = value0;
 
-  // Value parameter checking is handled within MrcUpdateVref for WrV and CmdV
-  if ((param != WrV) && (param != CmdV)) {
+  // Value parameter checking is handled within MrcUpdateVref for WrV/CmdV/CtlV
+  if ((param != WrV) && (param != CmdV) && (param != CtlV)) {
     Min = (-1) - Max0;
     v0 = RANGE (v0, Min, Max0);
   }
@@ -2050,8 +2052,26 @@ ChangeMargin (
       break;
 
     case CmdV:
+      // CMD Vref
       PdaMode = IsDdr5 && (byte != 0); // Force DDR5 PDA for CmdV to OFF until specified otherwise
       MrcUpdateVref (MrcData, McChannelMask, RankMask, byte, param, v0, UpdateMrcData, PdaMode, SkipWait, TRUE);
+      // Combined CMD + CTL Vref
+      if (!Outputs->SplitCmdCtlV && IsDdr5 && (byte == 0) && (!Outputs->IsOCProfile)) {
+        for (CurrentRank = 0; CurrentRank < MAX_RANK_IN_CHANNEL; CurrentRank++) {
+          if ((1 << CurrentRank) & RankMask) {
+            for (CurrentMc = McStart; CurrentMc < McEnd; CurrentMc++) {
+              for (CurrentCh = ChannelStart; CurrentCh < ChannelEnd; CurrentCh++) {
+                if (MrcRankExist (MrcData, CurrentMc, CurrentCh, CurrentRank)) {
+                  MrcDdr5SetVrefCsCachedOffset (MrcData, CurrentMc, CurrentCh, CurrentRank, v0, UpdateMrcData, FALSE);
+                }
+              }
+            }
+          }
+        }
+      }
+      break;
+
+    case CtlV:
       if (IsDdr5 && (byte == 0) && (!Outputs->IsOCProfile)) {
         for (CurrentRank = 0; CurrentRank < MAX_RANK_IN_CHANNEL; CurrentRank++) {
           if ((1 << CurrentRank) & RankMask) {

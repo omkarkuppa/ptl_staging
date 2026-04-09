@@ -273,7 +273,8 @@ typedef struct {
   UINT32  DunitTatOptimization      : 1;  ///<            Bit 26     Optimize Dunit TAT Timings
   UINT32  Lp5SafeSpeed              : 1;  ///<            Bit 27     LP5 safe speed: 0 = Disabled, 1 = Enabled
   UINT32  ForceInternalClkOn        : 1;  ///<            Bit 28     Force InternalClocksOn and TxPiOn to be set to 1 for frequencies >= 7467. <b>0: Disable</b>, 1: Enable
-  UINT32  SvReservedBits            : 3;  ///<            Bit 29-31  Reserved
+  UINT32  IsSplitCmdCtlVEn          : 1;  ///<            Bit 29     DDR5 only: Split Command Voltage Centering into separate CMD and CTL sweeps: 0 = Combined, 1 = Split CMD then CTL (default)
+  UINT32  SvReservedBits            : 2;  ///<            Bit 30-31  Reserved
 
   UINT8   RowPressEn;                     ///< Offset 324 Enable/disable ROW PRESS feature
   UINT8   WeaklockEn;                     ///< Offset 325 Weak Lock Enable: <b>0=Auto</b>, 1=Enable, 2=Disable

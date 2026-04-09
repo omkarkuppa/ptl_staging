@@ -100,6 +100,45 @@ const UINT8 Lp5ReadLatencyDvfscEnabledSet2[MrcLp5RlDvfscDisIndex3200+1] = { 3, 5
 const UINT8 Lp5nRBTPDvfscDisabled[MrcLp5RlDvfscDisIndexMax]   = { 0, 0, 0, 0, 1, 1, 2, 2, 3, 4, 4, 4, 6, 6, 7, 8 };
 const UINT8 Lp5nRBTPDvfscEnabled[MrcLp5RlDvfscDisIndex3200+1] = { 0, 0, 0, 1, 2, 2 };
 
+// JEDEC spec table: Lower Limit (>) | Upper Limit (<=) | x16 | x8
+// 7.4.8.3 Write Recovery time - Table 230 - nWR Latency
+typedef struct {
+  UINT8 nWR_x16;
+  UINT8 nWR_x8;
+} JedecTwrRange;
+
+// JEDEC nWR Latency table for LPDDR5
+// w\o DVFSC, w\o Write Link ECC
+const JedecTwrRange JedecTwrTable[MrcLp5RlDvfscDisIndexMax] = {
+  { 3,  3}, //    40,   f533,
+  { 5,  5}, //  f533,  f1067,
+  { 7,  8}, // f1067,  f1600,
+  {10, 10}, // f1600,  f2133,
+  {12, 13}, // f2133,  f2750,
+  {14, 15}, // f2750,  f3200,
+  {16, 17}, // f3200,  f3733,
+  {19, 20}, // f3733,  f4267,
+  {21, 22}, // f4267,  f4800,
+  {24, 25}, // f4800,  f5500,
+  {26, 28}, // f5500,  f6000,
+  {28, 29}, // f6000,  f6400,
+  {32, 34}, // f6400,  f7500,
+  {37, 39}, // f7500,  f8533,
+  {41, 44}, // f8533,  f9600,
+  {46, 48}, // f9600, f10667,
+};
+
+// JEDEC nWR Latency table for LPDDR5
+// w Enhanced DVFSC, w\o Write Link ECC
+const JedecTwrRange JedecTwrTableEdvfsc[] = {
+  { 3,  3}, //    40,   f533,
+  { 6,  6}, //  f533,  f1067,
+  { 9,  9}, // f1067,  f1600,
+  {11, 12}, // f1600,  f2133,
+  {15, 15}, // f2133,  f2750,
+  {17, 18}, // f2750,  f3200,
+};
+
 // This table is the list of possible terminations the DRAM can achieve using ZQ Resistor.
 const UINT16 Lp5RzqValues[LP5_RZQ_NUM_VALUES] = { 0xFFFF, 240, 120, 80, 60, 48, 40 };
 
@@ -418,221 +457,38 @@ EncodeWriteRecoveryLpddr5 (
   OUT UINT8         *EncVal
   )
 {
-  MrcOutput *Outputs;
-  MrcDebug  *Debug;
-  MrcStatus Status;
-  UINT8     MrValue;
+  MrcOutput           *Outputs;
+  MrcDebug            *Debug;
+  MrcStatus           Status;
+  UINT8               MrValue;
+  UINT8               Index;
+  UINT8               TwrTableLength;
+  const JedecTwrRange *TwrTable;
 
   Outputs = &MrcData->Outputs;
-  Debug = &MrcData->Outputs.Debug;
+  Debug   = &Outputs->Debug;
+  Status  = mrcSuccess;
 
-  Status = mrcSuccess;
   if (!Outputs->IsDvfscEnabled) {
-    if (MrcData->Outputs.LpByteMode) {
-      switch (Value) {
-        case 3:
-          MrValue = Lp5Wr4t1X8_3;
-          break;
+    TwrTable = JedecTwrTable;
+    TwrTableLength = MrcLp5RlDvfscDisIndexMax;
+  } else {
+    TwrTable = JedecTwrTableEdvfsc;
+    TwrTableLength = MrcLp5RlDvfscDisIndex3200+1;
+  }
 
-        case 5:
-          MrValue = Lp5Wr4t1X8_5;
-          break;
-
-        case 8:
-          MrValue = Lp5Wr4t1X8_8;
-          break;
-
-        case 10:
-          MrValue = Lp5Wr4t1X8_10;
-          break;
-
-        case 13:
-          MrValue = Lp5Wr4t1X8_13;
-          break;
-
-        case 15:
-          MrValue = Lp5Wr4t1X8_15;
-          break;
-
-        case 17:
-          MrValue = Lp5Wr4t1X8_17;
-          break;
-
-        case 20:
-          MrValue = Lp5Wr4t1X8_20;
-          break;
-
-        case 22:
-          MrValue = Lp5Wr4t1X8_22;
-          break;
-
-        case 25:
-          MrValue = Lp5Wr4t1X8_25;
-          break;
-
-        case 28:
-          MrValue = Lp5Wr4t1X8_28;
-          break;
-
-        case 29:
-          MrValue = Lp5Wr4t1X8_29;
-          break;
-
-        case 34:
-          MrValue = Lp5Wr4t1X8_34;
-          break;
-
-        case 39:
-          MrValue = Lp5Wr4t1X8_39;
-          break;
-
-        case 44:
-          MrValue = Lp5Wr4t1X8_44;
-          break;
-
-        case 48:
-          MrValue = Lp5Wr4t1X8_48;
-          break;
-
-        default:
-          MrValue = 0xFF;
-          Status = mrcWrongInputParameter;
-          break;
+  // Search for the value in the selected lookup table
+  MrValue = 0xFF;
+  for (Index = 0; Index < TwrTableLength; Index++) {
+    if (Outputs->LpByteMode) {
+      if (TwrTable[Index].nWR_x8 == Value) {
+        MrValue = Index;
+        break;
       }
     } else {
-      switch (Value) {
-        case 3:
-          MrValue = Lp5Wr4t1X16_3;
-          break;
-
-        case 5:
-          MrValue = Lp5Wr4t1X16_5;
-          break;
-
-        case 7:
-          MrValue = Lp5Wr4t1X16_7;
-          break;
-
-        case 10:
-          MrValue = Lp5Wr4t1X16_10;
-          break;
-
-        case 12:
-          MrValue = Lp5Wr4t1X16_12;
-          break;
-
-        case 14:
-          MrValue = Lp5Wr4t1X16_14;
-          break;
-
-        case 16:
-          MrValue = Lp5Wr4t1X16_16;
-          break;
-
-        case 19:
-          MrValue = Lp5Wr4t1X16_19;
-          break;
-
-        case 21:
-          MrValue = Lp5Wr4t1X16_21;
-          break;
-
-        case 24:
-          MrValue = Lp5Wr4t1X16_24;
-          break;
-
-        case 26:
-          MrValue = Lp5Wr4t1X16_26;
-          break;
-
-        case 28:
-          MrValue = Lp5Wr4t1X16_28;
-          break;
-
-        case 32:
-          MrValue = Lp5Wr4t1X16_32;
-          break;
-
-        case 37:
-          MrValue = Lp5Wr4t1X16_37;
-          break;
-
-        case 41:
-          MrValue = Lp5Wr4t1X16_41;
-          break;
-
-        case 48:
-          MrValue = Lp5Wr4t1X16_48;
-          break;
-
-        default:
-          MrValue = 0xFF;
-          Status = mrcWrongInputParameter;
-          break;
-      }
-    }
-  } else {  //E-DVFSC is enabled
-    if (MrcData->Outputs.LpByteMode) {
-      switch (Value) {
-        case 3:
-          MrValue = Lp5DvfscWr4t1X8_3;
-          break;
-
-        case 6:
-          MrValue = Lp5DvfscWr4t1X8_6;
-          break;
-
-        case 9:
-          MrValue = Lp5DvfscWr4t1X8_9;
-          break;
-
-        case 12:
-          MrValue = Lp5DvfscWr4t1X8_12;
-          break;
-
-        case 15:
-          MrValue = Lp5DvfscWr4t1X8_15;
-          break;
-
-        case 18:
-          MrValue = Lp5DvfscWr4t1X8_18;
-          break;
-
-        default:
-          MrValue = 0xFF;
-          Status = mrcWrongInputParameter;
-          break;
-      }
-    } else {
-      switch (Value) {
-        case 3:
-          MrValue = Lp5DvfscWr4t1X16_3;
-          break;
-
-        case 6:
-          MrValue = Lp5DvfscWr4t1X16_6;
-          break;
-
-        case 9:
-          MrValue = Lp5DvfscWr4t1X16_9;
-          break;
-
-        case 11:
-          MrValue = Lp5DvfscWr4t1X16_11;
-          break;
-
-        case 15:
-          MrValue = Lp5DvfscWr4t1X16_15;
-          break;
-
-        case 17:
-          MrValue = Lp5DvfscWr4t1X16_17;
-          break;
-
-        default:
-          MrValue = 0xFF;
-          Status = mrcWrongInputParameter;
-          break;
+      if (TwrTable[Index].nWR_x16 == Value) {
+        MrValue = Index;
+        break;
       }
     }
   }
@@ -4081,6 +3937,38 @@ EncodeReadLatencyLpddr5 (
   }
 
   return Status;
+}
+
+/**
+  Calculate the tWR value for LPDDR5
+  JEDEC Spec: 7.4.8.3 Write Recovery time
+  Table 230 - nWR Latency
+
+  @param[in] Frequency        - the memory frequency.
+  @param[in] SdramWidth       - The SDRAM width
+  @param[in] IsDvfscEnabled   - TRUE if DVFSC is enabled
+
+  @retval tWR in tCK units
+**/
+UINT32
+GetLpddr5tWR (
+  IN MrcFrequency     Frequency,
+  IN UINT8            SdramWidth,
+  IN BOOLEAN          IsDvfscEnabled
+  )
+{
+  UINT8 FreqBin;
+  FreqBin = GetFreqBinIndex (Frequency);
+
+  if (IsDvfscEnabled) {
+    FreqBin = MIN (FreqBin, ARRAY_COUNT(JedecTwrTableEdvfsc) - 1);
+    return (SdramWidth == 16) ?
+           JedecTwrTableEdvfsc[FreqBin].nWR_x16 : JedecTwrTableEdvfsc[FreqBin].nWR_x8;
+  } else {
+    FreqBin = MIN (FreqBin, ARRAY_COUNT(JedecTwrTable) - 1);
+    return (SdramWidth == 16) ?
+           JedecTwrTable[FreqBin].nWR_x16 : JedecTwrTable[FreqBin].nWR_x8;
+  }
 }
 
 /**

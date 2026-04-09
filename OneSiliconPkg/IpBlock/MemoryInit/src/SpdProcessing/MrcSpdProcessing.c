@@ -4985,139 +4985,6 @@ GetDdr5tRTP (
 }
 
 /**
-  Calculate the tWR value for LPDDR5
-  JEDEC Spec: Ch 9.3 Core AC Timing Parameters for LPDDR5X
-        DVFSC       DVFSC
-        Disabled    Enabled
-  --------------------------
-  x16 |  34ns        41ns
-  x8  |  36ns        43ns
-
-  @param[in] tCK              - the memory tCK in femtoseconds.
-  @param[in] SdramWidthIndex  - 1 for X8 and 2 for X16 SDRAM width
-  @param[in] IsDvfscEnabled   - TRUE if DVFSC is enabled
-
-  @retval tWR in tCK units
-**/
-UINT32
-GetLpddr5tWR (
-  IN const UINT32     tCK,
-  IN UINT8            SdramWidthIndex,
-  IN BOOLEAN          IsDvfscEnabled
-  )
-{
-  UINT32  tWR;
-
-  tWR = 0;
-  if (tCK > 0) {
-    if (!IsDvfscEnabled) {
-      tWR = DIVIDECEIL ((((SdramWidthIndex == MRC_SPD_SDRAM_DEVICE_WIDTH_8) ? 36000000 : 34000000) - (tCK / 100)), tCK);
-      if (SdramWidthIndex == MRC_SPD_SDRAM_DEVICE_WIDTH_8) {
-        if (tWR <= 3) {
-          tWR = 3;
-        } else if (tWR <= 5) {
-          tWR = 5;
-        } else if (tWR <= 8) {
-          tWR = 8;
-        } else if (tWR <= 10) {
-          tWR = 10;
-        } else if (tWR <= 13) {
-          tWR = 13;
-        } else if (tWR <= 15) {
-          tWR = 15;
-        } else if (tWR <= 17) {
-          tWR = 17;
-        } else if (tWR <= 20) {
-          tWR = 20;
-        } else if (tWR <= 22) {
-          tWR = 22;
-        } else if (tWR <= 25) {
-          tWR = 25;
-        } else if (tWR <= 28) {
-          tWR = 28;
-        } else if (tWR <= 29) {
-          tWR = 29;
-        } else if (tWR <= 34) {
-          tWR = 34;
-        } else if (tWR <= 39) {
-          tWR = 39;
-        } else if (tWR <= 44) {
-          tWR = 44;
-        } else {
-          tWR = 48;
-        }
-      } else {
-        if (tWR <= 3) {
-          tWR = 3;
-        } else if (tWR <= 5) {
-          tWR = 5;
-        } else if (tWR <= 7) {
-          tWR = 7;
-        } else if (tWR <= 10) {
-          tWR = 10;
-        } else if (tWR <= 12) {
-          tWR = 12;
-        } else if (tWR <= 14) {
-          tWR = 14;
-        } else if (tWR <= 16) {
-          tWR = 16;
-        } else if (tWR <= 19) {
-          tWR = 19;
-        } else if (tWR <= 21) {
-          tWR = 21;
-        } else if (tWR <= 24) {
-          tWR = 24;
-        } else if (tWR <= 26) {
-          tWR = 26;
-        } else if (tWR <= 28) {
-          tWR = 28;
-        } else if (tWR <= 32) {
-          tWR = 32;
-        } else if (tWR <= 37) {
-          tWR = 37;
-        } else if (tWR <= 41) {
-          tWR = 41;
-        } else {
-          tWR = 48;
-        }
-      }
-    } else {  // Dvfsc enabled
-      tWR = DIVIDECEIL ((((SdramWidthIndex == MRC_SPD_SDRAM_DEVICE_WIDTH_8) ? 43000000 : 41000000) - (tCK / 100)), tCK);
-      if (SdramWidthIndex == MRC_SPD_SDRAM_DEVICE_WIDTH_8) {
-        if (tWR <= 3) {
-          tWR = 3;
-        } else if (tWR <= 6) {
-          tWR = 6;
-        } else if (tWR <= 9) {
-          tWR = 9;
-        } else if (tWR <= 12) {
-          tWR = 12;
-        } else if (tWR <= 15) {
-          tWR = 15;
-        } else {
-          tWR = 18;
-        }
-      } else {
-        if (tWR <= 3) {
-          tWR = 3;
-        } else if (tWR <= 6) {
-          tWR = 6;
-        } else if (tWR <= 9) {
-          tWR = 9;
-        } else if (tWR <= 11) {
-          tWR = 11;
-        } else if (tWR <= 15) {
-          tWR = 15;
-        } else {
-          tWR = 17;
-        }
-      }
-    }
-  } // tCK > 0
-  return tWR;
-}
-
-/**
   Calculate the minimum tRTP timing value for the given memory frequency.
 
     @param[in, out] MrcData - Pointer to MrcData data structure.
@@ -5312,7 +5179,6 @@ GetChannelDimmtWR (
   UINT32                tCKmin;
   UINT32                Actual[MAX_PROFILE];
   UINT32                Calculated;
-  UINT8                 SdramWidthIndex;
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
@@ -5372,8 +5238,7 @@ GetChannelDimmtWR (
                 Calculated = GetDdr5tWR (tCKmin, SpdIn->Ddr5.Base.tWRmin.Bits.tWRmin);
                 } else {
                   // LPDDR5
-                  SdramWidthIndex = SpdIn->Lpddr.Base.ModuleOrganization.Bits.SdramDeviceWidth;
-                  Calculated = GetLpddr5tWR (tCKmin, SdramWidthIndex, Outputs->IsDvfscEnabled);
+                  Calculated = GetLpddr5tWR (Outputs->Frequency, DimmOut->SdramWidth, Outputs->IsDvfscEnabled);
                 }
               }
               break;

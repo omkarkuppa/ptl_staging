@@ -138,10 +138,13 @@ MrcLateCommandTraining (
 
 /**
   Perform Command Voltage Centering.
+  Based on IsSplitCmdCtlVEn flag:
+  - If enabled and DDR5: Runs CMD centering followed by CTL centering independently (high frequency only)
+  - If disabled or LP5:  Runs combined CMD+CTL centering
 
   @param[in, out] MrcData - Include all MRC global data.
 
-  @retval MrcStatus - if it succeded returns mrcSuccess
+  @retval MrcStatus -  if it succeeded returns mrcSuccess
 **/
 extern
 MRC_IRAM0_FUNCTION

@@ -3041,6 +3041,10 @@ Ddr5SetDramVref (
     MrIndex = mrIndexMR11;
     ProgramPda = (PdaMode && ChannelOut->IsMr11PdaEnabled);
     break;
+  case CtlV:
+    MrIndex = mrIndexMR12;
+    ProgramPda = FALSE;
+    break;
   case WrV:
     MrIndex = mrIndexMR10;
     ProgramPda = (PdaMode && ChannelOut->IsMr10PdaEnabled);
@@ -3095,8 +3099,8 @@ Ddr5SetDramVref (
           MrcSetTxVrefDdr5 (MrcData, Controller, Channel, Rank, Device, VrefType, CurrentOffset, UpdateMrcData, ProgramPda);
         }
       }
-      // Apply CA Vref after it is programmed above
-      if (VrefType == CmdV) {
+      // Apply CA/CTL Vref after it is programmed above
+      if ((VrefType == CmdV) || (VrefType == CtlV)) {
         MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_APPLY_VREF_RTT, MRC_PRINTS_OFF);
       }
       if (ProgramPda) {
@@ -3158,6 +3162,10 @@ MrcSetTxVrefDdr5 (
      MrAddress = mrMR11;
      ProgramPda = (PdaMode && ChannelOut->IsMr11PdaEnabled);
      break;
+   case CtlV:
+     MrAddress = mrMR12;
+     ProgramPda = FALSE;
+     break;
    case WrV:
      MrAddress = mrMR10;
      ProgramPda = (PdaMode && ChannelOut->IsMr10PdaEnabled);
@@ -3175,6 +3183,8 @@ MrcSetTxVrefDdr5 (
    }
    if (VrefType == CmdV) {
      MrcIssueVrefCmd (MrcData, Controller, Channel, Rank, DDR5_VREFCA (Vref), MRC_PRINTS_OFF);
+   } else if (VrefType == CtlV) {
+     MrcIssueVrefCmd (MrcData, Controller, Channel, Rank, DDR5_VREFCS (Vref), MRC_PRINTS_OFF);
    } else {
      // VrefType TxVref
      Delay = (tVREF_DQ_PS * MRC_TIMER_1NS) / 1000;
@@ -3192,6 +3202,8 @@ MrcSetTxVrefDdr5 (
       } else {
         if (VrefType == CmdV) {
           RankOut->MR[mrIndexMR11] = Vref;
+        } else if (VrefType == CtlV) {
+          RankOut->MR[mrIndexMR12] = Vref;
         } else {
           RankOut->MR[mrIndexMR10] = Vref;
         }
@@ -3229,7 +3241,7 @@ MrcOffsetToVrefDdr5 (
   INT32 MinEncoding;
   INT32 MaxEncoding;
 
-  if (VrefType == CmdV) {
+  if ((VrefType == CmdV) || (VrefType == CtlV)) {
     MinOffset = DDR5_CMD_VREF_OFFSET_MIN;
     MaxOffset = DDR5_CMD_VREF_OFFSET_MAX;
     MinEncoding = Ddr5Vref_47p5;
@@ -3277,7 +3289,7 @@ MrcVrefToOffsetDdr5 (
   INT32 MinEncoding;
   INT32 MaxEncoding;
 
-  if (VrefType == CmdV) {
+  if ((VrefType == CmdV) || (VrefType == CtlV)) {
     MinOffset = DDR5_CMD_VREF_OFFSET_MIN;
     MaxOffset = DDR5_CMD_VREF_OFFSET_MAX + 1;
     MinEncoding = Ddr5Vref_47p5;

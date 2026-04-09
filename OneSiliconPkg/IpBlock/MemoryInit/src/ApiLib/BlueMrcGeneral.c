@@ -1770,7 +1770,8 @@ MrcPrintInputParameters (
     "\tTxStepSizeLB: %u\n"
     "\tPhClkCheck: %u\n"
     "\tEnPeriodicComp: %u\n"
-    "\tDunitTatOptimization: %u\n",
+    "\tDunitTatOptimization: %u\n"
+    "\tIsSplitCmdCtlVEn: %u\n",
     Inputs->NumCL,
     Inputs->LoopCount,
     ExtInputs->DqLoopbackTest,
@@ -1779,7 +1780,8 @@ MrcPrintInputParameters (
     ExtInputs->TxStepSizeLB,
     ExtInputs->PhClkCheck,
     ExtInputs->EnPeriodicComp,
-    ExtInputs->DunitTatOptimization
+    ExtInputs->DunitTatOptimization,
+    ExtInputs->IsSplitCmdCtlVEn
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDisableChannel:\n");
