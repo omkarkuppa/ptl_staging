@@ -54,7 +54,6 @@ PeiHostBridgeIpStatusLib
 OcMailboxLib
 MsrFruLib
 CpuInitLib
-MeLib
 
 [Packages]
 MdePkg/MdePkg.dec
