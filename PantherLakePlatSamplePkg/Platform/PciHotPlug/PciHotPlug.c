@@ -815,7 +815,11 @@ GetResourcePadding (
   PaddingResource->SpecificFlag = 0;
   PaddingResource->AddrRangeMin = 0;
   PaddingResource->AddrRangeMax = 0;
-  PaddingResource->AddrLen      = RsvdExtraBusNum - 1; // Subordinate Bus Number = Secondary Bus Number + Reserved Bus Number, but Secondary Bus Number already consumed 1 bus number itself.
+  if (RsvdExtraBusNum > 0) {
+    PaddingResource->AddrLen = RsvdExtraBusNum - 1; // Subordinate Bus Number = Secondary Bus Number + Reserved Bus Number, but Secondary Bus Number already consumed 1 bus number itself.
+  } else {
+    PaddingResource->AddrLen = 0;
+  }
 
   //
   // Padding for non-prefetchable memory

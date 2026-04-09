@@ -451,7 +451,7 @@ GetUndiVersion (
   UINT32                      RetVal;
   VOID                        *ProtocolPointer;
 
-  RetVal = (UINT32)-1;
+  RetVal = MAX_UINT32;
   DriverImageHandleCount = 0;
 
   Status = gBS->LocateProtocol (&gEfiPxeBaseCodeProtocolGuid, NULL, (VOID **) &ProtocolPointer);
