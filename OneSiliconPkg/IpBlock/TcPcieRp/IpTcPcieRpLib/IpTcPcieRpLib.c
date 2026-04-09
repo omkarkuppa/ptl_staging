@@ -998,7 +998,7 @@ IpTcPcieRpGetVersion (
   IP_CSI_VER_ID         VerId
   )
 {
-  IP_CSI_VER_ID RetValue;
+  UINT32 RetValue;
 
   TC_PCIE_RP_API_ENTRY ();
 
@@ -1024,7 +1024,6 @@ IpTcPcieRpGetVersion (
       RetValue = VERSION_CSI;
       break;
     default:
-      RetValue = VERSION_UNKNOWN_TC_PCIE_RP;
       break;
   }
 

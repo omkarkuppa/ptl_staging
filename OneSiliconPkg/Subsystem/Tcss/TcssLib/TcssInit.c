@@ -176,7 +176,7 @@ TcssGetVersion (
   IP_CSI_VER_ID   VerId
   )
 {
-  IP_CSI_VER_ID RetValue;
+  UINT32 RetValue;
 
   TCSS_API_ENTRY ();
 
@@ -202,7 +202,6 @@ TcssGetVersion (
       RetValue = VERSION_CSI;
       break;
     default:
-      RetValue = MAX_UINT32;
       break;
   }
 

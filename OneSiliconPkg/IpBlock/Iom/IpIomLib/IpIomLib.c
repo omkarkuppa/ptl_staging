@@ -304,9 +304,11 @@ IpIomGetVersion (
   IP_CSI_VER_ID  VerId
   )
 {
-  IP_CSI_VER_ID  RetValue;
+  UINT32 RetValue;
 
   IOM_API_ENTRY ();
+
+  RetValue = VERSION_UNKNOWN_IOM;
 
   switch (VerId) {
     case (IpCsiVerIdHwIp):
@@ -328,7 +330,6 @@ IpIomGetVersion (
       RetValue = VERSION_CSI;
       break;
     default:
-      RetValue = VERSION_UNKNOWN_IOM;
       break;
   }
 
