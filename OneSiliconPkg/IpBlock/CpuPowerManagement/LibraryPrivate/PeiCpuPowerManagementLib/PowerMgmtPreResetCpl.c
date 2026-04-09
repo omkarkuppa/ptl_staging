@@ -30,6 +30,8 @@
 #include <Register/Cpuid.h>
 #include <Library/CpuPlatformLib.h>
 #include <Library/CpuInfoFruLib.h>
+#include <Library/PeiMeLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Register/B2pMailbox.h>
 
 /**
@@ -358,6 +360,9 @@ ConfigPowerFloorMgmt (
   PCODE_MAILBOX_INTERFACE          MailboxCommand;
   MAILBOX_DATA_POWER_FLOOR_CONFIG  MailboxData;
   BOOLEAN                          SettingsChanged;
+  FLASH_PARTITION_DATA             PcodePartitionData;
+  UINT32                           PcodeNumOfModules;
+  BOOLEAN                          PcodeVersionValid;
 
   SettingsChanged  = FALSE;
   MailboxData.Data = 0;
@@ -421,9 +426,31 @@ ConfigPowerFloorMgmt (
   }
 
   //
+  // Check pcode version before modifying Media Aggressive throttling option
+  //
+  PcodeVersionValid = FALSE;
+  PcodeNumOfModules = 0;
+  ZeroMem (&PcodePartitionData, sizeof (FLASH_PARTITION_DATA));
+
+  Status = PeiHeciGetImageFwVersionMsg (FPT_PARTITION_NAME_PCOD, &PcodeNumOfModules, &PcodePartitionData);
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "ConfigPowerFloorMgmt: Pcode version: %d.%d.%d.%d\n",
+      PcodePartitionData.Version.Major, PcodePartitionData.Version.Minor,
+      PcodePartitionData.Version.Hotfix, PcodePartitionData.Version.Build));
+    //
+    // Only enable Media Aggressive throttling config for proper pcode version
+    //
+    if ((PcodePartitionData.Version.Major > 9) ||
+        ((PcodePartitionData.Version.Major == 9) && (PcodePartitionData.Version.Minor > 0)) ||
+        ((PcodePartitionData.Version.Major == 9) && (PcodePartitionData.Version.Minor == 0) && (PcodePartitionData.Version.Hotfix >= 33))) {
+      PcodeVersionValid = TRUE;
+    }
+  }
+  //
   // Check Media Aggressive throttling option (reverse encoding is used)
   //
-  if (MailboxData.Fields.PowerFloorAggressiveMediaDisable == CpuPowerMgmtBasicConfig->PowerFloorAggressiveMedia) {
+  if (PcodeVersionValid &&
+      (MailboxData.Fields.PowerFloorAggressiveMediaDisable == CpuPowerMgmtBasicConfig->PowerFloorAggressiveMedia)) {
     //
     // When enabled, SoC uses aggressive media throttling to lower SoC floor power.
     // Mailbox parameter is to disable the option and thus have reverse encoding, 0: Enabled(Default), 1: Disabled
