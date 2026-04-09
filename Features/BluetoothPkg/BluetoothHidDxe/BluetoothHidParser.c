@@ -41,6 +41,7 @@
 #define BIT_FILED_BUFFBYTE(x) ((x >> 1 ) & 0x01)
 
 #define IS_LONG_ITEM(x)      (((x & 0xf0) == 0xf0) ? 1 : 0) // If an Item is Long Item
+#define LONG_ITEM_HEADER_SIZE 3 // Long Item header is 3 bytes (Prefix + Size + Tag) as per HID Specification 1.11
 
 // Types of Main Items
 #define M_INPUT             0x8
@@ -307,13 +308,24 @@ BtHidParseReportMap (
 
   do {
 
-    if (Cur > (BtHidDev->ReportMapLen-1)) {
+    if (Cur >= BtHidDev->ReportMapLen) {
         return;
       }
     // Skip long items
     if (IS_LONG_ITEM(Map[Cur])) {
-      Cur += Map[Cur + 1];
+      // Safely advance cursor past the long item (Data Size + Header Size).
+      // Header is 3 bytes (Prefix + Size + Tag) as per HID Specification 1.11.
+      if ((Cur + 1) < BtHidDev->ReportMapLen) {
+         Cur += (Map[Cur + 1] + LONG_ITEM_HEADER_SIZE);
+      } else {
+         Cur += LONG_ITEM_HEADER_SIZE;
+      }
       continue;
+    }
+
+    /* Ensure Map[Cur + 1] is within ReportMap bounds before dispatching to handlers */
+    if ((Cur + 1) >= BtHidDev->ReportMapLen) {
+      return;
     }
 
     // Process only the short items

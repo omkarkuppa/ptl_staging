@@ -2381,12 +2381,12 @@ gap_handle_adv_report (
  #endif /* GAP_EXTRA_REMOTE_DATA == TRUE */
   UINT8                bdaddr[BD_ADDR_LEN], direct_addr[BD_ADDR_LEN];
   UINT8                *data = 0;
-  UINT8                *ptr;
   UINT8                pos = 0, elem_len;
   BOOLEAN              skip = FALSE;
   char                 bdaddr_str[BD_ADDR_STR_LEN], direct_addr_str[BD_ADDR_STR_LEN];
   UINT8                zero_addr[] = { 0, 0, 0, 0, 0, 0 };
   discovered_device_t  *device     = &g_local_adapter.gap_data.discovered_device;
+  UINT8                *buffer_len = NULL;
 
   memcpy (direct_addr, zero_addr, BD_ADDR_LEN);
   if (buffer == NULL) {
@@ -2399,17 +2399,39 @@ gap_handle_adv_report (
     return 0;
   }
 
+  // Vulnerability Fix: Calculate end of buffer to prevent OOB read
+  buffer_len = buffer + len - 1; // -1 because num_reports already read
   while (num_reports) {
+    // Check if buffer has enough data for next read (event_type(1) + addr_type(1) + bdaddr(6))
+    if (buffer + sizeof(event_type) + sizeof(address_type) + sizeof(bdaddr) > buffer_len) {
+      loge ("Not enough data for event_type, address_type and bdaddr!");
+      break;
+    }
+
     STREAM_TO_UINT8 (event_type, buffer);
     STREAM_TO_UINT8 (address_type, buffer);
     STREAM_TO_BDADDR (bdaddr, buffer);
 
     if (directed) {
+      if (buffer + sizeof(direct_addr_type) + sizeof(direct_addr) > buffer_len) { // direct_addr_type(1) + direct_addr(6)
+        loge ("Not enough data for direct_addr_type and direct_addr!");
+        break;
+      }
+
       STREAM_TO_UINT8 (direct_addr_type, buffer);
       STREAM_TO_BDADDR (direct_addr, buffer);
     } else {
+      if (buffer + sizeof(length_data) > buffer_len) { // length_data(1)
+        loge ("Not enough data for length_data!");
+        break;
+      }
+
       STREAM_TO_UINT8 (length_data, buffer);
       if (length_data > 0) {
+        if (buffer + length_data > buffer_len) {
+          loge ("Not enough data for advertising payload!");
+          break;
+        }
         data = (UINT8 *)alloc (length_data);
 
         if (!data) {
@@ -2421,6 +2443,10 @@ gap_handle_adv_report (
 
       buffer += length_data;
  #if (GAP_EXTRA_REMOTE_DATA == TRUE)
+      if (buffer + sizeof(rssi) > buffer_len) { // rssi(1)
+        loge ("Not enough data for rssi!");
+        break;
+      }
       STREAM_TO_INT8 (rssi, buffer);
  #endif /* GAP_EXTRA_REMOTE_DATA == TRUE */
     }
@@ -2445,40 +2471,49 @@ gap_handle_adv_report (
     if (length_data > 0) {
       while (pos < (length_data - 1)) {
         elem_len = data[pos++];
-        elem_len--;
-        if (elem_len == 0 || pos + elem_len >= length_data) {  
-          break;  //prevent out-of-bounds access
-        }                        // Except the Type field
+        /* Validate raw AD length: must be non-zero and element must fit in buffer */
+        if (elem_len == 0 || pos + elem_len > length_data) {
+          loge ("Invalid AD element length!");
+          break;
+        }
+        elem_len--;              /* Subtract the Type field byte */
         switch (data[pos++]) {
           case GAP_DATA_SHORTENED_LOCAL_NAME:
           case GAP_DATA_COMPLETE_LOCAL_NAME:
-            ptr  = &data[pos];
-            pos += elem_len;
-            ARRAY_TO_STRING (device->localname, ptr, MIN (elem_len, MAX_DEVICE_NAME_LEN));
+            ARRAY_TO_STRING (device->localname, &data[pos], MIN (elem_len, MAX_DEVICE_NAME_LEN));
             logd ("devname=%s", device->localname);
             break;
  #if (GAP_EXTRA_REMOTE_DATA == TRUE)
           case GAP_DATA_TX_POWER_LEVEL:
-            device->tx_power = data[pos++];
-            logd ("tx_power=%u", device->tx_power);
+            if (elem_len >= sizeof (device->tx_power)) {
+              device->tx_power = data[pos];
+              logd ("tx_power=%u", device->tx_power);
+            }
             break;
           case GAP_DATA_APPEARANCE:
-            device->appearance = ((UINT16)data[pos])+(((UINT16)data[pos+1])<<8);
-            pos               += 2;
-            logd ("appearance=%u", device->appearance);
+            if (elem_len >= sizeof (device->appearance)) {
+              device->appearance = ((UINT16)data[pos]) + (((UINT16)data[pos + 1]) << 8);
+              logd ("appearance=%u", device->appearance);
+            }
             break;
           case GAP_DATA_LE_ROLE:
-            device->role_supported = data[pos++];
-            logd ("role_supported=%u", device->role_supported);
+            if (elem_len >= sizeof (device->role_supported)) {
+              device->role_supported = data[pos];
+              logd ("role_supported=%u", device->role_supported);
+            }
             break;
  #endif /* GAP_EXTRA_REMOTE_DATA == TRUE */
           case GAP_DATA_FLAGS:
-            device->flags = data[pos++];
-            logd ("flags=%u", device->flags);
+            if (elem_len >= sizeof (device->flags)) {
+              device->flags = data[pos];
+              logd ("flags=%u", device->flags);
+            }
             break;
           default:
-            pos += elem_len;
+            break;
         }
+        /* Always advance pos to next element boundary — prevents parser desync */
+        pos += elem_len;
       }
     }
 

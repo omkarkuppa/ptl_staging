@@ -1184,8 +1184,8 @@ l2cap_act_recv_data (
   logi ("");
 
   if (!data)
-	    return STATUS_ERR_INVALID_PARAM;
-  
+    return STATUS_ERR_INVALID_PARAM;
+
   if (!device) {
     return STATUS_ERR_INVALID_PARAM;
   }
@@ -1209,9 +1209,27 @@ l2cap_act_recv_data (
     }
 
     logd ("fresh pkt.");
+    /* Security Fix: Validate transport length covers L2CAP header */
+    if (data_pkt->data_length < L2CAP_HDR_SIZE) {
+      loge ("Invalid L2CAP packet length: %d", data_pkt->data_length);
+      return STATUS_ERR_INVALID_PARAM;
+    }
     STREAM_TO_UINT16 (l2cap_payload_length_total, data_pkt->data);
     STREAM_TO_UINT16 (cid, data_pkt->data);
     logd ("length:%d cid:%d", l2cap_payload_length_total, cid);
+
+    /* Security Fix: Reject zero-length payloads */
+    if (l2cap_payload_length_total == 0) {
+      loge ("Invalid L2CAP payload length: 0");
+      return STATUS_ERR_INVALID_PARAM;
+    }
+
+    /* Security Fix: Cross-validate L2CAP length against ACL length to prevent buffer overflow */
+    if (l2cap_payload_length_total < (data_pkt->data_length - L2CAP_HDR_SIZE)) {
+      loge ("L2CAP payload length mismatch: declared %d, received %d", l2cap_payload_length_total, data_pkt->data_length - L2CAP_HDR_SIZE);
+      return STATUS_ERR_INVALID_PARAM;
+    }
+
     l2cap_payload_length_total     = TRUNCATE_TO_16BIT_LENGTH (l2cap_payload_length_total, sizeof (buffer_t));
     device->data_rx_pkt.l2cap_data = (buffer_t *)alloc (l2cap_payload_length_total + sizeof (buffer_t));
     if (!device->data_rx_pkt.l2cap_data) {
@@ -1246,6 +1264,20 @@ l2cap_act_recv_data (
   } else {
     loge ("Unknown PB flag:%d", data_pkt->pb_flag);
     return STATUS_ERR_LAYER_SPECIFIC;
+  }
+
+  /* Security Fix: Bounds check before memcpy to prevent heap overflow */
+  if ((UINT32)device->data_rx_pkt.l2cap_data->offset + (UINT32)l2cap_payload_length_this_pkt > (UINT32)device->data_rx_pkt.l2cap_data->length) {
+    loge ("L2CAP data overflow: offset %d + len %d > max %d",
+          device->data_rx_pkt.l2cap_data->offset,
+          l2cap_payload_length_this_pkt,
+          device->data_rx_pkt.l2cap_data->length);
+    if (device->data_rx_pkt.l2cap_data) {
+      dealloc (device->data_rx_pkt.l2cap_data);
+      device->data_rx_pkt.l2cap_data = NULL;
+    }
+
+    return STATUS_ERR_INSUFFICIENT_RESOURCES;
   }
 
   memcpy (device->data_rx_pkt.l2cap_data->data + device->data_rx_pkt.l2cap_data->offset, data_pkt->data, l2cap_payload_length_this_pkt);

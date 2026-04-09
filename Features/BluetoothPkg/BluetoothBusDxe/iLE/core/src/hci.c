@@ -44,6 +44,7 @@
 
 #define HCI_CMD_Q_LEN    10
 #define HCI_CMD_TIMEOUT  2000 // ms
+#define HCI_DATA_HANDLE_SIZE 4
 
 static queue_internal_t  hci_cmd_tx_q;
 
@@ -381,8 +382,22 @@ hci_num_cmpl_data_pkts_evt_cmpl (
     return;
   }
 
+  /* Vulnerability Fix: This check ensures that the buffer is large enough (at least Preamble(2) + NumHandles(1))
+     to safely read 'num_of_handles' using STREAM_TO_UINT8, preventing an Out-Of-Bounds (OOB) read. */
+  if (len < (HCI_EVT_PREAMBLE_SIZE + 1)) {
+    loge ("Not enough data for event preamble and num_of_handles!");
+    return;
+  }
+
   JUMP_CUSTOM_LEN (buffer, 1);      /* Skip event length */
   STREAM_TO_UINT8 (num_of_handles, buffer);
+
+  /* Vulnerability Fix: Verify buffer holds Preamble(2) + NumHandles(1) + Data List(NumHandles*4) */
+  if (len < (HCI_EVT_PREAMBLE_SIZE + 1 + (num_of_handles * HCI_DATA_HANDLE_SIZE))) {
+    loge ("Not enough data for data list!");
+    return;
+  }
+
   for (it = 0; it < num_of_handles; it++) {
     STREAM_TO_UINT16 (handle, buffer);
     STREAM_TO_UINT16 (num_of_pkts_sent, buffer);
