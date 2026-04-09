@@ -69,7 +69,7 @@ LoadBiosGuardConfigDefault (
     CPU BIOS Guard configuration
   ********************************/
     BiosGuardConfig->BiosGuardModulePtr = 0xFFFFFFFFFFFFFFFF;
-    BiosGuardConfig->BiosGuardAttr      = 0xFFFFFFFF;
+    BiosGuardConfig->BiosGuardAttr      = BIT5 | BIT4 | BIT3 | BIT2 | BIT1 | BIT0;
     BiosGuardConfig->EcProvisionEav     = 0xFFFFFFFFFFFFFFFF;
     BiosGuardConfig->EcBiosGuardCmdLock = 0xFFFFFFFFFFFFFFFF;
 }

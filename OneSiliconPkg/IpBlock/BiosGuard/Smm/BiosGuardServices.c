@@ -147,7 +147,7 @@ BiosGuardToolsInterfaceInit (
     ///
     /// Register BIOS Guard SW SMI handler
     ///
-    SwContext.SwSmiInputValue = (UINTN)-1;
+    SwContext.SwSmiInputValue = MAX_UINTN;
     Handle = NULL;
     DEBUG ((DEBUG_ERROR, "Register SW SMI handler for BiosGuardUpdateBios Function\n"));
     Status = SwDispatch->Register (
