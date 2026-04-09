@@ -6831,14 +6831,16 @@ MrcGetVendorSwizzling (
 {
   MrcInput                          *Inputs;
   MrcOutput                         *Outputs;
+  MrcDebug                          *Debug;
   MrcSpd                            *Spd;
   MrcDimmOut                        *DimmOut;
   UINT8 DensityIndex;
+  UINT8                             MR5[MRC_MRR_ARRAY_SIZE];
   UINT8                             MR6[MRC_MRR_ARRAY_SIZE];
-  UINT8                             MR7[MRC_MRR_ARRAY_SIZE];
 
   Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
 
   Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
   DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm];
@@ -6850,22 +6852,41 @@ MrcGetVendorSwizzling (
   switch (DimmOut->DdrType) {
     case MRC_DDR_TYPE_DDR5:
       if ((Spd->Ddr5.ManufactureInfo.DramIdCode.Data == MICRON_DRAM_ID) ||
-            (Spd->Ddr5.ManufactureInfo.ModuleId.IdCode.Data == MICRON_DRAM_ID)) {
-        // Don't check DramStepping for DDR5, partially because DramStepping is often 0 in SPD
-        *MA1Swizzle |= DimmMap;
-        *MA2Swizzle |= DimmMap;
-      }
-
-      if ((Spd->Ddr5.ManufactureInfo.DramIdCode.Data == SAMSUNG_DRAM_ID) ||
-            (Spd->Ddr5.ManufactureInfo.ModuleId.IdCode.Data == SAMSUNG_DRAM_ID)) {
-        if (Spd->Ddr5.ManufactureInfo.DramStepping == 0x95) {
+          (Spd->Ddr5.ManufactureInfo.ModuleId.IdCode.Data == MICRON_DRAM_ID)) {
+        if (((DensityIndex == MrcDensity16Gb) &&
+             ((Spd->Ddr5.ManufactureInfo.DramStepping == 0x41)   ||
+              (Spd->Ddr5.ManufactureInfo.DramStepping == 0x5A)   ||
+              (Spd->Ddr5.ManufactureInfo.DramStepping == 0x44)   ||
+              (Spd->Ddr5.ManufactureInfo.DramStepping == 0x48))) ||
+            ((DensityIndex == MrcDensity24Gb)  &&
+             ((Spd->Ddr5.ManufactureInfo.DramStepping == 0x42)   ||
+              (Spd->Ddr5.ManufactureInfo.DramStepping == 0x43))) ||
+            ((DensityIndex == MrcDensity32Gb)  &&
+             ((Spd->Ddr5.ManufactureInfo.DramStepping == 0x42)   ||
+              (Spd->Ddr5.ManufactureInfo.DramStepping == 0x45)   ||
+              (Spd->Ddr5.ManufactureInfo.DramStepping == 0x46)))) {
           *MA1Swizzle |= DimmMap;
           *MA2Swizzle |= DimmMap;
         }
-        if (Spd->Ddr5.ManufactureInfo.DramStepping == 0x45) {
+      }
+
+      if ((Spd->Ddr5.ManufactureInfo.DramIdCode.Data == SAMSUNG_DRAM_ID) ||
+          (Spd->Ddr5.ManufactureInfo.ModuleId.IdCode.Data == SAMSUNG_DRAM_ID)) {
+        if ((DensityIndex == MrcDensity16Gb) &&
+            (Spd->Ddr5.ManufactureInfo.ModulePartNumber.ModulePartNumber[9] == 0x42) &&
+            (Spd->Ddr5.ManufactureInfo.DramStepping == 0x95)) {
+          *MA1Swizzle |= DimmMap;
           *MA2Swizzle |= DimmMap;
         }
-        if (Spd->Ddr5.ManufactureInfo.DramStepping == 0x4D) {
+        if ((DensityIndex == MrcDensity16Gb) && ((Spd->Ddr5.ManufactureInfo.DramStepping == 0x45) ||
+            (Spd->Ddr5.ManufactureInfo.DramStepping == 0x51) ||
+            (Spd->Ddr5.ManufactureInfo.DramStepping == 0x52))) {
+          *MA2Swizzle |= DimmMap;
+        }
+        if ((DensityIndex == MrcDensity32Gb) && (Spd->Ddr5.ManufactureInfo.DramStepping == 0x4D)) {
+          *MA2Swizzle |= DimmMap;
+        }
+        if ((DensityIndex == MrcDensity24Gb) && (Spd->Ddr5.ManufactureInfo.DramStepping == 0x51)) {
           *MA2Swizzle |= DimmMap;
         }
       }
@@ -6873,27 +6894,25 @@ MrcGetVendorSwizzling (
 
 
     case MRC_DDR_TYPE_LPDDR5:
-      if ((Spd->Lpddr.ManufactureInfo.DramIdCode.Data == MICRON_DRAM_ID) ||
-            (Spd->Lpddr.ManufactureInfo.ModuleId.IdCode.Data == MICRON_DRAM_ID)) {
+      MrcIssueMrr (MrcData, Controller, Channel, 0, mrMR5, MR5);
+      if (MR5[0] == 0xFF) {
         // Don't check DramStepping for LPDDR, partially because DramStepping is often 0 in SPD
-        if (DensityIndex == MRC_SPD_SDRAM_DENSITY_8Gb) {
+        MrcIssueMrr (MrcData, Controller, Channel, 0, mrMR6, MR6);
+        if ((MR6[0] == 0x6) && DensityIndex == MrcDensity8Gb) {
           *MA1Swizzle |= DimmMap;
           *MA2Swizzle |= DimmMap;
         }
-      }
-
-      if ((Spd->Lpddr.ManufactureInfo.DramIdCode.Data == SAMSUNG_DRAM_ID) ||
-            (Spd->Lpddr.ManufactureInfo.ModuleId.IdCode.Data == SAMSUNG_DRAM_ID)) {
+      } else if (MR5[0] == 0x1) {
         // Lp5 always has rank0. thus issue MRR on Rank0,
         // and Rank1 has same MrrResult.
         MrcIssueMrr (MrcData, Controller, Channel, 0, mrMR6, MR6);
-        MrcIssueMrr (MrcData, Controller, Channel, 0, mrMR7, MR7);
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DensityIndex %u\n", DensityIndex);
         // assume all Dram chips have same stepping, check device 0.
-        if (MR6[0] == 0x8 && !Outputs->LpX) {
+        if ((MR6[0] == 0x8) &&
+            ((DensityIndex == MrcDensity12Gb) || (DensityIndex == MrcDensity16Gb))) {
           *MA1Swizzle |= DimmMap;
           *MA2Swizzle |= DimmMap;
-        }
-        if (MR6[0] == 0xA && MR7[0] == 0x0 && Outputs->LpX) {
+        } else if ((MR6[0] == 0xA) || (MR6[0] == 0xB)) {
           *MA2Swizzle |= DimmMap;
         }
       }
