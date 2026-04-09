@@ -34,9 +34,11 @@ extern EFI_GUID gCpuPowerMgmtBasicConfigGuid;
 
   <b>Revision 1</b>:
   - Initial version.
+  <b>Revision 2</b>:
+  - Added PowerFloorAggressiveMedia policy.
 **/
 
-#define CPU_POWER_MGMT_BASIC_CONFIG_REVISION 1
+#define CPU_POWER_MGMT_BASIC_CONFIG_REVISION 2
 
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;                   ///< Config Block Header
@@ -217,7 +219,15 @@ typedef struct {
   0: Disable;<b>1: Enable</b>; MB control is to disable the disconnect (reverse encoding is used).
   **/
   UINT8  PowerFloorPcieGenDowngrade;
-  UINT8  Reserved[5];
+  /**
+  Survivability Feature: Media Aggressive Throttling option for Floor Power Management
+  This option is applicable only if SoC Floor Power Management is enabled.
+  When Disabled: SoC can divide media PLL to lower floor power (Default).
+  When Enabled: SoC will not perform media aggressive throttling.
+  0: Disable;<b>1: Enable</b>; MB control is to disable aggressive media throttling (reverse encoding is used).
+  **/
+  UINT8  PowerFloorAggressiveMedia;
+  UINT8  Reserved[4];
 } CPU_POWER_MGMT_BASIC_CONFIG;
 
 #pragma pack (pop)

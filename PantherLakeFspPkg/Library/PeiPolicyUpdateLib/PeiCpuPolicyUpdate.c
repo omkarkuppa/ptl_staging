@@ -153,6 +153,7 @@ FspUpdatePeiCpuPolicy (
   CpuPowerMgmtBasicConfig->HwpLock                                           = FspsUpd->FspsConfig.HwpLock;
   CpuPowerMgmtBasicConfig->PowerFloorManagement                              = FspsUpd->FspsConfig.PowerFloorManagement;
   CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect                       = FspsUpd->FspsConfig.PowerFloorDisplayDisconnect;
+  CpuPowerMgmtBasicConfig->PowerFloorAggressiveMedia                         = FspsUpd->FspsConfig.PowerFloorAggressiveMedia;
   CpuPowerMgmtBasicConfig->EnableFastMsrHwpReq                               = FspsUpd->FspsConfig.EnableFastMsrHwpReq;
   CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade                        = FspsUpd->FspsConfig.PowerFloorPcieGenDowngrade;
 

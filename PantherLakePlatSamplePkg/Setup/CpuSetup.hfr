@@ -929,6 +929,15 @@
       endoneof;
     endif;  //suppressif
 
+    suppressif ideqval CPU_SETUP.PowerFloorManagement == 0;
+      oneof varid   = CPU_SETUP.PowerFloorAggressiveMedia,
+        prompt      = STRING_TOKEN (STR_POWER_FLOOR_AGGRESSIVE_MEDIA_PROMPT),
+        help        = STRING_TOKEN (STR_POWER_FLOOR_AGGRESSIVE_MEDIA_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;  //suppressif
+
     goto CPU_PL3_OPTIONS_FORM_ID,
       prompt = STRING_TOKEN (STR_PL3_FORM_TITLE),
       help = STRING_TOKEN (STR_PL3_FORM_TITLE_HELP);

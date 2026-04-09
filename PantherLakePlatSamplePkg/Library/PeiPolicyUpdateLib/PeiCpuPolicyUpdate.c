@@ -133,6 +133,7 @@ InitCpuPmConfigBySetupValues (
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PowerFloorManagement,        CpuPowerMgmtBasicConfig->PowerFloorManagement,        CpuSetup->PowerFloorManagement);
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PowerFloorDisplayDisconnect, CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect, CpuSetup->PowerFloorDisplayDisconnect);
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PowerFloorPcieGenDowngrade,  CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade,  CpuSetup->PowerFloorPcieGenDowngrade);
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PowerFloorAggressiveMedia, CpuPowerMgmtBasicConfig->PowerFloorAggressiveMedia, CpuSetup->PowerFloorAggressiveMedia);
 
   //
   // Custom VID table

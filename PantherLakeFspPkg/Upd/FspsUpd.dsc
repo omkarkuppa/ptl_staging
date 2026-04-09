@@ -2790,8 +2790,12 @@
   # !BSF HELP:{VerticalResolution from PEIm Gfx for PEI Logo}
   gPlatformFspPkgTokenSpaceGuid.VerticalResolution          | * | 0x04 | 0x00000000
 
+  # !BSF NAME:{Power Floor Aggressive Media Throttling} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{SoC can divide the media PLL to lower SoC floor power (Default disabled).  0: Disable: Aggressive Media Throttling will not be used by SoC., </b>1: Enable <b>}
+  gPlatformFspPkgTokenSpaceGuid.PowerFloorAggressiveMedia | * | 0x01 | 0x00
+
   # Added reserved space FspsUpdRsvd38[56]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd388              | * | 0x38 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd388              | * | 0x37 | {0x00}
 
   ## GRAPHICS_PEI_CONFIG End
 

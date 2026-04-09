@@ -419,6 +419,22 @@ ConfigPowerFloorMgmt (
     MailboxData.Fields.PowerFloorPcieGenXDowngradeDisable = !CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade;
     SettingsChanged = TRUE;
   }
+
+  //
+  // Check Media Aggressive throttling option (reverse encoding is used)
+  //
+  if (MailboxData.Fields.PowerFloorAggressiveMediaDisable == CpuPowerMgmtBasicConfig->PowerFloorAggressiveMedia) {
+    //
+    // When enabled, SoC uses aggressive media throttling to lower SoC floor power.
+    // Mailbox parameter is to disable the option and thus have reverse encoding, 0: Enabled(Default), 1: Disabled
+    // Hence requested value of 1 for the mailbox data means aggressive media throttling will be disabled.
+    // Once it is disabled, it remains disabled till next warm/cold reset.
+    //
+    DEBUG ((DEBUG_INFO, "ConfigPowerFloorMgmt: User wants to modify Media Aggressive throttling option for SOC floor power management \n"));
+    MailboxData.Fields.PowerFloorAggressiveMediaDisable = !CpuPowerMgmtBasicConfig->PowerFloorAggressiveMedia;
+    SettingsChanged = TRUE;
+  }
+
   if (SettingsChanged) {
     DEBUG ((DEBUG_INFO, "ConfigPowerFloorMgmt: Writing value 0x%x to the mailbox\n", MailboxData.Data));
     MailboxCommand.InterfaceData = 0;

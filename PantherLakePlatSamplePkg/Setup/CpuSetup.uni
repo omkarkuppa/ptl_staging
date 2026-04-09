@@ -1315,6 +1315,9 @@
 #string STR_POWER_FLOOR_PCIE_GEN_DOWNGRADE_PROMPT   #language en-US "  PCIe Gen Speed Downgrade"
 #string STR_POWER_FLOOR_PCIE_GEN_DOWNGRADE_HELP     #language en-US "When this option is enabled, SoC can reduce PCIe Gen speed to lower SoC floor power. When disabled, Pcie Gen speed reduction option will not be used by SoC."
 
+#string STR_POWER_FLOOR_AGGRESSIVE_MEDIA_PROMPT   #language en-US "  Media Aggressive Throttling"
+#string STR_POWER_FLOOR_AGGRESSIVE_MEDIA_HELP     #language en-US "When this option is enabled, SoC can divide media PLL to lower SoC level. When disabled, media aggressive throttling will not be used by SoC."
+
 #string STR_SKIN_TEMP_CONTROL_TITLE                 #language en-US "Skin Temperature Control"
 #string STR_SKIN_TEMP_CONTROL_HELP                  #language en-US "Skin Temperature Control Sensors"
 

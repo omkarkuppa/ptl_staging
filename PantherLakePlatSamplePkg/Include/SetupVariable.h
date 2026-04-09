@@ -829,8 +829,9 @@ typedef struct {
  structure revision and update below history table\n
   <b>Revision 1</b>:  - Initial version.
   <b>Revision 2</b>:  - Added VccsaShutdown.
+  <b>Revision 3</b>:  - Added PowerFloorAggressiveMedia.
 **/
-#define CPU_SETUP_REVISION  2
+#define CPU_SETUP_REVISION  3
 
 typedef struct {
   UINT8   Revision;
@@ -1111,7 +1112,12 @@ typedef struct {
   UINT8   TseEnable;
   UINT8   CompareCtdpRatio;
   UINT8   CompareCtdpRatio2;
-  UINT8   Reserved[14];
+
+  ///
+  /// Power Floor Aggressive Media Disable
+  ///
+  UINT8   PowerFloorAggressiveMedia;
+  UINT8   Reserved[13];
   //
   // Select Core(s) and RING DLVR Mode
   //

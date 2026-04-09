@@ -67,6 +67,7 @@ CpuPowerMgmtBasicConfigPrint (
   DEBUG ((DEBUG_INFO, " PowerFloorManagement : 0x%x\n", CpuPowerMgmtBasicConfig->PowerFloorManagement));
   DEBUG ((DEBUG_INFO, " PowerFloorDisplayDisconnect : 0x%x\n", CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect));
   DEBUG ((DEBUG_INFO, " PowerFloorPcieGenDowngrade  : 0x%x\n", CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade));
+  DEBUG ((DEBUG_INFO, " PowerFloorAggressiveMedia  : 0x%x\n", CpuPowerMgmtBasicConfig->PowerFloorAggressiveMedia));
   for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE; Index++) {
     DEBUG ((DEBUG_INFO, " TurboRatioLimitRatio[0x%x] : 0x%X\n", Index, CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index]));
     DEBUG ((DEBUG_INFO, " TurboRatioLimitNumCore[0x%x] : 0x%X\n", Index, CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index]));

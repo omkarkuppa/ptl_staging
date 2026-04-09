@@ -259,6 +259,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.PlatformAtxTelemetryUnit|0x0               
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PmgCstCfgCtrlLock|0x1                                         # CFG Lock
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerFloorDisplayDisconnect|0x0                               # Display Disconnect
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerFloorPcieGenDowngrade|0x1                                # Pcie Gen Speed Downgrade for Floor Power Management
+gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerFloorAggressiveMedia|0x0                                 # Media Aggressive Throttling
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerFloorManagement|0x1                                      # Power Floor Management
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerLimit1|0x0                                               # Power Limit 1
 gStructPcdTokenSpaceGuid.PcdCpuSetup.PowerLimit1Time|0x0                                           # Power Limit 1 Time Window

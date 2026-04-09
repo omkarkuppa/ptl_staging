@@ -147,9 +147,11 @@ typedef union {
   struct {
     UINT32 PowerFloorManagementDisable          : 1;  ///< [0] Power Floor Management Disable
     UINT32 PowerFloorDisplayDisconnectDisable   : 1;  ///< [1] Power Floor Display Disconnect Disable
-    UINT32 Rsvd1                                : 17; ///< [18:2] Reserved
+    UINT32 Rsvd1                                : 12; ///< [13:2] Reserved
+    UINT32 PowerFloorAggressiveMediaDisable     : 1;  ///< [14] Power Floor Aggressive Media Throttling Disable
+    UINT32 Rsvd2                                : 4;  ///< [18:15] Reserved
     UINT32 PowerFloorPcieGenXDowngradeDisable   : 1;  ///< [19] Returns number of modules with consecutive id that has same scaling factor
-    UINT32 Rsvd2                                : 12; ///< [31:20] Reserved
+    UINT32 Rsvd3                                : 12; ///< [31:20] Reserved
   } Fields;
 } MAILBOX_DATA_POWER_FLOOR_CONFIG;
 
