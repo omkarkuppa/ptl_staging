@@ -492,6 +492,11 @@ VtioFormExtractConfig (
   ConfigRequest = NULL;
   *Progress = Request;
 
+  if ((Request != NULL) &&
+      !HiiIsConfigHdrMatch (Request, &gVtioSetupGuid, VTIO_CFG_VARIABLE_NAME))
+  {
+    return EFI_NOT_FOUND;
+  }
   // Get Buffer Storage data from EFI variable.
   // Try to get the current setting from variable.
   BufferSize = sizeof (VTIO_SETUP_DATA_STRUCT);
@@ -512,9 +517,7 @@ VtioFormExtractConfig (
 
   if (lVtioSetupData.VtioSupport == 1) {
     DEBUG ((DEBUG_INFO, "Overriding defaults if VTIO was previously enabled\n"));
-    // Check routing data in <ConfigHdr>.
-    // Note: if only one Storage is used, then this checking could be skipped.
-    if (!HiiIsConfigHdrMatch (Request, &gVtioSetupGuid, NULL)) {
+    if (Request == NULL) {
       return EFI_NOT_FOUND;
     }
     // Set Request to the unified request string.
@@ -566,6 +569,15 @@ VtioFormRouteConfig (
   UINT32                       VtioSetupVarAttr;
 
   DEBUG ((DEBUG_INFO, "%a start\n", __FUNCTION__));
+
+  if (Configuration == NULL || Progress == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  *Progress = Configuration + StrLen (Configuration);
+  if (!HiiIsConfigHdrMatch (Configuration, &gVtioSetupGuid, VTIO_CFG_VARIABLE_NAME)) {
+    return EFI_NOT_FOUND;
+  }
 
   VariableSize = sizeof(VTIO_SETUP_DATA_STRUCT);
 
